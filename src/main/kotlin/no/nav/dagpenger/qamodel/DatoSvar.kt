@@ -7,7 +7,7 @@ class DatoSvar(private val fakta: Fakta, private val dato: LocalDate) : Svar {
         return other is DatoSvar && this.equals(other)
     }
 
-    private fun equals(other: DatoSvar): Boolean{
+    private fun equals(other: DatoSvar): Boolean {
         return this.fakta == other.fakta && this.dato == other.dato
     }
 }
