@@ -10,23 +10,23 @@ internal class SpørsmålTest {
     @Test
     fun `jaNei spørsmål`() {
         assertEquals(Ja(Fakta.inntekt3G),
-                Fakta.inntekt3G.jaNei().aktiver().besvar(true))
+                Fakta.inntekt3G.jaNei().spør().besvar(true))
 
         assertEquals(Nei(Fakta.inntekt3G),
-                Fakta.inntekt3G.jaNei().aktiver().besvar(false))
+                Fakta.inntekt3G.jaNei().spør().besvar(false))
     }
 
     @Test
     fun `dato spørsmål`() {
         assertEquals(DatoSvar(Fakta.sisteDagMedLønn, 1.januar),
-                Fakta.sisteDagMedLønn.dato().aktiver().besvar(1.januar))
+                Fakta.sisteDagMedLønn.dato().spør().besvar(1.januar))
     }
 
     @Test
     fun `ubesvarte spørsmål`() {
         Fakta.inntekt3G.jaNei().also {
             assertEquals(Ubesvart(Fakta.inntekt3G), it.svar())
-            it.aktiver().besvar(true)
+            it.spør().besvar(true)
             assertEquals(Ja(Fakta.inntekt3G), it.svar())
         }
     }
@@ -39,9 +39,9 @@ internal class SpørsmålTest {
     }
 
     @Test
-    fun `aktivere allerede aktive spørsmål`() {
+    fun `kan ikke spørre allerede spurte spørsmål`() {
         assertThrows<IllegalStateException> {
-            Fakta.sisteDagMedLønn.dato().aktiver().aktiver()
+            Fakta.sisteDagMedLønn.dato().spør().spør()
         }
     }
 }
