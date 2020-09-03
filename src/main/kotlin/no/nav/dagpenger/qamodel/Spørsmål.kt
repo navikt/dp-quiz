@@ -2,7 +2,7 @@ package no.nav.dagpenger.qamodel
 
 import java.lang.IllegalStateException
 
-class Spørsmål<R> (private val fakta: Fakta, private val strategi: SpørsmålStrategi<R>) {
+class Spørsmål<R> (private val fakta: Fakta<R>, private val strategi: SpørsmålStrategi<R>) {
     private var tilstand: Tilstand = Inaktivt
     private lateinit var gjeldendeSvar: Svar
 
@@ -11,7 +11,7 @@ class Spørsmål<R> (private val fakta: Fakta, private val strategi: SpørsmålS
     fun besvar(r: R) = tilstand.besvar(r, this)
     fun spør() = tilstand.spør(this)
 
-    private fun _besvar(r: R) = strategi.besvar(r).also {
+    private fun _besvar(r: R) = strategi.besvar(r, fakta).also {
         gjeldendeSvar = it
         tilstand = Besvart
     }
@@ -44,5 +44,5 @@ class Spørsmål<R> (private val fakta: Fakta, private val strategi: SpørsmålS
 }
 
 interface SpørsmålStrategi<R> {
-    fun besvar(r: R): Svar
+    fun besvar(r: R, fakta: Fakta<R>): Svar
 }

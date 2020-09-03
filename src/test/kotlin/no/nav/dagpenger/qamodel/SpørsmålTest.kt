@@ -8,23 +8,23 @@ import org.junit.jupiter.api.assertThrows
 
 internal class SpørsmålTest {
     @Test
-    fun `jaNei spørsmål`() {
+    fun `spørsmål spørsmål`() {
         assertEquals(Ja(Fakta.inntekt3G),
-                Fakta.inntekt3G.jaNei().spør().besvar(true))
+                Fakta.inntekt3G.spørsmål().spør().besvar(true))
 
         assertEquals(Nei(Fakta.inntekt3G),
-                Fakta.inntekt3G.jaNei().spør().besvar(false))
+                Fakta.inntekt3G.spørsmål().spør().besvar(false))
     }
 
     @Test
     fun `dato spørsmål`() {
         assertEquals(DatoSvar(Fakta.sisteDagMedLønn, 1.januar),
-                Fakta.sisteDagMedLønn.dato().spør().besvar(1.januar))
+                Fakta.sisteDagMedLønn.spørsmål().spør().besvar(1.januar))
     }
 
     @Test
     fun `ubesvarte spørsmål`() {
-        Fakta.inntekt3G.jaNei().also {
+        Fakta.inntekt3G.spørsmål().also {
             assertEquals(Ubesvart(Fakta.inntekt3G), it.svar())
             it.spør().besvar(true)
             assertEquals(Ja(Fakta.inntekt3G), it.svar())
@@ -34,14 +34,14 @@ internal class SpørsmålTest {
     @Test
     fun `ugyldige spørsmål`() {
         assertThrows<IllegalStateException> {
-            Fakta.sisteDagMedLønn.dato().besvar(1.januar)
+            Fakta.sisteDagMedLønn.spørsmål().besvar(1.januar)
         }
     }
 
     @Test
     fun `kan ikke spørre allerede spurte spørsmål`() {
         assertThrows<IllegalStateException> {
-            Fakta.sisteDagMedLønn.dato().spør().spør()
+            Fakta.sisteDagMedLønn.spørsmål().spør().spør()
         }
     }
 }

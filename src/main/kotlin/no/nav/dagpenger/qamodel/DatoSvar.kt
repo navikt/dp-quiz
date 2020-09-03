@@ -2,7 +2,7 @@ package no.nav.dagpenger.qamodel
 
 import java.time.LocalDate
 
-class DatoSvar(private val fakta: Fakta, private val dato: LocalDate, handling: Handling = Handling()) : Svar(handling) {
+class DatoSvar(private val fakta: Fakta<LocalDate>, private val dato: LocalDate, handling: Handling = Handling()) : Svar(handling) {
     override fun equals(other: Any?): Boolean {
         return other is DatoSvar && this.equals(other)
     }

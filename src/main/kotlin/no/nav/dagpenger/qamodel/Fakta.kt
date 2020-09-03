@@ -1,13 +1,10 @@
 package no.nav.dagpenger.qamodel
 
-import java.time.LocalDate
-
-class Fakta private constructor(navn: String) {
-    fun jaNei(): Spørsmål<Boolean> = Spørsmål(this, JaNeiStrategi(this))
-    fun dato(): Spørsmål<LocalDate> = Spørsmål(this, DatoStrategi(this))
+class Fakta <R> private constructor(navn: String, private val strategi: SpørsmålStrategi<R>) {
+    fun spørsmål(): Spørsmål<R> = Spørsmål(this, strategi)
 
     companion object {
-        val inntekt3G = Fakta("Inntekt er lik eller over 3G siste 3 år")
-        val sisteDagMedLønn = Fakta("Siste dag du har lønn")
+        val inntekt3G = Fakta("Inntekt er lik eller over 3G siste 3 år", JaNeiStrategi())
+        val sisteDagMedLønn = Fakta("Siste dag du har lønn", DatoStrategi())
     }
 }
