@@ -1,18 +1,37 @@
 package no.nav.dagpenger.qamodel
 
-class Spørsmål<R> (private val fakta: Fakta, private val spørsmålStrategi: SpørsmålStrategi<R>) {
-    private var tilstand: Tilstand = Ubesvart
+import java.lang.IllegalStateException
+
+class Spørsmål<R> (private val fakta: Fakta, private val strategi: SpørsmålStrategi<R>) {
+    private var tilstand: Tilstand = Inaktivt
     private lateinit var gjeldendeSvar: Svar
 
     fun svar() = tilstand.svar(this)
 
-    fun besvar(r: R) = spørsmålStrategi.besvar(r).also {
+    fun besvar(r: R) = tilstand.besvar(r, this)
+    fun aktiver() = tilstand.aktiver(this)
+
+    private fun _besvar(r: R) = strategi.besvar(r).also {
         gjeldendeSvar = it
         tilstand = Besvart
     }
 
     private interface Tilstand {
         fun <R> svar(spørsmål: Spørsmål<R>): Svar
+
+        fun <R> besvar(r: R, spørsmål: Spørsmål<R>) = spørsmål._besvar(r)
+
+        fun <R> aktiver(spørsmål: Spørsmål<R>): Spørsmål<R> = throw IllegalStateException("Spørsmålet er allerede aktivt")
+    }
+
+    private object Inaktivt : Tilstand {
+        override fun <R> svar(spørsmål: Spørsmål<R>) = Ubesvart(spørsmål.fakta)
+
+        override fun <R> besvar(r: R, spørsmål: Spørsmål<R>) = throw IllegalStateException("Spørsmålet er ikke aktivt")
+
+        override fun <R> aktiver(spørsmål: Spørsmål<R>) = spørsmål.apply {
+            tilstand = Ubesvart
+        }
     }
 
     private object Ubesvart : Tilstand {

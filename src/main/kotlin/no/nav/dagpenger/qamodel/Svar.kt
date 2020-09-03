@@ -1,3 +1,3 @@
 package no.nav.dagpenger.qamodel
 
-interface Svar
+abstract class Svar(handling: Handling)
