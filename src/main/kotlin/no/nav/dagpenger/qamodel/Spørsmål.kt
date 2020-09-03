@@ -1,29 +1,29 @@
 package no.nav.dagpenger.qamodel
 
-class Spørsmål(private val fakta: Fakta, private val spørsmålStrategi: SpørsmålStrategi) {
+class Spørsmål<R> (private val fakta: Fakta, private val spørsmålStrategi: SpørsmålStrategi<R>) {
     private var tilstand: Tilstand = Ubesvart
     private lateinit var gjeldendeSvar: Svar
 
     fun svar() = tilstand.svar(this)
 
-    fun besvar(any: Any) = spørsmålStrategi.besvar(any).also {
+    fun besvar(r: R) = spørsmålStrategi.besvar(r).also {
         gjeldendeSvar = it
         tilstand = Besvart
     }
 
     private interface Tilstand {
-        fun svar(spørsmål: Spørsmål): Svar
+        fun <R> svar(spørsmål: Spørsmål<R>): Svar
     }
 
     private object Ubesvart : Tilstand {
-        override fun svar(spørsmål: Spørsmål) = Ubesvart(spørsmål.fakta)
+        override fun <R> svar(spørsmål: Spørsmål<R>) = Ubesvart(spørsmål.fakta)
     }
 
     private object Besvart : Tilstand {
-        override fun svar(spørsmål: Spørsmål) = spørsmål.gjeldendeSvar
+        override fun <R> svar(spørsmål: Spørsmål<R>) = spørsmål.gjeldendeSvar
     }
 }
 
-interface SpørsmålStrategi {
-    fun besvar(any: Any): Svar
+interface SpørsmålStrategi<R> {
+    fun besvar(r: R): Svar
 }
