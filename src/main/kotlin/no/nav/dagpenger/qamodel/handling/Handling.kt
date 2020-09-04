@@ -12,8 +12,6 @@ abstract class Handling(vararg fakta: Faktum<*>) {
 
     open fun utfør() {}
     internal fun accept(visitor: FaktumVisitor) {
-        visitor.preVisit(this)
-        fakta.forEach { it.accept(visitor)}
-        visitor.postVisit(this)
+        fakta.forEach { it.accept(visitor) }
     }
 }

@@ -1,7 +1,7 @@
 package no.nav.dagpenger.qamodel.fakta
 
-import no.nav.dagpenger.qamodel.handling.Handling
 import java.time.LocalDate
+import no.nav.dagpenger.qamodel.handling.Handling
 
 internal class DatoStrategi(private val handling: Handling) : SpørsmålStrategi<LocalDate> {
     override fun besvar(dato: LocalDate, faktum: Faktum<LocalDate>) =
@@ -12,9 +12,13 @@ internal class DatoStrategi(private val handling: Handling) : SpørsmålStrategi
                 }
             }
 
-    override fun accept(visitor: FaktumVisitor) {
-        visitor.preVisit(this)
+    override fun accept(visitor: FaktumVisitor, faktum: Faktum<LocalDate>) {
+        visitor.preVisitDato(faktum)
+
+        visitor.preVisitDato(handling)
         handling.accept(visitor)
-        visitor.postVisit(this)
+        visitor.postVisitDato(handling)
+
+        visitor.postVisitDato(faktum)
     }
 }

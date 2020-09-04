@@ -1,11 +1,15 @@
 package no.nav.dagpenger.qamodel.unit
 
-import no.nav.dagpenger.qamodel.fakta.*
+import java.time.LocalDate
+import no.nav.dagpenger.qamodel.fakta.DatoStrategi
+import no.nav.dagpenger.qamodel.fakta.Faktum
+import no.nav.dagpenger.qamodel.fakta.FaktumVisitor
+import no.nav.dagpenger.qamodel.fakta.Ja
+import no.nav.dagpenger.qamodel.fakta.JaNeiStrategi
 import no.nav.dagpenger.qamodel.handling.Handling
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.time.LocalDate
 
 internal class HandlingTest {
 
@@ -44,36 +48,42 @@ internal class HandlingTest {
     }
 
     @Test
-    fun `Flere handlinger`(){
+    fun `Flere handlinger`() {
         sisteDagMedLønn.spør().besvar(LocalDate.now())
         assertEquals(Ja(inntekt1_5G), inntekt1_5G.besvar(true))
         assertEquals(Ja(inntekt3G), inntekt3G.besvar(true))
     }
 
     @Test
-    fun `Visitor teller`(){
-        TellerVisitor().apply{
+    fun `Visitor teller`() {
+        TellerVisitor().apply {
             sisteDagMedLønn.accept(this)
             assertEquals(4, faktumTeller)
             assertEquals(7, handlingTeller)
-            assertEquals(4, strategiTeller)
         }
     }
-    private class TellerVisitor(): FaktumVisitor{
+    private class TellerVisitor() : FaktumVisitor {
         var faktumTeller = 0
         var handlingTeller = 0
-        var strategiTeller = 0
 
-        override fun preVisit(faktum: Faktum<*>) {
+        override fun preVisitJaNei(faktum: Faktum<Boolean>) {
             faktumTeller++
         }
 
-        override fun preVisit(handling: Handling) {
+        override fun preVisitDato(faktum: Faktum<LocalDate>) {
+            faktumTeller++
+        }
+
+        override fun preVisitJa(handling: Handling) {
             handlingTeller++
         }
 
-        override fun preVisit(strategi: SpørsmålStrategi<*>) {
-            strategiTeller++
+        override fun preVisitNei(handling: Handling) {
+            handlingTeller++
+        }
+
+        override fun preVisitDato(handling: Handling) {
+            handlingTeller++
         }
     }
 }

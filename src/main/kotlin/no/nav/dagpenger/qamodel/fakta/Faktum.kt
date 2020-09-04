@@ -1,7 +1,8 @@
 package no.nav.dagpenger.qamodel.fakta
 
-import no.nav.dagpenger.qamodel.handling.Handling
 import java.lang.IllegalStateException
+import java.time.LocalDate
+import no.nav.dagpenger.qamodel.handling.Handling
 
 class Faktum<R> (navn: String, private val strategi: SpørsmålStrategi<R>) {
     private var tilstand: Tilstand = Inaktivt
@@ -11,10 +12,8 @@ class Faktum<R> (navn: String, private val strategi: SpørsmålStrategi<R>) {
 
     fun besvar(r: R) = tilstand.besvar(r, this)
     fun spør() = tilstand.spør(this)
-    internal fun accept(visitor: FaktumVisitor){
-        visitor.preVisit(this)
-        strategi.accept(visitor)
-        visitor.postVisit(this)
+    internal fun accept(visitor: FaktumVisitor) {
+        strategi.accept(visitor, this)
     }
 
     private fun _besvar(r: R) = strategi.besvar(r, this).also {
@@ -51,14 +50,18 @@ class Faktum<R> (navn: String, private val strategi: SpørsmålStrategi<R>) {
 
 interface SpørsmålStrategi<R> {
     fun besvar(r: R, faktum: Faktum<R>): Svar
-    fun accept(visitor: FaktumVisitor)
+    fun accept(visitor: FaktumVisitor, faktum: Faktum<R>)
 }
 
-interface FaktumVisitor{
-    fun preVisit(faktum : Faktum<*>){}
-    fun postVisit(faktum : Faktum<*>){}
-    fun preVisit(strategi: SpørsmålStrategi<*>){}
-    fun postVisit(strategi: SpørsmålStrategi<*>){}
-    fun preVisit(handling : Handling){}
-    fun postVisit(handling : Handling){}
+interface FaktumVisitor {
+    fun preVisitJaNei(faktum: Faktum<Boolean>) {}
+    fun postVisitJaNei(faktum: Faktum<Boolean>) {}
+    fun preVisitDato(faktum: Faktum<LocalDate>) {}
+    fun postVisitDato(faktum: Faktum<LocalDate>) {}
+    fun preVisitJa(handling: Handling) {}
+    fun postVisitJa(handling: Handling) {}
+    fun preVisitNei(handling: Handling) {}
+    fun postVisitNei(handling: Handling) {}
+    fun preVisitDato(handling: Handling) {}
+    fun postVisitDato(handling: Handling) {}
 }
