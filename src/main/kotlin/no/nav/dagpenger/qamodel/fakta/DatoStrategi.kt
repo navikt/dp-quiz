@@ -11,4 +11,10 @@ internal class DatoStrategi(private val handling: Handling) : SpørsmålStrategi
                     nesteSpørsmål()
                 }
             }
+
+    override fun accept(visitor: FaktumVisitor) {
+        visitor.preVisit(this)
+        handling.accept(visitor)
+        visitor.postVisit(this)
+    }
 }

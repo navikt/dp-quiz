@@ -1,5 +1,6 @@
 package no.nav.dagpenger.qamodel.fakta
 
+import no.nav.dagpenger.qamodel.handling.Handling
 import java.lang.IllegalStateException
 
 class Faktum<R> (navn: String, private val strategi: SpørsmålStrategi<R>) {
@@ -10,6 +11,11 @@ class Faktum<R> (navn: String, private val strategi: SpørsmålStrategi<R>) {
 
     fun besvar(r: R) = tilstand.besvar(r, this)
     fun spør() = tilstand.spør(this)
+    internal fun accept(visitor: FaktumVisitor){
+        visitor.preVisit(this)
+        strategi.accept(visitor)
+        visitor.postVisit(this)
+    }
 
     private fun _besvar(r: R) = strategi.besvar(r, this).also {
         gjeldendeSvar = it
@@ -45,4 +51,14 @@ class Faktum<R> (navn: String, private val strategi: SpørsmålStrategi<R>) {
 
 interface SpørsmålStrategi<R> {
     fun besvar(r: R, faktum: Faktum<R>): Svar
+    fun accept(visitor: FaktumVisitor)
+}
+
+interface FaktumVisitor{
+    fun preVisit(faktum : Faktum<*>)
+    fun postVisit(faktum : Faktum<*>)
+    fun preVisit(strategi: SpørsmålStrategi<*>)
+    fun postVisit(strategi: SpørsmålStrategi<*>)
+    fun preVisit(handling : Handling)
+    fun postVisit(handling : Handling)
 }

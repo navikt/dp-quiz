@@ -1,6 +1,7 @@
 package no.nav.dagpenger.qamodel.handling
 
 import no.nav.dagpenger.qamodel.fakta.Faktum
+import no.nav.dagpenger.qamodel.fakta.FaktumVisitor
 
 abstract class Handling(vararg fakta: Faktum<*>) {
     private val fakta: List<Faktum<*>> = fakta.toList()
@@ -10,4 +11,9 @@ abstract class Handling(vararg fakta: Faktum<*>) {
     }
 
     open fun utfør() {}
+    internal fun accept(visitor: FaktumVisitor) {
+        visitor.preVisit(this)
+        fakta.forEach { it.accept(visitor)}
+        visitor.postVisit(this)
+    }
 }
