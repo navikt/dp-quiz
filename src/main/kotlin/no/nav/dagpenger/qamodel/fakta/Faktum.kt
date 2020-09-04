@@ -1,8 +1,8 @@
 package no.nav.dagpenger.qamodel.fakta
 
-import java.lang.IllegalStateException
 import no.nav.dagpenger.qamodel.visitor.FaktumVisitor
 import no.nav.dagpenger.qamodel.visitor.PrettyPrint
+import java.lang.IllegalStateException
 
 class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStrategi<R>) {
     private var tilstand: Tilstand = Inaktivt

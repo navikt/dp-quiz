@@ -1,6 +1,5 @@
 package no.nav.dagpenger.qamodel.unit
 
-import java.time.LocalDate
 import no.nav.dagpenger.qamodel.fakta.DatoStrategi
 import no.nav.dagpenger.qamodel.fakta.DatoSvar
 import no.nav.dagpenger.qamodel.fakta.Faktum
@@ -12,12 +11,13 @@ import no.nav.dagpenger.qamodel.handling.Handling
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDate
 
 internal class SpørsmålTest {
     val sisteDagMedLønn = Faktum(
         "Siste dag du har lønn",
         DatoStrategi(
-                object : Handling() {}
+            object : Handling() {}
         )
     )
     val inntekt1_5G = Faktum(

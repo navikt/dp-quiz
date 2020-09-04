@@ -1,9 +1,9 @@
 package no.nav.dagpenger.qamodel.visitor
 
-import java.time.LocalDate
 import no.nav.dagpenger.qamodel.fakta.Faktum
 import no.nav.dagpenger.qamodel.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.qamodel.handling.Handling
+import java.time.LocalDate
 
 interface FaktumVisitor {
     fun preVisitJaNei(faktum: Faktum<Boolean>, tilstand: FaktumTilstand) {}

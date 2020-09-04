@@ -1,6 +1,5 @@
 package no.nav.dagpenger.qamodel.unit
 
-import java.time.LocalDate
 import no.nav.dagpenger.qamodel.fakta.DatoStrategi
 import no.nav.dagpenger.qamodel.fakta.Faktum
 import no.nav.dagpenger.qamodel.fakta.Ja
@@ -11,6 +10,7 @@ import no.nav.dagpenger.qamodel.visitor.PrettyPrint
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDate
 
 internal class HandlingTest {
 
@@ -24,11 +24,13 @@ internal class HandlingTest {
         )
     )
 
-    val villigDeltid = Faktum("Villig til å jobbe deltid",
-            JaNeiStrategi(
-                    object : Handling() {},
-                    object : Handling() {}
-            ))
+    val villigDeltid = Faktum(
+        "Villig til å jobbe deltid",
+        JaNeiStrategi(
+            object : Handling() {},
+            object : Handling() {}
+        )
+    )
 
     val inntekt3G = Faktum(
         "Inntekt er lik eller over 3G siste 3 år",
@@ -41,10 +43,10 @@ internal class HandlingTest {
     )
 
     val sisteDagMedLønn = Faktum(
-            "Siste dag du har lønn",
-            DatoStrategi(
-                    object : Handling(inntekt1_5G, inntekt3G) {}
-            )
+        "Siste dag du har lønn",
+        DatoStrategi(
+            object : Handling(inntekt1_5G, inntekt3G) {}
+        )
     )
 
     @Test
