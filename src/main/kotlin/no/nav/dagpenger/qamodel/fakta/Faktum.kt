@@ -13,7 +13,7 @@ class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStra
     fun besvar(r: R) = tilstand.besvar(r, this)
     fun spør() = tilstand.spør(this)
     internal fun accept(visitor: FaktumVisitor) {
-        strategi.accept(visitor, this)
+        strategi.accept(visitor, this, tilstand.kode)
     }
 
     override fun toString() = PrettyPrint(this).result()
@@ -23,7 +23,15 @@ class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStra
         tilstand = Kjent
     }
 
+    enum class FaktumTilstand {
+        Inaktivt,
+        Ukjent,
+        Kjent
+    }
+
     private interface Tilstand {
+        val kode: FaktumTilstand
+
         fun <R> svar(faktum: Faktum<R>): Svar
 
         fun <R> besvar(r: R, faktum: Faktum<R>) = faktum._besvar(r)
@@ -32,6 +40,7 @@ class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStra
     }
 
     private object Inaktivt : Tilstand {
+        override val kode = FaktumTilstand.Inaktivt
         override fun <R> svar(faktum: Faktum<R>) = Ubesvart(faktum)
 
         override fun <R> besvar(r: R, faktum: Faktum<R>) = throw IllegalStateException("Spørsmålet er ikke aktivt")
@@ -42,15 +51,19 @@ class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStra
     }
 
     private object Ukjent : Tilstand {
+        override val kode = FaktumTilstand.Ukjent
+
         override fun <R> svar(faktum: Faktum<R>) = Ubesvart(faktum)
     }
 
     private object Kjent : Tilstand {
+        override val kode = FaktumTilstand.Kjent
+
         override fun <R> svar(faktum: Faktum<R>) = faktum.gjeldendeSvar
     }
 }
 
 interface SpørsmålStrategi<R> {
     fun besvar(r: R, faktum: Faktum<R>): Svar
-    fun accept(visitor: FaktumVisitor, faktum: Faktum<R>)
+    fun accept(visitor: FaktumVisitor, faktum: Faktum<R>, tilstand: Faktum.FaktumTilstand)
 }

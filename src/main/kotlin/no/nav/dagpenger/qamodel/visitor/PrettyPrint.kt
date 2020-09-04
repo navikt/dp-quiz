@@ -14,19 +14,19 @@ class PrettyPrint(faktum: Faktum<*>) : FaktumVisitor {
 
     fun result() = result
 
-    override fun preVisitJaNei(faktum: Faktum<Boolean>) {
+    override fun preVisitJaNei(faktum: Faktum<Boolean>, tilstand: Faktum.FaktumTilstand) {
         preVisit(faktum.navn)
     }
 
-    override fun postVisitJaNei(faktum: Faktum<Boolean>) {
+    override fun postVisitJaNei(faktum: Faktum<Boolean>, tilstand: Faktum.FaktumTilstand) {
         indentTeller--
     }
 
-    override fun preVisitDato(faktum: Faktum<LocalDate>) {
+    override fun preVisitDato(faktum: Faktum<LocalDate>, tilstand: Faktum.FaktumTilstand) {
         preVisit(faktum.navn)
     }
 
-    override fun postVisitDato(faktum: Faktum<LocalDate>) {
+    override fun postVisitDato(faktum: Faktum<LocalDate>, tilstand: Faktum.FaktumTilstand) {
         indentTeller--
     }
 

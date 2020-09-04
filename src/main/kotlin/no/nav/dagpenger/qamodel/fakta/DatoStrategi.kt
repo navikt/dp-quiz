@@ -13,13 +13,13 @@ internal class DatoStrategi(private val handling: Handling) : SpørsmålStrategi
                 }
             }
 
-    override fun accept(visitor: FaktumVisitor, faktum: Faktum<LocalDate>) {
-        visitor.preVisitDato(faktum)
+    override fun accept(visitor: FaktumVisitor, faktum: Faktum<LocalDate>, tilstand: Faktum.FaktumTilstand) {
+        visitor.preVisitDato(faktum, tilstand)
 
         visitor.preVisitDato(handling)
         handling.accept(visitor)
         visitor.postVisitDato(handling)
 
-        visitor.postVisitDato(faktum)
+        visitor.postVisitDato(faktum, tilstand)
     }
 }

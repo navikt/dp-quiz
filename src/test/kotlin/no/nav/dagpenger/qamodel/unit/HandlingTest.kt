@@ -23,11 +23,18 @@ internal class HandlingTest {
             object : Handling() {}
         )
     )
+
+    val villigDeltid = Faktum("Villig til å jobbe deltid",
+            JaNeiStrategi(
+                    object : Handling() {},
+                    object : Handling() {}
+            ))
+
     val inntekt3G = Faktum(
         "Inntekt er lik eller over 3G siste 3 år",
         JaNeiStrategi(
             object : Handling() {},
-            object : Handling(inntekt1_5G) {
+            object : Handling(villigDeltid) {
                 override fun utfør() { teller++ }
             }
         )
@@ -42,9 +49,9 @@ internal class HandlingTest {
 
     @Test
     fun `Utføre handlinger`() {
-        assertThrows<IllegalStateException> { inntekt1_5G.besvar(true) }
+        assertThrows<IllegalStateException> { villigDeltid.besvar(true) }
         inntekt3G.spør().besvar(false)
-        assertEquals(Ja(inntekt1_5G), inntekt1_5G.besvar(true))
+        assertEquals(Ja(villigDeltid), villigDeltid.besvar(true))
         assertEquals(1, teller)
     }
 
@@ -53,28 +60,36 @@ internal class HandlingTest {
         sisteDagMedLønn.spør().besvar(LocalDate.now())
         assertEquals(Ja(inntekt1_5G), inntekt1_5G.besvar(true))
         assertEquals(Ja(inntekt3G), inntekt3G.besvar(true))
+        assertEquals(3, TellerVisitor(sisteDagMedLønn).besvarteSpørsmålTeller)
     }
 
     @Test
     fun `Visitor teller`() {
-        TellerVisitor().apply {
-            sisteDagMedLønn.accept(this)
+        TellerVisitor(sisteDagMedLønn).apply {
             assertEquals(4, faktumTeller)
             assertEquals(7, handlingTeller)
         }
         println(PrettyPrint(sisteDagMedLønn).result())
     }
 
-    private class TellerVisitor() : FaktumVisitor {
+    private class TellerVisitor(faktum: Faktum<*>) : FaktumVisitor {
         var faktumTeller = 0
         var handlingTeller = 0
+        var besvarteSpørsmålTeller = 0
+        val ubesvarteSpørsmålTeller get() = faktumTeller - besvarteSpørsmålTeller
 
-        override fun preVisitJaNei(faktum: Faktum<Boolean>) {
-            faktumTeller++
+        init {
+            faktum.accept(this)
         }
 
-        override fun preVisitDato(faktum: Faktum<LocalDate>) {
+        override fun preVisitJaNei(faktum: Faktum<Boolean>, tilstand: Faktum.FaktumTilstand) {
             faktumTeller++
+            if (tilstand == Faktum.FaktumTilstand.Kjent) besvarteSpørsmålTeller++
+        }
+
+        override fun preVisitDato(faktum: Faktum<LocalDate>, tilstand: Faktum.FaktumTilstand) {
+            faktumTeller++
+            if (tilstand == Faktum.FaktumTilstand.Kjent) besvarteSpørsmålTeller++
         }
 
         override fun preVisitJa(handling: Handling) {

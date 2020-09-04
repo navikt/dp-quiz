@@ -19,8 +19,8 @@ internal class JaNeiStrategi(
         }
     }
 
-    override fun accept(visitor: FaktumVisitor, faktum: Faktum<Boolean>) {
-        visitor.preVisitJaNei(faktum)
+    override fun accept(visitor: FaktumVisitor, faktum: Faktum<Boolean>, tilstand: Faktum.FaktumTilstand) {
+        visitor.preVisitJaNei(faktum, tilstand)
 
         visitor.preVisitJa(jaHandling)
         jaHandling.accept(visitor)
@@ -30,6 +30,6 @@ internal class JaNeiStrategi(
         neiHandling.accept(visitor)
         visitor.postVisitNei(neiHandling)
 
-        visitor.postVisitJaNei(faktum)
+        visitor.postVisitJaNei(faktum, tilstand)
     }
 }
