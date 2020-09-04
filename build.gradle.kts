@@ -41,15 +41,8 @@ tasks.withType<KotlinCompile>().all {
 dependencies {
     implementation(kotlin("stdlib"))
 
-    implementation(RapidAndRivers)
-
-    implementation(Konfig.konfig)
-    implementation(Kotlin.Logging.kotlinLogging)
-
-    testImplementation(kotlin("test"))
-    testImplementation(Junit5.api)
-    testImplementation(KoTest.runner)
     testRuntimeOnly(Junit5.engine)
+    testImplementation(Junit5.api)
 }
 
 spotless {
