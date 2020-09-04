@@ -1,3 +1,5 @@
 package no.nav.dagpenger.qamodel.handling
 
-class Handling
+interface Handling {
+    fun nesteSpørsmål() {}
+}

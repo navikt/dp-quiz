@@ -1,8 +1,6 @@
 package no.nav.dagpenger.qamodel.fakta
 
-import no.nav.dagpenger.qamodel.handling.Handling
-
-class Ubesvart(private val fakta: Any, handling: Handling = Handling()) : Svar(handling) {
+class Ubesvart(private val fakta: Any) : Svar() {
     override fun equals(other: Any?): Boolean {
         return other is Ubesvart && this.equals(other)
     }

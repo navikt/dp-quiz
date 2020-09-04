@@ -13,7 +13,7 @@ class Fakta<R> (navn: String, private val strategi: SpørsmålStrategi<R>) {
 
     private fun _besvar(r: R) = strategi.besvar(r, this).also {
         gjeldendeSvar = it
-        tilstand = Besvart
+        tilstand = Kjent
     }
 
     private interface Tilstand {
@@ -30,15 +30,15 @@ class Fakta<R> (navn: String, private val strategi: SpørsmålStrategi<R>) {
         override fun <R> besvar(r: R, fakta: Fakta<R>) = throw IllegalStateException("Spørsmålet er ikke aktivt")
 
         override fun <R> spør(fakta: Fakta<R>) = fakta.apply {
-            tilstand = Ubesvart
+            tilstand = Ukjent
         }
     }
 
-    private object Ubesvart : Tilstand {
+    private object Ukjent : Tilstand {
         override fun <R> svar(fakta: Fakta<R>) = Ubesvart(fakta)
     }
 
-    private object Besvart : Tilstand {
+    private object Kjent : Tilstand {
         override fun <R> svar(fakta: Fakta<R>) = fakta.gjeldendeSvar
     }
 }
@@ -46,5 +46,3 @@ class Fakta<R> (navn: String, private val strategi: SpørsmålStrategi<R>) {
 interface SpørsmålStrategi<R> {
     fun besvar(r: R, fakta: Fakta<R>): Svar
 }
-
-internal typealias SvarStrategi = () -> Unit

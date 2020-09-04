@@ -1,9 +1,14 @@
 package no.nav.dagpenger.qamodel.fakta
 
-internal class JaNeiStrategi(private val jaStrategi: SvarStrategi, private val neiStrategi: SvarStrategi) : SpørsmålStrategi<Boolean> {
+import no.nav.dagpenger.qamodel.handling.Handling
+
+internal class JaNeiStrategi(
+    private val jaStrategi: Handling,
+    private val neiStrategi: Handling
+) : SpørsmålStrategi<Boolean> {
     override fun besvar(svar: Boolean, fakta: Fakta<Boolean>): Svar = if (svar) Ja(fakta).also {
-        jaStrategi()
+        jaStrategi.nesteSpørsmål()
     } else Nei(fakta).also {
-        neiStrategi()
+        neiStrategi.nesteSpørsmål()
     }
 }
