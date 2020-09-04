@@ -24,7 +24,7 @@ object Cucumber {
 object Dagpenger {
 
     object Biblioteker {
-        const val version = "2020.07.03-13.36.4ef81d2d51f6"
+        const val version = "2020.09.03-12.09.5136d1c38e7c"
         const val stsKlient = "com.github.navikt.dp-biblioteker:sts-klient:$version"
         const val grunnbeløp = "com.github.navikt.dp-biblioteker:grunnbelop:$version"
         const val ktorUtils = "com.github.navikt.dp-biblioteker:ktor-utils:$version"
@@ -36,6 +36,7 @@ object Dagpenger {
 
             object Client {
                 const val metrics = "com.github.navikt.dp-biblioteker:ktor-client-metrics:$version"
+                const val authBearer = "com.github.navikt.dp-biblioteker:ktor-client-auth-bearer:$version"
             }
         }
 
@@ -44,8 +45,8 @@ object Dagpenger {
         }
     }
 
-    const val Streams = "com.github.navikt:dagpenger-streams:2020.05.15-23.03.e0ab571caee4"
-    const val Events = "com.github.navikt:dagpenger-events:2020.05.15-21.57.e4685fc2a371"
+    const val Streams = "com.github.navikt:dagpenger-streams:2020.08.19-13.32.0fd360f3ef11"
+    const val Events = "com.github.navikt:dagpenger-events:2020.08.19-10.57.d2fe892352eb"
 }
 
 object Database {
@@ -120,11 +121,11 @@ object Konfig {
 }
 
 object Kotlin {
-    const val version = "1.3.71"
+    const val version = "1.4.0"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$version"
 
     object Coroutines {
-        const val version = "1.3.5"
+        const val version = "1.3.7"
         fun module(name: String) = "org.jetbrains.kotlinx:kotlinx-coroutines-$name:$version"
     }
 
@@ -135,7 +136,7 @@ object Kotlin {
 }
 
 object KoTest {
-    const val version = "4.0.3"
+    const val version = "4.2.0.RC2"
 
     // for kotest framework
     const val runner = "io.kotest:kotest-runner-junit5-jvm:$version"
@@ -155,7 +156,7 @@ object Kotlinx {
 }
 
 object Ktor {
-    const val version = "1.3.2"
+    const val version = "1.4.0"
     const val server = "io.ktor:ktor-server:$version"
     const val serverNetty = "io.ktor:ktor-server-netty:$version"
     const val auth = "io.ktor:ktor-auth:$version"
@@ -224,6 +225,10 @@ const val RapidAndRivers = "com.github.navikt:rapids-and-rivers:1.74ae9cb"
 object Slf4j {
     const val version = "1.7.25"
     const val api = "org.slf4j:slf4j-api:$version"
+}
+
+object Ktlint {
+    const val version = "0.38.1"
 }
 
 object Spotless {
