@@ -2,6 +2,7 @@ package no.nav.dagpenger.qamodel.fakta
 
 import java.lang.IllegalStateException
 import no.nav.dagpenger.qamodel.visitor.FaktumVisitor
+import no.nav.dagpenger.qamodel.visitor.PrettyPrint
 
 class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStrategi<R>) {
     private var tilstand: Tilstand = Inaktivt
@@ -14,6 +15,8 @@ class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStra
     internal fun accept(visitor: FaktumVisitor) {
         strategi.accept(visitor, this)
     }
+
+    override fun toString() = PrettyPrint(this).result()
 
     private fun _besvar(r: R) = strategi.besvar(r, this).also {
         gjeldendeSvar = it
