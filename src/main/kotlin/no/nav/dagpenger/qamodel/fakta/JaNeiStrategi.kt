@@ -6,9 +6,9 @@ internal class JaNeiStrategi(
     private val jaStrategi: Handling,
     private val neiStrategi: Handling
 ) : SpørsmålStrategi<Boolean> {
-    override fun besvar(svar: Boolean, fakta: Fakta<Boolean>): Svar = if (svar) Ja(fakta).also {
+    override fun besvar(svar: Boolean, faktum: Faktum<Boolean>): Svar = if (svar) Ja(faktum).also {
         jaStrategi.nesteSpørsmål()
-    } else Nei(fakta).also {
+    } else Nei(faktum).also {
         neiStrategi.nesteSpørsmål()
     }
 }

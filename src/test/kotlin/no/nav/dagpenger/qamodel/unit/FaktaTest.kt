@@ -2,7 +2,7 @@ package no.nav.dagpenger.qamodel.unit
 
 import no.nav.dagpenger.qamodel.fakta.DatoStrategi
 import no.nav.dagpenger.qamodel.fakta.DatoSvar
-import no.nav.dagpenger.qamodel.fakta.Fakta
+import no.nav.dagpenger.qamodel.fakta.Faktum
 import no.nav.dagpenger.qamodel.fakta.Ja
 import no.nav.dagpenger.qamodel.fakta.JaNeiStrategi
 import no.nav.dagpenger.qamodel.fakta.Nei
@@ -14,26 +14,22 @@ import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 
 internal class SpørsmålTest {
-    val sisteDagMedLønn = Fakta(
+    val sisteDagMedLønn = Faktum(
         "Siste dag du har lønn",
         DatoStrategi()
     )
-    val inntekt1_5G = Fakta(
+    val inntekt1_5G = Faktum(
         "Inntekt er lik eller over 1.5G siste 12 måneder",
         JaNeiStrategi(
-            object : Handling {},
-            object : Handling {}
+            object : Handling() {},
+            object : Handling() {}
         )
     )
-    val inntekt3G = Fakta(
+    val inntekt3G = Faktum(
         "Inntekt er lik eller over 3G siste 3 år",
         JaNeiStrategi(
-            object : Handling {},
-            object : Handling {
-                override fun nesteSpørsmål() {
-                    inntekt1_5G.spør()
-                }
-            }
+            object : Handling() {},
+            object : Handling(inntekt1_5G) { }
         )
     )
 
