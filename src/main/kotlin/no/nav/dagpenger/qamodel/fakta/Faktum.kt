@@ -55,10 +55,10 @@ interface SpørsmålStrategi<R> {
 }
 
 interface FaktumVisitor{
-    fun preVisit(faktum : Faktum<*>)
-    fun postVisit(faktum : Faktum<*>)
-    fun preVisit(strategi: SpørsmålStrategi<*>)
-    fun postVisit(strategi: SpørsmålStrategi<*>)
-    fun preVisit(handling : Handling)
-    fun postVisit(handling : Handling)
+    fun preVisit(faktum : Faktum<*>){}
+    fun postVisit(faktum : Faktum<*>){}
+    fun preVisit(strategi: SpørsmålStrategi<*>){}
+    fun postVisit(strategi: SpørsmålStrategi<*>){}
+    fun preVisit(handling : Handling){}
+    fun postVisit(handling : Handling){}
 }
