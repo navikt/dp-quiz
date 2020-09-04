@@ -8,15 +8,12 @@ import no.nav.dagpenger.qamodel.handling.Handling
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDate
 
 internal class HandlingTest {
 
     var teller = 0
 
-    val sisteDagMedLønn = Faktum(
-        "Siste dag du har lønn",
-        DatoStrategi()
-    )
     val inntekt1_5G = Faktum(
         "Inntekt er lik eller over 1.5G siste 12 måneder",
         JaNeiStrategi(
@@ -34,11 +31,25 @@ internal class HandlingTest {
         )
     )
 
+    val sisteDagMedLønn = Faktum(
+            "Siste dag du har lønn",
+            DatoStrategi(
+                    object : Handling(inntekt1_5G, inntekt3G) {}
+            )
+    )
+
     @Test
     fun `Utføre handlinger`() {
         assertThrows<IllegalStateException> { inntekt1_5G.besvar(true) }
         inntekt3G.spør().besvar(false)
         assertEquals(Ja(inntekt1_5G), inntekt1_5G.besvar(true))
         assertEquals(1, teller)
+    }
+
+    @Test
+    fun `Flere handlinger`(){
+        sisteDagMedLønn.spør().besvar(LocalDate.now())
+        assertEquals(Ja(inntekt1_5G), inntekt1_5G.besvar(true))
+        assertEquals(Ja(inntekt3G), inntekt3G.besvar(true))
     }
 }

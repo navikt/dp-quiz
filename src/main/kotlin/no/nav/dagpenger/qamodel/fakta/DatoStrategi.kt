@@ -1,7 +1,14 @@
 package no.nav.dagpenger.qamodel.fakta
 
+import no.nav.dagpenger.qamodel.handling.Handling
 import java.time.LocalDate
 
-internal class DatoStrategi : SpørsmålStrategi<LocalDate> {
-    override fun besvar(dato: LocalDate, faktum: Faktum<LocalDate>) = DatoSvar(faktum, dato)
+internal class DatoStrategi(private val handling: Handling) : SpørsmålStrategi<LocalDate> {
+    override fun besvar(dato: LocalDate, faktum: Faktum<LocalDate>) =
+            DatoSvar(faktum, dato).also {
+                handling.apply {
+                    utfør()
+                    nesteSpørsmål()
+                }
+            }
 }

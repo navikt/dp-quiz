@@ -16,7 +16,9 @@ import org.junit.jupiter.api.assertThrows
 internal class SpørsmålTest {
     val sisteDagMedLønn = Faktum(
         "Siste dag du har lønn",
-        DatoStrategi()
+        DatoStrategi(
+                object : Handling() {}
+        )
     )
     val inntekt1_5G = Faktum(
         "Inntekt er lik eller over 1.5G siste 12 måneder",
