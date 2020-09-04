@@ -11,6 +11,7 @@ abstract class Handling(vararg fakta: Faktum<*>) {
     }
 
     open fun utfør() {}
+
     internal fun accept(visitor: FaktumVisitor) {
         fakta.forEach { it.accept(visitor) }
     }

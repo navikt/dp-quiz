@@ -9,14 +9,14 @@ class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStra
     private lateinit var gjeldendeSvar: Svar
 
     fun svar() = tilstand.svar(this)
-
     fun besvar(r: R) = tilstand.besvar(r, this)
     fun spør() = tilstand.spør(this)
+
+    override fun toString() = PrettyPrint(this).result()
+
     internal fun accept(visitor: FaktumVisitor) {
         strategi.accept(visitor, this, tilstand.kode)
     }
-
-    override fun toString() = PrettyPrint(this).result()
 
     private fun _besvar(r: R) = strategi.besvar(r, this).also {
         gjeldendeSvar = it
@@ -33,18 +33,15 @@ class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStra
         val kode: FaktumTilstand
 
         fun <R> svar(faktum: Faktum<R>): Svar
-
         fun <R> besvar(r: R, faktum: Faktum<R>) = faktum._besvar(r)
-
         fun <R> spør(faktum: Faktum<R>): Faktum<R> = throw IllegalStateException("Spørsmålet er allerede spurt")
     }
 
     private object Inaktivt : Tilstand {
         override val kode = FaktumTilstand.Inaktivt
+
         override fun <R> svar(faktum: Faktum<R>) = Ubesvart(faktum)
-
         override fun <R> besvar(r: R, faktum: Faktum<R>) = throw IllegalStateException("Spørsmålet er ikke aktivt")
-
         override fun <R> spør(faktum: Faktum<R>) = faktum.apply {
             tilstand = Ukjent
         }
