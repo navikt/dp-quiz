@@ -1,7 +1,7 @@
 package no.nav.dagpenger.qamodel.handling
 
 import no.nav.dagpenger.qamodel.fakta.Faktum
-import no.nav.dagpenger.qamodel.fakta.FaktumVisitor
+import no.nav.dagpenger.qamodel.visitor.FaktumVisitor
 
 abstract class Handling(vararg fakta: Faktum<*>) {
     private val fakta: List<Faktum<*>> = fakta.toList()

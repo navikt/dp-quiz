@@ -1,6 +1,7 @@
 package no.nav.dagpenger.qamodel.fakta
 
 import no.nav.dagpenger.qamodel.handling.Handling
+import no.nav.dagpenger.qamodel.visitor.FaktumVisitor
 
 internal class JaNeiStrategi(
     private val jaHandling: Handling,

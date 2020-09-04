@@ -1,10 +1,9 @@
 package no.nav.dagpenger.qamodel.fakta
 
 import java.lang.IllegalStateException
-import java.time.LocalDate
-import no.nav.dagpenger.qamodel.handling.Handling
+import no.nav.dagpenger.qamodel.visitor.FaktumVisitor
 
-class Faktum<R> (navn: String, private val strategi: SpørsmålStrategi<R>) {
+class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStrategi<R>) {
     private var tilstand: Tilstand = Inaktivt
     private lateinit var gjeldendeSvar: Svar
 
@@ -51,17 +50,4 @@ class Faktum<R> (navn: String, private val strategi: SpørsmålStrategi<R>) {
 interface SpørsmålStrategi<R> {
     fun besvar(r: R, faktum: Faktum<R>): Svar
     fun accept(visitor: FaktumVisitor, faktum: Faktum<R>)
-}
-
-interface FaktumVisitor {
-    fun preVisitJaNei(faktum: Faktum<Boolean>) {}
-    fun postVisitJaNei(faktum: Faktum<Boolean>) {}
-    fun preVisitDato(faktum: Faktum<LocalDate>) {}
-    fun postVisitDato(faktum: Faktum<LocalDate>) {}
-    fun preVisitJa(handling: Handling) {}
-    fun postVisitJa(handling: Handling) {}
-    fun preVisitNei(handling: Handling) {}
-    fun postVisitNei(handling: Handling) {}
-    fun preVisitDato(handling: Handling) {}
-    fun postVisitDato(handling: Handling) {}
 }

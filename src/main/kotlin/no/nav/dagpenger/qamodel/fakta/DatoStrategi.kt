@@ -2,6 +2,7 @@ package no.nav.dagpenger.qamodel.fakta
 
 import java.time.LocalDate
 import no.nav.dagpenger.qamodel.handling.Handling
+import no.nav.dagpenger.qamodel.visitor.FaktumVisitor
 
 internal class DatoStrategi(private val handling: Handling) : SpørsmålStrategi<LocalDate> {
     override fun besvar(dato: LocalDate, faktum: Faktum<LocalDate>) =
