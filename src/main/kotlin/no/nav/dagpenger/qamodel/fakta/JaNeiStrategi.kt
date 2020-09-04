@@ -7,8 +7,14 @@ internal class JaNeiStrategi(
     private val neiStrategi: Handling
 ) : SpørsmålStrategi<Boolean> {
     override fun besvar(svar: Boolean, faktum: Faktum<Boolean>): Svar = if (svar) Ja(faktum).also {
-        jaStrategi.nesteSpørsmål()
+        jaStrategi.apply {
+            utfør()
+            nesteSpørsmål()
+        }
     } else Nei(faktum).also {
-        neiStrategi.nesteSpørsmål()
+        neiStrategi.apply {
+            utfør()
+            nesteSpørsmål()
+        }
     }
 }

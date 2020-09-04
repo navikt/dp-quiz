@@ -10,6 +10,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class HandlingTest {
+
+    var teller = 0
+
     val sisteDagMedLønn = Faktum(
         "Siste dag du har lønn",
         DatoStrategi()
@@ -25,7 +28,9 @@ internal class HandlingTest {
         "Inntekt er lik eller over 3G siste 3 år",
         JaNeiStrategi(
             object : Handling() {},
-            object : Handling(inntekt1_5G) { }
+            object : Handling(inntekt1_5G) {
+                override fun utfør() { teller++ }
+            }
         )
     )
 
@@ -34,5 +39,6 @@ internal class HandlingTest {
         assertThrows<IllegalStateException> { inntekt1_5G.besvar(true) }
         inntekt3G.spør().besvar(false)
         assertEquals(Ja(inntekt1_5G), inntekt1_5G.besvar(true))
+        assertEquals(1, teller)
     }
 }
