@@ -1,4 +1,4 @@
-package no.nav.dagpenger.qamodel
+package no.nav.dagpenger.qamodel.fakta
 
 import java.lang.IllegalStateException
 
@@ -48,4 +48,3 @@ interface SpørsmålStrategi<R> {
 }
 
 internal typealias SvarStrategi = () -> Unit
-
