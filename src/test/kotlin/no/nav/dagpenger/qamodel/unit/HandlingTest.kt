@@ -50,7 +50,7 @@ internal class HandlingTest {
     )
 
     @Test
-    fun `Utføre handlinger`() {
+    fun `at vi utfører en handling etter besvart spørsmål`() {
         assertThrows<IllegalStateException> { villigDeltid.besvar(true) }
         inntekt3G.spør().besvar(false)
         assertEquals(Ja(villigDeltid), villigDeltid.besvar(true))
@@ -58,7 +58,7 @@ internal class HandlingTest {
     }
 
     @Test
-    fun `Flere handlinger`() {
+    fun `at vi utfører flere handlinger etter besvart spørsmål`() {
         sisteDagMedLønn.spør().besvar(LocalDate.now())
         assertEquals(Ja(inntekt1_5G), inntekt1_5G.besvar(true))
         assertEquals(Ja(inntekt3G), inntekt3G.besvar(true))

@@ -36,7 +36,7 @@ internal class SpørsmålTest {
     )
 
     @Test
-    fun `spørsmål spørsmål`() {
+    fun `at vi kan endre svar på spørsmål som allerede er besvart`() {
         assertEquals(
             Ja(inntekt3G),
             inntekt3G.spør().besvar(true)
@@ -49,7 +49,7 @@ internal class SpørsmålTest {
     }
 
     @Test
-    fun `dato spørsmål`() {
+    fun `at vi kan svare på spørsmål som krever en dato som svar`() {
         assertEquals(
             DatoSvar(sisteDagMedLønn, 1.januar),
             sisteDagMedLønn.spør().besvar(1.januar)
@@ -57,7 +57,7 @@ internal class SpørsmålTest {
     }
 
     @Test
-    fun `ubesvarte spørsmål`() {
+    fun `at spørsmål er markert som ubesvart fram til de er besvart`() {
         inntekt3G.also {
             assertEquals(Ubesvart(inntekt3G), it.svar())
             it.spør().besvar(true)
@@ -66,14 +66,14 @@ internal class SpørsmålTest {
     }
 
     @Test
-    fun `ugyldige spørsmål`() {
+    fun `at vi ikke kan besvare spørsmål som ikke er stilt`() {
         assertThrows<IllegalStateException> {
             sisteDagMedLønn.besvar(1.januar)
         }
     }
 
     @Test
-    fun `kan ikke spørre allerede spurte spørsmål`() {
+    fun `at vi kan ikke stille spørsmål som allerede er stilt`() {
         assertThrows<IllegalStateException> {
             sisteDagMedLønn.spør().spør()
         }
