@@ -8,10 +8,10 @@ import no.nav.dagpenger.qamodel.fakta.JaNeiStrategi
 import no.nav.dagpenger.qamodel.fakta.Nei
 import no.nav.dagpenger.qamodel.fakta.Ubesvart
 import no.nav.dagpenger.qamodel.handling.Handling
+import no.nav.dagpenger.qamodel.helpers.januar
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.time.LocalDate
 
 internal class SpørsmålTest {
     val sisteDagMedLønn = Faktum(
@@ -79,5 +79,3 @@ internal class SpørsmålTest {
         }
     }
 }
-
-private val Int.januar get() = LocalDate.of(2018, 1, this)
