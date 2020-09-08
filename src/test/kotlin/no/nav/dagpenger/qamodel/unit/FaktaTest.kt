@@ -2,7 +2,6 @@ package no.nav.dagpenger.qamodel.unit
 
 import no.nav.dagpenger.qamodel.fakta.DatoStrategi
 import no.nav.dagpenger.qamodel.fakta.Faktum
-import no.nav.dagpenger.qamodel.fakta.IngenHandling
 import no.nav.dagpenger.qamodel.fakta.JaNeiStrategi
 import no.nav.dagpenger.qamodel.handling.Handling
 import no.nav.dagpenger.qamodel.helpers.dato
@@ -55,15 +54,6 @@ internal class FaktaTest {
             sisteDagMedLønn.dato,
             sisteDagMedLønn.spør().besvar(1.januar)
         )
-    }
-
-    @Test
-    fun `at spørsmål er markert som ubesvart fram til de er besvart`() {
-        inntekt3G.also {
-            assertEquals(IngenHandling, it.svar())
-            it.spør().besvar(true)
-            assertEquals(inntekt3G.ja, it.svar())
-        }
     }
 
     @Test

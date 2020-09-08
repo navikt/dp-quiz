@@ -8,7 +8,6 @@ class Faktum<R>(internal val navn: String, private val strategi: SpørsmålStrat
     private var tilstand: Tilstand = Inaktivt
     private lateinit var gjeldendeHandling: Handling<R>
 
-    fun svar() = tilstand.svar(this)
     fun besvar(r: R) = tilstand.besvar(r, this)
     fun spør() = tilstand.spør(this)
 
@@ -35,7 +34,6 @@ class Faktum<R>(internal val navn: String, private val strategi: SpørsmålStrat
     private interface Tilstand {
         val kode: FaktumTilstand
 
-        fun <R> svar(faktum: Faktum<R>): Handling<*>
         fun <R> besvar(r: R, faktum: Faktum<R>) = faktum._besvar(r)
         fun <R> spør(faktum: Faktum<R>): Faktum<R> = throw IllegalStateException("Spørsmålet er allerede spurt")
     }
@@ -43,7 +41,6 @@ class Faktum<R>(internal val navn: String, private val strategi: SpørsmålStrat
     private object Inaktivt : Tilstand {
         override val kode = FaktumTilstand.Inaktivt
 
-        override fun <R> svar(faktum: Faktum<R>) = IngenHandling
         override fun <R> besvar(r: R, faktum: Faktum<R>) = throw IllegalStateException("Spørsmålet er ikke aktivt")
         override fun <R> spør(faktum: Faktum<R>) = faktum.apply {
             tilstand = Ukjent
@@ -52,14 +49,10 @@ class Faktum<R>(internal val navn: String, private val strategi: SpørsmålStrat
 
     private object Ukjent : Tilstand {
         override val kode = FaktumTilstand.Ukjent
-
-        override fun <R> svar(faktum: Faktum<R>) = IngenHandling
     }
 
     private object Kjent : Tilstand {
         override val kode = FaktumTilstand.Kjent
-
-        override fun <R> svar(faktum: Faktum<R>) = faktum.gjeldendeHandling
     }
 }
 
