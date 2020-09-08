@@ -10,10 +10,10 @@ interface FaktumVisitor {
     fun postVisitJaNei(faktum: Faktum<Boolean>, tilstand: FaktumTilstand) {}
     fun preVisitDato(faktum: Faktum<LocalDate>, tilstand: FaktumTilstand) {}
     fun postVisitDato(faktum: Faktum<LocalDate>, tilstand: FaktumTilstand) {}
-    fun preVisitJa(handling: Handling) {}
-    fun postVisitJa(handling: Handling) {}
-    fun preVisitNei(handling: Handling) {}
-    fun postVisitNei(handling: Handling) {}
-    fun preVisitDato(handling: Handling) {}
-    fun postVisitDato(handling: Handling) {}
+    fun preVisitJa(handling: Handling<Boolean>) {}
+    fun postVisitJa(handling: Handling<Boolean>) {}
+    fun preVisitNei(handling: Handling<Boolean>) {}
+    fun postVisitNei(handling: Handling<Boolean>) {}
+    fun preVisitDato(handling: Handling<LocalDate>) {}
+    fun postVisitDato(handling: Handling<LocalDate>) {}
 }

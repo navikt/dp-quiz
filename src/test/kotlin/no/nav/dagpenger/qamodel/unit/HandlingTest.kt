@@ -2,9 +2,9 @@ package no.nav.dagpenger.qamodel.unit
 
 import no.nav.dagpenger.qamodel.fakta.DatoStrategi
 import no.nav.dagpenger.qamodel.fakta.Faktum
-import no.nav.dagpenger.qamodel.fakta.Ja
 import no.nav.dagpenger.qamodel.fakta.JaNeiStrategi
 import no.nav.dagpenger.qamodel.handling.Handling
+import no.nav.dagpenger.qamodel.helpers.ja
 import no.nav.dagpenger.qamodel.visitor.FaktumVisitor
 import no.nav.dagpenger.qamodel.visitor.PrettyPrint
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -19,25 +19,27 @@ internal class HandlingTest {
     val inntekt1_5G = Faktum(
         "Inntekt er lik eller over 1.5G siste 12 måneder",
         JaNeiStrategi(
-            object : Handling() {},
-            object : Handling() {}
+            object : Handling<Boolean>() {},
+            object : Handling<Boolean>() {}
         )
     )
 
     val villigDeltid = Faktum(
         "Villig til å jobbe deltid",
         JaNeiStrategi(
-            object : Handling() {},
-            object : Handling() {}
+            object : Handling<Boolean>() {},
+            object : Handling<Boolean>() {}
         )
     )
 
     val inntekt3G = Faktum(
         "Inntekt er lik eller over 3G siste 3 år",
         JaNeiStrategi(
-            object : Handling() {},
-            object : Handling(villigDeltid) {
-                override fun utfør() { teller++ }
+            object : Handling<Boolean>() {},
+            object : Handling<Boolean>(villigDeltid) {
+                override fun utfør(r: Boolean) {
+                    teller++
+                }
             }
         )
     )
@@ -45,23 +47,36 @@ internal class HandlingTest {
     val sisteDagMedLønn = Faktum(
         "Siste dag du har lønn",
         DatoStrategi(
-            object : Handling(inntekt1_5G, inntekt3G) {}
+            object : Handling<LocalDate>(inntekt1_5G, inntekt3G) {}
         )
     )
+
+    /*val dslDato = dato(
+        "Siste dag du har lønn",
+        jaNei(
+            "Oppfyller kravet til minsteinntekt",
+            minstEnAv(
+                jaNei("Inntekt lik eller over 1.5G siste 12 måneder"),
+                jaNei("Inntekt lik eller over 3G siste 3 år")
+            )
+            {},
+            jaNei("Villig til å jobbe deltid")
+        )
+    )*/
 
     @Test
     fun `at vi utfører en handling etter besvart spørsmål`() {
         assertThrows<IllegalStateException> { villigDeltid.besvar(true) }
         inntekt3G.spør().besvar(false)
-        assertEquals(Ja(villigDeltid), villigDeltid.besvar(true))
+        assertEquals(villigDeltid.ja, villigDeltid.besvar(true))
         assertEquals(1, teller)
     }
 
     @Test
     fun `at vi utfører flere handlinger etter besvart spørsmål`() {
         sisteDagMedLønn.spør().besvar(LocalDate.now())
-        assertEquals(Ja(inntekt1_5G), inntekt1_5G.besvar(true))
-        assertEquals(Ja(inntekt3G), inntekt3G.besvar(true))
+        assertEquals(inntekt1_5G.ja, inntekt1_5G.besvar(true))
+        assertEquals(inntekt3G.ja, inntekt3G.besvar(true))
         assertEquals(3, TellerVisitor(sisteDagMedLønn).besvarteSpørsmålTeller)
     }
 
@@ -94,15 +109,15 @@ internal class HandlingTest {
             if (tilstand == Faktum.FaktumTilstand.Kjent) besvarteSpørsmålTeller++
         }
 
-        override fun preVisitJa(handling: Handling) {
+        override fun preVisitJa(handling: Handling<Boolean>) {
             handlingTeller++
         }
 
-        override fun preVisitNei(handling: Handling) {
+        override fun preVisitNei(handling: Handling<Boolean>) {
             handlingTeller++
         }
 
-        override fun preVisitDato(handling: Handling) {
+        override fun preVisitDato(handling: Handling<LocalDate>) {
             handlingTeller++
         }
     }

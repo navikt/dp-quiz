@@ -1,12 +1,12 @@
 package no.nav.dagpenger.qamodel.fakta
 
+import no.nav.dagpenger.qamodel.handling.Handling
 import no.nav.dagpenger.qamodel.visitor.FaktumVisitor
 import no.nav.dagpenger.qamodel.visitor.PrettyPrint
-import java.lang.IllegalStateException
 
-class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStrategi<R>) {
+class Faktum<R>(internal val navn: String, private val strategi: SpørsmålStrategi<R>) {
     private var tilstand: Tilstand = Inaktivt
-    private lateinit var gjeldendeSvar: Svar
+    private lateinit var gjeldendeHandling: Handling<R>
 
     fun svar() = tilstand.svar(this)
     fun besvar(r: R) = tilstand.besvar(r, this)
@@ -18,8 +18,11 @@ class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStra
         strategi.accept(visitor, this, tilstand.kode)
     }
 
-    private fun _besvar(r: R) = strategi.besvar(r, this).also {
-        gjeldendeSvar = it
+    private fun _besvar(r: R) = strategi.besvar(r, this).apply {
+        gjeldendeHandling = this
+        utfør(r)
+        nesteSpørsmål()
+
         tilstand = Kjent
     }
 
@@ -32,7 +35,7 @@ class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStra
     private interface Tilstand {
         val kode: FaktumTilstand
 
-        fun <R> svar(faktum: Faktum<R>): Svar
+        fun <R> svar(faktum: Faktum<R>): Handling<*>
         fun <R> besvar(r: R, faktum: Faktum<R>) = faktum._besvar(r)
         fun <R> spør(faktum: Faktum<R>): Faktum<R> = throw IllegalStateException("Spørsmålet er allerede spurt")
     }
@@ -40,7 +43,7 @@ class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStra
     private object Inaktivt : Tilstand {
         override val kode = FaktumTilstand.Inaktivt
 
-        override fun <R> svar(faktum: Faktum<R>) = Ubesvart(faktum)
+        override fun <R> svar(faktum: Faktum<R>) = IngenHandling
         override fun <R> besvar(r: R, faktum: Faktum<R>) = throw IllegalStateException("Spørsmålet er ikke aktivt")
         override fun <R> spør(faktum: Faktum<R>) = faktum.apply {
             tilstand = Ukjent
@@ -50,17 +53,17 @@ class Faktum<R> (internal val navn: String, private val strategi: SpørsmålStra
     private object Ukjent : Tilstand {
         override val kode = FaktumTilstand.Ukjent
 
-        override fun <R> svar(faktum: Faktum<R>) = Ubesvart(faktum)
+        override fun <R> svar(faktum: Faktum<R>) = IngenHandling
     }
 
     private object Kjent : Tilstand {
         override val kode = FaktumTilstand.Kjent
 
-        override fun <R> svar(faktum: Faktum<R>) = faktum.gjeldendeSvar
+        override fun <R> svar(faktum: Faktum<R>) = faktum.gjeldendeHandling
     }
 }
 
 interface SpørsmålStrategi<R> {
-    fun besvar(r: R, faktum: Faktum<R>): Svar
+    fun besvar(r: R, faktum: Faktum<R>): Handling<R>
     fun accept(visitor: FaktumVisitor, faktum: Faktum<R>, tilstand: Faktum.FaktumTilstand)
 }

@@ -30,27 +30,27 @@ class PrettyPrint(faktum: Faktum<*>) : FaktumVisitor {
         indentTeller--
     }
 
-    override fun preVisitJa(handling: Handling) {
+    override fun preVisitJa(handling: Handling<Boolean>) {
         preVisit("Ja-handling")
     }
 
-    override fun postVisitJa(handling: Handling) {
+    override fun postVisitJa(handling: Handling<Boolean>) {
         indentTeller--
     }
 
-    override fun preVisitNei(handling: Handling) {
+    override fun preVisitNei(handling: Handling<Boolean>) {
         preVisit("Nei-handling")
     }
 
-    override fun postVisitNei(handling: Handling) {
+    override fun postVisitNei(handling: Handling<Boolean>) {
         indentTeller--
     }
 
-    override fun preVisitDato(handling: Handling) {
+    override fun preVisitDato(handling: Handling<LocalDate>) {
         preVisit("Dato-handling")
     }
 
-    override fun postVisitDato(handling: Handling) {
+    override fun postVisitDato(handling: Handling<LocalDate>) {
         indentTeller--
     }
 

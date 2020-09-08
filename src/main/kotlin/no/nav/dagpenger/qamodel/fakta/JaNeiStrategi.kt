@@ -4,20 +4,10 @@ import no.nav.dagpenger.qamodel.handling.Handling
 import no.nav.dagpenger.qamodel.visitor.FaktumVisitor
 
 internal class JaNeiStrategi(
-    private val jaHandling: Handling,
-    private val neiHandling: Handling
+    private val jaHandling: Handling<Boolean>,
+    private val neiHandling: Handling<Boolean>
 ) : SpørsmålStrategi<Boolean> {
-    override fun besvar(svar: Boolean, faktum: Faktum<Boolean>): Svar = if (svar) Ja(faktum).also {
-        jaHandling.apply {
-            utfør()
-            nesteSpørsmål()
-        }
-    } else Nei(faktum).also {
-        neiHandling.apply {
-            utfør()
-            nesteSpørsmål()
-        }
-    }
+    override fun besvar(svar: Boolean, faktum: Faktum<Boolean>) = if (svar) jaHandling else neiHandling
 
     override fun accept(visitor: FaktumVisitor, faktum: Faktum<Boolean>, tilstand: Faktum.FaktumTilstand) {
         visitor.preVisitJaNei(faktum, tilstand)
