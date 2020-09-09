@@ -4,7 +4,7 @@ import no.nav.dagpenger.qamodel.fakta.Faktum
 import no.nav.dagpenger.qamodel.visitor.PrettyPrint
 import no.nav.dagpenger.qamodel.visitor.SubsumsjonVisitor
 
-class AllSubsumsjon internal constructor(
+class AlleSubsumsjon internal constructor(
     internal val navn: String,
     private val subsumsjoner: List<Subsumsjon>
 ) : Subsumsjon {
