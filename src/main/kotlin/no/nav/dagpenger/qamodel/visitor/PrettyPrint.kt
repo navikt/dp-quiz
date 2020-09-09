@@ -1,36 +1,37 @@
 package no.nav.dagpenger.qamodel.visitor
 
 import no.nav.dagpenger.qamodel.fakta.Faktum
-import java.time.LocalDate
+import no.nav.dagpenger.qamodel.regel.Regel
+import no.nav.dagpenger.qamodel.subsumsjon.Subsumsjon
 
-class PrettyPrint(faktum: Faktum<*>) : FaktumVisitor {
+class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     private var result = ""
     private var indentTeller = 0
 
     init {
-        faktum.accept(this)
+        subsumsjon.accept(this)
     }
 
     fun result() = result
 
-    override fun preVisitJaNei(faktum: Faktum<Boolean>, tilstand: Faktum.FaktumTilstand) {
-        preVisit(faktum.navn)
-    }
-
-    override fun postVisitJaNei(faktum: Faktum<Boolean>, tilstand: Faktum.FaktumTilstand) {
-        indentTeller--
-    }
-
-    override fun preVisitDato(faktum: Faktum<LocalDate>, tilstand: Faktum.FaktumTilstand) {
-        preVisit(faktum.navn)
-    }
-
-    override fun postVisitDato(faktum: Faktum<LocalDate>, tilstand: Faktum.FaktumTilstand) {
-        indentTeller--
-    }
-
     private fun preVisit(navn: String) {
         result += "  ".repeat(indentTeller) + "${navn}\n"
+    }
+
+    override fun preVisit(subsumsjon: Subsumsjon, regel: Regel) {
+        preVisit("Regel: ${regel.javaClass.simpleName}")
         indentTeller++
+    }
+
+    override fun postVisit(subsumsjon: Subsumsjon, regel: Regel) {
+        indentTeller--
+    }
+
+    override fun <R : Any> visit(faktum: Faktum<R>, tilstand: Faktum.FaktumTilstand) {
+        preVisit("Faktum: ${faktum.navn} er ubesvart")
+    }
+
+    override fun <R : Any> visit(faktum: Faktum<R>, tilstand: Faktum.FaktumTilstand, svar: R) {
+        preVisit("Faktum: ${faktum.navn} er besvart med $svar")
     }
 }
