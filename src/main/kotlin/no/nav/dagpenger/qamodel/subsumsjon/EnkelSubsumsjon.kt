@@ -10,6 +10,8 @@ class EnkelSubsumsjon internal constructor(
     vararg fakta: Faktum<*>
 ) : Subsumsjon {
     private val fakta = fakta.toList()
+    override lateinit var gyldigSubsumsjon: Subsumsjon
+
     override fun konkluder() = regel.konkluder(fakta)
 
     override fun accept(visitor: SubsumsjonVisitor) {

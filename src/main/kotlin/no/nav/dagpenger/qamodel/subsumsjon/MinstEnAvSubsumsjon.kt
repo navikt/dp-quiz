@@ -8,6 +8,8 @@ class MinstEnAvSubsumsjon internal constructor(
     internal val navn: String,
     private val subsumsjoner: List<Subsumsjon>
 ) : Subsumsjon {
+    override lateinit var gyldigSubsumsjon: Subsumsjon
+
     override fun konkluder() = subsumsjoner.any { it.konkluder() }
 
     override fun accept(visitor: SubsumsjonVisitor) {
