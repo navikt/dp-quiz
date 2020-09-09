@@ -9,7 +9,7 @@ class Subsumsjon(private val regel: Regel, vararg fakta: Faktum<*>) {
     private val fakta = fakta.toList()
     fun konkluder() = regel.konkluder(fakta)
 
-    internal fun accept(visitor: SubsumsjonVisitor){
+    internal fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisit(this, regel)
         fakta.forEach { it.accept(visitor) }
         visitor.postVisit(this, regel)
