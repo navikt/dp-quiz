@@ -1,19 +1,28 @@
 package no.nav.dagpenger.qamodel.subsumsjon
 
 import no.nav.dagpenger.qamodel.fakta.Faktum
-import no.nav.dagpenger.qamodel.regel.Regel
-import no.nav.dagpenger.qamodel.visitor.PrettyPrint
+import no.nav.dagpenger.qamodel.regel.DatoEtterRegel
 import no.nav.dagpenger.qamodel.visitor.SubsumsjonVisitor
+import java.time.LocalDate
 
-class Subsumsjon(private val regel: Regel, vararg fakta: Faktum<*>) {
-    private val fakta = fakta.toList()
-    fun konkluder() = regel.konkluder(fakta)
+interface Subsumsjon {
+    fun konkluder(): Boolean
+    fun accept(visitor: SubsumsjonVisitor) {}
+    fun fakta(): Set<Faktum<*>>
+}
 
-    internal fun accept(visitor: SubsumsjonVisitor) {
-        visitor.preVisit(this, regel)
-        fakta.forEach { it.accept(visitor) }
-        visitor.postVisit(this, regel)
-    }
+fun String.alle(vararg subsumsjoner: Subsumsjon): Subsumsjon {
+    return AllSubsumsjon(this, subsumsjoner.toList())
+}
 
-    override fun toString() = PrettyPrint(this).result()
+infix fun Faktum<LocalDate>.etter(other: Faktum<LocalDate>): Subsumsjon {
+    return EnkelSubsumsjon(DatoEtterRegel, this, other)
+}
+
+infix fun Faktum<LocalDate>.før(other: Faktum<LocalDate>): Subsumsjon {
+    return EnkelSubsumsjon(DatoEtterRegel, this, other)
+}
+
+infix fun Faktum<LocalDate>.ikkeFør(other: Faktum<LocalDate>): Subsumsjon {
+    return EnkelSubsumsjon(DatoEtterRegel, this, other)
 }

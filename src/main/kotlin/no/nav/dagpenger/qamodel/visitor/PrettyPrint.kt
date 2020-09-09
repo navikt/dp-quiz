@@ -2,9 +2,11 @@ package no.nav.dagpenger.qamodel.visitor
 
 import no.nav.dagpenger.qamodel.fakta.Faktum
 import no.nav.dagpenger.qamodel.regel.Regel
+import no.nav.dagpenger.qamodel.subsumsjon.AllSubsumsjon
+import no.nav.dagpenger.qamodel.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.qamodel.subsumsjon.Subsumsjon
 
-class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
+internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     private var result = ""
     private var indentTeller = 0
 
@@ -18,12 +20,21 @@ class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         result += "  ".repeat(indentTeller) + "${navn}\n"
     }
 
-    override fun preVisit(subsumsjon: Subsumsjon, regel: Regel) {
+    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel) {
         preVisit("Regel: ${regel.javaClass.simpleName}")
         indentTeller++
     }
 
-    override fun postVisit(subsumsjon: Subsumsjon, regel: Regel) {
+    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel) {
+        indentTeller--
+    }
+
+    override fun preVisit(subsumsjon: AllSubsumsjon) {
+        preVisit("Kombinasjon av subsumsjoner ${subsumsjon.navn}")
+        indentTeller++
+    }
+
+    override fun postVisit(subsumsjon: AllSubsumsjon) {
         indentTeller--
     }
 
