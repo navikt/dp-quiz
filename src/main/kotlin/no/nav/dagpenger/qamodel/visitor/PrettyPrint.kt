@@ -1,7 +1,6 @@
 package no.nav.dagpenger.qamodel.visitor
 
 import no.nav.dagpenger.qamodel.fakta.Faktum
-import no.nav.dagpenger.qamodel.handling.Handling
 import java.time.LocalDate
 
 class PrettyPrint(faktum: Faktum<*>) : FaktumVisitor {
@@ -27,30 +26,6 @@ class PrettyPrint(faktum: Faktum<*>) : FaktumVisitor {
     }
 
     override fun postVisitDato(faktum: Faktum<LocalDate>, tilstand: Faktum.FaktumTilstand) {
-        indentTeller--
-    }
-
-    override fun preVisitJa(handling: Handling<Boolean>) {
-        preVisit("Ja-handling")
-    }
-
-    override fun postVisitJa(handling: Handling<Boolean>) {
-        indentTeller--
-    }
-
-    override fun preVisitNei(handling: Handling<Boolean>) {
-        preVisit("Nei-handling")
-    }
-
-    override fun postVisitNei(handling: Handling<Boolean>) {
-        indentTeller--
-    }
-
-    override fun preVisitDato(handling: Handling<LocalDate>) {
-        preVisit("Dato-handling")
-    }
-
-    override fun postVisitDato(handling: Handling<LocalDate>) {
         indentTeller--
     }
 
