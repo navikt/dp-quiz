@@ -23,6 +23,20 @@ Bonus: Sette opp pre-commit hook:
 ktlint installGitPreCommitHook
 ```
 
+## Co-Authors
+
+Siden vi praktiserer mye par- og mobprogrammering er det bra å legge på de man
+jobber med som Co-Authors.
+
+Installer [Co-Author](https://plugins.jetbrains.com/plugin/10952-co-author)
+pluginen i IntelliJ.
+
+Opprett en liste med commiters med:
+
+```
+git shortlog -es | cut -c8- > ~/.git_coauthors
+```
+
 # Henvendelser
 
 Spørsmål knyttet til koden eller prosjektet kan rettes mot:
