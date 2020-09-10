@@ -42,24 +42,24 @@ internal fun subsumsjonRoot(): Subsumsjon {
     inntekt15G = Faktum<Inntekt>("1.5G")
 
     return "inngangsvilkår".alle(
-            "under67".alle(
-                    søknadsdato før bursdag67,
-                    ønsketdato før bursdag67,
-                    sisteDagMedLønn før bursdag67
-            ),
-            "kravdato er godkjent".alle(
-                    ønsketdato ikkeFør sisteDagMedLønn,
-                    søknadsdato ikkeFør sisteDagMedLønn,
-            )
+        "under67".alle(
+            søknadsdato før bursdag67,
+            ønsketdato før bursdag67,
+            sisteDagMedLønn før bursdag67
+        ),
+        "kravdato er godkjent".alle(
+            ønsketdato ikkeFør sisteDagMedLønn,
+            søknadsdato ikkeFør sisteDagMedLønn,
+        )
     ) så (
-            "oppfyller krav til minsteinntekt".minstEnAv(
-                    inntektSiste3år minst inntekt3G,
-                    inntektSisteÅr minst inntekt15G,
-                    dimisjonsdato etter virkningstidspunkt
-            ) eller "oppfyller ikke kravet til minsteinntekt".alle(
-                    ønsketdato ikkeFør sisteDagMedLønn
-            )
-            ) eller "oppfyller ikke inngangsvilkår".alle(
+        "oppfyller krav til minsteinntekt".minstEnAv(
+            inntektSiste3år minst inntekt3G,
+            inntektSisteÅr minst inntekt15G,
+            dimisjonsdato etter virkningstidspunkt
+        ) eller "oppfyller ikke kravet til minsteinntekt".alle(
             ønsketdato ikkeFør sisteDagMedLønn
+        )
+        ) eller "oppfyller ikke inngangsvilkår".alle(
+        ønsketdato ikkeFør sisteDagMedLønn
     )
 }
