@@ -19,9 +19,9 @@ class AlleSubsumsjon internal constructor(
     }
 
     override fun nesteFakta(): Set<Faktum<*>> =
-            subsumsjoner.flatMap { it.nesteFakta() }.toSet().let {
-                if (it.isEmpty()) gyldigSubsumsjon.nesteFakta() else it
-            }
+        subsumsjoner.flatMap { it.nesteFakta() }.toSet().let {
+            if (it.isEmpty()) gyldigSubsumsjon.nesteFakta() else it
+        }
 
     override fun fakta() = this.nesteFakta() + gyldigSubsumsjon.fakta()
 

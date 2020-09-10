@@ -24,9 +24,9 @@ class EnkelSubsumsjon internal constructor(
 
     override fun fakta(): Set<Faktum<*>> = fakta
 
-    override fun nesteFakta(): Set<Faktum<*>>{
+    override fun nesteFakta(): Set<Faktum<*>> {
         return mutableSetOf<Faktum<*>>().also {
-            fakta.forEach{ faktum -> faktum.leggTilHvis(Faktum.FaktumTilstand.Ukjent, it)}
+            fakta.forEach { faktum -> faktum.leggTilHvis(Faktum.FaktumTilstand.Ukjent, it) }
         }
     }
 

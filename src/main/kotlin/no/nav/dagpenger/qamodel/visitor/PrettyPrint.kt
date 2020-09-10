@@ -6,6 +6,7 @@ import no.nav.dagpenger.qamodel.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.qamodel.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.qamodel.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.qamodel.subsumsjon.Subsumsjon
+import no.nav.dagpenger.qamodel.subsumsjon.TomSubsumsjon
 
 internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     private var result = ""
@@ -40,6 +41,8 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     }
 
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
+        if (child is TomSubsumsjon) return
+
         indentTeller--
         preVisit(">>Hvis ${parent.navn} er gyldig: ")
         indentTeller++
