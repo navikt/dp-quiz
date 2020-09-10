@@ -25,6 +25,7 @@ val virkningstidspunkt = Faktum<LocalDate>("Hvilken dato vedtaket skal gjelde fr
 val inntekt3G = Faktum<Inntekt>("3G")
 val inntekt15G = Faktum<Inntekt>("1.5G")
 
+/* ktlint-disable parameter-list-wrapping */
 val comp = "inngangsvilkår".alle(
     "under67".alle(
         søknadsdato før bursdag67,

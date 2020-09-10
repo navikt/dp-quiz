@@ -9,36 +9,35 @@ import no.nav.dagpenger.qamodel.regel.InntektMinstRegel
 import no.nav.dagpenger.qamodel.visitor.SubsumsjonVisitor
 import java.time.LocalDate
 
-abstract class Subsumsjon(internal val navn: String) {
-    protected var gyldigSubsumsjon: Subsumsjon = TomSubsumsjon
-    protected var ugyldigSubsumsjon: Subsumsjon = TomSubsumsjon
+interface Subsumsjon {
+    var gyldigSubsumsjon: Subsumsjon
+    var ugyldigSubsumsjon: Subsumsjon
+    val navn: String
 
-    abstract fun konkluder(): Boolean
-    open internal fun accept(visitor: SubsumsjonVisitor) {}
-    abstract internal fun fakta(): Set<Faktum<*>>
-
-    internal fun gyldig(child: Subsumsjon) {
+    fun konkluder(): Boolean
+    fun accept(visitor: SubsumsjonVisitor) {}
+    fun fakta(): Set<Faktum<*>>
+    fun gyldig(child: Subsumsjon) {
         this.gyldigSubsumsjon = child
     }
 
-    internal fun ugyldig(child: Subsumsjon) {
-        this.ugyldigSubsumsjon = child
-    }
+    fun nesteFakta(): Set<Faktum<*>>
 
-    abstract internal fun nesteFakta(): Set<Faktum<*>>
-
-    internal fun acceptGyldig(visitor: SubsumsjonVisitor) {
+    fun acceptGyldig(visitor: SubsumsjonVisitor) {
         visitor.preVisitGyldig(this, gyldigSubsumsjon)
         gyldigSubsumsjon.accept(visitor)
         visitor.postVisitGyldig(this, gyldigSubsumsjon)
     }
 
-    internal fun acceptUgyldig(visitor: SubsumsjonVisitor) {
+    fun acceptUgyldig(visitor: SubsumsjonVisitor) {
         visitor.preVisitUgyldig(this, ugyldigSubsumsjon)
         ugyldigSubsumsjon.accept(visitor)
         visitor.postVisitUgyldig(this, ugyldigSubsumsjon)
     }
 
+    fun ugyldig(child: Subsumsjon) {
+        this.ugyldigSubsumsjon = child
+    }
 }
 
 fun String.alle(vararg subsumsjoner: Subsumsjon): Subsumsjon {

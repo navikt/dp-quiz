@@ -31,7 +31,7 @@ internal class SammensattSubsumsjonsTest {
     }
 
     @Test
-    fun `subsumsjon status`(){
-        //comp[0]
+    fun `subsumsjon status`() {
+        // comp[0]
     }
 }
