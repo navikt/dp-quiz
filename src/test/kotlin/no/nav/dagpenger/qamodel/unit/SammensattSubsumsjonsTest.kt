@@ -45,8 +45,13 @@ internal class SammensattSubsumsjonsTest {
     )
 
     @Test
-    fun `subsumsjonen kan konkludere`() {
+    fun `kan besøke alle fakta fra treet`() {
         println(comp)
-        assertEquals(4, comp.fakta().size)
+        assertEquals(10, comp.fakta().size)
+    }
+
+    @Test
+    fun `hvilke fakta behøves nå`() {
+        assertEquals(4, comp.nesteFakta().size)
     }
 }

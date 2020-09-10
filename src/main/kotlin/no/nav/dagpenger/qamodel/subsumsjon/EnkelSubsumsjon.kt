@@ -9,7 +9,8 @@ class EnkelSubsumsjon internal constructor(
     private val regel: Regel,
     vararg fakta: Faktum<*>
 ) : Subsumsjon {
-    private val fakta = fakta.toList()
+    private val fakta = fakta.toSet()
+    override val navn = "Enkel subsumsjon"
     override lateinit var gyldigSubsumsjon: Subsumsjon
 
     override fun konkluder() = regel.konkluder(fakta)
@@ -17,10 +18,13 @@ class EnkelSubsumsjon internal constructor(
     override fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisit(this, regel)
         fakta.forEach { it.accept(visitor) }
+        if (::gyldigSubsumsjon.isInitialized) acceptGyldig(visitor)
         visitor.postVisit(this, regel)
     }
 
-    override fun fakta(): Set<Faktum<*>> = fakta.toSet()
+    override fun fakta(): Set<Faktum<*>> = fakta
+
+    override fun nesteFakta() = fakta()
 
     override fun toString() = PrettyPrint(this).result()
 }

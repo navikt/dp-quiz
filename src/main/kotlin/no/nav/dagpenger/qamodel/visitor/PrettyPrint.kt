@@ -4,6 +4,7 @@ import no.nav.dagpenger.qamodel.fakta.Faktum
 import no.nav.dagpenger.qamodel.regel.Regel
 import no.nav.dagpenger.qamodel.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.qamodel.subsumsjon.EnkelSubsumsjon
+import no.nav.dagpenger.qamodel.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.qamodel.subsumsjon.Subsumsjon
 
 internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
@@ -35,6 +36,23 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     }
 
     override fun postVisit(subsumsjon: AlleSubsumsjon) {
+        indentTeller--
+    }
+
+    override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
+        indentTeller--
+        preVisit(">>Hvis ${parent.navn} er gyldig: ")
+        indentTeller++
+    }
+
+    override fun postVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {} // Tom med vilje
+
+    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon) {
+        preVisit("Kombinasjon av subsumsjoner ${subsumsjon.navn}")
+        indentTeller++
+    }
+
+    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {
         indentTeller--
     }
 

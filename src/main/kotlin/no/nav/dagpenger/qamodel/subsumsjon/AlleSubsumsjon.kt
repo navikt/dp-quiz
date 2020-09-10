@@ -5,7 +5,7 @@ import no.nav.dagpenger.qamodel.visitor.PrettyPrint
 import no.nav.dagpenger.qamodel.visitor.SubsumsjonVisitor
 
 class AlleSubsumsjon internal constructor(
-    internal val navn: String,
+    override val navn: String,
     private val subsumsjoner: List<Subsumsjon>
 ) : Subsumsjon {
     override lateinit var gyldigSubsumsjon: Subsumsjon
@@ -14,10 +14,13 @@ class AlleSubsumsjon internal constructor(
     override fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisit(this)
         subsumsjoner.forEach { it.accept(visitor) }
+        if (::gyldigSubsumsjon.isInitialized) acceptGyldig(visitor)
         visitor.postVisit(this)
     }
 
-    override fun fakta(): Set<Faktum<*>> = subsumsjoner.flatMap { it.fakta() }.toSet()
+    override fun nesteFakta(): Set<Faktum<*>> = subsumsjoner.flatMap { it.fakta() }.toSet()
+
+    override fun fakta() = this.nesteFakta() + if (::gyldigSubsumsjon.isInitialized) gyldigSubsumsjon.fakta() else emptySet()
 
     override fun toString() = PrettyPrint(this).result()
 }

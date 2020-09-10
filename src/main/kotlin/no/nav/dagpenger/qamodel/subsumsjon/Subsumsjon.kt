@@ -9,12 +9,21 @@ import java.time.LocalDate
 
 interface Subsumsjon {
     var gyldigSubsumsjon: Subsumsjon
+    val navn: String
 
     fun konkluder(): Boolean
     fun accept(visitor: SubsumsjonVisitor) {}
     fun fakta(): Set<Faktum<*>>
     fun gyldig(child: Subsumsjon) {
         this.gyldigSubsumsjon = child
+    }
+
+    fun nesteFakta(): Set<Faktum<*>>
+
+    fun acceptGyldig(visitor: SubsumsjonVisitor) {
+        visitor.preVisitGyldig(this, gyldigSubsumsjon)
+        gyldigSubsumsjon.accept(visitor)
+        visitor.postVisitGyldig(this, gyldigSubsumsjon)
     }
 }
 
