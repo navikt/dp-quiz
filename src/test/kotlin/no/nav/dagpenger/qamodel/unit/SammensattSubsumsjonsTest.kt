@@ -1,6 +1,7 @@
 package no.nav.dagpenger.qamodel.unit
 
 import no.nav.dagpenger.qamodel.fakta.Faktum
+import no.nav.dagpenger.qamodel.helpers.januar
 import no.nav.dagpenger.qamodel.port.Inntekt
 import no.nav.dagpenger.qamodel.subsumsjon.alle
 import no.nav.dagpenger.qamodel.subsumsjon.etter
@@ -53,5 +54,16 @@ internal class SammensattSubsumsjonsTest {
     @Test
     fun `hvilke fakta behøves nå`() {
         assertEquals(4, comp.nesteFakta().size)
+    }
+
+    @Test
+    fun `test`() {
+        ønsketdato.besvar(2.januar)
+        søknadsdato.besvar(2.januar)
+        sisteDagMedLønn.besvar(1.januar)
+        assertEquals(1, comp.nesteFakta().size)
+        bursdag67.besvar(31.januar)
+        assertEquals(6, comp.nesteFakta().size)
+        println(comp)
     }
 }

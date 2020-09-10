@@ -17,6 +17,10 @@ class Faktum<R : Any>(internal val navn: String) {
         tilstand.accept(this, visitor)
     }
 
+    fun leggTilHvis(kode: FaktumTilstand, fakta: MutableSet<Faktum<*>>) {
+        if (tilstand.kode == kode) fakta.add(this)
+    }
+
     enum class FaktumTilstand {
         Ukjent,
         Kjent

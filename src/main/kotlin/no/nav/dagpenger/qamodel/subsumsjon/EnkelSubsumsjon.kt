@@ -11,20 +11,24 @@ class EnkelSubsumsjon internal constructor(
 ) : Subsumsjon {
     private val fakta = fakta.toSet()
     override val navn = "Enkel subsumsjon"
-    override lateinit var gyldigSubsumsjon: Subsumsjon
+    override var gyldigSubsumsjon: Subsumsjon = TomSubsumsjon
 
     override fun konkluder() = regel.konkluder(fakta)
 
     override fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisit(this, regel)
         fakta.forEach { it.accept(visitor) }
-        if (::gyldigSubsumsjon.isInitialized) acceptGyldig(visitor)
+        acceptGyldig(visitor)
         visitor.postVisit(this, regel)
     }
 
     override fun fakta(): Set<Faktum<*>> = fakta
 
-    override fun nesteFakta() = fakta()
+    override fun nesteFakta(): Set<Faktum<*>>{
+        return mutableSetOf<Faktum<*>>().also {
+            fakta.forEach{ faktum -> faktum.leggTilHvis(Faktum.FaktumTilstand.Ukjent, it)}
+        }
+    }
 
     override fun toString() = PrettyPrint(this).result()
 }
