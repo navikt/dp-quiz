@@ -5,11 +5,9 @@ import no.nav.dagpenger.qamodel.visitor.PrettyPrint
 import no.nav.dagpenger.qamodel.visitor.SubsumsjonVisitor
 
 class AlleSubsumsjon internal constructor(
-    override val navn: String,
+    navn: String,
     private val subsumsjoner: List<Subsumsjon>
-) : Subsumsjon {
-    override var gyldigSubsumsjon: Subsumsjon = TomSubsumsjon
-    override var ugyldigSubsumsjon: Subsumsjon = TomSubsumsjon
+) : Subsumsjon(navn) {
 
     override fun konkluder() = subsumsjoner.all { it.konkluder() }
 
@@ -31,4 +29,6 @@ class AlleSubsumsjon internal constructor(
         subsumsjoner.flatMap { it.fakta() }.toSet() + gyldigSubsumsjon.fakta() + ugyldigSubsumsjon.fakta()
 
     override fun toString() = PrettyPrint(this).result()
+
+    internal operator fun get(indeks: Int) = subsumsjoner[indeks]
 }

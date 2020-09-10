@@ -17,7 +17,7 @@ import no.nav.dagpenger.qamodel.søknad.Søknad
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-internal class FaktagruppeTest {
+internal class SeksjonTest {
 
     val datofakta = Seksjon(bursdag67, sisteDagMedLønn, ønsketdato, søknadsdato, dimisjonsdato)
     val inntektfakta = Seksjon(inntekt15G, inntekt3G, inntektSiste3år, inntektSisteÅr)

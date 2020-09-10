@@ -8,11 +8,8 @@ import no.nav.dagpenger.qamodel.visitor.SubsumsjonVisitor
 class EnkelSubsumsjon internal constructor(
     private val regel: Regel,
     vararg fakta: Faktum<*>
-) : Subsumsjon {
+) : Subsumsjon("Enkel subsumsjon") {
     private val fakta = fakta.toSet()
-    override val navn = "Enkel subsumsjon"
-    override var gyldigSubsumsjon: Subsumsjon = TomSubsumsjon
-    override var ugyldigSubsumsjon: Subsumsjon = TomSubsumsjon
 
     override fun konkluder() = regel.konkluder(fakta)
 
@@ -35,4 +32,6 @@ class EnkelSubsumsjon internal constructor(
     }
 
     override fun toString() = PrettyPrint(this).result()
+
+    internal operator fun get(indeks: Int): Subsumsjon = throw IllegalArgumentException()
 }

@@ -15,18 +15,7 @@ import org.junit.jupiter.api.Test
 internal class SammensattSubsumsjonsTest {
 
     @Test
-    fun `kan besøke alle fakta fra treet`() {
-        println(comp)
-        assertEquals(10, comp.fakta().size)
-    }
-
-    @Test
-    fun `hvilke fakta behøves nå`() {
-        assertEquals(4, comp.nesteFakta().size)
-    }
-
-    @Test
-    fun `test`() {
+    fun `neste fakta`() {
         assertEquals(10, comp.fakta().size)
         ønsketdato.besvar(2.januar)
         søknadsdato.besvar(2.januar)
@@ -39,5 +28,10 @@ internal class SammensattSubsumsjonsTest {
         assertEquals(4, comp.nesteFakta().size)
         assertEquals(10, comp.fakta().size)
         println(comp)
+    }
+
+    @Test
+    fun `subsumsjon status`(){
+        //comp[0]
     }
 }
