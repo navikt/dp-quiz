@@ -6,7 +6,7 @@ class Faktum<R : Any>(internal val navn: String) {
     private var tilstand: Tilstand = Ukjent
     private lateinit var gjeldendeSvar: R
 
-    fun besvar(r: R) = this.apply {
+    infix fun besvar(r: R) = this.apply {
         gjeldendeSvar = r
         tilstand = Kjent
     }
