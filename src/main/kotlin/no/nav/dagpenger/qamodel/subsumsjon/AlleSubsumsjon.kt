@@ -23,7 +23,7 @@ class AlleSubsumsjon internal constructor(
             if (it.isEmpty()) gyldigSubsumsjon.nesteFakta() else it
         }
 
-    override fun fakta() = this.nesteFakta() + gyldigSubsumsjon.fakta()
+    override fun fakta() = subsumsjoner.flatMap { it.fakta() }.toSet() + gyldigSubsumsjon.fakta()
 
     override fun toString() = PrettyPrint(this).result()
 }

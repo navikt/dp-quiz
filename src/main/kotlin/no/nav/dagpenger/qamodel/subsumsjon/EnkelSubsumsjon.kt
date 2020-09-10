@@ -27,6 +27,7 @@ class EnkelSubsumsjon internal constructor(
     override fun nesteFakta(): Set<Faktum<*>> {
         return mutableSetOf<Faktum<*>>().also {
             fakta.forEach { faktum -> faktum.leggTilHvis(Faktum.FaktumTilstand.Ukjent, it) }
+            if (it.isEmpty()) gyldigSubsumsjon.nesteFakta() else it
         }
     }
 
