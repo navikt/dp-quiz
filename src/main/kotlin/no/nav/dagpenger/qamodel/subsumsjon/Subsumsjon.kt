@@ -9,34 +9,36 @@ import no.nav.dagpenger.qamodel.regel.InntektMinstRegel
 import no.nav.dagpenger.qamodel.visitor.SubsumsjonVisitor
 import java.time.LocalDate
 
-interface Subsumsjon {
-    var gyldigSubsumsjon: Subsumsjon
-    var ugyldigSubsumsjon: Subsumsjon
-    val navn: String
+abstract class Subsumsjon(internal val navn: String) {
+    protected var gyldigSubsumsjon: Subsumsjon = TomSubsumsjon
+    protected var ugyldigSubsumsjon: Subsumsjon = TomSubsumsjon
 
-    fun konkluder(): Boolean
-    fun accept(visitor: SubsumsjonVisitor) {}
-    fun fakta(): Set<Faktum<*>>
-    fun gyldig(child: Subsumsjon) {
+    internal abstract fun konkluder(): Boolean
+
+    internal open fun accept(visitor: SubsumsjonVisitor) {}
+
+    internal abstract fun fakta(): Set<Faktum<*>>
+
+    internal fun gyldig(child: Subsumsjon) {
         this.gyldigSubsumsjon = child
     }
 
-    fun nesteFakta(): Set<Faktum<*>>
+    internal fun ugyldig(child: Subsumsjon) {
+        this.ugyldigSubsumsjon = child
+    }
 
-    fun acceptGyldig(visitor: SubsumsjonVisitor) {
+    internal abstract fun nesteFakta(): Set<Faktum<*>>
+
+    protected fun acceptGyldig(visitor: SubsumsjonVisitor) {
         visitor.preVisitGyldig(this, gyldigSubsumsjon)
         gyldigSubsumsjon.accept(visitor)
         visitor.postVisitGyldig(this, gyldigSubsumsjon)
     }
 
-    fun acceptUgyldig(visitor: SubsumsjonVisitor) {
+    protected fun acceptUgyldig(visitor: SubsumsjonVisitor) {
         visitor.preVisitUgyldig(this, ugyldigSubsumsjon)
         ugyldigSubsumsjon.accept(visitor)
         visitor.postVisitUgyldig(this, ugyldigSubsumsjon)
-    }
-
-    fun ugyldig(child: Subsumsjon) {
-        this.ugyldigSubsumsjon = child
     }
 }
 
