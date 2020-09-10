@@ -16,6 +16,8 @@ interface SubsumsjonVisitor {
     fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {}
     fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {}
     fun postVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {}
+    fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {}
+    fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {}
     fun <R : Any> visit(faktum: Faktum<R>, tilstand: Faktum.FaktumTilstand) {}
     fun <R : Any> visit(faktum: Faktum<R>, tilstand: Faktum.FaktumTilstand, svar: R) {}
 }

@@ -50,6 +50,16 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     override fun postVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {} // Tom med vilje
 
+    override fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
+        if (child is TomSubsumsjon) return
+
+        indentTeller--
+        preVisit("||Hvis ${parent.navn} ikke er gyldig: ")
+        indentTeller++
+    }
+
+    override fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {} // Tom med vilje
+
     override fun preVisit(subsumsjon: MinstEnAvSubsumsjon) {
         preVisit("Kombinasjon av subsumsjoner ${subsumsjon.navn}")
         indentTeller++

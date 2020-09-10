@@ -4,6 +4,7 @@ import no.nav.dagpenger.qamodel.fakta.Faktum
 
 internal object TomSubsumsjon : Subsumsjon {
     override var gyldigSubsumsjon: Subsumsjon = this
+    override var ugyldigSubsumsjon: Subsumsjon = this
     override val navn = "Tom subsumsjon"
 
     override fun konkluder() = true

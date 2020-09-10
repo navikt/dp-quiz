@@ -3,12 +3,15 @@ package no.nav.dagpenger.qamodel.subsumsjon
 import no.nav.dagpenger.qamodel.fakta.Faktum
 import no.nav.dagpenger.qamodel.port.Inntekt
 import no.nav.dagpenger.qamodel.regel.DatoEtterRegel
+import no.nav.dagpenger.qamodel.regel.DatoFørRegel
+import no.nav.dagpenger.qamodel.regel.DatoIkkeFørRegel
 import no.nav.dagpenger.qamodel.regel.InntektMinstRegel
 import no.nav.dagpenger.qamodel.visitor.SubsumsjonVisitor
 import java.time.LocalDate
 
 interface Subsumsjon {
     var gyldigSubsumsjon: Subsumsjon
+    var ugyldigSubsumsjon: Subsumsjon
     val navn: String
 
     fun konkluder(): Boolean
@@ -25,6 +28,16 @@ interface Subsumsjon {
         gyldigSubsumsjon.accept(visitor)
         visitor.postVisitGyldig(this, gyldigSubsumsjon)
     }
+
+    fun acceptUgyldig(visitor: SubsumsjonVisitor) {
+        visitor.preVisitUgyldig(this, ugyldigSubsumsjon)
+        ugyldigSubsumsjon.accept(visitor)
+        visitor.postVisitUgyldig(this, ugyldigSubsumsjon)
+    }
+
+    fun ugyldig(child: Subsumsjon) {
+        this.ugyldigSubsumsjon = child
+    }
 }
 
 fun String.alle(vararg subsumsjoner: Subsumsjon): Subsumsjon {
@@ -40,11 +53,11 @@ infix fun Faktum<LocalDate>.etter(other: Faktum<LocalDate>): Subsumsjon {
 }
 
 infix fun Faktum<LocalDate>.før(other: Faktum<LocalDate>): Subsumsjon {
-    return EnkelSubsumsjon(DatoEtterRegel, this, other)
+    return EnkelSubsumsjon(DatoFørRegel, this, other)
 }
 
 infix fun Faktum<LocalDate>.ikkeFør(other: Faktum<LocalDate>): Subsumsjon {
-    return EnkelSubsumsjon(DatoEtterRegel, this, other)
+    return EnkelSubsumsjon(DatoIkkeFørRegel, this, other)
 }
 
 infix fun Faktum<Inntekt>.minst(other: Faktum<Inntekt>): Subsumsjon {
@@ -53,4 +66,8 @@ infix fun Faktum<Inntekt>.minst(other: Faktum<Inntekt>): Subsumsjon {
 
 infix fun Subsumsjon.så(child: Subsumsjon): Subsumsjon {
     return this.also { this.gyldig(child) }
+}
+
+infix fun Subsumsjon.eller(child: Subsumsjon): Subsumsjon {
+    return this.also { this.ugyldig(child) }
 }

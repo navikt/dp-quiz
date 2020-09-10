@@ -12,6 +12,7 @@ class EnkelSubsumsjon internal constructor(
     private val fakta = fakta.toSet()
     override val navn = "Enkel subsumsjon"
     override var gyldigSubsumsjon: Subsumsjon = TomSubsumsjon
+    override var ugyldigSubsumsjon: Subsumsjon = TomSubsumsjon
 
     override fun konkluder() = regel.konkluder(fakta)
 
@@ -19,6 +20,7 @@ class EnkelSubsumsjon internal constructor(
         visitor.preVisit(this, regel)
         fakta.forEach { it.accept(visitor) }
         acceptGyldig(visitor)
+        acceptUgyldig(visitor)
         visitor.postVisit(this, regel)
     }
 
@@ -27,7 +29,8 @@ class EnkelSubsumsjon internal constructor(
     override fun nesteFakta(): Set<Faktum<*>> {
         return mutableSetOf<Faktum<*>>().also {
             fakta.forEach { faktum -> faktum.leggTilHvis(Faktum.FaktumTilstand.Ukjent, it) }
-            if (it.isEmpty()) gyldigSubsumsjon.nesteFakta() else it
+            if (it.isNotEmpty()) return it
+            (if (konkluder()) gyldigSubsumsjon else ugyldigSubsumsjon).nesteFakta()
         }
     }
 

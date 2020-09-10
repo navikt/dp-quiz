@@ -5,6 +5,7 @@ import no.nav.dagpenger.qamodel.helpers.januar
 import no.nav.dagpenger.qamodel.port.Inntekt
 import no.nav.dagpenger.qamodel.port.Inntekt.Companion.månedlig
 import no.nav.dagpenger.qamodel.subsumsjon.alle
+import no.nav.dagpenger.qamodel.subsumsjon.eller
 import no.nav.dagpenger.qamodel.subsumsjon.etter
 import no.nav.dagpenger.qamodel.subsumsjon.før
 import no.nav.dagpenger.qamodel.subsumsjon.ikkeFør
@@ -40,10 +41,16 @@ internal class SammensattSubsumsjonsTest {
             ønsketdato ikkeFør sisteDagMedLønn,
             søknadsdato ikkeFør sisteDagMedLønn,
         )
-    ) så "oppfyller krav til minsteinntekt".minstEnAv(
-        inntektSiste3år minst inntekt3G,
-        inntektSisteÅr minst inntekt15G,
-        dimisjonsdato etter virkningstidspunkt
+    ) så (
+        "oppfyller krav til minsteinntekt".minstEnAv(
+            inntektSiste3år minst inntekt3G,
+            inntektSisteÅr minst inntekt15G,
+            dimisjonsdato etter virkningstidspunkt
+        ) eller "oppfyller ikke kravet til minsteinntekt".alle(
+            ønsketdato ikkeFør sisteDagMedLønn
+        )
+    ) eller "oppfyller ikke inngangsvilkår".alle(
+        ønsketdato ikkeFør sisteDagMedLønn
     )
 
     @Test
@@ -66,7 +73,7 @@ internal class SammensattSubsumsjonsTest {
         assertEquals(1, comp.nesteFakta().size)
         bursdag67.besvar(31.januar)
         assertEquals(6, comp.nesteFakta().size)
-        inntektSisteÅr.besvar(1000.månedlig)
+        inntektSisteÅr.besvar(100000.månedlig)
         dimisjonsdato.besvar(1.januar)
         assertEquals(4, comp.nesteFakta().size)
         assertEquals(10, comp.fakta().size)
