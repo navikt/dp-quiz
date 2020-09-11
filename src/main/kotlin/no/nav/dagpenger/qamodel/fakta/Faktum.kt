@@ -6,12 +6,16 @@ class Faktum<R : Any>(internal val navn: String) {
     private var tilstand: Tilstand = Ukjent
     private lateinit var gjeldendeSvar: R
 
+    companion object {
+        internal fun erBesvart(fakta: Set<Faktum<*>>): Boolean {
+            return fakta.all { it.tilstand == Kjent }
+        }
+    }
+
     infix fun besvar(r: R) = this.apply {
         gjeldendeSvar = r
         tilstand = Kjent
     }
-
-    internal fun erBesvart() = tilstand == Kjent
 
     fun svar() = tilstand.svar(this)
 
@@ -51,3 +55,5 @@ class Faktum<R : Any>(internal val navn: String) {
         override fun <R : Any> svar(faktum: Faktum<R>) = faktum.gjeldendeSvar
     }
 }
+
+fun Set<Faktum<*>>.erBesvart() = Faktum.erBesvart(this)
