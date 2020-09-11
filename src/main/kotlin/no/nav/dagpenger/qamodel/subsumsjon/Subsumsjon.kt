@@ -50,6 +50,14 @@ abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
     internal abstract fun _sti(subsumsjon: Subsumsjon): List<Subsumsjon>
     fun sti(subsumsjon: Subsumsjon): List<Subsumsjon> =
         if (subsumsjon !is TomSubsumsjon) _sti(subsumsjon) else throw IndexOutOfBoundsException()
+
+    open fun resultat(): Boolean? = when(_resultat()){
+        true -> if(gyldig is TomSubsumsjon) true else gyldig.resultat()
+        false -> if(ugyldig is TomSubsumsjon) false else ugyldig.resultat()
+        null -> null
+    }
+
+    abstract fun _resultat(): Boolean?
 }
 
 fun String.alle(vararg subsumsjoner: Subsumsjon): Subsumsjon {

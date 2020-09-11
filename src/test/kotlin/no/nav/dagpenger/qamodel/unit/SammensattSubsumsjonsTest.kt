@@ -2,6 +2,7 @@ package no.nav.dagpenger.qamodel.unit
 
 import no.nav.dagpenger.qamodel.helpers.bursdag67
 import no.nav.dagpenger.qamodel.helpers.dimisjonsdato
+import no.nav.dagpenger.qamodel.helpers.februar
 import no.nav.dagpenger.qamodel.helpers.inntektSisteÅr
 import no.nav.dagpenger.qamodel.helpers.januar
 import no.nav.dagpenger.qamodel.helpers.sisteDagMedLønn
@@ -10,6 +11,7 @@ import no.nav.dagpenger.qamodel.helpers.søknadsdato
 import no.nav.dagpenger.qamodel.helpers.ønsketdato
 import no.nav.dagpenger.qamodel.port.Inntekt.Companion.månedlig
 import no.nav.dagpenger.qamodel.subsumsjon.Subsumsjon
+import no.nav.dagpenger.qamodel.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.qamodel.subsumsjon.før
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -99,5 +101,18 @@ internal class SammensattSubsumsjonsTest {
         assertThrows<IndexOutOfBoundsException> {
             comp.sti(comp.ugyldig[0].gyldig)
         }
+    }
+
+    @Test
+    fun `enkel subsumsjon resultater`() {
+        assertEquals(null, comp[0][0].resultat())
+
+        søknadsdato.besvar(1.januar)
+        bursdag67.besvar(31.januar)
+        assertEquals(true, comp[0][0].resultat())
+
+        søknadsdato.besvar(1.februar)
+        assertEquals(false, comp[0][0].resultat())
+
     }
 }

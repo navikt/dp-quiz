@@ -32,6 +32,8 @@ class EnkelSubsumsjon internal constructor(
 
     override fun _sti(subsumsjon: Subsumsjon) = if (this == subsumsjon) listOf(this) else emptyList()
 
+    override fun _resultat() = if(fakta.all { it.erBesvart() }) konkluder() else null
+
     override fun subsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon> =
         if (fakta.any { it in this.fakta }) listOf(this) else emptyList()
 

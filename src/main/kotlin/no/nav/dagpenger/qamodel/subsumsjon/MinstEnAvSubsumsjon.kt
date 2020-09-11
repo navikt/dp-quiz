@@ -34,6 +34,11 @@ class MinstEnAvSubsumsjon internal constructor(
         return emptyList()
     }
 
+    override fun _resultat(): Boolean? {
+        if(subsumsjoner.any { it._resultat() == null }) return null
+        return subsumsjoner.any { it._resultat()!! }
+    }
+
     override fun subsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon> =
         subsumsjoner.flatMap { it.subsumsjoner(*fakta) } +
             gyldigSubsumsjon.subsumsjoner(*fakta) +

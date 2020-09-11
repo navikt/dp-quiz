@@ -11,6 +11,8 @@ class Faktum<R : Any>(internal val navn: String) {
         tilstand = Kjent
     }
 
+    internal fun erBesvart() = tilstand == Kjent
+
     fun svar() = tilstand.svar(this)
 
     internal fun accept(visitor: SubsumsjonVisitor) {
