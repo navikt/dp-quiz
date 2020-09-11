@@ -37,7 +37,7 @@ class AlleSubsumsjon internal constructor(
     }
 
     override fun _resultat(): Boolean? {
-        if(subsumsjoner.any { it._resultat() == null }) return null
+        if (subsumsjoner.any { it._resultat() == null }) return null
         return subsumsjoner.all { it._resultat()!! }
     }
 

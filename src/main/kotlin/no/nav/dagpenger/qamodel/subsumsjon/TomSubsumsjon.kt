@@ -1,7 +1,6 @@
 package no.nav.dagpenger.qamodel.subsumsjon
 
 import no.nav.dagpenger.qamodel.fakta.Faktum
-import java.lang.IndexOutOfBoundsException
 
 internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
     override fun konkluder() = true

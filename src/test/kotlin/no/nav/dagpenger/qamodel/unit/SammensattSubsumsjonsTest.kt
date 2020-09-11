@@ -11,7 +11,6 @@ import no.nav.dagpenger.qamodel.helpers.søknadsdato
 import no.nav.dagpenger.qamodel.helpers.ønsketdato
 import no.nav.dagpenger.qamodel.port.Inntekt.Companion.månedlig
 import no.nav.dagpenger.qamodel.subsumsjon.Subsumsjon
-import no.nav.dagpenger.qamodel.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.qamodel.subsumsjon.før
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -113,6 +112,5 @@ internal class SammensattSubsumsjonsTest {
 
         søknadsdato.besvar(1.februar)
         assertEquals(false, comp[0][0].resultat())
-
     }
 }
