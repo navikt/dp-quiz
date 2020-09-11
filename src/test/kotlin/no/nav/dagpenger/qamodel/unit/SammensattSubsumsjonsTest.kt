@@ -75,4 +75,9 @@ internal class SammensattSubsumsjonsTest {
             comp.ugyldig[0]
         ), comp.subsumsjoner(ønsketdato, bursdag67))
     }
+
+    @Test
+    fun `Sti`(){
+        assertEquals(listOf(comp, comp.gyldig, comp.gyldig[1]), comp.sti(comp.gyldig[1]))
+    }
 }

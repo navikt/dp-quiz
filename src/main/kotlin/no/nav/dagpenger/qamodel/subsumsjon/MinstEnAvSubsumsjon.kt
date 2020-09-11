@@ -24,6 +24,16 @@ class MinstEnAvSubsumsjon internal constructor(
             (if (konkluder()) gyldigSubsumsjon else ugyldigSubsumsjon).nesteFakta()
         }
 
+    override fun sti(subsumsjon: Subsumsjon): List<Subsumsjon>{
+        if(this == subsumsjon) return listOf(this)
+        subsumsjoner.forEach{
+            it.sti(subsumsjon).also{ child ->
+                if(child.isNotEmpty()) return listOf(this) + child
+            }
+        }
+        return emptyList()
+    }
+
     override fun subsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon> =
         subsumsjoner.flatMap { it.subsumsjoner(*fakta) } +
             gyldigSubsumsjon.subsumsjoner(*fakta) +

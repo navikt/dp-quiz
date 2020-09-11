@@ -47,6 +47,7 @@ abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
     }
 
     abstract fun subsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon>
+    abstract fun sti(subsumsjon: Subsumsjon): List<Subsumsjon>
 }
 
 fun String.alle(vararg subsumsjoner: Subsumsjon): Subsumsjon {
