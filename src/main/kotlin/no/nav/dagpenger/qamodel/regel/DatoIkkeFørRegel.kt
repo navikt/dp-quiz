@@ -3,11 +3,10 @@ package no.nav.dagpenger.qamodel.regel
 import no.nav.dagpenger.qamodel.fakta.Faktum
 import java.time.LocalDate
 
-internal object DatoIkkeFørRegel : Regel {
-    override fun konkluder(fakta: Set<Faktum<*>>): Boolean {
-        return konkluder(fakta.first().svar() as LocalDate, fakta.last().svar() as LocalDate)
-    }
-
-    private fun konkluder(dato1: LocalDate, dato2: LocalDate) =
-        !(dato1 < dato2)
+internal class DatoIkkeFørRegel(
+    private val tidligsteDato: Faktum<LocalDate>,
+    private val senesteDato: Faktum<LocalDate>
+) : Regel {
+    override fun konkluder() = tidligsteDato.svar() >= senesteDato.svar()
+    override fun toString() = "Sjekk at '${tidligsteDato.navn}' ikke er før '${senesteDato.navn}'"
 }

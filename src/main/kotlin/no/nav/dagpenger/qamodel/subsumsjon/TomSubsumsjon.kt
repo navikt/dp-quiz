@@ -8,4 +8,15 @@ internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
     override fun fakta(): Set<Faktum<*>> = emptySet()
 
     override fun nesteFakta(): Set<Faktum<*>> = emptySet()
+
+    override fun subsumsjoner(vararg fakta: Faktum<*>) = emptyList<EnkelSubsumsjon>()
+
+    override operator fun get(indeks: Int) = throw IllegalArgumentException()
+
+    override fun iterator(): Iterator<Subsumsjon> {
+        return object : Iterator<Subsumsjon> {
+            override fun hasNext() = false
+            override fun next() = throw NoSuchElementException()
+        }
+    }
 }

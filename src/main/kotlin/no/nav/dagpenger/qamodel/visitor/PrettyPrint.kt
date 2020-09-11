@@ -23,7 +23,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     }
 
     override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel) {
-        preVisit("Regel: ${regel.javaClass.simpleName}")
+        preVisit(subsumsjon.toString())
         indentTeller++
     }
 

@@ -2,8 +2,7 @@ package no.nav.dagpenger.qamodel.unit
 
 import no.nav.dagpenger.qamodel.fakta.Faktum
 import no.nav.dagpenger.qamodel.helpers.januar
-import no.nav.dagpenger.qamodel.regel.DatoEtterRegel
-import no.nav.dagpenger.qamodel.subsumsjon.EnkelSubsumsjon
+import no.nav.dagpenger.qamodel.subsumsjon.etter
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -17,20 +16,20 @@ internal class EnkelSubsumsjonsTest {
 
     @Test
     fun `subsumsjonen kan konkludere`() {
-        println(EnkelSubsumsjon(DatoEtterRegel, bursdag67, søknadsdato))
+        println(bursdag67 etter søknadsdato)
 
-        assertThrows<IllegalStateException> { EnkelSubsumsjon(DatoEtterRegel, bursdag67, søknadsdato).konkluder() }
+        assertThrows<IllegalStateException> { (bursdag67 etter søknadsdato).konkluder() }
         bursdag67.besvar(31.januar)
         søknadsdato.besvar(1.januar)
-        assertTrue(EnkelSubsumsjon(DatoEtterRegel, bursdag67, søknadsdato).konkluder())
+        assertTrue((bursdag67 etter søknadsdato).konkluder())
 
-        println(EnkelSubsumsjon(DatoEtterRegel, bursdag67, søknadsdato))
+        println((bursdag67 etter søknadsdato))
     }
 
     @Test
     fun `subsumsjonen kan konkludere negativt`() {
         bursdag67.besvar(1.januar)
         søknadsdato.besvar(31.januar)
-        assertFalse(EnkelSubsumsjon(DatoEtterRegel, bursdag67, søknadsdato).konkluder())
+        assertFalse((bursdag67 etter søknadsdato).konkluder())
     }
 }

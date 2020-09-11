@@ -2,7 +2,6 @@ package no.nav.dagpenger.qamodel.subsumsjon
 
 import no.nav.dagpenger.qamodel.fakta.Faktum
 import no.nav.dagpenger.qamodel.regel.Regel
-import no.nav.dagpenger.qamodel.visitor.PrettyPrint
 import no.nav.dagpenger.qamodel.visitor.SubsumsjonVisitor
 
 class EnkelSubsumsjon internal constructor(
@@ -11,7 +10,7 @@ class EnkelSubsumsjon internal constructor(
 ) : Subsumsjon("Enkel subsumsjon") {
     private val fakta = fakta.toSet()
 
-    override fun konkluder() = regel.konkluder(fakta)
+    override fun konkluder() = regel.konkluder()
 
     override fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisit(this, regel)
@@ -31,7 +30,17 @@ class EnkelSubsumsjon internal constructor(
         }
     }
 
-    override fun toString() = PrettyPrint(this).result()
+    override fun subsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon> =
+        if (fakta.any { it in this.fakta }) listOf(this) else emptyList()
 
-    internal operator fun get(indeks: Int): Subsumsjon = throw IllegalArgumentException()
+    override fun toString() = regel.toString()
+
+    override operator fun get(indeks: Int) = throw IllegalArgumentException()
+
+    override fun iterator(): Iterator<Subsumsjon> {
+        return object : Iterator<Subsumsjon> {
+            override fun hasNext() = false
+            override fun next() = throw NoSuchElementException()
+        }
+    }
 }

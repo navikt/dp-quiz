@@ -40,6 +40,7 @@ internal class SammensattSubsumsjonsTest {
 
     @Test
     fun `subsumsjon status`() {
-        // comp[0]
+        println(comp.subsumsjoner(ønsketdato))
+        // assertEquals(emptyList<EnkelSubsumsjon>(), comp.subsumsjoner(ønsketdato))
     }
 }

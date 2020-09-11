@@ -9,9 +9,12 @@ import no.nav.dagpenger.qamodel.regel.InntektMinstRegel
 import no.nav.dagpenger.qamodel.visitor.SubsumsjonVisitor
 import java.time.LocalDate
 
-abstract class Subsumsjon(internal val navn: String) {
+abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
     protected var gyldigSubsumsjon: Subsumsjon = TomSubsumsjon
     protected var ugyldigSubsumsjon: Subsumsjon = TomSubsumsjon
+
+    internal val gyldig get() = gyldigSubsumsjon
+    internal val ugyldig get() = ugyldigSubsumsjon
 
     internal abstract fun konkluder(): Boolean
 
@@ -27,6 +30,8 @@ abstract class Subsumsjon(internal val navn: String) {
         this.ugyldigSubsumsjon = child
     }
 
+    internal abstract operator fun get(indeks: Int): Subsumsjon
+
     internal abstract fun nesteFakta(): Set<Faktum<*>>
 
     protected fun acceptGyldig(visitor: SubsumsjonVisitor) {
@@ -40,6 +45,8 @@ abstract class Subsumsjon(internal val navn: String) {
         ugyldigSubsumsjon.accept(visitor)
         visitor.postVisitUgyldig(this, ugyldigSubsumsjon)
     }
+
+    abstract fun subsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon>
 }
 
 fun String.alle(vararg subsumsjoner: Subsumsjon): Subsumsjon {
@@ -51,19 +58,19 @@ fun String.minstEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon {
 }
 
 infix fun Faktum<LocalDate>.etter(other: Faktum<LocalDate>): Subsumsjon {
-    return EnkelSubsumsjon(DatoEtterRegel, this, other)
+    return EnkelSubsumsjon(DatoEtterRegel(this, other), this, other)
 }
 
 infix fun Faktum<LocalDate>.før(other: Faktum<LocalDate>): Subsumsjon {
-    return EnkelSubsumsjon(DatoFørRegel, this, other)
+    return EnkelSubsumsjon(DatoFørRegel(this, other), this, other)
 }
 
 infix fun Faktum<LocalDate>.ikkeFør(other: Faktum<LocalDate>): Subsumsjon {
-    return EnkelSubsumsjon(DatoIkkeFørRegel, this, other)
+    return EnkelSubsumsjon(DatoIkkeFørRegel(this, other), this, other)
 }
 
 infix fun Faktum<Inntekt>.minst(other: Faktum<Inntekt>): Subsumsjon {
-    return EnkelSubsumsjon(InntektMinstRegel, this, other)
+    return EnkelSubsumsjon(InntektMinstRegel(this, other), this, other)
 }
 
 infix fun Subsumsjon.så(child: Subsumsjon): Subsumsjon {

@@ -25,10 +25,21 @@ class AlleSubsumsjon internal constructor(
             (if (konkluder()) gyldigSubsumsjon else ugyldigSubsumsjon).nesteFakta()
         }
 
+    override fun subsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon> =
+        subsumsjoner.flatMap { it.subsumsjoner(*fakta) }
+
     override fun fakta() =
         subsumsjoner.flatMap { it.fakta() }.toSet() + gyldigSubsumsjon.fakta() + ugyldigSubsumsjon.fakta()
 
     override fun toString() = PrettyPrint(this).result()
 
-    internal operator fun get(indeks: Int) = subsumsjoner[indeks]
+    override operator fun get(indeks: Int) = subsumsjoner[indeks]
+
+    override fun iterator(): Iterator<Subsumsjon> {
+        val iterator = subsumsjoner.iterator()
+        return object : Iterator<Subsumsjon> {
+            override fun hasNext() = iterator.hasNext()
+            override fun next() = iterator.next()
+        }
+    }
 }
