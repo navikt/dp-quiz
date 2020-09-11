@@ -9,11 +9,12 @@ import no.nav.dagpenger.qamodel.helpers.subsumsjonRoot
 import no.nav.dagpenger.qamodel.helpers.søknadsdato
 import no.nav.dagpenger.qamodel.helpers.ønsketdato
 import no.nav.dagpenger.qamodel.port.Inntekt.Companion.månedlig
-import no.nav.dagpenger.qamodel.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.qamodel.subsumsjon.Subsumsjon
+import no.nav.dagpenger.qamodel.subsumsjon.før
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class SammensattSubsumsjonsTest {
     private lateinit var comp: Subsumsjon
@@ -45,39 +46,58 @@ internal class SammensattSubsumsjonsTest {
         assertEquals(listOf(comp[0][0], comp[1][1]), comp.subsumsjoner(søknadsdato))
 
         assertEquals(4, comp.subsumsjoner(ønsketdato).size)
-        assertEquals(listOf(
-            comp[0][1],
-            comp[1][0],
-            comp.gyldig.ugyldig[0],
-            comp.ugyldig[0]
-        ), comp.subsumsjoner(ønsketdato))
+        assertEquals(
+            listOf(
+                comp[0][1],
+                comp[1][0],
+                comp.gyldig.ugyldig[0],
+                comp.ugyldig[0]
+            ),
+            comp.subsumsjoner(ønsketdato)
+        )
     }
 
     @Test
     fun `finne flere fakta`() {
         assertEquals(6, comp.subsumsjoner(ønsketdato, søknadsdato).size)
-        assertEquals(listOf(
-            comp[0][0],
-            comp[0][1],
-            comp[1][0],
-            comp[1][1],
-            comp.gyldig.ugyldig[0],
-            comp.ugyldig[0]
-        ), comp.subsumsjoner(ønsketdato, søknadsdato))
+        assertEquals(
+            listOf(
+                comp[0][0],
+                comp[0][1],
+                comp[1][0],
+                comp[1][1],
+                comp.gyldig.ugyldig[0],
+                comp.ugyldig[0]
+            ),
+            comp.subsumsjoner(ønsketdato, søknadsdato)
+        )
 
         assertEquals(6, comp.subsumsjoner(ønsketdato, bursdag67).size)
-        assertEquals(listOf(
-            comp[0][0],
-            comp[0][1],
-            comp[0][2],
-            comp[1][0],
-            comp.gyldig.ugyldig[0],
-            comp.ugyldig[0]
-        ), comp.subsumsjoner(ønsketdato, bursdag67))
+        assertEquals(
+            listOf(
+                comp[0][0],
+                comp[0][1],
+                comp[0][2],
+                comp[1][0],
+                comp.gyldig.ugyldig[0],
+                comp.ugyldig[0]
+            ),
+            comp.subsumsjoner(ønsketdato, bursdag67)
+        )
     }
 
     @Test
-    fun `Sti`(){
+    fun `Sti`() {
+        assertEquals(listOf(comp[1][1]), comp[1][1].sti(comp[1][1]))
+        assertEquals(listOf(comp[1], comp[1][1]), comp[1].sti(comp[1][1]))
+        assertEquals(listOf(comp), comp.sti(comp))
+        assertEquals(listOf(comp, comp[1], comp[1][1]), comp.sti(comp[1][1]))
         assertEquals(listOf(comp, comp.gyldig, comp.gyldig[1]), comp.sti(comp.gyldig[1]))
+        assertEquals(listOf(comp, comp.ugyldig, comp.ugyldig[0]), comp.sti(comp.ugyldig[0]))
+
+        assertEquals(emptyList<Subsumsjon>(), comp.sti(dimisjonsdato før bursdag67))
+        assertThrows<IndexOutOfBoundsException> {
+            comp.sti(comp.ugyldig[0].gyldig)
+        }
     }
 }

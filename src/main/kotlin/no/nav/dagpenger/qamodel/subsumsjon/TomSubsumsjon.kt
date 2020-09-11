@@ -11,7 +11,7 @@ internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
 
     override fun subsumsjoner(vararg fakta: Faktum<*>) = emptyList<EnkelSubsumsjon>()
 
-    override fun sti(subsumsjon: Subsumsjon) = if(this == subsumsjon) listOf(this) else emptyList()
+    override fun _sti(subsumsjon: Subsumsjon) = if (this == subsumsjon) listOf(this) else emptyList()
 
     override operator fun get(indeks: Int) = throw IllegalArgumentException()
 

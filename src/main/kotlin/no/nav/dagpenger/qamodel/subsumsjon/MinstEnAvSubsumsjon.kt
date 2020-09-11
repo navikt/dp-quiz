@@ -24,11 +24,11 @@ class MinstEnAvSubsumsjon internal constructor(
             (if (konkluder()) gyldigSubsumsjon else ugyldigSubsumsjon).nesteFakta()
         }
 
-    override fun sti(subsumsjon: Subsumsjon): List<Subsumsjon>{
-        if(this == subsumsjon) return listOf(this)
-        subsumsjoner.forEach{
-            it.sti(subsumsjon).also{ child ->
-                if(child.isNotEmpty()) return listOf(this) + child
+    override fun _sti(subsumsjon: Subsumsjon): List<Subsumsjon> {
+        if (this == subsumsjon) return listOf(this)
+        subsumsjoner.forEach {
+            it._sti(subsumsjon).also { child ->
+                if (child.isNotEmpty()) return listOf(this) + child
             }
         }
         return emptyList()
