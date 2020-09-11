@@ -25,7 +25,9 @@ class MinstEnAvSubsumsjon internal constructor(
         }
 
     override fun subsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon> =
-        subsumsjoner.flatMap { it.subsumsjoner(*fakta) }
+        subsumsjoner.flatMap { it.subsumsjoner(*fakta) } +
+            gyldigSubsumsjon.subsumsjoner(*fakta) +
+            ugyldigSubsumsjon.subsumsjoner(*fakta)
 
     override fun fakta() = subsumsjoner.flatMap { it.fakta() }.toSet() + gyldigSubsumsjon.fakta()
 

@@ -9,6 +9,7 @@ import no.nav.dagpenger.qamodel.helpers.subsumsjonRoot
 import no.nav.dagpenger.qamodel.helpers.søknadsdato
 import no.nav.dagpenger.qamodel.helpers.ønsketdato
 import no.nav.dagpenger.qamodel.port.Inntekt.Companion.månedlig
+import no.nav.dagpenger.qamodel.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.qamodel.subsumsjon.Subsumsjon
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -39,8 +40,39 @@ internal class SammensattSubsumsjonsTest {
     }
 
     @Test
-    fun `subsumsjon status`() {
-        println(comp.subsumsjoner(ønsketdato))
-        // assertEquals(emptyList<EnkelSubsumsjon>(), comp.subsumsjoner(ønsketdato))
+    fun `finne en fakta`() {
+        assertEquals(2, comp.subsumsjoner(søknadsdato).size)
+        assertEquals(listOf(comp[0][0], comp[1][1]), comp.subsumsjoner(søknadsdato))
+
+        assertEquals(4, comp.subsumsjoner(ønsketdato).size)
+        assertEquals(listOf(
+            comp[0][1],
+            comp[1][0],
+            comp.gyldig.ugyldig[0],
+            comp.ugyldig[0]
+        ), comp.subsumsjoner(ønsketdato))
+    }
+
+    @Test
+    fun `finne flere fakta`() {
+        assertEquals(6, comp.subsumsjoner(ønsketdato, søknadsdato).size)
+        assertEquals(listOf(
+            comp[0][0],
+            comp[0][1],
+            comp[1][0],
+            comp[1][1],
+            comp.gyldig.ugyldig[0],
+            comp.ugyldig[0]
+        ), comp.subsumsjoner(ønsketdato, søknadsdato))
+
+        assertEquals(6, comp.subsumsjoner(ønsketdato, bursdag67).size)
+        assertEquals(listOf(
+            comp[0][0],
+            comp[0][1],
+            comp[0][2],
+            comp[1][0],
+            comp.gyldig.ugyldig[0],
+            comp.ugyldig[0]
+        ), comp.subsumsjoner(ønsketdato, bursdag67))
     }
 }
