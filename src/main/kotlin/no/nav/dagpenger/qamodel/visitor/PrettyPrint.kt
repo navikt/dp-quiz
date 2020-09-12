@@ -18,12 +18,8 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     fun result() = result
 
-    private fun preVisit(navn: String) {
-        result += "  ".repeat(indentTeller) + "${navn}\n"
-    }
-
     override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel) {
-        preVisit(subsumsjon.toString())
+        melding("${status(subsumsjon)} $subsumsjon")
         indentTeller++
     }
 
@@ -32,7 +28,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     }
 
     override fun preVisit(subsumsjon: AlleSubsumsjon) {
-        preVisit("Kombinasjon av subsumsjoner ${subsumsjon.navn}")
+        melding("${status(subsumsjon)} Kombinasjon av subsumsjoner ${subsumsjon.navn}")
         indentTeller++
     }
 
@@ -40,11 +36,20 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         indentTeller--
     }
 
+    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon) {
+        melding("${status(subsumsjon)} Kombinasjon av subsumsjoner ${subsumsjon.navn}")
+        indentTeller++
+    }
+
+    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {
+        indentTeller--
+    }
+
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
         if (child is TomSubsumsjon) return
 
         indentTeller--
-        preVisit(">>Hvis ${parent.navn} er gyldig: ")
+        melding(">>Hvis ${parent.navn} er gyldig: ")
         indentTeller++
     }
 
@@ -54,26 +59,27 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         if (child is TomSubsumsjon) return
 
         indentTeller--
-        preVisit("||Hvis ${parent.navn} ikke er gyldig: ")
+        melding("||Hvis ${parent.navn} ikke er gyldig: ")
         indentTeller++
     }
 
     override fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {} // Tom med vilje
 
-    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon) {
-        preVisit("Kombinasjon av subsumsjoner ${subsumsjon.navn}")
-        indentTeller++
-    }
-
-    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {
-        indentTeller--
-    }
-
     override fun <R : Any> visit(faktum: Faktum<R>, tilstand: Faktum.FaktumTilstand) {
-        preVisit("Faktum: ${faktum.navn} er ubesvart")
+        melding("Faktum: ${faktum.navn} er ubesvart")
     }
 
     override fun <R : Any> visit(faktum: Faktum<R>, tilstand: Faktum.FaktumTilstand, svar: R) {
-        preVisit("Faktum: ${faktum.navn} er besvart med $svar")
+        melding("Faktum: ${faktum.navn} er besvart med $svar")
+    }
+
+    private fun melding(navn: String) {
+        result += "  ".repeat(indentTeller) + "${navn}\n"
+    }
+
+    private fun status(subsumsjon: Subsumsjon) = when (subsumsjon.resultat()) {
+        true -> "[bestått]"
+        false -> "[mislyktes]"
+        null -> "[ukjent]"
     }
 }
