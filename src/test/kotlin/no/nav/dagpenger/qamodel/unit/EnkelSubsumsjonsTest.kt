@@ -2,7 +2,7 @@ package no.nav.dagpenger.qamodel.unit
 
 import no.nav.dagpenger.qamodel.fakta.Faktum
 import no.nav.dagpenger.qamodel.helpers.januar
-import no.nav.dagpenger.qamodel.subsumsjon.etter
+import no.nav.dagpenger.qamodel.regel.etter
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

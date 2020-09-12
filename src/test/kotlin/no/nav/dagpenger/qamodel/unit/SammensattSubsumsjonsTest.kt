@@ -10,8 +10,8 @@ import no.nav.dagpenger.qamodel.helpers.subsumsjonRoot
 import no.nav.dagpenger.qamodel.helpers.søknadsdato
 import no.nav.dagpenger.qamodel.helpers.ønsketdato
 import no.nav.dagpenger.qamodel.port.Inntekt.Companion.månedlig
+import no.nav.dagpenger.qamodel.regel.før
 import no.nav.dagpenger.qamodel.subsumsjon.Subsumsjon
-import no.nav.dagpenger.qamodel.subsumsjon.før
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -43,10 +43,10 @@ internal class SammensattSubsumsjonsTest {
 
     @Test
     fun `finne en fakta`() {
-        assertEquals(2, comp.subsumsjoner(søknadsdato).size)
-        assertEquals(listOf(comp[0][0], comp[1][1]), comp.subsumsjoner(søknadsdato))
+        assertEquals(2, comp.enkelSubsumsjoner(søknadsdato).size)
+        assertEquals(listOf(comp[0][0], comp[1][1]), comp.enkelSubsumsjoner(søknadsdato))
 
-        assertEquals(4, comp.subsumsjoner(ønsketdato).size)
+        assertEquals(4, comp.enkelSubsumsjoner(ønsketdato).size)
         assertEquals(
             listOf(
                 comp[0][1],
@@ -54,13 +54,13 @@ internal class SammensattSubsumsjonsTest {
                 comp.gyldig.ugyldig[0],
                 comp.ugyldig[0]
             ),
-            comp.subsumsjoner(ønsketdato)
+            comp.enkelSubsumsjoner(ønsketdato)
         )
     }
 
     @Test
     fun `finne flere fakta`() {
-        assertEquals(6, comp.subsumsjoner(ønsketdato, søknadsdato).size)
+        assertEquals(6, comp.enkelSubsumsjoner(ønsketdato, søknadsdato).size)
         assertEquals(
             listOf(
                 comp[0][0],
@@ -70,10 +70,10 @@ internal class SammensattSubsumsjonsTest {
                 comp.gyldig.ugyldig[0],
                 comp.ugyldig[0]
             ),
-            comp.subsumsjoner(ønsketdato, søknadsdato)
+            comp.enkelSubsumsjoner(ønsketdato, søknadsdato)
         )
 
-        assertEquals(6, comp.subsumsjoner(ønsketdato, bursdag67).size)
+        assertEquals(6, comp.enkelSubsumsjoner(ønsketdato, bursdag67).size)
         assertEquals(
             listOf(
                 comp[0][0],
@@ -83,7 +83,7 @@ internal class SammensattSubsumsjonsTest {
                 comp.gyldig.ugyldig[0],
                 comp.ugyldig[0]
             ),
-            comp.subsumsjoner(ønsketdato, bursdag67)
+            comp.enkelSubsumsjoner(ønsketdato, bursdag67)
         )
     }
 

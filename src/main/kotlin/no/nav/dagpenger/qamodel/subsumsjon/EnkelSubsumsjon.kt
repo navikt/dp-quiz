@@ -8,7 +8,7 @@ import no.nav.dagpenger.qamodel.visitor.SubsumsjonVisitor
 class EnkelSubsumsjon internal constructor(
     private val regel: Regel,
     vararg fakta: Faktum<*>
-) : Subsumsjon("Enkel subsumsjon") {
+) : Subsumsjon(regel.toString()) {
     private val fakta = fakta.toSet()
 
     override fun konkluder() = regel.konkluder()
@@ -35,7 +35,7 @@ class EnkelSubsumsjon internal constructor(
 
     override fun _resultat() = if (fakta.erBesvart()) konkluder() else null
 
-    override fun subsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon> =
+    override fun enkelSubsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon> =
         if (fakta.any { it in this.fakta }) listOf(this) else emptyList()
 
     override fun toString() = regel.toString()

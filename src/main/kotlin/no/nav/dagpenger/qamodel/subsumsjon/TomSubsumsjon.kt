@@ -9,7 +9,7 @@ internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
 
     override fun nesteFakta(): Set<Faktum<*>> = emptySet()
 
-    override fun subsumsjoner(vararg fakta: Faktum<*>) = emptyList<EnkelSubsumsjon>()
+    override fun enkelSubsumsjoner(vararg fakta: Faktum<*>) = emptyList<EnkelSubsumsjon>()
 
     override fun _sti(subsumsjon: Subsumsjon) = if (this == subsumsjon) listOf(this) else emptyList()
 
