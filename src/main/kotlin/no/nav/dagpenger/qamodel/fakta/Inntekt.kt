@@ -1,4 +1,4 @@
-package no.nav.dagpenger.qamodel.port
+package no.nav.dagpenger.qamodel.fakta
 
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -36,7 +36,7 @@ class Inntekt : Comparable<Inntekt> {
             return this.fold(INGEN) { acc, inntekt -> Inntekt(acc.årlig + inntekt.årlig) }
         }
 
-        internal fun List<Inntekt>.avg(): Inntekt {
+        internal fun List<Inntekt>.gjennomsnitt(): Inntekt {
             if (this.isEmpty()) return INGEN
             return this.summer() / this.size
         }

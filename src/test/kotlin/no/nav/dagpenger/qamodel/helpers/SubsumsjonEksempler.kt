@@ -1,7 +1,7 @@
 package no.nav.dagpenger.qamodel.helpers
 
 import no.nav.dagpenger.qamodel.fakta.Faktum
-import no.nav.dagpenger.qamodel.port.Inntekt
+import no.nav.dagpenger.qamodel.fakta.Inntekt
 import no.nav.dagpenger.qamodel.regel.etter
 import no.nav.dagpenger.qamodel.regel.før
 import no.nav.dagpenger.qamodel.regel.ikkeFør

@@ -1,8 +1,10 @@
-package no.nav.dagpenger.qamodel.port
+package no.nav.dagpenger.qamodel.fakta
 
-import no.nav.dagpenger.qamodel.port.Inntekt.Companion.daglig
-import no.nav.dagpenger.qamodel.port.Inntekt.Companion.månedlig
-import no.nav.dagpenger.qamodel.port.Inntekt.Companion.årlig
+import no.nav.dagpenger.qamodel.fakta.Inntekt.Companion.daglig
+import no.nav.dagpenger.qamodel.fakta.Inntekt.Companion.gjennomsnitt
+import no.nav.dagpenger.qamodel.fakta.Inntekt.Companion.månedlig
+import no.nav.dagpenger.qamodel.fakta.Inntekt.Companion.summer
+import no.nav.dagpenger.qamodel.fakta.Inntekt.Companion.årlig
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -55,5 +57,25 @@ internal class InntektTest {
         assertTrue(1000.årlig >= 200.årlig)
         assertTrue(1000.årlig >= 1000.årlig)
         assertFalse(1000.årlig > 1000.årlig)
+    }
+
+    @Test
+    fun summer() {
+        assertEquals(40.daglig, listOf(2600.årlig, 10.daglig, 20.daglig).summer())
+    }
+
+    @Test
+    fun gjennomsnitt() {
+        assertEquals(15.daglig, listOf(2600.årlig, 20.daglig).gjennomsnitt())
+    }
+
+    @Test
+    fun reflection() {
+        15600.årlig.reflection { årlig, månedlig, daglig, dagligInt ->
+            assertEquals(15600.0, årlig)
+            assertEquals(1300.0, månedlig)
+            assertEquals(60.0, daglig)
+            assertEquals(60, dagligInt)
+        }
     }
 }

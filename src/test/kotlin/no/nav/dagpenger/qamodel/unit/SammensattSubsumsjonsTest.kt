@@ -1,5 +1,6 @@
 package no.nav.dagpenger.qamodel.unit
 
+import no.nav.dagpenger.qamodel.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.qamodel.helpers.bursdag67
 import no.nav.dagpenger.qamodel.helpers.dimisjonsdato
 import no.nav.dagpenger.qamodel.helpers.februar
@@ -9,7 +10,6 @@ import no.nav.dagpenger.qamodel.helpers.sisteDagMedLønn
 import no.nav.dagpenger.qamodel.helpers.subsumsjonRoot
 import no.nav.dagpenger.qamodel.helpers.søknadsdato
 import no.nav.dagpenger.qamodel.helpers.ønsketdato
-import no.nav.dagpenger.qamodel.port.Inntekt.Companion.månedlig
 import no.nav.dagpenger.qamodel.regel.før
 import no.nav.dagpenger.qamodel.subsumsjon.Subsumsjon
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -88,7 +88,7 @@ internal class SammensattSubsumsjonsTest {
     }
 
     @Test
-    fun `Sti`() {
+    fun sti() {
         assertEquals(listOf(comp[1][1]), comp[1][1].sti(comp[1][1]))
         assertEquals(listOf(comp[1], comp[1][1]), comp[1].sti(comp[1][1]))
         assertEquals(listOf(comp), comp.sti(comp))

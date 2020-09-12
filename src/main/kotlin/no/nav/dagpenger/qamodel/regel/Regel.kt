@@ -1,7 +1,7 @@
 package no.nav.dagpenger.qamodel.regel
 
 import no.nav.dagpenger.qamodel.fakta.Faktum
-import no.nav.dagpenger.qamodel.port.Inntekt
+import no.nav.dagpenger.qamodel.fakta.Inntekt
 import no.nav.dagpenger.qamodel.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.qamodel.subsumsjon.Subsumsjon
 import java.time.LocalDate

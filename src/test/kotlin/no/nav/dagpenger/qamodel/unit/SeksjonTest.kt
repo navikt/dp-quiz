@@ -1,5 +1,6 @@
 package no.nav.dagpenger.qamodel.unit
 
+import no.nav.dagpenger.qamodel.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.qamodel.helpers.bursdag67
 import no.nav.dagpenger.qamodel.helpers.dimisjonsdato
 import no.nav.dagpenger.qamodel.helpers.inntekt15G
@@ -11,7 +12,6 @@ import no.nav.dagpenger.qamodel.helpers.sisteDagMedLønn
 import no.nav.dagpenger.qamodel.helpers.subsumsjonRoot
 import no.nav.dagpenger.qamodel.helpers.søknadsdato
 import no.nav.dagpenger.qamodel.helpers.ønsketdato
-import no.nav.dagpenger.qamodel.port.Inntekt.Companion.månedlig
 import no.nav.dagpenger.qamodel.subsumsjon.Subsumsjon
 import no.nav.dagpenger.qamodel.søknad.Seksjon
 import no.nav.dagpenger.qamodel.søknad.Søknad
