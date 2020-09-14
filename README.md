@@ -1,4 +1,4 @@
-# dp-qa-model
+# dp-quiz
 
 ## Komme i gang
 
