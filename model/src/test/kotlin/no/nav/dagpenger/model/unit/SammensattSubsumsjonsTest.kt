@@ -9,13 +9,18 @@ import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.sisteDagMedLønn
 import no.nav.dagpenger.model.helpers.subsumsjonRoot
 import no.nav.dagpenger.model.helpers.søknadsdato
+import no.nav.dagpenger.model.helpers.virkningstidspunkt
 import no.nav.dagpenger.model.helpers.ønsketdato
 import no.nav.dagpenger.model.regel.før
+import no.nav.dagpenger.model.regel.ikkeFør
+import no.nav.dagpenger.model.subsumsjon.Handling
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.alle
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDate
 
 internal class SammensattSubsumsjonsTest {
     private lateinit var comp: Subsumsjon
@@ -112,5 +117,25 @@ internal class SammensattSubsumsjonsTest {
 
         søknadsdato.besvar(1.februar)
         assertEquals(false, comp[0][0].resultat())
+    }
+
+    @Test
+    fun `kan fastsette virkningstidspunkt når nødvendige fakta er ok`() {
+        ønsketdato besvar 2.januar
+        søknadsdato besvar 2.januar
+        sisteDagMedLønn besvar 1.januar
+
+        "virkningstidspunkt er godkjent".alle(
+                ønsketdato ikkeFør sisteDagMedLønn,
+                søknadsdato ikkeFør sisteDagMedLønn,
+                handling = { subsumsjon, resultat ->
+                    if (resultat == true) virkningstidspunkt.besvar(subsumsjon.fakta().first().svar() as LocalDate)
+                    assertEquals(true, resultat)
+                }
+
+        )
+
+        assertEquals(2.januar, virkningstidspunkt.svar())
+
     }
 }

@@ -47,7 +47,7 @@ internal fun subsumsjonRoot(): Subsumsjon {
             ønsketdato før bursdag67,
             sisteDagMedLønn før bursdag67
         ),
-        "kravdato er godkjent".alle(
+        "virkningstidspunkt er godkjent".alle(
             ønsketdato ikkeFør sisteDagMedLønn,
             søknadsdato ikkeFør sisteDagMedLønn,
         )

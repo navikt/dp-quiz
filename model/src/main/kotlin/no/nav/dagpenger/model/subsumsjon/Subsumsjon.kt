@@ -57,8 +57,12 @@ abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
     }
 }
 
-fun String.alle(vararg subsumsjoner: Subsumsjon): Subsumsjon {
-    return AlleSubsumsjon(this, subsumsjoner.toList())
+fun String.alle(vararg subsumsjoner: Subsumsjon, handling: Handling = Handling { _, _ -> }  ): Subsumsjon {
+    return AlleSubsumsjon(this, subsumsjoner.toList(), handling)
+}
+
+fun interface Handling {
+    fun kjør(it: Subsumsjon, resultat: Boolean?)
 }
 
 fun String.minstEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon {
