@@ -1,4 +1,4 @@
-package no.nav.dagpenger.qamodel.fakta
+package no.nav.dagpenger.model.fakta
 
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt

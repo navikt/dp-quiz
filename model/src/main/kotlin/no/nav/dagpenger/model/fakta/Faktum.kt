@@ -1,6 +1,6 @@
-package no.nav.dagpenger.qamodel.fakta
+package no.nav.dagpenger.model.fakta
 
-import no.nav.dagpenger.qamodel.visitor.SubsumsjonVisitor
+import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class Faktum<R : Any>(internal val navn: String) {
     private var tilstand: Tilstand = Ukjent
