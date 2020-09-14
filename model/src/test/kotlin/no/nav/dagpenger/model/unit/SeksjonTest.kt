@@ -1,0 +1,53 @@
+package no.nav.dagpenger.model.unit
+
+import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
+import no.nav.dagpenger.model.helpers.bursdag67
+import no.nav.dagpenger.model.helpers.dimisjonsdato
+import no.nav.dagpenger.model.helpers.inntekt15G
+import no.nav.dagpenger.model.helpers.inntekt3G
+import no.nav.dagpenger.model.helpers.inntektSiste3år
+import no.nav.dagpenger.model.helpers.inntektSisteÅr
+import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.helpers.sisteDagMedLønn
+import no.nav.dagpenger.model.helpers.subsumsjonRoot
+import no.nav.dagpenger.model.helpers.søknadsdato
+import no.nav.dagpenger.model.helpers.ønsketdato
+import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.søknad.Seksjon
+import no.nav.dagpenger.model.søknad.Søknad
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+
+internal class SeksjonTest {
+    private lateinit var comp: Subsumsjon
+    private lateinit var datofakta: Seksjon
+    private lateinit var inntektfakta: Seksjon
+    private lateinit var søknad: Søknad
+
+    @BeforeEach
+    fun setup() {
+        comp = subsumsjonRoot()
+        datofakta = Seksjon(bursdag67, sisteDagMedLønn, ønsketdato, søknadsdato, dimisjonsdato)
+        inntektfakta = Seksjon(inntekt15G, inntekt3G, inntektSiste3år, inntektSisteÅr)
+        søknad = Søknad(datofakta, inntektfakta)
+    }
+
+    @Test
+    fun `finne faktagrupper som skal spørres neste`() {
+        assertEquals(datofakta, søknad nesteSeksjon comp)
+
+        bursdag67 besvar 31.januar
+        sisteDagMedLønn besvar 1.januar
+        assertEquals(datofakta, søknad nesteSeksjon comp)
+
+        inntekt15G besvar 100000.månedlig
+        inntekt3G besvar 1000.månedlig
+        assertEquals(datofakta, søknad nesteSeksjon comp)
+
+        ønsketdato besvar 1.januar
+        søknadsdato besvar 1.januar
+        dimisjonsdato besvar 1.januar
+        assertEquals(inntektfakta, søknad nesteSeksjon comp)
+    }
+}

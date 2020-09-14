@@ -1,4 +1,4 @@
-rootProject.name = "dp-qa-model"
+rootProject.name = "dp-quiz"
 
 pluginManagement {
     repositories {
@@ -7,3 +7,5 @@ pluginManagement {
         maven(url = "https://dl.bintray.com/gradle/gradle-plugins")
     }
 }
+
+include("mediator", "dagpenger", "model")
