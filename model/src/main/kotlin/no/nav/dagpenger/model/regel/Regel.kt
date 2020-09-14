@@ -57,3 +57,21 @@ infix fun Faktum<Inntekt>.minst(terskel: Faktum<Inntekt>): Subsumsjon {
         terskel
     )
 }
+
+fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
+    return EnkelSubsumsjon(
+        object : Regel {
+            override fun konkluder() = !faktum.svar()
+            override fun toString() = "Sjekk at `${faktum.navn}` ikke er sann"
+        }
+    )
+}
+
+fun har(faktum: Faktum<Boolean>): Subsumsjon {
+    return EnkelSubsumsjon(
+        object : Regel {
+            override fun konkluder() = faktum.svar()
+            override fun toString() = "Sjekk at `${faktum.navn}` er sann"
+        }
+    )
+}
