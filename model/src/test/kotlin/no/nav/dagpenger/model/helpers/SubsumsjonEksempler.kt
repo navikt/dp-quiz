@@ -1,12 +1,10 @@
 package no.nav.dagpenger.model.helpers
 
-import no.nav.dagpenger.model.fakta.FaktaRegel
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.SammensattFaktum
 import no.nav.dagpenger.model.fakta.faktum
-import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.minst
@@ -41,9 +39,7 @@ internal fun subsumsjonRoot(): Subsumsjon {
     dimisjonsdato = GrunnleggendeFaktum<LocalDate>("Dimisjonsdato")
 
     virkningstidspunkt = setOf(ønsketdato, søknadsdato, sisteDagMedLønn)
-            .faktum("Hvilken dato vedtaket skal gjelde fra")
-            { fakta -> fakta.maxOf { it.svar() } }
-
+        .faktum("Hvilken dato vedtaket skal gjelde fra", SammensattFaktum<LocalDate>::max)
 
     inntekt3G = GrunnleggendeFaktum<Inntekt>("3G")
     inntekt15G = GrunnleggendeFaktum<Inntekt>("1.5G")

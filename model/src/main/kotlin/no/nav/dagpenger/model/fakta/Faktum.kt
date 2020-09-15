@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
-interface Faktum<R: Any> {
+interface Faktum<R: Comparable<R>> {
     val navn: String
 
     infix fun besvar(r: R): Faktum<R>
@@ -19,3 +19,4 @@ interface Faktum<R: Any> {
 
 fun <R: Comparable<R>> Set<Faktum<R>>.faktum(navn: String, regel: FaktaRegel<R>): Faktum<R> = SammensattFaktum(navn, this, regel)
 fun Set<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
+typealias FaktaRegel <R> = (SammensattFaktum<R>) -> R
