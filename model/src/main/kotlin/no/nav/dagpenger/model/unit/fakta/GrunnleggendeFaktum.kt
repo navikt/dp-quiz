@@ -1,6 +1,6 @@
-package no.nav.dagpenger.model.fakta
+package no.nav.dagpenger.model.unit.fakta
 
-import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
+import no.nav.dagpenger.model.unit.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val navn: String) : Faktum<R> {

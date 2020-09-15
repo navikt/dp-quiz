@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.fakta
+package no.nav.dagpenger.model.unit.fakta
 
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 

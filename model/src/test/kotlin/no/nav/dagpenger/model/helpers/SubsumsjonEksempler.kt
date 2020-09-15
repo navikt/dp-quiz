@@ -1,9 +1,9 @@
 package no.nav.dagpenger.model.helpers
 
-import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
-import no.nav.dagpenger.model.fakta.Inntekt
-import no.nav.dagpenger.model.fakta.faktum
+import no.nav.dagpenger.model.unit.fakta.Faktum
+import no.nav.dagpenger.model.unit.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.unit.fakta.Inntekt
+import no.nav.dagpenger.model.unit.fakta.faktum
 import no.nav.dagpenger.model.regel.MAKS_DATO
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør

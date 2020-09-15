@@ -1,10 +1,10 @@
-package no.nav.dagpenger.model.fakta
+package no.nav.dagpenger.model.unit.fakta
 
-import no.nav.dagpenger.model.fakta.Inntekt.Companion.daglig
-import no.nav.dagpenger.model.fakta.Inntekt.Companion.gjennomsnitt
-import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
-import no.nav.dagpenger.model.fakta.Inntekt.Companion.summer
-import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.unit.fakta.Inntekt.Companion.daglig
+import no.nav.dagpenger.model.unit.fakta.Inntekt.Companion.gjennomsnitt
+import no.nav.dagpenger.model.unit.fakta.Inntekt.Companion.månedlig
+import no.nav.dagpenger.model.unit.fakta.Inntekt.Companion.summer
+import no.nav.dagpenger.model.unit.fakta.Inntekt.Companion.årlig
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse

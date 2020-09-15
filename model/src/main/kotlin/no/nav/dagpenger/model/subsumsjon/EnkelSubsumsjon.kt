@@ -1,9 +1,9 @@
 package no.nav.dagpenger.model.subsumsjon
 
-import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand.*
-import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
-import no.nav.dagpenger.model.fakta.erBesvart
+import no.nav.dagpenger.model.unit.fakta.Faktum
+import no.nav.dagpenger.model.unit.fakta.Faktum.FaktumTilstand.*
+import no.nav.dagpenger.model.unit.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.unit.fakta.erBesvart
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 

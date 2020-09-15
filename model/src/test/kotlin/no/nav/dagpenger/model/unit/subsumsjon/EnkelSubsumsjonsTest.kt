@@ -1,6 +1,6 @@
-package no.nav.dagpenger.model.unit
+package no.nav.dagpenger.model.unit.subsumsjon
 
-import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.unit.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.etter
 import org.junit.jupiter.api.Assertions.assertFalse

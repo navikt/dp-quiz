@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.søknad
 
-import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.unit.fakta.Faktum
+import no.nav.dagpenger.model.unit.fakta.GrunnleggendeFaktum
 
 class Seksjon(vararg fakta: Faktum<*>) : Collection<Faktum<*>> by fakta.toFaktaSet() {
     private val fakta = fakta.toFaktaSet()

@@ -1,24 +1,24 @@
 package no.nav.dagpenger.regelverk
 
-import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
-import no.nav.dagpenger.model.fakta.Inntekt
+import no.nav.dagpenger.model.unit.fakta.Inntekt
+import no.nav.dagpenger.model.unit.fakta.faktum
 import java.time.LocalDate
 
-val fødselsdato = GrunnleggendeFaktum<LocalDate>("Fødselsdato")
-val datoForBortfallPgaAlder = GrunnleggendeFaktum<LocalDate>("Dato for bortfall på grunn av alder")
-val virkningstidspunkt = GrunnleggendeFaktum<LocalDate>("Virkningstidspunkt")
+val fødselsdato = "Fødselsdato".faktum<LocalDate>()
+val datoForBortfallPgaAlder = "Dato for bortfall på grunn av alder".faktum<LocalDate>()
+val virkningstidspunkt = "Virkningstidspunkt".faktum<LocalDate>()
 
-val utestengt = GrunnleggendeFaktum<Boolean>("Er utestengt")
+val utestengt = "Er utestengt".faktum<Boolean>()
 
-val oppholdINorge = GrunnleggendeFaktum<Boolean>("Har opphold i Norge")
+val oppholdINorge = "Har opphold i Norge".faktum<Boolean>()
 
-val sluttårsak = GrunnleggendeFaktum<Sluttårsak>("Sluttårsak")
+val sluttårsak = "Sluttårsak".faktum<Sluttårsak>()
 
-val inntektSiste3år = GrunnleggendeFaktum<Inntekt>("Inntekt siste 3 år")
-val inntektSisteÅr = GrunnleggendeFaktum<Inntekt>("Inntekt siste 12 mnd")
-val dimisjonsdato = GrunnleggendeFaktum<LocalDate>("Dimisjonsdato")
-val inntekt3G = GrunnleggendeFaktum<Inntekt>("3G")
-val inntekt15G = GrunnleggendeFaktum<Inntekt>("1,5G")
+val inntektSiste3år = "Inntekt siste 3 år".faktum<Inntekt>()
+val inntektSisteÅr = "Inntekt siste 12 mnd".faktum<Inntekt>()
+val dimisjonsdato = "Dimisjonsdato".faktum<LocalDate>()
+val inntekt3G = "3G".faktum<Inntekt>()
+val inntekt15G = "1,5G".faktum<Inntekt>()
 
 enum class Sluttårsak {
     SagtOpp,
