@@ -1,7 +1,9 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.visitor.PrettyPrint
+import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 abstract class SammensattSubsumsjon(
     navn: String,
@@ -9,11 +11,15 @@ abstract class SammensattSubsumsjon(
 ) : Subsumsjon(navn) {
     abstract override fun konkluder(): Boolean
 
-    override fun nesteFakta(): Set<Faktum<*>> =
+    override fun nesteFakta(): Set<GrunnleggendeFaktum<*>> =
         subsumsjoner.flatMap { it.nesteFakta() }.toSet().let {
             if (it.isNotEmpty()) return it
             (if (konkluder()) gyldigSubsumsjon else ugyldigSubsumsjon).nesteFakta()
         }
+    override fun accept(visitor: SubsumsjonVisitor) {
+        subsumsjoner.forEach { it.accept(visitor) }
+        super.accept(visitor)
+    }
 
     override fun _sti(subsumsjon: Subsumsjon): List<Subsumsjon> {
         if (this == subsumsjon) return listOf(this)

@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.regel
 
-import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -10,7 +10,7 @@ interface Regel {
     fun konkluder(): Boolean
 }
 
-infix fun Faktum<LocalDate>.etter(tidligsteDato: Faktum<LocalDate>): Subsumsjon {
+infix fun GrunnleggendeFaktum<LocalDate>.etter(tidligsteDato: GrunnleggendeFaktum<LocalDate>): Subsumsjon {
     val senesteDato = this
     return EnkelSubsumsjon(
         object : Regel {
@@ -22,7 +22,7 @@ infix fun Faktum<LocalDate>.etter(tidligsteDato: Faktum<LocalDate>): Subsumsjon 
     )
 }
 
-infix fun Faktum<LocalDate>.før(senesteDato: Faktum<LocalDate>): Subsumsjon {
+infix fun GrunnleggendeFaktum<LocalDate>.før(senesteDato: GrunnleggendeFaktum<LocalDate>): Subsumsjon {
     val tidligsteDato = this
     return EnkelSubsumsjon(
         object : Regel {
@@ -34,7 +34,7 @@ infix fun Faktum<LocalDate>.før(senesteDato: Faktum<LocalDate>): Subsumsjon {
     )
 }
 
-infix fun Faktum<LocalDate>.ikkeFør(senesteDato: Faktum<LocalDate>): Subsumsjon {
+infix fun GrunnleggendeFaktum<LocalDate>.ikkeFør(senesteDato: GrunnleggendeFaktum<LocalDate>): Subsumsjon {
     val tidligsteDato = this
     return EnkelSubsumsjon(
         object : Regel {
@@ -46,7 +46,7 @@ infix fun Faktum<LocalDate>.ikkeFør(senesteDato: Faktum<LocalDate>): Subsumsjon
     )
 }
 
-infix fun Faktum<Inntekt>.minst(terskel: Faktum<Inntekt>): Subsumsjon {
+infix fun GrunnleggendeFaktum<Inntekt>.minst(terskel: GrunnleggendeFaktum<Inntekt>): Subsumsjon {
     val faktisk = this
     return EnkelSubsumsjon(
         object : Regel {
@@ -58,7 +58,7 @@ infix fun Faktum<Inntekt>.minst(terskel: Faktum<Inntekt>): Subsumsjon {
     )
 }
 
-fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
+fun erIkke(faktum: GrunnleggendeFaktum<Boolean>): Subsumsjon {
     return EnkelSubsumsjon(
         object : Regel {
             override fun konkluder() = !faktum.svar()
@@ -67,7 +67,7 @@ fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
     )
 }
 
-fun har(faktum: Faktum<Boolean>): Subsumsjon {
+fun har(faktum: GrunnleggendeFaktum<Boolean>): Subsumsjon {
     return EnkelSubsumsjon(
         object : Regel {
             override fun konkluder() = faktum.svar()

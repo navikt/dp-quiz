@@ -1,13 +1,15 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand.*
+import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.erBesvart
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class EnkelSubsumsjon internal constructor(
     private val regel: Regel,
-    vararg fakta: Faktum<*>
+    vararg fakta: GrunnleggendeFaktum<*>
 ) : Subsumsjon(regel.toString()) {
     private val fakta = fakta.toSet()
 
@@ -16,17 +18,16 @@ class EnkelSubsumsjon internal constructor(
     override fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisit(this, regel)
         fakta.forEach { it.accept(visitor) }
-        acceptGyldig(visitor)
-        acceptUgyldig(visitor)
+        super.accept(visitor)
         visitor.postVisit(this, regel)
     }
 
-    override fun fakta(): Set<Faktum<*>> = fakta
+    override fun fakta(): Set<GrunnleggendeFaktum<*>> = fakta
 
     override fun nesteFakta() = ukjenteFakta().takeIf { it.isNotEmpty() } ?: nesteSubsumsjon().nesteFakta()
 
-    private fun ukjenteFakta() = mutableSetOf<Faktum<*>>().also {
-        fakta.forEach { faktum -> faktum.leggTilHvis(Faktum.FaktumTilstand.Ukjent, it) }
+    private fun ukjenteFakta() = mutableSetOf<GrunnleggendeFaktum<*>>().also {
+        fakta.forEach { faktum -> faktum.leggTilHvis(Ukjent, it) }
     }
 
     private fun nesteSubsumsjon() = if (konkluder()) gyldigSubsumsjon else ugyldigSubsumsjon

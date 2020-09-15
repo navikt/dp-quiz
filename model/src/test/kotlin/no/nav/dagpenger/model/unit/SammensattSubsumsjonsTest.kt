@@ -118,24 +118,4 @@ internal class SammensattSubsumsjonsTest {
         søknadsdato.besvar(1.februar)
         assertEquals(false, comp[0][0].resultat())
     }
-
-    @Test
-    fun `kan fastsette virkningstidspunkt når nødvendige fakta er ok`() {
-        ønsketdato besvar 2.januar
-        søknadsdato besvar 2.januar
-        sisteDagMedLønn besvar 1.januar
-
-        "virkningstidspunkt er godkjent".alle(
-                ønsketdato ikkeFør sisteDagMedLønn,
-                søknadsdato ikkeFør sisteDagMedLønn,
-                handling = { subsumsjon, resultat ->
-                    if (resultat == true) virkningstidspunkt.besvar(subsumsjon.fakta().first().svar() as LocalDate)
-                    assertEquals(true, resultat)
-                }
-
-        )
-
-        assertEquals(2.januar, virkningstidspunkt.svar())
-
-    }
 }

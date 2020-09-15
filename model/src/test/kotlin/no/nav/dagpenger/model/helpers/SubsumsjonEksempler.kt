@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.helpers
 
-import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.før
@@ -13,33 +13,35 @@ import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
 import java.time.LocalDate
 
-internal lateinit var bursdag67: Faktum<LocalDate>
-internal lateinit var søknadsdato: Faktum<LocalDate>
-internal lateinit var ønsketdato: Faktum<LocalDate>
-internal lateinit var sisteDagMedLønn: Faktum<LocalDate>
-internal lateinit var inntektSiste3år: Faktum<Inntekt>
-internal lateinit var inntektSisteÅr: Faktum<Inntekt>
-internal lateinit var dimisjonsdato: Faktum<LocalDate>
+internal lateinit var bursdag67: GrunnleggendeFaktum<LocalDate>
+internal lateinit var søknadsdato: GrunnleggendeFaktum<LocalDate>
+internal lateinit var ønsketdato: GrunnleggendeFaktum<LocalDate>
+internal lateinit var sisteDagMedLønn: GrunnleggendeFaktum<LocalDate>
+internal lateinit var inntektSiste3år: GrunnleggendeFaktum<Inntekt>
+internal lateinit var inntektSisteÅr: GrunnleggendeFaktum<Inntekt>
+internal lateinit var dimisjonsdato: GrunnleggendeFaktum<LocalDate>
 
-internal lateinit var virkningstidspunkt: Faktum<LocalDate>
+internal lateinit var virkningstidspunkt: GrunnleggendeFaktum<LocalDate>
 
-internal lateinit var inntekt3G: Faktum<Inntekt>
-internal lateinit var inntekt15G: Faktum<Inntekt>
+internal lateinit var inntekt3G: GrunnleggendeFaktum<Inntekt>
+internal lateinit var inntekt15G: GrunnleggendeFaktum<Inntekt>
 
 /* ktlint-disable parameter-list-wrapping */
 internal fun subsumsjonRoot(): Subsumsjon {
-    bursdag67 = Faktum<LocalDate>("Datoen du fyller 67")
-    søknadsdato = Faktum<LocalDate>("Datoen du søker om dagpenger")
-    ønsketdato = Faktum<LocalDate>("Datoen du ønsker dagpenger fra")
-    sisteDagMedLønn = Faktum<LocalDate>("Siste dag du mottar lønn")
-    inntektSiste3år = Faktum<Inntekt>("Inntekt siste 36 måneder")
-    inntektSisteÅr = Faktum<Inntekt>("Inntekt siste 12 måneder")
-    dimisjonsdato = Faktum<LocalDate>("Dimisjonsdato")
+    bursdag67 = GrunnleggendeFaktum<LocalDate>("Datoen du fyller 67")
+    søknadsdato = GrunnleggendeFaktum<LocalDate>("Datoen du søker om dagpenger")
+    ønsketdato = GrunnleggendeFaktum<LocalDate>("Datoen du ønsker dagpenger fra")
+    sisteDagMedLønn = GrunnleggendeFaktum<LocalDate>("Siste dag du mottar lønn")
+    inntektSiste3år = GrunnleggendeFaktum<Inntekt>("Inntekt siste 36 måneder")
+    inntektSisteÅr = GrunnleggendeFaktum<Inntekt>("Inntekt siste 12 måneder")
+    dimisjonsdato = GrunnleggendeFaktum<LocalDate>("Dimisjonsdato")
 
-    virkningstidspunkt = Faktum<LocalDate>("Hvilken dato vedtaket skal gjelde fra")
+    virkningstidspunkt = GrunnleggendeFaktum("Virkningstidspunkt")
+    //virkningstidspunkt = Faktum<LocalDate>("Hvilken dato vedtaket skal gjelde fra", ønsketdato, søknadsdato, sisteDagMedLønn){::max}
+    //virkningstidspunkt = setOf(ønsketdato, søknadsdato, sisteDagMedLønn).faktum("Hvilken dato vedtaket skal gjelde fra", FaktaRegel.max)
 
-    inntekt3G = Faktum<Inntekt>("3G")
-    inntekt15G = Faktum<Inntekt>("1.5G")
+    inntekt3G = GrunnleggendeFaktum<Inntekt>("3G")
+    inntekt15G = GrunnleggendeFaktum<Inntekt>("1.5G")
 
     return "inngangsvilkår".alle(
         "under67".alle(

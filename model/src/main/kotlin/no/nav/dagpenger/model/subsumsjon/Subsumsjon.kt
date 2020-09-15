@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
@@ -22,15 +23,11 @@ abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
 
     internal abstract fun _sti(subsumsjon: Subsumsjon): List<Subsumsjon>
 
-    internal open fun accept(visitor: SubsumsjonVisitor) {}
-
-    protected fun acceptGyldig(visitor: SubsumsjonVisitor) {
+    internal open fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisitGyldig(this, gyldigSubsumsjon)
         gyldigSubsumsjon.accept(visitor)
         visitor.postVisitGyldig(this, gyldigSubsumsjon)
-    }
 
-    protected fun acceptUgyldig(visitor: SubsumsjonVisitor) {
         visitor.preVisitUgyldig(this, ugyldigSubsumsjon)
         ugyldigSubsumsjon.accept(visitor)
         visitor.postVisitUgyldig(this, ugyldigSubsumsjon)
@@ -38,11 +35,11 @@ abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
 
     internal abstract fun konkluder(): Boolean
 
-    internal abstract fun fakta(): Set<Faktum<*>>
+    internal abstract fun fakta(): Set<GrunnleggendeFaktum<*>>
 
     internal abstract operator fun get(indeks: Int): Subsumsjon
 
-    internal abstract fun nesteFakta(): Set<Faktum<*>>
+    internal abstract fun nesteFakta(): Set<GrunnleggendeFaktum<*>>
 
     internal val gyldig get() = gyldigSubsumsjon
 

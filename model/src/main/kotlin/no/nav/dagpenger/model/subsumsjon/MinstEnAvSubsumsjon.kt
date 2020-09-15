@@ -10,9 +10,7 @@ class MinstEnAvSubsumsjon internal constructor(
 
     override fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisit(this)
-        subsumsjoner.forEach { it.accept(visitor) }
-        acceptGyldig(visitor)
-        acceptUgyldig(visitor)
+        super.accept(visitor)
         visitor.postVisit(this)
     }
 }

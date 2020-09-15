@@ -1,6 +1,8 @@
 package no.nav.dagpenger.model.visitor
 
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.Faktum.*
+import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
@@ -65,11 +67,11 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     override fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {} // Tom med vilje
 
-    override fun <R : Any> visit(faktum: Faktum<R>, tilstand: Faktum.FaktumTilstand) {
+    override fun <R : Any> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand) {
         melding("Faktum: ${faktum.navn} er ubesvart")
     }
 
-    override fun <R : Any> visit(faktum: Faktum<R>, tilstand: Faktum.FaktumTilstand, svar: R) {
+    override fun <R : Any> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand, svar: R) {
         melding("Faktum: ${faktum.navn} er besvart med $svar")
     }
 
