@@ -1,6 +1,5 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
-import no.nav.dagpenger.model.unit.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.helpers.bursdag67
 import no.nav.dagpenger.model.helpers.dimisjonsdato
 import no.nav.dagpenger.model.helpers.februar
@@ -12,6 +11,7 @@ import no.nav.dagpenger.model.helpers.søknadsdato
 import no.nav.dagpenger.model.helpers.ønsketdato
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.unit.fakta.Inntekt.Companion.månedlig
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

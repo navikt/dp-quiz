@@ -1,6 +1,5 @@
 package no.nav.dagpenger.model.unit.seksjon
 
-import no.nav.dagpenger.model.unit.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.helpers.bursdag67
 import no.nav.dagpenger.model.helpers.dimisjonsdato
 import no.nav.dagpenger.model.helpers.inntekt15G
@@ -16,6 +15,7 @@ import no.nav.dagpenger.model.helpers.ønsketdato
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.unit.fakta.Inntekt.Companion.månedlig
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue

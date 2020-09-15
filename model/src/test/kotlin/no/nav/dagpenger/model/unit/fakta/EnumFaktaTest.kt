@@ -31,6 +31,5 @@ internal class EnumFaktaTest {
         faktum.besvar(SpråkEnum.engelsk)
         assertEquals(true, subsumsjon.resultat())
         println(PrettyPrint(subsumsjon).result())
-
     }
 }

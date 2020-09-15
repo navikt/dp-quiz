@@ -1,14 +1,14 @@
 package no.nav.dagpenger.model.visitor
 
-import no.nav.dagpenger.model.unit.fakta.Faktum
-import no.nav.dagpenger.model.unit.fakta.Faktum.FaktumTilstand
-import no.nav.dagpenger.model.unit.fakta.GrunnleggendeFaktum
-import no.nav.dagpenger.model.unit.fakta.UtledetFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.unit.fakta.Faktum
+import no.nav.dagpenger.model.unit.fakta.Faktum.FaktumTilstand
+import no.nav.dagpenger.model.unit.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.unit.fakta.UtledetFaktum
 
 interface SubsumsjonVisitor {
     fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel) {}

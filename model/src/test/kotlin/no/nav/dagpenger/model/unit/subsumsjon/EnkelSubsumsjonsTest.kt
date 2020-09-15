@@ -1,8 +1,8 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
-import no.nav.dagpenger.model.unit.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.etter
+import no.nav.dagpenger.model.unit.fakta.GrunnleggendeFaktum
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
