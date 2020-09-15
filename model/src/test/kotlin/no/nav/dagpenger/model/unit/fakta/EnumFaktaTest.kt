@@ -2,9 +2,9 @@ package no.nav.dagpenger.model.unit.fakta
 
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.visitor.PrettyPrint
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.assertEquals
 
 internal class EnumFaktaTest {
 

@@ -11,10 +11,10 @@ import no.nav.dagpenger.model.regel.MAKS_DATO
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.PrettyPrint
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.assertEquals
 
 internal class UtledetFaktumTest {
     private lateinit var comp: Subsumsjon

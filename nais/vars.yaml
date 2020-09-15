@@ -1,0 +1,6 @@
+app: dp-quiz
+namespace: teamdagpenger
+team: teamdagpenger
+ingresses:
+  - dp-quiz
+service_user: srvdp-saksbehandler

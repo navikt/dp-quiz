@@ -3,33 +3,20 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    application
     kotlin("jvm") version Kotlin.version
     id(Spotless.spotless) version Spotless.version
-    // id(Shadow.shadow) version Shadow.version
-}
-
-buildscript {
-    repositories {
-        jcenter()
-    }
 }
 
 repositories {
     jcenter()
-    maven(url = "http://packages.confluent.io/maven/")
-    maven("https://jitpack.io")
 }
 
 allprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = Spotless.spotless)
-    tasks.withType<KotlinCompile>().all {
-        kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
 
     dependencies {
-        implementation(kotlin("stdlib"))
+        implementation(kotlin("stdlib-jdk8"))
 
         testRuntimeOnly(Junit5.engine)
         testImplementation(Junit5.api)
@@ -45,31 +32,37 @@ allprojects {
         }
     }
 
-/*tasks.named("compileKotlin") {
-    dependsOn("spotlessCheck")
-}*/
+    tasks {
+        /*tasks.named("compileKotlin") {
+         dependsOn("spotlessCheck")
+         } */
+        withType<KotlinCompile>().all {
+            kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+        }
 
-    tasks.withType<Test> {
-        useJUnitPlatform()
-        testLogging {
-            showExceptions = true
-            showStackTraces = true
-            exceptionFormat = TestExceptionFormat.FULL
-            events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
+        named<KotlinCompile>("compileTestKotlin") {
+            kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+        }
+
+        withType<Test> {
+            useJUnitPlatform()
+            testLogging {
+                showExceptions = true
+                showStackTraces = true
+                exceptionFormat = TestExceptionFormat.FULL
+                events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
+            }
         }
     }
 }
 
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
+
     repositories {
         jcenter()
-        maven("https://jitpack.io")
     }
+
     dependencies {
-        implementation(kotlin("stdlib-jdk8"))
-        testImplementation(kotlin("test"))
-        testImplementation(Junit5.api)
-        testRuntimeOnly(Junit5.engine)
     }
 }
