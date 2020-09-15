@@ -2,12 +2,12 @@ package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
-class SammensattFaktum<R : Comparable<R>> internal constructor(
-        override val navn: String,
-        private val fakta: Set<Faktum<R>>,
-        private val regel: FaktaRegel<R>
+class UtledetFaktum<R : Comparable<R>> internal constructor(
+    override val navn: String,
+    private val fakta: Set<Faktum<R>>,
+    private val regel: FaktaRegel<R>
 ) : Faktum<R> {
-    val max: R get() = fakta.maxOf { it.svar() }
+    internal val max: R get() = fakta.maxOf { it.svar() }
 
     override fun besvar(r: R): Faktum<R> {
         throw IllegalArgumentException("Kan ikke besvare sammensatte faktum")
@@ -17,6 +17,8 @@ class SammensattFaktum<R : Comparable<R>> internal constructor(
         fakta.forEach { it.svar() }
         return regel(this)
     }
+
+    override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> = fakta.flatMap { it.grunnleggendeFakta() }.toSet()
 
     override fun leggTilHvis(kode: Faktum.FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>) {
         this.fakta.forEach { it.leggTilHvis(kode, fakta) }
@@ -31,5 +33,4 @@ class SammensattFaktum<R : Comparable<R>> internal constructor(
         visitor.postVisit(fakta)
         visitor.postVisit(this)
     }
-
 }

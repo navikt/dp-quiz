@@ -41,7 +41,6 @@ abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
 
     internal abstract operator fun get(indeks: Int): Subsumsjon
 
-
     internal val gyldig get() = gyldigSubsumsjon
 
     internal fun gyldig(child: Subsumsjon) {
@@ -55,12 +54,8 @@ abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
     }
 }
 
-fun String.alle(vararg subsumsjoner: Subsumsjon, handling: Handling = Handling { _, _ -> }  ): Subsumsjon {
-    return AlleSubsumsjon(this, subsumsjoner.toList(), handling)
-}
-
-fun interface Handling {
-    fun kjør(it: Subsumsjon, resultat: Boolean?)
+fun String.alle(vararg subsumsjoner: Subsumsjon): Subsumsjon {
+    return AlleSubsumsjon(this, subsumsjoner.toList())
 }
 
 fun String.minstEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon {

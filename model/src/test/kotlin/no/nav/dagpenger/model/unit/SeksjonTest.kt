@@ -11,11 +11,14 @@ import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.sisteDagMedLønn
 import no.nav.dagpenger.model.helpers.subsumsjonRoot
 import no.nav.dagpenger.model.helpers.søknadsdato
+import no.nav.dagpenger.model.helpers.virkningstidspunkt
 import no.nav.dagpenger.model.helpers.ønsketdato
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -49,5 +52,20 @@ internal class SeksjonTest {
         søknadsdato besvar 1.januar
         dimisjonsdato besvar 1.januar
         assertEquals(inntektfakta, søknad nesteSeksjon comp)
+    }
+
+    @Test
+    fun `seksjon støtter utledede faktum`() {
+        assertEquals(Seksjon(ønsketdato, sisteDagMedLønn, søknadsdato).size, Seksjon(virkningstidspunkt).size)
+
+        assertTrue(Seksjon(virkningstidspunkt).contains(ønsketdato))
+        assertFalse(Seksjon(virkningstidspunkt).contains(virkningstidspunkt))
+        assertTrue(Seksjon(virkningstidspunkt).containsAll(listOf(ønsketdato, sisteDagMedLønn, søknadsdato)))
+    }
+
+    @Test
+    fun `søknad er en collection`() {
+        assertEquals(2, søknad.size)
+        assertEquals(9, søknad.flatten().size)
     }
 }

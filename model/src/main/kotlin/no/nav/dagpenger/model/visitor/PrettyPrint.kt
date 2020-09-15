@@ -1,9 +1,9 @@
 package no.nav.dagpenger.model.visitor
 
 import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.Faktum.*
+import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
-import no.nav.dagpenger.model.fakta.SammensattFaktum
+import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
@@ -44,12 +44,12 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         indentTeller++
     }
 
-    override fun <R : Comparable<R>> preVisit(faktum: SammensattFaktum<R>, svar: R) {
-        melding("Faktum: ${faktum.navn} er besvart med $svar")
+    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, svar: R) {
+        melding("Faktum: ${faktum.navn} er utledet til $svar")
         indentTeller++
     }
 
-    override fun <R : Comparable<R>> preVisit(faktum: SammensattFaktum<R>) {
+    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>) {
         melding("Faktum: ${faktum.navn} er ubesvart")
         indentTeller++
     }
@@ -61,7 +61,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         indentTeller--
     }
 
-    override fun <R : Comparable<R>> postVisit(faktum: SammensattFaktum<R>) {
+    override fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>) {
         indentTeller--
     }
 

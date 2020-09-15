@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.fakta
 import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
-class GrunnleggendeFaktum<R : Comparable<R>>(override val navn: String) : Faktum<R> {
+class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val navn: String) : Faktum<R> {
     private var tilstand: Tilstand = Ukjent
     private lateinit var gjeldendeSvar: R
 
@@ -20,6 +20,8 @@ class GrunnleggendeFaktum<R : Comparable<R>>(override val navn: String) : Faktum
         tilstand.accept(this, visitor)
     }
 
+    override fun grunnleggendeFakta() = setOf(this)
+
     override fun leggTilHvis(kode: FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>) {
         if (tilstand.kode == kode) fakta.add(this)
     }
@@ -28,7 +30,8 @@ class GrunnleggendeFaktum<R : Comparable<R>>(override val navn: String) : Faktum
         val kode: FaktumTilstand
 
         fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: SubsumsjonVisitor)
-        fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>): R = throw IllegalStateException("Faktumet er ikke kjent enda")
+        fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>): R =
+            throw IllegalStateException("Faktumet er ikke kjent enda")
     }
 
     private object Ukjent : Tilstand {
@@ -46,7 +49,4 @@ class GrunnleggendeFaktum<R : Comparable<R>>(override val navn: String) : Faktum
 
         override fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>) = faktum.gjeldendeSvar
     }
-
-
 }
-

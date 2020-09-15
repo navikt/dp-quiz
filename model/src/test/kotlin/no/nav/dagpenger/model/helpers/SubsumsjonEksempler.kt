@@ -3,8 +3,8 @@ package no.nav.dagpenger.model.helpers
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
-import no.nav.dagpenger.model.fakta.SammensattFaktum
 import no.nav.dagpenger.model.fakta.faktum
+import no.nav.dagpenger.model.regel.MAKS_DATO
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.minst
@@ -30,19 +30,19 @@ internal lateinit var inntekt15G: GrunnleggendeFaktum<Inntekt>
 
 /* ktlint-disable parameter-list-wrapping */
 internal fun subsumsjonRoot(): Subsumsjon {
-    bursdag67 = GrunnleggendeFaktum<LocalDate>("Datoen du fyller 67")
-    søknadsdato = GrunnleggendeFaktum<LocalDate>("Datoen du søker om dagpenger")
-    ønsketdato = GrunnleggendeFaktum<LocalDate>("Datoen du ønsker dagpenger fra")
-    sisteDagMedLønn = GrunnleggendeFaktum<LocalDate>("Siste dag du mottar lønn")
-    inntektSiste3år = GrunnleggendeFaktum<Inntekt>("Inntekt siste 36 måneder")
-    inntektSisteÅr = GrunnleggendeFaktum<Inntekt>("Inntekt siste 12 måneder")
-    dimisjonsdato = GrunnleggendeFaktum<LocalDate>("Dimisjonsdato")
+    bursdag67 = "Datoen du fyller 67".faktum()
+    søknadsdato = "Datoen du søker om dagpenger".faktum()
+    ønsketdato = "Datoen du ønsker dagpenger fra".faktum()
+    sisteDagMedLønn = "Siste dag du mottar lønn".faktum()
+    inntektSiste3år = "Inntekt siste 36 måneder".faktum()
+    inntektSisteÅr = "Inntekt siste 12 måneder".faktum()
+    dimisjonsdato = "Dimisjonsdato".faktum()
 
     virkningstidspunkt = setOf(ønsketdato, søknadsdato, sisteDagMedLønn)
-        .faktum("Hvilken dato vedtaket skal gjelde fra", SammensattFaktum<LocalDate>::max)
+        .faktum("Hvilken dato vedtaket skal gjelde fra", MAKS_DATO)
 
-    inntekt3G = GrunnleggendeFaktum<Inntekt>("3G")
-    inntekt15G = GrunnleggendeFaktum<Inntekt>("1.5G")
+    inntekt3G = "3G".faktum()
+    inntekt15G = "1.5G".faktum()
 
     return "inngangsvilkår".alle(
         "under67".alle(
