@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class EnkelSubsumsjon internal constructor(
     private val regel: Regel,
-    vararg fakta: GrunnleggendeFaktum<*>
+    vararg fakta: Faktum<*>
 ) : Subsumsjon(regel.toString()) {
     private val fakta = fakta.toSet()
 
@@ -22,7 +22,7 @@ class EnkelSubsumsjon internal constructor(
         visitor.postVisit(this, regel)
     }
 
-    override fun fakta(): Set<GrunnleggendeFaktum<*>> = fakta
+    override fun fakta() = fakta
 
     override fun nesteFakta() = ukjenteFakta().takeIf { it.isNotEmpty() } ?: nesteSubsumsjon().nesteFakta()
 

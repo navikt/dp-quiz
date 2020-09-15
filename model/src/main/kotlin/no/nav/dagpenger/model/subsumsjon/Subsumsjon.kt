@@ -16,6 +16,8 @@ abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
 
     internal abstract fun _resultat(): Boolean?
 
+    abstract fun nesteFakta(): Set<GrunnleggendeFaktum<*>>
+
     abstract fun enkelSubsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon>
 
     fun sti(subsumsjon: Subsumsjon): List<Subsumsjon> =
@@ -35,11 +37,10 @@ abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
 
     internal abstract fun konkluder(): Boolean
 
-    internal abstract fun fakta(): Set<GrunnleggendeFaktum<*>>
+    internal abstract fun fakta(): Set<Faktum<*>>
 
     internal abstract operator fun get(indeks: Int): Subsumsjon
 
-    internal abstract fun nesteFakta(): Set<GrunnleggendeFaktum<*>>
 
     internal val gyldig get() = gyldigSubsumsjon
 

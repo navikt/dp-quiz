@@ -38,10 +38,10 @@ internal class SammensattSubsumsjonsTest {
         sisteDagMedLønn.besvar(1.januar)
         assertEquals(1, comp.nesteFakta().size)
         bursdag67.besvar(31.januar)
-        assertEquals(6, comp.nesteFakta().size)
+        assertEquals(5, comp.nesteFakta().size)
         inntektSisteÅr.besvar(100000.månedlig)
         dimisjonsdato.besvar(1.januar)
-        assertEquals(4, comp.nesteFakta().size)
+        assertEquals(3, comp.nesteFakta().size)
         assertEquals(10, comp.fakta().size)
         println(comp)
     }

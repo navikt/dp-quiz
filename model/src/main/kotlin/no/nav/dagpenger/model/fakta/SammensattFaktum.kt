@@ -1,5 +1,35 @@
 package no.nav.dagpenger.model.fakta
 
-internal class SammensattFaktum<R: Any>(navn: String, set: Set<GrunnleggendeFaktum<R>>, regel: Any) {
+import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
+
+class SammensattFaktum<R : Any> internal constructor(
+        override val navn: String,
+        private val fakta: Set<Faktum<R>>,
+        private val regel: FaktaRegel<R>
+) : Faktum<R> {
+    override fun besvar(r: R): Faktum<R> {
+        throw IllegalArgumentException("Kan ikke besvare sammensatte faktum")
+    }
+
+    override fun svar(): R {
+        fakta.forEach { it.svar() }
+        return regel(fakta)
+    }
+
+    override fun leggTilHvis(kode: Faktum.FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>) {
+        this.fakta.forEach { it.leggTilHvis(kode, fakta) }
+    }
+
+    override fun erBesvart() = fakta.all { it.erBesvart() }
+
+    override fun accept(visitor: SubsumsjonVisitor) {
+        if (erBesvart()) visitor.preVisit(this, svar()) else visitor.preVisit(this)
+        visitor.preVisit(fakta)
+        fakta.forEach { it.accept(visitor) }
+        visitor.postVisit(fakta)
+        visitor.postVisit(this)
+    }
 
 }
+
+typealias FaktaRegel <R> = (Set<Faktum<R>>) -> R

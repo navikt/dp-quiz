@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.visitor
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Faktum.*
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.fakta.SammensattFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
@@ -22,4 +23,9 @@ interface SubsumsjonVisitor {
     fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {}
     fun <R : Any> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand) {}
     fun <R : Any> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand, svar: R) {}
+    fun <R : Any> preVisit(faktum: SammensattFaktum<R>, svar: R)  {}
+    fun <R : Any> preVisit(faktum: SammensattFaktum<R>) {}
+    fun <R : Any> postVisit(faktum: SammensattFaktum<R>) {}
+    fun <R : Any> preVisit(fakta: Set<Faktum<R>>) {}
+    fun <R : Any> postVisit(fakta: Set<Faktum<R>>) {}
 }

@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.visitor
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Faktum.*
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.fakta.SammensattFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
@@ -43,8 +44,28 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         indentTeller++
     }
 
+    override fun <R : Any> preVisit(faktum: SammensattFaktum<R>, svar: R) {
+        melding("Faktum: ${faktum.navn} er besvart med $svar")
+        indentTeller++
+    }
+
+    override fun <R : Any> preVisit(faktum: SammensattFaktum<R>) {
+        melding("Faktum: ${faktum.navn} er ubesvart")
+        indentTeller++
+    }
+
+    override fun <R : Any> preVisit(fakta: Set<Faktum<R>>) {
+    }
+
     override fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {
         indentTeller--
+    }
+
+    override fun <R : Any> postVisit(faktum: SammensattFaktum<R>) {
+        indentTeller--
+    }
+
+    override fun <R : Any> postVisit(fakta: Set<Faktum<R>>) {
     }
 
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {

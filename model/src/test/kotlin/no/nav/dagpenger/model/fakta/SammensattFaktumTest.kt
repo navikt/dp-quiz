@@ -8,10 +8,12 @@ import no.nav.dagpenger.model.helpers.ønsketdato
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import java.lang.IllegalArgumentException
 import java.time.LocalDate
 import kotlin.test.assertEquals
 
-internal class SammensattFaktum {
+internal class SammensattFaktumTest {
     private lateinit var comp: Subsumsjon
 
     @BeforeEach
@@ -21,10 +23,14 @@ internal class SammensattFaktum {
 
     @Test
     fun ` `(){
+        assertThrows<IllegalStateException> {
+            virkningstidspunkt.svar()
+        }
+
         ønsketdato besvar 2.januar
         søknadsdato besvar 2.januar
         sisteDagMedLønn besvar 1.januar
 
-        //assertEquals(virkningstidspunkt, listOf(ønsketdato, søknadsdato, sisteDagMedLønn).max())
+        assertEquals(2.januar, virkningstidspunkt.svar())
     }
 }

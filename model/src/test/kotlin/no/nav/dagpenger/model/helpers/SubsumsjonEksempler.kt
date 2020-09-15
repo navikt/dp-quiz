@@ -1,7 +1,11 @@
 package no.nav.dagpenger.model.helpers
 
+import no.nav.dagpenger.model.fakta.FaktaRegel
+import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
+import no.nav.dagpenger.model.fakta.SammensattFaktum
+import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
@@ -21,7 +25,7 @@ internal lateinit var inntektSiste3år: GrunnleggendeFaktum<Inntekt>
 internal lateinit var inntektSisteÅr: GrunnleggendeFaktum<Inntekt>
 internal lateinit var dimisjonsdato: GrunnleggendeFaktum<LocalDate>
 
-internal lateinit var virkningstidspunkt: GrunnleggendeFaktum<LocalDate>
+internal lateinit var virkningstidspunkt: Faktum<LocalDate>
 
 internal lateinit var inntekt3G: GrunnleggendeFaktum<Inntekt>
 internal lateinit var inntekt15G: GrunnleggendeFaktum<Inntekt>
@@ -36,9 +40,10 @@ internal fun subsumsjonRoot(): Subsumsjon {
     inntektSisteÅr = GrunnleggendeFaktum<Inntekt>("Inntekt siste 12 måneder")
     dimisjonsdato = GrunnleggendeFaktum<LocalDate>("Dimisjonsdato")
 
-    virkningstidspunkt = GrunnleggendeFaktum("Virkningstidspunkt")
-    //virkningstidspunkt = Faktum<LocalDate>("Hvilken dato vedtaket skal gjelde fra", ønsketdato, søknadsdato, sisteDagMedLønn){::max}
-    //virkningstidspunkt = setOf(ønsketdato, søknadsdato, sisteDagMedLønn).faktum("Hvilken dato vedtaket skal gjelde fra", FaktaRegel.max)
+    virkningstidspunkt = setOf(ønsketdato, søknadsdato, sisteDagMedLønn)
+            .faktum("Hvilken dato vedtaket skal gjelde fra")
+            { fakta -> fakta.maxOf { it.svar() } }
+
 
     inntekt3G = GrunnleggendeFaktum<Inntekt>("3G")
     inntekt15G = GrunnleggendeFaktum<Inntekt>("1.5G")
@@ -57,7 +62,7 @@ internal fun subsumsjonRoot(): Subsumsjon {
         "oppfyller krav til minsteinntekt".minstEnAv(
             inntektSiste3år minst inntekt3G,
             inntektSisteÅr minst inntekt15G,
-            dimisjonsdato etter virkningstidspunkt
+            dimisjonsdato før virkningstidspunkt
         ) eller "oppfyller ikke kravet til minsteinntekt".alle(
             ønsketdato ikkeFør sisteDagMedLønn
         )

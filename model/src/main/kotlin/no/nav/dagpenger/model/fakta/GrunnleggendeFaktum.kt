@@ -3,15 +3,9 @@ package no.nav.dagpenger.model.fakta
 import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
-class GrunnleggendeFaktum<R : Any>(internal val navn: String) : Faktum<R> {
+class GrunnleggendeFaktum<R : Any>(override val navn: String) : Faktum<R> {
     private var tilstand: Tilstand = Ukjent
     private lateinit var gjeldendeSvar: R
-
-    companion object {
-        internal fun erBesvart(fakta: Set<GrunnleggendeFaktum<*>>): Boolean {
-            return fakta.all { it.tilstand == Kjent }
-        }
-    }
 
     override infix fun besvar(r: R) = this.apply {
         gjeldendeSvar = r
@@ -20,7 +14,9 @@ class GrunnleggendeFaktum<R : Any>(internal val navn: String) : Faktum<R> {
 
     override fun svar(): R = tilstand.svar(this)
 
-    internal fun accept(visitor: SubsumsjonVisitor) {
+    override fun erBesvart() = tilstand == Kjent
+
+    override fun accept(visitor: SubsumsjonVisitor) {
         tilstand.accept(this, visitor)
     }
 
@@ -50,7 +46,7 @@ class GrunnleggendeFaktum<R : Any>(internal val navn: String) : Faktum<R> {
 
         override fun <R : Any> svar(faktum: GrunnleggendeFaktum<R>) = faktum.gjeldendeSvar
     }
+
+
 }
 
-fun Set<GrunnleggendeFaktum<*>>.erBesvart() = GrunnleggendeFaktum.erBesvart(this)
-//fun <R: Comparable<R>> Set<GrunnleggendeFaktum<R>>.faktum(navn: String, regel: FaktaRegel) = SammensattFaktum(navn, this, regel)
