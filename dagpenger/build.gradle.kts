@@ -1,3 +1,12 @@
+plugins {
+    application
+    id(Shadow.shadow) version Shadow.version
+}
+
+application {
+    mainClassName = "no.nav.dagpenger.AppKt"
+}
+
 dependencies {
     implementation(project(":model"))
 
