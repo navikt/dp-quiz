@@ -54,7 +54,7 @@ infix fun Faktum<Inntekt>.minst(terskel: Faktum<Inntekt>): Subsumsjon {
             override fun konkluder() = faktisk.svar() >= terskel.svar()
             override fun toString() = "Sjekk at '${faktisk.navn}' er minst '${terskel.navn}'"
         },
-        this,
+        faktisk,
         terskel
     )
 }
@@ -66,7 +66,7 @@ infix fun <T : Comparable<T>> Faktum<T>.er(annen: T): Subsumsjon {
             override fun konkluder() = faktum.svar() == annen
             override fun toString() = "Sjekk at `${faktum.navn}` er lik $annen"
         },
-        this
+        faktum
     )
 }
 
