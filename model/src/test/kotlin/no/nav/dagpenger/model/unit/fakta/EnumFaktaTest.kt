@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.unit.fakta
 
+import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.visitor.PrettyPrint
 import org.junit.jupiter.api.Test

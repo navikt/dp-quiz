@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.unit.fakta
 
+import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.helpers.dimisjonsdato
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.sisteDagMedLønn

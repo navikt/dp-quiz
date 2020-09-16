@@ -1,15 +1,15 @@
 package no.nav.dagpenger.model.visitor
 
+import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
+import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
-import no.nav.dagpenger.model.unit.fakta.Faktum
-import no.nav.dagpenger.model.unit.fakta.Faktum.FaktumTilstand
-import no.nav.dagpenger.model.unit.fakta.GrunnleggendeFaktum
-import no.nav.dagpenger.model.unit.fakta.UtledetFaktum
 
 internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     private var result = ""

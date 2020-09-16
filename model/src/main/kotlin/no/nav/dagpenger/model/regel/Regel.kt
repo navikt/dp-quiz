@@ -1,10 +1,10 @@
 package no.nav.dagpenger.model.regel
 
+import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.Inntekt
+import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.unit.fakta.Faktum
-import no.nav.dagpenger.model.unit.fakta.Inntekt
-import no.nav.dagpenger.model.unit.fakta.UtledetFaktum
 import java.time.LocalDate
 
 interface Regel {

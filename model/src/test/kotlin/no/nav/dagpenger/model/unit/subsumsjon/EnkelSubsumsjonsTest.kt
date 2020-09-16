@@ -1,8 +1,8 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
+import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.etter
-import no.nav.dagpenger.model.unit.fakta.GrunnleggendeFaktum
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -18,6 +18,7 @@ internal class EnkelSubsumsjonsTest {
     fun `subsumsjonen kan konkludere`() {
         println(bursdag67 etter søknadsdato)
 
+        // TODO: This should be return null, not throwing exception
         assertThrows<IllegalStateException> { (bursdag67 etter søknadsdato).konkluder() }
         bursdag67.besvar(31.januar)
         søknadsdato.besvar(1.januar)
