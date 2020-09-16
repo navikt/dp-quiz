@@ -9,12 +9,14 @@ abstract class SammensattSubsumsjon(
     navn: String,
     protected open val subsumsjoner: List<Subsumsjon>
 ) : Subsumsjon(navn) {
-    abstract override fun konkluder(): Boolean
 
     override fun nesteFakta(): Set<GrunnleggendeFaktum<*>> =
         subsumsjoner.flatMap { it.nesteFakta() }.toSet().let {
-            if (it.isNotEmpty()) return it
-            (if (konkluder()) gyldigSubsumsjon else ugyldigSubsumsjon).nesteFakta()
+            when (lokaltResultat()) {
+                null -> it
+                true -> gyldigSubsumsjon.nesteFakta()
+                false -> ugyldigSubsumsjon.nesteFakta()
+            }
         }
     override fun accept(visitor: SubsumsjonVisitor) {
         subsumsjoner.forEach { it.accept(visitor) }
@@ -32,9 +34,9 @@ abstract class SammensattSubsumsjon(
         return emptyList()
     }
 
-    override fun _resultat(): Boolean? {
-        if (subsumsjoner.any { it._resultat() == null }) return null
-        return subsumsjoner.all { it._resultat()!! }
+    override fun lokaltResultat(): Boolean? {
+        if (subsumsjoner.any { it.lokaltResultat() == null }) return null
+        return subsumsjoner.all { it.lokaltResultat()!! }
     }
 
     override fun enkelSubsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon> =

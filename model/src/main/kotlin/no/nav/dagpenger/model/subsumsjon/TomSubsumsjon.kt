@@ -5,7 +5,6 @@ import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
-    override fun konkluder() = true
 
     override fun fakta(): Set<GrunnleggendeFaktum<*>> = emptySet()
 
@@ -17,7 +16,7 @@ internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
 
     override fun _sti(subsumsjon: Subsumsjon) = if (this == subsumsjon) listOf(this) else emptyList()
 
-    override fun _resultat() = throw IllegalStateException()
+    override fun lokaltResultat() = throw IllegalStateException()
 
     override operator fun get(indeks: Int) = throw IllegalArgumentException()
 

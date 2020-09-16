@@ -8,13 +8,13 @@ abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
     protected var gyldigSubsumsjon: Subsumsjon = TomSubsumsjon
     protected var ugyldigSubsumsjon: Subsumsjon = TomSubsumsjon
 
-    open fun resultat(): Boolean? = when (_resultat()) {
+    open fun resultat(): Boolean? = when (lokaltResultat()) {
         true -> if (gyldig is TomSubsumsjon) true else gyldig.resultat()
         false -> if (ugyldig is TomSubsumsjon) false else ugyldig.resultat()
         null -> null
     }
 
-    internal abstract fun _resultat(): Boolean?
+    internal abstract fun lokaltResultat(): Boolean?
 
     abstract fun nesteFakta(): Set<GrunnleggendeFaktum<*>>
 
@@ -34,8 +34,6 @@ abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
         ugyldigSubsumsjon.accept(visitor)
         visitor.postVisitUgyldig(this, ugyldigSubsumsjon)
     }
-
-    internal abstract fun konkluder(): Boolean
 
     internal abstract fun fakta(): Set<Faktum<*>>
 

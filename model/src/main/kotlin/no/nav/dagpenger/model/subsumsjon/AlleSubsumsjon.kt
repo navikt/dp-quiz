@@ -6,7 +6,6 @@ class AlleSubsumsjon internal constructor(
     navn: String,
     subsumsjoner: List<Subsumsjon>
 ) : SammensattSubsumsjon(navn, subsumsjoner) {
-    override fun konkluder() = subsumsjoner.all { it.konkluder() }
 
     override fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisit(this)

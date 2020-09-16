@@ -13,8 +13,6 @@ class EnkelSubsumsjon internal constructor(
 ) : Subsumsjon(regel.toString()) {
     private val fakta = fakta.toSet()
 
-    override fun konkluder() = regel.konkluder()
-
     override fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisit(this, regel)
         fakta.forEach { it.accept(visitor) }
@@ -30,11 +28,11 @@ class EnkelSubsumsjon internal constructor(
         fakta.forEach { faktum -> faktum.leggTilHvis(Ukjent, it) }
     }
 
-    private fun nesteSubsumsjon() = if (konkluder()) gyldigSubsumsjon else ugyldigSubsumsjon
+    private fun nesteSubsumsjon() = if (lokaltResultat() == true) gyldigSubsumsjon else ugyldigSubsumsjon
 
     override fun _sti(subsumsjon: Subsumsjon) = if (this == subsumsjon) listOf(this) else emptyList()
 
-    override fun _resultat() = if (fakta.erBesvart()) konkluder() else null
+    override fun lokaltResultat() = if (fakta.erBesvart()) regel.konkluder() else null
 
     override fun enkelSubsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon> =
         if (fakta.any { it in this.fakta }) listOf(this) else emptyList()

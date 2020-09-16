@@ -6,7 +6,6 @@ class MinstEnAvSubsumsjon internal constructor(
     navn: String,
     subsumsjoner: List<Subsumsjon>
 ) : SammensattSubsumsjon(navn, subsumsjoner) {
-    override fun konkluder() = subsumsjoner.any { it.konkluder() }
 
     override fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisit(this)
