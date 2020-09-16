@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.fakta.faktum
 import java.time.LocalDate
 
 val fødselsdato = "Fødselsdato".faktum<LocalDate>()
+val ønsketDato = "Ønsker dagpenger fra dato".faktum<LocalDate>()
 val datoForBortfallPgaAlder = "Dato for bortfall på grunn av alder".faktum<LocalDate>()
 val virkningstidspunkt = "Virkningstidspunkt".faktum<LocalDate>()
 

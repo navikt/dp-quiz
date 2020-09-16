@@ -19,7 +19,8 @@ val inngangsvilkår = "Inngangsvilkår".alle(
     ),
     "reell arbeidssøker".alle(),
     "alder".alle(
-        virkningstidspunkt før datoForBortfallPgaAlder
+        virkningstidspunkt før datoForBortfallPgaAlder,
+        ønsketDato før datoForBortfallPgaAlder
     ),
     erIkke(utestengt)
 )
