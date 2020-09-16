@@ -1,10 +1,9 @@
 package no.nav.dagpenger
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.withTestApplication
+import io.ktor.http.*
+import io.ktor.request.*
+import io.ktor.server.testing.*
 import junit.framework.Assert.assertEquals
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
@@ -20,10 +19,12 @@ internal class ApiTest {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(mapper.readTree(jsonResponse), mapper.readTree(response.content))
         }
-        /* with(handleRequest(HttpMethod.Post, "/faktum")) {
+         with(handleRequest(HttpMethod.Post, "/faktum/"){
+             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+             setBody(jsonBesvar)
+         }) {
              assertEquals(HttpStatusCode.OK, response.status())
-             assertEquals("Random: 7", response.content)
-         }*/
+         }
     }
 }
 
@@ -36,3 +37,9 @@ val jsonResponse = """[
     "navn": "Fødselsdato"
   }
 ]""".trimIndent()
+
+@Language("json")
+val jsonBesvar = """  {
+    "navn": "Fødselsdato",
+    "svar": "2000-12-13"
+  }""".trimIndent()
