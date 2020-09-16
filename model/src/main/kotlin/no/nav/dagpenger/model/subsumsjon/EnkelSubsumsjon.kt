@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.fakta.erBesvart
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
-class EnkelSubsumsjon internal constructor(
+open class EnkelSubsumsjon internal constructor(
     private val regel: Regel,
     vararg fakta: Faktum<*>
 ) : Subsumsjon(regel.toString()) {

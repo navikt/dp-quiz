@@ -1,8 +1,10 @@
 package no.nav.dagpenger.model.regel
 
+import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.UtledetFaktum
+import no.nav.dagpenger.model.fakta.erBesvart
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.time.LocalDate
@@ -30,7 +32,7 @@ infix fun Faktum<LocalDate>.før(senesteDato: Faktum<LocalDate>): Subsumsjon {
             override fun konkluder() = tidligsteDato.svar() < senesteDato.svar()
             override fun toString() = "Sjekk at '${tidligsteDato.navn}' er før '${senesteDato.navn}'"
         },
-        this,
+        tidligsteDato,
         senesteDato
     )
 }
@@ -42,7 +44,7 @@ infix fun Faktum<LocalDate>.ikkeFør(senesteDato: Faktum<LocalDate>): Subsumsjon
             override fun konkluder() = tidligsteDato.svar() >= senesteDato.svar()
             override fun toString() = "Sjekk at '${tidligsteDato.navn}' ikke er før '${senesteDato.navn}'"
         },
-        this,
+        tidligsteDato,
         senesteDato
     )
 }
@@ -88,6 +90,25 @@ fun har(faktum: Faktum<Boolean>): Subsumsjon {
         },
         faktum
     )
+}
+
+infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon {
+    val godkjenning = this
+    val regel = object : Regel {
+        override fun konkluder() = resultat()
+        override fun toString() = "Sjekk at `${dokument.navn}` er ${if (resultat()) "godkjent" else "ikke godkjent" }"
+
+        private fun resultat() = dokument.erBesvart() && (!godkjenning.erBesvart() || godkjenning.svar())
+    }
+    return object : EnkelSubsumsjon(
+        regel,
+        godkjenning,
+        dokument
+    ) {
+        override fun lokaltResultat(): Boolean? {
+            return if (dokument.erBesvart()) regel.konkluder() else null
+        }
+    }
 }
 
 val MAKS_DATO = UtledetFaktum<LocalDate>::max
