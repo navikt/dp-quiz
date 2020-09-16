@@ -29,19 +29,19 @@ internal class UtledetFaktumTest {
     fun `støtte for faktum som utledes fra andre faktum`() {
         assertThrows<IllegalStateException> { virkningstidspunkt.svar() }
 
-        ønsketdato besvar 2.januar
-        søknadsdato besvar 2.januar
+        ønsketdato.besvar(2.januar)
+        søknadsdato.besvar(2.januar)
         assertThrows<IllegalStateException> { virkningstidspunkt.svar() }
-        sisteDagMedLønn besvar 1.januar
+        sisteDagMedLønn.besvar(1.januar)
 
         assertEquals(2.januar, virkningstidspunkt.svar())
     }
 
     @Test
     fun `støtte for faktum som utledes av andre utledede faktum`() {
-        ønsketdato besvar 2.januar
-        søknadsdato besvar 2.januar
-        sisteDagMedLønn besvar 1.januar
+        ønsketdato.besvar(2.januar)
+        søknadsdato.besvar(2.januar)
+        sisteDagMedLønn.besvar(1.januar)
 
         val blurp = setOf(virkningstidspunkt, dimisjonsdato)
             .faktum("Blurp dato", MAKS_DATO)

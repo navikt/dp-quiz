@@ -3,11 +3,14 @@ package no.nav.dagpenger.model.fakta
 import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
-class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val navn: String) : Faktum<R> {
+class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val navn: String, private val roller: MutableSet<Rolle>) : Faktum<R> {
     private var tilstand: Tilstand = Ukjent
     private lateinit var gjeldendeSvar: R
 
-    override infix fun besvar(r: R) = this.apply {
+    init { if (roller.isEmpty()) roller.add(Rolle.søker) }
+
+    override fun besvar(r: R, rolle: Rolle) = this.apply {
+        if (rolle !in roller) throw IllegalAccessError("Rollen $rolle kan ikke besvare faktum")
         gjeldendeSvar = r
         tilstand = Kjent
     }

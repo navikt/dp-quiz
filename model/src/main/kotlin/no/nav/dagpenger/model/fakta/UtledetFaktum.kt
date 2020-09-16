@@ -9,7 +9,7 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
 ) : Faktum<R> {
     internal val max: R get() = fakta.maxOf { it.svar() }
 
-    override fun besvar(r: R): Faktum<R> {
+    override fun besvar(r: R, rolle: Rolle): Faktum<R> {
         throw IllegalArgumentException("Kan ikke besvare sammensatte faktum")
     }
 
