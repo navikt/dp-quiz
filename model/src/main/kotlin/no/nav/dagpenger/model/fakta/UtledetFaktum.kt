@@ -7,6 +7,7 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     private val fakta: Set<Faktum<R>>,
     private val regel: FaktaRegel<R>
 ) : Faktum<R> {
+    override val avhengigeFakta = mutableListOf<Faktum<*>>()
     internal val max: R get() = fakta.maxOf { it.svar() }
 
     override fun besvar(r: R, rolle: Rolle): Faktum<R> {
@@ -25,6 +26,10 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     }
 
     override fun erBesvart() = fakta.all { it.erBesvart() }
+
+    override fun tilUbesvart() {
+        throw IllegalStateException("Kan ikke sette utleda faktum til ubesvart")
+    }
 
     override fun accept(visitor: SubsumsjonVisitor) {
         if (erBesvart()) visitor.preVisit(this, svar()) else visitor.preVisit(this)
