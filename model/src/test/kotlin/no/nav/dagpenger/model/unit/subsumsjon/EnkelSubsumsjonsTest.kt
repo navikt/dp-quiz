@@ -1,6 +1,8 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.fakta.faktum
+import no.nav.dagpenger.model.helpers.DATOEN_DU_FYLLER_67
+import no.nav.dagpenger.model.helpers.DATOEN_DU_SØKER_OM_DAGPENGER
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.etter
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -11,8 +13,8 @@ import java.time.LocalDate
 
 internal class EnkelSubsumsjonsTest {
 
-    val bursdag67 = "Datoen du fyller 67".faktum<LocalDate>()
-    val søknadsdato = "Datoen du søker om dagpenger".faktum<LocalDate>()
+    val bursdag67 = DATOEN_DU_FYLLER_67.faktum<LocalDate>()
+    val søknadsdato = DATOEN_DU_SØKER_OM_DAGPENGER.faktum<LocalDate>()
 
     @Test
     fun `subsumsjonen kan konkludere`() {

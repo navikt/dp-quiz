@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.fakta
 import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
-class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val navn: String, private val roller: MutableSet<Rolle>) : Faktum<R> {
+class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val navn: FaktumNavn, private val roller: MutableSet<Rolle>) : Faktum<R> {
     private var tilstand: Tilstand = Ukjent
     private lateinit var gjeldendeSvar: R
 

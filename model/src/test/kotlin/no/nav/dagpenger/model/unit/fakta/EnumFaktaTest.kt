@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.unit.fakta
 
+import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.visitor.PrettyPrint
@@ -16,7 +17,7 @@ internal class EnumFaktaTest {
     @Test
     fun `enum-fakta`() {
 
-        val faktum = "språk".faktum<SpråkEnum>()
+        val faktum = FaktumNavn(1, "språk").faktum<SpråkEnum>()
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(SpråkEnum.engelsk)
         assertEquals(SpråkEnum.engelsk, faktum.svar())
@@ -24,8 +25,7 @@ internal class EnumFaktaTest {
 
     @Test
     fun `subsumsjon test`() {
-        val faktum = "språk".faktum<SpråkEnum>()
-
+        val faktum = FaktumNavn(1, "språk").faktum<SpråkEnum>()
         val subsumsjon = faktum er SpråkEnum.engelsk
         assertEquals(null, subsumsjon.resultat())
 

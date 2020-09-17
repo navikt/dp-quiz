@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.fakta
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class UtledetFaktum<R : Comparable<R>> internal constructor(
-    override val navn: String,
+    override val navn: FaktumNavn,
     private val fakta: Set<Faktum<R>>,
     private val regel: FaktaRegel<R>
 ) : Faktum<R> {

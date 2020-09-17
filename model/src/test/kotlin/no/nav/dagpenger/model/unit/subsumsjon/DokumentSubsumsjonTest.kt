@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.av
@@ -17,8 +18,8 @@ internal class DokumentSubsumsjonTest {
 
     @BeforeEach
     fun setUp() {
-        dokumentFaktum = "dokument".faktum()
-        dokumentGodkjenning = "saksbehandler godkjenner".faktum()
+        dokumentFaktum = FaktumNavn(1,"dokument").faktum()
+        dokumentGodkjenning = FaktumNavn(2, "saksbehandler godkjenner").faktum()
         subsumsjon = dokumentGodkjenning av dokumentFaktum
         assertEquals(null, subsumsjon.resultat())
         dokumentFaktum.besvar(Dokument(1.januar))

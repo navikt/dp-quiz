@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.unit.fakta
 
+import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.regel.er
 import org.junit.jupiter.api.Test
@@ -11,7 +12,7 @@ internal class IntFaktumTest {
 
     @Test
     fun `Støtte fakta med type int`() {
-        val intFaktum = "int faktum".faktum<Int>()
+        val intFaktum = FaktumNavn(1, "int faktum").faktum<Int>()
         assertThrows<IllegalStateException> { intFaktum.svar() }
         intFaktum.besvar(5)
         assertEquals(5, intFaktum.svar())
@@ -19,7 +20,7 @@ internal class IntFaktumTest {
 
     @Test
     fun `Subsumsjon med fakta av typen int`() {
-        val intFaktum = "int faktum".faktum<Int>()
+        val intFaktum = FaktumNavn(1, "int faktum").faktum<Int>()
         val subsumsjon = intFaktum er 0
         assertEquals(null, subsumsjon.resultat())
         intFaktum.besvar(0)
