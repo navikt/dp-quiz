@@ -1,14 +1,13 @@
 package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
-import java.lang.IllegalStateException
 
 interface Faktum<R : Comparable<R>> {
     val navn: FaktumNavn
     val avhengigeFakta: MutableList<Faktum<*>>
 
     fun besvar(r: R, rolle: Rolle = Rolle.søker): Faktum<R> = this.also {
-        avhengigeFakta.forEach{
+        avhengigeFakta.forEach {
             it.tilUbesvart()
         }
     }

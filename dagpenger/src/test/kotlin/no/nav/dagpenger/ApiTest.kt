@@ -10,12 +10,14 @@ import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
 import org.intellij.lang.annotations.Language
 import org.junit.Assert.assertEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 internal class ApiTest {
     val mapper = ObjectMapper()
 
     @Test
+    @Disabled
     fun testRequest() = withTestApplication({
         søknadApi()
     }) {
