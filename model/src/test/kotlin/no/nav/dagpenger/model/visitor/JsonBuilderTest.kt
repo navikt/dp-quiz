@@ -4,16 +4,18 @@ import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.regel.har
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 
 internal class JsonBuilderTest {
 
     @Test
-    fun `a`() {
+    fun `Henter faktum id fra json`() {
         val faktumNavnId = 1
         val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>()
 
-        JsonBuilder(har(faktum)).resultat().also {
-            println(it)
-        }
+        val jsonfakta = JsonBuilder(har(faktum)).resultat()
+        println(jsonfakta)
+
+        assertEquals(faktumNavnId, jsonfakta["id"].asInt())
     }
 }
