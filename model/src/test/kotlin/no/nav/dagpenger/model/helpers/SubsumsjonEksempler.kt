@@ -1,6 +1,10 @@
 package no.nav.dagpenger.model.helpers
 
-import no.nav.dagpenger.model.fakta.*
+import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.FaktumNavn
+import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.fakta.Inntekt
+import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.regel.MAKS_DATO
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
@@ -25,7 +29,7 @@ internal lateinit var virkningstidspunkt: Faktum<LocalDate>
 internal lateinit var inntekt3G: GrunnleggendeFaktum<Inntekt>
 internal lateinit var inntekt15G: GrunnleggendeFaktum<Inntekt>
 
-val DATOEN_DU_FYLLER_67 = FaktumNavn(1,"Datoen du fyller 67")
+val DATOEN_DU_FYLLER_67 = FaktumNavn(1, "Datoen du fyller 67")
 val DATOEN_DU_SØKER_OM_DAGPENGER = FaktumNavn(2, "Datoen du søker om dagpenger")
 val DATOEN_DU_ØNSKER_DAGPENGER_FRA = FaktumNavn(3, "Datoen du ønsker dagpenger fra")
 val SISTE_DAG_DU_MOTTAR_LØNN = FaktumNavn(4, "Siste dag du mottar lønn")

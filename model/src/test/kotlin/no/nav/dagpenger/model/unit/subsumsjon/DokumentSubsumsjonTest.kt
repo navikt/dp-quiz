@@ -18,7 +18,7 @@ internal class DokumentSubsumsjonTest {
 
     @BeforeEach
     fun setUp() {
-        dokumentFaktum = FaktumNavn(1,"dokument").faktum()
+        dokumentFaktum = FaktumNavn(1, "dokument").faktum()
         dokumentGodkjenning = FaktumNavn(2, "saksbehandler godkjenner").faktum()
         subsumsjon = dokumentGodkjenning av dokumentFaktum
         assertEquals(null, subsumsjon.resultat())

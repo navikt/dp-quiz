@@ -38,10 +38,14 @@ internal class ApiTest {
 val jsonResponse =
     """[
   {
-    "navn": "Ønsker dagpenger fra dato"
+    "navn": {
+      "navn": "Ønsker dagpenger fra dato"
+    }
   },
   {
+      "navn": {
     "navn": "Fødselsdato"
+}
   }
 ]
     """.trimIndent()
