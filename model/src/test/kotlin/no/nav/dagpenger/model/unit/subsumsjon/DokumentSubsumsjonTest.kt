@@ -56,7 +56,5 @@ internal class DokumentSubsumsjonTest {
 
         dokumentGodkjenning.besvar(false)
         assertEquals(false, subsumsjon.resultat())
-
-        dokumentGodkjenning.erBesvart()
     }
 }

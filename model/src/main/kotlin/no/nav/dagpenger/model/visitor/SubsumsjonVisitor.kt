@@ -21,11 +21,11 @@ interface SubsumsjonVisitor {
     fun postVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {}
     fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {}
     fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {}
-    fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand) {}
-    fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand, svar: R) {}
-    fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, svar: R) {}
-    fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>) {}
-    fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>) {}
+    fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand, id: Int) {}
+    fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand, id: Int, svar: R) {}
+    fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, svar: R) {}
+    fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int) {}
+    fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>, id: Int) {}
     fun <R : Comparable<R>> preVisit(fakta: Set<Faktum<R>>) {}
     fun <R : Comparable<R>> postVisit(fakta: Set<Faktum<R>>) {}
 }

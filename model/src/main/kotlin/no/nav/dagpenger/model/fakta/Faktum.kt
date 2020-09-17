@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 interface Faktum<R : Comparable<R>> {
     val navn: FaktumNavn
+    val id: Int get() = navn.id
     val avhengigeFakta: MutableList<Faktum<*>>
 
     fun besvar(r: R, rolle: Rolle = Rolle.søker): Faktum<R> = this.also {
