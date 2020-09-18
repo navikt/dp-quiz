@@ -7,7 +7,7 @@ import mu.KotlinLogging
 val log = KotlinLogging.logger { }
 
 fun main() {
-    embeddedServer(factory = Netty, port = 8080) {
+    embeddedServer(factory = Netty, port = config[port]) {
         søknadApi()
         naisApi()
     }.start(wait = true)

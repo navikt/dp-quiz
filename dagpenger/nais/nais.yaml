@@ -8,7 +8,7 @@ metadata:
     app: {{app}}
 spec:
   image: {{image}}
-  port: 3000
+  port: 8080
   liveness:
     path: /isAlive
     timeout: 1
@@ -30,3 +30,7 @@ spec:
     requests:
       cpu: 300m
       memory: 512Mi
+  env:
+    - name: PORT
+      value: 8080
+

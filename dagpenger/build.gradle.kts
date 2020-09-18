@@ -10,6 +10,8 @@ application {
 dependencies {
     implementation(project(":model"))
 
+    implementation(Konfig.konfig)
+
     implementation(Ktor.server)
     implementation(Ktor.serverNetty)
     implementation(Ktor.library("jackson"))
