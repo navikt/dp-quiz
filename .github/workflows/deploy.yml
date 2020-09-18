@@ -1,4 +1,4 @@
-name: Build and deploy Mediator
+name: Mediator - Build and deploy
 
 on: [push]
 
