@@ -11,7 +11,6 @@ import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.har
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -31,6 +30,7 @@ internal class JsonBuilderTest {
         assertTrue(jsonfakta["root"]["fakta"].isArray)
         assertEquals(1, jsonfakta["root"]["fakta"].size())
         assertEquals(listOf(faktumNavnId), jsonfakta["root"]["fakta"].map { it.asInt() })
+        assertEquals("søker", jsonfakta["fakta"][0]["roller"][0].asText())
     }
 
     @Test

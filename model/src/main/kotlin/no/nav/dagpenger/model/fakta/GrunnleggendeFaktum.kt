@@ -46,14 +46,14 @@ class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val n
     private object Ukjent : Tilstand {
         override val kode = FaktumTilstand.Ukjent
         override fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: SubsumsjonVisitor) {
-            visitor.visit(faktum, kode, faktum.id, faktum.avhengigeFakta)
+            visitor.visit(faktum, kode, faktum.id, faktum.avhengigeFakta, faktum.roller)
         }
     }
 
     private object Kjent : Tilstand {
         override val kode = FaktumTilstand.Kjent
         override fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: SubsumsjonVisitor) {
-            visitor.visit(faktum, Ukjent.kode, faktum.id, faktum.avhengigeFakta, faktum.gjeldendeSvar)
+            visitor.visit(faktum, Ukjent.kode, faktum.id, faktum.avhengigeFakta, faktum.roller, faktum.gjeldendeSvar)
         }
 
         override fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>) = faktum.gjeldendeSvar

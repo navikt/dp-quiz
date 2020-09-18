@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.visitor
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
@@ -82,12 +83,12 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     override fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {} // Tom med vilje
 
-    override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>) {
-        melding("Faktum: ${faktum.navn} er ubesvart")
+    override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>, roller: Set<Rolle>) {
+        melding("Faktum: ${faktum.navn} for roller ${roller.joinToString(" og ") { it.name }} er ubesvart")
     }
 
-    override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>, svar: R) {
-        melding("Faktum: ${faktum.navn} er besvart med $svar")
+    override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>, roller: Set<Rolle>, svar: R) {
+        melding("Faktum: ${faktum.navn} for roller ${roller.joinToString(" og ") { it.name }} er besvart med $svar")
     }
 
     private fun melding(navn: String) {

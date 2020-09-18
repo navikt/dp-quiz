@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
+import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.regel.MAKS_DATO
 import no.nav.dagpenger.model.regel.før
@@ -42,19 +43,19 @@ val INNTEKT15G = FaktumNavn(10, "1.5G")
 
 /* ktlint-disable parameter-list-wrapping */
 internal fun subsumsjonRoot(): Subsumsjon {
-    bursdag67 = DATOEN_DU_FYLLER_67.faktum()
+    bursdag67 = DATOEN_DU_FYLLER_67.faktum(Rolle.nav)
     søknadsdato = DATOEN_DU_SØKER_OM_DAGPENGER.faktum()
     ønsketdato = DATOEN_DU_ØNSKER_DAGPENGER_FRA.faktum()
     sisteDagMedLønn = SISTE_DAG_DU_MOTTAR_LØNN.faktum()
-    inntektSiste3år = INNTEKT_SISTE_36_MÅNEDER.faktum()
-    inntektSisteÅr = INNTEKT_SISTE_12_MÅNEDER.faktum()
+    inntektSiste3år = INNTEKT_SISTE_36_MÅNEDER.faktum(Rolle.saksbehandler, Rolle.nav)
+    inntektSisteÅr = INNTEKT_SISTE_12_MÅNEDER.faktum(Rolle.saksbehandler, Rolle.nav)
     dimisjonsdato = DIMISJONSDATO.faktum()
 
     virkningstidspunkt = setOf(ønsketdato, søknadsdato, sisteDagMedLønn)
         .faktum(VIRKNINGSTIDSPUNKT, MAKS_DATO)
 
-    inntekt3G = INNTEKT3G.faktum()
-    inntekt15G = INNTEKT15G.faktum()
+    inntekt3G = INNTEKT3G.faktum(Rolle.nav)
+    inntekt15G = INNTEKT15G.faktum(Rolle.nav)
 
     return "inngangsvilkår".alle(
         "under67".alle(
