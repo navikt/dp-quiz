@@ -55,4 +55,14 @@ internal class JsonBuilderTest {
         assertEquals(3, json["fakta"][0]["fakta"].size())
         assertEquals(4, json["fakta"][0]["fakta"][2]["id"].asInt())
     }
+
+    @Test
+    fun `a`(){
+        val comp = subsumsjonRoot()
+        val json = JsonBuilder(comp).resultat()
+
+        val string = ObjectMapper().writerWithDefaultPrettyPrinter<ObjectWriter>().writeValueAsString(json)
+        println(string)
+
+    }
 }

@@ -17,9 +17,7 @@ import java.time.LocalDate
 class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     private val mapper = ObjectMapper()
     private var root: ObjectNode = mapper.createObjectNode()
-    private val fakta = mutableListOf<Faktum<*>>()
     private val arrayNodes: MutableList<ArrayNode> = mutableListOf(mapper.createArrayNode())
-    private lateinit var behaviorNodes: ArrayNode
     private val objectNodes: MutableList<ObjectNode> = mutableListOf()
 
     init {
@@ -27,11 +25,7 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     }
 
     override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel) {
-        mapper.createObjectNode().also { subsumsjonNode ->
-            objectNodes.add(0, subsumsjonNode)
-            subsumsjonNode.put("navn", subsumsjon.navn)
-            behaviorNodes = mapper.createArrayNode()
-        }
+        subsumsjonNode(subsumsjon, regel.typeNavn)
     }
 
     override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel) {
@@ -42,11 +36,36 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     }
 
     override fun preVisit(subsumsjon: AlleSubsumsjon) {
-        super.preVisit(subsumsjon)
+        subsumsjonNode(subsumsjon, "alle")
+    }
+
+    private fun subsumsjonNode(subsumsjon: Subsumsjon, regelType: String){
+        mapper.createObjectNode().also { subsumsjonNode ->
+            objectNodes.add(0, subsumsjonNode)
+            arrayNodes.first().add(subsumsjonNode)
+            subsumsjonNode.put("navn", subsumsjon.navn)
+            subsumsjonNode.put("kclass", subsumsjon.javaClass.simpleName)
+            subsumsjonNode.put("regelType", regelType)
+            arrayNodes.add(0, mapper.createArrayNode())
+        }
+    }
+
+    override fun postVisit(subsumsjon: AlleSubsumsjon) {
+        objectNodes.removeAt(0).also {
+            it.set("subsumsjoner", arrayNodes.removeAt(0))
+            root = it
+        }
     }
 
     override fun preVisit(subsumsjon: MinstEnAvSubsumsjon) {
-        super.preVisit(subsumsjon)
+        subsumsjonNode(subsumsjon, "minstEnAv")
+    }
+
+    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {
+        objectNodes.removeAt(0).also {
+            it.set("subsumsjoner", arrayNodes.removeAt(0))
+            root = it
+        }
     }
 
     override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, svar: R) {
@@ -80,14 +99,6 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     override fun <R : Comparable<R>> postVisit(parent: UtledetFaktum<R>, id: Int, children: Set<Faktum<*>>) {
         objectNodes.first().set("fakta", arrayNodes.removeAt(0))
-    }
-
-    override fun postVisit(subsumsjon: AlleSubsumsjon) {
-        super.postVisit(subsumsjon)
-    }
-
-    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {
-        super.postVisit(subsumsjon)
     }
 
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {

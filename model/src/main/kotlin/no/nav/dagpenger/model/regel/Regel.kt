@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.time.LocalDate
 
 interface Regel {
+    val typeNavn: String
     fun konkluder(): Boolean
 }
 
@@ -16,6 +17,7 @@ infix fun Faktum<LocalDate>.etter(tidligsteDato: Faktum<LocalDate>): Subsumsjon 
     val senesteDato = this
     return EnkelSubsumsjon(
         object : Regel {
+            override val typeNavn = this@etter::etter.name
             override fun konkluder() = tidligsteDato.svar() < senesteDato.svar()
             override fun toString() = "Sjekk at '${senesteDato.navn}' er etter '${tidligsteDato.navn}'"
         },
@@ -28,6 +30,7 @@ infix fun Faktum<LocalDate>.før(senesteDato: Faktum<LocalDate>): Subsumsjon {
     val tidligsteDato = this
     return EnkelSubsumsjon(
         object : Regel {
+            override val typeNavn = this@før::før.name
             override fun konkluder() = tidligsteDato.svar() < senesteDato.svar()
             override fun toString() = "Sjekk at '${tidligsteDato.navn}' er før '${senesteDato.navn}'"
         },
@@ -40,6 +43,7 @@ infix fun Faktum<LocalDate>.ikkeFør(senesteDato: Faktum<LocalDate>): Subsumsjon
     val tidligsteDato = this
     return EnkelSubsumsjon(
         object : Regel {
+            override val typeNavn = this@ikkeFør::ikkeFør.name
             override fun konkluder() = tidligsteDato.svar() >= senesteDato.svar()
             override fun toString() = "Sjekk at '${tidligsteDato.navn}' ikke er før '${senesteDato.navn}'"
         },
@@ -52,6 +56,7 @@ infix fun Faktum<Inntekt>.minst(terskel: Faktum<Inntekt>): Subsumsjon {
     val faktisk = this
     return EnkelSubsumsjon(
         object : Regel {
+            override val typeNavn = this@minst::minst.name
             override fun konkluder() = faktisk.svar() >= terskel.svar()
             override fun toString() = "Sjekk at '${faktisk.navn}' er minst '${terskel.navn}'"
         },
@@ -64,6 +69,7 @@ infix fun <T : Comparable<T>> Faktum<T>.er(annen: T): Subsumsjon {
     val faktum = this
     return EnkelSubsumsjon(
         object : Regel {
+            override val typeNavn = this@er::er.name
             override fun konkluder() = faktum.svar() == annen
             override fun toString() = "Sjekk at `${faktum.navn}` er lik $annen"
         },
@@ -74,6 +80,7 @@ infix fun <T : Comparable<T>> Faktum<T>.er(annen: T): Subsumsjon {
 fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
     return EnkelSubsumsjon(
         object : Regel {
+            override val typeNavn = ::erIkke.name
             override fun konkluder() = !faktum.svar()
             override fun toString() = "Sjekk at `${faktum.navn}` ikke er sann"
         },
@@ -84,6 +91,7 @@ fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
 fun har(faktum: Faktum<Boolean>): Subsumsjon {
     return EnkelSubsumsjon(
         object : Regel {
+            override val typeNavn = ::har.name
             override fun konkluder() = faktum.svar()
             override fun toString() = "Sjekk at `${faktum.navn}` er sann"
         },
@@ -94,6 +102,7 @@ fun har(faktum: Faktum<Boolean>): Subsumsjon {
 infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon {
     val godkjenning = this
     val regel = object : Regel {
+        override val typeNavn = this@av::av.name
         override fun konkluder() = resultat()
         override fun toString() = "Sjekk at `${dokument.navn}` er ${if (resultat()) "godkjent" else "ikke godkjent" }"
 
