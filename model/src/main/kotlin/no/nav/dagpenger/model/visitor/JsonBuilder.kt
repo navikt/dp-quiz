@@ -22,8 +22,6 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     private lateinit var behaviorNodes: ArrayNode
     private val objectNodes: MutableList<ObjectNode> = mutableListOf()
 
-
-
     init {
         subsumsjon.accept(this)
     }
@@ -33,7 +31,6 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
             objectNodes.add(0, subsumsjonNode)
             subsumsjonNode.put("navn", subsumsjon.navn)
             behaviorNodes = mapper.createArrayNode()
-
         }
     }
 
@@ -44,7 +41,6 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         }
     }
 
-
     override fun preVisit(subsumsjon: AlleSubsumsjon) {
         super.preVisit(subsumsjon)
     }
@@ -53,20 +49,37 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         super.preVisit(subsumsjon)
     }
 
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, svar: R) {
-        super.preVisit(faktum, id, svar)
+    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, svar: R) {
+        mapper.createObjectNode().also { faktumNode ->
+            objectNodes.add(0, faktumNode)
+            faktumNode.put("navn", faktum.navn.toString())
+            faktumNode.put("id", id)
+            faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
+            faktumNode.putR(svar)
+            arrayNodes.first().add(faktumNode)
+        }
     }
 
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int) {
-        super.preVisit(faktum, id)
+    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>) {
+        mapper.createObjectNode().also { faktumNode ->
+            objectNodes.add(0, faktumNode)
+            faktumNode.put("navn", faktum.navn.toString())
+            faktumNode.put("id", id)
+            faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
+            arrayNodes.first().add(faktumNode)
+        }
     }
 
-    override fun <R : Comparable<R>> preVisit(parent: UtledetFaktum<R>, id: Int, children: Set<Faktum<*>>) {
-        fakta.add(0, parent)
+    override fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>, id: Int) {
+        objectNodes.removeAt(0)
+    }
+
+    override fun <R : Comparable<R>> preVisit(parent: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>) {
+        arrayNodes.add(0, mapper.createArrayNode())
     }
 
     override fun <R : Comparable<R>> postVisit(parent: UtledetFaktum<R>, id: Int, children: Set<Faktum<*>>) {
-        fakta.removeAt(0)
+        objectNodes.first().set("fakta", arrayNodes.removeAt(0))
     }
 
     override fun postVisit(subsumsjon: AlleSubsumsjon) {
@@ -75,10 +88,6 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     override fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {
         super.postVisit(subsumsjon)
-    }
-
-    override fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>, id: Int) {
-        super.postVisit(faktum, id)
     }
 
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
@@ -97,27 +106,30 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         super.postVisitUgyldig(parent, child)
     }
 
-    override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: Int) {
+    override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>) {
         mapper.createObjectNode().also { faktumNode ->
             faktumNode.put("navn", faktum.navn.toString())
             faktumNode.put("id", id)
+            faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
             arrayNodes.first().add(faktumNode)
         }
     }
 
-    override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: Int, svar: R) {
+    override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>, svar: R) {
         mapper.createObjectNode().also { faktumNode ->
             faktumNode.put("navn", faktum.navn.toString())
             faktumNode.put("id", id)
+            faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
             faktumNode.putR(svar)
+            arrayNodes.first().add(faktumNode)
         }
     }
 
     fun resultat() = root
 }
 
-private fun <R: Comparable<R>> ObjectNode.putR(svar: R) {
-    when{
+private fun <R : Comparable<R>> ObjectNode.putR(svar: R) {
+    when {
         svar is Boolean -> this.put("svar", svar)
         svar is Int -> this.put("svar", svar)
         svar is Double -> this.put("svar", svar)
@@ -127,4 +139,3 @@ private fun <R: Comparable<R>> ObjectNode.putR(svar: R) {
         else -> throw IllegalArgumentException("Ukjent datatype")
     }
 }
-

@@ -1,14 +1,18 @@
 package no.nav.dagpenger.model.visitor
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.ObjectWriter
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.faktum
+import no.nav.dagpenger.model.helpers.bursdag67
+import no.nav.dagpenger.model.helpers.subsumsjonRoot
+import no.nav.dagpenger.model.helpers.virkningstidspunkt
+import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.har
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 internal class JsonBuilderTest {
 
@@ -27,7 +31,6 @@ internal class JsonBuilderTest {
     }
 
     @Test
-    @Disabled
     fun `Finner avhengige fakta i json`() {
         val faktumNavnId = 1
         val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>()
@@ -38,6 +41,18 @@ internal class JsonBuilderTest {
         val jsonfakta = JsonBuilder(har(faktum)).resultat()
         println(jsonfakta)
 
-        assertNotNull(jsonfakta["avhengigeFakta"][0])
+        assertEquals(listOf(2), jsonfakta["fakta"][0]["avhengigFakta"].map { it.asInt() })
+    }
+
+    @Test
+    fun `Finner utledet fakta i json`() {
+        subsumsjonRoot()
+        val json = JsonBuilder(virkningstidspunkt etter bursdag67).resultat()
+
+        val string = ObjectMapper().writerWithDefaultPrettyPrinter<ObjectWriter>().writeValueAsString(json)
+        println(string)
+
+        assertEquals(3, json["fakta"][0]["fakta"].size())
+        assertEquals(4, json["fakta"][0]["fakta"][2]["id"].asInt())
     }
 }
