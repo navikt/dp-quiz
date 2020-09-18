@@ -11,8 +11,8 @@ import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 
 interface SubsumsjonVisitor {
-    fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel) {}
-    fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel) {}
+    fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>) {}
+    fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>) {}
     fun preVisit(subsumsjon: AlleSubsumsjon) {}
     fun postVisit(subsumsjon: AlleSubsumsjon) {}
     fun preVisit(subsumsjon: MinstEnAvSubsumsjon) {}
@@ -23,9 +23,7 @@ interface SubsumsjonVisitor {
     fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {}
     fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>) {}
     fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>, svar: R) {}
-    fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, svar: R) {}
-    fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>) {}
-    fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>, id: Int) {}
-    fun <R : Comparable<R>> preVisit(parent: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>) {}
-    fun <R : Comparable<R>> postVisit(parent: UtledetFaktum<R>, id: Int, children: Set<Faktum<*>>) {}
+    fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>, svar: R) {}
+    fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>) {}
+    fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>, id: Int, children: Set<Faktum<*>>) {}
 }

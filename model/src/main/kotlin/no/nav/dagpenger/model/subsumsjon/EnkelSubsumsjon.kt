@@ -14,10 +14,10 @@ open class EnkelSubsumsjon internal constructor(
     private val fakta = fakta.toSet()
 
     override fun accept(visitor: SubsumsjonVisitor) {
-        visitor.preVisit(this, regel)
+        visitor.preVisit(this, regel, fakta)
         fakta.forEach { it.accept(visitor) }
         super.accept(visitor)
-        visitor.postVisit(this, regel)
+        visitor.postVisit(this, regel, fakta)
     }
 
     override fun fakta() = fakta

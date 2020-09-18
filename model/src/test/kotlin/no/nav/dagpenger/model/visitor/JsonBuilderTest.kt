@@ -11,23 +11,26 @@ import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.har
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class JsonBuilderTest {
 
     @Test
-    fun `Lage en subsubsjon med fakta`() {
+    fun `Lage en subsumsjon med fakta`() {
         val faktumNavnId = 1
         val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>()
 
-        val jsonfakta = JsonBuilder(har(faktum)).resultat()
-        println(jsonfakta)
+        val jsonBuilder = JsonBuilder(har(faktum))
+        val jsonfakta = jsonBuilder.resultat()
+        println(jsonBuilder)
 
-        assertFalse(jsonfakta["navn"].isNull)
-        assertTrue(jsonfakta["fakta"].isArray)
-        assertEquals(1, jsonfakta["fakta"].size())
-        assertEquals(faktumNavnId, jsonfakta["fakta"][0]["id"].asInt())
+        assertFalse(jsonfakta["root"]["navn"].isNull)
+        assertFalse(jsonfakta["fakta"].isNull)
+        assertTrue(jsonfakta["root"]["fakta"].isArray)
+        assertEquals(1, jsonfakta["root"]["fakta"].size())
+        assertEquals(listOf(faktumNavnId), jsonfakta["root"]["fakta"].map { it.asInt() })
     }
 
     @Test
@@ -38,8 +41,9 @@ internal class JsonBuilderTest {
 
         avhengigFaktum avhengerAv faktum
 
-        val jsonfakta = JsonBuilder(har(faktum)).resultat()
-        println(jsonfakta)
+        val jsonBuilder = JsonBuilder(har(faktum))
+        val jsonfakta = jsonBuilder.resultat()
+        println(jsonBuilder)
 
         assertEquals(listOf(2), jsonfakta["fakta"][0]["avhengigFakta"].map { it.asInt() })
     }
@@ -47,22 +51,24 @@ internal class JsonBuilderTest {
     @Test
     fun `Finner utledet fakta i json`() {
         subsumsjonRoot()
-        val json = JsonBuilder(virkningstidspunkt etter bursdag67).resultat()
-
-        val string = ObjectMapper().writerWithDefaultPrettyPrinter<ObjectWriter>().writeValueAsString(json)
-        println(string)
+        val jsonBuilder = JsonBuilder(virkningstidspunkt etter bursdag67)
+        val json = jsonBuilder.resultat()
+        println(jsonBuilder)
 
         assertEquals(3, json["fakta"][0]["fakta"].size())
-        assertEquals(4, json["fakta"][0]["fakta"][2]["id"].asInt())
+        assertEquals(listOf(3, 2, 4), json["fakta"][0]["fakta"].map { it.asInt() })
     }
 
     @Test
-    fun `a`(){
+    @Disabled
+    fun `a`() {
         val comp = subsumsjonRoot()
         val json = JsonBuilder(comp).resultat()
 
         val string = ObjectMapper().writerWithDefaultPrettyPrinter<ObjectWriter>().writeValueAsString(json)
         println(string)
 
+        assertEquals(10, json["fakta"].size())
+        assertEquals(2, json["root"]["subsumsjoner"].size())
     }
 }

@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.visitor
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.ObjectWriter
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.fakta.Dokument
@@ -19,36 +20,44 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     private var root: ObjectNode = mapper.createObjectNode()
     private val arrayNodes: MutableList<ArrayNode> = mutableListOf(mapper.createArrayNode())
     private val objectNodes: MutableList<ObjectNode> = mutableListOf()
+    private val faktaNode = mapper.createArrayNode()
+    private val faktumIder = mutableSetOf<Int>()
 
     init {
         subsumsjon.accept(this)
     }
 
-    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel) {
-        subsumsjonNode(subsumsjon, regel.typeNavn)
+    fun resultat() = mapper.createObjectNode().also {
+        it.set("fakta", faktaNode)
+        it.set("root", root)
     }
 
-    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel) {
-        objectNodes.removeAt(0).also {
-            it.set("fakta", arrayNodes.removeAt(0))
-            root = it
+    override fun toString() =
+        ObjectMapper().writerWithDefaultPrettyPrinter<ObjectWriter>().writeValueAsString(resultat())
+
+    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>) {
+        subsumsjonNode(subsumsjon, regel.typeNavn).also { it ->
+            it.set("fakta", mapper.valueToTree(fakta.map { it.id }))
         }
+    }
+
+    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>) {
+        root = objectNodes.removeAt(0)
     }
 
     override fun preVisit(subsumsjon: AlleSubsumsjon) {
         subsumsjonNode(subsumsjon, "alle")
+        arrayNodes.add(0, mapper.createArrayNode())
     }
 
-    private fun subsumsjonNode(subsumsjon: Subsumsjon, regelType: String){
+    private fun subsumsjonNode(subsumsjon: Subsumsjon, regelType: String) =
         mapper.createObjectNode().also { subsumsjonNode ->
             objectNodes.add(0, subsumsjonNode)
             arrayNodes.first().add(subsumsjonNode)
             subsumsjonNode.put("navn", subsumsjon.navn)
             subsumsjonNode.put("kclass", subsumsjon.javaClass.simpleName)
             subsumsjonNode.put("regelType", regelType)
-            arrayNodes.add(0, mapper.createArrayNode())
         }
-    }
 
     override fun postVisit(subsumsjon: AlleSubsumsjon) {
         objectNodes.removeAt(0).also {
@@ -59,6 +68,7 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     override fun preVisit(subsumsjon: MinstEnAvSubsumsjon) {
         subsumsjonNode(subsumsjon, "minstEnAv")
+        arrayNodes.add(0, mapper.createArrayNode())
     }
 
     override fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {
@@ -68,37 +78,29 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         }
     }
 
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, svar: R) {
+    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>, svar: R) {
+        if (id in faktumIder) return
         mapper.createObjectNode().also { faktumNode ->
-            objectNodes.add(0, faktumNode)
             faktumNode.put("navn", faktum.navn.toString())
             faktumNode.put("id", id)
             faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
+            faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
             faktumNode.putR(svar)
-            arrayNodes.first().add(faktumNode)
+            faktaNode.add(faktumNode)
         }
+        faktumIder.add(id)
     }
 
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>) {
+    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>) {
+        if (id in faktumIder) return
         mapper.createObjectNode().also { faktumNode ->
-            objectNodes.add(0, faktumNode)
             faktumNode.put("navn", faktum.navn.toString())
             faktumNode.put("id", id)
             faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
-            arrayNodes.first().add(faktumNode)
+            faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
+            faktaNode.add(faktumNode)
         }
-    }
-
-    override fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>, id: Int) {
-        objectNodes.removeAt(0)
-    }
-
-    override fun <R : Comparable<R>> preVisit(parent: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>) {
-        arrayNodes.add(0, mapper.createArrayNode())
-    }
-
-    override fun <R : Comparable<R>> postVisit(parent: UtledetFaktum<R>, id: Int, children: Set<Faktum<*>>) {
-        objectNodes.first().set("fakta", arrayNodes.removeAt(0))
+        faktumIder.add(id)
     }
 
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
@@ -118,25 +120,27 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     }
 
     override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>) {
+        if (id in faktumIder) return
         mapper.createObjectNode().also { faktumNode ->
             faktumNode.put("navn", faktum.navn.toString())
             faktumNode.put("id", id)
             faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
-            arrayNodes.first().add(faktumNode)
+            faktaNode.add(faktumNode)
         }
+        faktumIder.add(id)
     }
 
     override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>, svar: R) {
+        if (id in faktumIder) return
         mapper.createObjectNode().also { faktumNode ->
             faktumNode.put("navn", faktum.navn.toString())
             faktumNode.put("id", id)
             faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
             faktumNode.putR(svar)
-            arrayNodes.first().add(faktumNode)
+            faktaNode.add(faktumNode)
         }
+        faktumIder.add(id)
     }
-
-    fun resultat() = root
 }
 
 private fun <R : Comparable<R>> ObjectNode.putR(svar: R) {

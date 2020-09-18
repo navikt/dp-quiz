@@ -21,12 +21,12 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     fun result() = result
 
-    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel) {
+    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>) {
         melding("${status(subsumsjon)} $subsumsjon")
         indentTeller++
     }
 
-    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel) {
+    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>) {
         indentTeller--
     }
 
@@ -44,12 +44,12 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         indentTeller++
     }
 
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, svar: R) {
+    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>, svar: R) {
         melding("Faktum: ${faktum.navn} er utledet til $svar")
         indentTeller++
     }
 
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>) {
+    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>) {
         melding("Faktum: ${faktum.navn} er ubesvart")
         indentTeller++
     }
@@ -58,7 +58,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         indentTeller--
     }
 
-    override fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>, id: Int) {
+    override fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>, id: Int, children: Set<Faktum<*>>) {
         indentTeller--
     }
 
