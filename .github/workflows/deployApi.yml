@@ -34,7 +34,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew :dagpenger:build --info
 
-      - name: Login to DockerHub
+      - name: Login to GitHub Package Repository
         uses: docker/login-action@v1
         with:
           registry: docker.pkg.github.com
@@ -53,7 +53,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: nais-yaml
-          path: nais
+          path: dagpenger/nais
 
   deploy-dev:
     name: Deploy to dev
