@@ -22,6 +22,7 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     private val objectNodes: MutableList<ObjectNode> = mutableListOf()
     private val faktaNode = mapper.createArrayNode()
     private val faktumIder = mutableSetOf<Int>()
+    private val subsumsjoner = mutableMapOf<Subsumsjon, ObjectNode>()
 
     init {
         subsumsjon.accept(this)
@@ -33,7 +34,7 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     }
 
     override fun toString() =
-        ObjectMapper().writerWithDefaultPrettyPrinter<ObjectWriter>().writeValueAsString(resultat())
+            ObjectMapper().writerWithDefaultPrettyPrinter<ObjectWriter>().writeValueAsString(resultat())
 
     override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>) {
         subsumsjonNode(subsumsjon, regel.typeNavn).also { it ->
@@ -46,18 +47,23 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     }
 
     override fun preVisit(subsumsjon: AlleSubsumsjon) {
-        subsumsjonNode(subsumsjon, "alle")
-        arrayNodes.add(0, mapper.createArrayNode())
+        subsumsjonNode(subsumsjon, "alle").also { subsumsjonNode ->
+            mapper.createArrayNode().also { arrayNode ->
+                subsumsjonNode.set("subsumsjoner", arrayNode)
+                arrayNodes.add(0, arrayNode)
+            }
+        }
     }
 
     private fun subsumsjonNode(subsumsjon: Subsumsjon, regelType: String) =
-        mapper.createObjectNode().also { subsumsjonNode ->
-            objectNodes.add(0, subsumsjonNode)
-            arrayNodes.first().add(subsumsjonNode)
-            subsumsjonNode.put("navn", subsumsjon.navn)
-            subsumsjonNode.put("kclass", subsumsjon.javaClass.simpleName)
-            subsumsjonNode.put("regelType", regelType)
-        }
+            mapper.createObjectNode().also { subsumsjonNode ->
+                subsumsjoner[subsumsjon] = subsumsjonNode
+                objectNodes.add(0, subsumsjonNode)
+                arrayNodes.first().add(subsumsjonNode)
+                subsumsjonNode.put("navn", subsumsjon.navn)
+                subsumsjonNode.put("kclass", subsumsjon.javaClass.simpleName)
+                subsumsjonNode.put("regelType", regelType)
+            }
 
     override fun postVisit(subsumsjon: AlleSubsumsjon) {
         objectNodes.removeAt(0).also {
@@ -67,13 +73,17 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     }
 
     override fun preVisit(subsumsjon: MinstEnAvSubsumsjon) {
-        subsumsjonNode(subsumsjon, "minstEnAv")
-        arrayNodes.add(0, mapper.createArrayNode())
+        subsumsjonNode(subsumsjon, "minstEnAv").also { subsumsjonNode ->
+            mapper.createArrayNode().also { arrayNode ->
+                subsumsjonNode.set("subsumsjoner", arrayNode)
+                arrayNodes.add(0, arrayNode)
+            }
+        }
     }
 
     override fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {
         objectNodes.removeAt(0).also {
-            it.set("subsumsjoner", arrayNodes.removeAt(0))
+            arrayNodes.removeAt(0)
             root = it
         }
     }
@@ -104,19 +114,25 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     }
 
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
-        super.preVisitGyldig(parent, child)
+        arrayNodes.add(0, mapper.createArrayNode())
     }
 
     override fun postVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
-        super.postVisitGyldig(parent, child)
+        subsumsjoner[child]?.let {
+            objectNodes.first().set("gyldig", it)
+        }
+        arrayNodes.removeAt(0)
     }
 
     override fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
-        super.preVisitUgyldig(parent, child)
+        arrayNodes.add(0, mapper.createArrayNode())
     }
 
     override fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
-        super.postVisitUgyldig(parent, child)
+        subsumsjoner[child]?.let {
+            objectNodes.first().set("ugyldig", it)
+        }
+        arrayNodes.removeAt(0)
     }
 
     override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>) {

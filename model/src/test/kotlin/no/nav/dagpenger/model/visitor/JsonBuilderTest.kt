@@ -60,8 +60,7 @@ internal class JsonBuilderTest {
     }
 
     @Test
-    @Disabled
-    fun `a`() {
+    fun `Komplekse subsumsjoner i json`() {
         val comp = subsumsjonRoot()
         val json = JsonBuilder(comp).resultat()
 
@@ -70,5 +69,7 @@ internal class JsonBuilderTest {
 
         assertEquals(10, json["fakta"].size())
         assertEquals(2, json["root"]["subsumsjoner"].size())
+        assertEquals(3, json["root"]["gyldig"]["subsumsjoner"].size())
+        assertEquals(listOf(5, 9), json["root"]["gyldig"]["subsumsjoner"][0]["fakta"].map { it.asInt() })
     }
 }
