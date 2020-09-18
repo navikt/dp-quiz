@@ -9,5 +9,6 @@ val log = KotlinLogging.logger { }
 fun main() {
     embeddedServer(factory = Netty, port = 8080) {
         søknadApi()
+        naisApi()
     }.start(wait = true)
 }
