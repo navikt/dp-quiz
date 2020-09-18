@@ -3,6 +3,8 @@ package no.nav.dagpenger.model.visitor
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.regel.har
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -11,14 +13,17 @@ import kotlin.test.assertNotNull
 internal class JsonBuilderTest {
 
     @Test
-    fun `Finner faktum-id i json`() {
+    fun `Lage en subsubsjon med fakta`() {
         val faktumNavnId = 1
         val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>()
 
         val jsonfakta = JsonBuilder(har(faktum)).resultat()
         println(jsonfakta)
 
-        assertEquals(faktumNavnId, jsonfakta["id"].asInt())
+        assertFalse(jsonfakta["navn"].isNull)
+        assertTrue(jsonfakta["fakta"].isArray)
+        assertEquals(1, jsonfakta["fakta"].size())
+        assertEquals(faktumNavnId, jsonfakta["fakta"][0]["id"].asInt())
     }
 
     @Test

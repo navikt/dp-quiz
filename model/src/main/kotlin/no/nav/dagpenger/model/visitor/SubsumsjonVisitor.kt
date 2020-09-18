@@ -26,6 +26,6 @@ interface SubsumsjonVisitor {
     fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, svar: R) {}
     fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int) {}
     fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>, id: Int) {}
-    fun <R : Comparable<R>> preVisit(fakta: Set<Faktum<R>>) {}
-    fun <R : Comparable<R>> postVisit(fakta: Set<Faktum<R>>) {}
+    fun <R : Comparable<R>> preVisit(parent: UtledetFaktum<R>, id: Int, children: Set<Faktum<*>>) {}
+    fun <R : Comparable<R>> postVisit(parent: UtledetFaktum<R>, id: Int, children: Set<Faktum<*>>) {}
 }

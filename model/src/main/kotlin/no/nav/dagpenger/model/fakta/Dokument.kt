@@ -6,4 +6,8 @@ class Dokument(private val opplastingsdato: LocalDate) : Comparable<Dokument> {
     override fun compareTo(other: Dokument): Int {
         return this.opplastingsdato.compareTo(other.opplastingsdato)
     }
+
+    internal fun toUrl(): String {
+        return "http:"
+    }
 }

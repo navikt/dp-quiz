@@ -54,18 +54,12 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         indentTeller++
     }
 
-    override fun <R : Comparable<R>> preVisit(fakta: Set<Faktum<R>>) {
-    }
-
     override fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {
         indentTeller--
     }
 
     override fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>, id: Int) {
         indentTeller--
-    }
-
-    override fun <R : Comparable<R>> postVisit(fakta: Set<Faktum<R>>) {
     }
 
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {

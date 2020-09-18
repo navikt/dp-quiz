@@ -33,9 +33,9 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
 
     override fun accept(visitor: SubsumsjonVisitor) {
         if (erBesvart()) visitor.preVisit(this, id, svar()) else visitor.preVisit(this, id)
-        visitor.preVisit(fakta)
+        visitor.preVisit(this, id, fakta)
         fakta.forEach { it.accept(visitor) }
-        visitor.postVisit(fakta)
+        visitor.postVisit(this, id, fakta)
         visitor.postVisit(this, id)
     }
 }
