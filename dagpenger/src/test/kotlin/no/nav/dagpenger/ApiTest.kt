@@ -10,20 +10,21 @@ import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
 import org.intellij.lang.annotations.Language
 import org.junit.Assert.assertEquals
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 internal class ApiTest {
     val mapper = ObjectMapper()
 
     @Test
-    @Disabled
     fun testRequest() = withTestApplication({
         søknadApi()
     }) {
         with(handleRequest(HttpMethod.Get, "/neste-fakta")) {
             assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(mapper.readTree(jsonResponse), mapper.readTree(response.content))
+            mapper.readTree(response.content).let {
+                assertEquals(2, it.size())
+                assertEquals(2, it[0]["id"].asInt())
+            }
         }
         with(
             handleRequest(HttpMethod.Post, "/faktum/") {
@@ -34,23 +35,19 @@ internal class ApiTest {
             assertEquals(HttpStatusCode.OK, response.status())
         }
     }
-}
 
-@Language("json")
-val jsonResponse =
-    """[
-  {
-    "navn": {
-      "navn": "Ønsker dagpenger fra dato"
+    @Test
+    fun testSubsumsjontre() = withTestApplication({
+        søknadApi()
+    }) {
+        with(handleRequest(HttpMethod.Get, "/subsumsjoner")) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            mapper.readTree(response.content).let {
+                assertEquals(7, it["root"]["subsumsjoner"].size())
+            }
+        }
     }
-  },
-  {
-      "navn": {
-    "navn": "Fødselsdato"
 }
-  }
-]
-    """.trimIndent()
 
 @Language("json")
 val jsonBesvar =

@@ -11,6 +11,7 @@ import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
+import no.nav.dagpenger.model.visitor.JsonBuilder
 import no.nav.dagpenger.regelverk.inngangsvilkår
 import no.nav.dagpenger.regelverk.ønsketDato
 import no.nav.dagpenger.søknad.datamaskin
@@ -30,6 +31,9 @@ fun Application.søknadApi() {
         get("/neste-fakta") {
             val seksjon = datamaskin.nesteSeksjon(inngangsvilkår)
             call.respond(seksjon)
+        }
+        get("/subsumsjoner") {
+            call.respond(JsonBuilder(inngangsvilkår).resultat())
         }
         post("/faktum") {
             val svar = call.receive<Svar>()
