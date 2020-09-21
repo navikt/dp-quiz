@@ -30,7 +30,7 @@ class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val n
         tilstand.accept(this, visitor)
     }
 
-    override fun accept(visitor: SøknadVisitor){
+    override fun accept(visitor: SøknadVisitor) {
         tilstand.accept(this, visitor)
     }
 

@@ -73,11 +73,11 @@ class SøknadJsonBuilder(private val søknad: Søknad) : SøknadVisitor {
     }
 
     override fun <R : Comparable<R>> visit(
-            faktum: GrunnleggendeFaktum<R>,
-            tilstand: Faktum.FaktumTilstand,
-            id: Int,
-            avhengigeFakta: List<Faktum<*>>,
-            roller: Set<Rolle>
+        faktum: GrunnleggendeFaktum<R>,
+        tilstand: Faktum.FaktumTilstand,
+        id: Int,
+        avhengigeFakta: List<Faktum<*>>,
+        roller: Set<Rolle>
     ) {
         if (id in faktumIder) return
         faktumNode(faktum, id, avhengigeFakta).also { faktumNode ->
@@ -87,12 +87,12 @@ class SøknadJsonBuilder(private val søknad: Søknad) : SøknadVisitor {
     }
 
     override fun <R : Comparable<R>> visit(
-            faktum: GrunnleggendeFaktum<R>,
-            tilstand: Faktum.FaktumTilstand,
-            id: Int,
-            avhengigeFakta: List<Faktum<*>>,
-            roller: Set<Rolle>,
-            svar: R
+        faktum: GrunnleggendeFaktum<R>,
+        tilstand: Faktum.FaktumTilstand,
+        id: Int,
+        avhengigeFakta: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        svar: R
     ) {
         if (id in faktumIder) return
         faktumNode(faktum, id, avhengigeFakta).also { faktumNode ->
@@ -103,17 +103,17 @@ class SøknadJsonBuilder(private val søknad: Søknad) : SøknadVisitor {
     }
 
     private fun <R : Comparable<R>> faktumNode(
-            faktum: Faktum<R>,
-            id: Int,
-            avhengigeFakta: List<Faktum<*>>
+        faktum: Faktum<R>,
+        id: Int,
+        avhengigeFakta: List<Faktum<*>>
     ) =
-            mapper.createObjectNode().also { faktumNode ->
-                faktumNode.put("navn", faktum.navn.toString())
-                faktumNode.put("id", id)
-                faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
-                faktaNode.add(faktumNode)
-            }
-    }
+        mapper.createObjectNode().also { faktumNode ->
+            faktumNode.put("navn", faktum.navn.toString())
+            faktumNode.put("id", id)
+            faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
+            faktaNode.add(faktumNode)
+        }
+}
 
 private fun <R : Comparable<R>> ObjectNode.putR(svar: R) {
     when {
@@ -126,4 +126,3 @@ private fun <R : Comparable<R>> ObjectNode.putR(svar: R) {
         else -> throw IllegalArgumentException("Ukjent datatype")
     }
 }
-

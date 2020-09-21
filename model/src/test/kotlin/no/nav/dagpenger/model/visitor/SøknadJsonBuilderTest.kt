@@ -23,7 +23,7 @@ class SøknadJsonBuilderTest {
     }
 
     @Test
-    fun `Lage søknad med seksjoner`(){
+    fun `Lage søknad med seksjoner`() {
 
         val faktum = FaktumNavn(1, "navn").faktum<Boolean>()
         val faktum2 = FaktumNavn(2, "navn2").faktum<Boolean>()

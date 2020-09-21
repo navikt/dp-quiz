@@ -69,7 +69,6 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
             subsumsjonNode.put("regelType", regelType)
         }
 
-
     override fun preVisit(subsumsjon: MinstEnAvSubsumsjon) {
         subsumsjonNode(subsumsjon, "minstEnAv")
         arrayNodes.add(0, mapper.createArrayNode())
@@ -120,7 +119,6 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         }
         faktumIder.add(id)
     }
-
 
     override fun <R : Comparable<R>> visit(
         faktum: GrunnleggendeFaktum<R>,
