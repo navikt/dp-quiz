@@ -71,9 +71,8 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
 
     override fun preVisit(subsumsjon: MinstEnAvSubsumsjon) {
-        subsumsjonNode(subsumsjon, "minstEnAv").also { subsumsjonNode ->
-            arrayNodes.add(0, mapper.createArrayNode())
-        }
+        subsumsjonNode(subsumsjon, "minstEnAv")
+        arrayNodes.add(0, mapper.createArrayNode())
     }
 
     override fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {
@@ -81,23 +80,6 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
             it.set("subsumsjoner", arrayNodes.removeAt(0))
             rootSubsumsjon = it
         }
-    }
-
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>, svar: R) {
-        if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta).also { faktumNode ->
-            faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
-            faktumNode.putR(svar)
-        }
-        faktumIder.add(id)
-    }
-
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>) {
-        if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta).also { faktumNode ->
-            faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
-        }
-        faktumIder.add(id)
     }
 
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
@@ -121,6 +103,24 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         }
         arrayNodes.removeAt(0)
     }
+
+    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>, svar: R) {
+        if (id in faktumIder) return
+        faktumNode(faktum, id, avhengigeFakta).also { faktumNode ->
+            faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
+            faktumNode.putR(svar)
+        }
+        faktumIder.add(id)
+    }
+
+    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>) {
+        if (id in faktumIder) return
+        faktumNode(faktum, id, avhengigeFakta).also { faktumNode ->
+            faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
+        }
+        faktumIder.add(id)
+    }
+
 
     override fun <R : Comparable<R>> visit(
         faktum: GrunnleggendeFaktum<R>,

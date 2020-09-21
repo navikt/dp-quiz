@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
+import no.nav.dagpenger.model.visitor.SøknadVisitor
 
 class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val navn: FaktumNavn, private val roller: MutableSet<Rolle>) : Faktum<R> {
     override val avhengigeFakta: MutableList<Faktum<*>> = mutableListOf()
@@ -29,6 +30,10 @@ class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val n
         tilstand.accept(this, visitor)
     }
 
+    override fun accept(visitor: SøknadVisitor){
+        tilstand.accept(this, visitor)
+    }
+
     override fun grunnleggendeFakta() = setOf(this)
 
     override fun leggTilHvis(kode: FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>) {
@@ -39,6 +44,7 @@ class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val n
         val kode: FaktumTilstand
 
         fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: SubsumsjonVisitor)
+        fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: SøknadVisitor)
         fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>): R =
             throw IllegalStateException("Faktumet er ikke kjent enda")
     }
@@ -48,11 +54,19 @@ class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val n
         override fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: SubsumsjonVisitor) {
             visitor.visit(faktum, kode, faktum.id, faktum.avhengigeFakta, faktum.roller)
         }
+
+        override fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: SøknadVisitor) {
+            visitor.visit(faktum, kode, faktum.id, faktum.avhengigeFakta, faktum.roller)
+        }
     }
 
     private object Kjent : Tilstand {
         override val kode = FaktumTilstand.Kjent
         override fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: SubsumsjonVisitor) {
+            visitor.visit(faktum, Ukjent.kode, faktum.id, faktum.avhengigeFakta, faktum.roller, faktum.gjeldendeSvar)
+        }
+
+        override fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: SøknadVisitor) {
             visitor.visit(faktum, Ukjent.kode, faktum.id, faktum.avhengigeFakta, faktum.roller, faktum.gjeldendeSvar)
         }
 

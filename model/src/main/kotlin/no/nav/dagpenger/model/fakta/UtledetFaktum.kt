@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
+import no.nav.dagpenger.model.visitor.SøknadVisitor
 
 class UtledetFaktum<R : Comparable<R>> internal constructor(
     override val navn: FaktumNavn,
@@ -32,6 +33,13 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     }
 
     override fun accept(visitor: SubsumsjonVisitor) {
+        if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, fakta, svar())
+        else visitor.preVisit(this, id, avhengigeFakta, fakta)
+        fakta.forEach { it.accept(visitor) }
+        visitor.postVisit(this, id, fakta)
+    }
+
+    override fun accept(visitor: SøknadVisitor) {
         if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, fakta, svar())
         else visitor.preVisit(this, id, avhengigeFakta, fakta)
         fakta.forEach { it.accept(visitor) }

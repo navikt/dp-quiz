@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-internal class JsonBuilderTest {
+internal class SubsumsjonJsonBuilderTest {
 
     @Test
     fun `Lage en subsumsjon med fakta`() {

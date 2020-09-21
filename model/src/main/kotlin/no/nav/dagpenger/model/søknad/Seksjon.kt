@@ -12,7 +12,8 @@ class Seksjon(vararg fakta: Faktum<*>) : Collection<Faktum<*>> by fakta.toFaktaS
     }
 
     fun accept(visitor: SøknadVisitor) {
-        visitor.preVisit(this)
+        visitor.preVisit(this, fakta)
+        fakta.forEach { it.accept(visitor) }
         visitor.postVisit(this)
     }
 }
