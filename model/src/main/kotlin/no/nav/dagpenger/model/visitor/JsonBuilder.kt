@@ -48,11 +48,14 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     }
 
     override fun preVisit(subsumsjon: AlleSubsumsjon) {
-        subsumsjonNode(subsumsjon, "alle").also { subsumsjonNode ->
-            mapper.createArrayNode().also { arrayNode ->
-                subsumsjonNode.set("subsumsjoner", arrayNode)
-                arrayNodes.add(0, arrayNode)
-            }
+        subsumsjonNode(subsumsjon, "alle")
+        arrayNodes.add(0, mapper.createArrayNode())
+    }
+
+    override fun postVisit(subsumsjon: AlleSubsumsjon) {
+        objectNodes.removeAt(0).also {
+            it.set("subsumsjoner", arrayNodes.removeAt(0))
+            rootSubsumsjon = it
         }
     }
 
@@ -66,25 +69,16 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : SubsumsjonVisitor {
             subsumsjonNode.put("regelType", regelType)
         }
 
-    override fun postVisit(subsumsjon: AlleSubsumsjon) {
-        objectNodes.removeAt(0).also {
-            it.set("subsumsjoner", arrayNodes.removeAt(0))
-            rootSubsumsjon = it
-        }
-    }
 
     override fun preVisit(subsumsjon: MinstEnAvSubsumsjon) {
         subsumsjonNode(subsumsjon, "minstEnAv").also { subsumsjonNode ->
-            mapper.createArrayNode().also { arrayNode ->
-                subsumsjonNode.set("subsumsjoner", arrayNode)
-                arrayNodes.add(0, arrayNode)
-            }
+            arrayNodes.add(0, mapper.createArrayNode())
         }
     }
 
     override fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {
         objectNodes.removeAt(0).also {
-            arrayNodes.removeAt(0)
+            it.set("subsumsjoner", arrayNodes.removeAt(0))
             rootSubsumsjon = it
         }
     }
