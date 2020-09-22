@@ -2,9 +2,10 @@ package no.nav.dagpenger.model.søknad
 
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 
-class Seksjon(vararg fakta: Faktum<*>) : Collection<Faktum<*>> by fakta.toFaktaSet() {
+class Seksjon(private val rolle: Rolle, vararg fakta: Faktum<*>) : Collection<Faktum<*>> by fakta.toFaktaSet() {
     private val fakta = fakta.toFaktaSet()
 
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>): Boolean {
@@ -12,9 +13,9 @@ class Seksjon(vararg fakta: Faktum<*>) : Collection<Faktum<*>> by fakta.toFaktaS
     }
 
     fun accept(visitor: SøknadVisitor) {
-        visitor.preVisit(this, fakta)
+        visitor.preVisit(this, rolle, fakta)
         fakta.forEach { it.accept(visitor) }
-        visitor.postVisit(this)
+        visitor.postVisit(this, rolle)
     }
 }
 

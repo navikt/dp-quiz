@@ -32,8 +32,8 @@ internal class SeksjonTest {
     @BeforeEach
     fun setup() {
         comp = subsumsjonRoot()
-        datofakta = Seksjon(bursdag67, sisteDagMedLønn, ønsketdato, søknadsdato, dimisjonsdato)
-        inntektfakta = Seksjon(inntekt15G, inntekt3G, inntektSiste3år, inntektSisteÅr)
+        datofakta = Seksjon(Rolle.søker, bursdag67, sisteDagMedLønn, ønsketdato, søknadsdato, dimisjonsdato)
+        inntektfakta = Seksjon(Rolle.søker, inntekt15G, inntekt3G, inntektSiste3år, inntektSisteÅr)
         søknad = Søknad(datofakta, inntektfakta)
     }
 
@@ -57,11 +57,11 @@ internal class SeksjonTest {
 
     @Test
     fun `seksjon støtter utledede faktum`() {
-        assertEquals(Seksjon(ønsketdato, sisteDagMedLønn, søknadsdato).size, Seksjon(virkningstidspunkt).size)
+        assertEquals(Seksjon(Rolle.søker, ønsketdato, sisteDagMedLønn, søknadsdato).size, Seksjon(Rolle.søker, virkningstidspunkt).size)
 
-        assertTrue(Seksjon(virkningstidspunkt).contains(ønsketdato))
-        assertFalse(Seksjon(virkningstidspunkt).contains(virkningstidspunkt))
-        assertTrue(Seksjon(virkningstidspunkt).containsAll(listOf(ønsketdato, sisteDagMedLønn, søknadsdato)))
+        assertTrue(Seksjon(Rolle.søker, virkningstidspunkt).contains(ønsketdato))
+        assertFalse(Seksjon(Rolle.søker, virkningstidspunkt).contains(virkningstidspunkt))
+        assertTrue(Seksjon(Rolle.søker, virkningstidspunkt).containsAll(listOf(ønsketdato, sisteDagMedLønn, søknadsdato)))
     }
 
     @Test

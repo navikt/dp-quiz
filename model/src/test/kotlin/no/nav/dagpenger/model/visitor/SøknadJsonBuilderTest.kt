@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.visitor
 
 import no.nav.dagpenger.model.fakta.FaktumNavn
+import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
@@ -27,8 +28,8 @@ class SøknadJsonBuilderTest {
 
         val faktum = FaktumNavn(1, "navn").faktum<Boolean>()
         val faktum2 = FaktumNavn(2, "navn2").faktum<Boolean>()
-        val seksjon = Seksjon(faktum)
-        val seksjon2 = Seksjon(faktum, faktum2)
+        val seksjon = Seksjon(Rolle.søker, faktum)
+        val seksjon2 = Seksjon(Rolle.søker, faktum, faktum2)
         val søknad = Søknad(seksjon, seksjon2)
 
         val jsonBuilder = SøknadJsonBuilder(søknad)
@@ -37,6 +38,7 @@ class SøknadJsonBuilderTest {
         println(jsonBuilder)
 
         assertEquals(2, json["root"]["seksjoner"].size())
+        assertEquals(Rolle.søker.name, json["root"]["seksjoner"][0]["rolle"].asText())
         assertEquals(2, json["fakta"].size())
         assertEquals(listOf(1, 2), json["root"]["seksjoner"][1]["fakta"].map { it.asInt() })
     }

@@ -24,8 +24,8 @@ interface FaktumVisitor {
 interface SøknadVisitor : FaktumVisitor {
     fun preVisit(søknad: Søknad, uuid: UUID) {}
     fun postVisit(søknad: Søknad) {}
-    fun preVisit(seksjon: Seksjon, fakta: Set<Faktum<*>>) {}
-    fun postVisit(seksjon: Seksjon) {}
+    fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {}
+    fun postVisit(seksjon: Seksjon, rolle: Rolle) {}
 }
 
 interface SubsumsjonVisitor : FaktumVisitor {

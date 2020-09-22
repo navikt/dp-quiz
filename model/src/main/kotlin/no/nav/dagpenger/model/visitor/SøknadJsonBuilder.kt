@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.visitor
 
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import java.util.UUID
@@ -25,9 +26,10 @@ class SøknadJsonBuilder(private val søknad: Søknad) : FaktumJsonBuilder(), S�
         }
     }
 
-    override fun preVisit(seksjon: Seksjon, fakta: Set<Faktum<*>>) {
+    override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
         mapper.createObjectNode().also { seksjonNode ->
             arrayNodes.first().add(seksjonNode)
+            seksjonNode.put("rolle", rolle.name)
             seksjonNode.set("fakta", mapper.valueToTree(fakta.map { it.id }))
         }
     }
