@@ -24,7 +24,7 @@ open class EnkelSubsumsjon internal constructor(
 
     override fun nesteFakta() = ukjenteFakta().takeIf { it.isNotEmpty() } ?: nesteSubsumsjon().nesteFakta()
 
-    private fun ukjenteFakta() = mutableSetOf<GrunnleggendeFaktum<*>>().also {
+    open internal fun ukjenteFakta(): Set<GrunnleggendeFaktum<*>> = mutableSetOf<GrunnleggendeFaktum<*>>().also {
         fakta.forEach { faktum -> faktum.leggTilHvis(Ukjent, it) }
     }
 
@@ -32,7 +32,7 @@ open class EnkelSubsumsjon internal constructor(
 
     override fun _sti(subsumsjon: Subsumsjon) = if (this == subsumsjon) listOf(this) else emptyList()
 
-    override fun lokaltResultat() = if (fakta.erBesvart()) regel.konkluder() else null
+    override fun lokaltResultat() = if (fakta.erBesvart()) regel.resultat() else null
 
     override fun enkelSubsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon> =
         if (fakta.any { it in this.fakta }) listOf(this) else emptyList()

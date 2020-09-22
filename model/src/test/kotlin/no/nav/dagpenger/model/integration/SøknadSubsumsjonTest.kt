@@ -3,7 +3,9 @@ package no.nav.dagpenger.model.integration
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumNavn
+import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
+import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.helpers.desember
@@ -41,6 +43,7 @@ internal class SøknadSubsumsjonTest {
     private lateinit var f10Boolean: Faktum<Boolean>
     private lateinit var f11Dokument: Faktum<Dokument>
     private lateinit var f12Boolean: Faktum<Boolean>
+    private lateinit var f13Boolean: Faktum<Boolean>
 
     private lateinit var seksjon1: Seksjon
     private lateinit var seksjon2: Seksjon
@@ -68,19 +71,21 @@ internal class SøknadSubsumsjonTest {
         f11Dokument = FaktumNavn(11, "f11").faktum(Rolle.søker)
         f12Boolean = FaktumNavn(12, "f12").faktum(Rolle.saksbehandler)
         f12Boolean avhengerAv f11Dokument
+        f13Boolean = FaktumNavn(13, "f13").faktum(Rolle.saksbehandler)
+
 
         seksjon1 = Seksjon(Rolle.nav, f1Boolean, f2Dato)
         seksjon2 = Seksjon(Rolle.nav, f6Inntekt, f7Inntekt, f8Inntekt, f9Inntekt)
         seksjon3 = Seksjon(Rolle.søker, f3Dato, f4Dato, f5Dato, f_3_4_5Dato)
         seksjon4 = Seksjon(Rolle.søker, f10Boolean, f11Dokument)
-        seksjon5 = Seksjon(Rolle.saksbehandler, f6Inntekt, f7Inntekt, f12Boolean)
+        seksjon5 = Seksjon(Rolle.saksbehandler, f6Inntekt, f7Inntekt, f12Boolean, f13Boolean)
 
         søknad = Søknad(seksjon1, seksjon2, seksjon3, seksjon4, seksjon5)
 
         val minstEnSubsumsjon = "minstEnSubsumsjon".minstEnAv(
             f6Inntekt minst f8Inntekt,
             f7Inntekt minst f9Inntekt
-        )
+        ) så (f13Boolean er true)
 
         rootSubsumsjon = "rootSubsumsjon".alle(
             f1Boolean er true,
@@ -113,15 +118,31 @@ internal class SøknadSubsumsjonTest {
 
         f10Boolean.besvar(false)
         rootSubsumsjon.nesteFakta().also { fakta ->
-            assertEquals(2, fakta.size)
-            assertEquals(setOf(f11Dokument, f12Boolean), fakta)
+            assertEquals(1, fakta.size)
+            assertEquals(setOf(f11Dokument), fakta)
         }
 
         f11Dokument.besvar(Dokument(4.januar))
 
         rootSubsumsjon.nesteFakta().also { fakta ->
-            // assertEquals(4, fakta.size)
-            // assertEquals(setOf(f6Inntekt, f7Inntekt, f8Inntekt, f9Inntekt), fakta)
+            assertEquals(4, fakta.size)
+            assertEquals(setOf(f6Inntekt, f7Inntekt, f8Inntekt, f9Inntekt), fakta)
+        }
+
+        f6Inntekt.besvar(20000.månedlig, Rolle.nav)
+        f7Inntekt.besvar(10000.månedlig, Rolle.nav)
+        f8Inntekt.besvar(5000.månedlig, Rolle.nav)
+        f9Inntekt.besvar(2500.månedlig, Rolle.nav)
+
+        rootSubsumsjon.nesteFakta().also { fakta ->
+            assertEquals(1, fakta.size)
+            assertEquals(setOf(f13Boolean), fakta)
+        }
+
+        f13Boolean.besvar(true, Rolle.saksbehandler)
+        rootSubsumsjon.nesteFakta().also { fakta ->
+            assertEquals(0, fakta.size)
+            assertEquals(emptySet<GrunnleggendeFaktum<*>>(), fakta)
         }
     }
 }
