@@ -36,4 +36,6 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
         fakta.forEach { it.accept(visitor) }
         visitor.postVisit(this, id, fakta)
     }
+
+    override fun toString() = navn.toString()
 }

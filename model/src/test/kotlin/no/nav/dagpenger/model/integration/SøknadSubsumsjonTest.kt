@@ -6,6 +6,8 @@ import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
+import no.nav.dagpenger.model.helpers.desember
+import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.MAKS_DATO
 import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.regel.er
@@ -90,8 +92,36 @@ internal class SøknadSubsumsjonTest {
     @Test
     fun `Søknad subsumsjon integrasjonstest`() {
         rootSubsumsjon.nesteFakta().also { fakta ->
-
             assertEquals(5, fakta.size)
+            assertEquals(setOf(f1Boolean, f2Dato, f3Dato, f4Dato, f5Dato), fakta)
+        }
+
+        f1Boolean.besvar(true, Rolle.nav)
+        f2Dato.besvar(31.desember, Rolle.nav)
+        rootSubsumsjon.nesteFakta().also { fakta ->
+            assertEquals(3, fakta.size)
+            assertEquals(setOf(f3Dato, f4Dato, f5Dato), fakta)
+        }
+
+        f3Dato.besvar(1.januar)
+        f4Dato.besvar(2.januar)
+        f5Dato.besvar(3.januar)
+        rootSubsumsjon.nesteFakta().also { fakta ->
+            assertEquals(1, fakta.size)
+            assertEquals(setOf(f10Boolean), fakta)
+        }
+
+        f10Boolean.besvar(false)
+        rootSubsumsjon.nesteFakta().also { fakta ->
+            assertEquals(2, fakta.size)
+            assertEquals(setOf(f11Dokument, f12Boolean), fakta)
+        }
+
+        f11Dokument.besvar(Dokument(4.januar))
+
+        rootSubsumsjon.nesteFakta().also { fakta ->
+            // assertEquals(4, fakta.size)
+            // assertEquals(setOf(f6Inntekt, f7Inntekt, f8Inntekt, f9Inntekt), fakta)
         }
     }
 }

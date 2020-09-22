@@ -35,6 +35,8 @@ class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val n
         if (tilstand.kode == kode) fakta.add(this)
     }
 
+    override fun toString() = navn.toString()
+
     private interface Tilstand {
         val kode: FaktumTilstand
 
