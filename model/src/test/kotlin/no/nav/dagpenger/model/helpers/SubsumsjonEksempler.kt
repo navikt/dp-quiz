@@ -15,6 +15,7 @@ import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.eller
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
+import no.nav.dagpenger.model.søknad.Seksjon
 import java.time.LocalDate
 
 internal lateinit var bursdag67: GrunnleggendeFaktum<LocalDate>
@@ -41,6 +42,8 @@ val VIRKNINGSTIDSPUNKT = FaktumNavn(8, "Hvilken dato vedtaket skal gjelde fra")
 val INNTEKT3G = FaktumNavn(9, "3G")
 val INNTEKT15G = FaktumNavn(10, "1.5G")
 
+private lateinit var seksjon: Seksjon
+
 /* ktlint-disable parameter-list-wrapping */
 internal fun subsumsjonRoot(): Subsumsjon {
     bursdag67 = DATOEN_DU_FYLLER_67.faktum()
@@ -56,6 +59,7 @@ internal fun subsumsjonRoot(): Subsumsjon {
 
     inntekt3G = INNTEKT3G.faktum()
     inntekt15G = INNTEKT15G.faktum()
+    seksjon = Seksjon(Rolle.søker, bursdag67, søknadsdato, ønsketdato, sisteDagMedLønn, inntekt15G, inntekt3G, inntektSiste3år, inntektSisteÅr, sisteDagMedLønn, dimisjonsdato, virkningstidspunkt)
 
     return "inngangsvilkår".alle(
         "under67".alle(

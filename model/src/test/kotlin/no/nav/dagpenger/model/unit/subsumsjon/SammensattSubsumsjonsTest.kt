@@ -1,7 +1,6 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
-import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.helpers.bursdag67
 import no.nav.dagpenger.model.helpers.dimisjonsdato
 import no.nav.dagpenger.model.helpers.februar
@@ -33,9 +32,9 @@ internal class SammensattSubsumsjonsTest {
         søknadsdato.besvar(2.januar)
         sisteDagMedLønn.besvar(1.januar)
         assertEquals(1, comp.nesteFakta().size)
-        bursdag67.besvar(31.januar, Rolle.nav)
+        bursdag67.besvar(31.januar)
         assertEquals(5, comp.nesteFakta().size)
-        inntektSisteÅr.besvar(100000.månedlig, Rolle.saksbehandler)
+        inntektSisteÅr.besvar(100000.månedlig)
         dimisjonsdato.besvar(1.januar)
         assertEquals(3, comp.nesteFakta().size)
         assertEquals(10, comp.fakta().size)
@@ -108,7 +107,7 @@ internal class SammensattSubsumsjonsTest {
         assertEquals(null, comp[0][0].resultat())
 
         søknadsdato.besvar(1.januar)
-        bursdag67.besvar(31.januar, Rolle.nav)
+        bursdag67.besvar(31.januar)
         assertEquals(true, comp[0][0].resultat())
 
         søknadsdato.besvar(1.februar)

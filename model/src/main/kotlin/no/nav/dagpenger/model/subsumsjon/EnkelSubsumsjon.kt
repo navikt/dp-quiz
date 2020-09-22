@@ -24,7 +24,7 @@ open class EnkelSubsumsjon internal constructor(
 
     override fun nesteFakta() = ukjenteFakta().takeIf { it.isNotEmpty() } ?: nesteSubsumsjon().nesteFakta()
 
-    open internal fun ukjenteFakta(): Set<GrunnleggendeFaktum<*>> = mutableSetOf<GrunnleggendeFaktum<*>>().also {
+    internal open fun ukjenteFakta(): Set<GrunnleggendeFaktum<*>> = mutableSetOf<GrunnleggendeFaktum<*>>().also {
         fakta.forEach { faktum -> faktum.leggTilHvis(Ukjent, it) }
     }
 

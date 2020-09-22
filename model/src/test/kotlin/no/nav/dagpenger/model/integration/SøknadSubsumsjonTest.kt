@@ -73,7 +73,6 @@ internal class SøknadSubsumsjonTest {
         f12Boolean avhengerAv f11Dokument
         f13Boolean = FaktumNavn(13, "f13").faktum()
 
-
         seksjon1 = Seksjon(Rolle.nav, f1Boolean, f2Dato)
         seksjon2 = Seksjon(Rolle.nav, f6Inntekt, f7Inntekt, f8Inntekt, f9Inntekt)
         seksjon3 = Seksjon(Rolle.søker, f3Dato, f4Dato, f5Dato, f_3_4_5Dato)

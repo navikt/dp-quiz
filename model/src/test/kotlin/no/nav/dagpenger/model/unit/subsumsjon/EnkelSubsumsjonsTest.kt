@@ -1,10 +1,12 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
+import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.helpers.DATOEN_DU_FYLLER_67
 import no.nav.dagpenger.model.helpers.DATOEN_DU_SØKER_OM_DAGPENGER
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.etter
+import no.nav.dagpenger.model.søknad.Seksjon
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -15,6 +17,7 @@ internal class EnkelSubsumsjonsTest {
 
     val bursdag67 = DATOEN_DU_FYLLER_67.faktum<LocalDate>()
     val søknadsdato = DATOEN_DU_SØKER_OM_DAGPENGER.faktum<LocalDate>()
+    val seksjon = Seksjon(Rolle.søker, bursdag67, søknadsdato)
 
     @Test
     fun `subsumsjonen kan konkludere`() {

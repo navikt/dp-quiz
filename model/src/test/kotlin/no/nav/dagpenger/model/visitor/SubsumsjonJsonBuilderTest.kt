@@ -3,12 +3,14 @@ package no.nav.dagpenger.model.visitor
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.ObjectWriter
 import no.nav.dagpenger.model.fakta.FaktumNavn
+import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.helpers.bursdag67
 import no.nav.dagpenger.model.helpers.subsumsjonRoot
 import no.nav.dagpenger.model.helpers.virkningstidspunkt
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.har
+import no.nav.dagpenger.model.søknad.Seksjon
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -20,6 +22,7 @@ internal class SubsumsjonJsonBuilderTest {
     fun `Lage en subsumsjon med fakta`() {
         val faktumNavnId = 1
         val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>()
+        val seksjon = Seksjon(Rolle.søker, faktum)
 
         val jsonBuilder = JsonBuilder(har(faktum))
         val jsonfakta = jsonBuilder.resultat()

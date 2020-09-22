@@ -41,12 +41,12 @@ internal class SeksjonTest {
     fun `finne faktagrupper som skal spørres neste`() {
         assertEquals(datofakta, søknad nesteSeksjon comp)
 
-        bursdag67.besvar(31.januar, Rolle.nav)
+        bursdag67.besvar(31.januar)
         sisteDagMedLønn.besvar(1.januar)
         assertEquals(datofakta, søknad nesteSeksjon comp)
 
-        inntekt15G.besvar(100000.månedlig, Rolle.nav)
-        inntekt3G.besvar(1000.månedlig, Rolle.nav)
+        inntekt15G.besvar(100000.månedlig)
+        inntekt3G.besvar(1000.månedlig)
         assertEquals(datofakta, søknad nesteSeksjon comp)
 
         ønsketdato.besvar(1.januar)

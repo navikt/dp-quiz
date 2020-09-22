@@ -119,7 +119,6 @@ infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon {
         override fun ukjenteFakta(): Set<GrunnleggendeFaktum<*>> =
             if (dokument.erBesvart()) emptySet() else dokument.grunnleggendeFakta()
     }
-
 }
 
 val MAKS_DATO = UtledetFaktum<LocalDate>::max

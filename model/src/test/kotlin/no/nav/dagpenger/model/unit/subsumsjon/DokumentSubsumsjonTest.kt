@@ -3,10 +3,12 @@ package no.nav.dagpenger.model.unit.subsumsjon
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumNavn
+import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.søknad.Seksjon
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -16,11 +18,13 @@ internal class DokumentSubsumsjonTest {
     private lateinit var dokumentFaktum: Faktum<Dokument>
     private lateinit var dokumentGodkjenning: Faktum<Boolean>
     private lateinit var subsumsjon: Subsumsjon
+    private lateinit var seksjon: Seksjon
 
     @BeforeEach
     fun setUp() {
         dokumentFaktum = FaktumNavn(1, "dokument").faktum()
         dokumentGodkjenning = FaktumNavn(2, "saksbehandler godkjenner").faktum()
+        seksjon = Seksjon(Rolle.søker, dokumentFaktum, dokumentGodkjenning)
         dokumentGodkjenning avhengerAv dokumentFaktum
         subsumsjon = dokumentGodkjenning av dokumentFaktum
         assertEquals(null, subsumsjon.resultat())

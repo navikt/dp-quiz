@@ -1,8 +1,10 @@
 package no.nav.dagpenger.model.unit.fakta
 
 import no.nav.dagpenger.model.fakta.FaktumNavn
+import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.visitor.PrettyPrint
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -18,6 +20,7 @@ internal class EnumFaktaTest {
     fun `enum-fakta`() {
 
         val faktum = FaktumNavn(1, "språk").faktum<SpråkEnum>()
+        val seksjon = Seksjon(Rolle.søker, faktum)
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(SpråkEnum.engelsk)
         assertEquals(SpråkEnum.engelsk, faktum.svar())
@@ -27,6 +30,8 @@ internal class EnumFaktaTest {
     fun `subsumsjon test`() {
         val faktum = FaktumNavn(1, "språk").faktum<SpråkEnum>()
         val subsumsjon = faktum er SpråkEnum.engelsk
+        val seksjon = Seksjon(Rolle.søker, faktum)
+
         assertEquals(null, subsumsjon.resultat())
 
         faktum.besvar(SpråkEnum.engelsk)
