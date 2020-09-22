@@ -1,7 +1,6 @@
 package no.nav.dagpenger.model.fakta
 
-import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
-import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 class UtledetFaktum<R : Comparable<R>> internal constructor(
     override val navn: FaktumNavn,
@@ -31,15 +30,7 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     override fun tilUbesvart() {
         throw IllegalStateException("Kan ikke sette utleda faktum til ubesvart")
     }
-
-    override fun accept(visitor: SubsumsjonVisitor) {
-        if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, fakta, svar())
-        else visitor.preVisit(this, id, avhengigeFakta, fakta)
-        fakta.forEach { it.accept(visitor) }
-        visitor.postVisit(this, id, fakta)
-    }
-
-    override fun accept(visitor: SøknadVisitor) {
+    override fun accept(visitor: FaktumVisitor) {
         if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, fakta, svar())
         else visitor.preVisit(this, id, avhengigeFakta, fakta)
         fakta.forEach { it.accept(visitor) }

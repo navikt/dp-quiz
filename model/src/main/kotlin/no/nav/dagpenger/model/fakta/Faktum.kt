@@ -1,7 +1,6 @@
 package no.nav.dagpenger.model.fakta
 
-import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
-import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 interface Faktum<R : Comparable<R>> {
     val navn: FaktumNavn
@@ -18,8 +17,7 @@ interface Faktum<R : Comparable<R>> {
     fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>>
     fun leggTilHvis(kode: FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>)
     fun erBesvart(): Boolean
-    fun accept(visitor: SubsumsjonVisitor)
-    fun accept(visitor: SøknadVisitor)
+    fun accept(visitor: FaktumVisitor)
     infix fun avhengerAv(other: Faktum<*>) {
         other.avhengigeFakta.add(this)
     }
