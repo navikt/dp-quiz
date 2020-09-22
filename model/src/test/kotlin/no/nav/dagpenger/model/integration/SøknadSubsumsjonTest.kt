@@ -57,21 +57,21 @@ internal class SøknadSubsumsjonTest {
 
     @BeforeEach
     fun setUp() {
-        f1Boolean = FaktumNavn(1, "f1").faktum(Rolle.nav)
-        f2Dato = FaktumNavn(2, "f2").faktum(Rolle.nav)
-        f3Dato = FaktumNavn(3, "f3").faktum(Rolle.søker)
-        f4Dato = FaktumNavn(4, "f4").faktum(Rolle.søker)
-        f5Dato = FaktumNavn(5, "f5").faktum(Rolle.søker)
+        f1Boolean = FaktumNavn(1, "f1").faktum()
+        f2Dato = FaktumNavn(2, "f2").faktum()
+        f3Dato = FaktumNavn(3, "f3").faktum()
+        f4Dato = FaktumNavn(4, "f4").faktum()
+        f5Dato = FaktumNavn(5, "f5").faktum()
         f_3_4_5Dato = listOf(f3Dato, f4Dato, f5Dato).faktum(FaktumNavn(345, "345"), MAKS_DATO)
-        f6Inntekt = FaktumNavn(6, "f6").faktum(Rolle.nav, Rolle.saksbehandler)
-        f7Inntekt = FaktumNavn(7, "f7").faktum(Rolle.nav, Rolle.saksbehandler)
-        f8Inntekt = FaktumNavn(8, "f8").faktum(Rolle.nav)
-        f9Inntekt = FaktumNavn(9, "f9").faktum(Rolle.nav)
-        f10Boolean = FaktumNavn(10, "f10").faktum(Rolle.søker)
-        f11Dokument = FaktumNavn(11, "f11").faktum(Rolle.søker)
-        f12Boolean = FaktumNavn(12, "f12").faktum(Rolle.saksbehandler)
+        f6Inntekt = FaktumNavn(6, "f6").faktum()
+        f7Inntekt = FaktumNavn(7, "f7").faktum()
+        f8Inntekt = FaktumNavn(8, "f8").faktum()
+        f9Inntekt = FaktumNavn(9, "f9").faktum()
+        f10Boolean = FaktumNavn(10, "f10").faktum()
+        f11Dokument = FaktumNavn(11, "f11").faktum()
+        f12Boolean = FaktumNavn(12, "f12").faktum()
         f12Boolean avhengerAv f11Dokument
-        f13Boolean = FaktumNavn(13, "f13").faktum(Rolle.saksbehandler)
+        f13Boolean = FaktumNavn(13, "f13").faktum()
 
 
         seksjon1 = Seksjon(Rolle.nav, f1Boolean, f2Dato)

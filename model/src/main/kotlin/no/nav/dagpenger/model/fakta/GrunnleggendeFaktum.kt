@@ -3,12 +3,11 @@ package no.nav.dagpenger.model.fakta
 import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
-class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val navn: FaktumNavn, private val roller: MutableSet<Rolle>) : Faktum<R> {
+class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val navn: FaktumNavn) : Faktum<R> {
     override val avhengigeFakta: MutableList<Faktum<*>> = mutableListOf()
     private var tilstand: Tilstand = Ukjent
     private lateinit var gjeldendeSvar: R
-
-    init { if (roller.isEmpty()) roller.add(Rolle.søker) }
+    private val roller = mutableSetOf<Rolle>()
 
     override fun besvar(r: R, rolle: Rolle) = this.apply {
         if (rolle !in roller) throw IllegalAccessError("Rollen $rolle kan ikke besvare faktum")
@@ -34,6 +33,8 @@ class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val n
     override fun leggTilHvis(kode: FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>) {
         if (tilstand.kode == kode) fakta.add(this)
     }
+
+    override fun add(rolle: Rolle) = roller.add(rolle)
 
     override fun toString() = navn.toString()
 

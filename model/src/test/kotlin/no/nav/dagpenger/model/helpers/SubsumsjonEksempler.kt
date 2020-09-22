@@ -43,19 +43,19 @@ val INNTEKT15G = FaktumNavn(10, "1.5G")
 
 /* ktlint-disable parameter-list-wrapping */
 internal fun subsumsjonRoot(): Subsumsjon {
-    bursdag67 = DATOEN_DU_FYLLER_67.faktum(Rolle.nav)
+    bursdag67 = DATOEN_DU_FYLLER_67.faktum()
     søknadsdato = DATOEN_DU_SØKER_OM_DAGPENGER.faktum()
     ønsketdato = DATOEN_DU_ØNSKER_DAGPENGER_FRA.faktum()
     sisteDagMedLønn = SISTE_DAG_DU_MOTTAR_LØNN.faktum()
-    inntektSiste3år = INNTEKT_SISTE_36_MÅNEDER.faktum(Rolle.saksbehandler, Rolle.nav)
-    inntektSisteÅr = INNTEKT_SISTE_12_MÅNEDER.faktum(Rolle.saksbehandler, Rolle.nav)
+    inntektSiste3år = INNTEKT_SISTE_36_MÅNEDER.faktum()
+    inntektSisteÅr = INNTEKT_SISTE_12_MÅNEDER.faktum()
     dimisjonsdato = DIMISJONSDATO.faktum()
 
     virkningstidspunkt = setOf(ønsketdato, søknadsdato, sisteDagMedLønn)
         .faktum(VIRKNINGSTIDSPUNKT, MAKS_DATO)
 
-    inntekt3G = INNTEKT3G.faktum(Rolle.nav)
-    inntekt15G = INNTEKT15G.faktum(Rolle.nav)
+    inntekt3G = INNTEKT3G.faktum()
+    inntekt15G = INNTEKT15G.faktum()
 
     return "inngangsvilkår".alle(
         "under67".alle(

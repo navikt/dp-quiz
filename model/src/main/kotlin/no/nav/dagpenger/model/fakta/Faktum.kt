@@ -18,6 +18,7 @@ interface Faktum<R : Comparable<R>> {
     fun leggTilHvis(kode: FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>)
     fun erBesvart(): Boolean
     fun accept(visitor: FaktumVisitor)
+    fun add(rolle: Rolle): Boolean
     infix fun avhengerAv(other: Faktum<*>) {
         other.avhengigeFakta.add(this)
     }
@@ -34,4 +35,4 @@ fun <R : Comparable<R>> Collection<Faktum<R>>.faktum(navn: FaktumNavn, regel: Fa
 fun Set<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
 typealias FaktaRegel <R> = (UtledetFaktum<R>) -> R
 
-fun <R : Comparable<R>> FaktumNavn.faktum(vararg roller: Rolle) = GrunnleggendeFaktum<R>(this, roller.toMutableSet())
+fun <R : Comparable<R>> FaktumNavn.faktum() = GrunnleggendeFaktum<R>(this)

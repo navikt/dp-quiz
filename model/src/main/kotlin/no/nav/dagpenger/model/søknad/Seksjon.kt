@@ -8,6 +8,10 @@ import no.nav.dagpenger.model.visitor.SøknadVisitor
 class Seksjon(private val rolle: Rolle, vararg fakta: Faktum<*>) : Collection<Faktum<*>> by fakta.toFaktaSet() {
     private val fakta = fakta.toFaktaSet()
 
+    init {
+        fakta.forEach { it.add(rolle) }
+    }
+
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>): Boolean {
         return nesteFakta.any { it in fakta }
     }

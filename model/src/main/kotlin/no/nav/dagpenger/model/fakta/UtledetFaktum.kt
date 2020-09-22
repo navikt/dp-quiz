@@ -19,6 +19,8 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
         return regel(this)
     }
 
+    override fun add(rolle: Rolle) = fakta.all { it.add(rolle) }
+
     override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> = fakta.flatMap { it.grunnleggendeFakta() }.toSet()
 
     override fun leggTilHvis(kode: Faktum.FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>) {
