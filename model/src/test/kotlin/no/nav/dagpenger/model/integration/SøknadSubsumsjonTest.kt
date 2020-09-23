@@ -102,7 +102,8 @@ internal class SøknadSubsumsjonTest {
         }
 
         assertEquals(seksjon1, søknad.nesteSeksjon(rootSubsumsjon))
-        assertEquals(2, seksjon1.facta().size)
+        assertEquals(2, seksjon1.fakta().size)
+        assertEquals(setOf(f1Boolean, f2Dato), seksjon1.fakta())
         f1Boolean.besvar(true, Rolle.nav)
         f2Dato.besvar(31.desember, Rolle.nav)
         rootSubsumsjon.nesteFakta().also { fakta ->
@@ -111,6 +112,8 @@ internal class SøknadSubsumsjonTest {
         }
 
         assertEquals(seksjon3, søknad.nesteSeksjon(rootSubsumsjon))
+        assertEquals(3, seksjon3.fakta().size)
+        assertEquals(setOf(f3Dato, f4Dato, f5Dato), seksjon3.fakta())
         f3Dato.besvar(1.januar)
         f4Dato.besvar(2.januar)
         f5Dato.besvar(3.januar)
@@ -120,29 +123,38 @@ internal class SøknadSubsumsjonTest {
         }
 
         assertEquals(seksjon4, søknad.nesteSeksjon(rootSubsumsjon))
+        assertEquals(2, seksjon4.fakta().size)
+        assertEquals(setOf(f10Boolean, f11Dokument), seksjon4.fakta())
         f10Boolean.besvar(false)
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
             assertEquals(setOf(f11Dokument), fakta)
         }
 
+        assertEquals(seksjon4, søknad.nesteSeksjon(rootSubsumsjon))
+        assertEquals(2, seksjon4.fakta().size)
+        assertEquals(setOf(f10Boolean, f11Dokument), seksjon4.fakta())
         f11Dokument.besvar(Dokument(4.januar))
-
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(4, fakta.size)
             assertEquals(setOf(f6Inntekt, f7Inntekt, f8Inntekt, f9Inntekt), fakta)
         }
 
+        assertEquals(seksjon2, søknad.nesteSeksjon(rootSubsumsjon))
+        assertEquals(4, seksjon2.fakta().size)
+        assertEquals(setOf(f6Inntekt, f7Inntekt, f8Inntekt, f9Inntekt), seksjon2.fakta())
         f6Inntekt.besvar(20000.månedlig, Rolle.nav)
         f7Inntekt.besvar(10000.månedlig, Rolle.nav)
         f8Inntekt.besvar(5000.månedlig, Rolle.nav)
         f9Inntekt.besvar(2500.månedlig, Rolle.nav)
-
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
             assertEquals(setOf(f13Boolean), fakta)
         }
 
+        assertEquals(seksjon5, søknad.nesteSeksjon(rootSubsumsjon))
+        assertEquals(4, seksjon5.fakta().size)
+        assertEquals(setOf(f6Inntekt, f7Inntekt, f12Boolean, f13Boolean), seksjon5.fakta())
         f13Boolean.besvar(true, Rolle.saksbehandler)
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(0, fakta.size)
@@ -150,14 +162,14 @@ internal class SøknadSubsumsjonTest {
         }
     }
 
-    private fun Seksjon.facta(): Set<Faktum<*>> =
+    private fun Seksjon.fakta(): Set<Faktum<*>> =
         object : SøknadVisitor {
             lateinit var resultater: Set<Faktum<*>>
             override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
                 resultater = fakta
             }
         }.let {
-            this@facta.accept(it)
+            this@fakta.accept(it)
             it.resultater
         }
 }
