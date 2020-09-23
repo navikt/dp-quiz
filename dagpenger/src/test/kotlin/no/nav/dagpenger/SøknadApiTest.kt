@@ -8,31 +8,42 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
+import no.nav.dagpenger.model.visitor.SøknadJsonBuilder
 import org.intellij.lang.annotations.Language
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 internal class SøknadApiTest {
     private val mapper = ObjectMapper()
 
     @Test
-    fun testRequest() = withTestApplication({
+    fun `hent neste-seksjon og besvar faktumene`() = withTestApplication({
         søknadApi()
     }) {
-        with(handleRequest(HttpMethod.Get, "/neste-seksjon")) {
+        val fakta = with(handleRequest(HttpMethod.Get, "/søknad/1/neste-seksjon")) {
             assertEquals(HttpStatusCode.OK, response.status())
-            mapper.readTree(response.content).let {
-                assertEquals(2, it.size())
-                assertEquals(2, it[0]["id"].asInt())
+            mapper.readTree(response.content).let { response ->
+                assertEquals(2, response.size())
+                assertEquals(2, response[0]["id"].asInt())
+
+                response.map { it["id"].asInt() }
             }
         }
-        with(
-            handleRequest(HttpMethod.Post, "/faktum/") {
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody(jsonBesvar)
+
+        fakta.forEach {
+            with(
+                handleRequest(HttpMethod.Post, "/søknad/2/faktum/") {
+                    addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    setBody(getJsonBesvar(it, LocalDate.now().toString()))
+                }
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
             }
-        ) {
-            assertEquals(HttpStatusCode.OK, response.status())
+        }
+
+        søknader.forEach {
+            println(SøknadJsonBuilder(it.value).resultat())
         }
     }
 
@@ -50,9 +61,11 @@ internal class SøknadApiTest {
 }
 
 @Language("json")
-val jsonBesvar =
+fun getJsonBesvar(id: Int, svar: String) =
     """  {
+    "id": "$id",
     "navn": "Fødselsdato",
-    "svar": "2000-12-13"
+    "svar": "$svar",
+    "type": "LocalDate"
   }
     """.trimIndent()

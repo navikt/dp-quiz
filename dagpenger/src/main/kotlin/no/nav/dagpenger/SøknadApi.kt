@@ -10,16 +10,24 @@ import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.post
+import io.ktor.routing.route
 import io.ktor.routing.routing
+import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.søknad.Seksjon
+import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.JsonBuilder
+import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.regelverk.fødselsdato
 import no.nav.dagpenger.regelverk.inngangsvilkår
 import no.nav.dagpenger.regelverk.ønsketDato
-import no.nav.dagpenger.søknad.datamaskin
 import java.time.LocalDate
 
 data class Svar(
+    val id: Int,
     val navn: String,
-    val svar: String
+    val svar: String,
+    val type: String
 )
 
 fun Application.søknadApi() {
@@ -28,17 +36,53 @@ fun Application.søknadApi() {
     }
 
     routing {
-        get("/neste-seksjon") {
-            val seksjon = datamaskin.nesteSeksjon(inngangsvilkår)
-            call.respond(seksjon)
-        }
-        get("/subsumsjoner") {
-            call.respond(JsonBuilder(inngangsvilkår).resultat())
-        }
-        post("/faktum") {
-            val svar = call.receive<Svar>()
-            ønsketDato.besvar(LocalDate.parse(svar.svar))
-            call.respond(HttpStatusCode.OK)
+        route("/søknad/{søknadsId}") {
+            get("/neste-seksjon") {
+                val søknad = getOrCreateSøknad(call.parameters["søknadsId"]!!.toInt())
+                val seksjon = søknad.nesteSeksjon(inngangsvilkår)
+
+                call.respond(seksjon)
+            }
+            post("/faktum") {
+                val søknad = getOrCreateSøknad(call.parameters["søknadsId"]!!.toInt())
+
+                val svar = call.receive<Svar>()
+                when (svar.type) {
+                    "LocalDate" -> søknad.finnFaktum<LocalDate>(svar.id).besvar(LocalDate.parse(svar.svar))
+                    else -> IllegalArgumentException("BOOM")
+                }
+
+                call.respond(HttpStatusCode.OK)
+            }
+            get("/subsumsjoner") {
+                call.respond(JsonBuilder(inngangsvilkår).resultat())
+            }
         }
     }
 }
+
+private fun <R : Comparable<R>> Søknad.finnFaktum(id: Int): Faktum<R> =
+    object : SøknadVisitor {
+        lateinit var faktum: Faktum<R>
+
+        override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
+            if (this::faktum.isInitialized) return
+            fakta.find { it.id == id }?.let {
+                faktum = it as Faktum<R>
+            }
+        }
+    }.let {
+        this@finnFaktum.accept(it)
+        it.faktum
+    }
+
+internal val søknader = mutableMapOf<Int, Søknad>()
+private fun getOrCreateSøknad(id: Int) =
+    søknader.getOrPut(id) {
+        // val fødselsdato = FaktumNavn(1, "Fødselsdato").faktum<LocalDate>()
+        // val ønsketDato = FaktumNavn(2, "Ønsker dagpenger fra dato").faktum<LocalDate>()
+
+        Søknad(
+            Seksjon(Rolle.søker, ønsketDato, fødselsdato),
+        )
+    }

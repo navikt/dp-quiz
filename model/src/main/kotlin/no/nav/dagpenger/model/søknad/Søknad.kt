@@ -9,7 +9,7 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
 
     infix fun nesteSeksjon(subsumsjon: Subsumsjon) = seksjoner.first { subsumsjon.nesteFakta() in it }
 
-    internal fun accept(visitor: SøknadVisitor) {
+    fun accept(visitor: SøknadVisitor) {
         visitor.preVisit(this, uuid)
         seksjoner.forEach { it.accept(visitor) }
         visitor.postVisit(this)

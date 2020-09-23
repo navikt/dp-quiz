@@ -34,6 +34,7 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     override fun tilUbesvart() {
         throw IllegalStateException("Kan ikke sette utleda faktum til ubesvart")
     }
+
     override fun accept(visitor: FaktumVisitor) {
         if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, fakta, clazz(), svar())
         else visitor.preVisit(this, id, avhengigeFakta, fakta, clazz())
