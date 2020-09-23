@@ -12,14 +12,14 @@ import org.intellij.lang.annotations.Language
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.Test
 
-internal class ApiTest {
-    val mapper = ObjectMapper()
+internal class SøknadApiTest {
+    private val mapper = ObjectMapper()
 
     @Test
     fun testRequest() = withTestApplication({
         søknadApi()
     }) {
-        with(handleRequest(HttpMethod.Get, "/neste-fakta")) {
+        with(handleRequest(HttpMethod.Get, "/neste-seksjon")) {
             assertEquals(HttpStatusCode.OK, response.status())
             mapper.readTree(response.content).let {
                 assertEquals(2, it.size())

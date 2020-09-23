@@ -28,7 +28,7 @@ fun Application.søknadApi() {
     }
 
     routing {
-        get("/neste-fakta") {
+        get("/neste-seksjon") {
             val seksjon = datamaskin.nesteSeksjon(inngangsvilkår)
             call.respond(seksjon)
         }
