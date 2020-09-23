@@ -6,7 +6,6 @@ import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
 import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.jackson
-import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -26,7 +25,7 @@ import java.time.LocalDate
 data class Svar(
     val id: Int,
     val navn: String,
-    val svar: String,
+    val verdi: String,
     val type: String
 )
 
@@ -37,21 +36,23 @@ fun Application.søknadApi() {
 
     routing {
         route("/søknad/{søknadsId}") {
+
             get("/neste-seksjon") {
                 val søknad = getOrCreateSøknad(call.parameters["søknadsId"]!!.toInt())
                 val seksjon = søknad.nesteSeksjon(inngangsvilkår)
 
                 call.respond(seksjon)
             }
-            post("/faktum") {
+            post<Svar>("/faktum") { (id, type, verdi) ->
                 val søknad = getOrCreateSøknad(call.parameters["søknadsId"]!!.toInt())
 
-                val svar = call.receive<Svar>()
-                when (svar.type) {
-                    "LocalDate" -> søknad.finnFaktum<LocalDate>(svar.id).besvar(LocalDate.parse(svar.svar))
-                    else -> IllegalArgumentException("BOOM")
+                when (type) {
+                    "LocalDate" -> søknad.finnFaktum<LocalDate>(id).besvar(LocalDate.parse(verdi)) // bør løses et annet sted
+                    "String" -> søknad.finnFaktum<String>(id).besvar(verdi)
+                    "Boolean" -> søknad.finnFaktum<Boolean>(id).besvar(verdi.toBoolean())
+                    "Int" -> søknad.finnFaktum<Int>(id).besvar(verdi.toInt())
+                    else -> throw IllegalArgumentException("BOOM")
                 }
-
                 call.respond(HttpStatusCode.OK)
             }
             get("/subsumsjoner") {

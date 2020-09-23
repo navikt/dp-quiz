@@ -51,7 +51,7 @@ internal class SøknadApiTest {
     fun testSubsumsjontre() = withTestApplication({
         søknadApi()
     }) {
-        with(handleRequest(HttpMethod.Get, "/subsumsjoner")) {
+        with(handleRequest(HttpMethod.Get, "/søknad/123/subsumsjoner")) {
             assertEquals(HttpStatusCode.OK, response.status())
             mapper.readTree(response.content).let {
                 assertEquals(7, it["root"]["subsumsjoner"].size())
