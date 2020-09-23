@@ -12,11 +12,12 @@ dependencies {
 
     implementation(Konfig.konfig)
 
-    implementation(Ktor.server)
     implementation(Ktor.serverNetty)
     implementation(Ktor.library("jackson"))
 
     implementation(Kotlin.Logging.kotlinLogging)
+    implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("net.logstash.logback:logstash-logback-encoder:6.4")
 
     testImplementation(Ktor.ktorTest)
 }
