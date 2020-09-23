@@ -67,3 +67,5 @@ infix fun Subsumsjon.så(child: Subsumsjon): Subsumsjon {
 infix fun Subsumsjon.eller(child: Subsumsjon): Subsumsjon {
     return this.also { this.ugyldig(child) }
 }
+
+infix fun String.makro(child: Subsumsjon) = MakroSubsumsjon(this, child)
