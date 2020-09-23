@@ -24,9 +24,8 @@ internal class SubsumsjonJsonBuilderTest {
         val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>()
         val seksjon = Seksjon(Rolle.søker, faktum)
 
-        val jsonBuilder = JsonBuilder(har(faktum))
-        val jsonfakta = jsonBuilder.resultat()
-        println(jsonBuilder)
+        var jsonBuilder = JsonBuilder(har(faktum))
+        var jsonfakta = jsonBuilder.resultat()
 
         assertFalse(jsonfakta["root"]["navn"].isNull)
         assertFalse(jsonfakta["fakta"].isNull)
@@ -34,6 +33,12 @@ internal class SubsumsjonJsonBuilderTest {
         assertEquals(1, jsonfakta["root"]["fakta"].size())
         assertEquals(listOf(faktumNavnId), jsonfakta["root"]["fakta"].map { it.asInt() })
         assertEquals("søker", jsonfakta["fakta"][0]["roller"][0].asText())
+        assertEquals(null, jsonfakta["fakta"][0]["svar"])
+
+        faktum.besvar(true)
+        jsonBuilder = JsonBuilder((har(faktum)))
+        jsonfakta = jsonBuilder.resultat()
+        assertEquals(true, jsonfakta["fakta"][0]["svar"].asBoolean())
     }
 
     @Test

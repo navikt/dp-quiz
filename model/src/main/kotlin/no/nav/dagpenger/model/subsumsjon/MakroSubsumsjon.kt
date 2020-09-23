@@ -1,9 +1,8 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 
-class MakroSubsumsjon internal constructor(navn: String, private val child: Subsumsjon): Subsumsjon(navn) {
+class MakroSubsumsjon internal constructor(navn: String, private val child: Subsumsjon) : Subsumsjon(navn) {
     override fun lokaltResultat() = child.resultat()
 
     override fun nesteFakta() = child.nesteFakta()
@@ -15,7 +14,7 @@ class MakroSubsumsjon internal constructor(navn: String, private val child: Subs
     override fun fakta() = child.fakta()
 
     override fun get(indeks: Int): Subsumsjon {
-        if (indeks != 0 ) throw IndexOutOfBoundsException("Makro har bare ett barn")
+        if (indeks != 0) throw IndexOutOfBoundsException("Makro har bare ett barn")
         return child
     }
 

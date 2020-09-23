@@ -32,7 +32,7 @@ internal class MakroTest {
     }
 
     @Test
-    fun `makro resultat er lik child resultat`(){
+    fun `makro resultat er lik child resultat`() {
         assertEquals(null, makro.resultat())
         f1.besvar(true)
         assertEquals(true, makro.resultat())
