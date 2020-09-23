@@ -23,6 +23,7 @@ import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.visitor.SøknadVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -100,6 +101,8 @@ internal class SøknadSubsumsjonTest {
             assertEquals(setOf(f1Boolean, f2Dato, f3Dato, f4Dato, f5Dato), fakta)
         }
 
+        assertEquals(seksjon1, søknad.nesteSeksjon(rootSubsumsjon))
+        assertEquals(2, seksjon1.facta().size)
         f1Boolean.besvar(true, Rolle.nav)
         f2Dato.besvar(31.desember, Rolle.nav)
         rootSubsumsjon.nesteFakta().also { fakta ->
@@ -107,6 +110,7 @@ internal class SøknadSubsumsjonTest {
             assertEquals(setOf(f3Dato, f4Dato, f5Dato), fakta)
         }
 
+        assertEquals(seksjon3, søknad.nesteSeksjon(rootSubsumsjon))
         f3Dato.besvar(1.januar)
         f4Dato.besvar(2.januar)
         f5Dato.besvar(3.januar)
@@ -115,6 +119,7 @@ internal class SøknadSubsumsjonTest {
             assertEquals(setOf(f10Boolean), fakta)
         }
 
+        assertEquals(seksjon4, søknad.nesteSeksjon(rootSubsumsjon))
         f10Boolean.besvar(false)
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
@@ -144,4 +149,15 @@ internal class SøknadSubsumsjonTest {
             assertEquals(emptySet<GrunnleggendeFaktum<*>>(), fakta)
         }
     }
+
+    private fun Seksjon.facta(): Set<Faktum<*>> =
+        object : SøknadVisitor {
+            lateinit var resultater: Set<Faktum<*>>
+            override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
+                resultater = fakta
+            }
+        }.let {
+            this@facta.accept(it)
+            it.resultater
+        }
 }

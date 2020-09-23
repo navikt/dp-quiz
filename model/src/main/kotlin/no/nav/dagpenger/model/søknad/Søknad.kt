@@ -6,6 +6,7 @@ import java.util.UUID
 
 class Søknad private constructor(private val uuid: UUID, private val seksjoner: List<Seksjon>) : Collection<Seksjon> by seksjoner {
     constructor(vararg seksjoner: Seksjon) : this(UUID.randomUUID(), seksjoner.toList())
+
     infix fun nesteSeksjon(subsumsjon: Subsumsjon) = seksjoner.first { subsumsjon.nesteFakta() in it }
 
     internal fun accept(visitor: SøknadVisitor) {
