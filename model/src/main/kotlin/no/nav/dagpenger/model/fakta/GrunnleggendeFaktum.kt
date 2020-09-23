@@ -18,6 +18,8 @@ class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val n
         super.besvar(r, rolle)
     }
 
+    override fun faktaMap() = mapOf(navn to this)
+
     override fun svar(): R = tilstand.svar(this)
 
     override fun erBesvart() = tilstand == Kjent

@@ -25,6 +25,8 @@ interface Faktum<R : Comparable<R>> {
         other.avhengigeFakta.add(this)
     }
 
+    fun faktaMap(): Map<FaktumNavn, Faktum<*>>
+
     enum class FaktumTilstand {
         Ukjent,
         Kjent

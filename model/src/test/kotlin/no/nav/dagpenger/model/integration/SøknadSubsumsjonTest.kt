@@ -112,8 +112,8 @@ internal class SøknadSubsumsjonTest {
         }
 
         assertEquals(seksjon3, søknad.nesteSeksjon(rootSubsumsjon))
-        assertEquals(3, seksjon3.fakta().size)
-        assertEquals(setOf(f3Dato, f4Dato, f5Dato), seksjon3.fakta())
+        assertEquals(4, seksjon3.fakta().size)
+        assertEquals(setOf(f3Dato, f4Dato, f5Dato, f_3_4_5Dato), seksjon3.fakta())
         f3Dato.besvar(1.januar)
         f4Dato.besvar(2.januar)
         f5Dato.besvar(3.januar)

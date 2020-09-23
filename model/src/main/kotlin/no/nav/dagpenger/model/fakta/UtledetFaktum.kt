@@ -16,6 +16,12 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
         throw IllegalArgumentException("Kan ikke besvare sammensatte faktum")
     }
 
+    override fun faktaMap(): Map<FaktumNavn, Faktum<*>> {
+        return mapOf(navn to this) + fakta.fold(mapOf<FaktumNavn, Faktum<*>> ()) { resultater, faktum ->
+            resultater + faktum.faktaMap()
+        }
+    }
+
     override fun svar(): R {
         fakta.forEach { it.svar() }
         return regel(this)
