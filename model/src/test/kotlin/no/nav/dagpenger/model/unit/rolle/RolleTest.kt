@@ -11,7 +11,7 @@ import org.junit.jupiter.api.assertThrows
 internal class RolleTest {
     @Test
     fun `Faktum må besvares av riktig rolle`() {
-        val faktum = FaktumNavn(1, "ja").faktum<Boolean>()
+        val faktum = FaktumNavn(1, "ja").faktum<Boolean>(Boolean::class.java)
         val seksjon = Seksjon(Rolle.søker, faktum)
         assertThrows<IllegalAccessError> { faktum.besvar(true, Rolle.saksbehandler) }
         assertThrows<IllegalAccessError> { faktum.besvar(true, Rolle.nav) }

@@ -14,11 +14,44 @@ import no.nav.dagpenger.model.søknad.Søknad
 import java.util.UUID
 
 interface FaktumVisitor {
-    fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>, roller: Set<Rolle>) {}
-    fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>, roller: Set<Rolle>, svar: R) {}
-    fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>, svar: R) {}
-    fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>) {}
-    fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>, id: Int, children: Set<Faktum<*>>) {}
+    fun <R : Comparable<R>> visit(
+        faktum: GrunnleggendeFaktum<R>,
+        tilstand: Faktum.FaktumTilstand,
+        id: Int,
+        avhengigeFakta: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {}
+    fun <R : Comparable<R>> visit(
+        faktum: GrunnleggendeFaktum<R>,
+        tilstand: Faktum.FaktumTilstand,
+        id: Int,
+        avhengigeFakta: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>,
+        svar: R
+    ) {}
+    fun <R : Comparable<R>> preVisit(
+        faktum: UtledetFaktum<R>,
+        id: Int,
+        avhengigeFakta: List<Faktum<*>>,
+        children: Set<Faktum<*>>,
+        clazz: Class<R>,
+        svar: R
+    ) {}
+    fun <R : Comparable<R>> preVisit(
+        faktum: UtledetFaktum<R>,
+        id: Int,
+        avhengigeFakta: List<Faktum<*>>,
+        children: Set<Faktum<*>>,
+        clazz: Class<R>
+    ) {}
+    fun <R : Comparable<R>> postVisit(
+        faktum: UtledetFaktum<R>,
+        id: Int,
+        children: Set<Faktum<*>>,
+        clazz: Class<R>
+    ) {}
 }
 
 interface SøknadVisitor : FaktumVisitor {

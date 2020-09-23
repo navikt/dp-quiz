@@ -45,12 +45,25 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         indentTeller++
     }
 
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>, svar: R) {
+    override fun <R : Comparable<R>> preVisit(
+        faktum: UtledetFaktum<R>,
+        id: Int,
+        avhengigeFakta: List<Faktum<*>>,
+        children: Set<Faktum<*>>,
+        clazz: Class<R>,
+        svar: R
+    ) {
         melding("Faktum: ${faktum.navn} er utledet til $svar")
         indentTeller++
     }
 
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>) {
+    override fun <R : Comparable<R>> preVisit(
+        faktum: UtledetFaktum<R>,
+        id: Int,
+        avhengigeFakta: List<Faktum<*>>,
+        children: Set<Faktum<*>>,
+        clazz: Class<R>
+    ) {
         melding("Faktum: ${faktum.navn} er ubesvart")
         indentTeller++
     }
@@ -59,7 +72,12 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         indentTeller--
     }
 
-    override fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>, id: Int, children: Set<Faktum<*>>) {
+    override fun <R : Comparable<R>> postVisit(
+        faktum: UtledetFaktum<R>,
+        id: Int,
+        children: Set<Faktum<*>>,
+        clazz: Class<R>
+    ) {
         indentTeller--
     }
 
@@ -83,11 +101,26 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     override fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {} // Tom med vilje
 
-    override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>, roller: Set<Rolle>) {
+    override fun <R : Comparable<R>> visit(
+        faktum: GrunnleggendeFaktum<R>,
+        tilstand: FaktumTilstand,
+        id: Int,
+        avhengigeFakta: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {
         melding("Faktum: ${faktum.navn} for roller ${roller.joinToString(" og ") { it.name }} er ubesvart")
     }
 
-    override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: FaktumTilstand, id: Int, avhengigeFakta: List<Faktum<*>>, roller: Set<Rolle>, svar: R) {
+    override fun <R : Comparable<R>> visit(
+        faktum: GrunnleggendeFaktum<R>,
+        tilstand: FaktumTilstand,
+        id: Int,
+        avhengigeFakta: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>,
+        svar: R
+    ) {
         melding("Faktum: ${faktum.navn} for roller ${roller.joinToString(" og ") { it.name }} er besvart med $svar")
     }
 

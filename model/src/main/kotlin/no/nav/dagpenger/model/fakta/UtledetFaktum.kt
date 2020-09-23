@@ -10,6 +10,8 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     override val avhengigeFakta = mutableListOf<Faktum<*>>()
     internal val max: R get() = fakta.maxOf { it.svar() }
 
+    override fun clazz() = fakta.toList().first().clazz()
+
     override fun besvar(r: R, rolle: Rolle): Faktum<R> {
         throw IllegalArgumentException("Kan ikke besvare sammensatte faktum")
     }
@@ -33,10 +35,10 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
         throw IllegalStateException("Kan ikke sette utleda faktum til ubesvart")
     }
     override fun accept(visitor: FaktumVisitor) {
-        if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, fakta, svar())
-        else visitor.preVisit(this, id, avhengigeFakta, fakta)
+        if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, fakta, clazz(), svar())
+        else visitor.preVisit(this, id, avhengigeFakta, fakta, clazz())
         fakta.forEach { it.accept(visitor) }
-        visitor.postVisit(this, id, fakta)
+        visitor.postVisit(this, id, fakta, clazz())
     }
 
     override fun toString() = navn.toString()

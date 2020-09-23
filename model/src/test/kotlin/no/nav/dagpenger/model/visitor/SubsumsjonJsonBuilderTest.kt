@@ -21,7 +21,7 @@ internal class SubsumsjonJsonBuilderTest {
     @Test
     fun `Lage en subsumsjon med fakta`() {
         val faktumNavnId = 1
-        val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>()
+        val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>(Boolean::class.java)
         val seksjon = Seksjon(Rolle.søker, faktum)
 
         var jsonBuilder = JsonBuilder(har(faktum))
@@ -33,6 +33,7 @@ internal class SubsumsjonJsonBuilderTest {
         assertEquals(1, jsonfakta["root"]["fakta"].size())
         assertEquals(listOf(faktumNavnId), jsonfakta["root"]["fakta"].map { it.asInt() })
         assertEquals("søker", jsonfakta["fakta"][0]["roller"][0].asText())
+        assertEquals("boolean", jsonfakta["fakta"][0]["clazz"].asText())
         assertEquals(null, jsonfakta["fakta"][0]["svar"])
 
         faktum.besvar(true)
@@ -44,8 +45,8 @@ internal class SubsumsjonJsonBuilderTest {
     @Test
     fun `Finner avhengige fakta i json`() {
         val faktumNavnId = 1
-        val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>()
-        val avhengigFaktum = FaktumNavn(2, "faktumto").faktum<Boolean>()
+        val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>(Boolean::class.java)
+        val avhengigFaktum = FaktumNavn(2, "faktumto").faktum<Boolean>(Boolean::class.java)
 
         avhengigFaktum avhengerAv faktum
 
@@ -78,6 +79,8 @@ internal class SubsumsjonJsonBuilderTest {
         assertEquals(10, json["fakta"].size())
         assertEquals(2, json["root"]["subsumsjoner"].size())
         assertEquals(3, json["root"]["gyldig"]["subsumsjoner"].size())
+        assertEquals("localdate", json["fakta"][0]["clazz"].asText())
+        assertEquals("localdate", json["fakta"][9]["clazz"].asText())
         assertEquals(listOf(5, 9), json["root"]["gyldig"]["subsumsjoner"][0]["fakta"].map { it.asInt() })
     }
 }

@@ -3,11 +3,13 @@ package no.nav.dagpenger.model.fakta
 import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
-class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val navn: FaktumNavn) : Faktum<R> {
+class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val navn: FaktumNavn, private val clazz: Class<R>) : Faktum<R> {
     override val avhengigeFakta: MutableList<Faktum<*>> = mutableListOf()
     private var tilstand: Tilstand = Ukjent
     private lateinit var gjeldendeSvar: R
     private val roller = mutableSetOf<Rolle>()
+
+    override fun clazz() = clazz
 
     override fun besvar(r: R, rolle: Rolle) = this.apply {
         if (rolle !in roller) throw IllegalAccessError("Rollen $rolle kan ikke besvare faktum")
@@ -49,14 +51,14 @@ class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(override val n
     private object Ukjent : Tilstand {
         override val kode = FaktumTilstand.Ukjent
         override fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: FaktumVisitor) {
-            visitor.visit(faktum, kode, faktum.id, faktum.avhengigeFakta, faktum.roller)
+            visitor.visit(faktum, kode, faktum.id, faktum.avhengigeFakta, faktum.roller, faktum.clazz)
         }
     }
 
     private object Kjent : Tilstand {
         override val kode = FaktumTilstand.Kjent
         override fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: FaktumVisitor) {
-            visitor.visit(faktum, Ukjent.kode, faktum.id, faktum.avhengigeFakta, faktum.roller, faktum.gjeldendeSvar)
+            visitor.visit(faktum, Ukjent.kode, faktum.id, faktum.avhengigeFakta, faktum.roller, faktum.clazz, faktum.gjeldendeSvar)
         }
 
         override fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>) = faktum.gjeldendeSvar

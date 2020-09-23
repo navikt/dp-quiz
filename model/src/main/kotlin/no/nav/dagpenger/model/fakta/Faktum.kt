@@ -7,6 +7,8 @@ interface Faktum<R : Comparable<R>> {
     val id: Int get() = navn.id
     val avhengigeFakta: MutableList<Faktum<*>>
 
+    fun clazz(): Class<R>
+
     fun besvar(r: R, rolle: Rolle = Rolle.søker): Faktum<R> = this.also {
         avhengigeFakta.forEach {
             it.tilUbesvart()
@@ -35,4 +37,4 @@ fun <R : Comparable<R>> Collection<Faktum<R>>.faktum(navn: FaktumNavn, regel: Fa
 fun Set<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
 typealias FaktaRegel <R> = (UtledetFaktum<R>) -> R
 
-fun <R : Comparable<R>> FaktumNavn.faktum() = GrunnleggendeFaktum<R>(this)
+fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>) = GrunnleggendeFaktum<R>(this, clazz)

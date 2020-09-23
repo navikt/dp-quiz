@@ -46,19 +46,19 @@ private lateinit var seksjon: Seksjon
 
 /* ktlint-disable parameter-list-wrapping */
 internal fun subsumsjonRoot(): Subsumsjon {
-    bursdag67 = DATOEN_DU_FYLLER_67.faktum()
-    søknadsdato = DATOEN_DU_SØKER_OM_DAGPENGER.faktum()
-    ønsketdato = DATOEN_DU_ØNSKER_DAGPENGER_FRA.faktum()
-    sisteDagMedLønn = SISTE_DAG_DU_MOTTAR_LØNN.faktum()
-    inntektSiste3år = INNTEKT_SISTE_36_MÅNEDER.faktum()
-    inntektSisteÅr = INNTEKT_SISTE_12_MÅNEDER.faktum()
-    dimisjonsdato = DIMISJONSDATO.faktum()
+    bursdag67 = DATOEN_DU_FYLLER_67.faktum(LocalDate::class.java)
+    søknadsdato = DATOEN_DU_SØKER_OM_DAGPENGER.faktum(LocalDate::class.java)
+    ønsketdato = DATOEN_DU_ØNSKER_DAGPENGER_FRA.faktum(LocalDate::class.java)
+    sisteDagMedLønn = SISTE_DAG_DU_MOTTAR_LØNN.faktum(LocalDate::class.java)
+    inntektSiste3år = INNTEKT_SISTE_36_MÅNEDER.faktum(Inntekt::class.java)
+    inntektSisteÅr = INNTEKT_SISTE_12_MÅNEDER.faktum(Inntekt::class.java)
+    dimisjonsdato = DIMISJONSDATO.faktum(LocalDate::class.java)
 
     virkningstidspunkt = setOf(ønsketdato, søknadsdato, sisteDagMedLønn)
         .faktum(VIRKNINGSTIDSPUNKT, MAKS_DATO)
 
-    inntekt3G = INNTEKT3G.faktum()
-    inntekt15G = INNTEKT15G.faktum()
+    inntekt3G = INNTEKT3G.faktum(Inntekt::class.java)
+    inntekt15G = INNTEKT15G.faktum(Inntekt::class.java)
     seksjon = Seksjon(Rolle.søker, bursdag67, søknadsdato, ønsketdato, sisteDagMedLønn, inntekt15G, inntekt3G, inntektSiste3år, inntektSisteÅr, sisteDagMedLønn, dimisjonsdato, virkningstidspunkt)
 
     return "inngangsvilkår".alle(

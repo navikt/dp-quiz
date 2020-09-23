@@ -28,18 +28,31 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     override fun toString(): String =
         ObjectMapper().writerWithDefaultPrettyPrinter<ObjectWriter>().writeValueAsString(resultat())
 
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>, svar: R) {
+    override fun <R : Comparable<R>> preVisit(
+        faktum: UtledetFaktum<R>,
+        id: Int,
+        avhengigeFakta: List<Faktum<*>>,
+        children: Set<Faktum<*>>,
+        clazz: Class<R>,
+        svar: R
+    ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
             faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
             faktumNode.putR(svar)
         }
         faktumIder.add(id)
     }
 
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: Int, avhengigeFakta: List<Faktum<*>>, children: Set<Faktum<*>>) {
+    override fun <R : Comparable<R>> preVisit(
+        faktum: UtledetFaktum<R>,
+        id: Int,
+        avhengigeFakta: List<Faktum<*>>,
+        children: Set<Faktum<*>>,
+        clazz: Class<R>
+    ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
             faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
         }
         faktumIder.add(id)
@@ -50,10 +63,11 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         tilstand: Faktum.FaktumTilstand,
         id: Int,
         avhengigeFakta: List<Faktum<*>>,
-        roller: Set<Rolle>
+        roller: Set<Rolle>,
+        clazz: Class<R>
     ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
         }
         faktumIder.add(id)
@@ -65,10 +79,11 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         id: Int,
         avhengigeFakta: List<Faktum<*>>,
         roller: Set<Rolle>,
+        clazz: Class<R>,
         svar: R
     ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
             faktumNode.putR(svar)
         }
@@ -78,12 +93,14 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     private fun <R : Comparable<R>> faktumNode(
         faktum: Faktum<R>,
         id: Int,
-        avhengigeFakta: List<Faktum<*>>
+        avhengigeFakta: List<Faktum<*>>,
+        clazz: Class<R>
     ) =
         mapper.createObjectNode().also { faktumNode ->
             faktumNode.put("navn", faktum.navn.toString())
             faktumNode.put("id", id)
             faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
+            faktumNode.put("clazz", clazz.simpleName.toLowerCase())
             faktaNode.add(faktumNode)
         }
 
