@@ -43,7 +43,7 @@ internal class SøknadApiTest {
         }
 
         søknader.forEach {
-            println(SøknadJsonBuilder(it.value).resultat())
+            println(SøknadJsonBuilder(it.value))
         }
     }
 
