@@ -35,7 +35,7 @@ internal class SøknadApiTest {
             with(
                 handleRequest(HttpMethod.Post, "/søknad/2/faktum/") {
                     addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                    setBody(getJsonBesvar(it, LocalDate.now().toString()))
+                    setBody(mapper.writeValueAsString(Svar(it, LocalDate.now().toString(), "localdate")))
                 }
             ) {
                 assertEquals(HttpStatusCode.OK, response.status())
@@ -59,13 +59,3 @@ internal class SøknadApiTest {
         }
     }
 }
-
-@Language("json")
-fun getJsonBesvar(id: Int, svar: String) =
-    """  {
-    "id": "$id",
-    "navn": "Fødselsdato",
-    "svar": "$svar",
-    "type": "LocalDate"
-  }
-    """.trimIndent()

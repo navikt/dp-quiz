@@ -24,7 +24,6 @@ import java.time.LocalDate
 
 data class Svar(
     val id: Int,
-    val navn: String,
     val verdi: String,
     val type: String
 )
@@ -43,14 +42,14 @@ fun Application.søknadApi() {
 
                 call.respond(seksjon)
             }
-            post<Svar>("/faktum") { (id, type, verdi) ->
+            post<Svar>("/faktum") {   (id, verdi, type) ->
                 val søknad = getOrCreateSøknad(call.parameters["søknadsId"]!!.toInt())
 
-                when (type) {
-                    "LocalDate" -> søknad.finnFaktum<LocalDate>(id).besvar(LocalDate.parse(verdi)) // bør løses et annet sted
-                    "String" -> søknad.finnFaktum<String>(id).besvar(verdi)
-                    "Boolean" -> søknad.finnFaktum<Boolean>(id).besvar(verdi.toBoolean())
-                    "Int" -> søknad.finnFaktum<Int>(id).besvar(verdi.toInt())
+                when (type.toLowerCase()) {
+                    "localdate" -> søknad.finnFaktum<LocalDate>(id).besvar(LocalDate.parse(verdi)) // bør løses et annet sted
+                    "string" -> søknad.finnFaktum<String>(id).besvar(verdi)
+                    "boolean" -> søknad.finnFaktum<Boolean>(id).besvar(verdi.toBoolean())
+                    "int" -> søknad.finnFaktum<Int>(id).besvar(verdi.toInt())
                     else -> throw IllegalArgumentException("BOOM")
                 }
                 call.respond(HttpStatusCode.OK)
