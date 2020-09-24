@@ -38,9 +38,6 @@ fun Application.søknadApi() {
     }
 
     routing {
-        trace {
-            log.info { it.buildText() }
-        }
         route("/soknad/{søknadsId}") {
             get("/neste-seksjon") {
                 val søknad = getOrCreateSøknad(UUID.fromString(call.parameters["søknadsId"]!!))
@@ -102,9 +99,6 @@ internal fun Faktum<*>.finnSeksjon(søknad: Søknad): Seksjon =
 internal val søknader = mutableMapOf<UUID, Søknad>()
 private fun getOrCreateSøknad(id: UUID) =
     søknader.getOrPut(id) {
-        // val fødselsdato = FaktumNavn(1, "Fødselsdato").faktum<LocalDate>()
-        // val ønsketDato = FaktumNavn(2, "Ønsker dagpenger fra dato").faktum<LocalDate>()
-
         Søknad(
             Seksjon(Rolle.søker, ønsketDato, fødselsdato),
             Seksjon(Rolle.søker, dimisjonsdato),
