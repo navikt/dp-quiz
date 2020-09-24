@@ -19,8 +19,10 @@ import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.JsonBuilder
 import no.nav.dagpenger.model.visitor.SeksjonJsonBuilder
 import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.regelverk.dimisjonsdato
 import no.nav.dagpenger.regelverk.fødselsdato
 import no.nav.dagpenger.regelverk.inngangsvilkår
+import no.nav.dagpenger.regelverk.utestengt
 import no.nav.dagpenger.regelverk.ønsketDato
 import java.time.LocalDate
 import java.util.UUID
@@ -40,7 +42,6 @@ fun Application.søknadApi() {
             log.info { it.buildText() }
         }
         route("/soknad/{søknadsId}") {
-
             get("/neste-seksjon") {
                 val søknad = getOrCreateSøknad(UUID.fromString(call.parameters["søknadsId"]!!))
                 val seksjon = søknad.nesteSeksjon(inngangsvilkår)
@@ -53,7 +54,7 @@ fun Application.søknadApi() {
                 val id = call.parameters["faktumId"]!!.toInt()
 
                 when (type.toLowerCase()) {
-                    "localdate" -> søknad.finnFaktum<LocalDate>(id).besvar(LocalDate.parse(verdi)) // bør løses et annet sted?
+                    "localdate" -> søknad.finnFaktum<LocalDate>(id).besvar(LocalDate.parse(verdi))
                     "string" -> søknad.finnFaktum<String>(id).besvar(verdi)
                     "boolean" -> søknad.finnFaktum<Boolean>(id).besvar(verdi.toBoolean())
                     "int" -> søknad.finnFaktum<Int>(id).besvar(verdi.toInt())
@@ -91,5 +92,7 @@ private fun getOrCreateSøknad(id: UUID) =
 
         Søknad(
             Seksjon(Rolle.søker, ønsketDato, fødselsdato),
+            Seksjon(Rolle.søker, dimisjonsdato),
+            Seksjon(Rolle.søker, utestengt),
         )
     }
