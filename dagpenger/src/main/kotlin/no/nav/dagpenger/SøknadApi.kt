@@ -16,6 +16,8 @@ import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.JsonBuilder
+import no.nav.dagpenger.model.visitor.SeksjonJsonBuilder
+import no.nav.dagpenger.model.visitor.SøknadJsonBuilder
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import no.nav.dagpenger.regelverk.fødselsdato
 import no.nav.dagpenger.regelverk.inngangsvilkår
@@ -41,7 +43,7 @@ fun Application.søknadApi() {
                 val søknad = getOrCreateSøknad(UUID.fromString(call.parameters["søknadsId"]!!))
                 val seksjon = søknad.nesteSeksjon(inngangsvilkår)
 
-                call.respond(seksjon)
+                call.respond(SeksjonJsonBuilder(seksjon).resultat())
             }
             post<Svar>("/faktum") { (id, verdi, type) ->
                 val søknad = getOrCreateSøknad(UUID.fromString(call.parameters["søknadsId"]!!))

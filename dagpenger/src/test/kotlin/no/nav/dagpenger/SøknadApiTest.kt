@@ -25,10 +25,10 @@ internal class SøknadApiTest {
         val fakta = with(handleRequest(HttpMethod.Get, "/søknad/$søknadsId/neste-seksjon")) {
             assertEquals(HttpStatusCode.OK, response.status())
             mapper.readTree(response.content).let { response ->
-                assertEquals(2, response.size())
-                assertEquals(2, response[0]["id"].asInt())
+                assertEquals(2, response["fakta"].size())
+                assertEquals(2, response["fakta"][0]["id"].asInt())
 
-                response.map { it["id"].asInt() }
+                response["fakta"]
             }
         }
 
@@ -36,7 +36,7 @@ internal class SøknadApiTest {
             with(
                 handleRequest(HttpMethod.Post, "/søknad/$søknadsId/faktum/") {
                     addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                    setBody(mapper.writeValueAsString(Svar(it, LocalDate.now().toString(), "localdate")))
+                    setBody(mapper.writeValueAsString(Svar(it["id"].asInt(), LocalDate.now().toString(), it["clazz"].asText())))
                 }
             ) {
                 assertEquals(HttpStatusCode.OK, response.status())
