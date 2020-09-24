@@ -31,7 +31,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     override fun <R : Comparable<R>> preVisit(
         faktum: UtledetFaktum<R>,
         id: Int,
-        avhengigeFakta: List<Faktum<*>>,
+        avhengigeFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         svar: R
@@ -47,7 +47,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     override fun <R : Comparable<R>> preVisit(
         faktum: UtledetFaktum<R>,
         id: Int,
-        avhengigeFakta: List<Faktum<*>>,
+        avhengigeFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>
     ) {
@@ -62,7 +62,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: Int,
-        avhengigeFakta: List<Faktum<*>>,
+        avhengigeFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
@@ -77,7 +77,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: Int,
-        avhengigeFakta: List<Faktum<*>>,
+        avhengigeFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R
@@ -93,7 +93,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     private fun <R : Comparable<R>> faktumNode(
         faktum: Faktum<R>,
         id: Int,
-        avhengigeFakta: List<Faktum<*>>,
+        avhengigeFakta: Set<Faktum<*>>,
         clazz: Class<R>
     ) =
         mapper.createObjectNode().also { faktumNode ->

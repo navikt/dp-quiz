@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.fakta.erBesvart
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
-open class EnkelSubsumsjon private constructor(
+open class EnkelSubsumsjon protected constructor(
     private val regel: Regel,
     private val fakta: Set<Faktum<*>>,
     gyldigSubsumsjon: Subsumsjon,
@@ -27,7 +27,7 @@ open class EnkelSubsumsjon private constructor(
     }
 
     override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>) = EnkelSubsumsjon(
-        regel,
+        regel.deepCopy(faktaMap),
         fakta.deepCopy(faktaMap),
         gyldigSubsumsjon.deepCopy(faktaMap),
         ugyldigSubsumsjon.deepCopy(faktaMap)

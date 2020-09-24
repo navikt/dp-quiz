@@ -26,7 +26,6 @@ import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
@@ -122,7 +121,6 @@ internal class SøknadSubsumsjonTest {
         f12Boolean = fn12Boolean.faktum(Boolean::class.java)
         f13Boolean = fn13Boolean.faktum(Boolean::class.java)
         f_3_4_5Dato = listOf(f3Dato, f4Dato, f5Dato).faktum(fn_3_4_5Dato, MAKS_DATO)
-        f12Boolean avhengerAv f11Dokument
 
         seksjon1 = Seksjon(Rolle.nav, f1Boolean, f2Dato)
         seksjon2 = Seksjon(Rolle.nav, f6Inntekt, f7Inntekt, f8Inntekt, f9Inntekt)
@@ -136,7 +134,6 @@ internal class SøknadSubsumsjonTest {
     }
 
     @Test
-    @Disabled
     fun `Søknad subsumsjon integrasjonstest`() {
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(5, fakta.size)

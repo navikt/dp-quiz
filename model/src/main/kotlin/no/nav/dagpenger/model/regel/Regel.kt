@@ -2,123 +2,181 @@ package no.nav.dagpenger.model.regel
 
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.UtledetFaktum
+import no.nav.dagpenger.model.fakta.deepCopy
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import java.time.LocalDate
 
 interface Regel {
     val typeNavn: String
     fun resultat(): Boolean
+    fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Regel
 }
-
+private class Etter(private val senesteDato: Faktum<LocalDate>, private val tidligsteDato: Faktum<LocalDate>) : Regel {
+    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override fun resultat() = tidligsteDato.svar() < senesteDato.svar()
+    override fun toString() = "Sjekk at '${senesteDato.navn}' er etter '${tidligsteDato.navn}'"
+    override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Regel {
+        return Etter(faktaMap[senesteDato.navn] as Faktum<LocalDate>, faktaMap[tidligsteDato.navn] as Faktum<LocalDate>)
+    }
+}
 infix fun Faktum<LocalDate>.etter(tidligsteDato: Faktum<LocalDate>): Subsumsjon {
-    val senesteDato = this
     return EnkelSubsumsjon(
-        object : Regel {
-            override val typeNavn = this@etter::etter.name
-            override fun resultat() = tidligsteDato.svar() < senesteDato.svar()
-            override fun toString() = "Sjekk at '${senesteDato.navn}' er etter '${tidligsteDato.navn}'"
-        },
-        senesteDato,
+        Etter(this, tidligsteDato),
+        this,
         tidligsteDato
     )
 }
 
+private class Før(private val tidligsteDato: Faktum<LocalDate>, private val senesteDato: Faktum<LocalDate>) : Regel {
+    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override fun resultat() = tidligsteDato.svar() < senesteDato.svar()
+    override fun toString() = "Sjekk at '${tidligsteDato.navn}' er før '${senesteDato.navn}'"
+    override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Regel {
+        return Før(faktaMap[tidligsteDato.navn] as Faktum<LocalDate>, faktaMap[senesteDato.navn] as Faktum<LocalDate>)
+    }
+}
+
 infix fun Faktum<LocalDate>.før(senesteDato: Faktum<LocalDate>): Subsumsjon {
-    val tidligsteDato = this
     return EnkelSubsumsjon(
-        object : Regel {
-            override val typeNavn = this@før::før.name
-            override fun resultat() = tidligsteDato.svar() < senesteDato.svar()
-            override fun toString() = "Sjekk at '${tidligsteDato.navn}' er før '${senesteDato.navn}'"
-        },
-        tidligsteDato,
+        Før(this, senesteDato),
+        this,
         senesteDato
     )
+}
+
+private class IkkeFør(private val tidligsteDato: Faktum<LocalDate>, private val senesteDato: Faktum<LocalDate>) : Regel {
+    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override fun resultat() = tidligsteDato.svar() >= senesteDato.svar()
+    override fun toString() = "Sjekk at '${tidligsteDato.navn}' ikke er før '${senesteDato.navn}'"
+    override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Regel {
+        return IkkeFør(faktaMap[tidligsteDato.navn] as Faktum<LocalDate>, faktaMap[senesteDato.navn] as Faktum<LocalDate>)
+    }
 }
 
 infix fun Faktum<LocalDate>.ikkeFør(senesteDato: Faktum<LocalDate>): Subsumsjon {
-    val tidligsteDato = this
     return EnkelSubsumsjon(
-        object : Regel {
-            override val typeNavn = this@ikkeFør::ikkeFør.name
-            override fun resultat() = tidligsteDato.svar() >= senesteDato.svar()
-            override fun toString() = "Sjekk at '${tidligsteDato.navn}' ikke er før '${senesteDato.navn}'"
-        },
-        tidligsteDato,
+        IkkeFør(this, senesteDato),
+        this,
         senesteDato
     )
 }
 
+private class Minst(private val faktisk: Faktum<Inntekt>, private val terskel: Faktum<Inntekt>) : Regel {
+    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override fun resultat() = faktisk.svar() >= terskel.svar()
+    override fun toString() = "Sjekk at '${faktisk.navn}' er minst '${terskel.navn}'"
+    override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Regel {
+        return Minst(faktaMap[faktisk.navn] as Faktum<Inntekt>, faktaMap[terskel.navn] as Faktum<Inntekt>)
+    }
+}
 infix fun Faktum<Inntekt>.minst(terskel: Faktum<Inntekt>): Subsumsjon {
-    val faktisk = this
     return EnkelSubsumsjon(
-        object : Regel {
-            override val typeNavn = this@minst::minst.name
-            override fun resultat() = faktisk.svar() >= terskel.svar()
-            override fun toString() = "Sjekk at '${faktisk.navn}' er minst '${terskel.navn}'"
-        },
-        faktisk,
+        Minst(this, terskel),
+        this,
         terskel
     )
 }
+private class Er<T : Comparable<T>>(private val faktum: Faktum<*>, private val annen: T) : Regel {
+    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override fun resultat() = faktum.svar() == annen
+    override fun toString() = "Sjekk at `${faktum.navn}` er lik $annen"
+    override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Regel {
+        return Er(faktaMap[faktum.navn] as Faktum<T>, annen)
+    }
+}
 
 infix fun <T : Comparable<T>> Faktum<T>.er(annen: T): Subsumsjon {
-    val faktum = this
     return EnkelSubsumsjon(
-        object : Regel {
-            override val typeNavn = this@er::er.name
-            override fun resultat() = faktum.svar() == annen
-            override fun toString() = "Sjekk at `${faktum.navn}` er lik $annen"
-        },
-        faktum
+        Er(this, annen),
+        this
     )
+}
+
+private class ErIkke(private val faktum: Faktum<Boolean>) : Regel {
+    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override fun resultat() = !faktum.svar()
+    override fun toString() = "Sjekk at `${faktum.navn}` ikke er sann"
+    override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Regel {
+        return ErIkke(faktaMap[faktum.navn] as Faktum<Boolean>)
+    }
 }
 
 fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
     return EnkelSubsumsjon(
-        object : Regel {
-            override val typeNavn = ::erIkke.name
-            override fun resultat() = !faktum.svar()
-            override fun toString() = "Sjekk at `${faktum.navn}` ikke er sann"
-        },
+        ErIkke(faktum),
         faktum
     )
+}
+
+private class Har(private val faktum: Faktum<Boolean>) : Regel {
+    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override fun resultat() = faktum.svar()
+    override fun toString() = "Sjekk at `${faktum.navn}` er sann"
+    override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Regel {
+        return Har(faktaMap[faktum.navn] as Faktum<Boolean>)
+    }
 }
 
 fun har(faktum: Faktum<Boolean>): Subsumsjon {
     return EnkelSubsumsjon(
-        object : Regel {
-            override val typeNavn = ::har.name
-            override fun resultat() = faktum.svar()
-            override fun toString() = "Sjekk at `${faktum.navn}` er sann"
-        },
+        Har(faktum),
         faktum
     )
 }
 
-infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon {
-    val godkjenning = this
-    val regel = object : Regel {
-        override val typeNavn = this@av::av.name
-        override fun resultat() = dokument.erBesvart() && (!godkjenning.erBesvart() || godkjenning.svar())
-        override fun toString() = "Sjekk at `${dokument.navn}` er ${if (resultat()) "godkjent" else "ikke godkjent" }"
+private class Av(private val godkjenning: Faktum<Boolean>, private val dokument: Faktum<Dokument>) : Regel {
+    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override fun resultat() = dokument.erBesvart() && (!godkjenning.erBesvart() || godkjenning.svar())
+    override fun toString() = "Sjekk at `${dokument.navn}` er ${if (resultat()) "godkjent" else "ikke godkjent" }"
+    override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Regel {
+        return Av(faktaMap[godkjenning.navn] as Faktum<Boolean>, faktaMap[dokument.navn] as Faktum<Dokument>)
     }
-    return object : EnkelSubsumsjon(
-        regel,
-        godkjenning,
-        dokument
-    ) {
-        override fun lokaltResultat(): Boolean? {
-            return if (dokument.erBesvart()) regel.resultat() else null
-        }
+}
+private class AvSubsumsjon private constructor(
+    private val regel: Regel,
+    private val dokument: Faktum<Dokument>,
+    private val godkjenning: Faktum<Boolean>,
+    gyldigSubsumsjon: Subsumsjon,
+    ugyldigSubsumsjon: Subsumsjon
+) : EnkelSubsumsjon(
+    regel,
+    setOf(dokument, godkjenning),
+    gyldigSubsumsjon,
+    ugyldigSubsumsjon
+) {
 
-        override fun ukjenteFakta(): Set<GrunnleggendeFaktum<*>> =
-            if (dokument.erBesvart()) emptySet() else dokument.grunnleggendeFakta()
+    constructor(regel: Regel, dokument: Faktum<Dokument>, godkjenning: Faktum<Boolean>) : this(
+        regel,
+        dokument,
+        godkjenning,
+        TomSubsumsjon,
+        TomSubsumsjon
+    )
+
+    override fun lokaltResultat(): Boolean? {
+        return if (dokument.erBesvart()) regel.resultat() else null
     }
+
+    override fun ukjenteFakta(): Set<GrunnleggendeFaktum<*>> =
+        if (dokument.erBesvart()) emptySet() else dokument.grunnleggendeFakta()
+
+    override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>) = AvSubsumsjon(
+        regel.deepCopy(faktaMap),
+        faktaMap[dokument.navn ] as Faktum<Dokument>,
+        faktaMap[godkjenning.navn] as Faktum<Boolean>,
+        gyldigSubsumsjon.deepCopy(faktaMap),
+        ugyldigSubsumsjon.deepCopy(faktaMap)
+    )
+}
+
+infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon {
+    return AvSubsumsjon(Av(this, dokument), dokument, this)
 }
 
 val MAKS_DATO = UtledetFaktum<LocalDate>::max

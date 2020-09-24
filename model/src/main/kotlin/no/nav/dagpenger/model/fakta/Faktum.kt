@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.visitor.FaktumVisitor
 interface Faktum<R : Comparable<R>> {
     val navn: FaktumNavn
     val id: Int get() = navn.id
-    val avhengigeFakta: MutableList<Faktum<*>>
+    val avhengigeFakta: MutableSet<Faktum<*>>
 
     fun clazz(): Class<R>
 
@@ -41,7 +41,17 @@ typealias FaktaRegel <R> = (UtledetFaktum<R>) -> R
 
 fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>) = GrunnleggendeFaktum<R>(this, clazz)
 
-internal fun Set<Faktum<*>>.deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Set<Faktum<*>> =
-    this.mapNotNull { original -> faktaMap[original.navn] }.toSet().also {
+internal fun Set<Faktum<*>>.deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Set<Faktum<*>> = this
+    .mapNotNull { template ->
+        faktaMap[template.navn]?.also {
+            template.deepCopyAvhengigheter(it, faktaMap)
+        }
+    }
+    .toSet()
+    .also {
         require(it.size == this.size) { "Mangler fakta" }
     }
+
+private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, faktaMap: Map<FaktumNavn, Faktum<*>>) {
+    faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { faktaMap[it.navn] as Faktum<*> })
+}

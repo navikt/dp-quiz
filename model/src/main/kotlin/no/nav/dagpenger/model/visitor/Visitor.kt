@@ -18,7 +18,7 @@ interface FaktumVisitor {
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: Int,
-        avhengigeFakta: List<Faktum<*>>,
+        avhengigeFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {}
@@ -26,7 +26,7 @@ interface FaktumVisitor {
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: Int,
-        avhengigeFakta: List<Faktum<*>>,
+        avhengigeFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R
@@ -34,7 +34,7 @@ interface FaktumVisitor {
     fun <R : Comparable<R>> preVisit(
         faktum: UtledetFaktum<R>,
         id: Int,
-        avhengigeFakta: List<Faktum<*>>,
+        avhengigeFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         svar: R
@@ -42,7 +42,7 @@ interface FaktumVisitor {
     fun <R : Comparable<R>> preVisit(
         faktum: UtledetFaktum<R>,
         id: Int,
-        avhengigeFakta: List<Faktum<*>>,
+        avhengigeFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>
     ) {}
