@@ -21,6 +21,7 @@ import no.nav.dagpenger.regelverk.fødselsdato
 import no.nav.dagpenger.regelverk.inngangsvilkår
 import no.nav.dagpenger.regelverk.ønsketDato
 import java.time.LocalDate
+import java.util.UUID
 
 data class Svar(
     val id: Int,
@@ -37,13 +38,13 @@ fun Application.søknadApi() {
         route("/søknad/{søknadsId}") {
 
             get("/neste-seksjon") {
-                val søknad = getOrCreateSøknad(call.parameters["søknadsId"]!!.toInt())
+                val søknad = getOrCreateSøknad(UUID.fromString(call.parameters["søknadsId"]!!))
                 val seksjon = søknad.nesteSeksjon(inngangsvilkår)
 
                 call.respond(seksjon)
             }
-            post<Svar>("/faktum") {   (id, verdi, type) ->
-                val søknad = getOrCreateSøknad(call.parameters["søknadsId"]!!.toInt())
+            post<Svar>("/faktum") { (id, verdi, type) ->
+                val søknad = getOrCreateSøknad(UUID.fromString(call.parameters["søknadsId"]!!))
 
                 when (type.toLowerCase()) {
                     "localdate" -> søknad.finnFaktum<LocalDate>(id).besvar(LocalDate.parse(verdi)) // bør løses et annet sted
@@ -76,8 +77,8 @@ private fun <R : Comparable<R>> Søknad.finnFaktum(id: Int): Faktum<R> =
         it.faktum
     }
 
-internal val søknader = mutableMapOf<Int, Søknad>()
-private fun getOrCreateSøknad(id: Int) =
+internal val søknader = mutableMapOf<UUID, Søknad>()
+private fun getOrCreateSøknad(id: UUID) =
     søknader.getOrPut(id) {
         // val fødselsdato = FaktumNavn(1, "Fødselsdato").faktum<LocalDate>()
         // val ønsketDato = FaktumNavn(2, "Ønsker dagpenger fra dato").faktum<LocalDate>()

@@ -9,10 +9,10 @@ import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
 import no.nav.dagpenger.model.visitor.SøknadJsonBuilder
-import org.intellij.lang.annotations.Language
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.util.UUID
 
 internal class SøknadApiTest {
     private val mapper = ObjectMapper()
@@ -21,7 +21,8 @@ internal class SøknadApiTest {
     fun `hent neste-seksjon og besvar faktumene`() = withTestApplication({
         søknadApi()
     }) {
-        val fakta = with(handleRequest(HttpMethod.Get, "/søknad/1/neste-seksjon")) {
+        val søknadsId = UUID.randomUUID()
+        val fakta = with(handleRequest(HttpMethod.Get, "/søknad/$søknadsId/neste-seksjon")) {
             assertEquals(HttpStatusCode.OK, response.status())
             mapper.readTree(response.content).let { response ->
                 assertEquals(2, response.size())
@@ -33,7 +34,7 @@ internal class SøknadApiTest {
 
         fakta.forEach {
             with(
-                handleRequest(HttpMethod.Post, "/søknad/2/faktum/") {
+                handleRequest(HttpMethod.Post, "/søknad/$søknadsId/faktum/") {
                     addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     setBody(mapper.writeValueAsString(Svar(it, LocalDate.now().toString(), "localdate")))
                 }
@@ -51,7 +52,7 @@ internal class SøknadApiTest {
     fun testSubsumsjontre() = withTestApplication({
         søknadApi()
     }) {
-        with(handleRequest(HttpMethod.Get, "/søknad/123/subsumsjoner")) {
+        with(handleRequest(HttpMethod.Get, "/søknad/${UUID.randomUUID()}/subsumsjoner")) {
             assertEquals(HttpStatusCode.OK, response.status())
             mapper.readTree(response.content).let {
                 assertEquals(7, it["root"]["subsumsjoner"].size())
