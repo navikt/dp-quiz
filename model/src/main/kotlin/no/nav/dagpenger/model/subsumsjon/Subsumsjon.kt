@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
@@ -13,6 +14,8 @@ abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
         false -> if (ugyldig is TomSubsumsjon) false else ugyldig.resultat()
         null -> null
     }
+
+    open fun deepCopy(fakta: Map<FaktumNavn, Faktum<*>>): Subsumsjon = this
 
     internal abstract fun lokaltResultat(): Boolean?
 
