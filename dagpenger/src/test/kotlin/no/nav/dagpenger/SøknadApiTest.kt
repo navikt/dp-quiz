@@ -22,7 +22,7 @@ internal class SøknadApiTest {
         søknadApi()
     }) {
         val søknadsId = UUID.randomUUID()
-        val fakta = with(handleRequest(HttpMethod.Get, "/søknad/$søknadsId/neste-seksjon")) {
+        val fakta = with(handleRequest(HttpMethod.Get, "/soknad/$søknadsId/neste-seksjon")) {
             assertEquals(HttpStatusCode.OK, response.status())
             mapper.readTree(response.content).let { response ->
                 assertEquals(2, response["fakta"].size())
@@ -34,7 +34,7 @@ internal class SøknadApiTest {
 
         fakta.forEach {
             with(
-                handleRequest(HttpMethod.Put, "/søknad/$søknadsId/faktum/${it["id"]}") {
+                handleRequest(HttpMethod.Put, "/soknad/$søknadsId/faktum/${it["id"]}") {
                     addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     setBody(mapper.writeValueAsString(Svar(LocalDate.now().toString(), it["clazz"].asText())))
                 }
@@ -52,7 +52,7 @@ internal class SøknadApiTest {
     fun testSubsumsjontre() = withTestApplication({
         søknadApi()
     }) {
-        with(handleRequest(HttpMethod.Get, "/søknad/${UUID.randomUUID()}/subsumsjoner")) {
+        with(handleRequest(HttpMethod.Get, "/soknad/${UUID.randomUUID()}/subsumsjoner")) {
             assertEquals(HttpStatusCode.OK, response.status())
             mapper.readTree(response.content).let {
                 assertEquals(7, it["root"]["subsumsjoner"].size())
