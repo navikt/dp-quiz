@@ -36,6 +36,9 @@ fun Application.søknadApi() {
     }
 
     routing {
+        trace {
+            log.info { it.buildText() }
+        }
         route("/soknad/{søknadsId}") {
 
             get("/neste-seksjon") {
