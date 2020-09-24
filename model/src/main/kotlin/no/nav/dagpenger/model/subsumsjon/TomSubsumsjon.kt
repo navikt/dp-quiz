@@ -1,10 +1,13 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
+
+    override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>) = this
 
     override fun fakta(): Set<GrunnleggendeFaktum<*>> = emptySet()
 

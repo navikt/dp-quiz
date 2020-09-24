@@ -40,3 +40,8 @@ fun Set<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
 typealias FaktaRegel <R> = (UtledetFaktum<R>) -> R
 
 fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>) = GrunnleggendeFaktum<R>(this, clazz)
+
+internal fun Set<Faktum<*>>.deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Set<Faktum<*>> =
+    this.mapNotNull { original -> faktaMap[original.navn] }.toSet().also {
+        require(it.size == this.size) { "Mangler fakta" }
+    }

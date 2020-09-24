@@ -2,16 +2,22 @@ package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand.Ukjent
+import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.fakta.deepCopy
 import no.nav.dagpenger.model.fakta.erBesvart
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
-open class EnkelSubsumsjon internal constructor(
+open class EnkelSubsumsjon private constructor(
     private val regel: Regel,
-    vararg fakta: Faktum<*>
-) : Subsumsjon(regel.toString()) {
-    private val fakta = fakta.toSet()
+    private val fakta: Set<Faktum<*>>,
+    gyldigSubsumsjon: Subsumsjon,
+    ugyldigSubsumsjon: Subsumsjon
+) : Subsumsjon(regel.toString(), gyldigSubsumsjon, ugyldigSubsumsjon) {
+
+    internal constructor(regel: Regel, vararg fakta: Faktum<*>) :
+        this(regel, fakta.toSet(), TomSubsumsjon, TomSubsumsjon)
 
     override fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisit(this, regel, fakta)
@@ -19,6 +25,13 @@ open class EnkelSubsumsjon internal constructor(
         super.accept(visitor)
         visitor.postVisit(this, regel, fakta)
     }
+
+    override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>) = EnkelSubsumsjon(
+        regel,
+        fakta.deepCopy(faktaMap),
+        gyldigSubsumsjon.deepCopy(faktaMap),
+        ugyldigSubsumsjon.deepCopy(faktaMap)
+    )
 
     override fun fakta() = fakta
 

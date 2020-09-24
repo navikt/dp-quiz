@@ -5,10 +5,15 @@ import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.visitor.PrettyPrint
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
-abstract class SammensattSubsumsjon(
+abstract class SammensattSubsumsjon protected constructor(
     navn: String,
-    protected open val subsumsjoner: List<Subsumsjon>
-) : Subsumsjon(navn) {
+    protected open val subsumsjoner: List<Subsumsjon>,
+    gyldigSubsumsjon: Subsumsjon,
+    ugyldigSubsumsjon: Subsumsjon
+) : Subsumsjon(navn, gyldigSubsumsjon, ugyldigSubsumsjon) {
+
+    internal constructor(navn: String, subsumsjoner: List<Subsumsjon>) :
+        this(navn, subsumsjoner, TomSubsumsjon, TomSubsumsjon)
 
     override fun nesteFakta(): Set<GrunnleggendeFaktum<*>> =
         subsumsjoner.flatMap { it.nesteFakta() }.toSet().let {

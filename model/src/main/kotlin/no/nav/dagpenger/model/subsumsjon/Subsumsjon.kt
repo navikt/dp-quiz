@@ -5,9 +5,20 @@ import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
-abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
-    protected var gyldigSubsumsjon: Subsumsjon = TomSubsumsjon
-    protected var ugyldigSubsumsjon: Subsumsjon = TomSubsumsjon
+abstract class Subsumsjon protected constructor(
+    internal val navn: String,
+    gyldigSubsumsjon: Subsumsjon?,
+    ugyldigSubsumsjon: Subsumsjon?
+) : Iterable<Subsumsjon> {
+    protected lateinit var gyldigSubsumsjon: Subsumsjon
+    protected lateinit var ugyldigSubsumsjon: Subsumsjon
+
+    init {
+        if (gyldigSubsumsjon != null) this.gyldigSubsumsjon = gyldigSubsumsjon
+        if (ugyldigSubsumsjon != null) this.ugyldigSubsumsjon = ugyldigSubsumsjon
+    }
+
+    internal constructor(navn: String) : this(navn, TomSubsumsjon, TomSubsumsjon)
 
     open fun resultat(): Boolean? = when (lokaltResultat()) {
         true -> if (gyldig is TomSubsumsjon) true else gyldig.resultat()
@@ -15,7 +26,7 @@ abstract class Subsumsjon(internal val navn: String) : Iterable<Subsumsjon> {
         null -> null
     }
 
-    open fun deepCopy(fakta: Map<FaktumNavn, Faktum<*>>): Subsumsjon = this
+    abstract fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Subsumsjon
 
     internal abstract fun lokaltResultat(): Boolean?
 
