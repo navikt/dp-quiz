@@ -3,8 +3,6 @@ package no.nav.dagpenger.model.visitor
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
-import java.util.UUID
 
 class SeksjonJsonBuilder(private val seksjon: Seksjon) : FaktumJsonBuilder(), SøknadVisitor {
 

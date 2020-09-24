@@ -17,7 +17,6 @@ import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.JsonBuilder
 import no.nav.dagpenger.model.visitor.SeksjonJsonBuilder
-import no.nav.dagpenger.model.visitor.SøknadJsonBuilder
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import no.nav.dagpenger.regelverk.fødselsdato
 import no.nav.dagpenger.regelverk.inngangsvilkår
