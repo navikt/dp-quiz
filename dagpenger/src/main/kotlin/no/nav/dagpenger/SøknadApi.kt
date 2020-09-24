@@ -6,9 +6,11 @@ import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
 import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.jackson
+import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.post
+import io.ktor.routing.put
 import io.ktor.routing.route
 import io.ktor.routing.routing
 import no.nav.dagpenger.model.fakta.Faktum
@@ -25,7 +27,6 @@ import java.time.LocalDate
 import java.util.UUID
 
 data class Svar(
-    val id: Int,
     val verdi: String,
     val type: String
 )
@@ -44,11 +45,13 @@ fun Application.søknadApi() {
 
                 call.respond(SeksjonJsonBuilder(seksjon).resultat())
             }
-            post<Svar>("/faktum") { (id, verdi, type) ->
+            put("/faktum/{faktumId}") {
+                val (verdi, type) = call.receive<Svar>()
                 val søknad = getOrCreateSøknad(UUID.fromString(call.parameters["søknadsId"]!!))
+                val id = call.parameters["faktumId"]!!.toInt()
 
                 when (type.toLowerCase()) {
-                    "localdate" -> søknad.finnFaktum<LocalDate>(id).besvar(LocalDate.parse(verdi)) // bør løses et annet sted
+                    "localdate" -> søknad.finnFaktum<LocalDate>(id).besvar(LocalDate.parse(verdi)) // bør løses et annet sted?
                     "string" -> søknad.finnFaktum<String>(id).besvar(verdi)
                     "boolean" -> søknad.finnFaktum<Boolean>(id).besvar(verdi.toBoolean())
                     "int" -> søknad.finnFaktum<Int>(id).besvar(verdi.toInt())
