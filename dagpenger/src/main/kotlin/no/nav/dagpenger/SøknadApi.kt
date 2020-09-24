@@ -37,7 +37,7 @@ fun Application.søknadApi() {
     }
 
     routing {
-        route("/søknad/{søknadsId}") {
+        route("/soknad/{søknadsId}") {
 
             get("/neste-seksjon") {
                 val søknad = getOrCreateSøknad(UUID.fromString(call.parameters["søknadsId"]!!))
