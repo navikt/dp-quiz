@@ -22,26 +22,26 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     fun result() = result
 
-    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>) {
-        melding("${status(subsumsjon)} $subsumsjon")
+    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, resultat: Boolean?) {
+        melding("${status(resultat)} $subsumsjon")
         indentTeller++
     }
 
-    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>) {
+    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, resultat: Boolean?) {
         indentTeller--
     }
 
-    override fun preVisit(subsumsjon: AlleSubsumsjon) {
-        melding("${status(subsumsjon)} Kombinasjon av subsumsjoner ${subsumsjon.navn}")
+    override fun preVisit(subsumsjon: AlleSubsumsjon, resultat: Boolean?) {
+        melding("${status(resultat)} Kombinasjon av subsumsjoner ${subsumsjon.navn}")
         indentTeller++
     }
 
-    override fun postVisit(subsumsjon: AlleSubsumsjon) {
+    override fun postVisit(subsumsjon: AlleSubsumsjon, resultat: Boolean?) {
         indentTeller--
     }
 
-    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon) {
-        melding("${status(subsumsjon)} Kombinasjon av subsumsjoner ${subsumsjon.navn}")
+    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, resultat: Boolean?) {
+        melding("${status(resultat)} Kombinasjon av subsumsjoner ${subsumsjon.navn}")
         indentTeller++
     }
 
@@ -68,7 +68,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         indentTeller++
     }
 
-    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {
+    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, resultat: Boolean?) {
         indentTeller--
     }
 
@@ -128,7 +128,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         result += "  ".repeat(indentTeller) + "${navn}\n"
     }
 
-    private fun status(subsumsjon: Subsumsjon) = when (subsumsjon.resultat()) {
+    private fun status(resultat: Boolean?) = when (resultat) {
         true -> "[bestått]"
         false -> "[mislyktes]"
         null -> "[ukjent]"

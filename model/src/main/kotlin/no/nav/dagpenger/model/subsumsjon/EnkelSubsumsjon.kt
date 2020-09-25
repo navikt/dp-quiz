@@ -20,10 +20,12 @@ open class EnkelSubsumsjon protected constructor(
         this(regel, fakta.toSet(), TomSubsumsjon, TomSubsumsjon)
 
     override fun accept(visitor: SubsumsjonVisitor) {
-        visitor.preVisit(this, regel, fakta)
-        fakta.forEach { it.accept(visitor) }
-        super.accept(visitor)
-        visitor.postVisit(this, regel, fakta)
+        resultat().also {
+            visitor.preVisit(this, regel, fakta, it)
+            fakta.forEach { it.accept(visitor) }
+            super.accept(visitor)
+            visitor.postVisit(this, regel, fakta, it)
+        }
     }
 
     override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>) = EnkelSubsumsjon(

@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumNavn
+import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class MakroSubsumsjon private constructor(
     navn: String,
@@ -19,6 +20,14 @@ class MakroSubsumsjon private constructor(
             gyldigSubsumsjon.deepCopy(faktaMap),
             ugyldigSubsumsjon.deepCopy(faktaMap)
         )
+    }
+
+    override fun accept(visitor: SubsumsjonVisitor) {
+        resultat().also {
+            visitor.preVisit(this, it)
+            super.accept(visitor)
+            visitor.postVisit(this, it)
+        }
     }
 
     override fun lokaltResultat() = child.resultat()

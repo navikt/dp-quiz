@@ -15,29 +15,29 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : FaktumJsonBuilder(), Sub
         subsumsjon.accept(this)
     }
 
-    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>) {
-        subsumsjonNode(subsumsjon, regel.typeNavn).also { it ->
+    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, resultat: Boolean?) {
+        subsumsjonNode(subsumsjon, regel.typeNavn, resultat).also { it ->
             it.set("fakta", mapper.valueToTree(fakta.map { it.id }))
         }
     }
 
-    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>) {
+    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, resultat: Boolean?) {
         root = objectNodes.removeAt(0)
     }
 
-    override fun preVisit(subsumsjon: AlleSubsumsjon) {
-        subsumsjonNode(subsumsjon, "alle")
+    override fun preVisit(subsumsjon: AlleSubsumsjon, resultat: Boolean?) {
+        subsumsjonNode(subsumsjon, "alle", resultat)
         arrayNodes.add(0, mapper.createArrayNode())
     }
 
-    override fun postVisit(subsumsjon: AlleSubsumsjon) {
+    override fun postVisit(subsumsjon: AlleSubsumsjon, resultat: Boolean?) {
         objectNodes.removeAt(0).also {
             it.set("subsumsjoner", arrayNodes.removeAt(0))
             root = it
         }
     }
 
-    private fun subsumsjonNode(subsumsjon: Subsumsjon, regelType: String) =
+    private fun subsumsjonNode(subsumsjon: Subsumsjon, regelType: String, resultat: Boolean?) =
         mapper.createObjectNode().also { subsumsjonNode ->
             subsumsjoner[subsumsjon] = subsumsjonNode
             objectNodes.add(0, subsumsjonNode)
@@ -45,14 +45,15 @@ class JsonBuilder(private val subsumsjon: Subsumsjon) : FaktumJsonBuilder(), Sub
             subsumsjonNode.put("navn", subsumsjon.navn)
             subsumsjonNode.put("kclass", subsumsjon.javaClass.simpleName)
             subsumsjonNode.put("regelType", regelType)
+            subsumsjonNode.put("resultat", resultat)
         }
 
-    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon) {
-        subsumsjonNode(subsumsjon, "minstEnAv")
+    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, resultat: Boolean?) {
+        subsumsjonNode(subsumsjon, "minstEnAv", resultat)
         arrayNodes.add(0, mapper.createArrayNode())
     }
 
-    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon) {
+    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, resultat: Boolean?) {
         objectNodes.removeAt(0).also {
             it.set("subsumsjoner", arrayNodes.removeAt(0))
             root = it

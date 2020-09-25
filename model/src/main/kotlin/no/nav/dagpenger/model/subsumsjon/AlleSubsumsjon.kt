@@ -23,8 +23,10 @@ class AlleSubsumsjon private constructor(
     }
 
     override fun accept(visitor: SubsumsjonVisitor) {
-        visitor.preVisit(this)
-        super.accept(visitor)
-        visitor.postVisit(this)
+        resultat().also {
+            visitor.preVisit(this, it)
+            super.accept(visitor)
+            visitor.postVisit(this, it)
+        }
     }
 }
