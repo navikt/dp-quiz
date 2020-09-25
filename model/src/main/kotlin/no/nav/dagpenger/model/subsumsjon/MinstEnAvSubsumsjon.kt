@@ -22,6 +22,15 @@ class MinstEnAvSubsumsjon private constructor(
         )
     }
 
+    override fun deepCopy(): Subsumsjon {
+        return MinstEnAvSubsumsjon(
+            navn,
+            subsumsjoner.map { it.deepCopy() },
+            gyldigSubsumsjon.deepCopy(),
+            ugyldigSubsumsjon.deepCopy()
+        )
+    }
+
     override fun accept(visitor: SubsumsjonVisitor) {
         resultat().also {
             visitor.preVisit(this, it)

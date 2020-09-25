@@ -98,13 +98,13 @@ internal class SøknadSubsumsjonTest {
     }
 
     private fun Seksjon.fakta(): Set<Faktum<*>> =
-            object : SøknadVisitor {
-                lateinit var resultater: Set<Faktum<*>>
-                override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
-                    resultater = fakta
-                }
-            }.let {
-                this@fakta.accept(it)
-                it.resultater
+        object : SøknadVisitor {
+            lateinit var resultater: Set<Faktum<*>>
+            override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
+                resultater = fakta
             }
+        }.let {
+            this@fakta.accept(it)
+            it.resultater
+        }
 }

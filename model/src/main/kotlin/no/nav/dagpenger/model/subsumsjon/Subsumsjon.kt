@@ -28,6 +28,8 @@ abstract class Subsumsjon protected constructor(
 
     abstract fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Subsumsjon
 
+    abstract fun deepCopy(): Subsumsjon
+
     internal abstract fun lokaltResultat(): Boolean?
 
     abstract fun nesteFakta(): Set<GrunnleggendeFaktum<*>>
@@ -56,6 +58,23 @@ abstract class Subsumsjon protected constructor(
 
     internal fun ugyldig(child: Subsumsjon) {
         this.ugyldigSubsumsjon = child
+    }
+
+    internal open fun mulige(): Subsumsjon = this.apply {
+        when (lokaltResultat()) {
+            true -> {
+                ugyldigSubsumsjon = TomSubsumsjon
+                gyldigSubsumsjon.mulige()
+            }
+            false -> {
+                gyldigSubsumsjon = TomSubsumsjon
+                ugyldigSubsumsjon.mulige()
+            }
+            null -> {
+                gyldigSubsumsjon.mulige()
+                ugyldigSubsumsjon.mulige()
+            }
+        }
     }
 }
 

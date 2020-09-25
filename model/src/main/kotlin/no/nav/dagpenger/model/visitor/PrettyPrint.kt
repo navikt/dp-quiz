@@ -8,6 +8,7 @@ import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
@@ -43,6 +44,15 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, resultat: Boolean?) {
         melding("${status(resultat)} Kombinasjon av subsumsjoner ${subsumsjon.navn}")
         indentTeller++
+    }
+
+    override fun preVisit(subsumsjon: MakroSubsumsjon, resultat: Boolean?) {
+        melding("${status(resultat)} Resultat av subsumsjon ${subsumsjon.navn}")
+        indentTeller++
+    }
+
+    override fun postVisit(subsumsjon: MakroSubsumsjon, resultat: Boolean?) {
+        indentTeller--
     }
 
     override fun <R : Comparable<R>> preVisit(

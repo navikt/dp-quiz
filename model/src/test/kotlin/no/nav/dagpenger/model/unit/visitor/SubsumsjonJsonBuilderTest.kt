@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.visitor
+package no.nav.dagpenger.model.unit.visitor
 
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.Rolle
@@ -13,6 +13,7 @@ import no.nav.dagpenger.model.helpers.ønsketdato
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.søknad.Seksjon
+import no.nav.dagpenger.model.visitor.SubsumsjonJsonBuilder
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -26,7 +27,7 @@ internal class SubsumsjonJsonBuilderTest {
         val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>(Boolean::class.java)
         val seksjon = Seksjon(Rolle.søker, faktum)
 
-        var jsonBuilder = JsonBuilder(har(faktum))
+        var jsonBuilder = SubsumsjonJsonBuilder(har(faktum))
         var jsonfakta = jsonBuilder.resultat()
 
         assertFalse(jsonfakta["root"]["navn"].isNull)
@@ -39,7 +40,7 @@ internal class SubsumsjonJsonBuilderTest {
         assertEquals(null, jsonfakta["fakta"][0]["svar"])
 
         faktum.besvar(true)
-        jsonBuilder = JsonBuilder((har(faktum)))
+        jsonBuilder = SubsumsjonJsonBuilder((har(faktum)))
         jsonfakta = jsonBuilder.resultat()
         assertEquals(true, jsonfakta["fakta"][0]["svar"].asBoolean())
     }
@@ -52,7 +53,7 @@ internal class SubsumsjonJsonBuilderTest {
 
         avhengigFaktum avhengerAv faktum
 
-        val jsonBuilder = JsonBuilder(har(faktum))
+        val jsonBuilder = SubsumsjonJsonBuilder(har(faktum))
         val jsonfakta = jsonBuilder.resultat()
 
         assertEquals(listOf(2), jsonfakta["fakta"][0]["avhengigFakta"].map { it.asInt() })
@@ -61,7 +62,7 @@ internal class SubsumsjonJsonBuilderTest {
     @Test
     fun `Finner utledet fakta i json`() {
         subsumsjonRoot()
-        val jsonBuilder = JsonBuilder(virkningstidspunkt etter bursdag67)
+        val jsonBuilder = SubsumsjonJsonBuilder(virkningstidspunkt etter bursdag67)
         val json = jsonBuilder.resultat()
 
         assertEquals(3, json["fakta"][0]["fakta"].size())
@@ -74,7 +75,7 @@ internal class SubsumsjonJsonBuilderTest {
         bursdag67.besvar(31.januar)
         søknadsdato.besvar(1.januar)
         ønsketdato.besvar(1.februar)
-        val json = JsonBuilder(comp).resultat()
+        val json = SubsumsjonJsonBuilder(comp).resultat()
 
         assertEquals(10, json["fakta"].size())
         assertEquals(2, json["root"]["subsumsjoner"].size())

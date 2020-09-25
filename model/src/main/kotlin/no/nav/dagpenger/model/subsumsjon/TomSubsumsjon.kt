@@ -9,6 +9,8 @@ internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
 
     override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>) = this
 
+    override fun deepCopy() = this
+
     override fun accept(visitor: SubsumsjonVisitor) {}
 
     override fun nesteFakta(): Set<GrunnleggendeFaktum<*>> = emptySet()
@@ -25,4 +27,6 @@ internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
             override fun next() = throw NoSuchElementException()
         }
     }
+
+    override fun mulige() = this
 }

@@ -22,6 +22,15 @@ class MakroSubsumsjon private constructor(
         )
     }
 
+    override fun deepCopy(): Subsumsjon {
+        return MakroSubsumsjon(
+            navn,
+            child.deepCopy(),
+            gyldigSubsumsjon.deepCopy(),
+            ugyldigSubsumsjon.deepCopy()
+        )
+    }
+
     override fun accept(visitor: SubsumsjonVisitor) {
         resultat().also {
             visitor.preVisit(this, it)

@@ -58,19 +58,19 @@ internal class Eksempel {
 
     /* ktlint-disable parameter-list-wrapping */
     private val templateSubsumsjon = "rootSubsumsjon".alle(
-            t1Boolean er true,
-            t2Dato etter t_3_4_5Dato,
-            t3Dato før t4Dato
+        t1Boolean er true,
+        t2Dato etter t_3_4_5Dato,
+        t3Dato før t4Dato
     ) så (
-            "makro" makro
-                    (t10Boolean er true eller (t12Boolean av t11Dokument))
-                    så (
-                    "minstEnSubsumsjon".minstEnAv(
-                            t6Inntekt minst t8Inntekt,
-                            t7Inntekt minst t9Inntekt
-                    ) så (t13Boolean er true)
-                    )
-            )
+        "makro" makro
+            (t10Boolean er true eller (t12Boolean av t11Dokument))
+            så (
+                "minstEnSubsumsjon".minstEnAv(
+                    t6Inntekt minst t8Inntekt,
+                    t7Inntekt minst t9Inntekt
+                ) så (t13Boolean er true)
+                )
+        )
 
     internal lateinit var f1Boolean: Faktum<Boolean>
     internal lateinit var f2Dato: Faktum<LocalDate>

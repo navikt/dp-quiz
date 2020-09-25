@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 
-class JsonBuilder(private val subsumsjon: Subsumsjon) : FaktumJsonBuilder(), SubsumsjonVisitor {
+class SubsumsjonJsonBuilder(private val subsumsjon: Subsumsjon) : FaktumJsonBuilder(), SubsumsjonVisitor {
     private val subsumsjoner = mutableMapOf<Subsumsjon, ObjectNode>()
 
     init {
