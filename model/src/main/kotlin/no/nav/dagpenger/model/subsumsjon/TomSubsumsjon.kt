@@ -9,8 +9,6 @@ internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
 
     override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>) = this
 
-    override fun fakta(): Set<GrunnleggendeFaktum<*>> = emptySet()
-
     override fun accept(visitor: SubsumsjonVisitor) {}
 
     override fun nesteFakta(): Set<GrunnleggendeFaktum<*>> = emptySet()

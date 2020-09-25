@@ -25,7 +25,6 @@ internal class SammensattSubsumsjonsTest {
 
     @Test
     fun `neste fakta`() {
-        assertEquals(10, comp.fakta().size)
         ønsketdato.besvar(2.januar)
         søknadsdato.besvar(2.januar)
         sisteDagMedLønn.besvar(1.januar)
@@ -35,8 +34,6 @@ internal class SammensattSubsumsjonsTest {
         inntektSisteÅr.besvar(100000.månedlig)
         dimisjonsdato.besvar(1.januar)
         assertEquals(3, comp.nesteFakta().size)
-        assertEquals(10, comp.fakta().size)
-        println(comp)
     }
 
     @Test

@@ -5,7 +5,6 @@ import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.visitor.PrettyPrint
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
@@ -36,6 +35,5 @@ internal class EnumFaktaTest {
 
         faktum.besvar(SpråkEnum.engelsk)
         assertEquals(true, subsumsjon.resultat())
-        println(PrettyPrint(subsumsjon).result())
     }
 }

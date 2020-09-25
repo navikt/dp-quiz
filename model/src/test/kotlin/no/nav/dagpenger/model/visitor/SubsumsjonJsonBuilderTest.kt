@@ -52,7 +52,6 @@ internal class SubsumsjonJsonBuilderTest {
 
         val jsonBuilder = JsonBuilder(har(faktum))
         val jsonfakta = jsonBuilder.resultat()
-        println(jsonBuilder)
 
         assertEquals(listOf(2), jsonfakta["fakta"][0]["avhengigFakta"].map { it.asInt() })
     }
@@ -62,7 +61,6 @@ internal class SubsumsjonJsonBuilderTest {
         subsumsjonRoot()
         val jsonBuilder = JsonBuilder(virkningstidspunkt etter bursdag67)
         val json = jsonBuilder.resultat()
-        println(jsonBuilder)
 
         assertEquals(3, json["fakta"][0]["fakta"].size())
         assertEquals(listOf(3, 2, 4), json["fakta"][0]["fakta"].map { it.asInt() })
@@ -74,7 +72,6 @@ internal class SubsumsjonJsonBuilderTest {
         val json = JsonBuilder(comp).resultat()
 
         val string = ObjectMapper().writerWithDefaultPrettyPrinter<ObjectWriter>().writeValueAsString(json)
-        println(string)
 
         assertEquals(10, json["fakta"].size())
         assertEquals(2, json["root"]["subsumsjoner"].size())

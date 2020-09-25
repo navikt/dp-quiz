@@ -21,15 +21,10 @@ internal class EnkelSubsumsjonsTest {
 
     @Test
     fun `subsumsjonen kan konkludere`() {
-        println(bursdag67 etter søknadsdato)
-
-        // TODO: This should be return null, not throwing exception
         assertEquals(null, (bursdag67 etter søknadsdato).resultat())
         bursdag67.besvar(31.januar)
         søknadsdato.besvar(1.januar)
         assertTrue((bursdag67 etter søknadsdato).resultat()!!)
-
-        println((bursdag67 etter søknadsdato))
     }
 
     @Test

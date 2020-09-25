@@ -38,11 +38,10 @@ abstract class SammensattSubsumsjon protected constructor(
             gyldigSubsumsjon.enkelSubsumsjoner(*fakta) +
             ugyldigSubsumsjon.enkelSubsumsjoner(*fakta)
 
-    override fun fakta() =
-        subsumsjoner.flatMap { it.fakta() }.toSet() + gyldigSubsumsjon.fakta() + ugyldigSubsumsjon.fakta()
-
     override fun toString() = PrettyPrint(this).result()
+
     override operator fun get(indeks: Int) = subsumsjoner[indeks]
+
     override fun iterator(): Iterator<Subsumsjon> {
         val iterator = subsumsjoner.iterator()
         return object : Iterator<Subsumsjon> {

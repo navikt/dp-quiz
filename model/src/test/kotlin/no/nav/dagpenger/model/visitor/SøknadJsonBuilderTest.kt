@@ -19,7 +19,6 @@ class SøknadJsonBuilderTest {
         val jsonBuilder = SøknadJsonBuilder(søknad)
         val json = jsonBuilder.resultat()
 
-        println(jsonBuilder)
         assertNotNull(json["root"]["uuid"])
     }
 
@@ -34,8 +33,6 @@ class SøknadJsonBuilderTest {
 
         val jsonBuilder = SøknadJsonBuilder(søknad)
         val json = jsonBuilder.resultat()
-
-        println(jsonBuilder)
 
         assertEquals(2, json["root"]["seksjoner"].size())
         assertEquals(Rolle.søker.name, json["root"]["seksjoner"][0]["rolle"].asText())

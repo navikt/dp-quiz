@@ -16,8 +16,6 @@ class SeksjonJsonBuilderTest {
         val jsonBuilder = SeksjonJsonBuilder(seksjon)
         val json = jsonBuilder.resultat()
 
-        println(jsonBuilder)
-
         assertEquals(1, json["fakta"].size())
         assertEquals(listOf(1), json["root"]["fakta"].map { it.asInt() })
         assertEquals(listOf(1), json["fakta"].map { it["id"].asInt() })

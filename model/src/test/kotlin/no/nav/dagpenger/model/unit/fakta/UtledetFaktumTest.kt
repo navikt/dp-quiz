@@ -10,9 +10,7 @@ import no.nav.dagpenger.model.helpers.søknadsdato
 import no.nav.dagpenger.model.helpers.virkningstidspunkt
 import no.nav.dagpenger.model.helpers.ønsketdato
 import no.nav.dagpenger.model.regel.MAKS_DATO
-import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.visitor.PrettyPrint
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -52,7 +50,5 @@ internal class UtledetFaktumTest {
         dimisjonsdato.besvar(3.januar)
 
         assertEquals(3.januar, blurp.svar())
-
-        println(PrettyPrint(blurp etter søknadsdato).result())
     }
 }

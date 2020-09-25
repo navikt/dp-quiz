@@ -44,8 +44,6 @@ abstract class Subsumsjon protected constructor(
         visitor.postVisitUgyldig(this, ugyldigSubsumsjon)
     }
 
-    internal abstract fun fakta(): Set<Faktum<*>>
-
     internal abstract operator fun get(indeks: Int): Subsumsjon
 
     internal val gyldig get() = gyldigSubsumsjon
