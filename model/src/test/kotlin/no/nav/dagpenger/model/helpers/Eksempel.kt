@@ -37,7 +37,8 @@ internal class Eksempel {
     private val fn10Boolean = FaktumNavn(10, "f10")
     private val fn11Dokument = FaktumNavn(11, "f11")
     private val fn12Boolean = FaktumNavn(12, "f12")
-    private val fn13Boolean = FaktumNavn(13, "f13")
+    private val fn13Dato = FaktumNavn(13, "f13")
+    private val fn14Boolean = FaktumNavn(14, "f14")
 
     private val t1Boolean = fn1Boolean.faktum(Boolean::class.java)
     private val t2Dato = fn2Dato.faktum(LocalDate::class.java)
@@ -54,7 +55,8 @@ internal class Eksempel {
     private val t12Boolean = fn12Boolean.faktum(Boolean::class.java).apply {
         this avhengerAv t11Dokument
     }
-    private val t13Boolean = fn13Boolean.faktum(Boolean::class.java)
+    private val t13Dato = fn13Dato.faktum(LocalDate::class.java)
+    private val t14Boolean = fn14Boolean.faktum(Boolean::class.java)
 
     /* ktlint-disable parameter-list-wrapping */
     private val templateSubsumsjon = "rootSubsumsjon".alle(
@@ -68,8 +70,9 @@ internal class Eksempel {
                 "minstEnSubsumsjon".minstEnAv(
                     t6Inntekt minst t8Inntekt,
                     t7Inntekt minst t9Inntekt
-                ) så (t13Boolean er true)
+                ) så (t14Boolean er true)
                 )
+            eller (t2Dato etter t13Dato)
         )
 
     internal lateinit var f1Boolean: Faktum<Boolean>
@@ -85,7 +88,8 @@ internal class Eksempel {
     internal lateinit var f10Boolean: Faktum<Boolean>
     internal lateinit var f11Dokument: Faktum<Dokument>
     internal lateinit var f12Boolean: Faktum<Boolean>
-    internal lateinit var f13Boolean: Faktum<Boolean>
+    internal lateinit var f13Dato: Faktum<LocalDate>
+    internal lateinit var f14Boolean: Faktum<Boolean>
 
     internal lateinit var seksjon1: Seksjon
     internal lateinit var seksjon2: Seksjon
@@ -119,14 +123,15 @@ internal class Eksempel {
         f10Boolean = fn10Boolean.faktum(Boolean::class.java)
         f11Dokument = fn11Dokument.faktum(Dokument::class.java)
         f12Boolean = fn12Boolean.faktum(Boolean::class.java)
-        f13Boolean = fn13Boolean.faktum(Boolean::class.java)
+        f13Dato = fn13Dato.faktum(LocalDate::class.java)
+        f14Boolean = fn14Boolean.faktum(Boolean::class.java)
         f_3_4_5Dato = listOf(f3Dato, f4Dato, f5Dato).faktum(fn_3_4_5Dato, MAKS_DATO)
 
         seksjon1 = Seksjon(Rolle.nav, f1Boolean, f2Dato)
         seksjon2 = Seksjon(Rolle.nav, f6Inntekt, f7Inntekt, f8Inntekt, f9Inntekt)
-        seksjon3 = Seksjon(Rolle.søker, f3Dato, f4Dato, f5Dato, f_3_4_5Dato)
+        seksjon3 = Seksjon(Rolle.søker, f3Dato, f4Dato, f5Dato, f_3_4_5Dato, f13Dato)
         seksjon4 = Seksjon(Rolle.søker, f10Boolean, f11Dokument)
-        seksjon5 = Seksjon(Rolle.saksbehandler, f6Inntekt, f7Inntekt, f12Boolean, f13Boolean)
+        seksjon5 = Seksjon(Rolle.saksbehandler, f6Inntekt, f7Inntekt, f12Boolean, f14Boolean)
 
         _søknad = Søknad(seksjon1, seksjon2, seksjon3, seksjon4, seksjon5)
 

@@ -47,8 +47,8 @@ internal class SøknadSubsumsjonTest {
         }
 
         assertEquals(m.seksjon3, søknad.nesteSeksjon(rootSubsumsjon))
-        assertEquals(4, m.seksjon3.fakta().size)
-        assertEquals(setOf(m.f3Dato, m.f4Dato, m.f5Dato, m.f_3_4_5Dato), m.seksjon3.fakta())
+        assertEquals(5, m.seksjon3.fakta().size)
+        assertEquals(setOf(m.f3Dato, m.f4Dato, m.f5Dato, m.f_3_4_5Dato, m.f13Dato), m.seksjon3.fakta())
         m.f3Dato.besvar(1.januar)
         m.f4Dato.besvar(2.januar)
         m.f5Dato.besvar(3.januar)
@@ -84,13 +84,13 @@ internal class SøknadSubsumsjonTest {
         m.f9Inntekt.besvar(2500.månedlig, Rolle.nav)
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
-            assertEquals(setOf(m.f13Boolean), fakta)
+            assertEquals(setOf(m.f14Boolean), fakta)
         }
 
         assertEquals(m.seksjon5, søknad.nesteSeksjon(rootSubsumsjon))
         assertEquals(4, m.seksjon5.fakta().size)
-        assertEquals(setOf(m.f6Inntekt, m.f7Inntekt, m.f12Boolean, m.f13Boolean), m.seksjon5.fakta())
-        m.f13Boolean.besvar(true, Rolle.saksbehandler)
+        assertEquals(setOf(m.f6Inntekt, m.f7Inntekt, m.f12Boolean, m.f14Boolean), m.seksjon5.fakta())
+        m.f14Boolean.besvar(true, Rolle.saksbehandler)
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(0, fakta.size)
             assertEquals(emptySet<GrunnleggendeFaktum<*>>(), fakta)

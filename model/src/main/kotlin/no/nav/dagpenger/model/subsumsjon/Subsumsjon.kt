@@ -59,20 +59,21 @@ abstract class Subsumsjon protected constructor(
     internal fun ugyldig(child: Subsumsjon) {
         this.ugyldigSubsumsjon = child
     }
+    internal fun mulige(): Subsumsjon = this.deepCopy()._mulige()
 
-    internal open fun mulige(): Subsumsjon = this.apply {
+    internal open fun _mulige(): Subsumsjon = this.also { copy ->
         when (lokaltResultat()) {
             true -> {
-                ugyldigSubsumsjon = TomSubsumsjon
-                gyldigSubsumsjon.mulige()
+                copy.ugyldig(TomSubsumsjon)
+                copy.gyldigSubsumsjon._mulige()
             }
             false -> {
-                gyldigSubsumsjon = TomSubsumsjon
-                ugyldigSubsumsjon.mulige()
+                copy.gyldig(TomSubsumsjon)
+                copy.ugyldigSubsumsjon._mulige()
             }
             null -> {
-                gyldigSubsumsjon.mulige()
-                ugyldigSubsumsjon.mulige()
+                copy.gyldigSubsumsjon._mulige()
+                copy.ugyldigSubsumsjon._mulige()
             }
         }
     }

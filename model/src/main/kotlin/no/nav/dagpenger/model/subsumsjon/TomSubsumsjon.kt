@@ -28,5 +28,5 @@ internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
         }
     }
 
-    override fun mulige() = this
+    override fun _mulige() = this
 }

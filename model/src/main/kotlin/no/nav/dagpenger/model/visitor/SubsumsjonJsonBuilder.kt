@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 
@@ -37,17 +38,6 @@ class SubsumsjonJsonBuilder(private val subsumsjon: Subsumsjon) : FaktumJsonBuil
         }
     }
 
-    private fun subsumsjonNode(subsumsjon: Subsumsjon, regelType: String, resultat: Boolean?) =
-        mapper.createObjectNode().also { subsumsjonNode ->
-            subsumsjoner[subsumsjon] = subsumsjonNode
-            objectNodes.add(0, subsumsjonNode)
-            arrayNodes.first().add(subsumsjonNode)
-            subsumsjonNode.put("navn", subsumsjon.navn)
-            subsumsjonNode.put("kclass", subsumsjon.javaClass.simpleName)
-            subsumsjonNode.put("regelType", regelType)
-            subsumsjonNode.put("resultat", resultat)
-        }
-
     override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, resultat: Boolean?) {
         subsumsjonNode(subsumsjon, "minstEnAv", resultat)
         arrayNodes.add(0, mapper.createArrayNode())
@@ -59,6 +49,29 @@ class SubsumsjonJsonBuilder(private val subsumsjon: Subsumsjon) : FaktumJsonBuil
             root = it
         }
     }
+
+    override fun preVisit(subsumsjon: MakroSubsumsjon, resultat: Boolean?) {
+        subsumsjonNode(subsumsjon, "makro", resultat)
+        arrayNodes.add(0, mapper.createArrayNode())
+    }
+
+    override fun postVisit(subsumsjon: MakroSubsumsjon, resultat: Boolean?) {
+        objectNodes.removeAt(0).also {
+            it.set("child", arrayNodes.removeAt(0).first())
+            root = it
+        }
+    }
+
+    private fun subsumsjonNode(subsumsjon: Subsumsjon, regelType: String, resultat: Boolean?) =
+        mapper.createObjectNode().also { subsumsjonNode ->
+            subsumsjoner[subsumsjon] = subsumsjonNode
+            objectNodes.add(0, subsumsjonNode)
+            arrayNodes.first().add(subsumsjonNode)
+            subsumsjonNode.put("navn", subsumsjon.navn)
+            subsumsjonNode.put("kclass", subsumsjon.javaClass.simpleName)
+            subsumsjonNode.put("regelType", regelType)
+            subsumsjonNode.put("resultat", resultat)
+        }
 
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
         arrayNodes.add(0, mapper.createArrayNode())
