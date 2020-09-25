@@ -45,7 +45,7 @@ val INNTEKT15G = FaktumNavn(10, "1.5G")
 
 private lateinit var seksjon1: Seksjon
 private lateinit var seksjon2: Seksjon
-lateinit var søknad: Søknad
+private lateinit var søknad: Søknad
 
 /* ktlint-disable parameter-list-wrapping */
 internal fun subsumsjonRoot(): Subsumsjon {
