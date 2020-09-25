@@ -19,6 +19,7 @@ import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.eller
+import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
 import no.nav.dagpenger.model.søknad.Seksjon
@@ -62,21 +63,19 @@ internal class SøknadSubsumsjonTest {
     }
     private val t13Boolean = fn13Boolean.faktum(Boolean::class.java)
 
-    private val minstEnSubsumsjon = "minstEnSubsumsjon".minstEnAv(
-        t6Inntekt minst t8Inntekt,
-        t7Inntekt minst t9Inntekt
-    ) så (t13Boolean er true)
-
     /* ktlint-disable parameter-list-wrapping */
     private val templateSubsumsjon = "rootSubsumsjon".alle(
         t1Boolean er true,
         t2Dato etter t_3_4_5Dato,
         t3Dato før t4Dato
     ) så (
-        (t10Boolean er true)
-            så minstEnSubsumsjon
-            eller (
-                (t12Boolean av t11Dokument) så minstEnSubsumsjon
+        "makro" makro
+            (t10Boolean er true eller (t12Boolean av t11Dokument))
+            så (
+                "minstEnSubsumsjon".minstEnAv(
+                    t6Inntekt minst t8Inntekt,
+                    t7Inntekt minst t9Inntekt
+                ) så (t13Boolean er true)
                 )
         )
 

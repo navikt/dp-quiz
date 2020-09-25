@@ -8,7 +8,7 @@ class MakroSubsumsjon private constructor(
     private val child: Subsumsjon,
     gyldigSubsumsjon: Subsumsjon,
     ugyldigSubsumsjon: Subsumsjon
-) : Subsumsjon(navn, gyldigSubsumsjon, ugyldigSubsumsjon) {
+) : SammensattSubsumsjon(navn, listOf(child), gyldigSubsumsjon, ugyldigSubsumsjon) {
 
     internal constructor(navn: String, child: Subsumsjon) : this(navn, child, TomSubsumsjon, TomSubsumsjon)
 
@@ -22,23 +22,4 @@ class MakroSubsumsjon private constructor(
     }
 
     override fun lokaltResultat() = child.resultat()
-
-    override fun nesteFakta() = child.nesteFakta()
-
-    override fun enkelSubsumsjoner(vararg fakta: Faktum<*>) = child.enkelSubsumsjoner(*fakta)
-
-    override fun fakta() = child.fakta()
-
-    override fun get(indeks: Int): Subsumsjon {
-        if (indeks != 0) throw IndexOutOfBoundsException("Makro har bare ett barn")
-        return child
-    }
-
-    override fun iterator(): Iterator<Subsumsjon> {
-        val iterator = listOf(child).iterator()
-        return object : Iterator<Subsumsjon> {
-            override fun hasNext() = iterator.hasNext()
-            override fun next() = iterator.next()
-        }
-    }
 }
