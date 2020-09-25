@@ -27,8 +27,6 @@ class MakroSubsumsjon private constructor(
 
     override fun enkelSubsumsjoner(vararg fakta: Faktum<*>) = child.enkelSubsumsjoner(*fakta)
 
-    override fun _sti(subsumsjon: Subsumsjon): List<Subsumsjon> = listOf(this) + child._sti(subsumsjon)
-
     override fun fakta() = child.fakta()
 
     override fun get(indeks: Int): Subsumsjon {

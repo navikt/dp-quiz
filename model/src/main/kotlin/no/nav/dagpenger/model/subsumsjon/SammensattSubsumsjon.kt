@@ -28,17 +28,6 @@ abstract class SammensattSubsumsjon protected constructor(
         super.accept(visitor)
     }
 
-    override fun _sti(subsumsjon: Subsumsjon): List<Subsumsjon> {
-        if (this == subsumsjon) return listOf(this)
-
-        (subsumsjoner + listOf(gyldig, ugyldig)).forEach {
-            it._sti(subsumsjon).also { child ->
-                if (child.isNotEmpty()) return listOf(this) + child
-            }
-        }
-        return emptyList()
-    }
-
     override fun lokaltResultat(): Boolean? {
         if (subsumsjoner.any { it.lokaltResultat() == null }) return null
         return subsumsjoner.all { it.lokaltResultat()!! }

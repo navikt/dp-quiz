@@ -17,14 +17,17 @@ internal class MakroTest {
 
     private lateinit var f1: Faktum<Boolean>
     private lateinit var f2: Faktum<Boolean>
+    private lateinit var f3: Faktum<Boolean>
     private lateinit var s1: Subsumsjon
     private lateinit var s2: Subsumsjon
+    private lateinit var s3: Subsumsjon
     private lateinit var makro: Subsumsjon
 
     @BeforeEach
     fun setup() {
         f1 = FaktumNavn(1, "f1").faktum(Boolean::class.java)
         f2 = FaktumNavn(2, "f2").faktum(Boolean::class.java)
+        f3 = FaktumNavn(3, "f3").faktum(Boolean::class.java)
         Seksjon(Rolle.søker, f1, f2)
         s1 = f1 er true
         s2 = f2 er true

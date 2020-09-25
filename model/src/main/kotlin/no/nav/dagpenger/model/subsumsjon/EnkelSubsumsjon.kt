@@ -43,8 +43,6 @@ open class EnkelSubsumsjon protected constructor(
 
     private fun nesteSubsumsjon() = if (lokaltResultat() == true) gyldigSubsumsjon else ugyldigSubsumsjon
 
-    override fun _sti(subsumsjon: Subsumsjon) = if (this == subsumsjon) listOf(this) else emptyList()
-
     override fun lokaltResultat() = if (fakta.erBesvart()) regel.resultat() else null
 
     override fun enkelSubsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon> =

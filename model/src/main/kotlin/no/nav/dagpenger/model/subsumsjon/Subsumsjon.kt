@@ -34,11 +34,6 @@ abstract class Subsumsjon protected constructor(
 
     abstract fun enkelSubsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon>
 
-    fun sti(subsumsjon: Subsumsjon): List<Subsumsjon> =
-        if (subsumsjon !is TomSubsumsjon) _sti(subsumsjon) else throw IndexOutOfBoundsException()
-
-    internal abstract fun _sti(subsumsjon: Subsumsjon): List<Subsumsjon>
-
     internal open fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisitGyldig(this, gyldigSubsumsjon)
         gyldigSubsumsjon.accept(visitor)
