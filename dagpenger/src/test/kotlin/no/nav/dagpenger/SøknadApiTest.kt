@@ -34,7 +34,7 @@ internal class SøknadApiTest {
 
         fakta.forEach {
             with(
-                handleRequest(HttpMethod.Put, "/soknad/$søknadsId/faktum/${it["id"]}") {
+                handleRequest(HttpMethod.Put, "/soknad/$søknadsId/faktum/${it["id"].asText()}") {
                     addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     setBody(mapper.writeValueAsString(Svar(LocalDate.now().toString(), it["clazz"].asText())))
                 }

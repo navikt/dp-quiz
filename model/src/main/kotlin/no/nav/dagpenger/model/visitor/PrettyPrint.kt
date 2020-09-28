@@ -57,7 +57,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     override fun <R : Comparable<R>> preVisit(
         faktum: UtledetFaktum<R>,
-        id: Int,
+        id: String,
         avhengigeFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
@@ -69,7 +69,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     override fun <R : Comparable<R>> preVisit(
         faktum: UtledetFaktum<R>,
-        id: Int,
+        id: String,
         avhengigeFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>
@@ -84,7 +84,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     override fun <R : Comparable<R>> postVisit(
         faktum: UtledetFaktum<R>,
-        id: Int,
+        id: String,
         children: Set<Faktum<*>>,
         clazz: Class<R>
     ) {
@@ -114,7 +114,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     override fun <R : Comparable<R>> visit(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: FaktumTilstand,
-        id: Int,
+        id: String,
         avhengigeFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
@@ -125,7 +125,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     override fun <R : Comparable<R>> visit(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: FaktumTilstand,
-        id: Int,
+        id: String,
         avhengigeFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,

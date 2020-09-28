@@ -51,7 +51,7 @@ fun Application.søknadApi() {
             put("/faktum/{faktumId}") {
                 val (verdi, type) = call.receive<Svar>()
                 val søknad = getOrCreateSøknad(UUID.fromString(call.parameters["søknadsId"]!!))
-                val id = call.parameters["faktumId"]!!.toInt()
+                val id = call.parameters["faktumId"]!!
 
                 when (type.toLowerCase()) {
                     "localdate" -> søknad.finnFaktum<LocalDate>(id).besvar(LocalDate.parse(verdi))
@@ -69,7 +69,7 @@ fun Application.søknadApi() {
     }
 }
 
-private fun <R : Comparable<R>> Søknad.finnFaktum(id: Int): Faktum<R> =
+private fun <R : Comparable<R>> Søknad.finnFaktum(id: String): Faktum<R> =
     object : SøknadVisitor {
         lateinit var faktum: Faktum<R>
 

@@ -6,15 +6,18 @@ import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 
-class Seksjon(private val rolle: Rolle, vararg fakta: Faktum<*>) : Collection<Faktum<*>> by fakta.toFaktaSet() {
-    private val fakta = fakta.toSet()
+class Seksjon(private val rolle: Rolle, vararg fakta: Faktum<*>) : MutableSet<Faktum<*>> by fakta.toMutableSet() {
+    private val fakta = fakta.toMutableSet()
 
     init {
-        fakta.toFaktaSet().forEach { it.add(rolle) }
+        fakta.forEach {
+            it.add(rolle)
+            it.add(this)
+        }
     }
 
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>): Boolean {
-        return nesteFakta.any { it in fakta.toFaktaSet() }
+        return nesteFakta.any { it in fakta }
     }
 
     fun accept(visitor: SøknadVisitor) {
@@ -29,9 +32,3 @@ class Seksjon(private val rolle: Rolle, vararg fakta: Faktum<*>) : Collection<Fa
         }
     }
 }
-
-private fun <T : Faktum<*>> Array<T>.toFaktaSet(): Set<GrunnleggendeFaktum<*>> =
-    this.flatMap { it.grunnleggendeFakta() }.toSet()
-
-private fun <T : Faktum<*>> Set<T>.toFaktaSet(): Set<GrunnleggendeFaktum<*>> =
-    this.flatMap { it.grunnleggendeFakta() }.toSet()
