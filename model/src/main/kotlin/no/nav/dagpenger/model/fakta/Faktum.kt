@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 interface Faktum<R : Comparable<R>> {
     val navn: FaktumNavn
-    val id: Int get() = navn.id
+    val id: String get() = navn.id
     val avhengigeFakta: MutableSet<Faktum<*>>
 
     fun clazz(): Class<R>

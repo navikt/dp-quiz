@@ -18,7 +18,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     protected val objectNodes: MutableList<ObjectNode> = mutableListOf()
 
     private val faktaNode = mapper.createArrayNode()
-    private val faktumIder = mutableSetOf<Int>()
+    private val faktumIder = mutableSetOf<String>()
 
     fun resultat(): ObjectNode = mapper.createObjectNode().also {
         it.set("fakta", faktaNode)
@@ -30,7 +30,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
 
     override fun <R : Comparable<R>> preVisit(
         faktum: UtledetFaktum<R>,
-        id: Int,
+        id: String,
         avhengigeFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
@@ -46,7 +46,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
 
     override fun <R : Comparable<R>> preVisit(
         faktum: UtledetFaktum<R>,
-        id: Int,
+        id: String,
         avhengigeFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>
@@ -61,7 +61,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     override fun <R : Comparable<R>> visit(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
-        id: Int,
+        id: String,
         avhengigeFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
@@ -76,7 +76,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     override fun <R : Comparable<R>> visit(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
-        id: Int,
+        id: String,
         avhengigeFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
@@ -92,7 +92,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
 
     private fun <R : Comparable<R>> faktumNode(
         faktum: Faktum<R>,
-        id: Int,
+        id: String,
         avhengigeFakta: Set<Faktum<*>>,
         clazz: Class<R>
     ) =
