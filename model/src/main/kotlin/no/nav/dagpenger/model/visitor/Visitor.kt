@@ -34,11 +34,11 @@ interface FaktumVisitor {
         svar: R
     ) {}
     fun <R : Comparable<R>> visit(
-            faktum: TemplateFaktum<R>,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            roller: Set<Rolle>,
-            clazz: Class<R>
+        faktum: TemplateFaktum<R>,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
     ) {}
     fun <R : Comparable<R>> preVisit(
         faktum: UtledetFaktum<R>,
