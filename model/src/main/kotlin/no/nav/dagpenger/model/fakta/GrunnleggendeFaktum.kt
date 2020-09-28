@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.fakta
 import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
-class GrunnleggendeFaktum<R : Comparable<R>> private constructor(
+open class GrunnleggendeFaktum<R : Comparable<R>> private constructor(
     override val navn: FaktumNavn,
     private val clazz: Class<R>,
     override val avhengigeFakta: MutableSet<Faktum<*>>

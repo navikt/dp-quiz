@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.visitor
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
@@ -31,6 +32,13 @@ interface FaktumVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R
+    ) {}
+    fun <R : Comparable<R>> visit(
+            faktum: TemplateFaktum<R>,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>
     ) {}
     fun <R : Comparable<R>> preVisit(
         faktum: UtledetFaktum<R>,

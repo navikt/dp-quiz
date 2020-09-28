@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.fakta
 
+import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 interface Faktum<R : Comparable<R>> {
@@ -21,6 +22,7 @@ interface Faktum<R : Comparable<R>> {
     fun erBesvart(): Boolean
     fun accept(visitor: FaktumVisitor)
     fun add(rolle: Rolle): Boolean
+    fun add(seksjon: Seksjon): Boolean = false
     infix fun avhengerAv(other: Faktum<*>) {
         other.avhengigeFakta.add(this)
     }
@@ -40,6 +42,10 @@ fun Set<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
 typealias FaktaRegel <R> = (UtledetFaktum<R>) -> R
 
 fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>) = GrunnleggendeFaktum<R>(this, clazz)
+
+fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>, vararg templates: TemplateFaktum<*>) = GeneratorFaktum(this, templates.asList())
+
+fun <R : Comparable<R>> FaktumNavn.template(clazz: Class<R>) = TemplateFaktum<R>(this, clazz)
 
 internal fun Set<Faktum<*>>.deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Set<Faktum<*>> = this
     .mapNotNull { template ->

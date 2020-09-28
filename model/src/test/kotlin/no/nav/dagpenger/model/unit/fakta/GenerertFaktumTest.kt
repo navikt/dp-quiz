@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.unit.fakta
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
+import no.nav.dagpenger.model.fakta.template
 import no.nav.dagpenger.model.søknad.Seksjon
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled

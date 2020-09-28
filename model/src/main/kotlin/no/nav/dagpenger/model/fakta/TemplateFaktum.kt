@@ -2,47 +2,35 @@ package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
-class TemplateFaktum<R: Comparable<R>> internal constructor(navn: FaktumNavn, clazz: Class<R>): Faktum<R> {
-    override val navn: FaktumNavn
-        get() = TODO("Not yet implemented")
+class TemplateFaktum<R: Comparable<R>> internal constructor(override val navn: FaktumNavn, internal val clazz: Class<R>): Faktum<R> {
 
-    override val avhengigeFakta: MutableSet<Faktum<*>>
-        get() = TODO("Not yet implemented")
+    override val avhengigeFakta = mutableSetOf<Faktum<*>>()
+    private val roller = mutableSetOf<Rolle>()
 
-    override fun clazz(): Class<R> {
-        TODO("Not yet implemented")
-    }
+    override fun clazz() = clazz
 
     override fun tilUbesvart() {
-        TODO("Not yet implemented")
+        //Ignorert
     }
 
     override fun svar(): R {
-        TODO("Not yet implemented")
+        throw IllegalStateException("Templates har ikke svar")
     }
 
-    override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> {
-        TODO("Not yet implemented")
-    }
+    override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> = emptySet()
 
     override fun leggTilHvis(kode: Faktum.FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>) {
-        TODO("Not yet implemented")
+        //Ignorert
     }
 
-    override fun erBesvart(): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun erBesvart() = false
 
     override fun accept(visitor: FaktumVisitor) {
-        TODO("Not yet implemented")
+        visitor.visit(this, id, avhengigeFakta, roller, clazz)
     }
 
-    override fun add(rolle: Rolle): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun add(rolle: Rolle) = roller.add(rolle)
 
-    override fun faktaMap(): Map<FaktumNavn, Faktum<*>> {
-        TODO("Not yet implemented")
-    }
+    override fun faktaMap() = mapOf(navn to this)
 
 }
