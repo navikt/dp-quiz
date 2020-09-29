@@ -6,8 +6,7 @@ import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 
-class Seksjon(private val rolle: Rolle, vararg fakta: Faktum<*>) : MutableSet<Faktum<*>> by fakta.toMutableSet() {
-    private val fakta = fakta.toMutableSet()
+class Seksjon private constructor(private val rolle: Rolle, private val fakta: MutableSet<Faktum<*>>) : MutableSet<Faktum<*>> by fakta {
 
     init {
         fakta.forEach {
@@ -15,6 +14,8 @@ class Seksjon(private val rolle: Rolle, vararg fakta: Faktum<*>) : MutableSet<Fa
             it.add(this)
         }
     }
+
+    constructor(rolle: Rolle, vararg fakta: Faktum<*>): this(rolle, fakta.toMutableSet())
 
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>): Boolean {
         return nesteFakta.any { it in fakta }

@@ -37,10 +37,12 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: 
 
     override fun faktaMap() = mapOf(navn to this)
 
+    override fun toString() = navn.toString()
+
     internal fun generate(r: Int) {
         seksjoner.forEach { seksjon ->
-            (1..r).forEach {
-                seksjon.add(GrunnleggendeFaktum(FaktumNavn("$id.$r", navn.navn), clazz))
+            (1..r).forEach { indeks ->
+                seksjon.add(GrunnleggendeFaktum(FaktumNavn("$id.$indeks", navn.navn), clazz))
             }
         }
     }
