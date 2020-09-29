@@ -1,6 +1,5 @@
 package no.nav.dagpenger.model.unit.fakta
 
-import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
@@ -32,7 +31,8 @@ internal class GenerertFaktumTest {
         val template3 = FaktumNavn(3, "template3").template(Boolean::class.java)
         val generator = FaktumNavn(4, "generer").faktum(Int::class.java, template1, template2, template3)
         val seksjon1 = Seksjon(Rolle.søker, template1, generator)
-        val seksjon2 = Seksjon(Rolle.søker, template2, template3)
+        val seksjon2 = Seksjon(Rolle.søker, template2, template3, FaktumNavn(5, "faktum").faktum(Boolean::class.java))
+        val søknad = Søknad(seksjon1, seksjon2)
         val originalSize1 = seksjon1.size
         val originalSize2 = seksjon2.size
         generator.besvar(3)
@@ -61,7 +61,7 @@ internal class GenerertFaktumTest {
     }
 
     @Test
-    fun `Seksjon med kun og flere templates`(){
+    fun `Seksjon med kun og flere templates`() {
         val template1 = FaktumNavn(1, "template1").template(Boolean::class.java)
         val template2 = FaktumNavn(2, "template2").template(Boolean::class.java)
         val template3 = FaktumNavn(3, "template3").template(Boolean::class.java)

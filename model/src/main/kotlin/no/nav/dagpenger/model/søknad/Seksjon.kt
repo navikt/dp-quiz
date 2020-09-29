@@ -18,7 +18,7 @@ class Seksjon private constructor(private val rolle: Rolle, private val fakta: M
         }
     }
 
-    constructor(rolle: Rolle, vararg fakta: Faktum<*>): this(rolle, fakta.toMutableSet())
+    constructor(rolle: Rolle, vararg fakta: Faktum<*>) : this(rolle, fakta.toMutableSet())
 
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>): Boolean {
         return nesteFakta.any { it in fakta }
@@ -31,10 +31,11 @@ class Seksjon private constructor(private val rolle: Rolle, private val fakta: M
     internal fun deepCopy(indeks: Int): Seksjon {
         return if (indeks <= genererteSeksjoner.size) genererteSeksjoner[indeks - 1]
         else (
-                Seksjon(rolle).also {
-                    søknad.add(søknad.indexOf(this) + indeks, it)
-                    genererteSeksjoner.add(it)
-                })
+            Seksjon(rolle).also {
+                søknad.add(søknad.indexOf(this) + indeks, it)
+                genererteSeksjoner.add(it)
+            }
+            )
     }
 
     fun accept(visitor: SøknadVisitor) {
