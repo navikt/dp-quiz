@@ -29,6 +29,8 @@ interface Faktum<R : Comparable<R>> {
 
     fun faktaMap(): Map<FaktumNavn, Faktum<*>>
 
+    fun tilFaktum(indeks: Int): Faktum<*> = this
+
     enum class FaktumTilstand {
         Ukjent,
         Kjent
@@ -57,6 +59,12 @@ internal fun Set<Faktum<*>>.deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Set<
     .also {
         require(it.size == this.size) { "Mangler fakta" }
     }
+
+internal fun Set<Faktum<*>>.deepCopy(indeks: Int): Set<Faktum<*>> = this
+    .map { faktum ->
+        faktum.tilFaktum(indeks)
+    }
+    .toSet()
 
 private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, faktaMap: Map<FaktumNavn, Faktum<*>>) {
     faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { faktaMap[it.navn] as Faktum<*> })

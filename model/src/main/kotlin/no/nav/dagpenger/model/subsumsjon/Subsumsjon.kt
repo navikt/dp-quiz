@@ -30,6 +30,8 @@ abstract class Subsumsjon protected constructor(
 
     abstract fun deepCopy(): Subsumsjon
 
+    internal abstract fun deepCopy(indeks: Int): Subsumsjon
+
     internal abstract fun lokaltResultat(): Boolean?
 
     abstract fun nesteFakta(): Set<GrunnleggendeFaktum<*>>

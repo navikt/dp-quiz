@@ -42,6 +42,13 @@ open class EnkelSubsumsjon protected constructor(
         ugyldigSubsumsjon.deepCopy()
     )
 
+    override fun deepCopy(indeks: Int) = EnkelSubsumsjon(
+        regel.deepCopy(indeks),
+        fakta.deepCopy(indeks),
+        gyldigSubsumsjon.deepCopy(indeks),
+        ugyldigSubsumsjon.deepCopy(indeks)
+    )
+
     override fun nesteFakta() = ukjenteFakta().takeIf { it.isNotEmpty() } ?: nesteSubsumsjon().nesteFakta()
 
     internal open fun ukjenteFakta(): Set<GrunnleggendeFaktum<*>> = mutableSetOf<GrunnleggendeFaktum<*>>().also {

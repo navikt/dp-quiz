@@ -7,13 +7,13 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 abstract class SammensattSubsumsjon protected constructor(
     navn: String,
-    protected open val subsumsjoner: List<Subsumsjon>,
+    protected open val subsumsjoner: MutableList<Subsumsjon>,
     gyldigSubsumsjon: Subsumsjon,
     ugyldigSubsumsjon: Subsumsjon
-) : Subsumsjon(navn, gyldigSubsumsjon, ugyldigSubsumsjon) {
+) : Subsumsjon(navn, gyldigSubsumsjon, ugyldigSubsumsjon), MutableList<Subsumsjon> by subsumsjoner {
 
     internal constructor(navn: String, subsumsjoner: List<Subsumsjon>) :
-        this(navn, subsumsjoner, TomSubsumsjon, TomSubsumsjon)
+        this(navn, subsumsjoner.toMutableList(), TomSubsumsjon, TomSubsumsjon)
 
     override fun nesteFakta(): Set<GrunnleggendeFaktum<*>> =
         subsumsjoner.flatMap { it.nesteFakta() }.toSet().let {
@@ -39,14 +39,4 @@ abstract class SammensattSubsumsjon protected constructor(
             ugyldigSubsumsjon.enkelSubsumsjoner(*fakta)
 
     override fun toString() = PrettyPrint(this).result()
-
-    override operator fun get(indeks: Int) = subsumsjoner[indeks]
-
-    override fun iterator(): Iterator<Subsumsjon> {
-        val iterator = subsumsjoner.iterator()
-        return object : Iterator<Subsumsjon> {
-            override fun hasNext() = iterator.hasNext()
-            override fun next() = iterator.next()
-        }
-    }
 }

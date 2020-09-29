@@ -37,6 +37,8 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: 
 
     override fun faktaMap() = mapOf(navn to this)
 
+    override fun tilFaktum(indeks: Int) = GrunnleggendeFaktum(FaktumNavn("$id.$indeks", navn.navn), clazz)
+
     override fun toString() = navn.toString()
 
     internal fun generate(r: Int) {

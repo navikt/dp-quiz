@@ -9,7 +9,7 @@ class MinstEnAvSubsumsjon private constructor(
     subsumsjoner: List<Subsumsjon>,
     gyldigSubsumsjon: Subsumsjon,
     ugyldigSubsumsjon: Subsumsjon
-) : SammensattSubsumsjon(navn, subsumsjoner, gyldigSubsumsjon, ugyldigSubsumsjon) {
+) : SammensattSubsumsjon(navn, subsumsjoner.toMutableList(), gyldigSubsumsjon, ugyldigSubsumsjon) {
 
     internal constructor(navn: String, subsumsjoner: List<Subsumsjon>) : this(navn, subsumsjoner, TomSubsumsjon, TomSubsumsjon)
 
@@ -19,6 +19,15 @@ class MinstEnAvSubsumsjon private constructor(
             subsumsjoner.map { it.deepCopy(faktaMap) },
             gyldigSubsumsjon.deepCopy(faktaMap),
             ugyldigSubsumsjon.deepCopy(faktaMap)
+        )
+    }
+
+    override fun deepCopy(indeks: Int): Subsumsjon {
+        return MinstEnAvSubsumsjon(
+            "$navn [$indeks]",
+            subsumsjoner.map { it.deepCopy(indeks) }.toMutableList(),
+            gyldigSubsumsjon.deepCopy(indeks),
+            ugyldigSubsumsjon.deepCopy(indeks)
         )
     }
 

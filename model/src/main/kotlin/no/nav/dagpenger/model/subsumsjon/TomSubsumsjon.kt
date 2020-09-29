@@ -9,6 +9,8 @@ internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
 
     override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>) = this
 
+    override fun deepCopy(indeks: Int) = this
+
     override fun deepCopy() = this
 
     override fun accept(visitor: SubsumsjonVisitor) {}

@@ -9,7 +9,7 @@ class MakroSubsumsjon private constructor(
     private val child: Subsumsjon,
     gyldigSubsumsjon: Subsumsjon,
     ugyldigSubsumsjon: Subsumsjon
-) : SammensattSubsumsjon(navn, listOf(child), gyldigSubsumsjon, ugyldigSubsumsjon) {
+) : SammensattSubsumsjon(navn, mutableListOf(child), gyldigSubsumsjon, ugyldigSubsumsjon) {
 
     internal constructor(navn: String, child: Subsumsjon) : this(navn, child, TomSubsumsjon, TomSubsumsjon)
 
@@ -28,6 +28,15 @@ class MakroSubsumsjon private constructor(
             child.deepCopy(),
             gyldigSubsumsjon.deepCopy(),
             ugyldigSubsumsjon.deepCopy()
+        )
+    }
+
+    override fun deepCopy(indeks: Int): Subsumsjon {
+        return MakroSubsumsjon(
+            "$navn [$indeks]",
+            child.deepCopy(indeks),
+            gyldigSubsumsjon.deepCopy(indeks),
+            ugyldigSubsumsjon.deepCopy(indeks)
         )
     }
 
