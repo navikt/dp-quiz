@@ -60,5 +60,26 @@ internal class GenerertFaktumTest {
         assertEquals("1.3", søknad[4][0].id)
     }
 
+    @Test
+    fun `Seksjon med kun og flere templates`(){
+        val template1 = FaktumNavn(1, "template1").template(Boolean::class.java)
+        val template2 = FaktumNavn(2, "template2").template(Boolean::class.java)
+        val template3 = FaktumNavn(3, "template3").template(Boolean::class.java)
+        val generator = FaktumNavn(4, "generer").faktum(Int::class.java, template1, template2, template3)
+        val generatorSeksjon = Seksjon(Rolle.søker, generator)
+        val templateSeksjon1 = Seksjon(Rolle.søker, template1, template2)
+        val templateSeksjon2 = Seksjon(Rolle.søker, template3)
+        val søknad = Søknad(generatorSeksjon, templateSeksjon1, templateSeksjon2)
+        generator.besvar(3)
+
+        assertEquals(9, søknad.size)
+        assertEquals(1, generatorSeksjon.size)
+        assertEquals(2, templateSeksjon1.size)
+        assertEquals(1, templateSeksjon2.size)
+        assertEquals(2, søknad[4].size)
+        assertEquals("2.3", søknad[4][1].id)
+        assertEquals("3.3", søknad[8][0].id)
+    }
+
     private operator fun Seksjon.get(indeks: Int) = this.sortedBy { it.id }[indeks]
 }

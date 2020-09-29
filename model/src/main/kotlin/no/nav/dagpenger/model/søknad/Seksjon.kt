@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.visitor.SøknadVisitor
 
 class Seksjon private constructor(private val rolle: Rolle, private val fakta: MutableSet<Faktum<*>>) : MutableSet<Faktum<*>> by fakta {
     private lateinit var søknad: Søknad
+    private val genererteSeksjoner = mutableListOf<Seksjon>()
 
     init {
         fakta.forEach {
@@ -27,11 +28,13 @@ class Seksjon private constructor(private val rolle: Rolle, private val fakta: M
 
     internal fun bareTemplates() = fakta.all { it is TemplateFaktum }
 
-    internal fun deepCopy(indeks: Int): Seksjon = Seksjon(rolle).also {
-        søknad.add(
-                søknad.indexOf(this) + indeks,
-                it
-        )
+    internal fun deepCopy(indeks: Int): Seksjon {
+        return if (indeks <= genererteSeksjoner.size) genererteSeksjoner[indeks - 1]
+        else (
+                Seksjon(rolle).also {
+                    søknad.add(søknad.indexOf(this) + indeks, it)
+                    genererteSeksjoner.add(it)
+                })
     }
 
     fun accept(visitor: SøknadVisitor) {
