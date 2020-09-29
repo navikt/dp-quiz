@@ -40,8 +40,13 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: 
     override fun toString() = navn.toString()
 
     internal fun generate(r: Int) {
-        seksjoner.forEach { seksjon ->
+        seksjoner.forEach { originalSeksjon ->
             (1..r).forEach { indeks ->
+                val seksjon = if (originalSeksjon.bareTemplates()) {
+                    originalSeksjon.deepCopy(indeks)
+                } else {
+                    originalSeksjon
+                }
                 seksjon.add(GrunnleggendeFaktum(FaktumNavn("$id.$indeks", navn.navn), clazz))
             }
         }

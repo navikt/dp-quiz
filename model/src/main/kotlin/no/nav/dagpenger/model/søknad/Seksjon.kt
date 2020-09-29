@@ -4,9 +4,11 @@ import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 
 class Seksjon private constructor(private val rolle: Rolle, private val fakta: MutableSet<Faktum<*>>) : MutableSet<Faktum<*>> by fakta {
+    private lateinit var søknad: Søknad
 
     init {
         fakta.forEach {
@@ -19,6 +21,17 @@ class Seksjon private constructor(private val rolle: Rolle, private val fakta: M
 
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>): Boolean {
         return nesteFakta.any { it in fakta }
+    }
+
+    internal fun søknad(søknad: Søknad) { this.søknad = søknad }
+
+    internal fun bareTemplates() = fakta.all { it is TemplateFaktum }
+
+    internal fun deepCopy(indeks: Int): Seksjon = Seksjon(rolle).also {
+        søknad.add(
+                søknad.indexOf(this) + indeks,
+                it
+        )
     }
 
     fun accept(visitor: SøknadVisitor) {

@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.fakta.template
 import no.nav.dagpenger.model.søknad.Seksjon
+import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -41,6 +42,22 @@ internal class GenerertFaktumTest {
         assertEquals("1.1", seksjon1[1].id)
         assertEquals("2.1", seksjon2[1].id)
         assertEquals("3.3", seksjon2[7].id)
+    }
+
+    @Test
+    fun `Generere seksjoner`() {
+        val template = FaktumNavn(1, "template").template(Boolean::class.java)
+        val generator = FaktumNavn(2, "generer").faktum(Int::class.java, template)
+        val generatorSeksjon = Seksjon(Rolle.søker, generator)
+        val templateSeksjon = Seksjon(Rolle.søker, template)
+        val søknad = Søknad(generatorSeksjon, templateSeksjon)
+        generator.besvar(3)
+
+        assertEquals(5, søknad.size)
+        assertEquals(1, generatorSeksjon.size)
+        assertEquals(1, templateSeksjon.size)
+        assertEquals(1, søknad[4].size)
+        assertEquals("1.3", søknad[4][0].id)
     }
 
     private operator fun Seksjon.get(indeks: Int) = this.sortedBy { it.id }[indeks]

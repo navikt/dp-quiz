@@ -6,8 +6,14 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.util.UUID
 
-class Søknad private constructor(private val uuid: UUID, private val seksjoner: List<Seksjon>) : Collection<Seksjon> by seksjoner {
-    constructor(vararg seksjoner: Seksjon) : this(UUID.randomUUID(), seksjoner.toList())
+class Søknad private constructor(private val uuid: UUID, private val seksjoner: MutableList<Seksjon>) : MutableList<Seksjon> by seksjoner {
+    constructor(vararg seksjoner: Seksjon) : this(UUID.randomUUID(), seksjoner.toMutableList())
+
+    init {
+        seksjoner.forEach {
+            it.søknad(this)
+        }
+    }
 
     infix fun nesteSeksjon(subsumsjon: Subsumsjon) = seksjoner.first { subsumsjon.nesteFakta() in it }
 
