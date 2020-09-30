@@ -1,8 +1,8 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 abstract class Subsumsjon protected constructor(
@@ -26,7 +26,7 @@ abstract class Subsumsjon protected constructor(
         null -> null
     }
 
-    abstract fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Subsumsjon
+    abstract fun deepCopy(søknad: Søknad): Subsumsjon
 
     abstract fun deepCopy(): Subsumsjon
 

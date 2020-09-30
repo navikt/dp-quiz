@@ -30,13 +30,11 @@ class Seksjon private constructor(private val rolle: Rolle, private val fakta: M
 
     internal fun deepCopy(indeks: Int): Seksjon {
         return if (indeks <= genererteSeksjoner.size) genererteSeksjoner[indeks - 1]
-        else (
-            Seksjon(rolle).also {
-                søknad.add(søknad.indexOf(this) + indeks, it)
-                genererteSeksjoner.add(it)
-                it.søknad(this.søknad)
-            }
-            )
+        else Seksjon(rolle).also {
+            søknad.add(søknad.indexOf(this) + indeks, it)
+            genererteSeksjoner.add(it)
+            it.søknad(this.søknad)
+        }
     }
 
     fun accept(visitor: SøknadVisitor) {

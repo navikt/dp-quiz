@@ -170,6 +170,6 @@ internal class Eksempel {
 
         _søknad = Søknad(seksjon1, seksjon2, seksjon3, seksjon4, seksjon5, seksjon6, seksjon7, seksjon8)
 
-        _rootSubsumsjon = templateSubsumsjon.deepCopy(_søknad.faktaMap())
+        _rootSubsumsjon = templateSubsumsjon.deepCopy(_søknad)
     }
 }

@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.søknad.Seksjon
+import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 interface Faktum<R : Comparable<R>> {
@@ -49,10 +50,10 @@ fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>, vararg templates: Tem
 
 fun <R : Comparable<R>> FaktumNavn.template(clazz: Class<R>) = TemplateFaktum<R>(this, clazz)
 
-internal fun Set<Faktum<*>>.deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Set<Faktum<*>> = this
+internal fun Set<Faktum<*>>.deepCopy(søknad: Søknad): Set<Faktum<*>> = this
     .mapNotNull { template ->
-        faktaMap[template.navn]?.also {
-            template.deepCopyAvhengigheter(it, faktaMap)
+        søknad.faktaMap()[template.navn]?.also {
+            template.deepCopyAvhengigheter(it, søknad)
         }
     }
     .toSet()
@@ -66,6 +67,6 @@ internal fun Set<Faktum<*>>.deepCopy(indeks: Int): Set<Faktum<*>> = this
     }
     .toSet()
 
-private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, faktaMap: Map<FaktumNavn, Faktum<*>>) {
-    faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { faktaMap[it.navn] as Faktum<*> })
+private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, søknad: Søknad) {
+    faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { søknad.faktaMap()[it.navn] as Faktum<*> })
 }

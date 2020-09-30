@@ -1,7 +1,6 @@
 package no.nav.dagpenger.model.subsumsjon
 
-import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.FaktumNavn
+import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class MakroSubsumsjon private constructor(
@@ -13,12 +12,12 @@ class MakroSubsumsjon private constructor(
 
     internal constructor(navn: String, child: Subsumsjon) : this(navn, child, TomSubsumsjon, TomSubsumsjon)
 
-    override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Subsumsjon {
+    override fun deepCopy(søknad: Søknad): Subsumsjon {
         return MakroSubsumsjon(
             navn,
-            child.deepCopy(faktaMap),
-            gyldigSubsumsjon.deepCopy(faktaMap),
-            ugyldigSubsumsjon.deepCopy(faktaMap)
+            child.deepCopy(søknad),
+            gyldigSubsumsjon.deepCopy(søknad),
+            ugyldigSubsumsjon.deepCopy(søknad)
         )
     }
 

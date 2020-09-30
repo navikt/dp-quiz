@@ -2,11 +2,11 @@ package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand.Ukjent
-import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.deepCopy
 import no.nav.dagpenger.model.fakta.erBesvart
 import no.nav.dagpenger.model.regel.Regel
+import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 open class EnkelSubsumsjon protected constructor(
@@ -28,11 +28,11 @@ open class EnkelSubsumsjon protected constructor(
         }
     }
 
-    override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>) = EnkelSubsumsjon(
-        regel.deepCopy(faktaMap),
-        fakta.deepCopy(faktaMap),
-        gyldigSubsumsjon.deepCopy(faktaMap),
-        ugyldigSubsumsjon.deepCopy(faktaMap)
+    override fun deepCopy(søknad: Søknad) = EnkelSubsumsjon(
+        regel.deepCopy(søknad),
+        fakta.deepCopy(søknad),
+        gyldigSubsumsjon.deepCopy(søknad),
+        ugyldigSubsumsjon.deepCopy(søknad)
     )
 
     override fun deepCopy() = EnkelSubsumsjon(
