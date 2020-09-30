@@ -11,6 +11,7 @@ import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.så
 import no.nav.dagpenger.model.søknad.Seksjon
+import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -33,7 +34,7 @@ internal class GenerertSubsumsjonTest {
         val generator = FaktumNavn(2, "generator").faktum(Int::class.java, template)
         val makro = "makro template".makro(template er true)
         val root = generator med makro
-        Seksjon(Rolle.søker, generator, template)
+        Søknad(Seksjon(Rolle.søker, generator, template))
         generator.besvar(3)
         root.resultat()
 

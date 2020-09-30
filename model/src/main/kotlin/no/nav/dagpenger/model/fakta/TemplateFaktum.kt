@@ -49,7 +49,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: 
                 } else {
                     originalSeksjon
                 }
-                seksjon.add(GrunnleggendeFaktum(FaktumNavn("$id.$indeks", navn.navn), clazz))
+                seksjon.add("$id.$indeks")
             }
         }
     }

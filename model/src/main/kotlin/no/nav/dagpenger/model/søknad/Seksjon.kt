@@ -34,6 +34,7 @@ class Seksjon private constructor(private val rolle: Rolle, private val fakta: M
             Seksjon(rolle).also {
                 søknad.add(søknad.indexOf(this) + indeks, it)
                 genererteSeksjoner.add(it)
+                it.søknad(this.søknad)
             }
             )
     }
@@ -49,4 +50,6 @@ class Seksjon private constructor(private val rolle: Rolle, private val fakta: M
             resultater + faktum.faktaMap()
         }
     }
+
+    internal fun add(generertId: String): Boolean = this.add(søknad.faktum(generertId))
 }

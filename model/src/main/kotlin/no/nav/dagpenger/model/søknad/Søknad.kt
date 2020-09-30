@@ -45,7 +45,9 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
             val (templateId, indeks) = matchResult!!.destructured
             fakta[templateId]?.let { template ->
                 if (template !is TemplateFaktum) throw IllegalArgumentException("Faktum med id $templateId må være et TemplateFaktum")
-                template.tilFaktum(indeks.toInt())
+                template.tilFaktum(indeks.toInt()).also { generertFaktum ->
+                    fakta[generertFaktum.id] = generertFaktum
+                }
             } ?: throw IllegalArgumentException("Faktum med id $id finnes ikke i søknaden")
         }
 
