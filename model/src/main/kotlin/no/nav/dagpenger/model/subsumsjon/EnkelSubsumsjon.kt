@@ -10,8 +10,8 @@ import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 open class EnkelSubsumsjon protected constructor(
-    private val regel: Regel,
-    private val fakta: Set<Faktum<*>>,
+    protected val regel: Regel,
+    protected val fakta: Set<Faktum<*>>,
     gyldigSubsumsjon: Subsumsjon,
     ugyldigSubsumsjon: Subsumsjon
 ) : Subsumsjon(regel.toString(), gyldigSubsumsjon, ugyldigSubsumsjon) {
