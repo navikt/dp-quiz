@@ -73,7 +73,7 @@ internal class SøknadApiTest {
     }
 
     @Test
-    fun `Kan finne seksjon og fakta via faktumid`(){
+    fun `Kan finne seksjon og fakta via faktumid`() {
         val faktum = FaktumNavn(123, "testfaktum").faktum(Int::class.java)
 
         val seksjon = Seksjon(Rolle.søker, faktum)
