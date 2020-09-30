@@ -182,7 +182,7 @@ private class Av(private val godkjenning: Faktum<Boolean>, private val dokument:
 }
 
 private class AvSubsumsjon private constructor(
-    private val regel: Regel,
+    regel: Regel,
     private val dokument: Faktum<Dokument>,
     private val godkjenning: Faktum<Boolean>,
     gyldigSubsumsjon: Subsumsjon,
@@ -220,6 +220,25 @@ private class AvSubsumsjon private constructor(
 
 infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon {
     return AvSubsumsjon(Av(this, dokument), dokument, this)
+}
+
+private class Under(private val alder: Faktum<Int>, private val maksAlder: Int) : Regel {
+    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override fun resultat() = alder.svar() < maksAlder
+    override fun toString() = "Sjekk at '${alder.navn}' er under $maksAlder"
+    override fun deepCopy(faktaMap: Map<FaktumNavn, Faktum<*>>): Regel {
+        return Under(faktaMap[alder.navn] as Faktum<Int>, maksAlder)
+    }
+    override fun deepCopy(indeks: Int): Regel {
+        return Under(alder.tilFaktum(indeks) as Faktum<Int>, maksAlder)
+    }
+}
+
+infix fun Faktum<Int>.under(maksAlder: Int): Subsumsjon {
+    return EnkelSubsumsjon(
+        Under(this, maksAlder),
+        this
+    )
 }
 
 val MAKS_DATO = UtledetFaktum<LocalDate>::max

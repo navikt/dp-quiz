@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.visitor
 
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
@@ -35,6 +36,13 @@ interface FaktumVisitor {
     ) {}
     fun <R : Comparable<R>> visit(
         faktum: TemplateFaktum<R>,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {}
+    fun <R : Comparable<R>> visit(
+        faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
