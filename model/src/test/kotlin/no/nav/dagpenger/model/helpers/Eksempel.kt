@@ -1,6 +1,5 @@
 package no.nav.dagpenger.model.helpers
 
-import no.nav.dagpenger.model.fakta.Alder
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumNavn
@@ -83,13 +82,14 @@ internal class Eksempel {
                 "minstEnSubsumsjon".minstEnAv(
                     t6Inntekt minst t8Inntekt,
                     t7Inntekt minst t9Inntekt
-                ) så (t15Int med ("makro" makro (t16LocalDate før FaktumNavn(19, "18").faktum(LocalDate::class.java)))
+                ) så (t15Int med (
+                    "makro" makro (t16LocalDate før FaktumNavn(19, "18 år gammel").faktum(LocalDate::class.java))
+                    )
                         så (t14Boolean er true)
                 )
             )
             eller (t2Dato etter t13Dato)
         )
-
 
     internal lateinit var f1Boolean: Faktum<Boolean>
     internal lateinit var f2Dato: Faktum<LocalDate>
@@ -139,6 +139,7 @@ internal class Eksempel {
         f3Dato = fn3Dato.faktum(LocalDate::class.java)
         f4Dato = fn4Dato.faktum(LocalDate::class.java)
         f5Dato = fn5Dato.faktum(LocalDate::class.java)
+        f_3_4_5Dato = listOf(f3Dato, f4Dato, f5Dato).faktum(fn_3_4_5Dato, MAKS_DATO)
         f6Inntekt = fn6Inntekt.faktum(Inntekt::class.java)
         f7Inntekt = fn7Inntekt.faktum(Inntekt::class.java)
         f8Inntekt = fn8Inntekt.faktum(Inntekt::class.java)
@@ -148,11 +149,10 @@ internal class Eksempel {
         f12Boolean = fn12Boolean.faktum(Boolean::class.java)
         f13Dato = fn13Dato.faktum(LocalDate::class.java)
         f14Boolean = fn14Boolean.faktum(Boolean::class.java)
-        f15Int = fn15Int.faktum(Int::class.java, f16LocalDate, f17Boolean, f18Boolean)
         f16LocalDate = fn16LocalDate.template(LocalDate::class.java)
         f17Boolean = fn17Boolean.template(Boolean::class.java)
         f18Boolean = fn18Boolean.template(Boolean::class.java)
-        f_3_4_5Dato = listOf(f3Dato, f4Dato, f5Dato).faktum(fn_3_4_5Dato, MAKS_DATO)
+        f15Int = fn15Int.faktum(Int::class.java, f16LocalDate, f17Boolean, f18Boolean)
 
         seksjon1 = Seksjon(Rolle.nav, f1Boolean, f2Dato)
         seksjon2 = Seksjon(Rolle.nav, f6Inntekt, f7Inntekt, f8Inntekt, f9Inntekt)
@@ -163,7 +163,7 @@ internal class Eksempel {
         seksjon7 = Seksjon(Rolle.søker, f16LocalDate, f17Boolean)
         seksjon8 = Seksjon(Rolle.saksbehandler, f6Inntekt, f7Inntekt, f12Boolean, f14Boolean, f18Boolean)
 
-        _søknad = Søknad(seksjon1, seksjon2, seksjon3, seksjon4, seksjon5)
+        _søknad = Søknad(seksjon1, seksjon2, seksjon3, seksjon4, seksjon5, seksjon6, seksjon7, seksjon8)
 
         _rootSubsumsjon = templateSubsumsjon.deepCopy(_søknad.faktaMap())
     }
