@@ -4,6 +4,7 @@ import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
+import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.jackson
 import io.ktor.request.receive
 import io.ktor.response.respond
@@ -18,11 +19,7 @@ import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SeksjonJsonBuilder
 import no.nav.dagpenger.model.visitor.SubsumsjonJsonBuilder
 import no.nav.dagpenger.model.visitor.SøknadVisitor
-import no.nav.dagpenger.regelverk.dimisjonsdato
-import no.nav.dagpenger.regelverk.fødselsdato
 import no.nav.dagpenger.regelverk.inngangsvilkår
-import no.nav.dagpenger.regelverk.utestengt
-import no.nav.dagpenger.regelverk.ønsketDato
 import java.time.LocalDate
 import java.util.UUID
 
@@ -31,7 +28,7 @@ data class Svar(
     val type: String
 )
 
-fun Application.søknadApi() {
+fun Application.søknadApi(søknader: Søknader) {
     install(ContentNegotiation) {
         jackson {}
     }
@@ -39,14 +36,17 @@ fun Application.søknadApi() {
     routing {
         route("/soknad/{søknadsId}") {
             get("/neste-seksjon") {
-                val søknad = getOrCreateSøknad(UUID.fromString(call.parameters["søknadsId"]!!))
-                val seksjon = søknad.nesteSeksjon(inngangsvilkår)
-
-                call.respond(SeksjonJsonBuilder(seksjon).resultat())
+                val søknad = søknader.søknad(UUID.fromString(call.parameters["søknadsId"]!!))
+                try {
+                    val seksjon = søknad.nesteSeksjon(inngangsvilkår)
+                    call.respond(SeksjonJsonBuilder(seksjon).resultat())
+                } catch (e: NoSuchElementException) {
+                    call.respond(HttpStatusCode.ResetContent)
+                }
             }
             put("/faktum/{faktumId}") {
                 val (verdi, type) = call.receive<Svar>()
-                val søknad = getOrCreateSøknad(UUID.fromString(call.parameters["søknadsId"]!!))
+                val søknad = søknader.søknad(UUID.fromString(call.parameters["søknadsId"]!!))
                 val id = call.parameters["faktumId"]!!
 
                 val faktum = when (type.toLowerCase()) {
@@ -93,14 +93,4 @@ internal fun Faktum<*>.finnSeksjon(søknad: Søknad): Seksjon =
     }.let {
         søknad.accept(it)
         it.seksjon
-    }
-
-internal val søknader = mutableMapOf<UUID, Søknad>()
-private fun getOrCreateSøknad(id: UUID) =
-    søknader.getOrPut(id) {
-        Søknad(
-            Seksjon(Rolle.søker, ønsketDato, fødselsdato),
-            Seksjon(Rolle.søker, dimisjonsdato),
-            Seksjon(Rolle.søker, utestengt),
-        )
     }

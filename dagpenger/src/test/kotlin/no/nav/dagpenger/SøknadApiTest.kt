@@ -13,9 +13,9 @@ import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
-import no.nav.dagpenger.model.visitor.SøknadJsonBuilder
 import no.nav.dagpenger.regelverk.dimisjonsdato
 import no.nav.dagpenger.regelverk.fødselsdato
+import no.nav.dagpenger.regelverk.utestengt
 import no.nav.dagpenger.regelverk.ønsketDato
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.Test
@@ -25,9 +25,17 @@ import java.util.UUID
 internal class SøknadApiTest {
     private val mapper = ObjectMapper()
 
+    private val søknader = InMemorySøknader {
+        Søknad(
+            Seksjon(Rolle.søker, ønsketDato, fødselsdato),
+            Seksjon(Rolle.søker, dimisjonsdato),
+            Seksjon(Rolle.søker, utestengt),
+        )
+    }
+
     @Test
     fun `hent neste-seksjon og besvar faktumene`() = withTestApplication({
-        søknadApi()
+        søknadApi(søknader)
     }) {
         val søknadsId = UUID.randomUUID()
         val fakta = with(handleRequest(HttpMethod.Get, "/soknad/$søknadsId/neste-seksjon")) {
@@ -54,15 +62,11 @@ internal class SøknadApiTest {
                 }
             }
         }
-
-        søknader.forEach {
-            println(SøknadJsonBuilder(it.value))
-        }
     }
 
     @Test
     fun testSubsumsjontre() = withTestApplication({
-        søknadApi()
+        søknadApi(søknader)
     }) {
         with(handleRequest(HttpMethod.Get, "/soknad/${UUID.randomUUID()}/subsumsjoner")) {
             assertEquals(HttpStatusCode.OK, response.status())
@@ -85,6 +89,19 @@ internal class SøknadApiTest {
         søknad.finnFaktum<Int>("123").also {
             assertEquals(faktum, it)
             assertEquals(seksjon, it.finnSeksjon(søknad))
+        }
+    }
+
+    @Test
+    fun `Tomt for seksjoner`() {
+        val søknader = InMemorySøknader { Søknad() }
+        withTestApplication({
+            søknadApi(søknader)
+        }) {
+            val søknadsId = UUID.randomUUID()
+            with(handleRequest(HttpMethod.Get, "/soknad/$søknadsId/neste-seksjon")) {
+                assertEquals(HttpStatusCode.ResetContent, response.status())
+            }
         }
     }
 }
