@@ -53,14 +53,14 @@ fun Application.søknadApi() {
                 val søknad = getOrCreateSøknad(UUID.fromString(call.parameters["søknadsId"]!!))
                 val id = call.parameters["faktumId"]!!
 
-                when (type.toLowerCase()) {
+                val faktum = when (type.toLowerCase()) {
                     "localdate" -> søknad.finnFaktum<LocalDate>(id).besvar(LocalDate.parse(verdi))
                     "string" -> søknad.finnFaktum<String>(id).besvar(verdi)
                     "boolean" -> søknad.finnFaktum<Boolean>(id).besvar(verdi.toBoolean())
                     "int" -> søknad.finnFaktum<Int>(id).besvar(verdi.toInt())
                     else -> throw IllegalArgumentException("BOOM")
                 }
-                call.respond(HttpStatusCode.OK)
+                call.respond(SeksjonJsonBuilder(faktum.finnSeksjon(søknad)).resultat())
             }
             get("/subsumsjoner") {
                 call.respond(SubsumsjonJsonBuilder(inngangsvilkår).resultat())
@@ -69,7 +69,7 @@ fun Application.søknadApi() {
     }
 }
 
-private fun <R : Comparable<R>> Søknad.finnFaktum(id: String): Faktum<R> =
+internal fun <R : Comparable<R>> Søknad.finnFaktum(id: String): Faktum<R> =
     object : SøknadVisitor {
         lateinit var faktum: Faktum<R>
 
@@ -82,6 +82,21 @@ private fun <R : Comparable<R>> Søknad.finnFaktum(id: String): Faktum<R> =
     }.let {
         this@finnFaktum.accept(it)
         it.faktum
+    }
+
+internal fun Faktum<*>.finnSeksjon(søknad: Søknad): Seksjon =
+    object : SøknadVisitor {
+        lateinit var seksjon: Seksjon
+
+        override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
+            if (this::seksjon.isInitialized) return
+            fakta.find { it.id == this@finnSeksjon.id }?.let {
+                this.seksjon = seksjon
+            }
+        }
+    }.let {
+        søknad.accept(it)
+        it.seksjon
     }
 
 internal val søknader = mutableMapOf<UUID, Søknad>()
