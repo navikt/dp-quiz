@@ -61,9 +61,9 @@ internal fun Set<Faktum<*>>.deepCopy(søknad: Søknad): Set<Faktum<*>> = this
         require(it.size == this.size) { "Mangler fakta" }
     }
 
-internal fun Set<Faktum<*>>.deepCopy(indeks: Int): Set<Faktum<*>> = this
+internal fun Set<Faktum<*>>.deepCopy(indeks: Int, søknad: Søknad): Set<Faktum<*>> = this
     .map { faktum ->
-        faktum.tilFaktum(indeks)
+        søknad.faktum("${faktum.id}.$indeks")
     }
     .toSet()
 

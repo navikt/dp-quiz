@@ -12,13 +12,13 @@ class MinstEnAvSubsumsjon private constructor(
 
     internal constructor(navn: String, subsumsjoner: List<Subsumsjon>) : this(navn, subsumsjoner, TomSubsumsjon, TomSubsumsjon)
 
-    override fun deepCopy(søknad: Søknad): Subsumsjon {
-        return MinstEnAvSubsumsjon(
-            navn,
-            subsumsjoner.map { it.deepCopy(søknad) },
-            gyldigSubsumsjon.deepCopy(søknad),
-            ugyldigSubsumsjon.deepCopy(søknad)
-        )
+    override fun deepCopy(søknad: Søknad) = MinstEnAvSubsumsjon(
+        navn,
+        subsumsjoner.map { it.deepCopy(søknad) },
+        gyldigSubsumsjon.deepCopy(søknad),
+        ugyldigSubsumsjon.deepCopy(søknad)
+    ).also {
+        it.søknad = søknad
     }
 
     override fun deepCopy(indeks: Int): Subsumsjon {

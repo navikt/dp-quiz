@@ -12,13 +12,13 @@ class AlleSubsumsjon private constructor(
 
     internal constructor(navn: String, subsumsjoner: List<Subsumsjon>) : this(navn, subsumsjoner.toMutableList(), TomSubsumsjon, TomSubsumsjon)
 
-    override fun deepCopy(søknad: Søknad): Subsumsjon {
-        return AlleSubsumsjon(
-            navn,
-            subsumsjoner.map { it.deepCopy(søknad) }.toMutableList(),
-            gyldigSubsumsjon.deepCopy(søknad),
-            ugyldigSubsumsjon.deepCopy(søknad)
-        )
+    override fun deepCopy(søknad: Søknad) = AlleSubsumsjon(
+        navn,
+        subsumsjoner.map { it.deepCopy(søknad) }.toMutableList(),
+        gyldigSubsumsjon.deepCopy(søknad),
+        ugyldigSubsumsjon.deepCopy(søknad)
+    ).also {
+        it.søknad = søknad
     }
 
     override fun deepCopy(indeks: Int): Subsumsjon {

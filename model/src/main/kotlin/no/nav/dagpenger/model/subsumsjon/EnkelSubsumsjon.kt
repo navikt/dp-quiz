@@ -33,7 +33,9 @@ open class EnkelSubsumsjon protected constructor(
         fakta.deepCopy(søknad),
         gyldigSubsumsjon.deepCopy(søknad),
         ugyldigSubsumsjon.deepCopy(søknad)
-    )
+    ).also {
+        it.søknad = søknad
+    }
 
     override fun deepCopy() = EnkelSubsumsjon(
         regel,
@@ -43,8 +45,8 @@ open class EnkelSubsumsjon protected constructor(
     )
 
     override fun deepCopy(indeks: Int) = EnkelSubsumsjon(
-        regel.deepCopy(indeks),
-        fakta.deepCopy(indeks),
+        regel.deepCopy(indeks, søknad),
+        fakta.deepCopy(indeks, søknad),
         gyldigSubsumsjon.deepCopy(indeks),
         ugyldigSubsumsjon.deepCopy(indeks)
     )

@@ -12,13 +12,13 @@ class MakroSubsumsjon private constructor(
 
     internal constructor(navn: String, child: Subsumsjon) : this(navn, child, TomSubsumsjon, TomSubsumsjon)
 
-    override fun deepCopy(søknad: Søknad): Subsumsjon {
-        return MakroSubsumsjon(
-            navn,
-            child.deepCopy(søknad),
-            gyldigSubsumsjon.deepCopy(søknad),
-            ugyldigSubsumsjon.deepCopy(søknad)
-        )
+    override fun deepCopy(søknad: Søknad) = MakroSubsumsjon(
+        navn,
+        child.deepCopy(søknad),
+        gyldigSubsumsjon.deepCopy(søknad),
+        ugyldigSubsumsjon.deepCopy(søknad)
+    ).also {
+        it.søknad = søknad
     }
 
     override fun deepCopy(): Subsumsjon {
@@ -36,7 +36,9 @@ class MakroSubsumsjon private constructor(
             child.deepCopy(indeks),
             gyldigSubsumsjon.deepCopy(indeks),
             ugyldigSubsumsjon.deepCopy(indeks)
-        )
+        ).also {
+            it.søknad = søknad
+        }
     }
 
     override fun accept(visitor: SubsumsjonVisitor) {

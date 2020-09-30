@@ -12,6 +12,7 @@ abstract class Subsumsjon protected constructor(
 ) : Iterable<Subsumsjon> {
     protected lateinit var gyldigSubsumsjon: Subsumsjon
     protected lateinit var ugyldigSubsumsjon: Subsumsjon
+    protected lateinit var søknad: Søknad
 
     init {
         if (gyldigSubsumsjon != null) this.gyldigSubsumsjon = gyldigSubsumsjon

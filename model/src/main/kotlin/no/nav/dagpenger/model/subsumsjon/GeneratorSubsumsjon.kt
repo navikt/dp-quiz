@@ -24,7 +24,9 @@ class GeneratorSubsumsjon internal constructor(
         regel.deepCopy(søknad),
         setOf(faktum).deepCopy(søknad).first() as GeneratorFaktum,
         makro.deepCopy(søknad) as MakroSubsumsjon
-    )
+    ).also {
+        it.søknad = søknad
+    }
 
     override fun deepCopy() = GeneratorSubsumsjon(
         regel,
@@ -33,8 +35,8 @@ class GeneratorSubsumsjon internal constructor(
     )
 
     override fun deepCopy(indeks: Int) = GeneratorSubsumsjon(
-        regel.deepCopy(indeks),
-        setOf(faktum).deepCopy(indeks).first() as GeneratorFaktum,
+        regel.deepCopy(indeks, søknad),
+        setOf(faktum).deepCopy(indeks, søknad).first() as GeneratorFaktum,
         makro.deepCopy(indeks) as MakroSubsumsjon
     )
 }

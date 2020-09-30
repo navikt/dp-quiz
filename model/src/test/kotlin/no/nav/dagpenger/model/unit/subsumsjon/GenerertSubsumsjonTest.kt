@@ -33,8 +33,10 @@ internal class GenerertSubsumsjonTest {
         val template = FaktumNavn(1, "template").template(Boolean::class.java)
         val generator = FaktumNavn(2, "generator").faktum(Int::class.java, template)
         val makro = "makro template".makro(template er true)
-        val root = generator med makro
-        Søknad(Seksjon(Rolle.søker, generator, template))
+        val subsumsjon = generator med makro
+        val root = Søknad(Seksjon(Rolle.søker, generator, template)).let {
+            subsumsjon.deepCopy(it)
+        }
         generator.besvar(3)
         root.resultat()
 
