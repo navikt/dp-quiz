@@ -13,6 +13,10 @@ import no.nav.dagpenger.regelverk.fødselsdato
 import no.nav.dagpenger.regelverk.inngangsvilkår
 import no.nav.dagpenger.regelverk.inntektSiste3år
 import no.nav.dagpenger.regelverk.inntektSisteÅr
+import no.nav.dagpenger.regelverk.villigDeltid
+import no.nav.dagpenger.regelverk.villigHelse
+import no.nav.dagpenger.regelverk.villigJobb
+import no.nav.dagpenger.regelverk.villigPendle
 import no.nav.dagpenger.regelverk.virkningstidspunkt
 
 fun main() {
@@ -20,10 +24,12 @@ fun main() {
     val datoer = Seksjon(Rolle.søker, virkningstidspunkt, dimisjonsdato)
     val egenNæring = Seksjon(Rolle.søker, egenBondegård, egenBedrift, fangstOgFisk)
     val inntekter = Seksjon(Rolle.søker, inntektSisteÅr, inntektSiste3år)
+    val reellArbeidssøker = Seksjon(Rolle.søker, villigDeltid, villigHelse, villigJobb, villigPendle)
 
     val søknader = InMemorySøknader {
         Søknad(
             personalia,
+            reellArbeidssøker,
             datoer,
             egenNæring,
             inntekter
