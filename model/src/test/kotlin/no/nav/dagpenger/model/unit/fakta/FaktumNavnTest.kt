@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.fakta.FaktumNavn
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class FaktumNavnTest {
 
@@ -24,5 +25,13 @@ internal class FaktumNavnTest {
     @Test
     fun `Generere ny FaktumNavn`() {
         assertEquals("16.2", FaktumNavn(16, "orginal").indeks(2).id)
+    }
+
+    @Test
+    fun `invalid indeks`() {
+        assertThrows<IllegalArgumentException> { FaktumNavn(16, "ss").indeks(2).indeks(3) }
+        assertThrows<IllegalArgumentException> { FaktumNavn(0, "a") }
+        assertThrows<IllegalArgumentException> { FaktumNavn(16, "ss").indeks(0) }
+
     }
 }
