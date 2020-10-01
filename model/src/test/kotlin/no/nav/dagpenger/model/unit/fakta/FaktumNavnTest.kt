@@ -32,6 +32,5 @@ internal class FaktumNavnTest {
         assertThrows<IllegalArgumentException> { FaktumNavn(16, "ss").indeks(2).indeks(3) }
         assertThrows<IllegalArgumentException> { FaktumNavn(0, "a") }
         assertThrows<IllegalArgumentException> { FaktumNavn(16, "ss").indeks(0) }
-
     }
 }

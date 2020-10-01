@@ -31,11 +31,14 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
         visitor.postVisit(this)
     }
 
-    internal fun faktaMap(): Map<FaktumNavn, Faktum<*>> {
+    private fun faktaMap(): Map<FaktumNavn, Faktum<*>> {
         return seksjoner.fold(mapOf()) { resultater, seksjon ->
             resultater + seksjon.faktaMap()
         }
     }
+
+    internal fun faktum(navn: FaktumNavn) =
+        fakta[navn] ?: throw IllegalArgumentException("Faktum med denne id-en finnes ikke, id ${navn.id}")
 
     private class MapBuilder(søknad: Søknad) : SøknadVisitor {
         val resultat = mutableMapOf<FaktumNavn, Faktum<*>>()

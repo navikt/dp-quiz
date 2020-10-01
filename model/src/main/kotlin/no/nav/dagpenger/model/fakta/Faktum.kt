@@ -51,7 +51,7 @@ fun <R : Comparable<R>> FaktumNavn.template(clazz: Class<R>) = TemplateFaktum<R>
 
 internal fun Set<Faktum<*>>.deepCopy(søknad: Søknad): Set<Faktum<*>> = this
     .mapNotNull { template ->
-        søknad.faktaMap()[template.navn]?.also {
+        søknad.faktum(template.navn)?.also {
             template.deepCopyAvhengigheter(it, søknad)
         }
     }
@@ -67,5 +67,5 @@ internal fun Set<Faktum<*>>.deepCopy(indeks: Int, søknad: Søknad): Set<Faktum<
     .toSet()
 
 private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, søknad: Søknad) {
-    faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { søknad.faktaMap()[it.navn] as Faktum<*> })
+    faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { søknad.faktum(it.navn) })
 }

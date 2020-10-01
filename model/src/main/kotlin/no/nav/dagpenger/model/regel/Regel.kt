@@ -26,7 +26,7 @@ private class Etter(private val senesteDato: Faktum<LocalDate>, private val tidl
     override fun resultat() = tidligsteDato.svar() < senesteDato.svar()
     override fun toString() = "Sjekk at '${senesteDato.navn}' er etter '${tidligsteDato.navn}'"
     override fun deepCopy(søknad: Søknad): Regel {
-        return Etter(søknad.faktaMap()[senesteDato.navn] as Faktum<LocalDate>, søknad.faktaMap()[tidligsteDato.navn] as Faktum<LocalDate>)
+        return Etter(søknad.faktum(senesteDato.navn) as Faktum<LocalDate>, søknad.faktum(tidligsteDato.navn) as Faktum<LocalDate>)
     }
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
@@ -50,7 +50,7 @@ private class Før(private val tidligsteDato: Faktum<LocalDate>, private val sen
     override fun resultat() = tidligsteDato.svar() < senesteDato.svar()
     override fun toString() = "Sjekk at '${tidligsteDato.navn}' er før '${senesteDato.navn}'"
     override fun deepCopy(søknad: Søknad): Regel {
-        return Før(søknad.faktaMap()[tidligsteDato.navn] as Faktum<LocalDate>, søknad.faktaMap()[senesteDato.navn] as Faktum<LocalDate>)
+        return Før(søknad.faktum(tidligsteDato.navn) as Faktum<LocalDate>, søknad.faktum(senesteDato.navn) as Faktum<LocalDate>)
     }
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
@@ -74,7 +74,7 @@ private class IkkeFør(private val tidligsteDato: Faktum<LocalDate>, private val
     override fun resultat() = tidligsteDato.svar() >= senesteDato.svar()
     override fun toString() = "Sjekk at '${tidligsteDato.navn}' ikke er før '${senesteDato.navn}'"
     override fun deepCopy(søknad: Søknad): Regel {
-        return IkkeFør(søknad.faktaMap()[tidligsteDato.navn] as Faktum<LocalDate>, søknad.faktaMap()[senesteDato.navn] as Faktum<LocalDate>)
+        return IkkeFør(søknad.faktum(tidligsteDato.navn) as Faktum<LocalDate>, søknad.faktum(senesteDato.navn) as Faktum<LocalDate>)
     }
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
@@ -98,7 +98,7 @@ private class Minst(private val faktisk: Faktum<Inntekt>, private val terskel: F
     override fun resultat() = faktisk.svar() >= terskel.svar()
     override fun toString() = "Sjekk at '${faktisk.navn}' er minst '${terskel.navn}'"
     override fun deepCopy(søknad: Søknad): Regel {
-        return Minst(søknad.faktaMap()[faktisk.navn] as Faktum<Inntekt>, søknad.faktaMap()[terskel.navn] as Faktum<Inntekt>)
+        return Minst(søknad.faktum(faktisk.navn) as Faktum<Inntekt>, søknad.faktum(terskel.navn) as Faktum<Inntekt>)
     }
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
@@ -122,7 +122,7 @@ private class Er<T : Comparable<T>>(private val faktum: Faktum<*>, private val o
     override fun resultat() = faktum.svar() == other
     override fun toString() = "Sjekk at `${faktum.navn}` er lik $other"
     override fun deepCopy(søknad: Søknad): Regel {
-        return Er(søknad.faktaMap()[faktum.navn] as Faktum<T>, other)
+        return Er(søknad.faktum(faktum.navn) as Faktum<T>, other)
     }
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
@@ -157,7 +157,7 @@ private class ErIkke(private val faktum: Faktum<Boolean>) : Regel {
     override fun resultat() = !faktum.svar()
     override fun toString() = "Sjekk at `${faktum.navn}` ikke er sann"
     override fun deepCopy(søknad: Søknad): Regel {
-        return ErIkke(søknad.faktaMap()[faktum.navn] as Faktum<Boolean>)
+        return ErIkke(søknad.faktum(faktum.navn) as Faktum<Boolean>)
     }
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
@@ -177,7 +177,7 @@ private class Har(private val faktum: Faktum<Boolean>) : Regel {
     override fun resultat() = faktum.svar()
     override fun toString() = "Sjekk at `${faktum.navn}` er sann"
     override fun deepCopy(søknad: Søknad): Regel {
-        return Har(søknad.faktaMap()[faktum.navn] as Faktum<Boolean>)
+        return Har(søknad.faktum(faktum.navn) as Faktum<Boolean>)
     }
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
@@ -197,7 +197,7 @@ private class Av(private val godkjenning: Faktum<Boolean>, private val dokument:
     override fun resultat() = dokument.erBesvart() && (!godkjenning.erBesvart() || godkjenning.svar())
     override fun toString() = "Sjekk at `${dokument.navn}` er ${if (resultat()) "godkjent" else "ikke godkjent"}"
     override fun deepCopy(søknad: Søknad): Regel {
-        return Av(søknad.faktaMap()[godkjenning.navn] as Faktum<Boolean>, søknad.faktaMap()[dokument.navn] as Faktum<Dokument>)
+        return Av(søknad.faktum(godkjenning.navn) as Faktum<Boolean>, søknad.faktum(dokument.navn) as Faktum<Dokument>)
     }
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
@@ -235,8 +235,8 @@ private class AvSubsumsjon private constructor(
 
     override fun deepCopy(søknad: Søknad) = AvSubsumsjon(
         regel.deepCopy(søknad),
-        søknad.faktaMap()[dokument.navn] as Faktum<Dokument>,
-        søknad.faktaMap()[godkjenning.navn] as Faktum<Boolean>,
+        søknad.faktum(dokument.navn) as Faktum<Dokument>,
+        søknad.faktum(godkjenning.navn) as Faktum<Boolean>,
         gyldigSubsumsjon.deepCopy(søknad),
         ugyldigSubsumsjon.deepCopy(søknad)
     ).also {
@@ -269,7 +269,7 @@ private class Under(private val alder: Faktum<Int>, private val maksAlder: Int) 
     override fun resultat() = alder.svar() < maksAlder
     override fun toString() = "Sjekk at '${alder.navn}' er under $maksAlder"
     override fun deepCopy(søknad: Søknad): Regel {
-        return Under(søknad.faktaMap()[alder.navn] as Faktum<Int>, maksAlder)
+        return Under(søknad.faktum(alder.navn) as Faktum<Int>, maksAlder)
     }
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
