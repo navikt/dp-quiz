@@ -50,50 +50,50 @@ internal class Eksempel {
     private val fn17Boolean = FaktumNavn(17, "f17")
     private val fn18Boolean = FaktumNavn(18, "f18")
 
-    private val t1Boolean = fn1Boolean.faktum(Boolean::class.java)
-    private val t2Dato = fn2Dato.faktum(LocalDate::class.java)
-    private val t3Dato = fn3Dato.faktum(LocalDate::class.java)
-    private val t4Dato = fn4Dato.faktum(LocalDate::class.java)
-    private val t5Dato = fn5Dato.faktum(LocalDate::class.java)
-    private val t_3_4_5Dato = listOf(t3Dato, t4Dato, t5Dato).faktum(fn_3_4_5Dato, MAKS_DATO)
-    private val t6Inntekt = fn6Inntekt.faktum(Inntekt::class.java)
-    private val t7Inntekt = fn7Inntekt.faktum(Inntekt::class.java)
-    private val t8Inntekt = fn8Inntekt.faktum(Inntekt::class.java)
-    private val t9Inntekt = fn9Inntekt.faktum(Inntekt::class.java)
-    private val t10Boolean = fn10Boolean.faktum(Boolean::class.java)
-    private val t11Dokument = fn11Dokument.faktum(Dokument::class.java)
-    private val t12Boolean = fn12Boolean.faktum(Boolean::class.java).apply {
-        this avhengerAv t11Dokument
+    private val p1Boolean = fn1Boolean.faktum(Boolean::class.java)
+    private val p2Dato = fn2Dato.faktum(LocalDate::class.java)
+    private val p3Dato = fn3Dato.faktum(LocalDate::class.java)
+    private val p4Dato = fn4Dato.faktum(LocalDate::class.java)
+    private val p5Dato = fn5Dato.faktum(LocalDate::class.java)
+    private val p_3_4_5Dato = listOf(p3Dato, p4Dato, p5Dato).faktum(fn_3_4_5Dato, MAKS_DATO)
+    private val p6Inntekt = fn6Inntekt.faktum(Inntekt::class.java)
+    private val p7Inntekt = fn7Inntekt.faktum(Inntekt::class.java)
+    private val p8Inntekt = fn8Inntekt.faktum(Inntekt::class.java)
+    private val p9Inntekt = fn9Inntekt.faktum(Inntekt::class.java)
+    private val p10Boolean = fn10Boolean.faktum(Boolean::class.java)
+    private val p11Dokument = fn11Dokument.faktum(Dokument::class.java)
+    private val p12Boolean = fn12Boolean.faktum(Boolean::class.java).apply {
+        this avhengerAv p11Dokument
     }
-    private val t13Dato = fn13Dato.faktum(LocalDate::class.java)
-    private val t14Boolean = fn14Boolean.faktum(Boolean::class.java)
-    private val t16Int = fn16Int.template(Int::class.java)
-    private val t17Boolean = fn17Boolean.template(Boolean::class.java)
-    private val t18Boolean = fn18Boolean.template(Boolean::class.java)
-    private val t15Int = fn15Int.faktum(Int::class.java, t16Int, t17Boolean, t18Boolean)
+    private val p13Dato = fn13Dato.faktum(LocalDate::class.java)
+    private val p14Boolean = fn14Boolean.faktum(Boolean::class.java)
+    private val p16Int = fn16Int.template(Int::class.java)
+    private val p17Boolean = fn17Boolean.template(Boolean::class.java)
+    private val p18Boolean = fn18Boolean.template(Boolean::class.java)
+    private val p15Int = fn15Int.faktum(Int::class.java, p16Int, p17Boolean, p18Boolean)
 
     /* ktlint-disable parameter-list-wrapping */
-    private val templateSubsumsjon = "rootSubsumsjon".alle(
-        t1Boolean er true,
-        t2Dato etter t_3_4_5Dato,
-        t3Dato før t4Dato
+    private val prototypeSubsumsjon = "rootSubsumsjon".alle(
+        p1Boolean er true,
+        p2Dato etter p_3_4_5Dato,
+        p3Dato før p4Dato
     ) så (
         "makro" makro
             (
-                t10Boolean er true eller (t12Boolean av t11Dokument)
+                p10Boolean er true eller (p12Boolean av p11Dokument)
                 )
             så (
                 "minstEnSubsumsjon".minstEnAv(
-                    t6Inntekt minst t8Inntekt,
-                    t7Inntekt minst t9Inntekt
+                    p6Inntekt minst p8Inntekt,
+                    p7Inntekt minst p9Inntekt
                 ) så (
-                    t15Int med (
-                        "makro" makro (t16Int under 18 så (t17Boolean er true))
+                    p15Int med (
+                        "makro" makro (p16Int under 18 så (p17Boolean er true))
                         )
-                        uansett (t14Boolean er true)
+                        uansett (p14Boolean er true)
                     )
                 )
-            eller (t2Dato etter t13Dato)
+            eller (p2Dato etter p13Dato)
         )
 
     internal lateinit var f1Boolean: Faktum<Boolean>
@@ -170,6 +170,6 @@ internal class Eksempel {
 
         _søknad = Søknad(seksjon1, seksjon2, seksjon3, seksjon4, seksjon5, seksjon6, seksjon7, seksjon8)
 
-        _rootSubsumsjon = templateSubsumsjon.deepCopy(_søknad)
+        _rootSubsumsjon = prototypeSubsumsjon.deepCopy(_søknad)
     }
 }
