@@ -98,7 +98,7 @@ jobs:
   reportFailure:
     name: Report build failure to Slack
     needs: [build]
-    if: job.status == "failure"
+    if: ${{ failure() }}
     runs-on: ubuntu-latest
     steps:
       - run: |
