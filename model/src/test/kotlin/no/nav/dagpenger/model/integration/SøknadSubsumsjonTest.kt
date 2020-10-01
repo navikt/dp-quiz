@@ -119,11 +119,19 @@ internal class SøknadSubsumsjonTest {
             assertEquals(1, fakta.size)
             assertEquals(listOf("17.1"), fakta.map { it.id })
         }
+
+        assertEquals(m.søknad[7], søknad.nesteSeksjon(rootSubsumsjon))
+        assertEquals(2, m.søknad[7].fakta().size)
+        assertEquals(listOf("16.1", "17.1"), m.søknad[7].fakta().map { it.id })
         (m.søknad[7].first { it.id == "17.1" } as Faktum<Boolean>).besvar(true)
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
             assertEquals(setOf(m.f14Boolean), fakta)
         }
+
+        assertEquals(m.seksjon8, søknad.nesteSeksjon(rootSubsumsjon))
+        assertEquals(6, m.seksjon8.fakta().size)
+        assertEquals(listOf("6", "7", "12", "14", "18.1", "18.2"), m.seksjon8.fakta().map { it.id })
         m.f14Boolean.besvar(true, Rolle.saksbehandler)
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(0, fakta.size)
