@@ -31,12 +31,6 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
         visitor.postVisit(this)
     }
 
-    private fun faktaMap(): Map<FaktumNavn, Faktum<*>> {
-        return seksjoner.fold(mapOf()) { resultater, seksjon ->
-            resultater + seksjon.faktaMap()
-        }
-    }
-
     internal fun faktum(navn: FaktumNavn) =
         fakta[navn] ?: throw IllegalArgumentException("Faktum med denne id-en finnes ikke, id ${navn.id}")
 
@@ -46,28 +40,33 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
             søknad.accept(this)
         }
 
-        override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>) {
+        private fun set(faktum: Faktum<*>) {
+            if (resultat.containsKey(faktum.navn) && resultat[faktum.navn] != faktum) throw IllegalArgumentException("Duplisert faktumnavn i søknad: ${faktum.navn}")
             resultat[faktum.navn] = faktum
+        }
+
+        override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>) {
+            set(faktum)
         }
 
         override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>, svar: R) {
-            resultat[faktum.navn] = faktum
+            set(faktum)
         }
 
         override fun <R : Comparable<R>> visit(faktum: TemplateFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
-            resultat[faktum.navn] = faktum
+            set(faktum)
         }
 
         override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
-            resultat[faktum.navn] = faktum
+            set(faktum)
         }
 
         override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>, svar: R) {
-            resultat[faktum.navn] = faktum
+            set(faktum)
         }
 
         override fun <R : Comparable<R>> visit(faktum: GeneratorFaktum, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
-            resultat[faktum.navn] = faktum
+            set(faktum)
         }
     }
 }
