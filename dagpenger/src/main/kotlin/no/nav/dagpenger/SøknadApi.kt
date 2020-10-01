@@ -23,12 +23,12 @@ import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.util.UUID
 
-data class Svar(
+internal data class Svar(
     val verdi: String,
     val type: String
 )
 
-fun Application.søknadApi(søknader: Søknader, template: Subsumsjon) {
+internal fun Application.søknadApi(søknader: Søknader, template: Subsumsjon) {
     install(ContentNegotiation) {
         jackson {}
     }
