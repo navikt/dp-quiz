@@ -5,7 +5,6 @@ import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.regelverk.dimisjonsdato
 import no.nav.dagpenger.regelverk.fødselsdato
-import no.nav.dagpenger.regelverk.utestengt
 import no.nav.dagpenger.regelverk.ønsketDato
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -21,12 +20,11 @@ internal class SøknaderTest {
             Søknad(
                 Seksjon(Rolle.søker, ønsketDato, fødselsdato),
                 Seksjon(Rolle.søker, dimisjonsdato),
-                Seksjon(Rolle.søker, utestengt),
             )
         }
         val id = UUID.randomUUID()
         val søknad = søknader.søknad(id).also {
-            assertEquals(3, it.size)
+            assertEquals(2, it.size)
         }
         assertSame(søknad, søknader.søknad(id))
         assertNotSame(søknad, søknader.søknad(UUID.randomUUID()))

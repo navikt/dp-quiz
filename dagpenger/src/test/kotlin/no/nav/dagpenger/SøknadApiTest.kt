@@ -15,7 +15,6 @@ import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.regelverk.dimisjonsdato
 import no.nav.dagpenger.regelverk.fødselsdato
-import no.nav.dagpenger.regelverk.utestengt
 import no.nav.dagpenger.regelverk.ønsketDato
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.Test
@@ -29,7 +28,6 @@ internal class SøknadApiTest {
         Søknad(
             Seksjon(Rolle.søker, ønsketDato, fødselsdato),
             Seksjon(Rolle.søker, dimisjonsdato),
-            Seksjon(Rolle.søker, utestengt),
         )
     }
 
@@ -71,7 +69,7 @@ internal class SøknadApiTest {
         with(handleRequest(HttpMethod.Get, "/soknad/${UUID.randomUUID()}/subsumsjoner")) {
             assertEquals(HttpStatusCode.OK, response.status())
             mapper.readTree(response.content).let {
-                assertEquals(7, it["root"]["subsumsjoner"].size())
+                assertEquals(2, it["root"]["subsumsjoner"].size())
             }
         }
     }
