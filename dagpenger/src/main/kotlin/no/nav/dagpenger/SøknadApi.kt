@@ -28,7 +28,7 @@ data class Svar(
     val type: String
 )
 
-fun Application.søknadApi(søknader: Søknader, subsumsjoner: Subsumsjon) {
+fun Application.søknadApi(søknader: Søknader, template: Subsumsjon) {
     install(ContentNegotiation) {
         jackson {}
     }
@@ -37,6 +37,7 @@ fun Application.søknadApi(søknader: Søknader, subsumsjoner: Subsumsjon) {
         route("/soknad/{søknadsId}") {
             get("/neste-seksjon") {
                 val søknad = søknader.søknad(UUID.fromString(call.parameters["søknadsId"]!!))
+                val subsumsjoner = template.deepCopy(søknad)
                 try {
                     val seksjon = søknad.nesteSeksjon(subsumsjoner)
                     call.respond(SeksjonJsonBuilder(seksjon).resultat())
@@ -59,6 +60,9 @@ fun Application.søknadApi(søknader: Søknader, subsumsjoner: Subsumsjon) {
                 call.respond(SeksjonJsonBuilder(faktum.finnSeksjon(søknad)).resultat())
             }
             get("/subsumsjoner") {
+                val søknad = søknader.søknad(UUID.fromString(call.parameters["søknadsId"]!!))
+                val subsumsjoner = template.deepCopy(søknad)
+
                 call.respond(SubsumsjonJsonBuilder(subsumsjoner).resultat())
             }
         }

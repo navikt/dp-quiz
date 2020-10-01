@@ -98,7 +98,7 @@ internal class SøknadApiTest {
     fun `Tomt for seksjoner`() {
         val søknader = InMemorySøknader { Søknad() }
         withTestApplication({
-            søknadApi(søknader, subsumsjoner)
+            søknadApi(søknader, "tom subsumsjon".alle())
         }) {
             val søknadsId = UUID.randomUUID()
             with(handleRequest(HttpMethod.Get, "/soknad/$søknadsId/neste-seksjon")) {
