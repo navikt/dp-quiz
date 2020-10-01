@@ -14,12 +14,12 @@ import io.ktor.routing.route
 import io.ktor.routing.routing
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SeksjonJsonBuilder
 import no.nav.dagpenger.model.visitor.SubsumsjonJsonBuilder
 import no.nav.dagpenger.model.visitor.SøknadVisitor
-import no.nav.dagpenger.regelverk.inngangsvilkår
 import java.time.LocalDate
 import java.util.UUID
 
@@ -28,7 +28,7 @@ data class Svar(
     val type: String
 )
 
-fun Application.søknadApi(søknader: Søknader) {
+fun Application.søknadApi(søknader: Søknader, subsumsjoner: Subsumsjon) {
     install(ContentNegotiation) {
         jackson {}
     }
@@ -38,7 +38,7 @@ fun Application.søknadApi(søknader: Søknader) {
             get("/neste-seksjon") {
                 val søknad = søknader.søknad(UUID.fromString(call.parameters["søknadsId"]!!))
                 try {
-                    val seksjon = søknad.nesteSeksjon(inngangsvilkår)
+                    val seksjon = søknad.nesteSeksjon(subsumsjoner)
                     call.respond(SeksjonJsonBuilder(seksjon).resultat())
                 } catch (e: NoSuchElementException) {
                     call.respond(HttpStatusCode.ResetContent)
@@ -59,7 +59,7 @@ fun Application.søknadApi(søknader: Søknader) {
                 call.respond(SeksjonJsonBuilder(faktum.finnSeksjon(søknad)).resultat())
             }
             get("/subsumsjoner") {
-                call.respond(SubsumsjonJsonBuilder(inngangsvilkår).resultat())
+                call.respond(SubsumsjonJsonBuilder(subsumsjoner).resultat())
             }
         }
     }

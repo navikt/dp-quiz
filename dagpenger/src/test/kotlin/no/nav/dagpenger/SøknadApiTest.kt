@@ -11,11 +11,10 @@ import io.ktor.server.testing.withTestApplication
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
+import no.nav.dagpenger.model.regel.før
+import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
-import no.nav.dagpenger.regelverk.dimisjonsdato
-import no.nav.dagpenger.regelverk.fødselsdato
-import no.nav.dagpenger.regelverk.ønsketDato
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -24,6 +23,11 @@ import java.util.UUID
 internal class SøknadApiTest {
     private val mapper = ObjectMapper()
 
+    private val ønsketDato = FaktumNavn(2, "Ønsker dagpenger fra dato").faktum(LocalDate::class.java)
+    private val fødselsdato = FaktumNavn(1, "Fødselsdato").faktum(LocalDate::class.java)
+    private val dimisjonsdato = FaktumNavn(10, "Dimisjonsdato").faktum(LocalDate::class.java)
+
+    private val subsumsjoner = "".alle(ønsketDato før fødselsdato, dimisjonsdato før fødselsdato)
     private val søknader = InMemorySøknader {
         Søknad(
             Seksjon(Rolle.søker, ønsketDato, fødselsdato),
@@ -33,7 +37,7 @@ internal class SøknadApiTest {
 
     @Test
     fun `hent neste-seksjon og besvar faktumene`() = withTestApplication({
-        søknadApi(søknader)
+        søknadApi(søknader, subsumsjoner)
     }) {
         val søknadsId = UUID.randomUUID()
         val fakta = with(handleRequest(HttpMethod.Get, "/soknad/$søknadsId/neste-seksjon")) {
@@ -64,7 +68,7 @@ internal class SøknadApiTest {
 
     @Test
     fun testSubsumsjontre() = withTestApplication({
-        søknadApi(søknader)
+        søknadApi(søknader, subsumsjoner)
     }) {
         with(handleRequest(HttpMethod.Get, "/soknad/${UUID.randomUUID()}/subsumsjoner")) {
             assertEquals(HttpStatusCode.OK, response.status())
@@ -94,7 +98,7 @@ internal class SøknadApiTest {
     fun `Tomt for seksjoner`() {
         val søknader = InMemorySøknader { Søknad() }
         withTestApplication({
-            søknadApi(søknader)
+            søknadApi(søknader, subsumsjoner)
         }) {
             val søknadsId = UUID.randomUUID()
             with(handleRequest(HttpMethod.Get, "/soknad/$søknadsId/neste-seksjon")) {

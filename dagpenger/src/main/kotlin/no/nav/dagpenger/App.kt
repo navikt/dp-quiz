@@ -10,6 +10,7 @@ import no.nav.dagpenger.regelverk.egenBedrift
 import no.nav.dagpenger.regelverk.egenBondegård
 import no.nav.dagpenger.regelverk.fangstOgFisk
 import no.nav.dagpenger.regelverk.fødselsdato
+import no.nav.dagpenger.regelverk.inngangsvilkår
 import no.nav.dagpenger.regelverk.inntektSiste3år
 import no.nav.dagpenger.regelverk.inntektSisteÅr
 import no.nav.dagpenger.regelverk.virkningstidspunkt
@@ -29,7 +30,7 @@ fun main() {
         )
     }
     embeddedServer(factory = Netty, port = config[port]) {
-        søknadApi(søknader)
+        søknadApi(søknader, inngangsvilkår)
         naisApi()
     }.start(wait = true)
 }
