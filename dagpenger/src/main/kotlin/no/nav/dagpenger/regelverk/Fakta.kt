@@ -10,7 +10,7 @@ val fødselsdato get() = FaktumNavn(1, "Fødselsdato").faktum(LocalDate::class.j
 val ønsketDato get() = FaktumNavn(2, "Ønsker dagpenger fra dato").faktum(LocalDate::class.java)
 val datoForBortfallPgaAlder get() = FaktumNavn(3, "Dato for bortfall på grunn av alder").faktum(LocalDate::class.java)
 val sisteDagMedArbeidsplikt get() = FaktumNavn(5, "Siste dag med arbeidsplikt").faktum(LocalDate::class.java)
-val registreringsdato get() = FaktumNavn(6, "Virkningstidspunkt").faktum(LocalDate::class.java)
+val registreringsdato get() = FaktumNavn(6, "Registreringsdato").faktum(LocalDate::class.java)
 val sisteDagMedLønn get() = FaktumNavn(7, "Siste dag med lønn").faktum(LocalDate::class.java)
 
 val virkningstidspunkt
