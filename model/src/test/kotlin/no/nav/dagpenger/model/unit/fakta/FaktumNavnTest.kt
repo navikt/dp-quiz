@@ -15,4 +15,14 @@ internal class FaktumNavnTest {
         assertNotEquals(FaktumNavn(1, "ja"), "ja")
         assertNotEquals(FaktumNavn(1, "ja"), null)
     }
+
+    @Test
+    fun hash() {
+        assertEquals(FaktumNavn(1, "ja").hashCode(), FaktumNavn(1, "nei").hashCode())
+    }
+
+    @Test
+    fun `Generere ny FaktumNavn`() {
+        assertEquals("16.2", FaktumNavn(16, "orginal").indeks(2).id)
+    }
 }

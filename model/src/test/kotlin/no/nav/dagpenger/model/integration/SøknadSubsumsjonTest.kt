@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.integration
 
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.fakta.Rolle
@@ -14,11 +15,10 @@ import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import java.lang.IllegalArgumentException
 import kotlin.test.assertNotNull
 
 internal class SøknadSubsumsjonTest {
@@ -37,12 +37,10 @@ internal class SøknadSubsumsjonTest {
     @Test
     fun `Generere faktum fra template dersom det ikke finnes`() {
         (1..18).forEach {
-            assertNotNull(søknad.faktum(it.toString()))
+            assertNotNull(søknad.fakta[FaktumNavn(it, "")])
         }
 
-        assertNotNull(søknad.faktum("16.1"))
-        assertThrows<IllegalArgumentException> { søknad.faktum("1.1") }
-        assertThrows<IllegalArgumentException> { søknad.faktum("19") }
+        assertNull(søknad.fakta[FaktumNavn(16, "").indeks(1)])
     }
 
     @Test

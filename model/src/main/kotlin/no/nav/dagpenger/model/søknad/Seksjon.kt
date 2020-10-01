@@ -24,7 +24,9 @@ class Seksjon private constructor(private val rolle: Rolle, private val fakta: M
         return nesteFakta.any { it in fakta }
     }
 
-    internal fun søknad(søknad: Søknad) { this.søknad = søknad }
+    internal fun søknad(søknad: Søknad) {
+        this.søknad = søknad
+    }
 
     internal fun bareTemplates() = fakta.all { it is TemplateFaktum }
 
@@ -49,5 +51,15 @@ class Seksjon private constructor(private val rolle: Rolle, private val fakta: M
         }
     }
 
-    internal fun add(generertId: String): Boolean = this.add(søknad.faktum(generertId))
+    internal fun add(faktum: GrunnleggendeFaktum<*>): Boolean =
+        søknad.fakta[faktum.navn].let { eksisterendeFaktum ->
+            (eksisterendeFaktum == null).also {
+                if (it) {
+                    fakta.add(faktum)
+                    søknad.fakta[faktum.navn] = faktum
+                } else {
+                    fakta.add(eksisterendeFaktum as GrunnleggendeFaktum<*>)
+                }
+            }
+        }
 }

@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.søknad.Seksjon
+import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: FaktumNavn, internal val clazz: Class<R>) : Faktum<R> {
@@ -37,9 +38,12 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: 
 
     override fun faktaMap() = mapOf(navn to this)
 
-    override fun tilFaktum(indeks: Int) = GrunnleggendeFaktum(FaktumNavn("$id.$indeks", navn.navn), clazz)
-
     override fun toString() = navn.toString()
+
+    override fun med(indeks: Int, søknad: Søknad): Faktum<*> {
+        return søknad.fakta[navn.indeks(indeks)]
+            ?: GrunnleggendeFaktum(navn.indeks(indeks), clazz).also { søknad.fakta[it.navn] = it }
+    }
 
     internal fun generate(r: Int) {
         seksjoner.forEach { originalSeksjon ->
@@ -49,7 +53,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: 
                 } else {
                     originalSeksjon
                 }
-                seksjon.add("$id.$indeks")
+                seksjon.add(GrunnleggendeFaktum(navn.indeks(indeks), clazz))
             }
         }
     }

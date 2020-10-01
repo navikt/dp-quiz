@@ -14,7 +14,7 @@ import java.util.UUID
 class Søknad private constructor(private val uuid: UUID, private val seksjoner: MutableList<Seksjon>) : MutableList<Seksjon> by seksjoner {
     constructor(vararg seksjoner: Seksjon) : this(UUID.randomUUID(), seksjoner.toMutableList())
 
-    internal val fakta: MutableMap<String, Faktum<*>>
+    internal val fakta: MutableMap<FaktumNavn, Faktum<*>>
 
     init {
         seksjoner.forEach {
@@ -37,48 +37,34 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
         }
     }
 
-    internal fun faktum(id: String): Faktum<*> =
-        fakta[id].let {
-            if (it != null) return it
-            val regex = Regex("""^(\d+)\.(\d+)$""")
-            val matchResult = regex.matchEntire(id) ?: throw IllegalArgumentException("Faktum med id $id finnes ikke i søknaden")
-            val (templateId, indeks) = matchResult!!.destructured
-            fakta[templateId]?.let { template ->
-                if (template !is TemplateFaktum) throw IllegalArgumentException("Faktum med id $templateId må være et TemplateFaktum")
-                template.tilFaktum(indeks.toInt()).also { generertFaktum ->
-                    fakta[generertFaktum.id] = generertFaktum
-                }
-            } ?: throw IllegalArgumentException("Faktum med id $id finnes ikke i søknaden")
-        }
-
     private class MapBuilder(søknad: Søknad) : SøknadVisitor {
-        internal val resultat = mutableMapOf<String, Faktum<*>>()
+        val resultat = mutableMapOf<FaktumNavn, Faktum<*>>()
         init {
             søknad.accept(this)
         }
 
         override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>) {
-            resultat[faktum.id] = faktum
+            resultat[faktum.navn] = faktum
         }
 
         override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>, svar: R) {
-            resultat[faktum.id] = faktum
+            resultat[faktum.navn] = faktum
         }
 
         override fun <R : Comparable<R>> visit(faktum: TemplateFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
-            resultat[faktum.id] = faktum
+            resultat[faktum.navn] = faktum
         }
 
         override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
-            resultat[faktum.id] = faktum
+            resultat[faktum.navn] = faktum
         }
 
         override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>, svar: R) {
-            resultat[faktum.id] = faktum
+            resultat[faktum.navn] = faktum
         }
 
         override fun <R : Comparable<R>> visit(faktum: GeneratorFaktum, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
-            resultat[faktum.id] = faktum
+            resultat[faktum.navn] = faktum
         }
     }
 }

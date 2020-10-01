@@ -29,8 +29,7 @@ interface Faktum<R : Comparable<R>> {
     }
 
     fun faktaMap(): Map<FaktumNavn, Faktum<*>>
-
-    fun tilFaktum(indeks: Int): Faktum<*> = this
+    open fun med(indeks: Int, søknad: Søknad): Faktum<*> = this
 
     enum class FaktumTilstand {
         Ukjent,
@@ -63,7 +62,7 @@ internal fun Set<Faktum<*>>.deepCopy(søknad: Søknad): Set<Faktum<*>> = this
 
 internal fun Set<Faktum<*>>.deepCopy(indeks: Int, søknad: Søknad): Set<Faktum<*>> = this
     .map { faktum ->
-        søknad.faktum("${faktum.id}.$indeks")
+        faktum.med(indeks, søknad)
     }
     .toSet()
 
