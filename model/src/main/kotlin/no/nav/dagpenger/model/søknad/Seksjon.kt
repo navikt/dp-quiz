@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 
 class Seksjon private constructor(private val rolle: Rolle, private val fakta: MutableSet<Faktum<*>>) : MutableSet<Faktum<*>> by fakta {
-    private lateinit var søknad: Søknad
+    internal lateinit var søknad: Søknad
     private val genererteSeksjoner = mutableListOf<Seksjon>()
 
     init {

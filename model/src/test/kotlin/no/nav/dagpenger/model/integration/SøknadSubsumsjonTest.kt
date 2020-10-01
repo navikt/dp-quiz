@@ -17,7 +17,6 @@ import no.nav.dagpenger.model.visitor.SøknadVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertNotNull
 
@@ -44,7 +43,6 @@ internal class SøknadSubsumsjonTest {
     }
 
     @Test
-    @Disabled
     fun `Søknad subsumsjon integrasjonstest`() {
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(5, fakta.size)
@@ -119,7 +117,12 @@ internal class SøknadSubsumsjonTest {
         (m.seksjon3.first { it.id == "16.2" } as Faktum<Int>).besvar(19, Rolle.nav)
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
-            assertEquals(listOf("16.1"), fakta.map { it.id })
+            assertEquals(listOf("17.1"), fakta.map { it.id })
+        }
+        (m.søknad[7].first { it.id == "17.1" } as Faktum<Boolean>).besvar(true)
+        rootSubsumsjon.nesteFakta().also { fakta ->
+            assertEquals(1, fakta.size)
+            assertEquals(setOf(m.f14Boolean), fakta)
         }
         m.f14Boolean.besvar(true, Rolle.saksbehandler)
         rootSubsumsjon.nesteFakta().also { fakta ->

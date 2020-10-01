@@ -29,7 +29,7 @@ interface Faktum<R : Comparable<R>> {
     }
 
     fun faktaMap(): Map<FaktumNavn, Faktum<*>>
-    open fun med(indeks: Int, søknad: Søknad): Faktum<*> = this
+    fun med(indeks: Int, søknad: Søknad): Faktum<*> = this
 
     enum class FaktumTilstand {
         Ukjent,
@@ -50,9 +50,9 @@ fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>, vararg templates: Tem
 fun <R : Comparable<R>> FaktumNavn.template(clazz: Class<R>) = TemplateFaktum<R>(this, clazz)
 
 internal fun Set<Faktum<*>>.deepCopy(søknad: Søknad): Set<Faktum<*>> = this
-    .mapNotNull { template ->
-        søknad.faktum(template.navn)?.also {
-            template.deepCopyAvhengigheter(it, søknad)
+    .mapNotNull { prototype ->
+        søknad.faktum(prototype.navn)?.also {
+            prototype.deepCopyAvhengigheter(it, søknad)
         }
     }
     .toSet()
