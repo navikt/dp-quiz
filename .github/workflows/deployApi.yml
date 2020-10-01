@@ -101,10 +101,10 @@ jobs:
     #if: job.status == "failure"
     runs-on: ubuntu-latest
     steps:
-      run: |
-        curl -X POST --data-urlencode "payload={\"channel\": \"$CHANNEL\", \"username\": \"$USERNAME\", \"text\": \"$MESSAGE\", \"icon_emoji\": \":neutral_face:\"}" $WEBHOOK_URL
-      env:
-        USERNAME: "Github Actions"
-        MESSAGE: "The build is broken!"
-        CHANNEL: "#team-dagpenger-quizshow"
-        WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+      - run: |
+          curl -X POST --data-urlencode "payload={\"channel\": \"$CHANNEL\", \"username\": \"$USERNAME\", \"text\": \"$MESSAGE\", \"icon_emoji\": \":neutral_face:\"}" $WEBHOOK_URL
+        env:
+          USERNAME: "Github Actions"
+          MESSAGE: "The build is broken!"
+          CHANNEL: "#team-dagpenger-quizshow"
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
