@@ -7,7 +7,6 @@ import no.nav.dagpenger.regelverk.dimisjonsdato
 import no.nav.dagpenger.regelverk.fødselsdato
 import no.nav.dagpenger.regelverk.virkningstidspunkt
 import no.nav.dagpenger.regelverk.ønsketDato
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.LocalDate
@@ -44,7 +43,7 @@ internal class SøknaderTest {
         assertDoesNotThrow { finnFaktum }
         assertEquals("7", finnFaktum.id)
     }
-    @Disabled
+
     @Test
     fun `kan finne seksjon fra grunnleggende faktum gjennom derivert faktum`() {
         val søknad =
