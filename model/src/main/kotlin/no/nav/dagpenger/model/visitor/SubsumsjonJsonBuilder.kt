@@ -16,6 +16,10 @@ class SubsumsjonJsonBuilder(private val subsumsjon: Subsumsjon) : FaktumJsonBuil
         subsumsjon.accept(this)
     }
 
+    companion object {
+        fun mulige(subsumsjon: Subsumsjon) = SubsumsjonJsonBuilder(subsumsjon.mulige())
+    }
+
     override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, resultat: Boolean?) {
         subsumsjonNode(subsumsjon, regel.typeNavn, resultat).also { it ->
             it.set("fakta", mapper.valueToTree(fakta.map { it.id }))

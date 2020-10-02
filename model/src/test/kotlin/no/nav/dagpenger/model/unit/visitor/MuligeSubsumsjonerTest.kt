@@ -30,12 +30,11 @@ internal class MuligeSubsumsjonerTest {
         m.f3Dato.besvar(3.januar)
         m.f4Dato.besvar(4.januar)
         m.f5Dato.besvar(5.januar)
-        val subsumsjon = rootSubsumsjon.mulige()
-        val jsonBuilder = SubsumsjonJsonBuilder(subsumsjon)
+
+        val jsonBuilder = SubsumsjonJsonBuilder.mulige(rootSubsumsjon)
         val json = jsonBuilder.resultat()
 
-        assertEquals(TomSubsumsjon, subsumsjon.gyldig)
-
+        assertEquals(TomSubsumsjon, rootSubsumsjon.mulige().gyldig)
         assertNull(json["root"]["gyldig"])
     }
 
@@ -43,8 +42,7 @@ internal class MuligeSubsumsjonerTest {
     fun `Fjerner umulig ugyldig vei fra root`() {
         m.f10Boolean.besvar(true)
 
-        val subsumsjon = rootSubsumsjon.mulige()
-        val jsonBuilder = SubsumsjonJsonBuilder(subsumsjon)
+        val jsonBuilder = SubsumsjonJsonBuilder.mulige(rootSubsumsjon)
         val json = jsonBuilder.resultat()
 
         assertNull(json["root"]["gyldig"]["ugyldig"])
