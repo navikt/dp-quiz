@@ -20,36 +20,42 @@ import no.nav.dagpenger.regelverk.villigPendle
 import no.nav.dagpenger.regelverk.virkningstidspunkt
 
 internal class EnkelSøknad : SøknadBygger {
-    private val personalia = Seksjon(Rolle.søker, fødselsdato)
-    private val statiske = Seksjon(
-        Rolle.nav,
-        inntekt3G,
-        inntekt15G
-    )
-    private val datoer = Seksjon(
-        Rolle.søker,
-        virkningstidspunkt,
-        datoForBortfallPgaAlder,
-        dimisjonsdato
-    )
-    private val egenNæring = Seksjon(
-        Rolle.søker,
-        egenBondegård,
-        egenBedrift,
-        fangstOgFisk,
-    )
-    private val inntekter = Seksjon(
-        Rolle.søker,
-        inntektSisteÅr,
-        inntektSiste3år,
-    )
-    private val reellArbeidssøker = Seksjon(
-        Rolle.søker,
-        villigDeltid,
-        villigHelse,
-        villigJobb,
-        villigPendle,
-    )
+    private val personalia
+        get() = Seksjon(Rolle.søker, fødselsdato)
+    private val statiske
+        get() = Seksjon(
+            Rolle.nav,
+            inntekt3G,
+            inntekt15G
+        )
+    private val datoer
+        get() = Seksjon(
+            Rolle.søker,
+            virkningstidspunkt,
+            datoForBortfallPgaAlder,
+            dimisjonsdato
+        )
+    private val egenNæring
+        get() = Seksjon(
+            Rolle.søker,
+            egenBondegård,
+            egenBedrift,
+            fangstOgFisk,
+        )
+    private val inntekter
+        get() = Seksjon(
+            Rolle.søker,
+            inntektSisteÅr,
+            inntektSiste3år,
+        )
+    private val reellArbeidssøker
+        get() = Seksjon(
+            Rolle.søker,
+            villigDeltid,
+            villigHelse,
+            villigJobb,
+            villigPendle,
+        )
 
     override fun søknad(): Søknad =
         Søknad(

@@ -20,8 +20,11 @@ internal class EnkelSøknadTest {
 
     @Test
     fun `at vi får ny instans av faktum for hver søknad`() {
-        val søknad1 = EnkelSøknad().søknad()
-        val søknad2 = EnkelSøknad().søknad()
+        val bygger = EnkelSøknad()
+        val søknad1 = bygger.søknad()
+        val søknad2 = bygger.søknad()
+
+        assertNotSame(søknad1.first(), søknad2.first())
 
         assertNotSame(søknad1.finnFaktum<LocalDate>("1"), søknad2.finnFaktum<LocalDate>("1"))
     }
