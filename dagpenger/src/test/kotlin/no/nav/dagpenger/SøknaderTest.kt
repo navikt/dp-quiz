@@ -3,10 +3,6 @@ package no.nav.dagpenger
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
-import no.nav.dagpenger.regelverk.dimisjonsdato
-import no.nav.dagpenger.regelverk.fødselsdato
-import no.nav.dagpenger.regelverk.virkningstidspunkt
-import no.nav.dagpenger.regelverk.ønsketDato
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.LocalDate
@@ -19,10 +15,12 @@ internal class SøknaderTest {
 
     @Test
     fun `hente eller opprette søknad`() {
+        val f = Dagpengefakta()
+
         val søknader = InMemorySøknader {
             Søknad(
-                Seksjon(Rolle.søker, ønsketDato, fødselsdato),
-                Seksjon(Rolle.søker, dimisjonsdato),
+                Seksjon(Rolle.søker, f.ønsketDato),
+                Seksjon(Rolle.søker, f.dimisjonsdato),
             )
         }
         val id = UUID.randomUUID()
@@ -32,11 +30,14 @@ internal class SøknaderTest {
         assertSame(søknad, søknader.søknad(id))
         assertNotSame(søknad, søknader.søknad(UUID.randomUUID()))
     }
+
     @Test
     fun `kan finne grunnleggende faktum gjennom derivert faktum`() {
+        val f = Dagpengefakta()
+
         val søknad =
             Søknad(
-                Seksjon(Rolle.søker, virkningstidspunkt),
+                Seksjon(Rolle.søker, f.virkningstidspunkt),
             )
 
         val finnFaktum = søknad.finnFaktum<LocalDate>("7")
@@ -46,9 +47,11 @@ internal class SøknaderTest {
 
     @Test
     fun `kan finne seksjon fra grunnleggende faktum gjennom derivert faktum`() {
+        val f = Dagpengefakta()
+
         val søknad =
             Søknad(
-                Seksjon(Rolle.søker, virkningstidspunkt),
+                Seksjon(Rolle.søker, f.virkningstidspunkt),
             )
 
         assertDoesNotThrow { søknad.finnFaktum<LocalDate>("7").finnSeksjon(søknad) }

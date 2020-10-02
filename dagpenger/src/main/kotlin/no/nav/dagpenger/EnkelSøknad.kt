@@ -3,67 +3,57 @@ package no.nav.dagpenger
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
-import no.nav.dagpenger.regelverk.datoForBortfallPgaAlder
-import no.nav.dagpenger.regelverk.dimisjonsdato
-import no.nav.dagpenger.regelverk.egenBedrift
-import no.nav.dagpenger.regelverk.egenBondegård
-import no.nav.dagpenger.regelverk.fangstOgFisk
-import no.nav.dagpenger.regelverk.fødselsdato
-import no.nav.dagpenger.regelverk.inntekt15G
-import no.nav.dagpenger.regelverk.inntekt3G
-import no.nav.dagpenger.regelverk.inntektSiste3år
-import no.nav.dagpenger.regelverk.inntektSisteÅr
-import no.nav.dagpenger.regelverk.villigDeltid
-import no.nav.dagpenger.regelverk.villigHelse
-import no.nav.dagpenger.regelverk.villigJobb
-import no.nav.dagpenger.regelverk.villigPendle
-import no.nav.dagpenger.regelverk.virkningstidspunkt
 
 internal class EnkelSøknad : SøknadBygger {
+    lateinit var f: Dagpengefakta
+
     private val personalia
-        get() = Seksjon(Rolle.søker, fødselsdato)
+        get() = Seksjon(Rolle.søker, f.fødselsdato)
+
     private val statiske
         get() = Seksjon(
             Rolle.nav,
-            inntekt3G,
-            inntekt15G
+            f.inntekt3G,
+            f.inntekt15G
         )
     private val datoer
         get() = Seksjon(
             Rolle.søker,
-            virkningstidspunkt,
-            datoForBortfallPgaAlder,
-            dimisjonsdato
+            f.virkningstidspunkt,
+            f.datoForBortfallPgaAlder,
+            f.dimisjonsdato
         )
     private val egenNæring
         get() = Seksjon(
             Rolle.søker,
-            egenBondegård,
-            egenBedrift,
-            fangstOgFisk,
+            f.egenBondegård,
+            f.egenBedrift,
+            f.fangstOgFisk,
         )
     private val inntekter
         get() = Seksjon(
             Rolle.søker,
-            inntektSisteÅr,
-            inntektSiste3år,
+            f.inntektSisteÅr,
+            f.inntektSiste3År,
         )
     private val reellArbeidssøker
         get() = Seksjon(
             Rolle.søker,
-            villigDeltid,
-            villigHelse,
-            villigJobb,
-            villigPendle,
+            f.villigDeltid,
+            f.villigHelse,
+            f.villigJobb,
+            f.villigPendle,
         )
 
-    override fun søknad(): Søknad =
-        Søknad(
+    override fun søknad(): Søknad {
+        f = Dagpengefakta()
+        return Søknad(
             statiske,
-            personalia,
             reellArbeidssøker,
+            personalia,
             datoer,
             egenNæring,
             inntekter
         )
+    }
 }
