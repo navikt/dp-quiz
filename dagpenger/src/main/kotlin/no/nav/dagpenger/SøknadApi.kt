@@ -91,7 +91,7 @@ internal fun Faktum<*>.finnSeksjon(søknad: Søknad): Seksjon =
 
         override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
             if (this::seksjon.isInitialized) return
-            grunnleggendeFakta().find { it.id == this@finnSeksjon.id }?.let {
+            fakta.flatMap { it.grunnleggendeFakta() }.find { it.id == this@finnSeksjon.id }?.let {
                 this.seksjon = seksjon
             }
         }
