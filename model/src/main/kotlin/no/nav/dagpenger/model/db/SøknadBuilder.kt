@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
+import no.nav.dagpenger.model.regel.MAKS_DATO
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import java.time.LocalDate
@@ -42,6 +43,16 @@ class SøknadBuilder(private val jsonString: String) {
         val rootId = faktumNode["rootId"].asInt()
         val indeks = faktumNode["indeks"].asInt()
         val clazz = faktumNode["clazz"].asText()
+        if (faktumNode.has("fakta")) byggUtledetFakta(faktumNode, id, rootId, navn, indeks)
+        else byggGrunnleggendeFaktum(faktumNode, id, rootId, navn, indeks, clazz)
+    }
+
+    private fun byggUtledetFakta(faktumNode: JsonNode, id: String, rootId: Int, navn: String?, indeks: Int) {
+        val fakta: List<Faktum<LocalDate>> = faktumNode["fakta"].mapNotNull { this.fakta[it.asText()] as Faktum<LocalDate> }
+        this.fakta[id] = fakta.faktum(FaktumNavn::class.primaryConstructor!!.apply { isAccessible = true }.call(rootId, navn, indeks), MAKS_DATO)
+    }
+
+    private fun byggGrunnleggendeFaktum(faktumNode: JsonNode, id: String, rootId: Int, navn: String?, indeks: Int, clazz: String?) {
         val roller = faktumNode["roller"].mapNotNull { Rolle.valueOf(it.asText()) }
         fakta[id] = FaktumNavn::class.primaryConstructor!!.apply { isAccessible = true }.call(rootId, navn, indeks).faktum(
             when (clazz) {

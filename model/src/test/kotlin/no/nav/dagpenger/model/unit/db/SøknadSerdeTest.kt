@@ -2,14 +2,13 @@ package no.nav.dagpenger.model.unit.db
 
 import no.nav.dagpenger.model.db.SøknadBuilder
 import no.nav.dagpenger.model.fakta.Dokument
-import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
-import no.nav.dagpenger.model.helpers.INNTEKT3G
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.regel.MAKS_DATO
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SøknadJsonBuilder
@@ -30,14 +29,7 @@ internal class SøknadSerdeTest {
         val seksjon1 = Seksjon(Rolle.søker, faktumBoolean, faktumInntekt, faktumDokument)
         val seksjon2 = Seksjon(Rolle.saksbehandler, faktumInt, faktumLocalDate)
 
-        val originalSøknad = Søknad(seksjon1, seksjon2)
-
-        val originalJson = SøknadJsonBuilder(originalSøknad).resultat()
-        val builder = SøknadBuilder(originalJson.toString())
-        val nySøknad = builder.resultat()
-
-        assertEquals(originalSøknad.size, nySøknad.size)
-        assertEquals(originalJson, SøknadJsonBuilder(nySøknad).resultat())
+        assert(Søknad(seksjon1, seksjon2))
     }
 
     @Test
@@ -51,7 +43,7 @@ internal class SøknadSerdeTest {
         val seksjon1 = Seksjon(Rolle.søker, faktumBoolean, faktumInntekt, faktumDokument)
         val seksjon2 = Seksjon(Rolle.saksbehandler, faktumInt, faktumLocalDate)
 
-        val originalSøknad = Søknad(seksjon1, seksjon2)
+        val søknad = Søknad(seksjon1, seksjon2)
 
         faktumBoolean.besvar(true, Rolle.søker)
         faktumInt.besvar(5, Rolle.saksbehandler)
@@ -59,6 +51,22 @@ internal class SøknadSerdeTest {
         faktumLocalDate.besvar(1.januar, Rolle.saksbehandler)
         faktumDokument.besvar(Dokument(2.januar), Rolle.søker)
 
+        assert(søknad)
+    }
+
+    @Test
+    fun test() {
+        val faktum1 = FaktumNavn(1, "f1").faktum(LocalDate::class.java)
+        val faktum2 = FaktumNavn(2, "f2").faktum(LocalDate::class.java)
+
+        val utlededFaktum = listOf(faktum1, faktum2).faktum(FaktumNavn(3, "utledet"), MAKS_DATO)
+
+        val seksjon1 = Seksjon(Rolle.søker, faktum1, faktum2)
+        val seksjon2 = Seksjon(Rolle.søker, utlededFaktum)
+        assert(Søknad(seksjon1, seksjon2))
+    }
+
+    private fun assert(originalSøknad: Søknad) {
         val originalJson = SøknadJsonBuilder(originalSøknad).resultat()
         val builder = SøknadBuilder(originalJson.toString())
         val nySøknad = builder.resultat()
