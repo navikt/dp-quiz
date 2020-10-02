@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.UtledetFaktum
@@ -19,6 +20,9 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
 
     private val faktaNode = mapper.createArrayNode()
     private val faktumIder = mutableSetOf<String>()
+    private lateinit var navn: String
+    private var rootId = -1
+    private var indeks = -1
 
     fun resultat(): ObjectNode = mapper.createObjectNode().also {
         it.set("fakta", faktaNode)
@@ -37,7 +41,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         svar: R
     ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(id, avhengigeFakta, clazz).also { faktumNode ->
             faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
             faktumNode.putR(svar)
         }
@@ -52,10 +56,16 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         clazz: Class<R>
     ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(id, avhengigeFakta, clazz).also { faktumNode ->
             faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
         }
         faktumIder.add(id)
+    }
+
+    override fun visit(faktumNavn: FaktumNavn, navn: String, rootId: Int, indeks: Int) {
+        this.navn = navn
+        this.rootId = rootId
+        this.indeks = indeks
     }
 
     override fun <R : Comparable<R>> visit(
@@ -67,7 +77,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         clazz: Class<R>
     ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(id, avhengigeFakta, clazz).also { faktumNode ->
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
         }
         faktumIder.add(id)
@@ -83,7 +93,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         svar: R
     ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(id, avhengigeFakta, clazz).also { faktumNode ->
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
             faktumNode.putR(svar)
         }
@@ -91,16 +101,17 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     }
 
     private fun <R : Comparable<R>> faktumNode(
-        faktum: Faktum<R>,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         clazz: Class<R>
     ) =
         mapper.createObjectNode().also { faktumNode ->
-            faktumNode.put("navn", faktum.navn.toString())
+            faktumNode.put("navn", navn)
             faktumNode.put("id", id)
             faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
             faktumNode.put("clazz", clazz.simpleName.toLowerCase())
+            faktumNode.put("rootId", rootId)
+            faktumNode.put("indeks", indeks)
             faktaNode.add(faktumNode)
         }
 

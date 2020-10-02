@@ -42,6 +42,7 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     }
 
     override fun accept(visitor: FaktumVisitor) {
+        navn.accept(visitor)
         if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, fakta, clazz(), svar())
         else visitor.preVisit(this, id, avhengigeFakta, fakta, clazz())
         fakta.forEach { it.accept(visitor) }

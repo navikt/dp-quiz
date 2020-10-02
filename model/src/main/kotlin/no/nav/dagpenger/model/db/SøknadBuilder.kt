@@ -9,6 +9,8 @@ import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import java.util.UUID
+// import kotlin.reflect.full.primaryConstructor
+// import kotlin.reflect.jvm.isAccessible
 
 class SøknadBuilder(private val jsonString: String) {
     private lateinit var søknad: Søknad
@@ -22,6 +24,7 @@ class SøknadBuilder(private val jsonString: String) {
         val uuid = UUID.fromString(json["root"]["uuid"].asText())
         val seksjoner = json["root"]["seksjoner"].mapNotNull { seksjon -> byggSeksjon(seksjon) }.toTypedArray()
         return Søknad(*seksjoner)
+        // return Søknad::class.primaryConstructor!!
     }
 
     private fun byggFakta(faktaNode: JsonNode) {

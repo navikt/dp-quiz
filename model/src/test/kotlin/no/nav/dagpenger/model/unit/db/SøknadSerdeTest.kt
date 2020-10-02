@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.unit.serde
+package no.nav.dagpenger.model.unit.db
 
 import no.nav.dagpenger.model.db.SøknadBuilder
 import no.nav.dagpenger.model.fakta.Faktum

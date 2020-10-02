@@ -34,6 +34,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     }
 
     override fun accept(visitor: FaktumVisitor) {
+        navn.accept(visitor)
         tilstand.accept(this, visitor)
     }
 
