@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.LocalDate
-import kotlin.test.assertEquals
 import kotlin.test.assertNotSame
 
 internal class EnkelSøknadTest {
@@ -20,7 +19,7 @@ internal class EnkelSøknadTest {
     }
 
     @Test
-    fun `at vi får ny instans av faktum for hver søknad`(){
+    fun `at vi får ny instans av faktum for hver søknad`() {
         val søknad1 = EnkelSøknad().søknad()
         val søknad2 = EnkelSøknad().søknad()
 
