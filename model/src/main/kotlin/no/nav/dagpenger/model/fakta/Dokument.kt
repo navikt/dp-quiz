@@ -10,4 +10,9 @@ class Dokument(private val opplastingsdato: LocalDate) : Comparable<Dokument> {
     internal fun toUrl(): String {
         return "http:"
     }
+
+    internal fun <R> reflection(block: (LocalDate, String) -> R) = block(
+        opplastingsdato,
+        toUrl()
+    )
 }

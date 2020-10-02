@@ -8,6 +8,7 @@ import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.UtledetFaktum
 import java.time.LocalDate
@@ -122,7 +123,16 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
             is Double -> this.put("svar", svar)
             is String -> this.put("svar", svar)
             is LocalDate -> this.put("svar", svar.toString())
-            is Dokument -> this.put("svar", svar.toUrl())
+            is Dokument -> this.set(
+                "svar",
+                svar.reflection { opplastingsdato, url ->
+                    mapper.createObjectNode().also {
+                        it.put("opplastingsdato", opplastingsdato.toString())
+                        it.put("url", url)
+                    }
+                }
+            )
+            is Inntekt -> this.put("svar", svar.reflection { årlig, _, _, _ -> årlig })
             else -> throw IllegalArgumentException("Ukjent datatype")
         }
     }
