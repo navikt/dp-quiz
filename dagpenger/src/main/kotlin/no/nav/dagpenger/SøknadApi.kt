@@ -14,6 +14,7 @@ import io.ktor.routing.route
 import io.ktor.routing.routing
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
@@ -69,14 +70,28 @@ internal fun Application.søknadApi(søknader: Søknader, template: Subsumsjon) 
     }
 }
 
-internal fun <R : Comparable<R>> Søknad.finnFaktum(id: String): Faktum<R> =
+internal fun <T : Comparable<T>> Søknad.finnFaktum(id: String): Faktum<T> =
     object : SøknadVisitor {
-        lateinit var faktum: Faktum<R>
+        lateinit var faktum: Faktum<T>
+        val id = id
 
         override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
             if (this::faktum.isInitialized) return
             fakta.find { it.id == id }?.let {
-                faktum = it as Faktum<R>
+                faktum = it as Faktum<T>
+            }
+        }
+
+        override fun <R : Comparable<R>> preVisit(
+            faktum: UtledetFaktum<R>,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            children: Set<Faktum<*>>,
+            clazz: Class<R>
+        ) {
+            if (this::faktum.isInitialized) return
+            children.find { it.id == this.id }?.let {
+                this.faktum = it as Faktum<T>
             }
         }
     }.let {
