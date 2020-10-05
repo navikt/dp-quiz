@@ -234,4 +234,11 @@ infix fun Subsumsjon.godkjentAv(faktum: Faktum<Boolean>): Subsumsjon {
     return GodkjenningsSubsumsjon(GodkjenningsSubsumsjon.Action.UansettAction, this, faktum)
 }
 
+infix fun Subsumsjon.gyldigGodkjentAv(faktum: Faktum<Boolean>): Subsumsjon {
+    return GodkjenningsSubsumsjon(GodkjenningsSubsumsjon.Action.JaAction, this, faktum)
+}
+infix fun Subsumsjon.ugyldigGodkjentAv(faktum: Faktum<Boolean>): Subsumsjon {
+    return GodkjenningsSubsumsjon(GodkjenningsSubsumsjon.Action.NeiAction, this, faktum)
+}
+
 val MAKS_DATO = UtledetFaktum<LocalDate>::max
