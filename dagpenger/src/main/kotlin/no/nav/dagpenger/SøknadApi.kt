@@ -13,6 +13,8 @@ import io.ktor.routing.put
 import io.ktor.routing.route
 import io.ktor.routing.routing
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.Inntekt
+import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.søknad.Seksjon
@@ -55,6 +57,7 @@ internal fun Application.søknadApi(søknader: Søknader, template: Subsumsjon) 
                     "string" -> søknad.finnFaktum<String>(id).besvar(verdi)
                     "boolean" -> søknad.finnFaktum<Boolean>(id).besvar(verdi.toBoolean())
                     "int" -> søknad.finnFaktum<Int>(id).besvar(verdi.toInt())
+                    "inntekt" -> søknad.finnFaktum<Inntekt>(id).besvar(verdi.toInt().årlig)
                     else -> throw IllegalArgumentException("BOOM")
                 }
                 call.respond(SeksjonJsonBuilder(faktum.finnSeksjon(søknad)).resultat())
