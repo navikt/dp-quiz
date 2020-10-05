@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -94,6 +95,8 @@ interface SubsumsjonVisitor : FaktumVisitor {
     fun postVisit(subsumsjon: MinstEnAvSubsumsjon, resultat: Boolean?) {}
     fun preVisit(subsumsjon: MakroSubsumsjon, resultat: Boolean?) {}
     fun postVisit(subsumsjon: MakroSubsumsjon, resultat: Boolean?) {}
+    fun preVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {}
+    fun postVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {}
     fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {}
     fun postVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {}
     fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {}
