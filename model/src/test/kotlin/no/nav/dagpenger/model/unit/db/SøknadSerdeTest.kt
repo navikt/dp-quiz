@@ -55,7 +55,7 @@ internal class SøknadSerdeTest {
     }
 
     @Test
-    fun test() {
+    fun `Gjenopprette søknad med utledet faktum`() {
         val faktum1 = FaktumNavn(1, "f1").faktum(LocalDate::class.java)
         val faktum2 = FaktumNavn(2, "f2").faktum(LocalDate::class.java)
 
@@ -63,6 +63,18 @@ internal class SøknadSerdeTest {
 
         val seksjon1 = Seksjon(Rolle.søker, faktum1, faktum2)
         val seksjon2 = Seksjon(Rolle.søker, utlededFaktum)
+        assert(Søknad(seksjon1, seksjon2))
+    }
+
+    @Test
+    fun `Gjenopprette søknad med utsatt faktabygging`() {
+        val faktum1 = FaktumNavn(1, "f1").faktum(LocalDate::class.java)
+        val faktum2 = FaktumNavn(2, "f2").faktum(LocalDate::class.java)
+
+        val utlededFaktum = listOf(faktum1, faktum2).faktum(FaktumNavn(3, "utledet"), MAKS_DATO)
+
+        val seksjon1 = Seksjon(Rolle.søker, utlededFaktum)
+        val seksjon2 = Seksjon(Rolle.søker, faktum1, faktum2)
         assert(Søknad(seksjon1, seksjon2))
     }
 
