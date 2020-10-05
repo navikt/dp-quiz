@@ -231,7 +231,7 @@ infix fun Faktum<Int>.under(maksAlder: Int): Subsumsjon {
 }
 
 infix fun Subsumsjon.godkjentAv(faktum: Faktum<Boolean>): Subsumsjon {
-    return GodkjenningsSubsumsjon(this, faktum)
+    return GodkjenningsSubsumsjon(GodkjenningsSubsumsjon.Action.UansettAction, this, faktum)
 }
 
 val MAKS_DATO = UtledetFaktum<LocalDate>::max
