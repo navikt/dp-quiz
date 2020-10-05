@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.før
+import no.nav.dagpenger.model.regel.gyldigGodkjentAv
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.under
@@ -49,6 +50,7 @@ internal class Eksempel {
     private val fn16Int = FaktumNavn(16, "f16")
     private val fn17Boolean = FaktumNavn(17, "f17")
     private val fn18Boolean = FaktumNavn(18, "f18")
+    private val fn19Boolean = FaktumNavn(19, "f19")
 
     private val p1Boolean = fn1Boolean.faktum(Boolean::class.java)
     private val p2Dato = fn2Dato.faktum(LocalDate::class.java)
@@ -70,31 +72,46 @@ internal class Eksempel {
     private val p16Int = fn16Int.template(Int::class.java)
     private val p17Boolean = fn17Boolean.template(Boolean::class.java)
     private val p18Boolean = fn18Boolean.template(Boolean::class.java)
+    private val p19Boolean = fn19Boolean.faktum(Boolean::class.java).apply {
+        this avhengerAv p2Dato
+        this avhengerAv p13Dato
+    }
     private val p15Int = fn15Int.faktum(Int::class.java, p16Int, p17Boolean, p18Boolean)
 
-    /* ktlint-disable parameter-list-wrapping */
-    private val prototypeSubsumsjon = "rootSubsumsjon".alle(
+    private val datosjekk = "datosjekk".alle(
         p1Boolean er true,
         p2Dato etter p_3_4_5Dato,
         p3Dato før p4Dato
-    ) så (
-        "makro" makro
-            (
-                p10Boolean er true eller (p12Boolean av p11Dokument)
-                )
-            så (
-                "minstEnSubsumsjon".minstEnAv(
-                    p6Inntekt minst p8Inntekt,
-                    p7Inntekt minst p9Inntekt
-                ) så (
-                    p15Int med (
-                        "makro" makro (p16Int under 18 så (p17Boolean er true))
-                        )
-                        uansett (p14Boolean er true)
-                    )
-                )
-            eller (p2Dato etter p13Dato)
+    )
+
+    private val dokumentOpplastning = "dokumentopplastning" makro (
+        p10Boolean er true eller (p12Boolean av p11Dokument)
         )
+
+    private val inntektValidering = "inntektvalidering".minstEnAv(
+        p6Inntekt minst p8Inntekt,
+        p7Inntekt minst p9Inntekt
+    )
+
+    private val alderSjekk = "aldersjekk" makro (
+        p16Int under 18 så (p17Boolean er true)
+        )
+
+    private val personerGodkjenning = p15Int med (
+        alderSjekk
+        )uansett (p14Boolean er true)
+
+    /* ktlint-disable parameter-list-wrapping */
+    private val prototypeSubsumsjon =
+        datosjekk så (
+            dokumentOpplastning så (
+                inntektValidering så (
+                    personerGodkjenning
+                    )
+                ) eller (
+                (p2Dato etter p13Dato) gyldigGodkjentAv p19Boolean
+                )
+            )
 
     internal lateinit var f1Boolean: Faktum<Boolean>
     internal lateinit var f2Dato: Faktum<LocalDate>
@@ -115,6 +132,7 @@ internal class Eksempel {
     internal lateinit var f16Int: TemplateFaktum<Int>
     internal lateinit var f17Boolean: TemplateFaktum<Boolean>
     internal lateinit var f18Boolean: TemplateFaktum<Boolean>
+    internal lateinit var f19Boolean: Faktum<Boolean>
 
     internal lateinit var seksjon1: Seksjon
     internal lateinit var seksjon2: Seksjon
@@ -157,6 +175,7 @@ internal class Eksempel {
         f16Int = fn16Int.template(Int::class.java)
         f17Boolean = fn17Boolean.template(Boolean::class.java)
         f18Boolean = fn18Boolean.template(Boolean::class.java)
+        f19Boolean = fn19Boolean.faktum(Boolean::class.java)
         f15Int = fn15Int.faktum(Int::class.java, f16Int, f17Boolean, f18Boolean)
 
         seksjon1 = Seksjon(Rolle.nav, f1Boolean, f2Dato)
@@ -166,7 +185,7 @@ internal class Eksempel {
         seksjon5 = Seksjon(Rolle.søker, f10Boolean, f11Dokument)
         seksjon6 = Seksjon(Rolle.søker, f15Int)
         seksjon7 = Seksjon(Rolle.søker, f16Int, f17Boolean)
-        seksjon8 = Seksjon(Rolle.saksbehandler, f6Inntekt, f7Inntekt, f12Boolean, f14Boolean, f18Boolean)
+        seksjon8 = Seksjon(Rolle.saksbehandler, f6Inntekt, f7Inntekt, f12Boolean, f14Boolean, f18Boolean, f19Boolean)
 
         _søknad = Søknad(seksjon1, seksjon2, seksjon3, seksjon4, seksjon5, seksjon6, seksjon7, seksjon8)
 

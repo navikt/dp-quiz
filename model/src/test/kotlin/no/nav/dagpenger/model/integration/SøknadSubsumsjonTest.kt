@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.helpers.Eksempel
 import no.nav.dagpenger.model.helpers.desember
+import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.søknad.Seksjon
@@ -130,13 +131,42 @@ internal class SøknadSubsumsjonTest {
         }
 
         assertEquals(m.seksjon8, søknad.nesteSeksjon(rootSubsumsjon))
-        assertEquals(6, m.seksjon8.fakta().size)
-        assertEquals(listOf("6", "7", "12", "14", "18.1", "18.2"), m.seksjon8.fakta().map { it.id })
+        assertEquals(7, m.seksjon8.fakta().size)
+        assertEquals(listOf("6", "7", "12", "14", "18.1", "18.2", "19").sorted(), m.seksjon8.fakta().map { it.id }.sorted())
         m.f14Boolean.besvar(true, Rolle.saksbehandler)
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(0, fakta.size)
             assertEquals(emptySet<GrunnleggendeFaktum<*>>(), fakta)
         }
+    }
+
+    @Test
+    fun `Avvisning av søker faktum`() {
+        m.f1Boolean.besvar(true, Rolle.nav)
+        m.f2Dato.besvar(31.desember, Rolle.nav)
+        m.f3Dato.besvar(1.januar)
+        m.f4Dato.besvar(2.januar)
+        m.f5Dato.besvar(3.januar)
+
+        rootSubsumsjon.nesteFakta().also { fakta ->
+            assertEquals(1, fakta.size)
+            assertEquals(setOf(m.f10Boolean), fakta)
+        }
+
+        m.f10Boolean.besvar(false)
+        m.f11Dokument.besvar(Dokument(1.januar))
+        m.f12Boolean.besvar(false, Rolle.saksbehandler)
+
+        rootSubsumsjon.nesteFakta().also { fakta ->
+            assertEquals(1, fakta.size)
+            assertEquals(setOf(m.f13Dato), fakta)
+        }
+
+        m.f13Dato.besvar(1.februar)
+        assertEquals(true, rootSubsumsjon.resultat())
+
+        m.f19Boolean.besvar(false, Rolle.saksbehandler)
+        assertEquals(false, rootSubsumsjon.resultat())
     }
 
     private fun Seksjon.fakta(): Set<Faktum<*>> =
