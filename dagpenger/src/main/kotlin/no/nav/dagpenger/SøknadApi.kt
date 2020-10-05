@@ -65,8 +65,7 @@ internal fun Application.søknadApi(søknader: Søknader, template: Subsumsjon) 
             get("/subsumsjoner") {
                 val søknad = søknader.søknad(UUID.fromString(call.parameters["søknadsId"]!!))
                 val subsumsjoner = template.deepCopy(søknad)
-
-                call.respond(SubsumsjonJsonBuilder(subsumsjoner).resultat())
+                call.respond(SubsumsjonJsonBuilder.mulige(subsumsjoner).resultat())
             }
         }
     }
