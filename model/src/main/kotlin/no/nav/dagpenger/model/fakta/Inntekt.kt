@@ -24,13 +24,13 @@ class Inntekt : Comparable<Inntekt> {
 
         private const val ARBEIDSDAGER_PER_ÅR = 260
 
-        internal val Number.månedlig get() = Inntekt(this.toDouble() * 12)
+        val Number.månedlig get() = Inntekt(this.toDouble() * 12)
 
-        internal val Number.årlig get() = Inntekt(this.toDouble())
+        val Number.årlig get() = Inntekt(this.toDouble())
 
-        internal val Number.daglig get() = Inntekt(this.toDouble() * ARBEIDSDAGER_PER_ÅR)
+        val Number.daglig get() = Inntekt(this.toDouble() * ARBEIDSDAGER_PER_ÅR)
 
-        internal val INGEN = 0.daglig
+        val INGEN = 0.daglig
 
         internal fun List<Inntekt>.summer(): Inntekt {
             return this.fold(INGEN) { acc, inntekt -> Inntekt(acc.årlig + inntekt.årlig) }
