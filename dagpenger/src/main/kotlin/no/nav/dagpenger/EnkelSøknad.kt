@@ -5,48 +5,58 @@ import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 
 internal class EnkelSøknad : SøknadBygger {
-    lateinit var f: Dagpengefakta
+    lateinit var fakta: Dagpengefakta
 
     private val personalia
-        get() = Seksjon(Rolle.søker, f.fødselsdato)
+        get() = with(fakta) { Seksjon(Rolle.søker, fødselsdato) }
 
     private val statiske
-        get() = Seksjon(
-            Rolle.søker,
-            f.inntekt3G,
-            f.inntekt15G
-        )
+        get() = with(fakta) {
+            Seksjon(
+                Rolle.søker,
+                inntekt3G,
+                inntekt15G
+            )
+        }
     private val datoer
-        get() = Seksjon(
-            Rolle.søker,
-            f.virkningstidspunkt,
-            f.datoForBortfallPgaAlder,
-            f.dimisjonsdato
-        )
+        get() = with(fakta) {
+            Seksjon(
+                Rolle.søker,
+                virkningstidspunkt,
+                datoForBortfallPgaAlder,
+                dimisjonsdato
+            )
+        }
     private val egenNæring
-        get() = Seksjon(
-            Rolle.søker,
-            f.egenBondegård,
-            f.egenBedrift,
-            f.fangstOgFisk,
-        )
+        get() = with(fakta) {
+            Seksjon(
+                Rolle.søker,
+                egenBondegård,
+                egenBedrift,
+                fangstOgFisk,
+            )
+        }
     private val inntekter
-        get() = Seksjon(
-            Rolle.søker,
-            f.inntektSisteÅr,
-            f.inntektSiste3År,
-        )
+        get() = with(fakta) {
+            Seksjon(
+                Rolle.søker,
+                inntektSisteÅr,
+                inntektSiste3År,
+            )
+        }
     private val reellArbeidssøker
-        get() = Seksjon(
-            Rolle.søker,
-            f.villigDeltid,
-            f.villigHelse,
-            f.villigJobb,
-            f.villigPendle,
-        )
+        get() = with(fakta) {
+            Seksjon(
+                Rolle.søker,
+                villigDeltid,
+                villigHelse,
+                villigJobb,
+                villigPendle,
+            )
+        }
 
     override fun søknad(): Søknad {
-        f = Dagpengefakta()
+        fakta = Dagpengefakta()
         return Søknad(
             statiske,
             reellArbeidssøker,
