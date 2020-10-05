@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-internal class SøknadSerdeTest {
+internal class SøknadBuilderTest {
 
     @Test
     fun `Gjenopprette søknad med fakta uten svar`() {
@@ -76,6 +76,20 @@ internal class SøknadSerdeTest {
         val seksjon1 = Seksjon(Rolle.søker, utlededFaktum)
         val seksjon2 = Seksjon(Rolle.søker, faktum1, faktum2)
         assert(Søknad(seksjon1, seksjon2))
+    }
+
+    @Test
+    fun `Gjenopprette søknad med nøsta utledet faktum`() {
+        val faktum1 = FaktumNavn(1, "f1").faktum(LocalDate::class.java)
+        val faktum2 = FaktumNavn(2, "f2").faktum(LocalDate::class.java)
+
+        val utlededFaktum1 = listOf(faktum1, faktum2).faktum(FaktumNavn(3, "utledet1"), MAKS_DATO)
+        val utlededFaktum2 = listOf(faktum1, utlededFaktum1).faktum(FaktumNavn(4, "utledet2"), MAKS_DATO)
+
+        val seksjon1 = Seksjon(Rolle.søker, utlededFaktum2)
+        val seksjon2 = Seksjon(Rolle.søker, faktum2, utlededFaktum1)
+        val seksjon3 = Seksjon(Rolle.søker, faktum1, faktum2)
+        assert(Søknad(seksjon1, seksjon2, seksjon3))
     }
 
     private fun assert(originalSøknad: Søknad) {

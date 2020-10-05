@@ -26,7 +26,7 @@ class SøknadBuilder(private val jsonString: String) {
     private val utledetFaktumNoder = mutableListOf<JsonNode>()
 
     fun resultat(): Søknad {
-        byggFakta(json["fakta"])
+        byggGrunnleggendeFakta()
         byggUtledetFakta()
         val uuid = UUID.fromString(json["root"]["uuid"].asText())
         val seksjoner = json["root"]["seksjoner"].mapNotNull { seksjon -> byggSeksjon(seksjon) }.toMutableList()
@@ -42,20 +42,26 @@ class SøknadBuilder(private val jsonString: String) {
     )
 
     private fun byggUtledetFakta() {
-        utledetFaktumNoder.forEach { faktumNode ->
+        while (utledetFaktumNoder.isNotEmpty()) {
+            byggUtledetFakta(
+                utledetFaktumNoder.toList().also {
+                    utledetFaktumNoder.clear()
+                }
+            )
+        }
+    }
+
+    private fun byggUtledetFakta(faktumNoder: List<JsonNode>) {
+        faktumNoder.forEach { faktumNode ->
             byggUtledetFaktum(faktumNode)
         }
     }
 
-    private fun byggFakta(faktaNode: JsonNode) {
-        faktaNode.forEach { faktumNode ->
-            byggFaktum(faktumNode)
+    private fun byggGrunnleggendeFakta() {
+        json["fakta"].forEach { faktumNode ->
+            if (faktumNode.has("fakta")) utledetFaktumNoder.add(faktumNode)
+            else byggGrunnleggendeFaktum(faktumNode)
         }
-    }
-
-    private fun byggFaktum(faktumNode: JsonNode) {
-        if (faktumNode.has("fakta")) byggUtledetFaktum(faktumNode)
-        else byggGrunnleggendeFaktum(faktumNode)
     }
 
     private fun byggUtledetFaktum(faktumNode: JsonNode) {
