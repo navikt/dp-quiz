@@ -20,19 +20,19 @@ val inngangsvilkår = with(Dagpengefakta()) {
         ),
         "alder".alle(
             virkningstidspunkt før datoForBortfallPgaAlder,
-        ).så(
-            "resten".alle(
-                "har ikke egen næring".alle(
-                    egenBedrift er false,
-                    egenBondegård er false,
-                    fangstOgFisk er false
-                ),
-                "minste arbeidsinntekt".minstEnAv(
-                    inntektSiste3År minst inntekt3G,
-                    inntektSisteÅr minst inntekt15G,
-                    dimisjonsdato før virkningstidspunkt
-                )
+        )
+    ) så (
+        "resten".alle(
+            "har ikke egen næring".alle(
+                egenBedrift er false,
+                egenBondegård er false,
+                fangstOgFisk er false
             ),
-        ),
-    )
+            "minste arbeidsinntekt".minstEnAv(
+                inntektSiste3År minst inntekt3G,
+                inntektSisteÅr minst inntekt15G,
+                dimisjonsdato før virkningstidspunkt
+            ),
+        )
+        )
 }
