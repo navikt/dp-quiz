@@ -12,7 +12,7 @@ internal class EnkelSøknad : SøknadBygger {
 
     private val statiske
         get() = Seksjon(
-            Rolle.nav,
+            Rolle.søker,
             f.inntekt3G,
             f.inntekt15G
         )
