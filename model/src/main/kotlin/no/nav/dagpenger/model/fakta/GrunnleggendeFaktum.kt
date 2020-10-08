@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
-    override val navn: FaktumNavn,
+    override val navn: FaktumNavn<R>,
     private val clazz: Class<R>,
     override val avhengigeFakta: MutableSet<Faktum<*>>,
     protected val roller: MutableSet<Rolle>
@@ -12,7 +12,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     private var tilstand: Tilstand = Ukjent
     protected lateinit var gjeldendeSvar: R
 
-    internal constructor(navn: FaktumNavn, clazz: Class<R>) : this(navn, clazz, mutableSetOf(), mutableSetOf())
+    internal constructor(navn: FaktumNavn<R>, clazz: Class<R>) : this(navn, clazz, mutableSetOf(), mutableSetOf())
 
     override fun clazz() = clazz
 

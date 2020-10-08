@@ -13,8 +13,8 @@ internal class GenerertFaktumTest {
 
     @Test
     fun `Enkel template`() {
-        val template = FaktumNavn(1, "template").template(Boolean::class.java)
-        val generator = FaktumNavn(2, "generer").faktum(Int::class.java, template)
+        val template = FaktumNavn<Boolean>(1, "template").template()
+        val generator = FaktumNavn<Int>(2, "generer").faktum(template)
         val seksjon = Seksjon("seksjon", Rolle.søker, template, generator)
         Søknad(seksjon)
         val originalSize = seksjon.size
@@ -27,12 +27,12 @@ internal class GenerertFaktumTest {
 
     @Test
     fun `Flere templates`() {
-        val template1 = FaktumNavn(1, "template1").template(Boolean::class.java)
-        val template2 = FaktumNavn(2, "template2").template(Boolean::class.java)
-        val template3 = FaktumNavn(3, "template3").template(Boolean::class.java)
-        val generator = FaktumNavn(4, "generer").faktum(Int::class.java, template1, template2, template3)
+        val template1 = FaktumNavn<Boolean>(1, "template1").template()
+        val template2 = FaktumNavn<Boolean>(2, "template2").template()
+        val template3 = FaktumNavn<Boolean>(3, "template3").template()
+        val generator = FaktumNavn<Int>(4, "generer").faktum(template1, template2, template3)
         val seksjon1 = Seksjon("seksjon", Rolle.søker, template1, generator)
-        val seksjon2 = Seksjon("seksjon", Rolle.søker, template2, template3, FaktumNavn(5, "faktum").faktum(Boolean::class.java))
+        val seksjon2 = Seksjon("seksjon", Rolle.søker, template2, template3, FaktumNavn<Boolean>(5, "faktum").faktum())
         val søknad = Søknad(seksjon1, seksjon2)
         val originalSize1 = seksjon1.size
         val originalSize2 = seksjon2.size
@@ -47,8 +47,8 @@ internal class GenerertFaktumTest {
 
     @Test
     fun `Generere seksjoner`() {
-        val template = FaktumNavn(1, "template").template(Boolean::class.java)
-        val generator = FaktumNavn(2, "generer").faktum(Int::class.java, template)
+        val template = FaktumNavn<Boolean>(1, "template").template()
+        val generator = FaktumNavn<Int>(2, "generer").faktum(template)
         val generatorSeksjon = Seksjon("seksjon", Rolle.søker, generator)
         val templateSeksjon = Seksjon("seksjon", Rolle.søker, template)
         val søknad = Søknad(generatorSeksjon, templateSeksjon)
@@ -63,10 +63,10 @@ internal class GenerertFaktumTest {
 
     @Test
     fun `Seksjon med kun og flere templates`() {
-        val template1 = FaktumNavn(1, "template1").template(Boolean::class.java)
-        val template2 = FaktumNavn(2, "template2").template(Boolean::class.java)
-        val template3 = FaktumNavn(3, "template3").template(Boolean::class.java)
-        val generator = FaktumNavn(4, "generer").faktum(Int::class.java, template1, template2, template3)
+        val template1 = FaktumNavn<Boolean>(1, "template1").template()
+        val template2 = FaktumNavn<Boolean>(2, "template2").template()
+        val template3 = FaktumNavn<Boolean>(3, "template3").template()
+        val generator = FaktumNavn<Int>(4, "generer").faktum(template1, template2, template3)
         val generatorSeksjon = Seksjon("seksjon", Rolle.søker, generator)
         val templateSeksjon1 = Seksjon("seksjon", Rolle.søker, template1, template2)
         val templateSeksjon2 = Seksjon("seksjon", Rolle.søker, template3)

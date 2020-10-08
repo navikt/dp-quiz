@@ -40,10 +40,10 @@ internal class SøknadSubsumsjonTest {
     @Test
     fun `Generere faktum fra template dersom det ikke finnes`() {
         (1..18).forEach {
-            assertNotNull(søknad.fakta[FaktumNavn(it, "")])
+            assertNotNull(søknad.fakta[FaktumNavn<Int>(it, "")])
         }
 
-        assertNull(søknad.fakta[FaktumNavn(16, "").indeks(1)])
+        assertNull(søknad.fakta[FaktumNavn<Int>(16, "").indeks(1)])
     }
 
     @Test

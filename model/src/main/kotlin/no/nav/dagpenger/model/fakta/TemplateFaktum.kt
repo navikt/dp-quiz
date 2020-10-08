@@ -4,7 +4,10 @@ import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
-class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: FaktumNavn, internal val clazz: Class<R>) : Faktum<R> {
+class TemplateFaktum<R : Comparable<R>> internal constructor(
+    override val navn: FaktumNavn<R>,
+    internal val clazz: Class<R>
+) : Faktum<R> {
     private val seksjoner = mutableListOf<Seksjon>()
 
     override val avhengigeFakta = mutableSetOf<Faktum<*>>()

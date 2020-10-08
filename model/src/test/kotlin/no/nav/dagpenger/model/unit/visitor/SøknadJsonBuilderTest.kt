@@ -26,8 +26,8 @@ class SøknadJsonBuilderTest {
     @Test
     fun `Lage søknad med seksjoner`() {
 
-        val faktum = FaktumNavn(1, "navn").faktum(Boolean::class.java)
-        val faktum2 = FaktumNavn(2, "navn2").faktum(Boolean::class.java)
+        val faktum = FaktumNavn<Boolean>(1, "navn").faktum()
+        val faktum2 = FaktumNavn<Boolean>(2, "navn2").faktum()
         val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
         val seksjon2 = Seksjon("seksjon", Rolle.søker, faktum, faktum2)
         val søknad = Søknad(seksjon, seksjon2)

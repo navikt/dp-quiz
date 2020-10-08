@@ -11,9 +11,9 @@ import kotlin.test.assertEquals
 internal class SøknadTest {
     @Test
     fun `Fakta med dupliserte navn`() {
-        val navn = FaktumNavn(3, "a")
-        val faktum1 = navn.faktum(Boolean::class.java)
-        val faktum2 = navn.faktum(Boolean::class.java)
+        val navn = FaktumNavn<Boolean>(3, "a")
+        val faktum1 = navn.faktum()
+        val faktum2 = navn.faktum()
         val seksjon1 = Seksjon("seksjon", Rolle.søker, faktum1)
         val seksjon2 = Seksjon("seksjon", Rolle.søker, faktum2)
         assertThrows<IllegalArgumentException> { Søknad(seksjon1, seksjon2) }
@@ -21,8 +21,8 @@ internal class SøknadTest {
 
     @Test
     fun `Samme faktum kan være i flere seksjoner`() {
-        val navn = FaktumNavn(3, "a")
-        val faktum1 = navn.faktum(Boolean::class.java)
+        val navn = FaktumNavn<Boolean>(3, "a")
+        val faktum1 = navn.faktum()
         val seksjon1 = Seksjon("seksjon1", Rolle.søker, faktum1)
         val seksjon2 = Seksjon("seksjon2", Rolle.søker, faktum1)
         val søknad = assertDoesNotThrow { Søknad(seksjon1, seksjon2) }

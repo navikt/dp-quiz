@@ -22,8 +22,8 @@ internal class DokumentSubsumsjonTest {
 
     @BeforeEach
     fun setUp() {
-        dokumentFaktum = FaktumNavn(1, "dokument").faktum(Dokument::class.java)
-        dokumentGodkjenning = FaktumNavn(2, "saksbehandler godkjenner").faktum(Boolean::class.java)
+        dokumentFaktum = FaktumNavn<Dokument>(1, "dokument").faktum()
+        dokumentGodkjenning = FaktumNavn<Boolean>(2, "saksbehandler godkjenner").faktum()
         seksjon = Seksjon("seksjon", Rolle.søker, dokumentFaktum, dokumentGodkjenning)
         dokumentGodkjenning avhengerAv dokumentFaktum
         subsumsjon = dokumentGodkjenning av dokumentFaktum

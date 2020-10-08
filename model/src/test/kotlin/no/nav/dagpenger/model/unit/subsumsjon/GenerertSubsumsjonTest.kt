@@ -20,8 +20,8 @@ internal class GenerertSubsumsjonTest {
 
     @Test
     fun `Makro template kan ikke ha gyldig ugyldig stier`() {
-        val template = FaktumNavn(1, "template").template(Boolean::class.java)
-        val generator = FaktumNavn(2, "generator").faktum(Int::class.java, template)
+        val template = FaktumNavn<Boolean>(1, "template").template()
+        val generator = FaktumNavn<Int>(2, "generator").faktum(template)
         val makro = "makro template".makro(template er true) så (template er true)
 
         assertThrows<IllegalArgumentException> { generator med (makro as MakroSubsumsjon) }
@@ -29,8 +29,8 @@ internal class GenerertSubsumsjonTest {
 
     @Test
     fun `Makro template subsumsjon works`() {
-        val template = FaktumNavn(1, "template").template(Boolean::class.java)
-        val generator = FaktumNavn(2, "generator").faktum(Int::class.java, template)
+        val template = FaktumNavn<Boolean>(1, "template").template()
+        val generator = FaktumNavn<Int>(2, "generator").faktum(template)
         val makro = "makro template".makro(template er true)
         val subsumsjon = generator med makro
         val root = Søknad(Seksjon("seksjon", Rolle.søker, generator, template)).let {

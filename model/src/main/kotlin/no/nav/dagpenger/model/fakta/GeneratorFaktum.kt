@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
-class GeneratorFaktum(navn: FaktumNavn, private val templates: List<TemplateFaktum<*>>) : GrunnleggendeFaktum<Int>(navn, Int::class.java) {
+class GeneratorFaktum(navn: FaktumNavn<Int>, private val templates: List<TemplateFaktum<*>>) : GrunnleggendeFaktum<Int>(navn, Int::class.java) {
 
     override fun besvar(r: Int, rolle: Rolle): GrunnleggendeFaktum<Int> {
         super.besvar(r, rolle)

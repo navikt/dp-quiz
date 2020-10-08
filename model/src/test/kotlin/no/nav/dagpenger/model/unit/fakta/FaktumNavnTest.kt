@@ -10,27 +10,29 @@ internal class FaktumNavnTest {
 
     @Test
     fun equals() {
-        assertEquals(FaktumNavn(1, "ja"), FaktumNavn(1, "ja"))
-        assertEquals(FaktumNavn(1, "ja"), FaktumNavn(1, "nei"))
-        assertNotEquals(FaktumNavn(1, "ja"), FaktumNavn(2, "ja"))
-        assertNotEquals(FaktumNavn(1, "ja"), "ja")
-        assertNotEquals(FaktumNavn(1, "ja"), null)
+        assertEquals(FaktumNavn<String>(1, "ja"), FaktumNavn<String>(1, "ja"))
+        assertEquals(FaktumNavn<String>(1, "ja"), FaktumNavn<String>(1, "nei"))
+        assertNotEquals(FaktumNavn<String>(1, "ja"), FaktumNavn<String>(2, "ja"))
+        assertNotEquals(FaktumNavn<String>(1, "ja"), "ja")
+        assertNotEquals(FaktumNavn<String>(1, "ja"), null)
+
+        // TODO: assertNotEquals(FaktumNavn<String>(1, "ja"), FaktumNavn<Int>(1, "ja"))
     }
 
     @Test
     fun hash() {
-        assertEquals(FaktumNavn(1, "ja").hashCode(), FaktumNavn(1, "nei").hashCode())
+        assertEquals(FaktumNavn<Int>(1, "ja").hashCode(), FaktumNavn<Int>(1, "nei").hashCode())
     }
 
     @Test
     fun `Generere ny FaktumNavn`() {
-        assertEquals("16.2", FaktumNavn(16, "orginal").indeks(2).id)
+        assertEquals("16.2", FaktumNavn<Int>(16, "orginal").indeks(2).id)
     }
 
     @Test
     fun `invalid indeks`() {
-        assertThrows<IllegalArgumentException> { FaktumNavn(16, "ss").indeks(2).indeks(3) }
-        assertThrows<IllegalArgumentException> { FaktumNavn(0, "a") }
-        assertThrows<IllegalArgumentException> { FaktumNavn(16, "ss").indeks(0) }
+        assertThrows<IllegalArgumentException> { FaktumNavn<String>(16, "ss").indeks(2).indeks(3) }
+        assertThrows<IllegalArgumentException> { FaktumNavn<String>(0, "a") }
+        assertThrows<IllegalArgumentException> { FaktumNavn<String>(16, "ss").indeks(0) }
     }
 }

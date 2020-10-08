@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 interface Faktum<R : Comparable<R>> {
-    val navn: FaktumNavn
+    val navn: FaktumNavn<R>
     val id: String get() = navn.id
     val avhengigeFakta: MutableSet<Faktum<*>>
 
@@ -16,6 +16,7 @@ interface Faktum<R : Comparable<R>> {
             it.tilUbesvart()
         }
     }
+
     fun tilUbesvart()
     fun svar(): R
     fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>>
@@ -28,7 +29,7 @@ interface Faktum<R : Comparable<R>> {
         other.avhengigeFakta.add(this)
     }
 
-    fun faktaMap(): Map<FaktumNavn, Faktum<*>>
+    fun faktaMap(): Map<FaktumNavn<R>, Faktum<*>>
     fun med(indeks: Int, søknad: Søknad): Faktum<*> = this
 
     enum class FaktumTilstand {
@@ -37,17 +38,19 @@ interface Faktum<R : Comparable<R>> {
     }
 }
 
-fun <R : Comparable<R>> Collection<Faktum<R>>.faktum(navn: FaktumNavn, regel: FaktaRegel<R>): Faktum<R> =
+fun <R : Comparable<R>> Collection<Faktum<R>>.faktum(navn: FaktumNavn<R>, regel: FaktaRegel<R>): Faktum<R> =
     UtledetFaktum(navn, this.toSet(), regel)
 
 fun Set<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
 typealias FaktaRegel <R> = (UtledetFaktum<R>) -> R
 
-fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>) = GrunnleggendeFaktum<R>(this, clazz)
+inline fun <reified R : Comparable<R>> FaktumNavn<R>.faktum() = this.faktum(R::class.java)
+fun <R : Comparable<R>> FaktumNavn<R>.faktum(clazz: Class<R>) = GrunnleggendeFaktum(this, clazz)
 
-fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>, vararg templates: TemplateFaktum<*>) = GeneratorFaktum(this, templates.asList())
+fun FaktumNavn<Int>.faktum(vararg templates: TemplateFaktum<*>) = GeneratorFaktum(this, templates.toList())
 
-fun <R : Comparable<R>> FaktumNavn.template(clazz: Class<R>) = TemplateFaktum<R>(this, clazz)
+inline fun <reified R : Comparable<R>> FaktumNavn<R>.template() = this.template(R::class.java)
+fun <R : Comparable<R>> FaktumNavn<R>.template(clazz: Class<R>) = TemplateFaktum<R>(this, clazz)
 
 internal fun Set<Faktum<*>>.deepCopy(søknad: Søknad): Set<Faktum<*>> = this
     .mapNotNull { prototype ->

@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.fakta
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 class UtledetFaktum<R : Comparable<R>> internal constructor(
-    override val navn: FaktumNavn,
+    override val navn: FaktumNavn<R>,
     private val fakta: Set<Faktum<R>>,
     private val regel: FaktaRegel<R>
 ) : Faktum<R> {
@@ -17,8 +17,8 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
         throw IllegalArgumentException("Kan ikke besvare sammensatte faktum")
     }
 
-    override fun faktaMap(): Map<FaktumNavn, Faktum<*>> {
-        return mapOf(navn to this) + fakta.fold(mapOf<FaktumNavn, Faktum<*>> ()) { resultater, faktum ->
+    override fun faktaMap(): Map<FaktumNavn<R>, Faktum<*>> {
+        return mapOf(navn to this) + fakta.fold(mapOf<FaktumNavn<R>, Faktum<*>> ()) { resultater, faktum ->
             resultater + faktum.faktaMap()
         }
     }

@@ -49,7 +49,7 @@ class Seksjon private constructor(
         visitor.postVisit(this, rolle)
     }
 
-    internal fun faktaMap(): Map<FaktumNavn, Faktum<*>> {
+    internal fun faktaMap(): Map<FaktumNavn<*>, Faktum<*>> {
         return fakta.fold(mapOf()) { resultater, faktum ->
             resultater + faktum.faktaMap()
         }

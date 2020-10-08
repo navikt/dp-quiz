@@ -14,7 +14,7 @@ import java.util.UUID
 class Søknad private constructor(private val uuid: UUID, private val seksjoner: MutableList<Seksjon>) : MutableList<Seksjon> by seksjoner {
     constructor(vararg seksjoner: Seksjon) : this(UUID.randomUUID(), seksjoner.toMutableList())
 
-    internal val fakta: MutableMap<FaktumNavn, Faktum<*>>
+    internal val fakta: MutableMap<FaktumNavn<*>, Faktum<*>>
 
     init {
         seksjoner.forEach {
@@ -33,13 +33,13 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
         visitor.postVisit(this)
     }
 
-    internal fun faktum(navn: FaktumNavn) =
+    internal fun faktum(navn: FaktumNavn<*>) =
         fakta[navn] ?: throw IllegalArgumentException("Faktum med denne id-en finnes ikke, id ${navn.id}")
 
     fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
 
     private class MapBuilder(søknad: Søknad) : SøknadVisitor {
-        val resultat = mutableMapOf<FaktumNavn, Faktum<*>>()
+        val resultat = mutableMapOf<FaktumNavn<*>, Faktum<*>>()
         init {
             søknad.accept(this)
         }

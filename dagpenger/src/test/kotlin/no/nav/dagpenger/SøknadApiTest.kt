@@ -25,9 +25,9 @@ import java.util.UUID
 internal class SøknadApiTest {
     private val mapper = ObjectMapper()
 
-    private val ønsketDato = FaktumNavn(2, "Ønsker dagpenger fra dato").faktum(LocalDate::class.java)
-    private val fødselsdato = FaktumNavn(1, "Fødselsdato").faktum(LocalDate::class.java)
-    private val dimisjonsdato = FaktumNavn(10, "Dimisjonsdato").faktum(LocalDate::class.java)
+    private val ønsketDato = FaktumNavn<LocalDate>(2, "Ønsker dagpenger fra dato").faktum()
+    private val fødselsdato = FaktumNavn<LocalDate>(1, "Fødselsdato").faktum(LocalDate::class.java)
+    private val dimisjonsdato = FaktumNavn<LocalDate>(10, "Dimisjonsdato").faktum(LocalDate::class.java)
 
     private val subsumsjoner = "".alle(ønsketDato før fødselsdato, dimisjonsdato før fødselsdato)
     private val søknader = InMemorySøknader {
@@ -82,7 +82,9 @@ internal class SøknadApiTest {
     }) {
         with(handleRequest(HttpMethod.Get, "/soknad/${UUID.randomUUID()}/subsumsjoner")) {
             assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(2, mapper.readTree(response.content)["root"]["subsumsjoner"].size())
+            mapper.readTree(response.content).let {
+                assertEquals(2, it["root"]["subsumsjoner"].size())
+            }
         }
     }
 

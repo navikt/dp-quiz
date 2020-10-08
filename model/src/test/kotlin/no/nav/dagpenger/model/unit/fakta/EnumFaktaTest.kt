@@ -17,8 +17,7 @@ internal class EnumFaktaTest {
 
     @Test
     fun `enum-fakta`() {
-
-        val faktum = FaktumNavn(1, "språk").faktum<SpråkEnum>(SpråkEnum::class.java)
+        val faktum = FaktumNavn<SpråkEnum>(1, "språk").faktum()
         val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(SpråkEnum.engelsk)
@@ -27,7 +26,7 @@ internal class EnumFaktaTest {
 
     @Test
     fun `subsumsjon test`() {
-        val faktum = FaktumNavn(1, "språk").faktum<SpråkEnum>(SpråkEnum::class.java)
+        val faktum = FaktumNavn<SpråkEnum>(1, "språk").faktum()
         val subsumsjon = faktum er SpråkEnum.engelsk
         val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
 

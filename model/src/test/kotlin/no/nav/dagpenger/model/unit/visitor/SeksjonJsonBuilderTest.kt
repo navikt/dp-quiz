@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 class SeksjonJsonBuilderTest {
     @Test
     fun `Hente ut enkelt seksjon`() {
-        val faktum = FaktumNavn(1, "navn").faktum(Boolean::class.java)
+        val faktum = FaktumNavn<Boolean>(1, "navn").faktum()
         val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
 
         val jsonBuilder = SeksjonJsonBuilder(seksjon)

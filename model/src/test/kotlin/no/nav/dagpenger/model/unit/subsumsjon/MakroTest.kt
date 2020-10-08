@@ -25,9 +25,9 @@ internal class MakroTest {
 
     @BeforeEach
     fun setup() {
-        f1 = FaktumNavn(1, "f1").faktum(Boolean::class.java)
-        f2 = FaktumNavn(2, "f2").faktum(Boolean::class.java)
-        f3 = FaktumNavn(3, "f3").faktum(Boolean::class.java)
+        f1 = FaktumNavn<Boolean>(1, "f1").faktum()
+        f2 = FaktumNavn<Boolean>(2, "f2").faktum()
+        f3 = FaktumNavn<Boolean>(3, "f3").faktum()
         Seksjon("seksjon", Rolle.søker, f1, f2)
         s1 = f1 er true
         s2 = f2 er true

@@ -24,7 +24,7 @@ internal class SubsumsjonJsonBuilderTest {
     @Test
     fun `Lage en subsumsjon med fakta`() {
         val faktumNavnId = 1
-        val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>(Boolean::class.java)
+        val faktum = FaktumNavn<Boolean>(faktumNavnId, "faktum").faktum()
         val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
 
         var jsonBuilder = SubsumsjonJsonBuilder(har(faktum))
@@ -48,8 +48,8 @@ internal class SubsumsjonJsonBuilderTest {
     @Test
     fun `Finner avhengige fakta i json`() {
         val faktumNavnId = 1
-        val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>(Boolean::class.java)
-        val avhengigFaktum = FaktumNavn(2, "faktumto").faktum<Boolean>(Boolean::class.java)
+        val faktum = FaktumNavn<Boolean>(faktumNavnId, "faktum").faktum()
+        val avhengigFaktum = FaktumNavn<Boolean>(2, "faktumto").faktum()
 
         avhengigFaktum avhengerAv faktum
 
