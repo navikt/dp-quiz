@@ -1,6 +1,5 @@
 package no.nav.dagpenger.model.subsumsjon
 
-import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
@@ -36,8 +35,6 @@ abstract class Subsumsjon protected constructor(
     internal abstract fun lokaltResultat(): Boolean?
 
     abstract fun nesteFakta(): Set<GrunnleggendeFaktum<*>>
-
-    abstract fun enkelSubsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon>
 
     internal open fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisitGyldig(this, gyldigSubsumsjon)

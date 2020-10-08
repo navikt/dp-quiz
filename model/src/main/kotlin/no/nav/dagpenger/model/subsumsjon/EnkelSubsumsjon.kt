@@ -28,7 +28,7 @@ open class EnkelSubsumsjon protected constructor(
         }
     }
 
-    override fun deepCopy(søknad: Søknad) = EnkelSubsumsjon(
+    override fun deepCopy(søknad: Søknad) = deepCopy(
         regel.deepCopy(søknad),
         fakta.deepCopy(søknad),
         gyldigSubsumsjon.deepCopy(søknad),
@@ -37,19 +37,26 @@ open class EnkelSubsumsjon protected constructor(
         it.søknad = søknad
     }
 
-    override fun deepCopy() = EnkelSubsumsjon(
+    override fun deepCopy() = deepCopy(
         regel,
         fakta,
         gyldigSubsumsjon.deepCopy(),
         ugyldigSubsumsjon.deepCopy()
     )
 
-    override fun deepCopy(indeks: Int) = EnkelSubsumsjon(
+    override fun deepCopy(indeks: Int) = deepCopy(
         regel.deepCopy(indeks, søknad),
         fakta.deepCopy(indeks, søknad),
         gyldigSubsumsjon.deepCopy(indeks),
         ugyldigSubsumsjon.deepCopy(indeks)
     )
+
+    private fun deepCopy(
+        regel: Regel,
+        fakta: Set<Faktum<*>>,
+        gyldigSubsumsjon: Subsumsjon,
+        ugyldigSubsumsjon: Subsumsjon
+    ) = EnkelSubsumsjon(regel, fakta, gyldigSubsumsjon, ugyldigSubsumsjon)
 
     override fun nesteFakta() = ukjenteFakta().takeIf { it.isNotEmpty() } ?: nesteSubsumsjon().nesteFakta()
 
@@ -60,9 +67,6 @@ open class EnkelSubsumsjon protected constructor(
     private fun nesteSubsumsjon() = if (lokaltResultat() == true) gyldigSubsumsjon else ugyldigSubsumsjon
 
     override fun lokaltResultat() = if (fakta.erBesvart()) regel.resultat() else null
-
-    override fun enkelSubsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon> =
-        if (fakta.any { it in this.fakta }) listOf(this) else emptyList()
 
     override fun toString() = regel.toString()
 

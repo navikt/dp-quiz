@@ -37,52 +37,6 @@ internal class SammensattSubsumsjonsTest {
     }
 
     @Test
-    fun `finne en fakta`() {
-        assertEquals(2, comp.enkelSubsumsjoner(søknadsdato).size)
-        assertEquals(listOf(comp[0][0], comp[1][1]), comp.enkelSubsumsjoner(søknadsdato))
-
-        assertEquals(4, comp.enkelSubsumsjoner(ønsketdato).size)
-        assertEquals(
-            listOf(
-                comp[0][1],
-                comp[1][0],
-                comp.gyldig.ugyldig[0],
-                comp.ugyldig[0]
-            ),
-            comp.enkelSubsumsjoner(ønsketdato)
-        )
-    }
-
-    @Test
-    fun `finne flere fakta`() {
-        assertEquals(6, comp.enkelSubsumsjoner(ønsketdato, søknadsdato).size)
-        assertEquals(
-            listOf(
-                comp[0][0],
-                comp[0][1],
-                comp[1][0],
-                comp[1][1],
-                comp.gyldig.ugyldig[0],
-                comp.ugyldig[0]
-            ),
-            comp.enkelSubsumsjoner(ønsketdato, søknadsdato)
-        )
-
-        assertEquals(6, comp.enkelSubsumsjoner(ønsketdato, bursdag67).size)
-        assertEquals(
-            listOf(
-                comp[0][0],
-                comp[0][1],
-                comp[0][2],
-                comp[1][0],
-                comp.gyldig.ugyldig[0],
-                comp.ugyldig[0]
-            ),
-            comp.enkelSubsumsjoner(ønsketdato, bursdag67)
-        )
-    }
-
-    @Test
     fun `enkel subsumsjon resultater`() {
         assertEquals(null, comp[0][0].resultat())
 

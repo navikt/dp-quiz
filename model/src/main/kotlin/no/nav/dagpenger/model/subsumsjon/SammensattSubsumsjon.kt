@@ -1,6 +1,5 @@
 package no.nav.dagpenger.model.subsumsjon
 
-import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.visitor.PrettyPrint
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
@@ -32,11 +31,6 @@ abstract class SammensattSubsumsjon protected constructor(
         if (subsumsjoner.any { it.lokaltResultat() == null }) return null
         return subsumsjoner.all { it.lokaltResultat()!! }
     }
-
-    override fun enkelSubsumsjoner(vararg fakta: Faktum<*>): List<EnkelSubsumsjon> =
-        subsumsjoner.flatMap { it.enkelSubsumsjoner(*fakta) } +
-            gyldigSubsumsjon.enkelSubsumsjoner(*fakta) +
-            ugyldigSubsumsjon.enkelSubsumsjoner(*fakta)
 
     override fun toString() = PrettyPrint(this).result()
 }
