@@ -3,7 +3,10 @@ package no.nav.dagpenger.model.fakta
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 class FaktumNavn private constructor(private val rootId: Int, val navn: String, private val indeks: Int) {
+
     constructor(id: Int, navn: String) : this(id, navn, 0)
+
+    constructor(id: String) : this(id.rootId(), "<generert>", id.indeks())
 
     init {
         require(rootId > 0) { "Id må være en positiv integer større enn null" }
@@ -27,3 +30,7 @@ class FaktumNavn private constructor(private val rootId: Int, val navn: String, 
         require(indeks != 0) { "Indeks må være en positiv integer større enn null" }
     }
 }
+
+private fun String.rootId() = "\\d+".toRegex().find(this)?.value?.toInt()
+    ?: throw IllegalArgumentException("ugyldig id: $this")
+private fun String.indeks(): Int = "\\d+".toRegex().findAll(this).elementAtOrNull(1)?.value?.toInt() ?: 0

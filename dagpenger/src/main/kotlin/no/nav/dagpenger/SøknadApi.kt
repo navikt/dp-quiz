@@ -71,22 +71,6 @@ internal fun Application.søknadApi(søknader: Søknader, template: Subsumsjon) 
     }
 }
 
-internal fun <T : Comparable<T>> Søknad.finnFaktum(id: String): Faktum<T> =
-    object : SøknadVisitor {
-        lateinit var faktum: Faktum<T>
-        val id = id
-
-        override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
-            if (this::faktum.isInitialized) return
-            fakta.flatMap { it.grunnleggendeFakta() }.find { it.id == id }?.let { grunnleggendeFaktum ->
-                faktum = grunnleggendeFaktum as Faktum<T>
-            }
-        }
-    }.let {
-        this@finnFaktum.accept(it)
-        it.faktum
-    }
-
 internal fun Faktum<*>.finnSeksjon(søknad: Søknad): Seksjon =
     object : SøknadVisitor {
         lateinit var seksjon: Seksjon
