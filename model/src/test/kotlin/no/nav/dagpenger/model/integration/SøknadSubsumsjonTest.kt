@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.integration
 
+import no.nav.dagpenger.model.db.SøknadBuilder
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumNavn
@@ -14,6 +15,7 @@ import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.visitor.SøknadJsonBuilder
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -167,6 +169,14 @@ internal class SøknadSubsumsjonTest {
 
         m.f19Boolean.besvar(false, Rolle.saksbehandler)
         assertEquals(false, rootSubsumsjon.resultat())
+
+        assertMarshalling(m.søknad)
+    }
+
+    private fun assertMarshalling(original: Søknad) {
+        val jsonString = SøknadJsonBuilder(original).toString()
+        val clone = SøknadBuilder(jsonString).resultat()
+//        assertDeepEquals(original, clone)
     }
 
     private fun Seksjon.fakta(): Set<Faktum<*>> =

@@ -169,7 +169,9 @@ internal class Eksempel {
         f9Inntekt = fn9Inntekt.faktum(Inntekt::class.java)
         f10Boolean = fn10Boolean.faktum(Boolean::class.java)
         f11Dokument = fn11Dokument.faktum(Dokument::class.java)
-        f12Boolean = fn12Boolean.faktum(Boolean::class.java)
+        f12Boolean = fn12Boolean.faktum(Boolean::class.java).apply {
+            this avhengerAv f11Dokument
+        }
         f13Dato = fn13Dato.faktum(LocalDate::class.java)
         f14Boolean = fn14Boolean.faktum(Boolean::class.java)
         f16Int = fn16Int.template(Int::class.java)
