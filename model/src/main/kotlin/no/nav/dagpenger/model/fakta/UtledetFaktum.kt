@@ -8,7 +8,8 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     private val regel: FaktaRegel<R>
 ) : Faktum<R> {
     override val avhengigeFakta = mutableSetOf<Faktum<*>>()
-    internal val max: R get() = fakta.maxOf { it.svar() }
+
+    internal fun max(): R = fakta.maxOf { it.svar() }
 
     override fun clazz() = fakta.toList().first().clazz()
 

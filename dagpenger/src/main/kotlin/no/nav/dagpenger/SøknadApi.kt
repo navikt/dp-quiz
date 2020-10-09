@@ -72,7 +72,7 @@ internal fun Application.søknadApi(søknader: Søknader, template: Subsumsjon) 
 }
 
 internal fun Faktum<*>.finnSeksjon(søknad: Søknad): Seksjon =
-        // TODO: This method will find the LAST Seksjon with the Factum. Is that what you want?
+    // TODO: This method will find the LAST Seksjon with the Factum. Is that what you want?
     object : SøknadVisitor {
         lateinit var seksjon: Seksjon
 

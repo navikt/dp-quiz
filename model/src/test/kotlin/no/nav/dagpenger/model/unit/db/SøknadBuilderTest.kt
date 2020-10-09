@@ -12,6 +12,7 @@ import no.nav.dagpenger.model.regel.MAKS_DATO
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SøknadJsonBuilder
+import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -99,5 +100,6 @@ internal class SøknadBuilderTest {
 
         assertEquals(originalSøknad.size, nySøknad.size)
         assertEquals(originalJson, SøknadJsonBuilder(nySøknad).resultat())
+        assertDeepEquals(originalSøknad, nySøknad)
     }
 }
