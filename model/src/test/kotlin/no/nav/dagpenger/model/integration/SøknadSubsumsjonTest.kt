@@ -17,6 +17,7 @@ import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SøknadJsonBuilder
 import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
@@ -176,7 +177,7 @@ internal class SøknadSubsumsjonTest {
     private fun assertMarshalling(original: Søknad) {
         val jsonString = SøknadJsonBuilder(original).toString()
         val clone = SøknadBuilder(jsonString).resultat()
-//        assertDeepEquals(original, clone)
+        assertDeepEquals(original, clone)
     }
 
     private fun Seksjon.fakta(): Set<Faktum<*>> =

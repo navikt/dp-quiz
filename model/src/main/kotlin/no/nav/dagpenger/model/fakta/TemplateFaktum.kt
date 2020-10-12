@@ -29,6 +29,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: 
     override fun erBesvart() = false
 
     override fun accept(visitor: FaktumVisitor) {
+        navn.accept(visitor)
         visitor.visit(this, id, avhengigeFakta, roller, clazz)
     }
 

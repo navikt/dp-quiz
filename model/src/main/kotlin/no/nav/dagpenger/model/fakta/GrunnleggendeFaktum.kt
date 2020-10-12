@@ -7,10 +7,10 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     override val navn: FaktumNavn,
     private val clazz: Class<R>,
     override val avhengigeFakta: MutableSet<Faktum<*>>,
-    private val roller: MutableSet<Rolle>
+    protected val roller: MutableSet<Rolle>
 ) : Faktum<R> {
     private var tilstand: Tilstand = Ukjent
-    private lateinit var gjeldendeSvar: R
+    protected lateinit var gjeldendeSvar: R
 
     internal constructor(navn: FaktumNavn, clazz: Class<R>) : this(navn, clazz, mutableSetOf(), mutableSetOf())
 
@@ -46,6 +46,14 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     override fun add(rolle: Rolle) = roller.add(rolle)
 
+    protected open fun acceptUtenSvar(visitor: FaktumVisitor) {
+        visitor.visit(this, Ukjent.kode, id, avhengigeFakta, roller, clazz)
+    }
+
+    protected open fun acceptMedSvar(visitor: FaktumVisitor) {
+        visitor.visit(this, Kjent.kode, id, avhengigeFakta, roller, clazz, gjeldendeSvar)
+    }
+
     override fun toString() = navn.toString()
 
     private interface Tilstand {
@@ -56,17 +64,18 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
             throw IllegalStateException("Faktumet er ikke kjent enda")
     }
 
+
     private object Ukjent : Tilstand {
         override val kode = FaktumTilstand.Ukjent
         override fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: FaktumVisitor) {
-            visitor.visit(faktum, kode, faktum.id, faktum.avhengigeFakta, faktum.roller, faktum.clazz)
+            faktum.acceptUtenSvar(visitor)
         }
     }
 
     private object Kjent : Tilstand {
         override val kode = FaktumTilstand.Kjent
         override fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: FaktumVisitor) {
-            visitor.visit(faktum, Ukjent.kode, faktum.id, faktum.avhengigeFakta, faktum.roller, faktum.clazz, faktum.gjeldendeSvar)
+            faktum.acceptMedSvar(visitor)
         }
 
         override fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>) = faktum.gjeldendeSvar

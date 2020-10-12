@@ -7,9 +7,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumNavn
+import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.fakta.UtledetFaktum
 import java.time.LocalDate
 
@@ -42,7 +44,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         svar: R
     ) {
         if (id in faktumIder) return
-        faktumNode(id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
             faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
             faktumNode.putR(svar)
         }
@@ -57,7 +59,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         clazz: Class<R>
     ) {
         if (id in faktumIder) return
-        faktumNode(id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
             faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
         }
         faktumIder.add(id)
@@ -78,7 +80,21 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         clazz: Class<R>
     ) {
         if (id in faktumIder) return
-        faktumNode(id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
+            faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
+        }
+        faktumIder.add(id)
+    }
+
+    override fun <R : Comparable<R>> visit(
+        faktum: TemplateFaktum<R>,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {
+        if (id in faktumIder) return
+        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
         }
         faktumIder.add(id)
@@ -94,19 +110,55 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         svar: R
     ) {
         if (id in faktumIder) return
-        faktumNode(id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
             faktumNode.putR(svar)
         }
         faktumIder.add(id)
     }
 
+    override fun <R : Comparable<R>> visit(
+        faktum: GeneratorFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        templates: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>,
+        svar: R
+    ) {
+        if (id in faktumIder) return
+        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
+            faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
+            faktumNode.set("templates", mapper.valueToTree(templates.map { it.id }))
+            faktumNode.putR(svar)
+        }
+        faktumIder.add(id)
+    }
+
+    override fun <R : Comparable<R>> visit(
+        faktum: GeneratorFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        templates: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {
+        if (id in faktumIder) return
+        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
+            faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
+            faktumNode.set("templates", mapper.valueToTree(templates.map { it.id }))
+        }
+        faktumIder.add(id)
+    }
+
     private fun <R : Comparable<R>> faktumNode(
+        faktum: Faktum<*>,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         clazz: Class<R>
     ) =
         mapper.createObjectNode().also { faktumNode ->
+            faktumNode.put("type", faktum::class.java.simpleName)
             faktumNode.put("navn", navn)
             faktumNode.put("id", id)
             faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))

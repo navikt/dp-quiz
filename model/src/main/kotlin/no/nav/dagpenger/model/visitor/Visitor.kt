@@ -47,8 +47,18 @@ interface FaktumVisitor {
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        templates: List<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
+    ) {}
+    fun <R : Comparable<R>> visit(
+        faktum: GeneratorFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        templates: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>,
+        svar: R
     ) {}
     fun <R : Comparable<R>> preVisit(
         faktum: UtledetFaktum<R>,

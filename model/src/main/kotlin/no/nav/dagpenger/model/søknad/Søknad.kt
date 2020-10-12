@@ -59,7 +59,14 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
             set(faktum)
         }
 
-        override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
+        override fun <R : Comparable<R>> visit(
+            faktum: GrunnleggendeFaktum<R>,
+            tilstand: Faktum.FaktumTilstand,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>
+        ) {
             set(faktum)
         }
 
@@ -67,7 +74,14 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
             set(faktum)
         }
 
-        override fun <R : Comparable<R>> visit(faktum: GeneratorFaktum, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
+        override fun <R : Comparable<R>> visit(
+            faktum: GeneratorFaktum,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            templates: List<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>
+        ) {
             set(faktum)
         }
     }
