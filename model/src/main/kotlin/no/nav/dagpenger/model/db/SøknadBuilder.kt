@@ -49,10 +49,13 @@ class SøknadBuilder(private val jsonString: String) {
         parametere(faktumNode) { navn: String, id: String, rootId: Int, indeks: Int, clazz: String, ider: List<String> ->
             val roller = faktumNode["roller"].mapNotNull { Rolle.valueOf(it.asText()) }
             fakta[id] =
-                faktumNavn(rootId, navn, indeks).faktum(Int::class.java,
-                    *(faktumNode["templates"].map {
-                        fakta[it.asText()] as TemplateFaktum<*>
-                    }.toTypedArray())
+                faktumNavn(rootId, navn, indeks).faktum(
+                    Int::class.java,
+                    *(
+                        faktumNode["templates"].map {
+                            fakta[it.asText()] as TemplateFaktum<*>
+                        }.toTypedArray()
+                        )
                 )
                     .also { faktum ->
                         roller.forEach { faktum.add(it) }
@@ -61,7 +64,6 @@ class SøknadBuilder(private val jsonString: String) {
                         faktaIder[faktum] = ider
                     }
         }
-
     }
 
     private fun parametere(faktumNode: JsonNode, block: (String, String, Int, Int, String, List<String>) -> Unit) =
@@ -115,8 +117,11 @@ class SøknadBuilder(private val jsonString: String) {
             } else {
                 val fakta: List<Faktum<LocalDate>> =
                     faktumNode["fakta"].mapNotNull { this.fakta[it.asText()] as Faktum<LocalDate> }
-                this.fakta[id] = fakta.faktum(FaktumNavn::class.primaryConstructor!!.apply { isAccessible = true }
-                    .call(rootId, navn, indeks), MAKS_DATO)
+                this.fakta[id] = fakta.faktum(
+                    FaktumNavn::class.primaryConstructor!!.apply { isAccessible = true }
+                        .call(rootId, navn, indeks),
+                    MAKS_DATO
+                )
                     .also { faktum ->
                         faktaIder[faktum] = ider
                     }
@@ -129,10 +134,9 @@ class SøknadBuilder(private val jsonString: String) {
             val roller = faktumNode["roller"].mapNotNull { Rolle.valueOf(it.asText()) }
             fakta[id] =
                 faktumNavn(rootId, navn, indeks).let { faktumNavn ->
-                    if(faktumNode["type"].asText()==TemplateFaktum::class.java.simpleName){
+                    if (faktumNode["type"].asText() == TemplateFaktum::class.java.simpleName) {
                         faktumNavn.template(clazz(clazz))
-                    }
-                    else faktumNavn.faktum(clazz(clazz))
+                    } else faktumNavn.faktum(clazz(clazz))
                 }
                     .also { faktum ->
                         roller.forEach { faktum.add(it) }

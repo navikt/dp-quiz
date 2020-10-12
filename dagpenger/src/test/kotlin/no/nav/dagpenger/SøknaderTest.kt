@@ -19,8 +19,8 @@ internal class SøknaderTest {
 
         val søknader = InMemorySøknader {
             Søknad(
-                Seksjon(Rolle.søker, f.ønsketDato),
-                Seksjon(Rolle.søker, f.dimisjonsdato),
+                Seksjon("seksjon", Rolle.søker, f.ønsketDato),
+                Seksjon("seksjon", Rolle.søker, f.dimisjonsdato),
             )
         }
         val id = UUID.randomUUID()
@@ -37,7 +37,7 @@ internal class SøknaderTest {
 
         val søknad =
             Søknad(
-                Seksjon(Rolle.søker, f.virkningstidspunkt),
+                Seksjon("seksjon", Rolle.søker, f.virkningstidspunkt),
             )
 
         val finnFaktum = søknad.finnFaktum<LocalDate>("7")
@@ -51,7 +51,7 @@ internal class SøknaderTest {
 
         val søknad =
             Søknad(
-                Seksjon(Rolle.søker, f.virkningstidspunkt),
+                Seksjon("seksjon", Rolle.søker, f.virkningstidspunkt),
             )
 
         assertDoesNotThrow { søknad.finnFaktum<LocalDate>("7").finnSeksjon(søknad) }

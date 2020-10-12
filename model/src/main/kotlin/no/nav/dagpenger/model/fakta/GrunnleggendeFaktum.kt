@@ -64,7 +64,6 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
             throw IllegalStateException("Faktumet er ikke kjent enda")
     }
 
-
     private object Ukjent : Tilstand {
         override val kode = FaktumTilstand.Ukjent
         override fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: FaktumVisitor) {

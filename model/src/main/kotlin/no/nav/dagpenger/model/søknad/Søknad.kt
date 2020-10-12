@@ -36,6 +36,8 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
     internal fun faktum(navn: FaktumNavn) =
         fakta[navn] ?: throw IllegalArgumentException("Faktum med denne id-en finnes ikke, id ${navn.id}")
 
+    fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
+
     private class MapBuilder(søknad: Søknad) : SøknadVisitor {
         val resultat = mutableMapOf<FaktumNavn, Faktum<*>>()
         init {

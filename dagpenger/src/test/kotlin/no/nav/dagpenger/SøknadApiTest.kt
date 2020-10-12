@@ -30,8 +30,8 @@ internal class SøknadApiTest {
     private val subsumsjoner = "".alle(ønsketDato før fødselsdato, dimisjonsdato før fødselsdato)
     private val søknader = InMemorySøknader {
         Søknad(
-            Seksjon(Rolle.søker, ønsketDato, fødselsdato),
-            Seksjon(Rolle.søker, dimisjonsdato),
+            Seksjon("seksjon1", Rolle.søker, ønsketDato, fødselsdato),
+            Seksjon("seksjon2", Rolle.søker, dimisjonsdato),
         )
     }
 
@@ -82,11 +82,11 @@ internal class SøknadApiTest {
     fun `Kan finne seksjon og fakta via faktumid`() {
         val faktum = FaktumNavn(123, "testfaktum").faktum(Int::class.java)
 
-        val seksjon = Seksjon(Rolle.søker, faktum)
+        val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
         val søknad = Søknad(
-            Seksjon(Rolle.søker, ønsketDato, fødselsdato),
+            Seksjon("seksjon", Rolle.søker, ønsketDato, fødselsdato),
             seksjon,
-            Seksjon(Rolle.søker, dimisjonsdato),
+            Seksjon("seksjon", Rolle.søker, dimisjonsdato),
         )
         søknad.finnFaktum<Int>("123").also {
             assertEquals(faktum, it)

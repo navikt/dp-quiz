@@ -8,11 +8,12 @@ internal class EnkelSøknad : SøknadBygger {
     lateinit var fakta: Dagpengefakta
 
     private val personalia
-        get() = with(fakta) { Seksjon(Rolle.søker, fødselsdato) }
+        get() = with(fakta) { Seksjon("personalia", Rolle.søker, fødselsdato) }
 
     private val statiske
         get() = with(fakta) {
             Seksjon(
+                "statiske",
                 Rolle.søker,
                 inntekt3G,
                 inntekt15G
@@ -21,6 +22,7 @@ internal class EnkelSøknad : SøknadBygger {
     private val datoer
         get() = with(fakta) {
             Seksjon(
+                "datoer",
                 Rolle.søker,
                 virkningstidspunkt,
                 datoForBortfallPgaAlder,
@@ -30,6 +32,7 @@ internal class EnkelSøknad : SøknadBygger {
     private val egenNæring
         get() = with(fakta) {
             Seksjon(
+                "egenNæring",
                 Rolle.søker,
                 egenBondegård,
                 egenBedrift,
@@ -39,6 +42,7 @@ internal class EnkelSøknad : SøknadBygger {
     private val inntekter
         get() = with(fakta) {
             Seksjon(
+                "inntekter",
                 Rolle.søker,
                 inntektSisteÅr,
                 inntektSiste3År,
@@ -47,6 +51,7 @@ internal class EnkelSøknad : SøknadBygger {
     private val reellArbeidssøker
         get() = with(fakta) {
             Seksjon(
+                "reellArbeidssøker",
                 Rolle.søker,
                 villigDeltid,
                 villigHelse,

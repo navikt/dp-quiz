@@ -19,5 +19,4 @@ class GeneratorFaktum(navn: FaktumNavn, private val templates: List<TemplateFakt
     override fun acceptMedSvar(visitor: FaktumVisitor) {
         visitor.visit(this, id, avhengigeFakta, templates, roller, Int::class.java, gjeldendeSvar)
     }
-
 }
