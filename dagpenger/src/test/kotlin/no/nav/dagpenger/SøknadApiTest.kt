@@ -8,6 +8,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
+import no.nav.dagpenger.FaktumBesvarelse.Kontekst
+import no.nav.dagpenger.FaktumBesvarelse.Svar
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
@@ -56,7 +58,7 @@ internal class SøknadApiTest {
                     addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     setBody(
                         mapper.writeValueAsString(
-                            FaktumSvarBody(
+                            FaktumBesvarelse(
                                 svar = Svar(LocalDate.now().toString(), it["clazz"].asText()),
                                 kontekst = Kontekst("seksjon1")
                             )
@@ -65,11 +67,10 @@ internal class SøknadApiTest {
                 }
             ) {
                 assertEquals(HttpStatusCode.OK, response.status())
-                println(response.content)
                 mapper.readTree(response.content).let { response ->
                     assertEquals(2, response["fakta"].size())
                     assertEquals(2, response["fakta"][0]["id"].asInt())
-                    assertEquals("seksjon1", response["navn"].asText())
+                    assertEquals("seksjon1", response["root"]["navn"].asText())
                 }
             }
         }
@@ -81,9 +82,7 @@ internal class SøknadApiTest {
     }) {
         with(handleRequest(HttpMethod.Get, "/soknad/${UUID.randomUUID()}/subsumsjoner")) {
             assertEquals(HttpStatusCode.OK, response.status())
-            mapper.readTree(response.content).let {
-                assertEquals(2, it["root"]["subsumsjoner"].size())
-            }
+            assertEquals(2, mapper.readTree(response.content)["root"]["subsumsjoner"].size())
         }
     }
 

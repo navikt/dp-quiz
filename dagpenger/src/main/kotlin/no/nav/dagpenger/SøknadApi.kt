@@ -20,19 +20,19 @@ import no.nav.dagpenger.model.visitor.SubsumsjonJsonBuilder
 import java.time.LocalDate
 import java.util.UUID
 
-internal data class Svar(
-    val verdi: String,
-    val type: String
-)
-
-internal data class FaktumSvarBody(
+internal data class FaktumBesvarelse(
     val svar: Svar,
     val kontekst: Kontekst
-)
+) {
+    internal data class Svar(
+        val verdi: String,
+        val type: String
+    )
 
-internal data class Kontekst(
-    val seksjon: String
-)
+    internal data class Kontekst(
+        val seksjon: String
+    )
+}
 
 internal fun Application.søknadApi(søknader: Søknader, template: Subsumsjon) {
     install(ContentNegotiation) {
@@ -52,7 +52,7 @@ internal fun Application.søknadApi(søknader: Søknader, template: Subsumsjon) 
                 }
             }
             put("/faktum/{faktumId}") {
-                val (svar, kontekst) = call.receive<FaktumSvarBody>()
+                val (svar, kontekst) = call.receive<FaktumBesvarelse>()
                 val søknad = søknader.søknad(UUID.fromString(call.parameters["søknadsId"]!!))
                 val id = call.parameters["faktumId"]!!
 
