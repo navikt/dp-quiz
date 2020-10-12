@@ -50,11 +50,12 @@ private class ModelDeepEquals {
     }
 
     private fun assertHelseObjectEquals(one: Any, other: Any) {
-        one::class.memberProperties.map { it.apply { isAccessible = true } }.forEach { prop ->
-            if (!prop.name.toLowerCase().endsWith("observers")) {
+        one::class.memberProperties
+            .filterNot { it.isLateinit }
+            .map { it.apply { isAccessible = true } }
+            .forEach { prop ->
                 assertDeepEquals(prop.call(one), prop.call(other), prop.name)
             }
-        }
     }
 
     private fun assertMapEquals(one: Map<*, *>, other: Map<*, *>, fieldName: String) {
