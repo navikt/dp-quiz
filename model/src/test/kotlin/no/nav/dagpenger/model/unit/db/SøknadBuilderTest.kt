@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
+import no.nav.dagpenger.model.fakta.template
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.MAKS_DATO
 import no.nav.dagpenger.model.søknad.Seksjon
@@ -91,6 +92,16 @@ internal class SøknadBuilderTest {
         val seksjon2 = Seksjon(Rolle.søker, faktum2, utlededFaktum1)
         val seksjon3 = Seksjon(Rolle.søker, faktum1, faktum2)
         assert(Søknad(seksjon1, seksjon2, seksjon3))
+    }
+
+    @Test
+    fun `Hvilken som helst bokstav vil fungere`() {
+        val template = FaktumNavn(2, "template").template(Int::class.java)
+        val generator = FaktumNavn(1, "generator").faktum(Int::class.java, template)
+
+        val seksjon = Seksjon(Rolle.søker, generator, template)
+
+        assert(Søknad(seksjon))
     }
 
     private fun assert(originalSøknad: Søknad) {
