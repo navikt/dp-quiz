@@ -12,22 +12,26 @@ import io.ktor.routing.get
 import io.ktor.routing.put
 import io.ktor.routing.route
 import io.ktor.routing.routing
-import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SeksjonJsonBuilder
 import no.nav.dagpenger.model.visitor.SubsumsjonJsonBuilder
-import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.util.UUID
 
 internal data class Svar(
     val verdi: String,
     val type: String
+)
+
+internal data class FaktumSvarBody(
+    val svar: Svar,
+    val kontekst: Kontekst
+)
+
+internal data class Kontekst(
+    val seksjon: String
 )
 
 internal fun Application.søknadApi(søknader: Søknader, template: Subsumsjon) {
@@ -48,19 +52,22 @@ internal fun Application.søknadApi(søknader: Søknader, template: Subsumsjon) 
                 }
             }
             put("/faktum/{faktumId}") {
-                val (verdi, type) = call.receive<Svar>()
+                val (svar, kontekst) = call.receive<FaktumSvarBody>()
                 val søknad = søknader.søknad(UUID.fromString(call.parameters["søknadsId"]!!))
                 val id = call.parameters["faktumId"]!!
 
-                val faktum = when (type.toLowerCase()) {
-                    "localdate" -> søknad.finnFaktum<LocalDate>(id).besvar(LocalDate.parse(verdi))
-                    "string" -> søknad.finnFaktum<String>(id).besvar(verdi)
-                    "boolean" -> søknad.finnFaktum<Boolean>(id).besvar(verdi.toBoolean())
-                    "int" -> søknad.finnFaktum<Int>(id).besvar(verdi.toInt())
-                    "inntekt" -> søknad.finnFaktum<Inntekt>(id).besvar(verdi.toInt().årlig)
-                    else -> throw IllegalArgumentException("BOOM")
+                with(svar) {
+                    when (type.toLowerCase()) {
+                        "localdate" -> søknad.finnFaktum<LocalDate>(id).besvar(LocalDate.parse(verdi))
+                        "string" -> søknad.finnFaktum<String>(id).besvar(verdi)
+                        "boolean" -> søknad.finnFaktum<Boolean>(id).besvar(verdi.toBoolean())
+                        "int" -> søknad.finnFaktum<Int>(id).besvar(verdi.toInt())
+                        "inntekt" -> søknad.finnFaktum<Inntekt>(id).besvar(verdi.toInt().årlig)
+                        else -> throw IllegalArgumentException("BOOM")
+                    }
                 }
-                call.respond(SeksjonJsonBuilder(faktum.finnSeksjon(søknad)).resultat())
+
+                call.respond(SeksjonJsonBuilder(søknad.seksjon(kontekst.seksjon)).resultat())
             }
             get("/subsumsjoner") {
                 val søknad = søknader.søknad(UUID.fromString(call.parameters["søknadsId"]!!))
@@ -70,19 +77,3 @@ internal fun Application.søknadApi(søknader: Søknader, template: Subsumsjon) 
         }
     }
 }
-
-internal fun Faktum<*>.finnSeksjon(søknad: Søknad): Seksjon =
-    // TODO: This method will find the LAST Seksjon with the Factum. Is that what you want?
-    object : SøknadVisitor {
-        lateinit var seksjon: Seksjon
-
-        override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
-            if (this::seksjon.isInitialized) return
-            fakta.flatMap { it.grunnleggendeFakta() }.find { it.id == this@finnSeksjon.id }?.let {
-                this.seksjon = seksjon
-            }
-        }
-    }.let {
-        søknad.accept(it)
-        it.seksjon
-    }

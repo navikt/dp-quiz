@@ -44,16 +44,4 @@ internal class SøknaderTest {
         assertDoesNotThrow { finnFaktum }
         assertEquals("7", finnFaktum.id)
     }
-
-    @Test
-    fun `kan finne seksjon fra grunnleggende faktum gjennom derivert faktum`() {
-        val f = Dagpengefakta()
-
-        val søknad =
-            Søknad(
-                Seksjon("seksjon", Rolle.søker, f.virkningstidspunkt),
-            )
-
-        assertDoesNotThrow { søknad.finnFaktum<LocalDate>("7").finnSeksjon(søknad) }
-    }
 }

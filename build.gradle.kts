@@ -55,6 +55,7 @@ allprojects {
             showExceptions = true
             showStackTraces = true
             exceptionFormat = TestExceptionFormat.FULL
+            showStandardStreams = true
             events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
         }
     }

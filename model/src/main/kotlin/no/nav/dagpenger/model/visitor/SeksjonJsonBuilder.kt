@@ -14,6 +14,7 @@ class SeksjonJsonBuilder(private val seksjon: Seksjon) : FaktumJsonBuilder(), SÃ
         mapper.createObjectNode().also { seksjonNode ->
             root = seksjonNode
             seksjonNode.put("rolle", rolle.name)
+            seksjonNode.put("navn", seksjon.navn)
             seksjonNode.set("fakta", mapper.valueToTree(fakta.map { it.id }))
         }
     }

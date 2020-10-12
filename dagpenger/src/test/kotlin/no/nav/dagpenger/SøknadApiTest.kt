@@ -54,13 +54,22 @@ internal class SøknadApiTest {
             with(
                 handleRequest(HttpMethod.Put, "/soknad/$søknadsId/faktum/${it["id"].asText()}") {
                     addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                    setBody(mapper.writeValueAsString(Svar(LocalDate.now().toString(), it["clazz"].asText())))
+                    setBody(
+                        mapper.writeValueAsString(
+                            FaktumSvarBody(
+                                svar = Svar(LocalDate.now().toString(), it["clazz"].asText()),
+                                kontekst = Kontekst("seksjon1")
+                            )
+                        )
+                    )
                 }
             ) {
                 assertEquals(HttpStatusCode.OK, response.status())
+                println(response.content)
                 mapper.readTree(response.content).let { response ->
                     assertEquals(2, response["fakta"].size())
                     assertEquals(2, response["fakta"][0]["id"].asInt())
+                    assertEquals("seksjon1", response["navn"].asText())
                 }
             }
         }
@@ -75,22 +84,6 @@ internal class SøknadApiTest {
             mapper.readTree(response.content).let {
                 assertEquals(2, it["root"]["subsumsjoner"].size())
             }
-        }
-    }
-
-    @Test
-    fun `Kan finne seksjon og fakta via faktumid`() {
-        val faktum = FaktumNavn(123, "testfaktum").faktum(Int::class.java)
-
-        val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
-        val søknad = Søknad(
-            Seksjon("seksjon", Rolle.søker, ønsketDato, fødselsdato),
-            seksjon,
-            Seksjon("seksjon", Rolle.søker, dimisjonsdato),
-        )
-        søknad.finnFaktum<Int>("123").also {
-            assertEquals(faktum, it)
-            assertEquals(seksjon, it.finnSeksjon(søknad))
         }
     }
 
