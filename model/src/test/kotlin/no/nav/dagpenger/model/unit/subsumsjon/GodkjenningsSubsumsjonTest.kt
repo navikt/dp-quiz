@@ -17,9 +17,9 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning uansett resultat av child`() {
-        val faktum = FaktumNavn(1, "faktum").faktum(Boolean::class.java)
+        val faktum = FaktumNavn<Boolean>(1, "faktum").faktum()
         val subsumsjon = faktum er true
-        val godkjenning = FaktumNavn(2, "godkjenning").faktum(Boolean::class.java)
+        val godkjenning = FaktumNavn<Boolean>(2, "godkjenning").faktum()
         val godkjenningsSubsumsjon = subsumsjon godkjentAv godkjenning
         godkjenning avhengerAv faktum
         Søknad(Seksjon("seksjon", Rolle.søker, faktum), Seksjon("seksjon", Rolle.saksbehandler, godkjenning))
@@ -42,9 +42,9 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning av gyldig sti av child`() {
-        val faktum = FaktumNavn(1, "faktum").faktum(Boolean::class.java)
+        val faktum = FaktumNavn<Boolean>(1, "faktum").faktum()
         val subsumsjon = faktum er true
-        val godkjenning = FaktumNavn(2, "godkjenning").faktum(Boolean::class.java)
+        val godkjenning = FaktumNavn<Boolean>(2, "godkjenning").faktum()
         val godkjenningsSubsumsjon = subsumsjon gyldigGodkjentAv godkjenning
         godkjenning avhengerAv faktum
         Søknad(Seksjon("seksjon", Rolle.søker, faktum), Seksjon("seksjon", Rolle.saksbehandler, godkjenning))
@@ -67,9 +67,9 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning av ugyldig sti av child`() {
-        val faktum = FaktumNavn(1, "faktum").faktum(Boolean::class.java)
+        val faktum = FaktumNavn<Boolean>(1, "faktum").faktum()
         val subsumsjon = faktum er true
-        val godkjenning = FaktumNavn(2, "godkjenning").faktum(Boolean::class.java)
+        val godkjenning = FaktumNavn<Boolean>(2, "godkjenning").faktum()
         val godkjenningsSubsumsjon = subsumsjon ugyldigGodkjentAv godkjenning
         godkjenning avhengerAv faktum
         Søknad(Seksjon("seksjon", Rolle.søker, faktum), Seksjon("seksjon", Rolle.saksbehandler, godkjenning))

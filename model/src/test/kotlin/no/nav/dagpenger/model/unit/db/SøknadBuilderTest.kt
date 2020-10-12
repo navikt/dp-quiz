@@ -22,11 +22,11 @@ internal class SøknadBuilderTest {
 
     @Test
     fun `Gjenopprette søknad med fakta uten svar`() {
-        val faktumBoolean = FaktumNavn(1, "faktumBoolean").faktum(Boolean::class.java)
-        val faktumInt = FaktumNavn(2, "faktumInt").faktum(Int::class.java)
-        val faktumInntekt = FaktumNavn(3, "faktumInntekt").indeks(1).faktum(Inntekt::class.java)
-        val faktumLocalDate = FaktumNavn(4, "faktumLocalDate").faktum(LocalDate::class.java)
-        val faktumDokument = FaktumNavn(5, "faktumDokumet").faktum(Dokument::class.java)
+        val faktumBoolean = FaktumNavn<Boolean>(1, "faktumBoolean").faktum()
+        val faktumInt = FaktumNavn<Int>(2, "faktumInt").faktum()
+        val faktumInntekt = FaktumNavn<Inntekt>(3, "faktumInntekt").indeks(1).faktum()
+        val faktumLocalDate = FaktumNavn<LocalDate>(4, "faktumLocalDate").faktum()
+        val faktumDokument = FaktumNavn<Dokument>(5, "faktumDokumet").faktum()
 
         val seksjon1 = Seksjon("seksjon1", Rolle.søker, faktumBoolean, faktumInntekt, faktumDokument)
         val seksjon2 = Seksjon("seksjon2", Rolle.saksbehandler, faktumInt, faktumLocalDate)
@@ -36,11 +36,11 @@ internal class SøknadBuilderTest {
 
     @Test
     fun `Gjenopprette søknad med fakta og svar`() {
-        val faktumBoolean = FaktumNavn(1, "faktumBoolean").faktum(Boolean::class.java)
-        val faktumInt = FaktumNavn(2, "faktumInt").faktum(Int::class.java)
-        val faktumInntekt = FaktumNavn(3, "faktumInntekt").indeks(1).faktum(Inntekt::class.java)
-        val faktumLocalDate = FaktumNavn(4, "faktumLocalDate").faktum(LocalDate::class.java)
-        val faktumDokument = FaktumNavn(5, "faktumDokumet").faktum(Dokument::class.java)
+        val faktumBoolean = FaktumNavn<Boolean>(1, "faktumBoolean").faktum()
+        val faktumInt = FaktumNavn<Int>(2, "faktumInt").faktum()
+        val faktumInntekt = FaktumNavn<Inntekt>(3, "faktumInntekt").indeks(1).faktum()
+        val faktumLocalDate = FaktumNavn<LocalDate>(4, "faktumLocalDate").faktum()
+        val faktumDokument = FaktumNavn<Dokument>(5, "faktumDokumet").faktum()
 
         val seksjon1 = Seksjon("seksjon1", Rolle.søker, faktumBoolean, faktumInntekt, faktumDokument)
         val seksjon2 = Seksjon("seksjon2", Rolle.saksbehandler, faktumInt, faktumLocalDate)
@@ -58,8 +58,8 @@ internal class SøknadBuilderTest {
 
     @Test
     fun `Gjenopprette søknad med utledet faktum`() {
-        val faktum1 = FaktumNavn(1, "f1").faktum(LocalDate::class.java)
-        val faktum2 = FaktumNavn(2, "f2").faktum(LocalDate::class.java)
+        val faktum1 = FaktumNavn<LocalDate>(1, "f1").faktum()
+        val faktum2 = FaktumNavn<LocalDate>(2, "f2").faktum()
 
         val utlededFaktum = listOf(faktum1, faktum2).faktum(FaktumNavn(3, "utledet"), MAKS_DATO)
 
@@ -70,8 +70,8 @@ internal class SøknadBuilderTest {
 
     @Test
     fun `Gjenopprette søknad med utsatt faktabygging`() {
-        val faktum1 = FaktumNavn(1, "f1").faktum(LocalDate::class.java)
-        val faktum2 = FaktumNavn(2, "f2").faktum(LocalDate::class.java)
+        val faktum1 = FaktumNavn<LocalDate>(1, "f1").faktum()
+        val faktum2 = FaktumNavn<LocalDate>(2, "f2").faktum()
 
         val utlededFaktum = listOf(faktum1, faktum2).faktum(FaktumNavn(3, "utledet"), MAKS_DATO)
 
@@ -82,8 +82,8 @@ internal class SøknadBuilderTest {
 
     @Test
     fun `Gjenopprette søknad med nøsta utledet faktum`() {
-        val faktum1 = FaktumNavn(1, "f1").faktum(LocalDate::class.java)
-        val faktum2 = FaktumNavn(2, "f2").faktum(LocalDate::class.java)
+        val faktum1 = FaktumNavn<LocalDate>(1, "f1").faktum()
+        val faktum2 = FaktumNavn<LocalDate>(2, "f2").faktum()
 
         val utlededFaktum1 = listOf(faktum1, faktum2).faktum(FaktumNavn(3, "utledet1"), MAKS_DATO)
         val utlededFaktum2 = listOf(faktum1, utlededFaktum1).faktum(FaktumNavn(4, "utledet2"), MAKS_DATO)

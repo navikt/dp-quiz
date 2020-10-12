@@ -82,7 +82,7 @@ interface FaktumVisitor {
         clazz: Class<R>
     ) {}
     fun visit(
-        faktumNavn: FaktumNavn,
+        faktumNavn: FaktumNavn<*>,
         navn: String,
         rootId: Int,
         indeks: Int

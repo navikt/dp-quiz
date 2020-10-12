@@ -65,7 +65,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         faktumIder.add(id)
     }
 
-    override fun visit(faktumNavn: FaktumNavn, navn: String, rootId: Int, indeks: Int) {
+    override fun visit(faktumNavn: FaktumNavn<*>, navn: String, rootId: Int, indeks: Int) {
         this.navn = navn
         this.rootId = rootId
         this.indeks = indeks

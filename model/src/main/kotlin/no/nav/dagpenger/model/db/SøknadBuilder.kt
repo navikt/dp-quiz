@@ -49,8 +49,7 @@ class SøknadBuilder(private val jsonString: String) {
         parametere(faktumNode) { navn: String, id: String, rootId: Int, indeks: Int, clazz: String, ider: List<String> ->
             val roller = faktumNode["roller"].mapNotNull { Rolle.valueOf(it.asText()) }
             fakta[id] =
-                faktumNavn(rootId, navn, indeks).faktum(
-                    Int::class.java,
+                (faktumNavn(rootId, navn, indeks, clazz) as FaktumNavn<Int>).faktum(
                     *(
                         faktumNode["templates"].map {
                             fakta[it.asText()] as TemplateFaktum<*>
@@ -115,13 +114,12 @@ class SøknadBuilder(private val jsonString: String) {
             if (faktumNode["fakta"].any { this.fakta[it.asText()] == null }) {
                 utledetFaktumNoder.add(faktumNode)
             } else {
+                val type = FaktumNavn<LocalDate>("1")
                 val fakta: List<Faktum<LocalDate>> =
                     faktumNode["fakta"].mapNotNull { this.fakta[it.asText()] as Faktum<LocalDate> }
                 this.fakta[id] = fakta.faktum(
-                    FaktumNavn::class.primaryConstructor!!.apply { isAccessible = true }
-                        .call(rootId, navn, indeks),
-                    MAKS_DATO
-                )
+                    type::class.primaryConstructor!!.apply { isAccessible = true }
+                        .call(rootId, navn, indeks), MAKS_DATO)
                     .also { faktum ->
                         faktaIder[faktum] = ider
                     }
@@ -132,43 +130,68 @@ class SøknadBuilder(private val jsonString: String) {
     private fun byggGrunnleggendeFaktum(faktumNode: JsonNode) {
         parametere(faktumNode) { navn: String, id: String, rootId: Int, indeks: Int, clazz: String, ider: List<String> ->
             val roller = faktumNode["roller"].mapNotNull { Rolle.valueOf(it.asText()) }
-            fakta[id] =
-                faktumNavn(rootId, navn, indeks).let { faktumNavn ->
+
+            fakta[id] = faktumNavn(rootId, navn, indeks, clazz)
+                .let {
                     if (faktumNode["type"].asText() == TemplateFaktum::class.java.simpleName) {
-                        faktumNavn.template(clazz(clazz))
-                    } else faktumNavn.faktum(clazz(clazz))
-                }
-                    .also { faktum ->
-                        roller.forEach { faktum.add(it) }
-                        if (faktumNode.has("svar")) when (clazz) {
-                            "boolean" -> (faktum as Faktum<Boolean>).besvar(
-                                faktumNode["svar"].asBoolean(),
-                                roller.first()
-                            )
-                            "int" -> (faktum as Faktum<Int>).besvar(faktumNode["svar"].asInt(), roller.first())
-                            "inntekt" -> (faktum as Faktum<Inntekt>).besvar(
-                                faktumNode["svar"].asDouble().årlig,
-                                roller.first()
-                            )
-                            "localdate" -> (faktum as Faktum<LocalDate>).besvar(
-                                LocalDate.parse(faktumNode["svar"].asText()),
-                                roller.first()
-                            )
-                            "dokument" -> (faktum as Faktum<Dokument>).besvar(
-                                Dokument(LocalDate.parse(faktumNode["svar"]["opplastingsdato"].asText())),
-                                roller.first()
-                            )
+                        when (clazz) {
+                            "boolean" -> (it as FaktumNavn<Boolean>).template()
+                            "int" -> (it as FaktumNavn<Int>).template()
+                            "inntekt" -> (it as FaktumNavn<Inntekt>).template()
+                            "localdate" -> (it as FaktumNavn<LocalDate>).template()
+                            "dokument" -> (it as FaktumNavn<Dokument>).template()
+                            else -> throw IllegalArgumentException("Kjenner ikke clazz $clazz")
                         }
-                        faktaIder[faktum] = ider
+                    } else {
+                        when (clazz) {
+                            "boolean" -> (it as FaktumNavn<Boolean>).faktum()
+                            "int" -> (it as FaktumNavn<Int>).faktum()
+                            "inntekt" -> (it as FaktumNavn<Inntekt>).faktum()
+                            "localdate" -> (it as FaktumNavn<LocalDate>).faktum()
+                            "dokument" -> (it as FaktumNavn<Dokument>).faktum()
+                            else -> throw IllegalArgumentException("Kjenner ikke clazz $clazz")
+                        }
                     }
+                }
+                .also { faktum ->
+                    roller.forEach { faktum.add(it) }
+                    if (faktumNode.has("svar")) when (clazz) {
+                        "boolean" -> (faktum as Faktum<Boolean>).besvar(faktumNode["svar"].asBoolean(), roller.first())
+                        "int" -> (faktum as Faktum<Int>).besvar(faktumNode["svar"].asInt(), roller.first())
+                        "inntekt" -> (faktum as Faktum<Inntekt>).besvar(
+                            faktumNode["svar"].asDouble().årlig,
+                            roller.first()
+                        )
+                        "localdate" -> (faktum as Faktum<LocalDate>).besvar(
+                            LocalDate.parse(faktumNode["svar"].asText()),
+                            roller.first()
+                        )
+                        "dokument" -> (faktum as Faktum<Dokument>).besvar(
+                            Dokument(LocalDate.parse(faktumNode["svar"]["opplastingsdato"].asText())),
+                            roller.first()
+                        )
+                    }
+                }
         }
     }
 
     private fun faktumNavn(
         rootId: Int,
         navn: String,
-        indeks: Int
-    ) = FaktumNavn::class.primaryConstructor!!.apply { isAccessible = true }.call(rootId, navn, indeks)
+        indeks: Int,
+        clazz: String
+    ): FaktumNavn<out Comparable<*>> {
+        val type = when (clazz) {
+            "boolean" -> FaktumNavn<Boolean>("1")
+            "int" -> FaktumNavn<Int>("1")
+            "inntekt" -> FaktumNavn<Inntekt>("1")
+            "localdate" -> FaktumNavn<LocalDate>("1")
+            "dokument" -> FaktumNavn<Dokument>("1")
+            else -> throw IllegalArgumentException("Kjenner ikke clazz $clazz")
+        }
+
+        return type::class.primaryConstructor!!.apply { isAccessible = true }.call(rootId, navn, indeks)
+    }
 
     private fun clazz(clazz: String): Class<out Comparable<*>> {
         return when (clazz) {

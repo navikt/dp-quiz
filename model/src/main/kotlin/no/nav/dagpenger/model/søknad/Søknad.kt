@@ -23,7 +23,7 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
         fakta = MapBuilder(this).resultat
     }
 
-    fun <T : Comparable<T>> finnFaktum(id: String) = (fakta[FaktumNavn(id)] as Faktum<T>)
+    fun <T : Comparable<T>> finnFaktum(id: String) = (fakta[FaktumNavn<T>(id)] as Faktum<T>)
 
     infix fun nesteSeksjon(subsumsjon: Subsumsjon) = seksjoner.first { subsumsjon.nesteFakta() in it }
 

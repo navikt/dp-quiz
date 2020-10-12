@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
-class FaktumNavn<R> private constructor(private val rootId: Int, val navn: String, private val indeks: Int) {
+open class FaktumNavn<R> private constructor(private val rootId: Int, val navn: String, private val indeks: Int) {
     constructor(id: Int, navn: String) : this(id, navn, 0)
 
     constructor(id: String) : this(id.rootId(), "<generert>", id.indeks())
