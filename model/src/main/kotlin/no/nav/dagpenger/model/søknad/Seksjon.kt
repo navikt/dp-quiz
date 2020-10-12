@@ -7,7 +7,11 @@ import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 
-class Seksjon private constructor(private val rolle: Rolle, private val fakta: MutableSet<Faktum<*>>) : MutableSet<Faktum<*>> by fakta {
+class Seksjon private constructor(
+    val navn: String,
+    private val rolle: Rolle,
+    private val fakta: MutableSet<Faktum<*>>
+) : MutableSet<Faktum<*>> by fakta {
     internal lateinit var søknad: Søknad
     private val genererteSeksjoner = mutableListOf<Seksjon>()
 
@@ -18,7 +22,7 @@ class Seksjon private constructor(private val rolle: Rolle, private val fakta: M
         }
     }
 
-    constructor(rolle: Rolle, vararg fakta: Faktum<*>) : this(rolle, fakta.toMutableSet())
+    constructor(navn: String, rolle: Rolle, vararg fakta: Faktum<*>) : this(navn, rolle, fakta.toMutableSet())
 
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>): Boolean {
         return nesteFakta.any { it in fakta }
@@ -32,7 +36,7 @@ class Seksjon private constructor(private val rolle: Rolle, private val fakta: M
 
     internal fun deepCopy(indeks: Int): Seksjon {
         return if (indeks <= genererteSeksjoner.size) genererteSeksjoner[indeks - 1]
-        else Seksjon(rolle).also {
+        else Seksjon(navn, rolle).also {
             søknad.add(søknad.indexOf(this) + indeks, it)
             genererteSeksjoner.add(it)
             it.søknad(this.søknad)

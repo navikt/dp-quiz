@@ -179,7 +179,8 @@ class SøknadBuilder(private val jsonString: String) {
 
     private fun byggSeksjon(seksjonJson: JsonNode): Seksjon {
         val fakta = seksjonJson["fakta"].mapNotNull { fakta[it.asText()] }.toTypedArray()
+        val navn = seksjonJson["navn"].asText()
         val rolle = Rolle.valueOf(seksjonJson["rolle"].asText())
-        return Seksjon(rolle, *fakta)
+        return Seksjon(navn, rolle, *fakta)
     }
 }

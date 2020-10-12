@@ -17,7 +17,7 @@ internal class EnkelSubsumsjonsTest {
 
     val bursdag67 = DATOEN_DU_FYLLER_67.faktum<LocalDate>(LocalDate::class.java)
     val søknadsdato = DATOEN_DU_SØKER_OM_DAGPENGER.faktum<LocalDate>(LocalDate::class.java)
-    val seksjon = Seksjon(Rolle.søker, bursdag67, søknadsdato)
+    val seksjon = Seksjon("seksjon", Rolle.søker, bursdag67, søknadsdato)
 
     @Test
     fun `subsumsjonen kan konkludere`() {

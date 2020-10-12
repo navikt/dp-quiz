@@ -15,7 +15,7 @@ internal class IntFaktumTest {
     @Test
     fun `Støtte fakta med type int`() {
         val intFaktum = FaktumNavn(1, "int faktum").faktum<Int>(Int::class.java)
-        val seksjon = Seksjon(Rolle.søker, intFaktum)
+        val seksjon = Seksjon("seksjon", Rolle.søker, intFaktum)
         assertThrows<IllegalStateException> { intFaktum.svar() }
         intFaktum.besvar(5)
         assertEquals(5, intFaktum.svar())
@@ -25,7 +25,7 @@ internal class IntFaktumTest {
     fun `Subsumsjon med fakta av typen int`() {
         val intFaktum = FaktumNavn(1, "int faktum").faktum<Int>(Int::class.java)
         val subsumsjon = intFaktum er 0
-        val seksjon = Seksjon(Rolle.søker, intFaktum)
+        val seksjon = Seksjon("seksjon", Rolle.søker, intFaktum)
 
         assertEquals(null, subsumsjon.resultat())
         intFaktum.besvar(0)

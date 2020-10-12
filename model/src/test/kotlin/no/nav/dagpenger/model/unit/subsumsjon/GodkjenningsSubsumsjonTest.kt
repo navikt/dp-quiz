@@ -22,7 +22,7 @@ internal class GodkjenningsSubsumsjonTest {
         val godkjenning = FaktumNavn(2, "godkjenning").faktum(Boolean::class.java)
         val godkjenningsSubsumsjon = subsumsjon godkjentAv godkjenning
         godkjenning avhengerAv faktum
-        Søknad(Seksjon(Rolle.søker, faktum), Seksjon(Rolle.saksbehandler, godkjenning))
+        Søknad(Seksjon("seksjon", Rolle.søker, faktum), Seksjon("seksjon", Rolle.saksbehandler, godkjenning))
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true, Rolle.søker)
@@ -47,7 +47,7 @@ internal class GodkjenningsSubsumsjonTest {
         val godkjenning = FaktumNavn(2, "godkjenning").faktum(Boolean::class.java)
         val godkjenningsSubsumsjon = subsumsjon gyldigGodkjentAv godkjenning
         godkjenning avhengerAv faktum
-        Søknad(Seksjon(Rolle.søker, faktum), Seksjon(Rolle.saksbehandler, godkjenning))
+        Søknad(Seksjon("seksjon", Rolle.søker, faktum), Seksjon("seksjon", Rolle.saksbehandler, godkjenning))
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true, Rolle.søker)
@@ -72,7 +72,7 @@ internal class GodkjenningsSubsumsjonTest {
         val godkjenning = FaktumNavn(2, "godkjenning").faktum(Boolean::class.java)
         val godkjenningsSubsumsjon = subsumsjon ugyldigGodkjentAv godkjenning
         godkjenning avhengerAv faktum
-        Søknad(Seksjon(Rolle.søker, faktum), Seksjon(Rolle.saksbehandler, godkjenning))
+        Søknad(Seksjon("seksjon", Rolle.søker, faktum), Seksjon("seksjon", Rolle.saksbehandler, godkjenning))
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true, Rolle.søker)

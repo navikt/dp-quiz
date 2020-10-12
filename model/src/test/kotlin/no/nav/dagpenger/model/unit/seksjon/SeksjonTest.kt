@@ -29,8 +29,8 @@ internal class SeksjonTest {
     @BeforeEach
     fun setup() {
         comp = subsumsjonRoot()
-        datofakta = Seksjon(Rolle.søker, bursdag67, sisteDagMedLønn, ønsketdato, søknadsdato, dimisjonsdato)
-        inntektfakta = Seksjon(Rolle.søker, inntekt15G, inntekt3G, inntektSiste3år, inntektSisteÅr)
+        datofakta = Seksjon("seksjon", Rolle.søker, bursdag67, sisteDagMedLønn, ønsketdato, søknadsdato, dimisjonsdato)
+        inntektfakta = Seksjon("seksjon", Rolle.søker, inntekt15G, inntekt3G, inntektSiste3år, inntektSisteÅr)
         søknad = Søknad(datofakta, inntektfakta)
     }
 

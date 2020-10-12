@@ -12,7 +12,7 @@ class SeksjonJsonBuilderTest {
     @Test
     fun `Hente ut enkelt seksjon`() {
         val faktum = FaktumNavn(1, "navn").faktum(Boolean::class.java)
-        val seksjon = Seksjon(Rolle.søker, faktum)
+        val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
 
         val jsonBuilder = SeksjonJsonBuilder(seksjon)
         val json = jsonBuilder.resultat()

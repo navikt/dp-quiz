@@ -180,14 +180,14 @@ internal class Eksempel {
         f19Boolean = fn19Boolean.faktum(Boolean::class.java)
         f15Int = fn15Int.faktum(Int::class.java, f16Int, f17Boolean, f18Boolean)
 
-        seksjon1 = Seksjon(Rolle.nav, f1Boolean, f2Dato)
-        seksjon2 = Seksjon(Rolle.nav, f6Inntekt, f7Inntekt, f8Inntekt, f9Inntekt)
-        seksjon3 = Seksjon(Rolle.nav, f15Int, f16Int)
-        seksjon4 = Seksjon(Rolle.søker, f3Dato, f4Dato, f5Dato, f_3_4_5Dato, f13Dato)
-        seksjon5 = Seksjon(Rolle.søker, f10Boolean, f11Dokument)
-        seksjon6 = Seksjon(Rolle.søker, f15Int)
-        seksjon7 = Seksjon(Rolle.søker, f16Int, f17Boolean)
-        seksjon8 = Seksjon(Rolle.saksbehandler, f6Inntekt, f7Inntekt, f12Boolean, f14Boolean, f18Boolean, f19Boolean)
+        seksjon1 = Seksjon("seksjon1", Rolle.nav, f1Boolean, f2Dato)
+        seksjon2 = Seksjon("seksjon2", Rolle.nav, f6Inntekt, f7Inntekt, f8Inntekt, f9Inntekt)
+        seksjon3 = Seksjon("seksjon3", Rolle.nav, f15Int, f16Int)
+        seksjon4 = Seksjon("seksjon4", Rolle.søker, f3Dato, f4Dato, f5Dato, f_3_4_5Dato, f13Dato)
+        seksjon5 = Seksjon("seksjon5", Rolle.søker, f10Boolean, f11Dokument)
+        seksjon6 = Seksjon("seksjon6", Rolle.søker, f15Int)
+        seksjon7 = Seksjon("seksjon7", Rolle.søker, f16Int, f17Boolean)
+        seksjon8 = Seksjon("seksjon8", Rolle.saksbehandler, f6Inntekt, f7Inntekt, f12Boolean, f14Boolean, f18Boolean, f19Boolean)
 
         _søknad = Søknad(seksjon1, seksjon2, seksjon3, seksjon4, seksjon5, seksjon6, seksjon7, seksjon8)
 

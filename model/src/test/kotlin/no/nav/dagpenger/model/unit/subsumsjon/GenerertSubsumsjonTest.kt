@@ -15,7 +15,6 @@ import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.lang.IllegalArgumentException
 
 internal class GenerertSubsumsjonTest {
 
@@ -34,7 +33,7 @@ internal class GenerertSubsumsjonTest {
         val generator = FaktumNavn(2, "generator").faktum(Int::class.java, template)
         val makro = "makro template".makro(template er true)
         val subsumsjon = generator med makro
-        val root = Søknad(Seksjon(Rolle.søker, generator, template)).let {
+        val root = Søknad(Seksjon("seksjon", Rolle.søker, generator, template)).let {
             subsumsjon.deepCopy(it)
         }
         generator.besvar(3)

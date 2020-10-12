@@ -62,8 +62,8 @@ internal fun subsumsjonRoot(): Subsumsjon {
 
     inntekt3G = INNTEKT3G.faktum(Inntekt::class.java)
     inntekt15G = INNTEKT15G.faktum(Inntekt::class.java)
-    seksjon1 = Seksjon(Rolle.søker, bursdag67, søknadsdato, ønsketdato, sisteDagMedLønn, sisteDagMedLønn, dimisjonsdato, virkningstidspunkt)
-    seksjon2 = Seksjon(Rolle.søker, inntekt15G, inntekt3G, inntektSiste3år, inntektSisteÅr)
+    seksjon1 = Seksjon("seksjon1", Rolle.søker, bursdag67, søknadsdato, ønsketdato, sisteDagMedLønn, sisteDagMedLønn, dimisjonsdato, virkningstidspunkt)
+    seksjon2 = Seksjon("seksjon2", Rolle.søker, inntekt15G, inntekt3G, inntektSiste3år, inntektSisteÅr)
     søknad = Søknad(seksjon1, seksjon2)
 
     return "inngangsvilkår".alle(

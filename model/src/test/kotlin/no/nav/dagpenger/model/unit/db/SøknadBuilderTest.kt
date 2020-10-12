@@ -28,8 +28,8 @@ internal class SøknadBuilderTest {
         val faktumLocalDate = FaktumNavn(4, "faktumLocalDate").faktum(LocalDate::class.java)
         val faktumDokument = FaktumNavn(5, "faktumDokumet").faktum(Dokument::class.java)
 
-        val seksjon1 = Seksjon(Rolle.søker, faktumBoolean, faktumInntekt, faktumDokument)
-        val seksjon2 = Seksjon(Rolle.saksbehandler, faktumInt, faktumLocalDate)
+        val seksjon1 = Seksjon("seksjon1", Rolle.søker, faktumBoolean, faktumInntekt, faktumDokument)
+        val seksjon2 = Seksjon("seksjon2", Rolle.saksbehandler, faktumInt, faktumLocalDate)
 
         assert(Søknad(seksjon1, seksjon2))
     }
@@ -42,8 +42,8 @@ internal class SøknadBuilderTest {
         val faktumLocalDate = FaktumNavn(4, "faktumLocalDate").faktum(LocalDate::class.java)
         val faktumDokument = FaktumNavn(5, "faktumDokumet").faktum(Dokument::class.java)
 
-        val seksjon1 = Seksjon(Rolle.søker, faktumBoolean, faktumInntekt, faktumDokument)
-        val seksjon2 = Seksjon(Rolle.saksbehandler, faktumInt, faktumLocalDate)
+        val seksjon1 = Seksjon("seksjon1", Rolle.søker, faktumBoolean, faktumInntekt, faktumDokument)
+        val seksjon2 = Seksjon("seksjon2", Rolle.saksbehandler, faktumInt, faktumLocalDate)
 
         val søknad = Søknad(seksjon1, seksjon2)
 
@@ -63,8 +63,8 @@ internal class SøknadBuilderTest {
 
         val utlededFaktum = listOf(faktum1, faktum2).faktum(FaktumNavn(3, "utledet"), MAKS_DATO)
 
-        val seksjon1 = Seksjon(Rolle.søker, faktum1, faktum2)
-        val seksjon2 = Seksjon(Rolle.søker, utlededFaktum)
+        val seksjon1 = Seksjon("seksjon1", Rolle.søker, faktum1, faktum2)
+        val seksjon2 = Seksjon("seksjon2", Rolle.søker, utlededFaktum)
         assert(Søknad(seksjon1, seksjon2))
     }
 
@@ -75,8 +75,8 @@ internal class SøknadBuilderTest {
 
         val utlededFaktum = listOf(faktum1, faktum2).faktum(FaktumNavn(3, "utledet"), MAKS_DATO)
 
-        val seksjon1 = Seksjon(Rolle.søker, utlededFaktum)
-        val seksjon2 = Seksjon(Rolle.søker, faktum1, faktum2)
+        val seksjon1 = Seksjon("seksjon1", Rolle.søker, utlededFaktum)
+        val seksjon2 = Seksjon("seksjon2", Rolle.søker, faktum1, faktum2)
         assert(Søknad(seksjon1, seksjon2))
     }
 
@@ -88,9 +88,9 @@ internal class SøknadBuilderTest {
         val utlededFaktum1 = listOf(faktum1, faktum2).faktum(FaktumNavn(3, "utledet1"), MAKS_DATO)
         val utlededFaktum2 = listOf(faktum1, utlededFaktum1).faktum(FaktumNavn(4, "utledet2"), MAKS_DATO)
 
-        val seksjon1 = Seksjon(Rolle.søker, utlededFaktum2)
-        val seksjon2 = Seksjon(Rolle.søker, faktum2, utlededFaktum1)
-        val seksjon3 = Seksjon(Rolle.søker, faktum1, faktum2)
+        val seksjon1 = Seksjon("seksjon1", Rolle.søker, utlededFaktum2)
+        val seksjon2 = Seksjon("seksjon2", Rolle.søker, faktum2, utlededFaktum1)
+        val seksjon3 = Seksjon("seksjon3", Rolle.søker, faktum1, faktum2)
         assert(Søknad(seksjon1, seksjon2, seksjon3))
     }
 
@@ -99,7 +99,7 @@ internal class SøknadBuilderTest {
         val template = FaktumNavn(2, "template").template(Int::class.java)
         val generator = FaktumNavn(1, "generator").faktum(Int::class.java, template)
 
-        val seksjon = Seksjon(Rolle.søker, generator, template)
+        val seksjon = Seksjon("seksjon1", Rolle.søker, generator, template)
 
         assert(Søknad(seksjon))
     }

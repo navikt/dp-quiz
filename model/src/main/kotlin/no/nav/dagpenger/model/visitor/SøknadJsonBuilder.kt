@@ -29,6 +29,7 @@ class SøknadJsonBuilder(private val søknad: Søknad) : FaktumJsonBuilder(), S�
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
         mapper.createObjectNode().also { seksjonNode ->
             arrayNodes.first().add(seksjonNode)
+            seksjonNode.put("navn", seksjon.navn)
             seksjonNode.put("rolle", rolle.name)
             seksjonNode.set("fakta", mapper.valueToTree(fakta.map { it.id }))
         }

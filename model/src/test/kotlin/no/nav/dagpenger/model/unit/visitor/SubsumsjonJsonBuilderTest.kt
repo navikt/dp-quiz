@@ -25,7 +25,7 @@ internal class SubsumsjonJsonBuilderTest {
     fun `Lage en subsumsjon med fakta`() {
         val faktumNavnId = 1
         val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>(Boolean::class.java)
-        val seksjon = Seksjon(Rolle.søker, faktum)
+        val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
 
         var jsonBuilder = SubsumsjonJsonBuilder(har(faktum))
         var jsonfakta = jsonBuilder.resultat()
