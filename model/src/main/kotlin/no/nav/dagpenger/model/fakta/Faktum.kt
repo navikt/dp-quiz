@@ -47,10 +47,12 @@ typealias FaktaRegel <R> = (UtledetFaktum<R>) -> R
 inline fun <reified R : Comparable<R>> FaktumNavn<R>.faktum() = this.faktum(R::class.java)
 fun <R : Comparable<R>> FaktumNavn<R>.faktum(clazz: Class<R>) = GrunnleggendeFaktum(this, clazz)
 
-fun FaktumNavn<Int>.faktum(vararg templates: TemplateFaktum<*>) = GeneratorFaktum(this, templates.toList())
+fun FaktumNavn<Int>.faktum(vararg templates: TemplateFaktum<*>): GeneratorFaktum {
+    return GeneratorFaktum(this, templates.toList())
+}
 
 inline fun <reified R : Comparable<R>> FaktumNavn<R>.template() = this.template(R::class.java)
-fun <R : Comparable<R>> FaktumNavn<R>.template(clazz: Class<R>) = TemplateFaktum<R>(this, clazz)
+fun <R : Comparable<R>> FaktumNavn<R>.template(clazz: Class<R>) = TemplateFaktum(this, clazz)
 
 internal fun Set<Faktum<*>>.deepCopy(søknad: Søknad): Set<Faktum<*>> = this
     .mapNotNull { prototype ->

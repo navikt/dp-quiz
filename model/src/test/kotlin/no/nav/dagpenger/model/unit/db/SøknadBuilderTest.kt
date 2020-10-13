@@ -96,8 +96,8 @@ internal class SøknadBuilderTest {
 
     @Test
     fun `Hvilken som helst bokstav vil fungere`() {
-        val template = FaktumNavn(2, "template").template(Int::class.java)
-        val generator = FaktumNavn(1, "generator").faktum(Int::class.java, template)
+        val template = FaktumNavn<Int>(2, "template").template()
+        val generator = FaktumNavn<Int>(1, "generator").faktum(template)
 
         val seksjon = Seksjon("seksjon1", Rolle.søker, generator, template)
 

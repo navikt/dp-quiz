@@ -50,18 +50,16 @@ class SøknadBuilder(private val jsonString: String) {
             val roller = faktumNode["roller"].mapNotNull { Rolle.valueOf(it.asText()) }
             fakta[id] =
                 (faktumNavn(rootId, navn, indeks, clazz) as FaktumNavn<Int>).faktum(
-                    *(
-                        faktumNode["templates"].map {
-                            fakta[it.asText()] as TemplateFaktum<*>
-                        }.toTypedArray()
+                    templates = *(faktumNode["templates"].map {
+                        fakta[it.asText()] as TemplateFaktum<*>
+                    }.toTypedArray()
                         )
-                )
-                    .also { faktum ->
-                        roller.forEach { faktum.add(it) }
-                        if (faktumNode.has("svar"))
-                            (faktum as Faktum<Int>).besvar(faktumNode["svar"].asInt(), roller.first())
-                        faktaIder[faktum] = ider
-                    }
+                ).also { faktum ->
+                    roller.forEach { faktum.add(it) }
+                    if (faktumNode.has("svar"))
+                        (faktum as Faktum<Int>).besvar(faktumNode["svar"].asInt(), roller.first())
+                    faktaIder[faktum] = ider
+                }
         }
     }
 
@@ -86,7 +84,7 @@ class SøknadBuilder(private val jsonString: String) {
     }
 
     private fun byggAvhengigheter() {
-        faktaIder.forEach { faktum, ider ->
+        faktaIder.forEach { (faktum, ider) ->
             ider.forEach { id ->
                 fakta[id]?.avhengerAv(faktum) ?: throw IllegalArgumentException("Mangler faktum med id: $id")
             }
@@ -131,29 +129,10 @@ class SøknadBuilder(private val jsonString: String) {
         parametere(faktumNode) { navn: String, id: String, rootId: Int, indeks: Int, clazz: String, ider: List<String> ->
             val roller = faktumNode["roller"].mapNotNull { Rolle.valueOf(it.asText()) }
 
-            fakta[id] = faktumNavn(rootId, navn, indeks, clazz)
-                .let {
-                    if (faktumNode["type"].asText() == TemplateFaktum::class.java.simpleName) {
-                        when (clazz) {
-                            "boolean" -> (it as FaktumNavn<Boolean>).template()
-                            "int" -> (it as FaktumNavn<Int>).template()
-                            "inntekt" -> (it as FaktumNavn<Inntekt>).template()
-                            "localdate" -> (it as FaktumNavn<LocalDate>).template()
-                            "dokument" -> (it as FaktumNavn<Dokument>).template()
-                            else -> throw IllegalArgumentException("Kjenner ikke clazz $clazz")
-                        }
-                    } else {
-                        when (clazz) {
-                            "boolean" -> (it as FaktumNavn<Boolean>).faktum()
-                            "int" -> (it as FaktumNavn<Int>).faktum()
-                            "inntekt" -> (it as FaktumNavn<Inntekt>).faktum()
-                            "localdate" -> (it as FaktumNavn<LocalDate>).faktum()
-                            "dokument" -> (it as FaktumNavn<Dokument>).faktum()
-                            else -> throw IllegalArgumentException("Kjenner ikke clazz $clazz")
-                        }
-                    }
-                }
+            val faktaNavn = faktumNavn(rootId, navn, indeks, clazz)
+            fakta[id] = asTypedFaktum(faktaNavn, clazz, faktumNode["type"].asText())
                 .also { faktum ->
+                    faktaIder[faktum] = ider
                     roller.forEach { faktum.add(it) }
                     if (faktumNode.has("svar")) when (clazz) {
                         "boolean" -> (faktum as Faktum<Boolean>).besvar(faktumNode["svar"].asBoolean(), roller.first())
@@ -184,6 +163,7 @@ class SøknadBuilder(private val jsonString: String) {
         val type = when (clazz) {
             "boolean" -> FaktumNavn<Boolean>("1")
             "int" -> FaktumNavn<Int>("1")
+            "integer" -> FaktumNavn<Int>("1")
             "inntekt" -> FaktumNavn<Inntekt>("1")
             "localdate" -> FaktumNavn<LocalDate>("1")
             "dokument" -> FaktumNavn<Dokument>("1")
@@ -193,14 +173,27 @@ class SøknadBuilder(private val jsonString: String) {
         return type::class.primaryConstructor!!.apply { isAccessible = true }.call(rootId, navn, indeks)
     }
 
-    private fun clazz(clazz: String): Class<out Comparable<*>> {
-        return when (clazz) {
-            "boolean" -> Boolean::class.java
-            "int" -> Int::class.java
-            "inntekt" -> Inntekt::class.java
-            "localdate" -> LocalDate::class.java
-            "dokument" -> Dokument::class.java
-            else -> throw IllegalArgumentException("Kjenner ikke clazz $clazz")
+    private inline fun asTypedFaktum(faktumNavn: FaktumNavn<*>, clazz: String, type: String): Faktum<*> {
+        return if (type == TemplateFaktum::class.java.simpleName) {
+            when (clazz) {
+                "boolean" -> (faktumNavn as FaktumNavn<Boolean>).template()
+                "dokument" -> (faktumNavn as FaktumNavn<Dokument>).template()
+                "inntekt" -> (faktumNavn as FaktumNavn<Inntekt>).template()
+                "int" -> (faktumNavn as FaktumNavn<Int>).template()
+                "integer" -> (faktumNavn as FaktumNavn<Int>).template()
+                "localdate" -> (faktumNavn as FaktumNavn<LocalDate>).template()
+                else -> throw IllegalArgumentException("Kjenner ikke clazz $clazz")
+            }
+        } else {
+            when (clazz) {
+                "boolean" -> (faktumNavn as FaktumNavn<Boolean>).faktum()
+                "dokument" -> (faktumNavn as FaktumNavn<Dokument>).faktum()
+                "inntekt" -> (faktumNavn as FaktumNavn<Inntekt>).faktum()
+                "int" -> (faktumNavn as FaktumNavn<Int>).faktum()
+                "integer" -> (faktumNavn as FaktumNavn<Int>).faktum()
+                "localdate" -> (faktumNavn as FaktumNavn<LocalDate>).faktum()
+                else -> throw IllegalArgumentException("Kjenner ikke clazz $clazz")
+            }
         }
     }
 
