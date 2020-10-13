@@ -50,6 +50,7 @@ class SøknadBuilder(private val jsonString: String) {
             val roller = faktumNode["roller"].mapNotNull { Rolle.valueOf(it.asText()) }
             fakta[id] =
                 (faktumNavn(rootId, navn, indeks, clazz) as FaktumNavn<Int>).faktum(
+                    // templates må angis som named parameter, ellers vil den opprette et vanlig faktum, ikke som template
                     templates = *(faktumNode["templates"].map {
                         fakta[it.asText()] as TemplateFaktum<*>
                     }.toTypedArray()
