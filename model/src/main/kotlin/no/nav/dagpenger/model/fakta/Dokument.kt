@@ -1,18 +1,16 @@
 package no.nav.dagpenger.model.fakta
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 
-class Dokument(private val opplastingsdato: LocalDate) : Comparable<Dokument> {
+class Dokument(private val lastOppTidsstempel: LocalDateTime) : Comparable<Dokument> {
     override fun compareTo(other: Dokument): Int {
-        return this.opplastingsdato.compareTo(other.opplastingsdato)
+        return this.lastOppTidsstempel.compareTo(other.lastOppTidsstempel)
     }
 
-    internal fun toUrl(): String {
-        return "http:"
-    }
+    internal fun toUrl() = "http:"
 
-    internal fun <R> reflection(block: (LocalDate, String) -> R) = block(
-        opplastingsdato,
-        toUrl()
+    internal fun <R> reflection(block: (LocalDateTime, String) -> R) = block(
+            lastOppTidsstempel,
+            toUrl()
     )
 }
