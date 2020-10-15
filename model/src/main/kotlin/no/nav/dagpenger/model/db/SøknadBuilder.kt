@@ -15,6 +15,7 @@ import no.nav.dagpenger.model.regel.MAKS_DATO
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -155,7 +156,7 @@ class SøknadBuilder(private val jsonString: String) {
                                 roller.first()
                             )
                             "dokument" -> (faktum as Faktum<Dokument>).besvar(
-                                Dokument(LocalDate.parse(faktumNode["svar"]["opplastingsdato"].asText())),
+                                Dokument(LocalDateTime.parse(faktumNode["svar"]["lastOppTidsstempel"].asText())),
                                 roller.first()
                             )
                         }

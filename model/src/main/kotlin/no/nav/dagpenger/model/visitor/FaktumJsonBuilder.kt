@@ -177,9 +177,9 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
             is LocalDate -> this.put("svar", svar.toString())
             is Dokument -> this.set(
                 "svar",
-                svar.reflection { opplastingsdato, url ->
+                svar.reflection { lastOppTidsstempel, url ->
                     mapper.createObjectNode().also {
-                        it.put("opplastingsdato", opplastingsdato.toString())
+                        it.put("lastOppTidsstempel", lastOppTidsstempel.toString())
                         it.put("url", url)
                     }
                 }
