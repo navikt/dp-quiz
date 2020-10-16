@@ -1,13 +1,17 @@
 package no.nav.dagpenger.model.fakta
 
+import java.time.LocalDate
+
 class FaktumFactory<T : Comparable<T>>(private val clazz: Class<T>, private val navn: String) {
     private var rootId = 0
 
     companion object {
         object boolean { infix fun faktum(navn: String) = FaktumFactory(Boolean::class.java, navn) }
-        object number { infix fun faktum(navn: String) = FaktumFactory(Double::class.java, navn) }
+        object desimal { infix fun faktum(navn: String) = FaktumFactory(Double::class.java, navn) }
+        object heltall { infix fun faktum(navn: String) = FaktumFactory(Int::class.java, navn) }
         object dokument { infix fun faktum(navn: String) = FaktumFactory(Dokument::class.java, navn) }
         object inntekt { infix fun faktum(navn: String) = FaktumFactory(Inntekt::class.java, navn) }
+        object dato { infix fun faktum(navn: String) = FaktumFactory(LocalDate::class.java, navn) }
     }
 
     infix fun id(rootId: Int) = this.also { this.rootId = rootId }
