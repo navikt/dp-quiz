@@ -7,8 +7,6 @@ import no.nav.dagpenger.model.visitor.FaktumVisitor
 class TemplateFaktum<R : Comparable<R>> internal constructor(override val faktumNavn: FaktumNavn, internal val clazz: Class<R>) : Faktum<R>() {
     private val seksjoner = mutableListOf<Seksjon>()
 
-    private val roller = mutableSetOf<Rolle>()
-
     override fun clazz() = clazz
 
     override fun tilUbesvart() {
@@ -32,11 +30,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(override val faktum
         visitor.visit(this, id, avhengigeFakta, roller, clazz)
     }
 
-    override fun add(rolle: Rolle) = roller.add(rolle)
-
     override fun add(seksjon: Seksjon) = seksjoner.add(seksjon)
-
-    override fun faktaMap() = mapOf(faktumNavn to this)
 
     override fun toString() = faktumNavn.toString()
 

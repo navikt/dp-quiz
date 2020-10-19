@@ -1,7 +1,6 @@
 package no.nav.dagpenger.model.søknad
 
 import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
@@ -49,12 +48,6 @@ class Seksjon private constructor(
         visitor.preVisit(this, rolle, fakta)
         fakta.forEach { it.accept(visitor) }
         visitor.postVisit(this, rolle)
-    }
-
-    internal fun faktaMap(): Map<FaktumNavn, Faktum<*>> {
-        return fakta.fold(mapOf()) { resultater, faktum ->
-            resultater + faktum.faktaMap()
-        }
     }
 
     internal fun add(faktum: GrunnleggendeFaktum<*>): Boolean =
