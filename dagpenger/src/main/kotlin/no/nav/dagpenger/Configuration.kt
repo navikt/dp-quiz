@@ -15,7 +15,7 @@ internal object Configuration {
         "KAFKA_BOOTSTRAP_SERVERS" to config[Key("kafka.bootstrap.servers", stringType)],
         "KAFKA_CONSUMER_GROUP_ID" to "dp-quiz-v1",
         "KAFKA_RAPID_TOPIC" to config.getOrElse(Key("kafka.topic", stringType), "privat-dagpenger-behov-v2"),
-        "KAFKA_RESET_POLICY" to config[Key("kafka.reset.policy", stringType)],
+        "KAFKA_RESET_POLICY" to config.getOrElse(Key("kafka.reset.policy", stringType), "earliest"),
         "NAV_TRUSTSTORE_PATH" to config[Key("nav.truststore.path", stringType)],
         "NAV_TRUSTSTORE_PASSWORD" to config[Key("nav.truststore.password", stringType)],
         "HTTP_PORT" to config.getOrElse(Key("port", stringType), "8080")
