@@ -3,7 +3,6 @@ package no.nav.dagpenger.model.factory
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
-import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
@@ -33,6 +32,5 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 
     val template: Faktum<T> get() = TemplateFaktum<T>(faktumId, navn, clazz)
 
-
-    private val faktumId get() = FaktumId(rootId).also { require(rootId > 0) {"Root id må være positiv"} }
+    private val faktumId get() = FaktumId(rootId).also { require(rootId > 0) { "Root id må være positiv" } }
 }
