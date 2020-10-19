@@ -36,8 +36,8 @@ spec:
   filesFrom:
     - secret: serviceuser-srvdp-oppslag-refusj
       mountPath: "/var/run/secrets/nais.io/service_user"
-    envFrom:
-      - configmap: kafka-bootstrap-servers
+  envFrom:
+    - configmap: kafka-bootstrap-servers
   accessPolicy:
     inbound:
       rules:
