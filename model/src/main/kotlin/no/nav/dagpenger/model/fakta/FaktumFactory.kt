@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.fakta
 
 import java.time.LocalDate
 
-class FaktumFactory<T : Comparable<T>>(private val clazz: Class<T>, private val navn: String) {
+class FaktumFactory<T : Comparable<T>> internal constructor(private val clazz: Class<T>, private val navn: String) {
     private var rootId = 0
 
     companion object {
