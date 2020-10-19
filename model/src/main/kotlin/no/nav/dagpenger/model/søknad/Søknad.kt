@@ -11,8 +11,12 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.util.UUID
 
-class Søknad private constructor(private val uuid: UUID, private val seksjoner: MutableList<Seksjon>) : MutableList<Seksjon> by seksjoner {
-    constructor(vararg seksjoner: Seksjon) : this(UUID.randomUUID(), seksjoner.toMutableList())
+class Søknad private constructor(
+    internal val rootSubsumsjon: Subsumsjon,
+    private val uuid: UUID,
+    private val seksjoner: MutableList<Seksjon>
+) : MutableList<Seksjon> by seksjoner {
+    constructor(rootSubsumsjon: Subsumsjon, vararg seksjoner: Seksjon) : this(rootSubsumsjon, UUID.randomUUID(), seksjoner.toMutableList())
 
     internal val fakta: MutableMap<FaktumId, Faktum<*>>
 
@@ -37,6 +41,14 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
         fakta[id] ?: throw IllegalArgumentException("Faktum med denne id-en finnes ikke, id ${id.id}")
 
     fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
+
+    fun bygg(): Søknad {
+        this.forEach { seksjon ->
+            seksjon.bygg()
+
+        }
+        TODO("not implemented")
+    }
 
     private class MapBuilder(søknad: Søknad) : SøknadVisitor {
         val resultat = mutableMapOf<FaktumId, Faktum<*>>()

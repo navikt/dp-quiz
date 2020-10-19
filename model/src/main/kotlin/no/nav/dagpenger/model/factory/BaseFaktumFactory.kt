@@ -30,7 +30,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 
     fun faktum(vararg templates: TemplateFaktum<*>) = GeneratorFaktum(faktumId, navn, templates.asList())
 
-    val template: Faktum<T> get() = TemplateFaktum<T>(faktumId, navn, clazz)
+    val template: TemplateFaktum<T> get() = TemplateFaktum<T>(faktumId, navn, clazz)
 
     private val faktumId get() = FaktumId(rootId).also { require(rootId > 0) { "Root id må være positiv" } }
 }

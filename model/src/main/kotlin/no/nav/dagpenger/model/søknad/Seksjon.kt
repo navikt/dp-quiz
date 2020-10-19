@@ -61,4 +61,8 @@ class Seksjon private constructor(
                 }
             }
         }
+
+    internal fun bygg() {
+        Seksjon(navn, rolle, fakta.map { it.bygg() }.toMutableSet())
+    }
 }

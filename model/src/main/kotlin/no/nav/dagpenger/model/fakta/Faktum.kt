@@ -70,6 +70,8 @@ abstract class Faktum<R : Comparable<R>>internal constructor(
     }
 
     override fun toString() = "$navn med id $id"
+
+    internal abstract fun bygg(): Faktum<R>
 }
 
 fun <R : Comparable<R>> Collection<Faktum<R>>.faktum(navn: FaktumNavn, regel: FaktaRegel<R>): Faktum<R> =
