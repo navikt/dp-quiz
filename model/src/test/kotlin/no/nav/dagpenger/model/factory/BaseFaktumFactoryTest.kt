@@ -1,13 +1,12 @@
-package no.nav.dagpenger.model.unit.fakta
+package no.nav.dagpenger.model.factory
 
 import no.nav.dagpenger.model.fakta.Dokument
-import no.nav.dagpenger.model.fakta.FaktumFactory
-import no.nav.dagpenger.model.fakta.FaktumFactory.Companion.boolean
-import no.nav.dagpenger.model.fakta.FaktumFactory.Companion.dato
-import no.nav.dagpenger.model.fakta.FaktumFactory.Companion.desimal
-import no.nav.dagpenger.model.fakta.FaktumFactory.Companion.dokument
-import no.nav.dagpenger.model.fakta.FaktumFactory.Companion.heltall
-import no.nav.dagpenger.model.fakta.FaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolean
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimal
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.daglig
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
@@ -15,8 +14,8 @@ import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
-import no.nav.dagpenger.model.unit.fakta.FaktumFactoryTest.Companion.Valg.A
-import no.nav.dagpenger.model.unit.fakta.FaktumFactoryTest.Companion.Valg.C
+import no.nav.dagpenger.model.factory.BaseFaktumFactoryTest.Companion.Valg.A
+import no.nav.dagpenger.model.factory.BaseFaktumFactoryTest.Companion.Valg.C
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -26,13 +25,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class FaktumFactoryTest {
+internal class BaseFaktumFactoryTest {
 
     companion object {
         internal enum class Valg { A, B, C }
     }
 
-    private object valg { infix fun faktum(navn: String) = FaktumFactory(Valg::class.java, navn) }
+    private object valg { infix fun faktum(navn: String) = BaseFaktumFactory(Valg::class.java, navn) }
 
     @Test
     fun boolean() {

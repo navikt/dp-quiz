@@ -1,6 +1,8 @@
 package no.nav.dagpenger.model.søknad
 
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.factory.BaseFaktumFactory
+import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Rolle
@@ -24,6 +26,8 @@ class Seksjon private constructor(
 
     constructor(navn: String, rolle: Rolle, vararg fakta: Faktum<*>) : this(navn, rolle, fakta.toMutableSet())
 
+   // constructor(navn: String, rolle: Rolle, vararg factories: FaktumFactory<*>) : this(navn, rolle, factories.map { it.faktum }.toMutableSet())
+
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>): Boolean {
         return nesteFakta.any { it in fakta }
     }
@@ -36,7 +40,7 @@ class Seksjon private constructor(
 
     internal fun deepCopy(indeks: Int): Seksjon {
         return if (indeks <= genererteSeksjoner.size) genererteSeksjoner[indeks - 1]
-        else Seksjon(navn, rolle).also {
+        else Seksjon(navn, rolle, mutableSetOf()).also {
             søknad.add(søknad.indexOf(this) + indeks, it)
             genererteSeksjoner.add(it)
             it.søknad(this.søknad)
