@@ -3,11 +3,10 @@ package no.nav.dagpenger.model.fakta
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 class UtledetFaktum<R : Comparable<R>> internal constructor(
-    override val navn: FaktumNavn,
-    private val fakta: Set<Faktum<R>>,
-    private val regel: FaktaRegel<R>
-) : Faktum<R> {
-    override val avhengigeFakta = mutableSetOf<Faktum<*>>()
+        override val faktumNavn: FaktumNavn,
+        private val fakta: Set<Faktum<R>>,
+        private val regel: FaktaRegel<R>
+) : Faktum<R>() {
 
     internal fun max(): R = fakta.maxOf { it.svar() }
     internal fun alle(): Boolean = fakta.all { it.svar() as Boolean }
@@ -19,7 +18,7 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     }
 
     override fun faktaMap(): Map<FaktumNavn, Faktum<*>> {
-        return mapOf(navn to this) + fakta.fold(mapOf<FaktumNavn, Faktum<*>> ()) { resultater, faktum ->
+        return mapOf(faktumNavn to this) + fakta.fold(mapOf<FaktumNavn, Faktum<*>> ()) { resultater, faktum ->
             resultater + faktum.faktaMap()
         }
     }
@@ -44,12 +43,12 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     }
 
     override fun accept(visitor: FaktumVisitor) {
-        navn.accept(visitor)
+        faktumNavn.accept(visitor)
         if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, fakta, clazz(), svar())
         else visitor.preVisit(this, id, avhengigeFakta, fakta, clazz())
         fakta.forEach { it.accept(visitor) }
         visitor.postVisit(this, id, fakta, clazz())
     }
 
-    override fun toString() = navn.toString()
+    override fun toString() = faktumNavn.toString()
 }

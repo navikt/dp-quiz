@@ -4,10 +4,9 @@ import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
-class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: FaktumNavn, internal val clazz: Class<R>) : Faktum<R> {
+class TemplateFaktum<R : Comparable<R>> internal constructor(override val faktumNavn: FaktumNavn, internal val clazz: Class<R>) : Faktum<R>() {
     private val seksjoner = mutableListOf<Seksjon>()
 
-    override val avhengigeFakta = mutableSetOf<Faktum<*>>()
     private val roller = mutableSetOf<Rolle>()
 
     override fun clazz() = clazz
@@ -29,7 +28,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: 
     override fun erBesvart() = false
 
     override fun accept(visitor: FaktumVisitor) {
-        navn.accept(visitor)
+        faktumNavn.accept(visitor)
         visitor.visit(this, id, avhengigeFakta, roller, clazz)
     }
 
@@ -37,18 +36,18 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: 
 
     override fun add(seksjon: Seksjon) = seksjoner.add(seksjon)
 
-    override fun faktaMap() = mapOf(navn to this)
+    override fun faktaMap() = mapOf(faktumNavn to this)
 
-    override fun toString() = navn.toString()
+    override fun toString() = faktumNavn.toString()
 
     override fun med(indeks: Int, søknad: Søknad): Faktum<*> {
-        return søknad.fakta[navn.indeks(indeks)]
+        return søknad.fakta[faktumNavn.indeks(indeks)]
             ?: GrunnleggendeFaktum(
-                navn.indeks(indeks),
+                faktumNavn.indeks(indeks),
                 clazz,
                 avhengigeFakta.deepCopy(indeks, søknad).toMutableSet(),
                 roller
-            ).also { søknad.fakta[it.navn] = it }
+            ).also { søknad.fakta[it.faktumNavn] = it }
     }
 
     internal fun generate(r: Int) {
@@ -59,7 +58,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: 
                 } else {
                     originalSeksjon
                 }
-                seksjon.add(GrunnleggendeFaktum(navn.indeks(indeks), clazz, avhengigeFakta.deepCopy(indeks, seksjon.søknad).toMutableSet(), roller))
+                seksjon.add(GrunnleggendeFaktum(faktumNavn.indeks(indeks), clazz, avhengigeFakta.deepCopy(indeks, seksjon.søknad).toMutableSet(), roller))
             }
         }
     }

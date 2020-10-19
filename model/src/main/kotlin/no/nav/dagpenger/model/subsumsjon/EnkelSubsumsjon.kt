@@ -1,9 +1,9 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.Faktum.Companion.deepCopy
 import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand.Ukjent
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
-import no.nav.dagpenger.model.fakta.deepCopy
 import no.nav.dagpenger.model.fakta.erBesvart
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.søknad.Søknad

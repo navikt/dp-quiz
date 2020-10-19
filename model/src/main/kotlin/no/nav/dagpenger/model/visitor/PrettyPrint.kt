@@ -63,7 +63,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         clazz: Class<R>,
         svar: R
     ) {
-        melding("Faktum: ${faktum.navn} er utledet til $svar")
+        melding("Faktum: ${faktum.faktumNavn} er utledet til $svar")
         indentTeller++
     }
 
@@ -74,7 +74,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         children: Set<Faktum<*>>,
         clazz: Class<R>
     ) {
-        melding("Faktum: ${faktum.navn} er ubesvart")
+        melding("Faktum: ${faktum.faktumNavn} er ubesvart")
         indentTeller++
     }
 
@@ -119,7 +119,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
-        melding("Faktum: ${faktum.navn} for roller ${roller.joinToString(" og ") { it.name }} er ubesvart")
+        melding("Faktum: ${faktum.faktumNavn} for roller ${roller.joinToString(" og ") { it.name }} er ubesvart")
     }
 
     override fun <R : Comparable<R>> visit(
@@ -131,7 +131,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         clazz: Class<R>,
         svar: R
     ) {
-        melding("Faktum: ${faktum.navn} for roller ${roller.joinToString(" og ") { it.name }} er besvart med $svar")
+        melding("Faktum: ${faktum.faktumNavn} for roller ${roller.joinToString(" og ") { it.name }} er besvart med $svar")
     }
 
     private fun melding(navn: String) {

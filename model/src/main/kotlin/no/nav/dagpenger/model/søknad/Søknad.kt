@@ -45,8 +45,8 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
         }
 
         private fun set(faktum: Faktum<*>) {
-            if (resultat.containsKey(faktum.navn) && resultat[faktum.navn] != faktum) throw IllegalArgumentException("Duplisert faktumnavn i søknad: ${faktum.navn}")
-            resultat[faktum.navn] = faktum
+            if (resultat.containsKey(faktum.faktumNavn) && resultat[faktum.faktumNavn] != faktum) throw IllegalArgumentException("Duplisert faktumnavn i søknad: ${faktum.faktumNavn}")
+            resultat[faktum.faktumNavn] = faktum
         }
 
         override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>) {

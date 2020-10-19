@@ -58,11 +58,11 @@ class Seksjon private constructor(
     }
 
     internal fun add(faktum: GrunnleggendeFaktum<*>): Boolean =
-        søknad.fakta[faktum.navn].let { eksisterendeFaktum ->
+        søknad.fakta[faktum.faktumNavn].let { eksisterendeFaktum ->
             (eksisterendeFaktum == null).also {
                 if (it) {
                     fakta.add(faktum)
-                    søknad.fakta[faktum.navn] = faktum
+                    søknad.fakta[faktum.faktumNavn] = faktum
                 } else {
                     fakta.add(eksisterendeFaktum as GrunnleggendeFaktum<*>)
                 }

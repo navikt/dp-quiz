@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.fakta.Faktum.Companion.deepCopy
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
-import no.nav.dagpenger.model.fakta.deepCopy
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.søknad.Søknad
 
@@ -9,7 +9,7 @@ class GeneratorSubsumsjon internal constructor(
     regel: Regel,
     private val faktum: GeneratorFaktum,
     private val makro: MakroSubsumsjon
-) : EnkelSubsumsjon(regel, setOf(faktum), TomSubsumsjon, AlleSubsumsjon(faktum.navn.navn, mutableListOf())) {
+) : EnkelSubsumsjon(regel, setOf(faktum), TomSubsumsjon, AlleSubsumsjon(faktum.faktumNavn.navn, mutableListOf())) {
 
     override fun lokaltResultat(): Boolean? {
         return super.lokaltResultat().also {
