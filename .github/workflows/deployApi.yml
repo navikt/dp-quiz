@@ -7,6 +7,7 @@ on:
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-quiz-api:${{ github.sha }}
+  LATEST_IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-quiz-api:latest
 
 jobs:
   build:
@@ -45,8 +46,10 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
         run: |
-          docker build dagpenger -t ${{ env.IMAGE }}
+          docker build dagpenger -t ${{ env.IMAGE }} -t ${{ env.LATEST_IMAGE }}
           docker push ${{ env.IMAGE }}
+          docker push ${{ env.LATEST_IMAGE }}
+
 
       - name: Archive NAIS yaml
         if: github.ref == 'refs/heads/main'
