@@ -1,12 +1,14 @@
 package no.nav.dagpenger.model.factory
 
-import no.nav.dagpenger.model.fakta.Dokument
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolean
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimal
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.factory.BaseFaktumFactoryTest.Companion.Valg.A
+import no.nav.dagpenger.model.factory.BaseFaktumFactoryTest.Companion.Valg.C
+import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.daglig
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
@@ -14,8 +16,6 @@ import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
-import no.nav.dagpenger.model.factory.BaseFaktumFactoryTest.Companion.Valg.A
-import no.nav.dagpenger.model.factory.BaseFaktumFactoryTest.Companion.Valg.C
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -35,7 +35,7 @@ internal class BaseFaktumFactoryTest {
 
     @Test
     fun boolean() {
-        (boolean faktum "boolean" id 3).also { factory ->
+        (ja nei "boolean" id 3).also { factory ->
             assertNotNull(factory)
             assertNotNull(factory.faktum)
             assertNotNull(factory.template)
@@ -43,7 +43,7 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `boolean factory faktum`() {
-        val faktum = (boolean faktum "boolean" id 3).faktum.also {
+        val faktum = (ja nei "boolean" id 3).faktum.also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())

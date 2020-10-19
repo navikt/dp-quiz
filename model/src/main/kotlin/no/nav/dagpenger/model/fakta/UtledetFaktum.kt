@@ -10,6 +10,7 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     override val avhengigeFakta = mutableSetOf<Faktum<*>>()
 
     internal fun max(): R = fakta.maxOf { it.svar() }
+    internal fun alle(): Boolean = fakta.all { it.svar() as Boolean }
 
     override fun clazz() = fakta.toList().first().clazz()
 

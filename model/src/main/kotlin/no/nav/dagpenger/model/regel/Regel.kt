@@ -243,3 +243,5 @@ infix fun Subsumsjon.ugyldigGodkjentAv(faktum: Faktum<Boolean>): Subsumsjon {
 }
 
 val MAKS_DATO = UtledetFaktum<LocalDate>::max
+val MAKS_INNTEKT = UtledetFaktum<Inntekt>::max
+val ALLE_JA = UtledetFaktum<Boolean>::alle

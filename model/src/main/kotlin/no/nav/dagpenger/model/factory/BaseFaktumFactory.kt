@@ -10,13 +10,13 @@ import no.nav.dagpenger.model.fakta.TemplateFaktum
 import java.time.LocalDate
 
 class BaseFaktumFactory<T : Comparable<T>> internal constructor(
-        private val clazz: Class<T>,
-        private val navn: String
-): FaktumFactory<T> {
+    private val clazz: Class<T>,
+    private val navn: String
+) : FaktumFactory<T> {
     private var rootId = 0
 
     companion object {
-        object boolean { infix fun faktum(navn: String) = BaseFaktumFactory(Boolean::class.java, navn) }
+        object ja { infix fun nei(navn: String) = BaseFaktumFactory(Boolean::class.java, navn) }
         object desimal { infix fun faktum(navn: String) = BaseFaktumFactory(Double::class.java, navn) }
         object heltall { infix fun faktum(navn: String) = BaseFaktumFactory(Int::class.java, navn) }
         object dokument { infix fun faktum(navn: String) = BaseFaktumFactory(Dokument::class.java, navn) }
