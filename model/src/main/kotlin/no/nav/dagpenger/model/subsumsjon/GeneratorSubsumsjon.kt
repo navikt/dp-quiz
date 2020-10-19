@@ -9,7 +9,7 @@ class GeneratorSubsumsjon internal constructor(
     regel: Regel,
     private val faktum: GeneratorFaktum,
     private val makro: MakroSubsumsjon
-) : EnkelSubsumsjon(regel, setOf(faktum), TomSubsumsjon, AlleSubsumsjon(faktum.faktumNavn.navn, mutableListOf())) {
+) : EnkelSubsumsjon(regel, setOf(faktum), TomSubsumsjon, AlleSubsumsjon(faktum.navn, mutableListOf())) {
 
     override fun lokaltResultat(): Boolean? {
         return super.lokaltResultat().also {

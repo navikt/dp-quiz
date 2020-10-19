@@ -1,18 +1,18 @@
 package no.nav.dagpenger.model.fakta
 
-import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
-    override val faktumNavn: FaktumNavn,
+    faktumId: FaktumId,
+    navn: String,
     private val clazz: Class<R>,
     avhengigeFakta: MutableSet<Faktum<*>>,
     roller: MutableSet<Rolle>
-) : Faktum<R>(avhengigeFakta, roller) {
+) : Faktum<R>(faktumId, navn, avhengigeFakta, roller) {
     private var tilstand: Tilstand = Ukjent
     protected lateinit var gjeldendeSvar: R
 
-    internal constructor(navn: FaktumNavn, clazz: Class<R>) : this(navn, clazz, mutableSetOf(), mutableSetOf())
+    internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>) : this(faktumId, navn, clazz, mutableSetOf(), mutableSetOf())
 
     override fun clazz() = clazz
 
@@ -31,7 +31,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     }
 
     override fun accept(visitor: FaktumVisitor) {
-        faktumNavn.accept(visitor)
+        faktumId.accept(visitor)
         tilstand.accept(this, visitor)
     }
 
@@ -48,8 +48,6 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     protected open fun acceptMedSvar(visitor: FaktumVisitor) {
         visitor.visit(this, Kjent.kode, id, avhengigeFakta, roller, clazz, gjeldendeSvar)
     }
-
-    override fun toString() = faktumNavn.toString()
 
     private interface Tilstand {
         val kode: FaktumTilstand

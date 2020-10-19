@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
-class TemplateFaktum<R : Comparable<R>> internal constructor(override val faktumNavn: FaktumNavn, internal val clazz: Class<R>) : Faktum<R>() {
+class TemplateFaktum<R : Comparable<R>> internal constructor(faktumId: FaktumId, navn: String, internal val clazz: Class<R>) : Faktum<R>(faktumId, navn) {
     private val seksjoner = mutableListOf<Seksjon>()
 
     override fun clazz() = clazz
@@ -26,22 +26,21 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(override val faktum
     override fun erBesvart() = false
 
     override fun accept(visitor: FaktumVisitor) {
-        faktumNavn.accept(visitor)
+        faktumId.accept(visitor)
         visitor.visit(this, id, avhengigeFakta, roller, clazz)
     }
 
     override fun add(seksjon: Seksjon) = seksjoner.add(seksjon)
 
-    override fun toString() = faktumNavn.toString()
-
     override fun med(indeks: Int, søknad: Søknad): Faktum<*> {
-        return søknad.fakta[faktumNavn.indeks(indeks)]
+        return søknad.fakta[faktumId.indeks(indeks)]
             ?: GrunnleggendeFaktum(
-                faktumNavn.indeks(indeks),
+                faktumId.indeks(indeks),
+                navn,
                 clazz,
                 avhengigeFakta.deepCopy(indeks, søknad).toMutableSet(),
                 roller
-            ).also { søknad.fakta[it.faktumNavn] = it }
+            ).also { søknad.fakta[it.faktumId] = it }
     }
 
     internal fun generate(r: Int) {
@@ -52,7 +51,13 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(override val faktum
                 } else {
                     originalSeksjon
                 }
-                seksjon.add(GrunnleggendeFaktum(faktumNavn.indeks(indeks), clazz, avhengigeFakta.deepCopy(indeks, seksjon.søknad).toMutableSet(), roller))
+                seksjon.add(GrunnleggendeFaktum(
+                    faktumId.indeks(indeks),
+                    navn,
+                    clazz,
+                    avhengigeFakta.deepCopy(indeks, seksjon.søknad).toMutableSet(),
+                    roller
+                ))
             }
         }
     }

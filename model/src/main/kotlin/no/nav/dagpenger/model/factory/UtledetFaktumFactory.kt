@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.factory
 
 import no.nav.dagpenger.model.fakta.FaktaRegel
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.FaktumId
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.regel.ALLE_JA
@@ -35,7 +36,7 @@ class UtledetFaktumFactory<T : Comparable<T>>(
 
     infix fun id(rootId: Int) = this.also { this.rootId = rootId }
 
-    override val faktum get() = UtledetFaktum<T>(faktumNavn, fakta, regel)
+    override val faktum get() = UtledetFaktum<T>(faktumId, navn, fakta, regel)
 
-    private val faktumNavn get() = FaktumNavn(rootId, navn).also { require(rootId != 0) }
+    private val faktumId get() = FaktumId(rootId).also { require(rootId != 0) }
 }

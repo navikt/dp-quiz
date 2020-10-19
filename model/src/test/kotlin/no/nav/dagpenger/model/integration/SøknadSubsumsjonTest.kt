@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.integration
 import no.nav.dagpenger.model.db.SøknadBuilder
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.FaktumId
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
@@ -40,10 +41,10 @@ internal class SøknadSubsumsjonTest {
     @Test
     fun `Generere faktum fra template dersom det ikke finnes`() {
         (1..18).forEach {
-            assertNotNull(søknad.fakta[FaktumNavn(it, "")])
+            assertNotNull(søknad.fakta[FaktumId(it)])
         }
 
-        assertNull(søknad.fakta[FaktumNavn(16, "").indeks(1)])
+        assertNull(søknad.fakta[FaktumId(16).indeks(1)])
     }
 
     @Test

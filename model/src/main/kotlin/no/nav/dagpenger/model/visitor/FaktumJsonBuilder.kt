@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.FaktumId
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
@@ -67,6 +68,12 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
 
     override fun visit(faktumNavn: FaktumNavn, navn: String, rootId: Int, indeks: Int) {
         this.navn = navn
+        this.rootId = rootId
+        this.indeks = indeks
+    }
+
+
+    override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
         this.rootId = rootId
         this.indeks = indeks
     }
@@ -159,7 +166,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     ) =
         mapper.createObjectNode().also { faktumNode ->
             faktumNode.put("type", faktum::class.java.simpleName)
-            faktumNode.put("navn", navn)
+            faktumNode.put("navn",faktum.navn)
             faktumNode.put("id", id)
             faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
             faktumNode.put("clazz", clazz.simpleName.toLowerCase())

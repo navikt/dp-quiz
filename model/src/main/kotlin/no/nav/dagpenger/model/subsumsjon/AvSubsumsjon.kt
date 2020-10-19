@@ -36,8 +36,8 @@ internal class AvSubsumsjon private constructor(
 
     override fun deepCopy(søknad: Søknad) = AvSubsumsjon(
         regel.deepCopy(søknad),
-        søknad.faktum(dokument.faktumNavn) as Faktum<Dokument>,
-        søknad.faktum(godkjenning.faktumNavn) as Faktum<Boolean>,
+        søknad.faktum(dokument.faktumId) as Faktum<Dokument>,
+        søknad.faktum(godkjenning.faktumId) as Faktum<Boolean>,
         gyldigSubsumsjon.deepCopy(søknad),
         ugyldigSubsumsjon.deepCopy(søknad)
     ).also {

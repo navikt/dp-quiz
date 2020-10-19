@@ -3,10 +3,11 @@ package no.nav.dagpenger.model.fakta
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 class UtledetFaktum<R : Comparable<R>> internal constructor(
-    override val faktumNavn: FaktumNavn,
+    faktumId: FaktumId,
+    navn: String,
     private val fakta: Set<Faktum<R>>,
     private val regel: FaktaRegel<R>
-) : Faktum<R>() {
+) : Faktum<R>(faktumId, navn) {
 
     internal fun max(): R = fakta.maxOf { it.svar() }
     internal fun alle(): Boolean = fakta.all { it.svar() as Boolean }
@@ -33,12 +34,10 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     override fun erBesvart() = fakta.all { it.erBesvart() }
 
     override fun accept(visitor: FaktumVisitor) {
-        faktumNavn.accept(visitor)
+        faktumId.accept(visitor)
         if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, fakta, clazz(), svar())
         else visitor.preVisit(this, id, avhengigeFakta, fakta, clazz())
         fakta.forEach { it.accept(visitor) }
         visitor.postVisit(this, id, fakta, clazz())
     }
-
-    override fun toString() = faktumNavn.toString()
 }

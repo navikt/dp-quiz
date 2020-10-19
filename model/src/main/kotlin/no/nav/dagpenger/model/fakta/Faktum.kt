@@ -5,19 +5,21 @@ import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 abstract class Faktum<R : Comparable<R>>internal constructor(
+    internal val faktumId: FaktumId,
+    val navn: String,
     protected val avhengigeFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     protected val roller: MutableSet<Rolle> = mutableSetOf()
 ) {
-    abstract val faktumNavn: FaktumNavn
-    val id: String get() = faktumNavn.id
+
+    val id: String get() = faktumId.id
 
     companion object {
         private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, søknad: Søknad) {
-            faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { søknad.faktum(it.faktumNavn) })
+            faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { søknad.faktum(it.faktumId) })
         }
         internal fun Set<Faktum<*>>.deepCopy(søknad: Søknad): Set<Faktum<*>> = this
             .mapNotNull { prototype ->
-                søknad.faktum(prototype.faktumNavn)?.also {
+                søknad.faktum(prototype.faktumId)?.also {
                     prototype.deepCopyAvhengigheter(it, søknad)
                 }
             }
@@ -66,16 +68,18 @@ abstract class Faktum<R : Comparable<R>>internal constructor(
         Ukjent,
         Kjent
     }
+
+    override fun toString() = "$navn med id $id"
 }
 
 fun <R : Comparable<R>> Collection<Faktum<R>>.faktum(navn: FaktumNavn, regel: FaktaRegel<R>): Faktum<R> =
-    UtledetFaktum(navn, this.toSet(), regel)
+    UtledetFaktum(navn.faktumId, navn.navn, this.toSet(), regel)
 
 fun Set<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
 typealias FaktaRegel <R> = (UtledetFaktum<R>) -> R
 
-fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>) = GrunnleggendeFaktum<R>(this, clazz)
+fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>) = GrunnleggendeFaktum<R>(this.faktumId, this.navn, clazz)
 
-fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>, vararg templates: TemplateFaktum<*>) = GeneratorFaktum(this, templates.asList())
+fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>, vararg templates: TemplateFaktum<*>) = GeneratorFaktum(this.faktumId, this.navn, templates.asList())
 
-fun <R : Comparable<R>> FaktumNavn.template(clazz: Class<R>) = TemplateFaktum<R>(this, clazz)
+fun <R : Comparable<R>> FaktumNavn.template(clazz: Class<R>) = TemplateFaktum<R>(this.faktumId, this.navn, clazz)

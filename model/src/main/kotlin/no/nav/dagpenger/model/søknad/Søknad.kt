@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.søknad
 
 import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.FaktumNavn
+import no.nav.dagpenger.model.fakta.FaktumId
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Rolle
@@ -14,7 +14,7 @@ import java.util.UUID
 class Søknad private constructor(private val uuid: UUID, private val seksjoner: MutableList<Seksjon>) : MutableList<Seksjon> by seksjoner {
     constructor(vararg seksjoner: Seksjon) : this(UUID.randomUUID(), seksjoner.toMutableList())
 
-    internal val fakta: MutableMap<FaktumNavn, Faktum<*>>
+    internal val fakta: MutableMap<FaktumId, Faktum<*>>
 
     init {
         seksjoner.forEach {
@@ -23,7 +23,7 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
         fakta = MapBuilder(this).resultat
     }
 
-    fun <T : Comparable<T>> finnFaktum(id: String) = (fakta[FaktumNavn(id)] as Faktum<T>)
+    fun <T : Comparable<T>> finnFaktum(id: String) = (fakta[FaktumId(id)] as Faktum<T>)
 
     infix fun nesteSeksjon(subsumsjon: Subsumsjon) = seksjoner.first { subsumsjon.nesteFakta() in it }
 
@@ -33,20 +33,20 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
         visitor.postVisit(this)
     }
 
-    internal fun faktum(navn: FaktumNavn) =
-        fakta[navn] ?: throw IllegalArgumentException("Faktum med denne id-en finnes ikke, id ${navn.id}")
+    internal fun faktum(id: FaktumId) =
+        fakta[id] ?: throw IllegalArgumentException("Faktum med denne id-en finnes ikke, id ${id.id}")
 
     fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
 
     private class MapBuilder(søknad: Søknad) : SøknadVisitor {
-        val resultat = mutableMapOf<FaktumNavn, Faktum<*>>()
+        val resultat = mutableMapOf<FaktumId, Faktum<*>>()
         init {
             søknad.accept(this)
         }
 
         private fun set(faktum: Faktum<*>) {
-            if (resultat.containsKey(faktum.faktumNavn) && resultat[faktum.faktumNavn] != faktum) throw IllegalArgumentException("Duplisert faktumnavn i søknad: ${faktum.faktumNavn}")
-            resultat[faktum.faktumNavn] = faktum
+            if (resultat.containsKey(faktum.faktumId) && resultat[faktum.faktumId] != faktum) throw IllegalArgumentException("Duplisert faktumnavn i søknad: ${faktum.faktumId}")
+            resultat[faktum.faktumId] = faktum
         }
 
         override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>) {

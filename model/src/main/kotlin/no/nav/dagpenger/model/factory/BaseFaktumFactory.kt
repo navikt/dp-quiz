@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.factory
 
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.FaktumId
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
@@ -26,11 +27,12 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 
     infix fun id(rootId: Int) = this.also { this.rootId = rootId }
 
-    override val faktum: Faktum<T> get() = GrunnleggendeFaktum<T>(faktumNavn, clazz)
+    override val faktum: Faktum<T> get() = GrunnleggendeFaktum<T>(faktumId, navn, clazz)
 
-    fun faktum(vararg templates: TemplateFaktum<*>) = GeneratorFaktum(faktumNavn, templates.asList())
+    fun faktum(vararg templates: TemplateFaktum<*>) = GeneratorFaktum(faktumId, navn, templates.asList())
 
-    val template: Faktum<T> get() = TemplateFaktum<T>(faktumNavn, clazz)
+    val template: Faktum<T> get() = TemplateFaktum<T>(faktumId, navn, clazz)
 
-    private val faktumNavn get() = FaktumNavn(rootId, navn).also { require(rootId != 0) }
+
+    private val faktumId get() = FaktumId(rootId).also { require(rootId > 0) {"Root id må være positiv"} }
 }
