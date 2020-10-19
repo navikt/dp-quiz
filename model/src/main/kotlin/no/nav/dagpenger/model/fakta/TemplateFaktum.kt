@@ -51,13 +51,15 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(faktumId: FaktumId,
                 } else {
                     originalSeksjon
                 }
-                seksjon.add(GrunnleggendeFaktum(
-                    faktumId.indeks(indeks),
-                    navn,
-                    clazz,
-                    avhengigeFakta.deepCopy(indeks, seksjon.søknad).toMutableSet(),
-                    roller
-                ))
+                seksjon.add(
+                    GrunnleggendeFaktum(
+                        faktumId.indeks(indeks),
+                        navn,
+                        clazz,
+                        avhengigeFakta.deepCopy(indeks, seksjon.søknad).toMutableSet(),
+                        roller
+                    )
+                )
             }
         }
     }

@@ -4,7 +4,6 @@ import no.nav.dagpenger.model.db.SøknadBuilder
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
-import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.fakta.Rolle

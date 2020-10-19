@@ -1,7 +1,6 @@
 package no.nav.dagpenger.model.unit.fakta
 
 import no.nav.dagpenger.model.fakta.FaktumId
-import no.nav.dagpenger.model.fakta.FaktumNavn
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test

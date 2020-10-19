@@ -72,7 +72,6 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         this.indeks = indeks
     }
 
-
     override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
         this.rootId = rootId
         this.indeks = indeks
@@ -166,7 +165,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     ) =
         mapper.createObjectNode().also { faktumNode ->
             faktumNode.put("type", faktum::class.java.simpleName)
-            faktumNode.put("navn",faktum.navn)
+            faktumNode.put("navn", faktum.navn)
             faktumNode.put("id", id)
             faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
             faktumNode.put("clazz", clazz.simpleName.toLowerCase())

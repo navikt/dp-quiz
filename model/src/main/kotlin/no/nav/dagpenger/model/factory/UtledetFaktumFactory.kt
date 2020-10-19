@@ -3,7 +3,6 @@ package no.nav.dagpenger.model.factory
 import no.nav.dagpenger.model.fakta.FaktaRegel
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
-import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.regel.ALLE_JA
 import no.nav.dagpenger.model.regel.MAKS_DATO

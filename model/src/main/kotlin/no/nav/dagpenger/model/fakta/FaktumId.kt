@@ -34,4 +34,3 @@ class FaktumId private constructor(private val rootId: Int, private val indeks: 
 private fun String.rootId() = "\\d+".toRegex().find(this)?.value?.toInt()
     ?: throw IllegalArgumentException("ugyldig id: $this")
 private fun String.indeks(): Int = "\\d+".toRegex().findAll(this).elementAtOrNull(1)?.value?.toInt() ?: 0
-
