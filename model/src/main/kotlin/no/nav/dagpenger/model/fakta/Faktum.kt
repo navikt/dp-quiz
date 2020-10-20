@@ -70,6 +70,10 @@ abstract class Faktum<R : Comparable<R>>internal constructor(
     }
 
     override fun toString() = "$navn med id $id"
+
+    internal open fun tilTemplate(): TemplateFaktum<R> {
+        throw IllegalArgumentException("Kan ikke lage template av faktum: $navn $id")
+    }
 }
 
 fun <R : Comparable<R>> Collection<Faktum<R>>.faktum(navn: FaktumNavn, regel: FaktaRegel<R>): Faktum<R> =

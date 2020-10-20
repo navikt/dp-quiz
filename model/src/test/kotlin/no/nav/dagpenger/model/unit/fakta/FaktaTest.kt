@@ -2,11 +2,14 @@ package no.nav.dagpenger.model.unit.fakta
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Fakta
+import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
@@ -62,5 +65,23 @@ class FaktaTest {
         assertEquals(5.januar, fakta.id(345).svar())
         fakta.dato(3).besvar(30.januar)
         assertEquals(30.januar, fakta.id(345).svar())
+    }
+
+    @Test
+    fun `fakta templater`() {
+        val fakta = Fakta(
+            "12345678910",
+            heltall faktum "f15" id 15 genererer 16 og 17 og 18,
+            heltall faktum "f16" id 16,
+            ja nei "f17" id 17,
+            ja nei "f18" id 18
+        )
+        val seksjon = Seksjon("seksjon", Rolle.søker, fakta id 15, fakta id 16, fakta id 17, fakta id 18)
+        Søknad(seksjon)
+        assertEquals(TemplateFaktum::class, fakta.id(16)::class)
+        assertEquals(GeneratorFaktum::class, fakta.id(15)::class)
+        assertEquals(4, seksjon.size)
+        (fakta heltall 15).besvar(2, Rolle.søker)
+        assertEquals(10, seksjon.size)
     }
 }

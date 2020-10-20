@@ -20,6 +20,7 @@ class UtledetFaktumFactory<T : Comparable<T>>(
             infix fun dato(navn: String) = UtledetFaktumFactory(navn, MAKS_DATO)
             infix fun inntekt(navn: String) = UtledetFaktumFactory(navn, MAKS_INNTEKT)
         }
+
         object alle {
             infix fun ja(navn: String) = UtledetFaktumFactory(navn, ALLE_JA)
         }

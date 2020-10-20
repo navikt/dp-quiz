@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.factory.FaktumFactory
 import java.time.LocalDate
 import java.util.UUID
 
-class Fakta private constructor(fnr: String, uuid: UUID, versjon: Versjon, private val faktumMap: Map<FaktumId, Faktum<*>>) {
+class Fakta private constructor(fnr: String, uuid: UUID, versjon: Versjon, private val faktumMap: MutableMap<FaktumId, Faktum<*>>) {
 
     constructor(fnr: String, vararg factories: FaktumFactory<*>) : this(
         fnr,
@@ -14,7 +14,10 @@ class Fakta private constructor(fnr: String, uuid: UUID, versjon: Versjon, priva
             it.faktum().let { faktum ->
                 faktum.faktumId to faktum
             }
-        }.toMap().also { faktumMap ->
+        }.toMap().toMutableMap().also { faktumMap ->
+            factories.forEach { factory ->
+                factory.tilTemplate(faktumMap)
+            }
             factories.forEach { factory ->
                 factory.avhengerAv(faktumMap)
                 factory.sammensattAv(faktumMap)
@@ -34,6 +37,8 @@ class Fakta private constructor(fnr: String, uuid: UUID, versjon: Versjon, priva
 
     infix fun id(id: String) =
         faktumMap[FaktumId(id)] ?: throw IllegalArgumentException("Ukjent id $id")
+
+    infix fun heltall(rootId: Int) = id(rootId.toString()) as Faktum<Int>
 
     private enum class Versjon { V1 }
 }
