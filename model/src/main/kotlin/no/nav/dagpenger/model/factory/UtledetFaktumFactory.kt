@@ -11,8 +11,7 @@ import no.nav.dagpenger.model.regel.MAKS_INNTEKT
 class UtledetFaktumFactory<T : Comparable<T>>(
     private val navn: String,
     private val regel: FaktaRegel<T>
-) : FaktumFactory<T> {
-    private var rootId = 0
+) : FaktumFactory<T>() {
     private val fakta = mutableSetOf<Faktum<T>>()
 
     companion object {
@@ -27,15 +26,11 @@ class UtledetFaktumFactory<T : Comparable<T>>(
 
     infix fun av(factum: Faktum<T>) = this.also { fakta.add(factum) }
 
-    // infix fun av(factory: BaseFaktumFactory<T>) = this.also { fakta.add(factory.faktum) }
-
     infix fun og(factum: Faktum<T>) = this.also { fakta.add(factum) }
-
-    // infix fun og(factory: BaseFaktumFactory<T>) = this.also { fakta.add(factory.faktum) }
 
     infix fun id(rootId: Int) = this.also { this.rootId = rootId }
 
-    override val faktum get() = UtledetFaktum<T>(faktumId, navn, fakta, regel)
+    override fun faktum() = UtledetFaktum(faktumId, navn, fakta, regel)
 
     private val faktumId get() = FaktumId(rootId).also { require(rootId != 0) }
 }

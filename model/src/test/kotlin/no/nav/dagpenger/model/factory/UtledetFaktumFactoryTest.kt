@@ -23,10 +23,10 @@ internal class UtledetFaktumFactoryTest {
 
     @Test
     fun `maks dato`() {
-        val dato1 = (dato faktum "dato1" id 1).faktum
-        val dato2 = (dato faktum "dato2" id 2).faktum
-        val dato3 = (dato faktum "dato3" id 3).faktum
-        val factory = (maks dato "maks dato" av dato1 og dato2 og dato3 id 123).faktum
+        val dato1 = (dato faktum "dato1" id 1).faktum()
+        val dato2 = (dato faktum "dato2" id 2).faktum()
+        val dato3 = (dato faktum "dato3" id 3).faktum()
+        val factory = (maks dato "maks dato" av dato1 og dato2 og dato3 id 123).faktum()
 
         val søknad = Søknad(Seksjon("seksjon", Rolle.søker, dato1, dato2, dato3, factory))
         val faktum = søknad.finnFaktum<LocalDate>("123")
@@ -44,10 +44,10 @@ internal class UtledetFaktumFactoryTest {
     }
 
     @Test fun `maks inntekt`() {
-        val inntekt1 = (inntekt faktum "inntekt1" id 1).faktum
-        val inntekt2 = (inntekt faktum "inntekt2" id 2).faktum
-        val inntekt3 = (inntekt faktum "inntekt3" id 3).faktum
-        val factory = (maks inntekt "maks inntekt" av inntekt1 og inntekt2 og inntekt3 id 123).faktum
+        val inntekt1 = (inntekt faktum "inntekt1" id 1).faktum()
+        val inntekt2 = (inntekt faktum "inntekt2" id 2).faktum()
+        val inntekt3 = (inntekt faktum "inntekt3" id 3).faktum()
+        val factory = (maks inntekt "maks inntekt" av inntekt1 og inntekt2 og inntekt3 id 123).faktum()
 
         val søknad = Søknad(Seksjon("seksjon", Rolle.søker, inntekt1, inntekt2, inntekt3, factory))
         val faktum = søknad.finnFaktum<LocalDate>("123")
@@ -65,10 +65,10 @@ internal class UtledetFaktumFactoryTest {
     }
 
     @Test fun `boolean and`() {
-        val jaNei1 = (ja nei "jaNei1" id 1).faktum
-        val jaNei2 = (ja nei "jaNei2" id 2).faktum
-        val jaNei3 = (ja nei "jaNei3" id 3).faktum
-        val factory = (alle ja "alle ja" av jaNei1 og jaNei2 og jaNei3 id 123).faktum
+        val jaNei1 = (ja nei "jaNei1" id 1).faktum()
+        val jaNei2 = (ja nei "jaNei2" id 2).faktum()
+        val jaNei3 = (ja nei "jaNei3" id 3).faktum()
+        val factory = (alle ja "alle ja" av jaNei1 og jaNei2 og jaNei3 id 123).faktum()
 
         val søknad = Søknad(Seksjon("seksjon", Rolle.søker, jaNei1, jaNei2, jaNei3, factory))
         val faktum = søknad.finnFaktum<LocalDate>("123")

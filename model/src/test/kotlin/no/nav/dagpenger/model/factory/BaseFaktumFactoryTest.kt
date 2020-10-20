@@ -37,13 +37,13 @@ internal class BaseFaktumFactoryTest {
     fun boolean() {
         (ja nei "boolean" id 3).also { factory ->
             assertNotNull(factory)
-            assertNotNull(factory.faktum)
+            assertNotNull(factory.faktum())
             assertNotNull(factory.template)
         }
     }
 
     @Test fun `boolean factory faktum`() {
-        val faktum = (ja nei "boolean" id 3).faktum.also {
+        val faktum = (ja nei "boolean" id 3).faktum().also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())
@@ -57,7 +57,7 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `desimal factory faktum`() {
-        val faktum = (desimal faktum "desimal" id 3).faktum.also {
+        val faktum = (desimal faktum "desimal" id 3).faktum().also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())
@@ -71,7 +71,7 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `heltall factory faktum`() {
-        val faktum = (heltall faktum "heltall" id 3).faktum.also {
+        val faktum = (heltall faktum "heltall" id 3).faktum().also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())
@@ -85,7 +85,7 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `Inntekt factory faktum`() {
-        val faktum = (inntekt faktum "inntekt" id 3).faktum.also {
+        val faktum = (inntekt faktum "inntekt" id 3).faktum().also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())
@@ -99,7 +99,7 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `Dato factory faktum`() {
-        val faktum = (dato faktum "dato" id 3).faktum.also {
+        val faktum = (dato faktum "dato" id 3).faktum().also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())
@@ -113,7 +113,7 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `Dokument factory faktum`() {
-        val faktum = (dokument faktum "dokument" id 3).faktum.also {
+        val faktum = (dokument faktum "dokument" id 3).faktum().also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())
@@ -126,7 +126,7 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `valg (enum) factory faktum`() {
-        val faktum = (valg faktum "valg" id 3).faktum.also {
+        val faktum = (valg faktum "valg" id 3).faktum().also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())

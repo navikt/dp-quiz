@@ -12,8 +12,7 @@ import java.time.LocalDate
 class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     private val clazz: Class<T>,
     private val navn: String
-) : FaktumFactory<T> {
-    private var rootId = 0
+) : FaktumFactory<T>() {
 
     companion object {
         object ja { infix fun nei(navn: String) = BaseFaktumFactory(Boolean::class.java, navn) }
@@ -26,11 +25,11 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 
     infix fun id(rootId: Int) = this.also { this.rootId = rootId }
 
-    override val faktum: Faktum<T> get() = GrunnleggendeFaktum<T>(faktumId, navn, clazz)
+    override fun faktum() = GrunnleggendeFaktum(faktumId, navn, clazz)
 
     fun faktum(vararg templates: TemplateFaktum<*>) = GeneratorFaktum(faktumId, navn, templates.asList())
 
-    val template: Faktum<T> get() = TemplateFaktum<T>(faktumId, navn, clazz)
+    val template: Faktum<T> get() = TemplateFaktum(faktumId, navn, clazz)
 
     private val faktumId get() = FaktumId(rootId).also { require(rootId > 0) { "Root id må være positiv" } }
 }
