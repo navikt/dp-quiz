@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.visitor.FaktumVisitor
 class UtledetFaktum<R : Comparable<R>> internal constructor(
     faktumId: FaktumId,
     navn: String,
-    private val fakta: Set<Faktum<R>>,
+    private val fakta: MutableSet<Faktum<R>>,
     private val regel: FaktaRegel<R>
 ) : Faktum<R>(faktumId, navn) {
 
@@ -22,6 +22,8 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
         fakta.forEach { it.svar() }
         return regel(this)
     }
+
+    internal fun addAll(fakta: List<Faktum<*>>) = this.fakta.addAll(fakta as List<Faktum<R>>)
 
     override fun add(rolle: Rolle): Boolean = false // utledet faktum kan ikke settes av roller
 

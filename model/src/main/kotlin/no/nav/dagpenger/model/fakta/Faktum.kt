@@ -73,7 +73,7 @@ abstract class Faktum<R : Comparable<R>>internal constructor(
 }
 
 fun <R : Comparable<R>> Collection<Faktum<R>>.faktum(navn: FaktumNavn, regel: FaktaRegel<R>): Faktum<R> =
-    UtledetFaktum(navn.faktumId, navn.navn, this.toSet(), regel)
+    UtledetFaktum(navn.faktumId, navn.navn, this.toMutableSet(), regel)
 
 fun Set<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
 typealias FaktaRegel <R> = (UtledetFaktum<R>) -> R

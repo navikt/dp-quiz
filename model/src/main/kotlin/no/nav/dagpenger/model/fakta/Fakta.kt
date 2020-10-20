@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.factory.FaktumFactory
+import java.time.LocalDate
 import java.util.UUID
 
 class Fakta private constructor(fnr: String, uuid: UUID, versjon: Versjon, private val faktumMap: Map<FaktumId, Faktum<*>>) {
@@ -16,6 +17,7 @@ class Fakta private constructor(fnr: String, uuid: UUID, versjon: Versjon, priva
         }.toMap().also { faktumMap ->
             factories.forEach { factory ->
                 factory.avhengerAv(faktumMap)
+                factory.sammensattAv(faktumMap)
             }
         }
     )
@@ -27,6 +29,8 @@ class Fakta private constructor(fnr: String, uuid: UUID, versjon: Versjon, priva
     infix fun inntekt(rootId: Int) = id(rootId.toString()) as Faktum<Inntekt>
 
     infix fun ja(rootId: Int) = id(rootId.toString()) as Faktum<Boolean>
+
+    infix fun dato(rootId: Int) = id(rootId.toString()) as Faktum<LocalDate>
 
     infix fun id(id: String) =
         faktumMap[FaktumId(id)] ?: throw IllegalArgumentException("Ukjent id $id")

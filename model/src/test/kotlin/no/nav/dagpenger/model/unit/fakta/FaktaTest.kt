@@ -1,7 +1,9 @@
 package no.nav.dagpenger.model.unit.fakta
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Rolle
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertEquals
 
 class FaktaTest {
 
@@ -28,7 +31,7 @@ class FaktaTest {
         val fakta = Fakta(
             "12345678910",
             dokument faktum "f11" id 11,
-            ja nei "f12" id 12 avhengerAv 11,
+            ja nei "f12" id 12 avhengerAv 11
         )
 
         Søknad(Seksjon("seksjon", Rolle.søker, fakta id 11, fakta id 12))
@@ -38,5 +41,26 @@ class FaktaTest {
         assertTrue(fakta.ja(12).erBesvart())
         fakta.dokument(11).besvar(Dokument(2.januar), Rolle.søker)
         assertFalse(fakta.ja(12).erBesvart())
+    }
+
+    @Test
+    fun `sammensatte fakta`() {
+        val fakta = Fakta(
+            "12345678910",
+            dato faktum "f3" id 3,
+            dato faktum "f4" id 4,
+            dato faktum "f5" id 5,
+            maks dato "maksdato" av 3 og 4 og 5 id 345
+        )
+
+        Søknad(Seksjon("seksjon", Rolle.søker, fakta id 345, fakta id 3, fakta id 4, fakta id 5))
+        fakta.dato(3).besvar(3.januar)
+        fakta.dato(4).besvar(4.januar)
+        assertFalse(fakta.id(345).erBesvart())
+        fakta.dato(5).besvar(5.januar)
+        assertTrue(fakta.id(345).erBesvart())
+        assertEquals(5.januar, fakta.id(345).svar())
+        fakta.dato(3).besvar(30.januar)
+        assertEquals(30.januar, fakta.id(345).svar())
     }
 }

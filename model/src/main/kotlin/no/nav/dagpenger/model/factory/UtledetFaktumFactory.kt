@@ -13,6 +13,7 @@ class UtledetFaktumFactory<T : Comparable<T>>(
     private val regel: FaktaRegel<T>
 ) : FaktumFactory<T>() {
     private val fakta = mutableSetOf<Faktum<T>>()
+    private val childIder = mutableSetOf<Int>()
 
     companion object {
         object maks {
@@ -28,9 +29,21 @@ class UtledetFaktumFactory<T : Comparable<T>>(
 
     infix fun og(factum: Faktum<T>) = this.also { fakta.add(factum) }
 
+    override fun og(otherId: Int) = this.also { childIder.add(otherId) }
+
+    infix fun av(otherId: Int) = this.also { childIder.add(otherId) }
+
     infix fun id(rootId: Int) = this.also { this.rootId = rootId }
 
     override fun faktum() = UtledetFaktum(faktumId, navn, fakta, regel)
+
+    override fun sammensattAv(faktumMap: Map<FaktumId, Faktum<*>>) {
+        (faktumMap[FaktumId(rootId)] as UtledetFaktum).addAll(
+            childIder.map { otherId ->
+                faktumMap[FaktumId(otherId)] as Faktum
+            }
+        )
+    }
 
     private val faktumId get() = FaktumId(rootId).also { require(rootId != 0) }
 }

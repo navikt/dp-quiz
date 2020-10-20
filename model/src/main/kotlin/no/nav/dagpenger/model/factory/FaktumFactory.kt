@@ -17,5 +17,7 @@ abstract class FaktumFactory <T : Comparable<T>> {
         }
     }
 
-    infix fun og(otherId: Int) = avhengerAv(otherId)
+    open infix fun og(otherId: Int) = avhengerAv(otherId)
+
+    internal open fun sammensattAv(faktumMap: Map<FaktumId, Faktum<*>>) {}
 }
