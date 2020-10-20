@@ -11,8 +11,11 @@ import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.søknad.Versjon
+import no.nav.dagpenger.model.søknad.Versjon.Type.Web
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -23,7 +26,7 @@ class FaktaTest {
 
     @Test
     fun `fakta med ett faktum`() {
-        val fakta = Fakta("12345678910", ja nei "janei" id 3)
+        val fakta = Fakta(ja nei "janei" id 3)
         assertFalse((fakta id 3).erBesvart())
         assertFalse((fakta id "3").erBesvart())
         assertThrows<IllegalArgumentException> { fakta id 1 }
@@ -32,7 +35,6 @@ class FaktaTest {
     @Test
     fun `fakta med avhengigheter`() {
         val fakta = Fakta(
-            "12345678910",
             dokument faktum "f11" id 11,
             ja nei "f12" id 12 avhengerAv 11
         )
@@ -49,7 +51,6 @@ class FaktaTest {
     @Test
     fun `sammensatte fakta`() {
         val fakta = Fakta(
-            "12345678910",
             dato faktum "f3" id 3,
             dato faktum "f4" id 4,
             dato faktum "f5" id 5,
@@ -69,19 +70,25 @@ class FaktaTest {
 
     @Test
     fun `fakta templater`() {
-        val fakta = Fakta(
-            "12345678910",
+        val fnr = "12345678910"
+        val prototypeFakta = Fakta(
             heltall faktum "f15" id 15 genererer 16 og 17 og 18,
             heltall faktum "f16" id 16,
             ja nei "f17" id 17,
             ja nei "f18" id 18
         )
-        val seksjon = Seksjon("seksjon", Rolle.søker, fakta id 15, fakta id 16, fakta id 17, fakta id 18)
-        Søknad(seksjon)
-        assertEquals(TemplateFaktum::class, fakta.id(16)::class)
-        assertEquals(GeneratorFaktum::class, fakta.id(15)::class)
-        assertEquals(4, seksjon.size)
-        (fakta heltall 15).besvar(2, Rolle.søker)
-        assertEquals(10, seksjon.size)
+        val prototypeSeksjon = Seksjon("seksjon", Rolle.søker, prototypeFakta id 15, prototypeFakta id 16, prototypeFakta id 17, prototypeFakta id 18)
+        val prototypeSøknad = Søknad(prototypeSeksjon)
+        val prototypeSubsumsjon = prototypeFakta heltall 15 er 6
+        val versjon = Versjon(prototypeFakta, prototypeSubsumsjon, mapOf(Web to prototypeSøknad))
+
+        val søknad = versjon.søknad(fnr, Web)
+        søknad.fakta2.also { fakta ->
+            assertEquals(TemplateFaktum::class, fakta.id(16)::class)
+            assertEquals(GeneratorFaktum::class, fakta.id(15)::class)
+            assertEquals(4, søknad[0].size)
+            (fakta heltall 15).besvar(2, Rolle.søker)
+            assertEquals(10, søknad[0].size)
+        }
     }
 }

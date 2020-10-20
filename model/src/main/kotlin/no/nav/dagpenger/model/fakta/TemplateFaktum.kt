@@ -4,7 +4,13 @@ import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
-class TemplateFaktum<R : Comparable<R>> internal constructor(faktumId: FaktumId, navn: String, internal val clazz: Class<R>) : Faktum<R>(faktumId, navn) {
+class TemplateFaktum<R : Comparable<R>> internal constructor(
+    faktumId: FaktumId,
+    navn: String,
+    internal val clazz: Class<R>,
+    avhengigeFakta: MutableSet<Faktum<*>> = mutableSetOf(),
+    roller: MutableSet<Rolle> = mutableSetOf()
+) : Faktum<R>(faktumId, navn, avhengigeFakta, roller) {
     private val seksjoner = mutableListOf<Seksjon>()
 
     override fun clazz() = clazz
@@ -62,5 +68,11 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(faktumId: FaktumId,
                 )
             }
         }
+    }
+
+    override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
+        if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
+        val avhengigheter = avhengigeFakta.map { it.bygg(byggetFakta) }.toMutableSet()
+        return TemplateFaktum(faktumId, navn, clazz, avhengigheter, roller).also { byggetFakta[faktumId] = it }
     }
 }

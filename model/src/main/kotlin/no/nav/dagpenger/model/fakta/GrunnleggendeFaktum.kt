@@ -22,6 +22,13 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         tilstand = Kjent
     }
 
+    override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
+        if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
+        val avhengigheter = avhengigeFakta.map { it.bygg(byggetFakta) }.toMutableSet()
+
+        return GrunnleggendeFaktum(faktumId, navn, clazz, avhengigheter, roller).also { byggetFakta[faktumId] = it }
+    }
+
     override fun svar(): R = tilstand.svar(this)
 
     override fun erBesvart() = tilstand == Kjent

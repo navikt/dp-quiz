@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.søknad
 
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
@@ -8,11 +9,30 @@ import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.util.UUID
 
-class Søknad private constructor(private val uuid: UUID, private val seksjoner: MutableList<Seksjon>) : MutableList<Seksjon> by seksjoner {
-    constructor(vararg seksjoner: Seksjon) : this(UUID.randomUUID(), seksjoner.toMutableList())
+class Søknad private constructor(
+    internal val fakta2: Fakta,
+    private val rootSubsumsjon: Subsumsjon,
+    private val uuid: UUID,
+    private val seksjoner: MutableList<Seksjon>
+) : MutableList<Seksjon> by seksjoner {
+
+    constructor(vararg seksjoner: Seksjon) : this(
+        Fakta("", mutableMapOf()),
+        TomSubsumsjon,
+        UUID.randomUUID(),
+        seksjoner.toMutableList()
+    )
+
+    constructor(fakta: Fakta, rootSubsumsjon: Subsumsjon, vararg seksjoner: Seksjon) : this(
+        fakta,
+        rootSubsumsjon,
+        UUID.randomUUID(),
+        seksjoner.toMutableList()
+    )
 
     internal val fakta: MutableMap<FaktumId, Faktum<*>>
 
