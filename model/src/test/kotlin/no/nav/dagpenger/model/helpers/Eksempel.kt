@@ -1,17 +1,15 @@
 package no.nav.dagpenger.model.helpers
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
+import no.nav.dagpenger.model.fakta.faktum
+import no.nav.dagpenger.model.fakta.template
+import no.nav.dagpenger.model.regel.MAKS_DATO
 import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
@@ -33,54 +31,53 @@ import java.time.LocalDate
 
 internal class Eksempel {
 
-    private val ff1Boolean = ja nei "f1" id 1
-    private val ff2Dato = dato faktum "f2" id 2
-    private val ff3Dato = dato faktum "f3" id 3
-    private val ff4Dato = dato faktum "f4" id 4
-    private val ff5Dato = dato faktum "f5" id 5
-    private val ff6Inntekt = inntekt faktum "f6" id 6
-    private val ff7Inntekt = inntekt faktum "f7" id 7
-    private val ff8Inntekt = inntekt faktum "f8" id 8
-    private val ff9Inntekt = inntekt faktum "f9" id 9
-    private val ff10Boolean = ja nei "f10" id 10
-    private val ff11Dokument = dokument faktum "f11" id 11 
-    private val ff12Boolean =  ja nei "f12" id 12 
-    private val ff13Dato = dato faktum "f13" id 13
-    private val ff14Boolean = ja nei "f14" id 14
-    private val ff15Int = heltall faktum "f15" id 15
-    private val ff16Int = heltall faktum "f16" id 16
-    private val ff17Boolean = ja nei "f17" id 17
-    private val ff18Boolean = ja nei "f18" id 18
-    private val ff19Boolean = ja nei "f19" id 19
+    private val fn1Boolean = FaktumNavn(1, "f1")
+    private val fn2Dato = FaktumNavn(2, "f2")
+    private val fn3Dato = FaktumNavn(3, "f3")
+    private val fn4Dato = FaktumNavn(4, "f4")
+    private val fn5Dato = FaktumNavn(5, "f5")
+    private val fn_3_4_5Dato = FaktumNavn(345, "345")
+    private val fn6Inntekt = FaktumNavn(6, "f6")
+    private val fn7Inntekt = FaktumNavn(7, "f7")
+    private val fn8Inntekt = FaktumNavn(8, "f8")
+    private val fn9Inntekt = FaktumNavn(9, "f9")
+    private val fn10Boolean = FaktumNavn(10, "f10")
+    private val fn11Dokument = FaktumNavn(11, "f11")
+    private val fn12Boolean = FaktumNavn(12, "f12")
+    private val fn13Dato = FaktumNavn(13, "f13")
+    private val fn14Boolean = FaktumNavn(14, "f14")
+    private val fn15Int = FaktumNavn(15, "f15")
+    private val fn16Int = FaktumNavn(16, "f16")
+    private val fn17Boolean = FaktumNavn(17, "f17")
+    private val fn18Boolean = FaktumNavn(18, "f18")
+    private val fn19Boolean = FaktumNavn(19, "f19")
 
-    private val p1Boolean = ff1Boolean.faktum
-    private val p2Dato = ff2Dato.faktum
-    private val p3Dato = ff3Dato.faktum
-    private val p4Dato = ff4Dato.faktum
-    private val p5Dato = ff5Dato.faktum
-    private val p6Inntekt = ff6Inntekt.faktum
-    private val p7Inntekt = ff7Inntekt.faktum
-    private val p8Inntekt = ff8Inntekt.faktum
-    private val p9Inntekt = ff9Inntekt.faktum
-    private val p10Boolean = ff10Boolean.faktum
-    private val p11Dokument = ff11Dokument.faktum
-    private val p12Boolean = ff12Boolean.faktum.apply {
+    private val p1Boolean = fn1Boolean.faktum(Boolean::class.java)
+    private val p2Dato = fn2Dato.faktum(LocalDate::class.java)
+    private val p3Dato = fn3Dato.faktum(LocalDate::class.java)
+    private val p4Dato = fn4Dato.faktum(LocalDate::class.java)
+    private val p5Dato = fn5Dato.faktum(LocalDate::class.java)
+    private val p_3_4_5Dato = listOf(p3Dato, p4Dato, p5Dato).faktum(fn_3_4_5Dato, MAKS_DATO)
+    private val p6Inntekt = fn6Inntekt.faktum(Inntekt::class.java)
+    private val p7Inntekt = fn7Inntekt.faktum(Inntekt::class.java)
+    private val p8Inntekt = fn8Inntekt.faktum(Inntekt::class.java)
+    private val p9Inntekt = fn9Inntekt.faktum(Inntekt::class.java)
+    private val p10Boolean = fn10Boolean.faktum(Boolean::class.java)
+    private val p11Dokument = fn11Dokument.faktum(Dokument::class.java)
+    private val p12Boolean = fn12Boolean.faktum(Boolean::class.java).apply {
         this avhengerAv p11Dokument
     }
-    private val p13Dato = ff13Dato.faktum
-    private val p14Boolean = ff14Boolean.faktum
-    private val p16Int = ff16Int.template
-    private val p17Boolean = ff17Boolean.template
-    private val p18Boolean = ff18Boolean.template
-    private val p19Boolean = ff19Boolean.faktum.apply {
+    private val p13Dato = fn13Dato.faktum(LocalDate::class.java)
+    private val p14Boolean = fn14Boolean.faktum(Boolean::class.java)
+    private val p16Int = fn16Int.template(Int::class.java)
+    private val p17Boolean = fn17Boolean.template(Boolean::class.java)
+    private val p18Boolean = fn18Boolean.template(Boolean::class.java)
+    private val p19Boolean = fn19Boolean.faktum(Boolean::class.java).apply {
         this avhengerAv p2Dato
         this avhengerAv p13Dato
     }
-    
-    private val p15Int = ff15Int.faktum(p16Int, p17Boolean, p18Boolean)
-    private val ff_3_4_5Dato = maks dato "345" av p3Dato og p4Dato og p5Dato 
-    private val p_3_4_5Dato = ff_3_4_5Dato.faktum
-    
+    private val p15Int = fn15Int.faktum(Int::class.java, p16Int, p17Boolean, p18Boolean)
+
     private val datosjekk = "datosjekk".alle(
         p1Boolean er true,
         p2Dato etter p_3_4_5Dato,
@@ -146,12 +143,12 @@ internal class Eksempel {
     internal lateinit var seksjon7: Seksjon
     internal lateinit var seksjon8: Seksjon
 
-    private lateinit var prototypeSøknad: Søknad
+    private lateinit var _søknad: Søknad
     private lateinit var _rootSubsumsjon: Subsumsjon
 
     internal val søknad: Søknad get() {
-        if (!this::prototypeSøknad.isInitialized) byggModell()
-        return prototypeSøknad
+        if (!this::_søknad.isInitialized) byggModell()
+        return _søknad
     }
 
     internal val rootSubsumsjon: Subsumsjon get() {
@@ -160,44 +157,40 @@ internal class Eksempel {
     }
 
     private fun byggModell() {
-        // f1Boolean = fn1Boolean.faktum(Boolean::class.java)
-        // f2Dato = fn2Dato.faktum(LocalDate::class.java)
-        // f3Dato = fn3Dato.faktum(LocalDate::class.java)
-        // f4Dato = fn4Dato.faktum(LocalDate::class.java)
-        // f5Dato = fn5Dato.faktum(LocalDate::class.java)
-        // f_3_4_5Dato = listOf(f3Dato, p4Dato, p5Dato).faktum(fn_3_4_5Dato, MAKS_DATO)
-        // f6Inntekt = fn6Inntekt.faktum(Inntekt::class.java)
-        // f7Inntekt = fn7Inntekt.faktum(Inntekt::class.java)
-        // f8Inntekt = fn8Inntekt.faktum(Inntekt::class.java)
-        // f9Inntekt = fn9Inntekt.faktum(Inntekt::class.java)
-        // f10Boolean = fn10Boolean.faktum(Boolean::class.java)
-        // f11Dokument = fn11Dokument.faktum(Dokument::class.java)
-        // f12Boolean = fn12Boolean.faktum(Boolean::class.java).apply {
-        //     this avhengerAv f11Dokument
-        // }
-        // f13Dato = fn13Dato.faktum(LocalDate::class.java)
-        // f14Boolean = fn14Boolean.faktum(Boolean::class.java)
-        // f16Int = fn16Int.template(Int::class.java)
-        // f17Boolean = fn17Boolean.template(Boolean::class.java)
-        // f18Boolean = fn18Boolean.template(Boolean::class.java)
-        // f19Boolean = fn19Boolean.faktum(Boolean::class.java)
-        // f15Int = fn15Int.faktum(Int::class.java, p16Int, p17Boolean, p18Boolean)
+        f1Boolean = fn1Boolean.faktum(Boolean::class.java)
+        f2Dato = fn2Dato.faktum(LocalDate::class.java)
+        f3Dato = fn3Dato.faktum(LocalDate::class.java)
+        f4Dato = fn4Dato.faktum(LocalDate::class.java)
+        f5Dato = fn5Dato.faktum(LocalDate::class.java)
+        f_3_4_5Dato = listOf(f3Dato, f4Dato, f5Dato).faktum(fn_3_4_5Dato, MAKS_DATO)
+        f6Inntekt = fn6Inntekt.faktum(Inntekt::class.java)
+        f7Inntekt = fn7Inntekt.faktum(Inntekt::class.java)
+        f8Inntekt = fn8Inntekt.faktum(Inntekt::class.java)
+        f9Inntekt = fn9Inntekt.faktum(Inntekt::class.java)
+        f10Boolean = fn10Boolean.faktum(Boolean::class.java)
+        f11Dokument = fn11Dokument.faktum(Dokument::class.java)
+        f12Boolean = fn12Boolean.faktum(Boolean::class.java).apply {
+            this avhengerAv f11Dokument
+        }
+        f13Dato = fn13Dato.faktum(LocalDate::class.java)
+        f14Boolean = fn14Boolean.faktum(Boolean::class.java)
+        f16Int = fn16Int.template(Int::class.java)
+        f17Boolean = fn17Boolean.template(Boolean::class.java)
+        f18Boolean = fn18Boolean.template(Boolean::class.java)
+        f19Boolean = fn19Boolean.faktum(Boolean::class.java)
+        f15Int = fn15Int.faktum(Int::class.java, f16Int, f17Boolean, f18Boolean)
 
-        seksjon1 = Seksjon("seksjon1", Rolle.nav, p1Boolean, p2Dato)
-        seksjon2 = Seksjon("seksjon2", Rolle.nav, p6Inntekt, p7Inntekt, p8Inntekt, p9Inntekt)
-        seksjon3 = Seksjon("seksjon3", Rolle.nav, p15Int, p16Int)
-        seksjon4 = Seksjon("seksjon4", Rolle.søker, p3Dato, p4Dato, p5Dato, p_3_4_5Dato, p13Dato)
-        seksjon5 = Seksjon("seksjon5", Rolle.søker, p10Boolean, p11Dokument)
-        seksjon6 = Seksjon("seksjon6", Rolle.søker, p15Int)
-        seksjon7 = Seksjon("seksjon7", Rolle.søker, p16Int, p17Boolean)
-        seksjon8 = Seksjon("seksjon8", Rolle.saksbehandler, p6Inntekt, p7Inntekt, p12Boolean, p14Boolean, p18Boolean, p19Boolean)
+        seksjon1 = Seksjon("seksjon1", Rolle.nav, f1Boolean, f2Dato)
+        seksjon2 = Seksjon("seksjon2", Rolle.nav, f6Inntekt, f7Inntekt, f8Inntekt, f9Inntekt)
+        seksjon3 = Seksjon("seksjon3", Rolle.nav, f15Int, f16Int)
+        seksjon4 = Seksjon("seksjon4", Rolle.søker, f3Dato, f4Dato, f5Dato, f_3_4_5Dato, f13Dato)
+        seksjon5 = Seksjon("seksjon5", Rolle.søker, f10Boolean, f11Dokument)
+        seksjon6 = Seksjon("seksjon6", Rolle.søker, f15Int)
+        seksjon7 = Seksjon("seksjon7", Rolle.søker, f16Int, f17Boolean)
+        seksjon8 = Seksjon("seksjon8", Rolle.saksbehandler, f6Inntekt, f7Inntekt, f12Boolean, f14Boolean, f18Boolean, f19Boolean)
 
-        prototypeSøknad = Søknad(prototypeSubsumsjon, seksjon1, seksjon2, seksjon3, seksjon4, seksjon5, seksjon6, seksjon7, seksjon8)
+        _søknad = Søknad(seksjon1, seksjon2, seksjon3, seksjon4, seksjon5, seksjon6, seksjon7, seksjon8)
 
-        søknad = prototypeSøknad.bygg()
-
-        //_rootSubsumsjon = prototypeSubsumsjon.deepCopy(_søknad)
-
-        f1Boolean = søknad.finnFaktum("1")
+        _rootSubsumsjon = prototypeSubsumsjon.deepCopy(_søknad)
     }
 }

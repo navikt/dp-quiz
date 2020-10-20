@@ -16,8 +16,6 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     override fun clazz() = clazz
 
-    override fun bygg(): Faktum<R> = GrunnleggendeFaktum(faktumId, navn, clazz, avhengigeFakta, roller)
-
     override fun besvar(r: R, rolle: Rolle) = this.apply {
         super.besvar(r, rolle)
         gjeldendeSvar = r
@@ -74,5 +72,4 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
         override fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>) = faktum.gjeldendeSvar
     }
-
 }
