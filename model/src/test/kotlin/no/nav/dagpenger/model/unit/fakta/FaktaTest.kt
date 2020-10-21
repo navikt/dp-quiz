@@ -88,16 +88,17 @@ class FaktaTest {
     }
 
     @Test
-    fun `test`() {
+    fun `sortere utledede faktum`() {
         val fakta = Fakta(
             dato faktum "f3" id 3,
             dato faktum "f4" id 4,
             dato faktum "f5" id 5,
+            maks dato "maksdato" av 6 og 7 id 8,
             maks dato "maksdato" av 5 og 7 id 6,
-            maks dato "maksdato" av 3 og 4 id 7
+            maks dato "maksdato" av 3 og 4 id 7,
         )
 
-        assertIder(fakta, 3, 4, 5, 7, 6)
+        assertIder(fakta, 3, 4, 5, 7, 6, 8)
     }
 
     private fun assertIder(fakta: Fakta, vararg ider: Int) {
