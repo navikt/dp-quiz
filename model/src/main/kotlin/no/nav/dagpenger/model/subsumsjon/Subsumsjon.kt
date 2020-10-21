@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
@@ -27,6 +28,8 @@ abstract class Subsumsjon protected constructor(
     }
 
     abstract fun deepCopy(søknad: Søknad): Subsumsjon
+
+    internal abstract fun bygg(fakta: Fakta): Subsumsjon
 
     abstract fun deepCopy(): Subsumsjon
 

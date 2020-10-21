@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Faktum.Companion.deepCopy
 import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand.Ukjent
@@ -36,6 +37,13 @@ open class EnkelSubsumsjon protected constructor(
     ).also {
         it.søknad = søknad
     }
+
+    override fun bygg(fakta: Fakta) = deepCopy(
+        regel.bygg(fakta),
+        this.fakta.map{fakta.id(it.faktumId)}.toSet(),
+        gyldigSubsumsjon.bygg(fakta),
+        ugyldigSubsumsjon.bygg(fakta)
+    )
 
     override fun deepCopy() = deepCopy(
         regel,

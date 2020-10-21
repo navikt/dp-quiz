@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
@@ -20,6 +21,13 @@ class MakroSubsumsjon private constructor(
     ).also {
         it.søknad = søknad
     }
+
+    override fun bygg(fakta: Fakta) = MakroSubsumsjon(
+        navn,
+        child.bygg(fakta),
+        gyldigSubsumsjon.bygg(fakta),
+        ugyldigSubsumsjon.bygg(fakta)
+    )
 
     override fun deepCopy(): Subsumsjon {
         return MakroSubsumsjon(

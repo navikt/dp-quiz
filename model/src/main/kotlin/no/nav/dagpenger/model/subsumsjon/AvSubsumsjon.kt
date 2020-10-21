@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Dokument
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.regel.Regel
@@ -43,6 +44,14 @@ internal class AvSubsumsjon private constructor(
     ).also {
         it.søknad = søknad
     }
+
+    override fun bygg(fakta: Fakta) = AvSubsumsjon(
+        regel.bygg(fakta),
+        fakta.dokument(dokument.faktumId),
+        fakta.ja(godkjenning.faktumId),
+        gyldigSubsumsjon.bygg(fakta),
+        ugyldigSubsumsjon.bygg(fakta)
+    )
 
     override fun deepCopy() = AvSubsumsjon(
         regel,

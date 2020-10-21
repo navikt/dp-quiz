@@ -60,6 +60,8 @@ class Søknad private constructor(
 
     fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
 
+    //internal fun bygg(fakta: Fakta): Søknad
+
     private class MapBuilder(søknad: Søknad) : SøknadVisitor {
         val resultat = mutableMapOf<FaktumId, Faktum<*>>()
         init {

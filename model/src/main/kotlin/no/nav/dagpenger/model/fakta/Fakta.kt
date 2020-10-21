@@ -34,20 +34,31 @@ class Fakta private constructor(
         }
     )
 
-    infix fun id(rootId: Int) = id(rootId.toString())
+    infix fun id(rootId: Int) = id(FaktumId(rootId))
 
-    infix fun dokument(rootId: Int) = id(rootId.toString()) as Faktum<Dokument>
+    infix fun id(id: String) = id(FaktumId(id))
 
-    infix fun inntekt(rootId: Int) = id(rootId.toString()) as Faktum<Inntekt>
+    internal infix fun id(faktumId: FaktumId) = faktumMap[faktumId] ?: throw IllegalArgumentException("Ukjent id $faktumId")
 
-    infix fun ja(rootId: Int) = id(rootId.toString()) as Faktum<Boolean>
+    infix fun dokument(rootId: Int) = dokument(FaktumId(rootId))
 
-    infix fun dato(rootId: Int) = id(rootId.toString()) as Faktum<LocalDate>
+    internal infix fun dokument(faktumId: FaktumId) = id(faktumId) as Faktum<Dokument>
 
-    infix fun id(id: String) =
-        faktumMap[FaktumId(id)] ?: throw IllegalArgumentException("Ukjent id $id")
+    infix fun inntekt(rootId: Int) = inntekt(FaktumId(rootId))
 
-    infix fun heltall(rootId: Int) = id(rootId.toString()) as Faktum<Int>
+    internal infix fun inntekt(faktumId: FaktumId) = id(faktumId) as Faktum<Inntekt>
+
+    infix fun ja(rootId: Int) = ja(FaktumId(rootId))
+
+    internal infix fun ja(faktumId: FaktumId) = id(faktumId) as Faktum<Boolean>
+
+    infix fun dato(rootId: Int) = dato(FaktumId(rootId))
+
+    internal infix fun dato(faktumId: FaktumId) = id(faktumId) as Faktum<LocalDate>
+
+    infix fun heltall(rootId: Int) = heltall(FaktumId(rootId))
+
+    internal infix fun heltall(faktumId: FaktumId) = id(faktumId) as Faktum<Int>
 
     fun bygg(fnr: String): Fakta {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
