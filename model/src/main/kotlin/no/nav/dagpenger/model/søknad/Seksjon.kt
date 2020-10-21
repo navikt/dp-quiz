@@ -55,6 +55,7 @@ class Seksjon private constructor(
             (eksisterendeFaktum == null).also {
                 if (it) {
                     fakta.add(faktum)
+                    søknad.add(faktum)
                     søknad.fakta[faktum.faktumId] = faktum
                 } else {
                     fakta.add(eksisterendeFaktum as GrunnleggendeFaktum<*>)

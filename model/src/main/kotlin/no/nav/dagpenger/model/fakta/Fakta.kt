@@ -4,7 +4,11 @@ import no.nav.dagpenger.model.factory.FaktumFactory
 import java.time.LocalDate
 import java.util.UUID
 
-class Fakta private constructor(fnr: String, uuid: UUID, private val faktumMap: MutableMap<FaktumId, Faktum<*>>): MutableList<Faktum<*>> by faktumMap.values.toMutableList() {
+class Fakta private constructor(
+    fnr: String,
+    uuid: UUID,
+    private val faktumMap: MutableMap<FaktumId, Faktum<*>>
+): MutableList<Faktum<*>> by faktumMap.values.toMutableList() {
 
     internal constructor(fnr: String, faktumMap: MutableMap<FaktumId, Faktum<*>>) : this(fnr, UUID.randomUUID(), faktumMap)
 

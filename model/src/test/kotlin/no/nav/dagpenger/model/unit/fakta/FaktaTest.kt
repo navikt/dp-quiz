@@ -11,6 +11,7 @@ import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -71,13 +72,13 @@ class FaktaTest {
     @Test
     fun `fakta templater `() {
         val fakta = Fakta(
-            heltall faktum "f15" id 15 genererer 16 og 17 og 18,
-            heltall faktum "f16" id 16,
-            ja nei "f17" id 17,
-            ja nei "f18" id 18
+            heltall faktum "antall barn" id 15 genererer 16 og 17 og 18,
+            heltall faktum "alder barn" id 16,
+            ja nei "skal du ha penger for barn" id 17,
+            ja nei "annen forelder får støtte" id 18
         )
-        val seksjon = Seksjon("seksjon", Rolle.søker, fakta id 15, fakta id 16, fakta id 17, fakta id 18)
-        Søknad(seksjon)
+        val barneSeksjon = Seksjon("barneseksjon", Rolle.søker, fakta id 15, fakta id 16, fakta id 17, fakta id 18)
+        Søknad(fakta, TomSubsumsjon, barneSeksjon)
         assertEquals(TemplateFaktum::class, fakta.id(16)::class)
         assertEquals(GeneratorFaktum::class, fakta.id(15)::class)
         assertEquals(4, fakta.size)
