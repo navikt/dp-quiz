@@ -4,12 +4,12 @@ import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
-abstract class Faktum<R : Comparable<R>>internal constructor(
+abstract class Faktum<R : Comparable<R>> internal constructor(
     internal val faktumId: FaktumId,
     val navn: String,
     protected val avhengigeFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     protected val roller: MutableSet<Rolle> = mutableSetOf()
-) {
+) : Comparable<Faktum<*>> {
 
     val id: String get() = faktumId.id
 
@@ -17,6 +17,7 @@ abstract class Faktum<R : Comparable<R>>internal constructor(
         private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, søknad: Søknad) {
             faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { søknad.faktum(it.faktumId) })
         }
+
         internal fun Set<Faktum<*>>.deepCopy(søknad: Søknad): Set<Faktum<*>> = this
             .mapNotNull { prototype ->
                 søknad.faktum(prototype.faktumId)?.also {
@@ -43,9 +44,11 @@ abstract class Faktum<R : Comparable<R>>internal constructor(
         if (rolle !in roller) throw IllegalAccessError("Rollen $rolle kan ikke besvare faktum")
         avhengigeFakta.forEach { it.tilUbesvart() }
     }
+
     protected open fun tilUbesvart() {
         throw IllegalStateException("Kan ikke sette utleda faktum til ubesvart")
     }
+
     abstract fun svar(): R
 
     abstract fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>>
@@ -76,6 +79,19 @@ abstract class Faktum<R : Comparable<R>>internal constructor(
     internal open fun tilTemplate(): TemplateFaktum<R> {
         throw IllegalArgumentException("Kan ikke lage template av faktum: $navn $id")
     }
+
+    override fun compareTo(challenger: Faktum<*>) =
+        when (this::class.java to challenger::class.java) {
+            GrunnleggendeFaktum::class.java to TemplateFaktum::class.java -> -1
+            TemplateFaktum::class.java to GrunnleggendeFaktum::class.java -> 1
+            GeneratorFaktum::class.java to TemplateFaktum::class.java -> 1
+            TemplateFaktum::class.java to GeneratorFaktum::class.java -> -1
+            GeneratorFaktum::class.java to UtledetFaktum::class.java -> -1
+            UtledetFaktum::class.java to GeneratorFaktum::class.java -> 1
+            else -> {
+                this.faktumId.compareTo(challenger.faktumId)
+            }
+        }
 }
 
 fun <R : Comparable<R>> Collection<Faktum<R>>.faktum(navn: FaktumNavn, regel: FaktaRegel<R>): Faktum<R> =
@@ -86,6 +102,7 @@ typealias FaktaRegel <R> = (UtledetFaktum<R>) -> R
 
 fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>) = GrunnleggendeFaktum<R>(this.faktumId, this.navn, clazz)
 
-fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>, vararg templates: TemplateFaktum<*>) = GeneratorFaktum(this.faktumId, this.navn, templates.asList())
+fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>, vararg templates: TemplateFaktum<*>) =
+    GeneratorFaktum(this.faktumId, this.navn, templates.asList())
 
 fun <R : Comparable<R>> FaktumNavn.template(clazz: Class<R>) = TemplateFaktum<R>(this.faktumId, this.navn, clazz)

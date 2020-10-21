@@ -34,22 +34,6 @@ class Fakta private constructor(
         }
     )
 
-    companion object {
-        private val faktumComparator = Comparator<Faktum<*>> { champion, challenger ->
-            when (champion::class.java to challenger::class.java) {
-                GrunnleggendeFaktum::class.java to TemplateFaktum::class.java -> -1
-                TemplateFaktum::class.java to GrunnleggendeFaktum::class.java -> 1
-                GeneratorFaktum::class.java to TemplateFaktum::class.java -> 1
-                TemplateFaktum::class.java to GeneratorFaktum::class.java -> -1
-                GeneratorFaktum::class.java to UtledetFaktum::class.java -> -1
-                UtledetFaktum::class.java to GeneratorFaktum::class.java -> 1
-                else -> {
-                    champion.faktumId.compareTo(challenger.faktumId)
-                }
-            }
-        }
-    }
-
     infix fun id(rootId: Int) = id(rootId.toString())
 
     infix fun dokument(rootId: Int) = id(rootId.toString()) as Faktum<Dokument>
@@ -72,6 +56,6 @@ class Fakta private constructor(
     }
 
     override fun iterator(): MutableIterator<Faktum<*>> {
-        return faktumMap.values.sortedWith(faktumComparator).toMutableList().iterator()
+        return faktumMap.values.sorted().toMutableList().iterator()
     }
 }
