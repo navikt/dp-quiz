@@ -56,6 +56,18 @@ class Fakta private constructor(
     }
 
     override fun iterator(): MutableIterator<Faktum<*>> {
-        return faktumMap.values.sorted().toMutableList().iterator()
+        return faktumMap.values.sorted().sortx().iterator()
+    }
+
+    private fun List<Faktum<*>>.sortx(): MutableList<Faktum<*>> {
+        this.forEachIndexed { indeks, faktum ->
+            if (faktum !is UtledetFaktum) return@forEachIndexed
+            if (faktum.child(this, indeks)) return@forEachIndexed
+            val nyListe = this.toMutableList().also {
+                it.add(it.removeAt(indeks))
+            }
+            return@sortx nyListe.sortx()
+        }
+        return this.toMutableList()
     }
 }

@@ -84,6 +84,23 @@ class FaktaTest {
         assertEquals(4, fakta.size)
         (fakta heltall 15).besvar(2, Rolle.søker)
         assertEquals(10, fakta.size)
-        assertEquals(listOf(fakta id 16, fakta id 17, fakta id 18, fakta id 15), fakta.map { it })
+        assertIder(fakta, 16, 17, 18, 15)
+    }
+
+    @Test
+    fun `test`() {
+        val fakta = Fakta(
+            dato faktum "f3" id 3,
+            dato faktum "f4" id 4,
+            dato faktum "f5" id 5,
+            maks dato "maksdato" av 5 og 7 id 6,
+            maks dato "maksdato" av 3 og 4 id 7
+        )
+
+        assertIder(fakta, 3, 4, 5, 7, 6)
+    }
+
+    private fun assertIder(fakta: Fakta, vararg ider: Int) {
+        assertEquals(ider.map { it.toString() }, fakta.map { it.id })
     }
 }

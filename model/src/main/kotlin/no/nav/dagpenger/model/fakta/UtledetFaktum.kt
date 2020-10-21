@@ -48,4 +48,8 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
         val childFakta = childFakta.map { it.bygg(byggetFakta) as Faktum<R> }.toMutableSet()
         return UtledetFaktum(faktumId, navn, childFakta, regel).also { byggetFakta[faktumId] = it }
     }
+
+    internal fun child(faktaList: List<Faktum<*>>, indeks: Int) = childFakta.all { faktum ->
+        faktaList.indexOf(faktum) < indeks
+    }
 }
