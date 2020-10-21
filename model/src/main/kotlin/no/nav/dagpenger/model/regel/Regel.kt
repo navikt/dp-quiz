@@ -36,8 +36,8 @@ private class Etter(private val senesteDato: Faktum<LocalDate>, private val tidl
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
         return Etter(
-            senesteDato.med(indeks, søknad) as Faktum<LocalDate>,
-            tidligsteDato.med(indeks, søknad) as Faktum<LocalDate>
+            senesteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>,
+            tidligsteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>
         )
     }
 }
@@ -62,8 +62,8 @@ private class Før(private val tidligsteDato: Faktum<LocalDate>, private val sen
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
         return Før(
-            tidligsteDato.med(indeks, søknad) as Faktum<LocalDate>,
-            senesteDato.med(indeks, søknad) as Faktum<LocalDate>
+            tidligsteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>,
+            senesteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>
         )
     }
 }
@@ -88,8 +88,8 @@ private class IkkeFør(private val tidligsteDato: Faktum<LocalDate>, private val
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
         return IkkeFør(
-            tidligsteDato.med(indeks, søknad) as Faktum<LocalDate>,
-            senesteDato.med(indeks, søknad) as Faktum<LocalDate>
+            tidligsteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>,
+            senesteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>
         )
     }
 }
@@ -113,8 +113,8 @@ private class Minst(private val faktisk: Faktum<Inntekt>, private val terskel: F
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
         return Minst(
-            faktisk.med(indeks, søknad) as Faktum<Inntekt>,
-            terskel.med(indeks, søknad) as Faktum<Inntekt>
+            faktisk.deepCopy(indeks, søknad) as Faktum<Inntekt>,
+            terskel.deepCopy(indeks, søknad) as Faktum<Inntekt>
         )
     }
 }
@@ -135,7 +135,7 @@ private class Er<T : Comparable<T>>(private val faktum: Faktum<*>, private val o
 
     override fun bygg(fakta: Fakta) = Er(fakta.id(faktum.faktumId) as Faktum<T>, other)
 
-    override fun deepCopy(indeks: Int, søknad: Søknad) = Er(faktum.med(indeks, søknad) as Faktum<T>, other)
+    override fun deepCopy(indeks: Int, søknad: Søknad) = Er(faktum.deepCopy(indeks, søknad) as Faktum<T>, other)
 }
 
 infix fun <T : Comparable<T>> Faktum<T>.er(other: T): Subsumsjon {
@@ -168,7 +168,7 @@ private class ErIkke(private val faktum: Faktum<Boolean>) : Regel {
 
     override fun bygg(fakta: Fakta) = ErIkke(fakta.ja(faktum.faktumId))
 
-    override fun deepCopy(indeks: Int, søknad: Søknad) = ErIkke(faktum.med(indeks, søknad) as Faktum<Boolean>)
+    override fun deepCopy(indeks: Int, søknad: Søknad) = ErIkke(faktum.deepCopy(indeks, søknad) as Faktum<Boolean>)
 }
 
 fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
@@ -186,7 +186,7 @@ private class Har(private val faktum: Faktum<Boolean>) : Regel {
 
     override fun bygg(fakta: Fakta) = Har(fakta.ja(faktum.faktumId))
 
-    override fun deepCopy(indeks: Int, søknad: Søknad) = Har(faktum.med(indeks, søknad) as Faktum<Boolean>)
+    override fun deepCopy(indeks: Int, søknad: Søknad) = Har(faktum.deepCopy(indeks, søknad) as Faktum<Boolean>)
 }
 
 fun har(faktum: Faktum<Boolean>): Subsumsjon {
@@ -207,7 +207,7 @@ private class Av(private val godkjenning: Faktum<Boolean>, private val dokument:
         Av(fakta.ja(godkjenning.faktumId), fakta.dokument(dokument.faktumId))
 
     override fun deepCopy(indeks: Int, søknad: Søknad) =
-        Av(godkjenning.med(indeks, søknad) as Faktum<Boolean>, dokument.med(indeks, søknad) as Faktum<Dokument>)
+        Av(godkjenning.deepCopy(indeks, søknad) as Faktum<Boolean>, dokument.deepCopy(indeks, søknad) as Faktum<Dokument>)
 }
 
 infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon {
@@ -223,7 +223,7 @@ private class Under(private val alder: Faktum<Int>, private val maksAlder: Int) 
     override fun bygg(fakta: Fakta) = Under(fakta.heltall(alder.faktumId), maksAlder)
 
     override fun deepCopy(indeks: Int, søknad: Søknad) =
-        Under(alder.med(indeks, søknad) as Faktum<Int>, maksAlder)
+        Under(alder.deepCopy(indeks, søknad) as Faktum<Int>, maksAlder)
 }
 
 infix fun Faktum<Int>.under(maksAlder: Int): Subsumsjon {

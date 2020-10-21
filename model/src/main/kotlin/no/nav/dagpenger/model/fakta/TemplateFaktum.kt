@@ -38,7 +38,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
 
     override fun add(seksjon: Seksjon) = seksjoner.add(seksjon)
 
-    override fun med(indeks: Int, søknad: Søknad): Faktum<*> {
+    override fun deepCopy(indeks: Int, søknad: Søknad): Faktum<*> {
         return søknad.fakta[faktumId.indeks(indeks)]
             ?: GrunnleggendeFaktum(
                 faktumId.indeks(indeks),

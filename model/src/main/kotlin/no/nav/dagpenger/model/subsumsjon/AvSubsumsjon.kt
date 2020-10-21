@@ -63,8 +63,8 @@ internal class AvSubsumsjon private constructor(
 
     override fun deepCopy(indeks: Int) = AvSubsumsjon(
         regel.deepCopy(indeks, søknad),
-        dokument.med(indeks, søknad) as Faktum<Dokument>,
-        godkjenning.med(indeks, søknad) as Faktum<Boolean>,
+        dokument.deepCopy(indeks, søknad) as Faktum<Dokument>,
+        godkjenning.deepCopy(indeks, søknad) as Faktum<Boolean>,
         gyldigSubsumsjon.deepCopy(indeks),
         ugyldigSubsumsjon.deepCopy(indeks)
     )

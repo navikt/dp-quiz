@@ -58,6 +58,10 @@ class Fakta private constructor(
 
     infix fun heltall(rootId: Int) = heltall(FaktumId(rootId))
 
+    infix fun generator(rootId: Int) = generator(FaktumId(rootId))
+
+    internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
+
     internal infix fun heltall(faktumId: FaktumId) = id(faktumId) as Faktum<Int>
 
     fun bygg(fnr: String): Fakta {

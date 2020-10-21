@@ -37,7 +37,7 @@ abstract class Subsumsjon protected constructor(
 
     internal abstract fun lokaltResultat(): Boolean?
 
-    abstract fun nesteFakta(): Set<GrunnleggendeFaktum<*>>
+    internal abstract fun nesteFakta(): Set<GrunnleggendeFaktum<*>>
 
     internal open fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisitGyldig(this, gyldigSubsumsjon)

@@ -40,7 +40,7 @@ internal class SøknaderTest {
                 Seksjon("seksjon", Rolle.søker, f.virkningstidspunkt),
             )
 
-        val finnFaktum = søknad.finnFaktum<LocalDate>("7")
+        val finnFaktum = søknad.faktum<LocalDate>("7")
         assertDoesNotThrow { finnFaktum }
         assertEquals("7", finnFaktum.id)
     }

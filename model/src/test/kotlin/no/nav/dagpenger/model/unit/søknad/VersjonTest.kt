@@ -30,7 +30,7 @@ internal class VersjonTest {
         val versjon = Versjon(prototypeFakta, prototypeSubsumsjon, mapOf(Versjon.Type.Web to prototypeSøknad))
 
         val søknad = versjon.søknad(fnr, Versjon.Type.Web)
-        søknad.fakta2.also { fakta ->
+        søknad.fakta.also { fakta ->
             assertEquals(TemplateFaktum::class, fakta.id(16)::class)
             assertEquals(GeneratorFaktum::class, fakta.id(15)::class)
             assertEquals(4, fakta.size)

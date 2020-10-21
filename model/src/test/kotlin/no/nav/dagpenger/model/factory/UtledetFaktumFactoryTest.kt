@@ -29,17 +29,17 @@ internal class UtledetFaktumFactoryTest {
         val factory = (maks dato "maks dato" av dato1 og dato2 og dato3 id 123).faktum()
 
         val søknad = Søknad(Seksjon("seksjon", Rolle.søker, dato1, dato2, dato3, factory))
-        val faktum = søknad.finnFaktum<LocalDate>("123")
+        val faktum = søknad.faktum<LocalDate>("123")
 
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
-        søknad.finnFaktum<LocalDate>("1").besvar(1.januar)
-        søknad.finnFaktum<LocalDate>("2").besvar(2.januar)
+        søknad.faktum<LocalDate>("1").besvar(1.januar)
+        søknad.faktum<LocalDate>("2").besvar(2.januar)
         assertFalse(faktum.erBesvart())
-        søknad.finnFaktum<LocalDate>("3").besvar(3.januar)
+        søknad.faktum<LocalDate>("3").besvar(3.januar)
         assertTrue(faktum.erBesvart())
         assertEquals(3.januar, faktum.svar())
-        søknad.finnFaktum<LocalDate>("1").besvar(4.januar)
+        søknad.faktum<LocalDate>("1").besvar(4.januar)
         assertEquals(4.januar, faktum.svar())
     }
 
@@ -50,17 +50,17 @@ internal class UtledetFaktumFactoryTest {
         val factory = (maks inntekt "maks inntekt" av inntekt1 og inntekt2 og inntekt3 id 123).faktum()
 
         val søknad = Søknad(Seksjon("seksjon", Rolle.søker, inntekt1, inntekt2, inntekt3, factory))
-        val faktum = søknad.finnFaktum<LocalDate>("123")
+        val faktum = søknad.faktum<LocalDate>("123")
 
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
-        søknad.finnFaktum<Inntekt>("1").besvar(260.årlig)
-        søknad.finnFaktum<Inntekt>("2").besvar(520.årlig)
+        søknad.faktum<Inntekt>("1").besvar(260.årlig)
+        søknad.faktum<Inntekt>("2").besvar(520.årlig)
         assertFalse(faktum.erBesvart())
-        søknad.finnFaktum<Inntekt>("3").besvar(130.årlig)
+        søknad.faktum<Inntekt>("3").besvar(130.årlig)
         assertTrue(faktum.erBesvart())
         assertEquals(520.årlig, faktum.svar())
-        søknad.finnFaktum<Inntekt>("1").besvar(1040.årlig)
+        søknad.faktum<Inntekt>("1").besvar(1040.årlig)
         assertEquals(1040.årlig, faktum.svar())
     }
 
@@ -71,17 +71,17 @@ internal class UtledetFaktumFactoryTest {
         val factory = (alle ja "alle ja" av jaNei1 og jaNei2 og jaNei3 id 123).faktum()
 
         val søknad = Søknad(Seksjon("seksjon", Rolle.søker, jaNei1, jaNei2, jaNei3, factory))
-        val faktum = søknad.finnFaktum<LocalDate>("123")
+        val faktum = søknad.faktum<LocalDate>("123")
 
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
-        søknad.finnFaktum<Boolean>("1").besvar(true)
-        søknad.finnFaktum<Boolean>("2").besvar(true)
+        søknad.faktum<Boolean>("1").besvar(true)
+        søknad.faktum<Boolean>("2").besvar(true)
         assertFalse(faktum.erBesvart())
-        søknad.finnFaktum<Boolean>("3").besvar(true)
+        søknad.faktum<Boolean>("3").besvar(true)
         assertTrue(faktum.erBesvart())
         assertEquals(true, faktum.svar())
-        søknad.finnFaktum<Boolean>("1").besvar(false)
+        søknad.faktum<Boolean>("1").besvar(false)
         assertEquals(false, faktum.svar())
     }
 }
