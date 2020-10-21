@@ -6,7 +6,7 @@ import java.util.UUID
 
 class Fakta private constructor(fnr: String, uuid: UUID, private val faktumMap: MutableMap<FaktumId, Faktum<*>>) {
 
-    constructor(fnr: String, faktumMap: MutableMap<FaktumId, Faktum<*>>) : this(fnr, UUID.randomUUID(), faktumMap)
+    internal constructor(fnr: String, faktumMap: MutableMap<FaktumId, Faktum<*>>) : this(fnr, UUID.randomUUID(), faktumMap)
 
     constructor(vararg factories: FaktumFactory<*>) : this(
         "",

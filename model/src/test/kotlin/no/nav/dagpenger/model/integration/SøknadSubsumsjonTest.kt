@@ -170,8 +170,6 @@ internal class SøknadSubsumsjonTest {
 
         m.f19Boolean.besvar(false, Rolle.saksbehandler)
         assertEquals(false, rootSubsumsjon.resultat())
-
-        assertMarshalling(m.søknad)
     }
 
     private fun assertMarshalling(original: Søknad) {
