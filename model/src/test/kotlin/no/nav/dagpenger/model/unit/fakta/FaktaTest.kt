@@ -26,6 +26,7 @@ class FaktaTest {
         val fakta = Fakta(ja nei "janei" id 3)
         assertFalse((fakta id 3).erBesvart())
         assertFalse((fakta id "3").erBesvart())
+        assertEquals(1, fakta.size)
         assertThrows<IllegalArgumentException> { fakta id 1 }
     }
 
@@ -37,6 +38,7 @@ class FaktaTest {
         )
 
         Søknad(Seksjon("seksjon", Rolle.søker, fakta id 11, fakta id 12))
+        assertEquals(2, fakta.size)
         fakta.dokument(11).besvar(Dokument(1.januar), Rolle.søker)
         fakta.ja(12).besvar(true, Rolle.søker)
 
@@ -55,6 +57,7 @@ class FaktaTest {
         )
 
         Søknad(Seksjon("seksjon", Rolle.søker, fakta id 345, fakta id 3, fakta id 4, fakta id 5))
+        assertEquals(4, fakta.size)
         fakta.dato(3).besvar(3.januar)
         fakta.dato(4).besvar(4.januar)
         assertFalse(fakta.id(345).erBesvart())
@@ -77,8 +80,8 @@ class FaktaTest {
         Søknad(seksjon)
         assertEquals(TemplateFaktum::class, fakta.id(16)::class)
         assertEquals(GeneratorFaktum::class, fakta.id(15)::class)
-        assertEquals(4, seksjon.size)
+        assertEquals(4, fakta.size)
         (fakta heltall 15).besvar(2, Rolle.søker)
-        assertEquals(10, seksjon.size)
+        assertEquals(10, fakta.size)
     }
 }
