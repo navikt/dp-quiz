@@ -84,5 +84,6 @@ class FaktaTest {
         assertEquals(4, fakta.size)
         (fakta heltall 15).besvar(2, Rolle.søker)
         assertEquals(10, fakta.size)
+        assertEquals(listOf(fakta id 16, fakta id 17, fakta id 18, fakta id 15), fakta.map { it })
     }
 }

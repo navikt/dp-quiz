@@ -8,9 +8,13 @@ class Fakta private constructor(
     fnr: String,
     uuid: UUID,
     private val faktumMap: MutableMap<FaktumId, Faktum<*>>
-): MutableList<Faktum<*>> by faktumMap.values.toMutableList() {
+) : MutableList<Faktum<*>> by faktumMap.values.toMutableList() {
 
-    internal constructor(fnr: String, faktumMap: MutableMap<FaktumId, Faktum<*>>) : this(fnr, UUID.randomUUID(), faktumMap)
+    internal constructor(fnr: String, faktumMap: MutableMap<FaktumId, Faktum<*>>) : this(
+        fnr,
+        UUID.randomUUID(),
+        faktumMap
+    )
 
     constructor(vararg factories: FaktumFactory<*>) : this(
         "",
@@ -29,6 +33,22 @@ class Fakta private constructor(
             }
         }
     )
+
+    companion object {
+        private val faktumComparator = Comparator<Faktum<*>> { champion, challenger ->
+            when (champion::class.java to challenger::class.java) {
+                GrunnleggendeFaktum::class.java to TemplateFaktum::class.java -> -1
+                TemplateFaktum::class.java to GrunnleggendeFaktum::class.java -> 1
+                GeneratorFaktum::class.java to TemplateFaktum::class.java -> 1
+                TemplateFaktum::class.java to GeneratorFaktum::class.java -> -1
+                GeneratorFaktum::class.java to UtledetFaktum::class.java -> -1
+                UtledetFaktum::class.java to GeneratorFaktum::class.java -> 1
+                else -> {
+                    champion.faktumId.compareTo(challenger.faktumId)
+                }
+            }
+        }
+    }
 
     infix fun id(rootId: Int) = id(rootId.toString())
 
@@ -49,5 +69,9 @@ class Fakta private constructor(
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktumMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
         return Fakta(fnr, mapOfFakta)
+    }
+
+    override fun iterator(): MutableIterator<Faktum<*>> {
+        return faktumMap.values.sortedWith(faktumComparator).toMutableList().iterator()
     }
 }

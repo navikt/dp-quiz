@@ -43,7 +43,7 @@ class Søknad private constructor(
         fakta = MapBuilder(this).resultat
     }
 
-    internal fun add (faktum: Faktum<*>) = fakta2.add(faktum)
+    internal fun add(faktum: Faktum<*>) = fakta2.add(faktum)
 
     fun <T : Comparable<T>> finnFaktum(id: String) = (fakta[FaktumId(id)] as Faktum<T>)
 

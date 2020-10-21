@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
-class FaktumId private constructor(private val rootId: Int, private val indeks: Int) {
+class FaktumId private constructor(private val rootId: Int, private val indeks: Int) : Comparable<FaktumId> {
 
     constructor(id: Int) : this(id, 0)
 
@@ -28,6 +28,13 @@ class FaktumId private constructor(private val rootId: Int, private val indeks: 
     fun indeks(indeks: Int) = FaktumId(rootId, indeks).also {
         require(this.indeks == 0) { "Kan ikke indeksere et allerede indeksert FaktumNavn, id: $id " }
         require(indeks != 0) { "Indeks må være en positiv integer større enn null" }
+    }
+
+    override fun compareTo(other: FaktumId): Int {
+        this.rootId.compareTo(other.rootId).also {
+            if (it != 0) return it
+        }
+        return this.indeks.compareTo(other.indeks)
     }
 }
 
