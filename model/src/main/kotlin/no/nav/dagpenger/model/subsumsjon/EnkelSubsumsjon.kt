@@ -40,7 +40,7 @@ open class EnkelSubsumsjon protected constructor(
 
     override fun bygg(fakta: Fakta) = deepCopy(
         regel.bygg(fakta),
-        this.fakta.map{fakta.id(it.faktumId)}.toSet(),
+        this.fakta.map { fakta.id(it.faktumId) }.toSet(),
         gyldigSubsumsjon.bygg(fakta),
         ugyldigSubsumsjon.bygg(fakta)
     )

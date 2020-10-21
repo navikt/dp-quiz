@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.søknad
 
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Rolle
@@ -62,4 +63,6 @@ class Seksjon private constructor(
                 }
             }
         }
+
+    internal fun bygg(fakta: Fakta) = Seksjon(navn, rolle, this.fakta.map { fakta.id(it.faktumId) }.toMutableSet())
 }

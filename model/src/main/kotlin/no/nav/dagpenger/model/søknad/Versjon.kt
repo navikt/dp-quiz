@@ -12,8 +12,7 @@ internal class Versjon(
     fun søknad(fnr: String, type: Type): Søknad {
         val fakta = prototypeFakta.bygg(fnr)
         val subsumsjon = prototypeSubsumsjon.bygg(fakta)
-        //val søknad = prototypeSøknader[type].bygg(fakta, subsumsjon)
-        return Søknad(fakta, prototypeSubsumsjon)
+        return prototypeSøknader[type]?.bygg(fakta, subsumsjon) ?: throw IllegalArgumentException("Kan ikke finne søknad av type $type")
     }
 
     companion object {

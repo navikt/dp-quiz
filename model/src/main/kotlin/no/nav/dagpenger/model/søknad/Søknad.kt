@@ -27,7 +27,7 @@ class Søknad private constructor(
         seksjoner.toMutableList()
     )
 
-    constructor(fakta: Fakta, rootSubsumsjon: Subsumsjon, vararg seksjoner: Seksjon) : this(
+    internal constructor(fakta: Fakta, rootSubsumsjon: Subsumsjon, vararg seksjoner: Seksjon) : this(
         fakta,
         rootSubsumsjon,
         UUID.randomUUID(),
@@ -60,7 +60,8 @@ class Søknad private constructor(
 
     fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
 
-    //internal fun bygg(fakta: Fakta): Søknad
+    internal fun bygg(fakta: Fakta, subsumsjon: Subsumsjon) =
+        Søknad(fakta, subsumsjon, UUID.randomUUID(), seksjoner.map { it.bygg(fakta) }.toMutableList())
 
     private class MapBuilder(søknad: Søknad) : SøknadVisitor {
         val resultat = mutableMapOf<FaktumId, Faktum<*>>()

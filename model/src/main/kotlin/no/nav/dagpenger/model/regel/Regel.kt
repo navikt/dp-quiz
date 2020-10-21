@@ -60,7 +60,6 @@ private class Før(private val tidligsteDato: Faktum<LocalDate>, private val sen
 
     override fun bygg(fakta: Fakta) = Før(fakta.dato(tidligsteDato.faktumId), fakta.dato(senesteDato.faktumId))
 
-
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
         return Før(
             tidligsteDato.med(indeks, søknad) as Faktum<LocalDate>,
@@ -87,7 +86,6 @@ private class IkkeFør(private val tidligsteDato: Faktum<LocalDate>, private val
 
     override fun bygg(fakta: Fakta) = IkkeFør(fakta.dato(tidligsteDato.faktumId), fakta.dato(senesteDato.faktumId))
 
-
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
         return IkkeFør(
             tidligsteDato.med(indeks, søknad) as Faktum<LocalDate>,
@@ -112,7 +110,6 @@ private class Minst(private val faktisk: Faktum<Inntekt>, private val terskel: F
         Minst(søknad.faktum(faktisk.faktumId) as Faktum<Inntekt>, søknad.faktum(terskel.faktumId) as Faktum<Inntekt>)
 
     override fun bygg(fakta: Fakta) = Minst(fakta.inntekt(faktisk.faktumId), fakta.inntekt(terskel.faktumId))
-
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
         return Minst(
@@ -139,8 +136,6 @@ private class Er<T : Comparable<T>>(private val faktum: Faktum<*>, private val o
     override fun bygg(fakta: Fakta) = Er(fakta.id(faktum.faktumId) as Faktum<T>, other)
 
     override fun deepCopy(indeks: Int, søknad: Søknad) = Er(faktum.med(indeks, søknad) as Faktum<T>, other)
-
-
 }
 
 infix fun <T : Comparable<T>> Faktum<T>.er(other: T): Subsumsjon {
