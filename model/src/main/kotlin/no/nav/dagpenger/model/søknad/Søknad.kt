@@ -11,7 +11,7 @@ import java.util.UUID
 
 class Søknad private constructor(
     internal val fakta: Fakta,
-    private val rootSubsumsjon: Subsumsjon,
+    internal val rootSubsumsjon: Subsumsjon,
     private val uuid: UUID,
     private val seksjoner: MutableList<Seksjon>
 ) : TypedFaktum by fakta, MutableList<Seksjon> by seksjoner {
@@ -23,7 +23,7 @@ class Søknad private constructor(
         seksjoner.toMutableList()
     )
 
-    internal constructor(fakta: Fakta, rootSubsumsjon: Subsumsjon, vararg seksjoner: Seksjon) : this(
+    internal constructor(fakta: Fakta, vararg seksjoner: Seksjon, rootSubsumsjon: Subsumsjon = TomSubsumsjon) : this(
         fakta,
         rootSubsumsjon,
         UUID.randomUUID(),
@@ -63,4 +63,5 @@ class Søknad private constructor(
 
     internal fun nesteFakta() = rootSubsumsjon.nesteFakta()
 
+    fun resultat() = rootSubsumsjon.resultat()
 }

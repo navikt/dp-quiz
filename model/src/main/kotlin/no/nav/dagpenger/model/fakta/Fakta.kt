@@ -8,7 +8,9 @@ class Fakta private constructor(
     fnr: String,
     uuid: UUID,
     private val faktumMap: MutableMap<FaktumId, Faktum<*>>
-) : TypedFaktum, MutableList<Faktum<*>> by faktumMap.values.toMutableList() {
+) : TypedFaktum, Iterable<Faktum<*>> {
+
+    internal val size get() = faktumMap.size
 
     internal constructor(fnr: String, faktumMap: MutableMap<FaktumId, Faktum<*>>) : this(
         fnr,
@@ -35,7 +37,7 @@ class Fakta private constructor(
     )
 
     init {
-        this.forEach { if (it is GeneratorFaktum) it.fakta=this }
+        this.forEach { if (it is GeneratorFaktum) it.fakta = this }
     }
 
     override infix fun id(rootId: Int) = id(FaktumId(rootId))
@@ -87,5 +89,9 @@ class Fakta private constructor(
             return@sortUtledet nyListe.sortUtledet()
         }
         return this.toMutableList()
+    }
+
+    internal fun add(faktum: Faktum<*>) {
+        faktumMap[faktum.faktumId] = faktum
     }
 }

@@ -1,9 +1,10 @@
 package no.nav.dagpenger.model.unit.fakta
 
-import no.nav.dagpenger.model.fakta.FaktumNavn
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
-import no.nav.dagpenger.model.fakta.template
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -13,12 +14,17 @@ internal class GenerertFaktumTest {
 
     @Test
     fun `Enkel template`() {
-        val template = FaktumNavn(1, "template").template(Boolean::class.java)
-        val generator = FaktumNavn(2, "generer").faktum(Int::class.java, template)
-        val seksjon = Seksjon("seksjon", Rolle.søker, template, generator)
-        Søknad(seksjon)
+
+        val fakta = Fakta(
+            ja nei "template" id 1,
+            heltall faktum "generator" id 2 genererer 1
+
+        )
+
+        val seksjon = Seksjon("seksjon", Rolle.søker, fakta ja 1, fakta generator 2)
+        val søknad = Søknad(fakta, seksjon)
         val originalSize = seksjon.size
-        generator.besvar(5)
+        søknad.generator(2).besvar(5)
 
         assertEquals(5, seksjon.size - originalSize)
         assertEquals("1.1", seksjon[1].id)
@@ -27,16 +33,22 @@ internal class GenerertFaktumTest {
 
     @Test
     fun `Flere templates`() {
-        val template1 = FaktumNavn(1, "template1").template(Boolean::class.java)
-        val template2 = FaktumNavn(2, "template2").template(Boolean::class.java)
-        val template3 = FaktumNavn(3, "template3").template(Boolean::class.java)
-        val generator = FaktumNavn(4, "generer").faktum(Int::class.java, template1, template2, template3)
-        val seksjon1 = Seksjon("seksjon", Rolle.søker, template1, generator)
-        val seksjon2 = Seksjon("seksjon", Rolle.søker, template2, template3, FaktumNavn(5, "faktum").faktum(Boolean::class.java))
-        val søknad = Søknad(seksjon1, seksjon2)
+
+        val fakta = Fakta(
+            ja nei "template" id 1,
+            ja nei "template" id 2,
+            ja nei "template" id 3,
+            heltall faktum "generer" id 4 genererer 1 og 2 og 3,
+            ja nei "boolean" id 5
+
+        )
+
+        val seksjon1 = Seksjon("seksjon", Rolle.søker, fakta ja 1, fakta generator 4)
+        val seksjon2 = Seksjon("seksjon", Rolle.søker, fakta ja 2, fakta ja 3, fakta ja 5)
+        val søknad = Søknad(fakta, seksjon1, seksjon2)
         val originalSize1 = seksjon1.size
         val originalSize2 = seksjon2.size
-        generator.besvar(3)
+        søknad.generator(4).besvar(3)
 
         assertEquals(3, seksjon1.size - originalSize1)
         assertEquals(6, seksjon2.size - originalSize2)
@@ -47,13 +59,14 @@ internal class GenerertFaktumTest {
 
     @Test
     fun `Generere seksjoner`() {
-        val template = FaktumNavn(1, "template").template(Boolean::class.java)
-        val generator = FaktumNavn(2, "generer").faktum(Int::class.java, template)
-        val generatorSeksjon = Seksjon("seksjon", Rolle.søker, generator)
-        val templateSeksjon = Seksjon("seksjon", Rolle.søker, template)
-        val søknad = Søknad(generatorSeksjon, templateSeksjon)
-        generator.besvar(3)
-
+        val fakta = Fakta(
+            ja nei "template" id 1,
+            heltall faktum "generator" id 2 genererer 1
+        )
+        val generatorSeksjon = Seksjon("seksjon", Rolle.søker, fakta generator 2)
+        val templateSeksjon = Seksjon("seksjon", Rolle.søker, fakta ja 1)
+        val søknad = Søknad(fakta, generatorSeksjon, templateSeksjon)
+        søknad.generator(2).besvar(3)
         assertEquals(5, søknad.size)
         assertEquals(1, generatorSeksjon.size)
         assertEquals(1, templateSeksjon.size)
@@ -63,15 +76,18 @@ internal class GenerertFaktumTest {
 
     @Test
     fun `Seksjon med kun og flere templates`() {
-        val template1 = FaktumNavn(1, "template1").template(Boolean::class.java)
-        val template2 = FaktumNavn(2, "template2").template(Boolean::class.java)
-        val template3 = FaktumNavn(3, "template3").template(Boolean::class.java)
-        val generator = FaktumNavn(4, "generer").faktum(Int::class.java, template1, template2, template3)
-        val generatorSeksjon = Seksjon("seksjon", Rolle.søker, generator)
-        val templateSeksjon1 = Seksjon("seksjon", Rolle.søker, template1, template2)
-        val templateSeksjon2 = Seksjon("seksjon", Rolle.søker, template3)
-        val søknad = Søknad(generatorSeksjon, templateSeksjon1, templateSeksjon2)
-        generator.besvar(3)
+        val fakta = Fakta(
+            ja nei "template" id 1,
+            ja nei "template" id 2,
+            ja nei "template" id 3,
+            heltall faktum "generator" id 4 genererer 1 og 2 og 3
+        )
+
+        val generatorSeksjon = Seksjon("seksjon", Rolle.søker, fakta generator 4)
+        val templateSeksjon1 = Seksjon("seksjon", Rolle.søker, fakta ja 1, fakta ja 2)
+        val templateSeksjon2 = Seksjon("seksjon", Rolle.søker, fakta ja 3)
+        val søknad = Søknad(fakta, generatorSeksjon, templateSeksjon1, templateSeksjon2)
+        søknad.generator(4).besvar(3)
 
         assertEquals(9, søknad.size)
         assertEquals(1, generatorSeksjon.size)

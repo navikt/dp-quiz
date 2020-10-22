@@ -19,7 +19,7 @@ class GeneratorFaktum internal constructor(
 
     override fun besvar(r: Int, rolle: Rolle): GrunnleggendeFaktum<Int> = this.also {
         super.besvar(r, rolle)
-        templates.forEach { template -> template.generate(r,fakta) }
+        templates.forEach { template -> template.generate(r, fakta) }
     }
 
     override fun acceptUtenSvar(visitor: FaktumVisitor) {

@@ -30,7 +30,6 @@ import no.nav.dagpenger.model.søknad.Versjon.Type.Web
 
 internal class NyEksempel {
 
-
     val prototypeFakta = Fakta(
         ja nei "f1" id 1,
         dato faktum "f2" id 2,
@@ -130,7 +129,6 @@ internal class NyEksempel {
             prototypeSeksjon8
         )
 
-
     internal lateinit var seksjon1: Seksjon
     internal lateinit var seksjon2: Seksjon
     internal lateinit var seksjon3: Seksjon
@@ -139,7 +137,7 @@ internal class NyEksempel {
     internal lateinit var seksjon6: Seksjon
     internal lateinit var seksjon7: Seksjon
     internal lateinit var seksjon8: Seksjon
-
+    internal lateinit var rootSubsumsjon: Subsumsjon
 
     private val versjon = Versjon(prototypeFakta, prototypeSubsumsjon, mapOf(Web to webPrototypeSøknad))
 
@@ -154,6 +152,7 @@ internal class NyEksempel {
             seksjon6 = it[5]
             seksjon7 = it[6]
             seksjon8 = it[7]
+            rootSubsumsjon = it.rootSubsumsjon
         }
     }
 }

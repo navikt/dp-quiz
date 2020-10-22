@@ -11,7 +11,6 @@ import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -78,13 +77,13 @@ class FaktaTest {
             ja nei "annen forelder får støtte" id 18
         )
         val barneSeksjon = Seksjon("barneseksjon", Rolle.søker, fakta id 15, fakta id 16, fakta id 17, fakta id 18)
-        Søknad(fakta, TomSubsumsjon, barneSeksjon)
+        Søknad(fakta, barneSeksjon)
         assertEquals(TemplateFaktum::class, fakta.id(16)::class)
         assertEquals(GeneratorFaktum::class, fakta.id(15)::class)
         assertEquals(4, fakta.size)
         (fakta generator 15).besvar(2, Rolle.søker)
         assertEquals(10, fakta.size)
-        assertIder(fakta, 16, 17, 18, 15)
+        assertIder(fakta, "16.1", "16.2", "17.1", "17.2", "18.1", "18.2", "16", "17", "18", "15")
     }
 
     @Test
@@ -103,5 +102,9 @@ class FaktaTest {
 
     private fun assertIder(fakta: Fakta, vararg ider: Int) {
         assertEquals(ider.map { it.toString() }, fakta.map { it.id })
+    }
+
+    private fun assertIder(fakta: Fakta, vararg ider: String) {
+        assertEquals(ider.toList(), fakta.map { it.id })
     }
 }

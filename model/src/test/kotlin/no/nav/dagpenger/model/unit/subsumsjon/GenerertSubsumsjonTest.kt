@@ -33,13 +33,13 @@ internal class GenerertSubsumsjonTest {
     @Test
     fun `Makro template subsumsjon works`() {
         val fakta = Fakta(
-                ja nei "template" id 1,
-                heltall faktum "generator" id 2 genererer 1
+            ja nei "template" id 1,
+            heltall faktum "generator" id 2 genererer 1
 
         )
         val makro = "makro template".makro(fakta ja 1 er true)
         val subsumsjon = fakta generator 2 med makro
-        val søknad = Søknad(fakta, subsumsjon, Seksjon("seksjon", Rolle.søker, fakta generator 2, fakta ja 1))
+        val søknad = Søknad(fakta, Seksjon("seksjon", Rolle.søker, fakta generator 2, fakta ja 1), rootSubsumsjon = subsumsjon)
 
         søknad.generator(2).besvar(3)
         subsumsjon.resultat()
