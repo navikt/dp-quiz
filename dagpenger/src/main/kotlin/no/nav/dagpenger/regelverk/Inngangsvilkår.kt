@@ -1,6 +1,6 @@
 package no.nav.dagpenger.regelverk
 
-import no.nav.dagpenger.Dagpengefakta
+import no.nav.dagpenger.Prototype
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
 
-val inngangsvilkår = with(Dagpengefakta()) {
+val inngangsvilkår = with(Prototype()) {
     "Inngangsvilkår".alle(
         "reell arbeidssøker".alle(
             villigDeltid er true,

@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.søknad
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 
-internal class Versjon(
+class Versjon(
     private val prototypeFakta: Fakta,
     private val prototypeSubsumsjon: Subsumsjon,
     private val prototypeSøknader: Map<Type, Søknad>

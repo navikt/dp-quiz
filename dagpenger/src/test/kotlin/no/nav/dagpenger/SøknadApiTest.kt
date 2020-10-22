@@ -10,13 +10,15 @@ import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
 import no.nav.dagpenger.FaktumBesvarelse.Kontekst
 import no.nav.dagpenger.FaktumBesvarelse.Svar
-import no.nav.dagpenger.model.fakta.FaktumNavn
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.søknad.Versjon
+import no.nav.dagpenger.model.søknad.Versjon.Type.Web
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -25,21 +27,32 @@ import java.util.UUID
 internal class SøknadApiTest {
     private val mapper = ObjectMapper()
 
-    private val ønsketDato = FaktumNavn(2, "Ønsker dagpenger fra dato").faktum(LocalDate::class.java)
-    private val fødselsdato = FaktumNavn(1, "Fødselsdato").faktum(LocalDate::class.java)
-    private val dimisjonsdato = FaktumNavn(10, "Dimisjonsdato").faktum(LocalDate::class.java)
+    private val fakta: Fakta = Fakta(
+        dato faktum "Ønsker dagpenger fra dato" id 2,
+        dato faktum "Fødselsdato" id 1,
+        dato faktum "Dimisjonsdato" id 10
 
-    private val subsumsjoner = "".alle(ønsketDato før fødselsdato, dimisjonsdato før fødselsdato)
+    )
+
+    private val ønsketDato = fakta dato 2
+    private val fødselsdato = fakta dato 1
+    private val dimisjonsdato = fakta dato 10
+
+    private val prototypeSubsumsjoner = "".alle(ønsketDato før fødselsdato, dimisjonsdato før fødselsdato)
+    private val søknadPrototype = Søknad(
+        Seksjon("seksjon1", Rolle.søker, ønsketDato, fødselsdato),
+        Seksjon("seksjon2", Rolle.søker, dimisjonsdato),
+    )
+    private val søknad = Versjon(fakta, prototypeSubsumsjoner, mapOf(Web to søknadPrototype))
+        .søknad("", Web)
+
     private val søknader = InMemorySøknader {
-        Søknad(
-            Seksjon("seksjon1", Rolle.søker, ønsketDato, fødselsdato),
-            Seksjon("seksjon2", Rolle.søker, dimisjonsdato),
-        )
+        søknad
     }
 
     @Test
     fun `hent neste-seksjon og besvar faktumene`() = withTestApplication({
-        søknadApi(søknader, subsumsjoner)
+        søknadApi(søknader, prototypeSubsumsjoner)
     }) {
         val søknadsId = UUID.randomUUID()
         val fakta = with(handleRequest(HttpMethod.Get, "/soknad/$søknadsId/neste-seksjon")) {
@@ -78,7 +91,7 @@ internal class SøknadApiTest {
 
     @Test
     fun testSubsumsjontre() = withTestApplication({
-        søknadApi(søknader, subsumsjoner)
+        søknadApi(søknader, prototypeSubsumsjoner)
     }) {
         with(handleRequest(HttpMethod.Get, "/soknad/${UUID.randomUUID()}/subsumsjoner")) {
             assertEquals(HttpStatusCode.OK, response.status())
