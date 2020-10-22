@@ -5,6 +5,7 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
@@ -12,11 +13,16 @@ import java.util.UUID
 class MeldingMediatorTest {
 
     @Test
-    internal fun `leser søknader`() {
+    internal fun `Oppretter søknad`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
         assertEquals(1, søknader.søknader.size)
     }
 
+    @Disabled
+    @Test fun `Publiserer behov`() {
+        testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
+        assertEquals(1, testRapid.inspektør.size)
+    }
     @BeforeEach
     internal fun reset() {
         testRapid.reset()
@@ -26,7 +32,7 @@ class MeldingMediatorTest {
         private val meldingsfabrikk = TestMeldingFactory("fødselsnummer", "aktør")
         private val testRapid = TestRapid()
         private val søknader = TestSøknader()
-        private val hendelseMediator = HendelseMediator(søknader)
+        private val hendelseMediator = HendelseMediator(søknader, testRapid)
 
         init {
             MeldingMediator(

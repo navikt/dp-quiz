@@ -1,3 +1,4 @@
 package meldinger.model
 
-class ØnskerRettighetsavklaring
+// Forstår behovet for å ønske rettighetsavklaring(hva som trengs)
+class ØnskerRettighetsavklaring()
