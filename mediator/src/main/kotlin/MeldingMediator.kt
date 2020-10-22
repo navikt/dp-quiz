@@ -15,7 +15,7 @@ internal class MeldingMediator(
 ) {
     init {
         DelegatedRapid(rapidsConnection).also {
-
+            ØnskerRettighetsavklaringerRiver(it, this)
         }
     }
 
@@ -29,12 +29,13 @@ internal class MeldingMediator(
         riverErrors.clear()
     }
 
-    fun onRecognizedMessage(melding: HendelseMelding, context: RapidsConnection.MessageContext){
+    fun onRecognizedMessage(melding: HendelseMelding, context: RapidsConnection.MessageContext) {
         messageRecognized = true
         withLoggingContext(
             "melding_id" to melding.id.toString(),
-            "melding_type" to (melding::class.simpleName?:"ukjent")) {
-            sikkerLogg.info {  "gjenkjente melding for fnr=${melding.fødselsnummer}"}
+            "melding_type" to (melding::class.simpleName ?: "ukjent")
+        ) {
+            sikkerLogg.info { "gjenkjente melding for fnr=${melding.fødselsnummer}" }
             håndterMelding(melding, context)
         }
     }
@@ -48,15 +49,20 @@ internal class MeldingMediator(
         if (messageRecognized) return
         if (riverErrors.isNotEmpty()) return sikkerLogg.warn(
             "kunne ikke gjenkjenne melding:\n\t$message\n\nProblemer:\n${
-                riverErrors.joinToString(
-                    separator = "\n"
-                ) { "${it.first}:\n${it.second}" }
+            riverErrors.joinToString(
+                separator = "\n"
+            ) { "${it.first}:\n${it.second}" }
             }"
         )
         sikkerLogg.debug("ukjent melding:\n\t$message\n\nProblemer:\n${riverSevereErrors.joinToString(separator = "\n") { "${it.first}:\n${it.second}" }}")
     }
 
-    private inner class DelegatedRapid(private val rapidsConnection: RapidsConnection) : RapidsConnection(),
+    fun onRiverError(riverName: String, problems: MessageProblems, context: RapidsConnection.MessageContext) {
+        TODO("Not yet implemented")
+    }
+
+    private inner class DelegatedRapid(private val rapidsConnection: RapidsConnection) :
+        RapidsConnection(),
         RapidsConnection.MessageListener {
         init {
             rapidsConnection.register(this)

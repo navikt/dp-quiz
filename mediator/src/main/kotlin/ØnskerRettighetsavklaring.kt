@@ -1,2 +1,1 @@
-class ØnskerRettighetsavklaring {
-}
+class ØnskerRettighetsavklaring

@@ -1,4 +1,4 @@
-class HendelseMediator {
-    fun behandle(melding: ØnskerRettighetsavklaringMelding, ønskerRettighetsavklaring: ØnskerRettighetsavklaring){
+internal class HendelseMediator {
+    fun behandle(melding: ØnskerRettighetsavklaringMelding, ønskerRettighetsavklaring: ØnskerRettighetsavklaring) {
     }
 }
