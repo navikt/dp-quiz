@@ -10,7 +10,6 @@ import no.nav.dagpenger.model.helpers.NyEksempel
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -19,14 +18,11 @@ import org.junit.jupiter.api.Test
 
 internal class SøknadSubsumsjonTest {
 
-    private lateinit var m: NyEksempel
     private lateinit var søknad: Søknad
-    private lateinit var rootSubsumsjon: Subsumsjon
 
     @BeforeEach
     fun setUp() {
-        m = NyEksempel()
-        søknad = m.søknad
+        søknad = NyEksempel().søknad
     }
 
     @Test
@@ -36,9 +32,9 @@ internal class SøknadSubsumsjonTest {
             assertIder(fakta, 1, 2, 3, 4, 5)
         }
 
-        assertEquals(m.seksjon1, søknad.nesteSeksjon())
-        assertEquals(2, m.seksjon1.fakta().size)
-        assertIder(m.seksjon1.fakta(), 1, 2)
+        assertEquals(søknad[0], søknad.nesteSeksjon())
+        assertEquals(2, søknad[0].fakta().size)
+        assertIder(søknad[0].fakta(), 1, 2)
 
         søknad.ja(1).besvar(true, Rolle.nav)
         søknad.dato(2).besvar(31.desember, Rolle.nav)
@@ -47,10 +43,10 @@ internal class SøknadSubsumsjonTest {
             assertIder(fakta, 3, 4, 5)
         }
 
-        assertEquals(m.seksjon4, søknad.nesteSeksjon())
-        assertEquals(5, m.seksjon4.fakta().size)
+        assertEquals(søknad[3], søknad.nesteSeksjon())
+        assertEquals(5, søknad[3].fakta().size)
 
-        assertIder(m.seksjon4.fakta(), 3, 4, 5, 345, 13)
+        assertIder(søknad[3].fakta(), 3, 4, 5, 345, 13)
         søknad.dato(3).besvar(1.januar)
         søknad.dato(4).besvar(2.januar)
         søknad.dato(5).besvar(3.januar)
@@ -59,18 +55,18 @@ internal class SøknadSubsumsjonTest {
             assertIder(fakta, 10)
         }
 
-        assertEquals(m.seksjon5, søknad.nesteSeksjon())
-        assertEquals(2, m.seksjon5.fakta().size)
-        assertIder(m.seksjon5.fakta(), 10, 11)
+        assertEquals(søknad[4], søknad.nesteSeksjon())
+        assertEquals(2, søknad[4].fakta().size)
+        assertIder(søknad[4].fakta(), 10, 11)
         søknad.ja(10).besvar(false)
         søknad.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
             assertIder(fakta, 11)
         }
 
-        assertEquals(m.seksjon5, søknad.nesteSeksjon())
-        assertEquals(2, m.seksjon5.fakta().size)
-        assertIder(m.seksjon5.fakta(), 10, 11)
+        assertEquals(søknad[4], søknad.nesteSeksjon())
+        assertEquals(2, søknad[4].fakta().size)
+        assertIder(søknad[4].fakta(), 10, 11)
         søknad.dokument(11).besvar(Dokument(4.januar))
 
         søknad.nesteFakta().also { fakta ->
@@ -78,9 +74,9 @@ internal class SøknadSubsumsjonTest {
             assertIder(fakta, 6, 8, 7, 9)
         }
 
-        assertEquals(m.seksjon2, søknad.nesteSeksjon())
-        assertEquals(4, m.seksjon2.fakta().size)
-        assertIder(m.seksjon2.fakta(), 6, 7, 8, 9)
+        assertEquals(søknad[1], søknad.nesteSeksjon())
+        assertEquals(4, søknad[1].fakta().size)
+        assertIder(søknad[1].fakta(), 6, 7, 8, 9)
 
         søknad.inntekt(6).besvar(20000.månedlig, Rolle.nav)
         søknad.inntekt(7).besvar(10000.månedlig, Rolle.nav)
@@ -91,38 +87,38 @@ internal class SøknadSubsumsjonTest {
             assertIder(fakta, 15)
         }
 
-        assertEquals(m.seksjon3, søknad.nesteSeksjon())
-        assertEquals(1, m.seksjon3.fakta().size)
-        assertIder(m.seksjon3.fakta(), 15)
+        assertEquals(søknad[2], søknad.nesteSeksjon())
+        assertEquals(1, søknad[2].fakta().size)
+        assertIder(søknad[2].fakta(), 15)
         søknad.generator(15).besvar(2, Rolle.nav)
-        assertEquals(3, m.seksjon3.fakta().size) // Genererte 2 til
+        assertEquals(3, søknad[2].fakta().size) // Genererte 2 til
         søknad.nesteFakta().also { fakta ->
             assertEquals(2, fakta.size) // Feltene i første genererte subsumsjon
             assertEquals(listOf("16.1", "16.2"), fakta.map { it.id })
         }
 
-        assertEquals(m.seksjon3, søknad.nesteSeksjon())
-        assertEquals(3, m.seksjon3.fakta().size)
-        assertEquals(listOf("15", "16.1", "16.2"), m.seksjon3.fakta().map { it.id })
-        (m.seksjon3.first { it.id == "16.1" } as Faktum<Int>).besvar(17, Rolle.nav)
-        (m.seksjon3.first { it.id == "16.2" } as Faktum<Int>).besvar(19, Rolle.nav)
+        assertEquals(søknad[2], søknad.nesteSeksjon())
+        assertEquals(3, søknad[2].fakta().size)
+        assertEquals(listOf("15", "16.1", "16.2"), søknad[2].fakta().map { it.id })
+        (søknad[2].first { it.id == "16.1" } as Faktum<Int>).besvar(17, Rolle.nav)
+        (søknad[2].first { it.id == "16.2" } as Faktum<Int>).besvar(19, Rolle.nav)
         søknad.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
             assertEquals(listOf("17.1"), fakta.map { it.id })
         }
 
-        assertEquals(m.søknad[7], søknad.nesteSeksjon())
-        assertEquals(2, m.søknad[7].fakta().size)
-        assertEquals(listOf("16.1", "17.1"), m.søknad[7].fakta().map { it.id })
-        (m.søknad[7].first { it.id == "17.1" } as Faktum<Boolean>).besvar(true)
+        assertEquals(søknad[7], søknad.nesteSeksjon())
+        assertEquals(2, søknad[7].fakta().size)
+        assertEquals(listOf("16.1", "17.1"), søknad[7].fakta().map { it.id })
+        (søknad[7].first { it.id == "17.1" } as Faktum<Boolean>).besvar(true)
         søknad.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
             assertIder(fakta, 14)
         }
 
-        assertEquals(m.seksjon8, søknad.nesteSeksjon())
-        assertEquals(7, m.seksjon8.fakta().size)
-        assertEquals(listOf("6", "7", "12", "14", "18.1", "18.2", "19").sorted(), m.seksjon8.fakta().map { it.id }.sorted())
+        assertEquals(søknad[9], søknad.nesteSeksjon())
+        assertEquals(7, søknad[9].fakta().size)
+        assertEquals(listOf("6", "7", "12", "14", "18.1", "18.2", "19").sorted(), søknad[9].fakta().map { it.id }.sorted())
         søknad.ja(14).besvar(true, Rolle.saksbehandler)
         søknad.nesteFakta().also { fakta ->
             assertEquals(0, fakta.size)
