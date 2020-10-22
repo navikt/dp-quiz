@@ -100,6 +100,17 @@ class FaktaTest {
         assertIder(fakta, 3, 4, 5, 7, 6, 8)
     }
 
+    @Test
+    fun `Fakta med duplikate ider `() {
+        assertThrows<IllegalArgumentException> {
+            Fakta(
+                heltall faktum "f11" id 11,
+                dokument faktum "whoops" id 11,
+                heltall faktum "f12" id 12
+            )
+        }
+    }
+
     private fun assertIder(fakta: Fakta, vararg ider: Int) {
         assertEquals(ider.map { it.toString() }, fakta.map { it.id })
     }

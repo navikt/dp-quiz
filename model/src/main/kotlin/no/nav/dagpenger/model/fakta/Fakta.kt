@@ -25,6 +25,10 @@ class Fakta private constructor(
             it.faktum().let { faktum ->
                 faktum.faktumId to faktum
             }
+        }.also { fakta ->
+            fakta.groupingBy { it.first }.eachCount().forEach {
+                require(it.value == 1) { "Faktum med ${it.key} er definert mer en 1 gang" }
+            }
         }.toMap().toMutableMap().also { faktumMap ->
             factories.forEach { factory ->
                 factory.tilTemplate(faktumMap)
@@ -42,7 +46,7 @@ class Fakta private constructor(
 
     override infix fun id(rootId: Int) = id(FaktumId(rootId))
     override infix fun id(id: String) = id(FaktumId(id))
-    internal infix fun id(faktumId: FaktumId) = faktumMap[faktumId] ?: throw IllegalArgumentException("Ukjent id $faktumId")
+    internal infix fun id(faktumId: FaktumId) = faktumMap[faktumId] ?: throw IllegalArgumentException("Ukjent faktum $faktumId")
     internal infix fun idOrNull(faktumId: FaktumId) = faktumMap[faktumId]
 
     override infix fun dokument(rootId: Int) = dokument(FaktumId(rootId))
