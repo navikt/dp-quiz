@@ -18,11 +18,11 @@ class MeldingMediatorTest {
         assertEquals(1, søknader.søknader.size)
     }
 
-    @Disabled
     @Test fun `Publiserer behov`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
         assertEquals(1, testRapid.inspektør.size)
     }
+
     @BeforeEach
     internal fun reset() {
         testRapid.reset()

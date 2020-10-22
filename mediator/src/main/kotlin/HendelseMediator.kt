@@ -12,5 +12,6 @@ internal class HendelseMediator(private val søknader: Søknader, private val ra
         val enkelSøknad = EnkelSøknad().søknad()
         søknader.nySøknad(enkelSøknad)
         val nesteSeksjon = enkelSøknad.nesteSeksjon(inngangsvilkår.deepCopy(enkelSøknad))
+        behovMediator.håndter(nesteSeksjon)
     }
 }
