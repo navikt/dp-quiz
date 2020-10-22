@@ -39,14 +39,14 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     override fun add(seksjon: Seksjon) = seksjoner.add(seksjon)
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Faktum<*> {
-        return søknad.fakta[faktumId.indeks(indeks)]
+        return søknad.idOrNull(faktumId medIndeks indeks )
             ?: GrunnleggendeFaktum(
-                faktumId.indeks(indeks),
+                faktumId medIndeks indeks,
                 navn,
                 clazz,
                 avhengigeFakta.deepCopy(indeks, søknad).toMutableSet(),
                 roller
-            ).also { søknad.fakta[it.faktumId] = it }
+            ).also { søknad.add(it) }
     }
 
     internal fun generate(r: Int) {
@@ -59,7 +59,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
                 }
                 seksjon.add(
                     GrunnleggendeFaktum(
-                        faktumId.indeks(indeks),
+                        faktumId.medIndeks(indeks),
                         navn,
                         clazz,
                         avhengigeFakta.deepCopy(indeks, seksjon.søknad).toMutableSet(),

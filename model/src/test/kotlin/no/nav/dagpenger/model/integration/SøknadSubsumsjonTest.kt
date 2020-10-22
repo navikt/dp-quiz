@@ -140,58 +140,42 @@ internal class SøknadSubsumsjonTest {
         }
     }
 
-    private fun assertIder(fakta: Set<Faktum<*>>, vararg ider: Int) {
-        assertEquals(ider.map { it.toString() }, fakta.map { it.id })
-    }
-
     @Test
     fun `Avvisning av søker faktum`() {
-        m.f1Boolean.besvar(true, Rolle.nav)
-        m.f2Dato.besvar(31.desember, Rolle.nav)
-        m.f3Dato.besvar(1.januar)
-        m.f4Dato.besvar(2.januar)
-        m.f5Dato.besvar(3.januar)
+        søknad.ja(1).besvar(true, Rolle.nav)
+        søknad.dato(2).besvar(31.desember, Rolle.nav)
+        søknad.dato(3).besvar(1.januar)
+        søknad.dato(4).besvar(2.januar)
+        søknad.dato(5).besvar(3.januar)
 
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
-            assertEquals(setOf(m.f10Boolean), fakta)
+            assertEquals(setOf(søknad.ja(10)), fakta)
         }
 
-        m.f10Boolean.besvar(false)
-        m.f11Dokument.besvar(Dokument(1.januar))
-        m.f12Boolean.besvar(false, Rolle.saksbehandler)
+        søknad.ja(10).besvar(false)
+        søknad.dokument(11).besvar(Dokument(1.januar))
+        søknad.ja(12).besvar(false, Rolle.saksbehandler)
 
         rootSubsumsjon.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
-            assertEquals(setOf(m.f13Dato), fakta)
+            assertEquals(setOf(søknad.dato(13)), fakta)
         }
 
-        m.f13Dato.besvar(1.februar)
+        søknad.dato(13).besvar(1.februar)
         assertEquals(true, rootSubsumsjon.resultat())
 
-        m.f19Boolean.besvar(false, Rolle.saksbehandler)
+        søknad.ja(19).besvar(false, Rolle.saksbehandler)
         assertEquals(false, rootSubsumsjon.resultat())
     }
 
-    private fun assertMarshalling(original: Søknad) {
-        val jsonString = SøknadJsonBuilder(original).toString()
-        val clone = SøknadBuilder(jsonString).resultat()
-        assertDeepEquals(original, clone)
+    private fun assertIder(fakta: Set<Faktum<*>>, vararg ider: Int) {
+        assertIder(fakta, *ider.map { it.toString() }.toTypedArray())
     }
 
-    private fun Seksjon.fakta(): Set<Faktum<*>> =
-        object : SøknadVisitor {
-            lateinit var resultater: Set<Faktum<*>>
+    private fun assertIder(fakta: Set<Faktum<*>>, vararg ider: String) {
+        assertEquals(ider, fakta.map { it.id })
+    }
 
-            override fun postVisit(søknad: Søknad) {
-                rootSubsumsjon.resultat()
-            }
-
-            override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
-                resultater = fakta.filterNot { it is TemplateFaktum<*> }.toSet()
-            }
-        }.let {
-            this@fakta.accept(it)
-            it.resultater
-        }
+    private fun Seksjon.fakta() = this.map { it }.toSet()
 }

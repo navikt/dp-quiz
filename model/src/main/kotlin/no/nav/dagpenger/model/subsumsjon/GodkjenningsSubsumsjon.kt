@@ -37,7 +37,7 @@ class GodkjenningsSubsumsjon private constructor(
         navn,
         action,
         child.deepCopy(søknad),
-        søknad.fakta[godkjenning.faktumId] as Faktum<Boolean>,
+        søknad.ja(godkjenning.id),
         gyldigSubsumsjon.deepCopy(søknad),
         ugyldigSubsumsjon.deepCopy(søknad)
     ).also {

@@ -14,7 +14,7 @@ class Søknad private constructor(
     private val rootSubsumsjon: Subsumsjon,
     private val uuid: UUID,
     private val seksjoner: MutableList<Seksjon>
-) : MutableList<Seksjon> by seksjoner, TypedFaktum by fatka {
+) : TypedFaktum by fakta, MutableList<Seksjon> by seksjoner {
 
     constructor(vararg seksjoner: Seksjon) : this(
         Fakta("", mutableMapOf()),
@@ -38,21 +38,13 @@ class Søknad private constructor(
 
     internal fun add(faktum: Faktum<*>) = fakta.add(faktum)
 
+    internal infix fun idOrNull(faktumId: FaktumId) = fakta.idOrNull(faktumId)
+
     fun <T : Comparable<T>> faktum(id: String): Faktum<T> = (fakta.id(id) as Faktum<T>)
 
     fun <T : Comparable<T>> faktum(id: Int): Faktum<T> = (fakta.id(id) as Faktum<T>)
 
-    fun ja(id: Int) = fakta.ja(id)
-
-    fun dato(id: Int) = fakta.dato(id)
-
-    fun dokument(id: Int) = fakta.dokument(id)
-
-    fun inntekt(id: Int) = fakta.inntekt(id)
-
-    fun heltall(id: Int) = fakta.heltall(id)
-
-    internal infix fun nesteSeksjon(subsumsjon: Subsumsjon) = seksjoner.first { subsumsjon.nesteFakta() in it }
+    infix fun nesteSeksjon(subsumsjon: Subsumsjon) = seksjoner.first { subsumsjon.nesteFakta() in it }
 
     fun nesteSeksjon() = nesteSeksjon(rootSubsumsjon)
 

@@ -24,13 +24,13 @@ internal class FaktumIdTest {
 
     @Test
     fun `Generere ny indeks FaktumId`() {
-        assertEquals("16.2", FaktumId(16).indeks(2).id)
+        assertEquals("16.2", FaktumId(16).medIndeks(2).id)
     }
 
     @Test
     fun `invalid indeks`() {
-        assertThrows<IllegalArgumentException> { FaktumId(16).indeks(2).indeks(3) }
+        assertThrows<IllegalArgumentException> { FaktumId(16).medIndeks(2).medIndeks(3) }
         assertThrows<IllegalArgumentException> { FaktumId(0) }
-        assertThrows<IllegalArgumentException> { FaktumId(16).indeks(0) }
+        assertThrows<IllegalArgumentException> { FaktumId(16).medIndeks(0) }
     }
 }

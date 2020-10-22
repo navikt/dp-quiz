@@ -13,7 +13,7 @@ class FaktumId private constructor(private val rootId: Int, private val indeks: 
         require(indeks >= 0) { "Indeks må være en positiv integer større enn null" }
     }
 
-    val id: String get() = if (indeks == 0) rootId.toString() else "$rootId.$indeks"
+    internal val id: String get() = if (indeks == 0) rootId.toString() else "$rootId.$indeks"
 
     override fun toString() = "Id $id"
 
@@ -25,7 +25,7 @@ class FaktumId private constructor(private val rootId: Int, private val indeks: 
 
     override fun hashCode() = rootId.hashCode() * 37 + indeks.hashCode()
 
-    fun indeks(indeks: Int) = FaktumId(rootId, indeks).also {
+    infix fun medIndeks(indeks: Int) = FaktumId(rootId, indeks).also {
         require(this.indeks == 0) { "Kan ikke indeksere et allerede indeksert FaktumNavn, id: $id " }
         require(indeks != 0) { "Indeks må være en positiv integer større enn null" }
     }

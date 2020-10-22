@@ -35,38 +35,33 @@ class Fakta private constructor(
     )
 
     override infix fun id(rootId: Int) = id(FaktumId(rootId))
-
     override infix fun id(id: String) = id(FaktumId(id))
-
     internal infix fun id(faktumId: FaktumId) = faktumMap[faktumId] ?: throw IllegalArgumentException("Ukjent id $faktumId")
+    internal infix fun idOrNull(faktumId: FaktumId) = faktumMap[faktumId]
 
-    infix fun dokument(rootId: Int) = dokument(FaktumId(rootId))
-
+    override infix fun dokument(rootId: Int) = dokument(FaktumId(rootId))
+    override infix fun dokument(id: String) = dokument(FaktumId(id))
     internal infix fun dokument(faktumId: FaktumId) = id(faktumId) as Faktum<Dokument>
 
-    infix fun inntekt(rootId: Int) = inntekt(FaktumId(rootId))
-
+    override fun inntekt(rootId: Int) = inntekt(FaktumId(rootId))
+    override fun inntekt(id: String) = inntekt(FaktumId(id))
     internal infix fun inntekt(faktumId: FaktumId) = id(faktumId) as Faktum<Inntekt>
 
     override infix fun ja(rootId: Int) = ja(FaktumId(rootId))
-
     override infix fun ja(id: String) = ja(FaktumId(id))
-
     internal infix fun ja(faktumId: FaktumId) = id(faktumId) as Faktum<Boolean>
 
     override infix fun dato(rootId: Int) = dato(FaktumId(rootId))
-
     override infix fun dato(id: String) = dato(FaktumId(id))
-
     internal infix fun dato(faktumId: FaktumId) = id(faktumId) as Faktum<LocalDate>
 
-    infix fun heltall(rootId: Int) = heltall(FaktumId(rootId))
-
-    infix fun generator(rootId: Int) = generator(FaktumId(rootId))
-
-    internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
-
+    override infix fun heltall(rootId: Int) = heltall(FaktumId(rootId))
+    override infix fun heltall(id: String) = heltall(FaktumId(id))
     internal infix fun heltall(faktumId: FaktumId) = id(faktumId) as Faktum<Int>
+
+    override infix fun generator(rootId: Int) = generator(FaktumId(rootId))
+    override infix fun generator(id: String) = heltall(FaktumId(id))
+    internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
 
     fun bygg(fnr: String): Fakta {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
