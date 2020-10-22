@@ -1,3 +1,7 @@
+package meldinger
+
+import MeldingMediator
+import meldinger.model.ØnskerRettighetsavklaringMelding
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 

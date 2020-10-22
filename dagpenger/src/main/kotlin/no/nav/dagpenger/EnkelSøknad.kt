@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 
-internal class EnkelSøknad : SøknadBygger {
+class EnkelSøknad : SøknadBygger {
     lateinit var fakta: Dagpengefakta
 
     private val personalia

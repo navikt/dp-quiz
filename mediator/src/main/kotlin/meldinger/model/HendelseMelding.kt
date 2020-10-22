@@ -1,4 +1,5 @@
-
+package meldinger.model
+import HendelseMediator
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.util.UUID

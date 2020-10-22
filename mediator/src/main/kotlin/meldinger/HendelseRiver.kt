@@ -1,4 +1,8 @@
+package meldinger
+
+import MeldingMediator
 import com.fasterxml.jackson.databind.JsonNode
+import meldinger.model.HendelseMelding
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection

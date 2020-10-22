@@ -1,3 +1,6 @@
+package meldinger.model
+
+import HendelseMediator
 import no.nav.helse.rapids_rivers.JsonMessage
 
 internal class ØnskerRettighetsavklaringMelding(packet: JsonMessage) : HendelseMelding(packet) {

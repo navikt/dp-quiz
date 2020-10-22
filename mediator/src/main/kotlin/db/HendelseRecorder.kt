@@ -1,6 +1,6 @@
 package db
 
-import HendelseMelding
+import meldinger.model.HendelseMelding
 
 internal class HendelseRecorder {
     fun lagreMelding(melding: HendelseMelding) {}

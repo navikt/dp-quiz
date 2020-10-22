@@ -1,4 +1,6 @@
 import db.HendelseRecorder
+import meldinger.model.HendelseMelding
+import meldinger.ØnskerRettighetsavklaringerRiver
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.helse.rapids_rivers.MessageProblems

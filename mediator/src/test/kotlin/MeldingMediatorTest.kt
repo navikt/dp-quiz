@@ -1,23 +1,20 @@
+import db.Søknader
 import io.mockk.mockk
-import io.mockk.verify
+import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
 
-class MediatorTest {
+class MeldingMediatorTest {
 
     @Test
     internal fun `leser søknader`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
-        verify {
-            hendelseMediator.behandle(
-                ofType(ØnskerRettighetsavklaringMelding::class),
-                ofType(ØnskerRettighetsavklaring::class)
-            )
-        }
+        assertEquals(1, søknader.søknader.size)
     }
 
     @BeforeEach
@@ -28,7 +25,8 @@ class MediatorTest {
     private companion object {
         private val meldingsfabrikk = TestMeldingFactory("fødselsnummer", "aktør")
         private val testRapid = TestRapid()
-        private val hendelseMediator = mockk<HendelseMediator>(relaxed = true)
+        private val søknader = TestSøknader()
+        private val hendelseMediator = HendelseMediator(søknader)
 
         init {
             MeldingMediator(
@@ -36,6 +34,13 @@ class MediatorTest {
                 hendelseRecorder = mockk(relaxed = true),
                 hendelseMediator = hendelseMediator
             )
+        }
+    }
+
+    private class TestSøknader : Søknader {
+        val søknader = mutableMapOf<UUID, Søknad>()
+        override fun nySøknad(søknad: Søknad) {
+            søknader[UUID.randomUUID()] = søknad
         }
     }
 }
