@@ -80,6 +80,7 @@ abstract class Subsumsjon protected constructor(
             }
         }
     }
+
 }
 
 fun String.alle(vararg subsumsjoner: Subsumsjon): Subsumsjon {

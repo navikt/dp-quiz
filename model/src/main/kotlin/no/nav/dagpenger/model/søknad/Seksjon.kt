@@ -52,7 +52,7 @@ class Seksjon private constructor(
     }
 
     internal fun add(faktum: GrunnleggendeFaktum<*>): Boolean =
-        søknad.id(faktum.id).let { eksisterendeFaktum ->
+        søknad.idOrNull(faktum.faktumId).let { eksisterendeFaktum ->
             (eksisterendeFaktum == null).also {
                 if (it) {   // Use existing Faktum
                     seksjonFakta.add(faktum)

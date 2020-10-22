@@ -82,7 +82,7 @@ class FaktaTest {
         assertEquals(TemplateFaktum::class, fakta.id(16)::class)
         assertEquals(GeneratorFaktum::class, fakta.id(15)::class)
         assertEquals(4, fakta.size)
-        (fakta heltall 15).besvar(2, Rolle.søker)
+        (fakta generator 15).besvar(2, Rolle.søker)
         assertEquals(10, fakta.size)
         assertIder(fakta, 16, 17, 18, 15)
     }
