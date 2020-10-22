@@ -8,7 +8,7 @@ class Fakta private constructor(
     fnr: String,
     uuid: UUID,
     private val faktumMap: MutableMap<FaktumId, Faktum<*>>
-) : MutableList<Faktum<*>> by faktumMap.values.toMutableList() {
+) : TypedFaktum, MutableList<Faktum<*>> by faktumMap.values.toMutableList() {
 
     internal constructor(fnr: String, faktumMap: MutableMap<FaktumId, Faktum<*>>) : this(
         fnr,
@@ -34,9 +34,9 @@ class Fakta private constructor(
         }
     )
 
-    infix fun id(rootId: Int) = id(FaktumId(rootId))
+    override infix fun id(rootId: Int) = id(FaktumId(rootId))
 
-    infix fun id(id: String) = id(FaktumId(id))
+    override infix fun id(id: String) = id(FaktumId(id))
 
     internal infix fun id(faktumId: FaktumId) = faktumMap[faktumId] ?: throw IllegalArgumentException("Ukjent id $faktumId")
 
@@ -48,11 +48,15 @@ class Fakta private constructor(
 
     internal infix fun inntekt(faktumId: FaktumId) = id(faktumId) as Faktum<Inntekt>
 
-    infix fun ja(rootId: Int) = ja(FaktumId(rootId))
+    override infix fun ja(rootId: Int) = ja(FaktumId(rootId))
+
+    override infix fun ja(id: String) = ja(FaktumId(id))
 
     internal infix fun ja(faktumId: FaktumId) = id(faktumId) as Faktum<Boolean>
 
-    infix fun dato(rootId: Int) = dato(FaktumId(rootId))
+    override infix fun dato(rootId: Int) = dato(FaktumId(rootId))
+
+    override infix fun dato(id: String) = dato(FaktumId(id))
 
     internal infix fun dato(faktumId: FaktumId) = id(faktumId) as Faktum<LocalDate>
 

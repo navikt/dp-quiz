@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.søknad
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
+import no.nav.dagpenger.model.fakta.TypedFaktum
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
@@ -13,7 +14,7 @@ class Søknad private constructor(
     private val rootSubsumsjon: Subsumsjon,
     private val uuid: UUID,
     private val seksjoner: MutableList<Seksjon>
-) : MutableList<Seksjon> by seksjoner {
+) : MutableList<Seksjon> by seksjoner, TypedFaktum by fatka {
 
     constructor(vararg seksjoner: Seksjon) : this(
         Fakta("", mutableMapOf()),
