@@ -18,9 +18,7 @@ class AlleSubsumsjon private constructor(
         subsumsjoner.map { it.deepCopy(søknad) }.toMutableList(),
         gyldigSubsumsjon.deepCopy(søknad),
         ugyldigSubsumsjon.deepCopy(søknad)
-    ).also {
-        it.søknad = søknad
-    }
+    )
 
     override fun bygg(fakta: Fakta) = AlleSubsumsjon(
         navn,
@@ -29,12 +27,12 @@ class AlleSubsumsjon private constructor(
         ugyldigSubsumsjon.bygg(fakta)
     )
 
-    override fun deepCopy(indeks: Int): Subsumsjon {
+    override fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon {
         return AlleSubsumsjon(
             "$navn [$indeks]",
-            subsumsjoner.map { it.deepCopy(indeks) }.toMutableList(),
-            gyldigSubsumsjon.deepCopy(indeks),
-            ugyldigSubsumsjon.deepCopy(indeks)
+            subsumsjoner.map { it.deepCopy(indeks, fakta) }.toMutableList(),
+            gyldigSubsumsjon.deepCopy(indeks, fakta),
+            ugyldigSubsumsjon.deepCopy(indeks, fakta)
         )
     }
 

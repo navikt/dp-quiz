@@ -34,6 +34,10 @@ class Fakta private constructor(
         }
     )
 
+    init {
+        this.forEach { if (it is GeneratorFaktum) it.fakta=this }
+    }
+
     override infix fun id(rootId: Int) = id(FaktumId(rootId))
     override infix fun id(id: String) = id(FaktumId(id))
     internal infix fun id(faktumId: FaktumId) = faktumMap[faktumId] ?: throw IllegalArgumentException("Ukjent id $faktumId")

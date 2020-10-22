@@ -12,7 +12,7 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 open class EnkelSubsumsjon protected constructor(
     protected val regel: Regel,
-    protected val fakta: Set<Faktum<*>>,
+    protected val subsumsjonFakta: Set<Faktum<*>>,
     gyldigSubsumsjon: Subsumsjon,
     ugyldigSubsumsjon: Subsumsjon
 ) : Subsumsjon(regel.toString(), gyldigSubsumsjon, ugyldigSubsumsjon) {
@@ -22,41 +22,38 @@ open class EnkelSubsumsjon protected constructor(
 
     override fun accept(visitor: SubsumsjonVisitor) {
         resultat().also {
-            visitor.preVisit(this, regel, fakta, it)
-            fakta.forEach { it.accept(visitor) }
+            visitor.preVisit(this, regel, subsumsjonFakta, it)
+            subsumsjonFakta.forEach { it.accept(visitor) }
             super.accept(visitor)
-            visitor.postVisit(this, regel, fakta, it)
+            visitor.postVisit(this, regel, subsumsjonFakta, it)
         }
     }
 
     override fun deepCopy(søknad: Søknad) = deepCopy(
         regel.deepCopy(søknad),
-        fakta.deepCopy(søknad),
+        subsumsjonFakta.deepCopy(søknad),
         gyldigSubsumsjon.deepCopy(søknad),
         ugyldigSubsumsjon.deepCopy(søknad)
-    ).also {
-        it.søknad = søknad
-    }
-
+    )
     override fun bygg(fakta: Fakta) = deepCopy(
         regel.bygg(fakta),
-        this.fakta.map { fakta.id(it.faktumId) }.toSet(),
+        this.subsumsjonFakta.map { fakta.id(it.faktumId) }.toSet(),
         gyldigSubsumsjon.bygg(fakta),
         ugyldigSubsumsjon.bygg(fakta)
     )
 
     override fun deepCopy() = deepCopy(
         regel,
-        fakta,
+        subsumsjonFakta,
         gyldigSubsumsjon.deepCopy(),
         ugyldigSubsumsjon.deepCopy()
     )
 
-    override fun deepCopy(indeks: Int) = deepCopy(
-        regel.deepCopy(indeks, søknad),
-        fakta.deepCopy(indeks, søknad),
-        gyldigSubsumsjon.deepCopy(indeks),
-        ugyldigSubsumsjon.deepCopy(indeks)
+    override fun deepCopy(indeks: Int, fakta: Fakta) = deepCopy(
+        regel.deepCopy(indeks, fakta),
+        subsumsjonFakta.deepCopy(indeks, fakta),
+        gyldigSubsumsjon.deepCopy(indeks, fakta),
+        ugyldigSubsumsjon.deepCopy(indeks, fakta)
     )
 
     private fun deepCopy(
@@ -69,12 +66,12 @@ open class EnkelSubsumsjon protected constructor(
     override fun nesteFakta() = ukjenteFakta().takeIf { it.isNotEmpty() } ?: nesteSubsumsjon().nesteFakta()
 
     internal open fun ukjenteFakta(): Set<GrunnleggendeFaktum<*>> = mutableSetOf<GrunnleggendeFaktum<*>>().also {
-        fakta.forEach { faktum -> faktum.leggTilHvis(Ukjent, it) }
+        subsumsjonFakta.forEach { faktum -> faktum.leggTilHvis(Ukjent, it) }
     }
 
     private fun nesteSubsumsjon() = if (lokaltResultat() == true) gyldigSubsumsjon else ugyldigSubsumsjon
 
-    override fun lokaltResultat() = if (fakta.erBesvart()) regel.resultat() else null
+    override fun lokaltResultat() = if (subsumsjonFakta.erBesvart()) regel.resultat() else null
 
     override fun toString() = regel.toString()
 

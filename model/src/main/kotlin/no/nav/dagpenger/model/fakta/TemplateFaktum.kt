@@ -1,7 +1,6 @@
 package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 class TemplateFaktum<R : Comparable<R>> internal constructor(
@@ -38,22 +37,22 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
 
     override fun add(seksjon: Seksjon) = seksjoner.add(seksjon)
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Faktum<*> {
-        return søknad.idOrNull(faktumId medIndeks indeks )
+    override fun deepCopy(indeks: Int, fakta: Fakta): Faktum<*> {
+        return fakta.idOrNull(faktumId medIndeks indeks )
             ?: GrunnleggendeFaktum(
                 faktumId medIndeks indeks,
                 navn,
                 clazz,
-                avhengigeFakta.deepCopy(indeks, søknad).toMutableSet(),
+                avhengigeFakta.deepCopy(indeks, fakta).toMutableSet(),
                 roller
-            ).also { søknad.add(it) }
+            ).also { fakta.add(it) }
     }
 
-    internal fun generate(r: Int) {
+    internal fun generate(r: Int, fakta: Fakta) {
         seksjoner.forEach { originalSeksjon ->
             (1..r).forEach { indeks ->
                 val seksjon = if (originalSeksjon.bareTemplates()) {
-                    originalSeksjon.deepCopy(indeks)
+                    originalSeksjon.deepCopy(indeks, fakta)
                 } else {
                     originalSeksjon
                 }
@@ -62,7 +61,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
                         faktumId.medIndeks(indeks),
                         navn,
                         clazz,
-                        avhengigeFakta.deepCopy(indeks, seksjon.søknad).toMutableSet(),
+                        avhengigeFakta.deepCopy(indeks, fakta).toMutableSet(),
                         roller
                     )
                 )

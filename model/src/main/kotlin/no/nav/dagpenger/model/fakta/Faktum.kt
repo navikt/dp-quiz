@@ -29,9 +29,9 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
                 require(it.size == this.size) { "Mangler fakta" }
             }
 
-        internal fun Set<Faktum<*>>.deepCopy(indeks: Int, søknad: Søknad): Set<Faktum<*>> = this
+        internal fun Set<Faktum<*>>.deepCopy(indeks: Int, fakta: Fakta): Set<Faktum<*>> = this
             .map { faktum ->
-                faktum.deepCopy(indeks, søknad)
+                faktum.deepCopy(indeks, fakta)
             }
             .toSet()
     }
@@ -67,7 +67,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
         other.avhengigeFakta.add(this)
     }
 
-    internal open fun deepCopy(indeks: Int, søknad: Søknad): Faktum<*> = this
+    internal open fun deepCopy(indeks: Int, fakta: Fakta): Faktum<*> = this
 
     enum class FaktumTilstand {
         Ukjent,

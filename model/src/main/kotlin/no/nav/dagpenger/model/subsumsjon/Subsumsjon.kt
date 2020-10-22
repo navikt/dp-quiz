@@ -12,7 +12,6 @@ abstract class Subsumsjon protected constructor(
 ) : Iterable<Subsumsjon> {
     protected lateinit var gyldigSubsumsjon: Subsumsjon
     protected lateinit var ugyldigSubsumsjon: Subsumsjon
-    protected lateinit var søknad: Søknad
 
     init {
         if (gyldigSubsumsjon != null) this.gyldigSubsumsjon = gyldigSubsumsjon
@@ -33,7 +32,7 @@ abstract class Subsumsjon protected constructor(
 
     abstract fun deepCopy(): Subsumsjon
 
-    internal abstract fun deepCopy(indeks: Int): Subsumsjon
+    internal abstract fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon
 
     internal abstract fun lokaltResultat(): Boolean?
 

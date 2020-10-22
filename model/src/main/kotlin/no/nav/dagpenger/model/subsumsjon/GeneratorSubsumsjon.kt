@@ -15,7 +15,7 @@ class GeneratorSubsumsjon internal constructor(
     override fun lokaltResultat(): Boolean? {
         return super.lokaltResultat().also {
             when (it) {
-                false -> { (ugyldig as AlleSubsumsjon).addAll((1..faktum.svar()).map { makro.deepCopy(it) }) }
+                false -> { (ugyldig as AlleSubsumsjon).addAll((1..faktum.svar()).map { makro.deepCopy(it, faktum.fakta) }) }
                 else -> { (ugyldig as AlleSubsumsjon).clear() }
             }
         }
@@ -25,9 +25,7 @@ class GeneratorSubsumsjon internal constructor(
         regel.deepCopy(søknad),
         setOf(faktum).deepCopy(søknad).first() as GeneratorFaktum,
             makro.deepCopy(søknad)
-    ).also {
-        it.søknad = søknad
-    }
+    )
 
     override fun bygg(fakta: Fakta) = GeneratorSubsumsjon(
         regel.bygg(fakta),
@@ -41,9 +39,9 @@ class GeneratorSubsumsjon internal constructor(
         makro.deepCopy() as MakroSubsumsjon
     )
 
-    override fun deepCopy(indeks: Int) = GeneratorSubsumsjon(
-        regel.deepCopy(indeks, søknad),
-        setOf(faktum).deepCopy(indeks, søknad).first() as GeneratorFaktum,
-        makro.deepCopy(indeks) as MakroSubsumsjon
+    override fun deepCopy(indeks: Int, fakta: Fakta) = GeneratorSubsumsjon(
+        regel.deepCopy(indeks, fakta),
+        setOf(faktum).deepCopy(indeks, fakta).first() as GeneratorFaktum,
+        makro.deepCopy(indeks, fakta) as MakroSubsumsjon
     )
 }

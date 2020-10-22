@@ -9,7 +9,7 @@ internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
 
     override fun deepCopy(søknad: Søknad) = this
 
-    override fun deepCopy(indeks: Int) = this
+    override fun deepCopy(indeks: Int, fakta: Fakta) = this
 
     override fun bygg(fakta: Fakta) = this
 
