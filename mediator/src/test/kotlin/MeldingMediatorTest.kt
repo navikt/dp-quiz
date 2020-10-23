@@ -1,5 +1,6 @@
 import db.Søknader
 import io.mockk.mockk
+import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -12,12 +13,12 @@ import java.util.UUID
 class MeldingMediatorTest {
 
     @Test
-    internal fun `Oppretter søknad`() {
+    internal fun `Oppretter søknad og persisterer noe ved ønsket rettighetsavklaring`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
         assertEquals(1, søknader.søknader.size)
     }
 
-    @Test fun `Publiserer behov`() {
+    @Test fun `Publiserer noe ved ønsket rettighetsavklaring`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
         assertEquals(1, testRapid.inspektør.size)
     }
@@ -25,6 +26,7 @@ class MeldingMediatorTest {
     @BeforeEach
     internal fun reset() {
         testRapid.reset()
+        søknader.søknader.clear()
     }
 
     private companion object {
@@ -43,9 +45,9 @@ class MeldingMediatorTest {
     }
 
     private class TestSøknader : Søknader {
-        val søknader = mutableMapOf<UUID, Søknad>()
-        override fun nySøknad(søknad: Søknad) {
-            søknader[UUID.randomUUID()] = søknad
+        val søknader = mutableMapOf<UUID, List<Faktum<*>>>()
+        override fun persister(søknad: Søknad) {
+            søknader[UUID.randomUUID()] = emptyList()
         }
     }
 }
