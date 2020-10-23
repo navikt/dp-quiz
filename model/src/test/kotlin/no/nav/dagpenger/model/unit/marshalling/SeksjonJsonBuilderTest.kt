@@ -1,18 +1,20 @@
 package no.nav.dagpenger.model.unit.marshalling
 
-import no.nav.dagpenger.model.fakta.FaktumNavn
-import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.faktum
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.fakta.Fakta
+import no.nav.dagpenger.model.helpers.testSøknad
 import no.nav.dagpenger.model.marshalling.SeksjonJsonBuilder
-import no.nav.dagpenger.model.søknad.Seksjon
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class SeksjonJsonBuilderTest {
     @Test
     fun `Hente ut enkelt seksjon`() {
-        val faktum = FaktumNavn(1, "navn").faktum(Boolean::class.java)
-        val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
+        val seksjon = Fakta(
+            ja nei "navn" id 1
+        ).testSøknad().let {
+            it[0]
+        }
 
         val jsonBuilder = SeksjonJsonBuilder(seksjon)
         val json = jsonBuilder.resultat()

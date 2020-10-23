@@ -1,8 +1,8 @@
 package no.nav.dagpenger.model.unit.marshalling
 
-import no.nav.dagpenger.model.fakta.FaktumNavn
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.marshalling.SøknadJsonBuilder
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
@@ -25,11 +25,13 @@ class SøknadJsonBuilderTest {
 
     @Test
     fun `Lage søknad med seksjoner`() {
+        val fakta = Fakta(
+            ja nei "navn1" id 1,
+            ja nei "navn2" id 2
+        )
 
-        val faktum = FaktumNavn(1, "navn").faktum(Boolean::class.java)
-        val faktum2 = FaktumNavn(2, "navn2").faktum(Boolean::class.java)
-        val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
-        val seksjon2 = Seksjon("seksjon", Rolle.søker, faktum, faktum2)
+        val seksjon = Seksjon("seksjon", Rolle.søker, fakta ja 1)
+        val seksjon2 = Seksjon("seksjon", Rolle.søker, fakta ja 1, fakta ja 2)
         val søknad = Søknad(seksjon, seksjon2)
 
         val jsonBuilder = SøknadJsonBuilder(søknad)

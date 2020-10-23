@@ -42,7 +42,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning av gyldig sti av child`() {
-        søknad { fakta -> fakta ja 1 er true gyldigGodkjentAv  (fakta ja 2) }
+        søknad { fakta -> fakta ja 1 er true gyldigGodkjentAv (fakta ja 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true, Rolle.søker)
@@ -62,7 +62,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning av ugyldig sti av child`() {
-        søknad { fakta -> fakta ja 1 er true ugyldigGodkjentAv  (fakta ja 2) }
+        søknad { fakta -> fakta ja 1 er true ugyldigGodkjentAv (fakta ja 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true, Rolle.søker)
@@ -80,10 +80,10 @@ internal class GodkjenningsSubsumsjonTest {
         assertEquals(true, godkjenningsSubsumsjon.resultat())
     }
 
-    private fun søknad(block: (Fakta) -> Subsumsjon): Søknad{
+    private fun søknad(block: (Fakta) -> Subsumsjon): Søknad {
         val fakta = Fakta(
-                ja nei "faktum" id 1,
-                ja nei "godkjenning" id 2 avhengerAv 1
+            ja nei "faktum" id 1,
+            ja nei "godkjenning" id 2 avhengerAv 1
         )
 
         faktum = fakta ja 1
@@ -91,10 +91,10 @@ internal class GodkjenningsSubsumsjonTest {
 
         godkjenningsSubsumsjon = block(fakta)
         return Søknad(
-                fakta,
-                Seksjon("seksjon", Rolle.søker, faktum),
-                Seksjon("seksjon", Rolle.saksbehandler, godkjenning),
-                rootSubsumsjon = godkjenningsSubsumsjon
+            fakta,
+            Seksjon("seksjon", Rolle.søker, faktum),
+            Seksjon("seksjon", Rolle.saksbehandler, godkjenning),
+            rootSubsumsjon = godkjenningsSubsumsjon
         )
     }
 }

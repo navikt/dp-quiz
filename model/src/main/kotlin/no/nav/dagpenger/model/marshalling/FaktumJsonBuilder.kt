@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
-import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
@@ -65,12 +64,6 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
             faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
         }
         faktumIder.add(id)
-    }
-
-    override fun visit(faktumNavn: FaktumNavn, navn: String, rootId: Int, indeks: Int) {
-        this.navn = navn
-        this.rootId = rootId
-        this.indeks = indeks
     }
 
     override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {

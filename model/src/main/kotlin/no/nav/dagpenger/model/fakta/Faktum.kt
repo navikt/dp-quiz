@@ -94,13 +94,5 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
         }
 }
 
-fun <R : Comparable<R>> Collection<Faktum<R>>.faktum(navn: FaktumNavn, regel: FaktaRegel<R>): Faktum<R> =
-    UtledetFaktum(navn.faktumId, navn.navn, this.toMutableSet(), regel)
-
 fun Set<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
 typealias FaktaRegel <R> = (UtledetFaktum<R>) -> R
-
-fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>) = GrunnleggendeFaktum<R>(this.faktumId, this.navn, clazz)
-
-fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>, vararg templates: TemplateFaktum<*>) =
-    GeneratorFaktum(this.faktumId, this.navn, templates.asList())
