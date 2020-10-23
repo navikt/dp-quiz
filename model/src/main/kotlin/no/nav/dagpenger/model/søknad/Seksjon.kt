@@ -24,8 +24,6 @@ class Seksjon private constructor(
 
     constructor(navn: String, rolle: Rolle, vararg fakta: Faktum<*>) : this(navn, rolle, fakta.toMutableSet())
 
-    // constructor(navn: String, rolle: Rolle, vararg factories: FaktumFactory<*>) : this(navn, rolle, factories.map { it.faktum }.toMutableSet())
-
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>): Boolean {
         return nesteFakta.any { it in seksjonFakta }
     }
