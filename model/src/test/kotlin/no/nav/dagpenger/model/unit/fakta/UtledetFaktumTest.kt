@@ -1,53 +1,67 @@
 package no.nav.dagpenger.model.unit.fakta
-
-import no.nav.dagpenger.model.fakta.FaktumNavn
-import no.nav.dagpenger.model.fakta.faktum
-import no.nav.dagpenger.model.helpers.dimisjonsdato
-import no.nav.dagpenger.model.helpers.eksempelSøknad
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.fakta.Fakta
+import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.helpers.sisteDagMedLønn
-import no.nav.dagpenger.model.helpers.søknadsdato
-import no.nav.dagpenger.model.helpers.virkningstidspunkt
-import no.nav.dagpenger.model.helpers.ønsketdato
-import no.nav.dagpenger.model.regel.MAKS_DATO
-import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.helpers.testSøknad
+import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDate
 import kotlin.test.assertEquals
 
 internal class UtledetFaktumTest {
-    private lateinit var comp: Subsumsjon
+    private lateinit var søknad: Søknad
+    private lateinit var maks4: Faktum<LocalDate>
+    private lateinit var maks3: Faktum<LocalDate>
+    private lateinit var dato1: Faktum<LocalDate>
+    private lateinit var dato2: Faktum<LocalDate>
+    private lateinit var dato5: Faktum<LocalDate>
+    private lateinit var dato6: Faktum<LocalDate>
 
     @BeforeEach
     fun setup() {
-        comp = eksempelSøknad().rootSubsumsjon
+        søknad = Fakta(
+                maks dato "maks dato" av 1 og 3 og 6 id 4,
+                maks dato "maks dato" av 1 og 2 og 5 id 3,
+                dato faktum "dato1" id 1,
+                dato faktum "dato2" id 2,
+                dato faktum "dato5" id 5,
+                dato faktum "dato6" id 6
+        ).testSøknad()
+
+        maks4 = søknad dato 4
+        maks3 = søknad dato 3
+        dato1 = søknad dato 1
+        dato2 = søknad dato 2
+        dato5 = søknad dato 5
+        dato6 = søknad dato 6
     }
 
     @Test
     fun `støtte for faktum som utledes fra andre faktum`() {
-        assertThrows<IllegalStateException> { virkningstidspunkt.svar() }
+        assertThrows<IllegalStateException> { maks3.svar() }
 
-        ønsketdato.besvar(2.januar)
-        søknadsdato.besvar(2.januar)
-        assertThrows<IllegalStateException> { virkningstidspunkt.svar() }
-        sisteDagMedLønn.besvar(1.januar)
+        dato1.besvar(2.januar)
+        dato2.besvar(2.januar)
+        assertThrows<IllegalStateException> { maks3.svar() }
+        dato5.besvar(1.januar)
 
-        assertEquals(2.januar, virkningstidspunkt.svar())
+        assertEquals(2.januar, maks3.svar())
     }
 
     @Test
     fun `støtte for faktum som utledes av andre utledede faktum`() {
-        ønsketdato.besvar(2.januar)
-        søknadsdato.besvar(2.januar)
-        sisteDagMedLønn.besvar(1.januar)
+        dato1.besvar(2.januar)
+        dato2.besvar(2.januar)
+        dato5.besvar(1.januar)
 
-        val blurp = setOf(virkningstidspunkt, dimisjonsdato).faktum(FaktumNavn(1, "Blurp dato"), MAKS_DATO)
+        assertThrows<IllegalStateException> { maks4.svar() }
 
-        assertThrows<IllegalStateException> { blurp.svar() }
+        dato6.besvar(3.januar)
 
-        dimisjonsdato.besvar(3.januar)
-
-        assertEquals(3.januar, blurp.svar())
+        assertEquals(3.januar, maks4.svar())
     }
 }

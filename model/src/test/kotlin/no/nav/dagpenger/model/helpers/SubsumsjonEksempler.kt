@@ -8,7 +8,6 @@ import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.minst
