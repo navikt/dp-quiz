@@ -1,6 +1,15 @@
 package no.nav.dagpenger.model.unit.db
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.fakta.Dokument
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
@@ -18,85 +27,93 @@ internal class SøknadBuilderTest {
 
     @Test
     fun `Gjenopprette søknad med fakta uten svar`() {
-        val faktumBoolean = FaktumNavn(1, "faktumBoolean").faktum(Boolean::class.java)
-        val faktumInt = FaktumNavn(2, "faktumInt").faktum(Int::class.java)
-        val faktumInntekt = FaktumNavn(3, "faktumInntekt").indeks(1).faktum(Inntekt::class.java)
-        val faktumLocalDate = FaktumNavn(4, "faktumLocalDate").faktum(LocalDate::class.java)
-        val faktumDokument = FaktumNavn(5, "faktumDokumet").faktum(Dokument::class.java)
+        val fakta = Fakta(
+                ja nei "boolean" id 1,
+                heltall faktum "int" id 2,
+                inntekt faktum "inntekt" id 3,
+                dato faktum "dato" id 4,
+                dokument faktum "dokument" id 5
+        )
 
-        val seksjon1 = Seksjon("seksjon1", Rolle.søker, faktumBoolean, faktumInntekt, faktumDokument)
-        val seksjon2 = Seksjon("seksjon2", Rolle.saksbehandler, faktumInt, faktumLocalDate)
+        val seksjon1 = Seksjon("seksjon1", Rolle.søker, fakta ja 1, fakta inntekt 3, fakta dokument 5)
+        val seksjon2 = Seksjon("seksjon2", Rolle.saksbehandler, fakta heltall 2, fakta dato 4)
 
         assert(Søknad(seksjon1, seksjon2))
     }
 
     @Test
     fun `Gjenopprette søknad med fakta og svar`() {
-        val faktumBoolean = FaktumNavn(1, "faktumBoolean").faktum(Boolean::class.java)
-        val faktumInt = FaktumNavn(2, "faktumInt").faktum(Int::class.java)
-        val faktumInntekt = FaktumNavn(3, "faktumInntekt").indeks(1).faktum(Inntekt::class.java)
-        val faktumLocalDate = FaktumNavn(4, "faktumLocalDate").faktum(LocalDate::class.java)
-        val faktumDokument = FaktumNavn(5, "faktumDokumet").faktum(Dokument::class.java)
+        val fakta = Fakta(
+            ja nei "boolean" id 1,
+            heltall faktum "int" id 2,
+            inntekt faktum "inntekt" id 3,
+            dato faktum "dato" id 4,
+            dokument faktum "dokument" id 5
+         )
 
-        val seksjon1 = Seksjon("seksjon1", Rolle.søker, faktumBoolean, faktumInntekt, faktumDokument)
-        val seksjon2 = Seksjon("seksjon2", Rolle.saksbehandler, faktumInt, faktumLocalDate)
+        val seksjon1 = Seksjon("seksjon1", Rolle.søker, fakta ja 1, fakta inntekt 3, fakta dokument 5)
+        val seksjon2 = Seksjon("seksjon2", Rolle.saksbehandler, fakta heltall 2, fakta dato 4)
 
-        val søknad = Søknad(seksjon1, seksjon2)
+        val søknad = Søknad(fakta, seksjon1, seksjon2)
 
-        faktumBoolean.besvar(true, Rolle.søker)
-        faktumInt.besvar(5, Rolle.saksbehandler)
-        faktumInntekt.besvar(20000.årlig, Rolle.søker)
-        faktumLocalDate.besvar(1.januar, Rolle.saksbehandler)
-        faktumDokument.besvar(Dokument(2.januar), Rolle.søker)
+        søknad.ja(1).besvar(true, Rolle.søker)
+        søknad.heltall(2).besvar(5, Rolle.saksbehandler)
+        søknad.inntekt(3).besvar(20000.årlig, Rolle.søker)
+        søknad.dato(4).besvar(1.januar, Rolle.saksbehandler)
+        søknad.dokument(5).besvar(Dokument(2.januar), Rolle.søker)
 
         assert(søknad)
     }
 
     @Test
     fun `Gjenopprette søknad med utledet faktum`() {
-        val faktum1 = FaktumNavn(1, "f1").faktum(LocalDate::class.java)
-        val faktum2 = FaktumNavn(2, "f2").faktum(LocalDate::class.java)
+        val fakta = Fakta(
+                dato faktum "dato" id 1,
+                dato faktum "dato" id 2,
+                maks dato "utledet" av 1 og 2 id 3
+        )
 
-        val utlededFaktum = listOf(faktum1, faktum2).faktum(FaktumNavn(3, "utledet"), MAKS_DATO)
-
-        val seksjon1 = Seksjon("seksjon1", Rolle.søker, faktum1, faktum2)
-        val seksjon2 = Seksjon("seksjon2", Rolle.søker, utlededFaktum)
+        val seksjon1 = Seksjon("seksjon1", Rolle.søker, fakta dato 1, fakta dato 2)
+        val seksjon2 = Seksjon("seksjon2", Rolle.søker, fakta dato 3)
         assert(Søknad(seksjon1, seksjon2))
     }
 
     @Test
     fun `Gjenopprette søknad med utsatt faktabygging`() {
-        val faktum1 = FaktumNavn(1, "f1").faktum(LocalDate::class.java)
-        val faktum2 = FaktumNavn(2, "f2").faktum(LocalDate::class.java)
+        val fakta = Fakta(
+                dato faktum "dato" id 1,
+                dato faktum "dato" id 2,
+                maks dato "utledet" av 1 og 2 id 3
+        )
 
-        val utlededFaktum = listOf(faktum1, faktum2).faktum(FaktumNavn(3, "utledet"), MAKS_DATO)
-
-        val seksjon1 = Seksjon("seksjon1", Rolle.søker, utlededFaktum)
-        val seksjon2 = Seksjon("seksjon2", Rolle.søker, faktum1, faktum2)
+        val seksjon1 = Seksjon("seksjon1", Rolle.søker, fakta dato 3)
+        val seksjon2 = Seksjon("seksjon2", Rolle.søker, fakta dato 1, fakta dato 2)
         assert(Søknad(seksjon1, seksjon2))
     }
 
     @Test
     fun `Gjenopprette søknad med nøsta utledet faktum`() {
-        val faktum1 = FaktumNavn(1, "f1").faktum(LocalDate::class.java)
-        val faktum2 = FaktumNavn(2, "f2").faktum(LocalDate::class.java)
+        val fakta = Fakta(
+                dato faktum "dato" id 1,
+                dato faktum "dato" id 2,
+                maks dato "utledet 1" av 1 og 2 id 3,
+                maks dato "utledet 2" av 1 og 3 id 4
+        )
 
-        val utlededFaktum1 = listOf(faktum1, faktum2).faktum(FaktumNavn(3, "utledet1"), MAKS_DATO)
-        val utlededFaktum2 = listOf(faktum1, utlededFaktum1).faktum(FaktumNavn(4, "utledet2"), MAKS_DATO)
-
-        val seksjon1 = Seksjon("seksjon1", Rolle.søker, utlededFaktum2)
-        val seksjon2 = Seksjon("seksjon2", Rolle.søker, faktum2, utlededFaktum1)
-        val seksjon3 = Seksjon("seksjon3", Rolle.søker, faktum1, faktum2)
+        val seksjon1 = Seksjon("seksjon1", Rolle.søker, fakta dato 4)
+        val seksjon2 = Seksjon("seksjon2", Rolle.søker, fakta dato 2, fakta dato 3)
+        val seksjon3 = Seksjon("seksjon3", Rolle.søker, fakta dato 1, fakta dato 2)
         assert(Søknad(seksjon1, seksjon2, seksjon3))
     }
 
     @Test
     fun `Hvilken som helst bokstav vil fungere`() {
-        val template = FaktumNavn(2, "template").template(Int::class.java)
-        val generator = FaktumNavn(1, "generator").faktum(Int::class.java, template)
+        val fakta = Fakta(
+                heltall faktum "generator" genererer 2 id 1,
+                heltall faktum "template" id 2
+        )
 
-        val seksjon = Seksjon("seksjon1", Rolle.søker, generator, template)
-
+        val seksjon = Seksjon("seksjon1", Rolle.søker, fakta heltall 1, fakta heltall 2)
         assert(Søknad(seksjon))
     }
 

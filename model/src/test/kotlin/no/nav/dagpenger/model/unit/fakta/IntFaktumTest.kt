@@ -1,5 +1,7 @@
 package no.nav.dagpenger.model.unit.fakta
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
@@ -14,16 +16,16 @@ internal class IntFaktumTest {
 
     @Test
     fun `Støtte fakta med type int`() {
-        val intFaktum = FaktumNavn(1, "int faktum").faktum<Int>(Int::class.java)
+        val intFaktum = (heltall faktum "int" id 1).faktum()
         val seksjon = Seksjon("seksjon", Rolle.søker, intFaktum)
         assertThrows<IllegalStateException> { intFaktum.svar() }
-        intFaktum.besvar(5)
+        intFaktum.besvar( 5)
         assertEquals(5, intFaktum.svar())
     }
 
     @Test
     fun `Subsumsjon med fakta av typen int`() {
-        val intFaktum = FaktumNavn(1, "int faktum").faktum<Int>(Int::class.java)
+        val intFaktum = (heltall faktum "int" id 1).faktum()
         val subsumsjon = intFaktum er 0
         val seksjon = Seksjon("seksjon", Rolle.søker, intFaktum)
 
