@@ -20,10 +20,6 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
             infix fun nei(navn: String) = BaseFaktumFactory(Boolean::class.java, navn)
         }
 
-        object desimal {
-            infix fun faktum(navn: String) = BaseFaktumFactory(Double::class.java, navn)
-        }
-
         object heltall {
             infix fun faktum(navn: String) = BaseFaktumFactory(Int::class.java, navn)
         }
@@ -41,7 +37,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
         }
     }
 
-    infix fun id(rootId: Int) = this.also { this.rootId = rootId }
+    infix fun id(rootId: Int) = this.apply { this.rootId = rootId }
 
     override fun faktum() = GrunnleggendeFaktum(faktumId, navn, clazz)
 
@@ -65,8 +61,6 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
         GeneratorFaktum(faktumId, navn, templateIder.map { otherId -> faktumMap[FaktumId(otherId)] as TemplateFaktum<*> })
             .also { generatorfaktum -> faktumMap[faktumId] = generatorfaktum }
     }
-
-    val template: Faktum<T> get() = TemplateFaktum(faktumId, navn, clazz)
 
     private val faktumId get() = FaktumId(rootId).also { require(rootId > 0) { "Root id må være positiv" } }
 }

@@ -2,7 +2,6 @@ package no.nav.dagpenger.model.unit.factory
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimal
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
@@ -39,7 +38,6 @@ internal class BaseFaktumFactoryTest {
         (ja nei "boolean" id 3).also { factory ->
             assertNotNull(factory)
             assertNotNull(factory.faktum())
-            assertNotNull(factory.template)
         }
     }
 
@@ -55,20 +53,6 @@ internal class BaseFaktumFactoryTest {
         faktum.besvar(false)
         assertTrue(faktum.erBesvart())
         assertFalse(faktum.svar())
-    }
-
-    @Test fun `desimal factory faktum`() {
-        val faktum = (desimal faktum "desimal" id 3).faktum().also {
-            Søknad(Seksjon("seksjon", Rolle.søker, it))
-        }
-        assertFalse(faktum.erBesvart())
-        assertThrows<IllegalStateException> { faktum.svar() }
-        faktum.besvar(6.0)
-        assertTrue(faktum.erBesvart())
-        assertEquals(6.0, faktum.svar())
-        faktum.besvar(3.toDouble())
-        assertTrue(faktum.erBesvart())
-        assertEquals(3.0, faktum.svar())
     }
 
     @Test fun `heltall factory faktum`() {
