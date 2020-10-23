@@ -1,29 +1,33 @@
 package no.nav.dagpenger.model.fakta
 
-import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
-    override val navn: FaktumNavn,
+    faktumId: FaktumId,
+    navn: String,
     private val clazz: Class<R>,
-    override val avhengigeFakta: MutableSet<Faktum<*>>,
-    protected val roller: MutableSet<Rolle>
-) : Faktum<R> {
+    avhengigeFakta: MutableSet<Faktum<*>>,
+    roller: MutableSet<Rolle>
+) : Faktum<R>(faktumId, navn, avhengigeFakta, roller) {
     private var tilstand: Tilstand = Ukjent
     protected lateinit var gjeldendeSvar: R
 
-    internal constructor(navn: FaktumNavn, clazz: Class<R>) : this(navn, clazz, mutableSetOf(), mutableSetOf())
+    internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>) : this(faktumId, navn, clazz, mutableSetOf(), mutableSetOf())
 
     override fun clazz() = clazz
 
     override fun besvar(r: R, rolle: Rolle) = this.apply {
-        if (rolle !in roller) throw IllegalAccessError("Rollen $rolle kan ikke besvare faktum")
+        super.besvar(r, rolle)
         gjeldendeSvar = r
         tilstand = Kjent
-        super.besvar(r, rolle)
     }
 
-    override fun faktaMap() = mapOf(navn to this)
+    override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
+        if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
+        val avhengigheter = avhengigeFakta.map { it.bygg(byggetFakta) }.toMutableSet()
+
+        return GrunnleggendeFaktum(faktumId, navn, clazz, avhengigheter, roller).also { byggetFakta[faktumId] = it }
+    }
 
     override fun svar(): R = tilstand.svar(this)
 
@@ -34,7 +38,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     }
 
     override fun accept(visitor: FaktumVisitor) {
-        navn.accept(visitor)
+        faktumId.accept(visitor)
         tilstand.accept(this, visitor)
     }
 
@@ -44,7 +48,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         if (tilstand.kode == kode) fakta.add(this)
     }
 
-    override fun add(rolle: Rolle) = roller.add(rolle)
+    override fun tilTemplate() = TemplateFaktum(faktumId, navn, clazz)
 
     protected open fun acceptUtenSvar(visitor: FaktumVisitor) {
         visitor.visit(this, Ukjent.kode, id, avhengigeFakta, roller, clazz)
@@ -53,8 +57,6 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     protected open fun acceptMedSvar(visitor: FaktumVisitor) {
         visitor.visit(this, Kjent.kode, id, avhengigeFakta, roller, clazz, gjeldendeSvar)
     }
-
-    override fun toString() = navn.toString()
 
     private interface Tilstand {
         val kode: FaktumTilstand

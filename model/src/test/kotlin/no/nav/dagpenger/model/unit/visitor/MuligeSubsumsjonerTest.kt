@@ -1,11 +1,12 @@
 package no.nav.dagpenger.model.unit.visitor
 
 import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.helpers.Eksempel
+import no.nav.dagpenger.model.helpers.NyEksempel
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
+import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SubsumsjonJsonBuilder
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -14,22 +15,24 @@ import kotlin.test.assertNull
 
 internal class MuligeSubsumsjonerTest {
 
-    private lateinit var m: Eksempel
+    private lateinit var m: NyEksempel
     private lateinit var rootSubsumsjon: Subsumsjon
+    private lateinit var søknad: Søknad
 
     @BeforeEach
     fun setUp() {
-        m = Eksempel()
-        rootSubsumsjon = m.rootSubsumsjon
+        m = NyEksempel()
+        søknad = m.søknad
+        rootSubsumsjon = søknad.rootSubsumsjon
     }
 
     @Test
     fun `Fjerner umulig gyldig vei fra root`() {
-        m.f1Boolean.besvar(false, Rolle.nav)
-        m.f2Dato.besvar(1.februar, Rolle.nav)
-        m.f3Dato.besvar(3.januar)
-        m.f4Dato.besvar(4.januar)
-        m.f5Dato.besvar(5.januar)
+        søknad.ja(1).besvar(false, Rolle.nav)
+        søknad.dato(2).besvar(1.februar, Rolle.nav)
+        søknad.dato(3).besvar(3.januar)
+        søknad.dato(4).besvar(4.januar)
+        søknad.dato(5).besvar(5.januar)
 
         val jsonBuilder = SubsumsjonJsonBuilder.mulige(rootSubsumsjon)
         val json = jsonBuilder.resultat()
@@ -40,7 +43,8 @@ internal class MuligeSubsumsjonerTest {
 
     @Test
     fun `Fjerner umulig ugyldig vei fra root`() {
-        m.f10Boolean.besvar(true)
+
+        søknad.ja(10).besvar(true)
 
         val jsonBuilder = SubsumsjonJsonBuilder.mulige(rootSubsumsjon)
         val json = jsonBuilder.resultat()

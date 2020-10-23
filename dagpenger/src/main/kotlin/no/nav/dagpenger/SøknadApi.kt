@@ -58,11 +58,11 @@ internal fun Application.søknadApi(søknader: Søknader, template: Subsumsjon) 
 
                 with(svar) {
                     when (type.toLowerCase()) {
-                        "localdate" -> søknad.finnFaktum<LocalDate>(id).besvar(LocalDate.parse(verdi))
-                        "string" -> søknad.finnFaktum<String>(id).besvar(verdi)
-                        "boolean" -> søknad.finnFaktum<Boolean>(id).besvar(verdi.toBoolean())
-                        "int" -> søknad.finnFaktum<Int>(id).besvar(verdi.toInt())
-                        "inntekt" -> søknad.finnFaktum<Inntekt>(id).besvar(verdi.toInt().årlig)
+                        "localdate" -> søknad.faktum<LocalDate>(id).besvar(LocalDate.parse(verdi))
+                        "string" -> søknad.faktum<String>(id).besvar(verdi)
+                        "boolean" -> søknad.faktum<Boolean>(id).besvar(verdi.toBoolean())
+                        "int" -> søknad.faktum<Int>(id).besvar(verdi.toInt())
+                        "inntekt" -> søknad.faktum<Inntekt>(id).besvar(verdi.toInt().årlig)
                         else -> throw IllegalArgumentException("BOOM")
                     }
                 }

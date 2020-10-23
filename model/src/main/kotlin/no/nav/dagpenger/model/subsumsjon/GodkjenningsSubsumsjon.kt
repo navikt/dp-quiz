@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
@@ -36,12 +37,19 @@ class GodkjenningsSubsumsjon private constructor(
         navn,
         action,
         child.deepCopy(søknad),
-        søknad.fakta[godkjenning.navn] as Faktum<Boolean>,
+        søknad.ja(godkjenning.id),
         gyldigSubsumsjon.deepCopy(søknad),
         ugyldigSubsumsjon.deepCopy(søknad)
-    ).also {
-        it.søknad = søknad
-    }
+    )
+
+    override fun bygg(fakta: Fakta) = GodkjenningsSubsumsjon(
+        navn,
+        action,
+        child.bygg(fakta),
+        fakta.ja(godkjenning.faktumId),
+        gyldigSubsumsjon.bygg(fakta),
+        ugyldigSubsumsjon.bygg(fakta)
+    )
 
     override fun deepCopy(): Subsumsjon {
         return GodkjenningsSubsumsjon(
@@ -54,17 +62,15 @@ class GodkjenningsSubsumsjon private constructor(
         )
     }
 
-    override fun deepCopy(indeks: Int): Subsumsjon {
+    override fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon {
         return GodkjenningsSubsumsjon(
             "$navn [$indeks]",
             action,
-            child.deepCopy(indeks),
+            child.deepCopy(indeks, fakta),
             godkjenning,
-            gyldigSubsumsjon.deepCopy(indeks),
-            ugyldigSubsumsjon.deepCopy(indeks)
-        ).also {
-            it.søknad = søknad
-        }
+            gyldigSubsumsjon.deepCopy(indeks, fakta),
+            ugyldigSubsumsjon.deepCopy(indeks, fakta)
+        )
     }
 
     override fun accept(visitor: SubsumsjonVisitor) {

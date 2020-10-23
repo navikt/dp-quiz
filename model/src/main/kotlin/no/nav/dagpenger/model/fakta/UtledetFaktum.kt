@@ -3,52 +3,53 @@ package no.nav.dagpenger.model.fakta
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 class UtledetFaktum<R : Comparable<R>> internal constructor(
-    override val navn: FaktumNavn,
-    private val fakta: Set<Faktum<R>>,
+    faktumId: FaktumId,
+    navn: String,
+    private val underordnede: MutableSet<Faktum<R>>,
     private val regel: FaktaRegel<R>
-) : Faktum<R> {
-    override val avhengigeFakta = mutableSetOf<Faktum<*>>()
+) : Faktum<R>(faktumId, navn) {
 
-    internal fun max(): R = fakta.maxOf { it.svar() }
+    internal fun max(): R = underordnede.maxOf { it.svar() }
+    internal fun alle(): Boolean = underordnede.all { it.svar() as Boolean }
 
-    override fun clazz() = fakta.toList().first().clazz()
+    override fun clazz() = underordnede.toList().first().clazz()
 
     override fun besvar(r: R, rolle: Rolle): Faktum<R> {
         throw IllegalArgumentException("Kan ikke besvare sammensatte faktum")
     }
 
-    override fun faktaMap(): Map<FaktumNavn, Faktum<*>> {
-        return mapOf(navn to this) + fakta.fold(mapOf<FaktumNavn, Faktum<*>> ()) { resultater, faktum ->
-            resultater + faktum.faktaMap()
-        }
-    }
-
     override fun svar(): R {
-        fakta.forEach { it.svar() }
+        underordnede.forEach { it.svar() }
         return regel(this)
     }
 
-    override fun add(rolle: Rolle) = fakta.all { it.add(rolle) }
+    internal fun addAll(fakta: List<Faktum<*>>) = this.underordnede.addAll(fakta as List<Faktum<R>>)
 
-    override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> = fakta.flatMap { it.grunnleggendeFakta() }.toSet()
+    override fun add(rolle: Rolle): Boolean = false // utledet faktum kan ikke settes av roller
+
+    override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> = underordnede.flatMap { it.grunnleggendeFakta() }.toSet()
 
     override fun leggTilHvis(kode: Faktum.FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>) {
-        this.fakta.forEach { it.leggTilHvis(kode, fakta) }
+        this.underordnede.forEach { it.leggTilHvis(kode, fakta) }
     }
 
-    override fun erBesvart() = fakta.all { it.erBesvart() }
-
-    override fun tilUbesvart() {
-        throw IllegalStateException("Kan ikke sette utleda faktum til ubesvart")
-    }
+    override fun erBesvart() = underordnede.all { it.erBesvart() }
 
     override fun accept(visitor: FaktumVisitor) {
-        navn.accept(visitor)
-        if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, fakta, clazz(), svar())
-        else visitor.preVisit(this, id, avhengigeFakta, fakta, clazz())
-        fakta.forEach { it.accept(visitor) }
-        visitor.postVisit(this, id, fakta, clazz())
+        faktumId.accept(visitor)
+        if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, underordnede, clazz(), svar())
+        else visitor.preVisit(this, id, avhengigeFakta, underordnede, clazz())
+        underordnede.forEach { it.accept(visitor) }
+        visitor.postVisit(this, id, underordnede, clazz())
     }
 
-    override fun toString() = navn.toString()
+    override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): UtledetFaktum<R> {
+        if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId] as UtledetFaktum<R>
+        val childFakta = underordnede.map { it.bygg(byggetFakta) as Faktum<R> }.toMutableSet()
+        return UtledetFaktum(faktumId, navn, childFakta, regel).also { byggetFakta[faktumId] = it }
+    }
+
+    internal fun erDefinert(faktaList: List<Faktum<*>>, indeks: Int) = underordnede.all { faktum ->
+        faktaList.indexOf(faktum) < indeks
+    }
 }

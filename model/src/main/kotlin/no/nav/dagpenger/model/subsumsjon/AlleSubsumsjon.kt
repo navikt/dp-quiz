@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
@@ -17,16 +18,21 @@ class AlleSubsumsjon private constructor(
         subsumsjoner.map { it.deepCopy(søknad) }.toMutableList(),
         gyldigSubsumsjon.deepCopy(søknad),
         ugyldigSubsumsjon.deepCopy(søknad)
-    ).also {
-        it.søknad = søknad
-    }
+    )
 
-    override fun deepCopy(indeks: Int): Subsumsjon {
+    override fun bygg(fakta: Fakta) = AlleSubsumsjon(
+        navn,
+        subsumsjoner.map { it.bygg(fakta) }.toMutableList(),
+        gyldigSubsumsjon.bygg(fakta),
+        ugyldigSubsumsjon.bygg(fakta)
+    )
+
+    override fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon {
         return AlleSubsumsjon(
             "$navn [$indeks]",
-            subsumsjoner.map { it.deepCopy(indeks) }.toMutableList(),
-            gyldigSubsumsjon.deepCopy(indeks),
-            ugyldigSubsumsjon.deepCopy(indeks)
+            subsumsjoner.map { it.deepCopy(indeks, fakta) }.toMutableList(),
+            gyldigSubsumsjon.deepCopy(indeks, fakta),
+            ugyldigSubsumsjon.deepCopy(indeks, fakta)
         )
     }
 

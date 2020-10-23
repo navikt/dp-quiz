@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
@@ -11,7 +12,6 @@ abstract class Subsumsjon protected constructor(
 ) : Iterable<Subsumsjon> {
     protected lateinit var gyldigSubsumsjon: Subsumsjon
     protected lateinit var ugyldigSubsumsjon: Subsumsjon
-    protected lateinit var søknad: Søknad
 
     init {
         if (gyldigSubsumsjon != null) this.gyldigSubsumsjon = gyldigSubsumsjon
@@ -28,13 +28,15 @@ abstract class Subsumsjon protected constructor(
 
     abstract fun deepCopy(søknad: Søknad): Subsumsjon
 
+    internal abstract fun bygg(fakta: Fakta): Subsumsjon
+
     abstract fun deepCopy(): Subsumsjon
 
-    internal abstract fun deepCopy(indeks: Int): Subsumsjon
+    internal abstract fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon
 
     internal abstract fun lokaltResultat(): Boolean?
 
-    abstract fun nesteFakta(): Set<GrunnleggendeFaktum<*>>
+    internal abstract fun nesteFakta(): Set<GrunnleggendeFaktum<*>>
 
     internal open fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisitGyldig(this, gyldigSubsumsjon)

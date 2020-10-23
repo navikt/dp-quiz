@@ -1,31 +1,52 @@
 package no.nav.dagpenger.model.søknad
 
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.FaktumNavn
-import no.nav.dagpenger.model.fakta.GeneratorFaktum
-import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
-import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.TemplateFaktum
-import no.nav.dagpenger.model.fakta.UtledetFaktum
+import no.nav.dagpenger.model.fakta.FaktumId
+import no.nav.dagpenger.model.fakta.TypedFaktum
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.util.UUID
 
-class Søknad private constructor(private val uuid: UUID, private val seksjoner: MutableList<Seksjon>) : MutableList<Seksjon> by seksjoner {
-    constructor(vararg seksjoner: Seksjon) : this(UUID.randomUUID(), seksjoner.toMutableList())
+class Søknad private constructor(
+    internal val fakta: Fakta,
+    internal val rootSubsumsjon: Subsumsjon,
+    private val uuid: UUID,
+    private val seksjoner: MutableList<Seksjon>
+) : TypedFaktum by fakta, MutableList<Seksjon> by seksjoner {
 
-    internal val fakta: MutableMap<FaktumNavn, Faktum<*>>
+    constructor(vararg seksjoner: Seksjon) : this(
+        Fakta(),
+        TomSubsumsjon,
+        UUID.randomUUID(),
+        seksjoner.toMutableList()
+    )
+
+    internal constructor(fakta: Fakta, vararg seksjoner: Seksjon, rootSubsumsjon: Subsumsjon = TomSubsumsjon) : this(
+        fakta,
+        rootSubsumsjon,
+        UUID.randomUUID(),
+        seksjoner.toMutableList()
+    )
 
     init {
         seksjoner.forEach {
             it.søknad(this)
         }
-        fakta = MapBuilder(this).resultat
     }
 
-    fun <T : Comparable<T>> finnFaktum(id: String) = (fakta[FaktumNavn(id)] as Faktum<T>)
+    internal fun add(faktum: Faktum<*>) = fakta.add(faktum)
+
+    internal infix fun idOrNull(faktumId: FaktumId) = fakta.idOrNull(faktumId)
+
+    fun <T : Comparable<T>> faktum(id: String): Faktum<T> = (fakta.id(id) as Faktum<T>)
+
+    fun <T : Comparable<T>> faktum(id: Int): Faktum<T> = (fakta.id(id) as Faktum<T>)
 
     infix fun nesteSeksjon(subsumsjon: Subsumsjon) = seksjoner.first { subsumsjon.nesteFakta() in it }
+
+    fun nesteSeksjon() = nesteSeksjon(rootSubsumsjon)
 
     fun accept(visitor: SøknadVisitor) {
         visitor.preVisit(this, uuid)
@@ -33,61 +54,14 @@ class Søknad private constructor(private val uuid: UUID, private val seksjoner:
         visitor.postVisit(this)
     }
 
-    internal fun faktum(navn: FaktumNavn) =
-        fakta[navn] ?: throw IllegalArgumentException("Faktum med denne id-en finnes ikke, id ${navn.id}")
+    internal fun faktum(id: FaktumId) = fakta.id(id)
 
     fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
 
-    private class MapBuilder(søknad: Søknad) : SøknadVisitor {
-        val resultat = mutableMapOf<FaktumNavn, Faktum<*>>()
-        init {
-            søknad.accept(this)
-        }
+    internal fun bygg(fakta: Fakta, subsumsjon: Subsumsjon) =
+        Søknad(fakta, subsumsjon, UUID.randomUUID(), seksjoner.map { it.bygg(fakta) }.toMutableList())
 
-        private fun set(faktum: Faktum<*>) {
-            if (resultat.containsKey(faktum.navn) && resultat[faktum.navn] != faktum) throw IllegalArgumentException("Duplisert faktumnavn i søknad: ${faktum.navn}")
-            resultat[faktum.navn] = faktum
-        }
+    internal fun nesteFakta() = rootSubsumsjon.nesteFakta()
 
-        override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>) {
-            set(faktum)
-        }
-
-        override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>, svar: R) {
-            set(faktum)
-        }
-
-        override fun <R : Comparable<R>> visit(faktum: TemplateFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
-            set(faktum)
-        }
-
-        override fun <R : Comparable<R>> visit(
-            faktum: GrunnleggendeFaktum<R>,
-            tilstand: Faktum.FaktumTilstand,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            roller: Set<Rolle>,
-            clazz: Class<R>
-        ) {
-            set(faktum)
-        }
-
-        override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>, svar: R) {
-            set(faktum)
-        }
-
-        override fun <R : Comparable<R>> visit(
-            faktum: GeneratorFaktum,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            templates: List<Faktum<*>>,
-            roller: Set<Rolle>,
-            clazz: Class<R>
-        ) {
-            set(faktum)
-        }
-    }
+    fun resultat() = rootSubsumsjon.resultat()
 }
-
-private fun String.rootId() = this.toInt()
-private fun String.indeks(): Int? = this.toInt()

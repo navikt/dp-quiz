@@ -26,6 +26,6 @@ internal class EnkelSøknadTest {
 
         assertNotSame(søknad1.first(), søknad2.first())
 
-        assertNotSame(søknad1.finnFaktum<LocalDate>("1"), søknad2.finnFaktum<LocalDate>("1"))
+        assertNotSame(søknad1.faktum<LocalDate>("1"), søknad2.faktum<LocalDate>("1"))
     }
 }

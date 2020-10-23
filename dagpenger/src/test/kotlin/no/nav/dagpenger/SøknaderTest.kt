@@ -15,7 +15,7 @@ internal class SøknaderTest {
 
     @Test
     fun `hente eller opprette søknad`() {
-        val f = Dagpengefakta()
+        val f = Prototype()
 
         val søknader = InMemorySøknader {
             Søknad(
@@ -33,14 +33,11 @@ internal class SøknaderTest {
 
     @Test
     fun `kan finne grunnleggende faktum gjennom derivert faktum`() {
-        val f = Dagpengefakta()
+        val f = Prototype()
 
-        val søknad =
-            Søknad(
-                Seksjon("seksjon", Rolle.søker, f.virkningstidspunkt),
-            )
+        val søknad = f.søknad("")
 
-        val finnFaktum = søknad.finnFaktum<LocalDate>("7")
+        val finnFaktum = søknad.faktum<LocalDate>("7")
         assertDoesNotThrow { finnFaktum }
         assertEquals("7", finnFaktum.id)
     }

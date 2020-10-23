@@ -1,14 +1,16 @@
 package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
-class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: FaktumNavn, internal val clazz: Class<R>) : Faktum<R> {
+class TemplateFaktum<R : Comparable<R>> internal constructor(
+    faktumId: FaktumId,
+    navn: String,
+    internal val clazz: Class<R>,
+    avhengigeFakta: MutableSet<Faktum<*>> = mutableSetOf(),
+    roller: MutableSet<Rolle> = mutableSetOf()
+) : Faktum<R>(faktumId, navn, avhengigeFakta, roller) {
     private val seksjoner = mutableListOf<Seksjon>()
-
-    override val avhengigeFakta = mutableSetOf<Faktum<*>>()
-    private val roller = mutableSetOf<Rolle>()
 
     override fun clazz() = clazz
 
@@ -29,38 +31,47 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(override val navn: 
     override fun erBesvart() = false
 
     override fun accept(visitor: FaktumVisitor) {
-        navn.accept(visitor)
+        faktumId.accept(visitor)
         visitor.visit(this, id, avhengigeFakta, roller, clazz)
     }
 
-    override fun add(rolle: Rolle) = roller.add(rolle)
-
     override fun add(seksjon: Seksjon) = seksjoner.add(seksjon)
 
-    override fun faktaMap() = mapOf(navn to this)
-
-    override fun toString() = navn.toString()
-
-    override fun med(indeks: Int, søknad: Søknad): Faktum<*> {
-        return søknad.fakta[navn.indeks(indeks)]
+    override fun deepCopy(indeks: Int, fakta: Fakta): Faktum<*> {
+        return fakta.idOrNull(faktumId medIndeks indeks)
             ?: GrunnleggendeFaktum(
-                navn.indeks(indeks),
+                faktumId medIndeks indeks,
+                navn,
                 clazz,
-                avhengigeFakta.deepCopy(indeks, søknad).toMutableSet(),
+                avhengigeFakta.deepCopy(indeks, fakta).toMutableSet(),
                 roller
-            ).also { søknad.fakta[it.navn] = it }
+            ).also { fakta.add(it) }
     }
 
-    internal fun generate(r: Int) {
+    internal fun generate(r: Int, fakta: Fakta) {
         seksjoner.forEach { originalSeksjon ->
             (1..r).forEach { indeks ->
                 val seksjon = if (originalSeksjon.bareTemplates()) {
-                    originalSeksjon.deepCopy(indeks)
+                    originalSeksjon.deepCopy(indeks, fakta)
                 } else {
                     originalSeksjon
                 }
-                seksjon.add(GrunnleggendeFaktum(navn.indeks(indeks), clazz, avhengigeFakta.deepCopy(indeks, seksjon.søknad).toMutableSet(), roller))
+                seksjon.add(
+                    GrunnleggendeFaktum(
+                        faktumId.medIndeks(indeks),
+                        navn,
+                        clazz,
+                        avhengigeFakta.deepCopy(indeks, fakta).toMutableSet(),
+                        roller
+                    )
+                )
             }
         }
+    }
+
+    override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
+        if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
+        val avhengigheter = avhengigeFakta.map { it.bygg(byggetFakta) }.toMutableSet()
+        return TemplateFaktum(faktumId, navn, clazz, avhengigheter, roller).also { byggetFakta[faktumId] = it }
     }
 }

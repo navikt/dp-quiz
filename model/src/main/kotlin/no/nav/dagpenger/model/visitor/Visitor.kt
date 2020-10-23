@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.visitor
 
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.fakta.FaktumId
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
@@ -84,6 +85,12 @@ interface FaktumVisitor {
     fun visit(
         faktumNavn: FaktumNavn,
         navn: String,
+        rootId: Int,
+        indeks: Int
+    ) {}
+
+    fun visit(
+        faktumId: FaktumId,
         rootId: Int,
         indeks: Int
     ) {}

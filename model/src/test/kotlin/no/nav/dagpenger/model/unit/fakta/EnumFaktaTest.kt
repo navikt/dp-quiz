@@ -1,10 +1,10 @@
 package no.nav.dagpenger.model.unit.fakta
 
-import no.nav.dagpenger.model.fakta.FaktumNavn
-import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.faktum
+import no.nav.dagpenger.model.factory.BaseFaktumFactory
+import no.nav.dagpenger.model.fakta.Fakta
+import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.helpers.testSøknad
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.søknad.Seksjon
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
@@ -15,11 +15,14 @@ internal class EnumFaktaTest {
         norsk, engelsk
     }
 
+    private object språk {
+        infix fun faktum(navn: String) = BaseFaktumFactory(SpråkEnum::class.java, navn)
+    }
+
     @Test
     fun `enum-fakta`() {
-
-        val faktum = FaktumNavn(1, "språk").faktum<SpråkEnum>(SpråkEnum::class.java)
-        val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
+        val søknad = Fakta(språk faktum "språk" id 1).testSøknad()
+        val faktum = søknad.id(1) as Faktum<SpråkEnum>
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(SpråkEnum.engelsk)
         assertEquals(SpråkEnum.engelsk, faktum.svar())
@@ -27,12 +30,11 @@ internal class EnumFaktaTest {
 
     @Test
     fun `subsumsjon test`() {
-        val faktum = FaktumNavn(1, "språk").faktum<SpråkEnum>(SpråkEnum::class.java)
+        val søknad = Fakta(språk faktum "språk" id 1).testSøknad()
+        val faktum = søknad.id(1) as Faktum<SpråkEnum>
         val subsumsjon = faktum er SpråkEnum.engelsk
-        val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
 
         assertEquals(null, subsumsjon.resultat())
-
         faktum.besvar(SpråkEnum.engelsk)
         assertEquals(true, subsumsjon.resultat())
     }

@@ -1,13 +1,13 @@
-package no.nav.dagpenger.model.unit.fakta
+package no.nav.dagpenger.model.unit.factory
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimal
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.fakta.Dokument
-import no.nav.dagpenger.model.fakta.FaktumFactory
-import no.nav.dagpenger.model.fakta.FaktumFactory.Companion.boolean
-import no.nav.dagpenger.model.fakta.FaktumFactory.Companion.dato
-import no.nav.dagpenger.model.fakta.FaktumFactory.Companion.desimal
-import no.nav.dagpenger.model.fakta.FaktumFactory.Companion.dokument
-import no.nav.dagpenger.model.fakta.FaktumFactory.Companion.heltall
-import no.nav.dagpenger.model.fakta.FaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.daglig
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
@@ -15,8 +15,8 @@ import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
-import no.nav.dagpenger.model.unit.fakta.FaktumFactoryTest.Companion.Valg.A
-import no.nav.dagpenger.model.unit.fakta.FaktumFactoryTest.Companion.Valg.C
+import no.nav.dagpenger.model.unit.factory.BaseFaktumFactoryTest.Companion.Valg.A
+import no.nav.dagpenger.model.unit.factory.BaseFaktumFactoryTest.Companion.Valg.C
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -26,25 +26,25 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class FaktumFactoryTest {
+internal class BaseFaktumFactoryTest {
 
     companion object {
         internal enum class Valg { A, B, C }
     }
 
-    private object valg { infix fun faktum(navn: String) = FaktumFactory(Valg::class.java, navn) }
+    private object valg { infix fun faktum(navn: String) = BaseFaktumFactory(Valg::class.java, navn) }
 
     @Test
     fun boolean() {
-        (boolean faktum "boolean" id 3).also { factory ->
+        (ja nei "boolean" id 3).also { factory ->
             assertNotNull(factory)
-            assertNotNull(factory.faktum)
+            assertNotNull(factory.faktum())
             assertNotNull(factory.template)
         }
     }
 
     @Test fun `boolean factory faktum`() {
-        val faktum = (boolean faktum "boolean" id 3).faktum.also {
+        val faktum = (ja nei "boolean" id 3).faktum().also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())
@@ -58,7 +58,7 @@ internal class FaktumFactoryTest {
     }
 
     @Test fun `desimal factory faktum`() {
-        val faktum = (desimal faktum "desimal" id 3).faktum.also {
+        val faktum = (desimal faktum "desimal" id 3).faktum().also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())
@@ -72,7 +72,7 @@ internal class FaktumFactoryTest {
     }
 
     @Test fun `heltall factory faktum`() {
-        val faktum = (heltall faktum "heltall" id 3).faktum.also {
+        val faktum = (heltall faktum "heltall" id 3).faktum().also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())
@@ -86,7 +86,7 @@ internal class FaktumFactoryTest {
     }
 
     @Test fun `Inntekt factory faktum`() {
-        val faktum = (inntekt faktum "inntekt" id 3).faktum.also {
+        val faktum = (inntekt faktum "inntekt" id 3).faktum().also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())
@@ -100,7 +100,7 @@ internal class FaktumFactoryTest {
     }
 
     @Test fun `Dato factory faktum`() {
-        val faktum = (dato faktum "dato" id 3).faktum.also {
+        val faktum = (dato faktum "dato" id 3).faktum().also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())
@@ -114,7 +114,7 @@ internal class FaktumFactoryTest {
     }
 
     @Test fun `Dokument factory faktum`() {
-        val faktum = (dokument faktum "dokument" id 3).faktum.also {
+        val faktum = (dokument faktum "dokument" id 3).faktum().also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())
@@ -127,7 +127,7 @@ internal class FaktumFactoryTest {
     }
 
     @Test fun `valg (enum) factory faktum`() {
-        val faktum = (valg faktum "valg" id 3).faktum.also {
+        val faktum = (valg faktum "valg" id 3).faktum().also {
             Søknad(Seksjon("seksjon", Rolle.søker, it))
         }
         assertFalse(faktum.erBesvart())

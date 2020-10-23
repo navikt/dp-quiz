@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.regel
 
 import no.nav.dagpenger.model.fakta.Dokument
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
@@ -19,21 +20,24 @@ interface Regel {
     val typeNavn: String
     fun resultat(): Boolean
     fun deepCopy(søknad: Søknad): Regel
-    fun deepCopy(indeks: Int, søknad: Søknad): Regel
+    fun bygg(fakta: Fakta): Regel
+    fun deepCopy(indeks: Int, fakta: Fakta): Regel
 }
 
 private class Etter(private val senesteDato: Faktum<LocalDate>, private val tidligsteDato: Faktum<LocalDate>) : Regel {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = tidligsteDato.svar() < senesteDato.svar()
-    override fun toString() = "Sjekk at '${senesteDato.navn}' er etter '${tidligsteDato.navn}'"
-    override fun deepCopy(søknad: Søknad): Regel {
-        return Etter(søknad.faktum(senesteDato.navn) as Faktum<LocalDate>, søknad.faktum(tidligsteDato.navn) as Faktum<LocalDate>)
-    }
+    override fun toString() = "Sjekk at '$senesteDato' er etter '$tidligsteDato'"
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
+    override fun deepCopy(søknad: Søknad): Regel {
+        return Etter(søknad.faktum(senesteDato.faktumId) as Faktum<LocalDate>, søknad.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>)
+    }
+    override fun bygg(fakta: Fakta) = Etter(fakta.dato(senesteDato.faktumId), fakta.dato(tidligsteDato.faktumId))
+
+    override fun deepCopy(indeks: Int, fakta: Fakta): Regel {
         return Etter(
-            senesteDato.med(indeks, søknad) as Faktum<LocalDate>,
-            tidligsteDato.med(indeks, søknad) as Faktum<LocalDate>
+            senesteDato.deepCopy(indeks, fakta) as Faktum<LocalDate>,
+            tidligsteDato.deepCopy(indeks, fakta) as Faktum<LocalDate>
         )
     }
 }
@@ -49,15 +53,17 @@ infix fun Faktum<LocalDate>.etter(tidligsteDato: Faktum<LocalDate>): Subsumsjon 
 private class Før(private val tidligsteDato: Faktum<LocalDate>, private val senesteDato: Faktum<LocalDate>) : Regel {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = tidligsteDato.svar() < senesteDato.svar()
-    override fun toString() = "Sjekk at '${tidligsteDato.navn}' er før '${senesteDato.navn}'"
+    override fun toString() = "Sjekk at '$tidligsteDato' er før '$senesteDato'"
     override fun deepCopy(søknad: Søknad): Regel {
-        return Før(søknad.faktum(tidligsteDato.navn) as Faktum<LocalDate>, søknad.faktum(senesteDato.navn) as Faktum<LocalDate>)
+        return Før(søknad.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>, søknad.faktum(senesteDato.faktumId) as Faktum<LocalDate>)
     }
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
+    override fun bygg(fakta: Fakta) = Før(fakta.dato(tidligsteDato.faktumId), fakta.dato(senesteDato.faktumId))
+
+    override fun deepCopy(indeks: Int, fakta: Fakta): Regel {
         return Før(
-            tidligsteDato.med(indeks, søknad) as Faktum<LocalDate>,
-            senesteDato.med(indeks, søknad) as Faktum<LocalDate>
+            tidligsteDato.deepCopy(indeks, fakta) as Faktum<LocalDate>,
+            senesteDato.deepCopy(indeks, fakta) as Faktum<LocalDate>
         )
     }
 }
@@ -73,15 +79,17 @@ infix fun Faktum<LocalDate>.før(senesteDato: Faktum<LocalDate>): Subsumsjon {
 private class IkkeFør(private val tidligsteDato: Faktum<LocalDate>, private val senesteDato: Faktum<LocalDate>) : Regel {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = tidligsteDato.svar() >= senesteDato.svar()
-    override fun toString() = "Sjekk at '${tidligsteDato.navn}' ikke er før '${senesteDato.navn}'"
+    override fun toString() = "Sjekk at '$tidligsteDato' ikke er før '$senesteDato'"
     override fun deepCopy(søknad: Søknad): Regel {
-        return IkkeFør(søknad.faktum(tidligsteDato.navn) as Faktum<LocalDate>, søknad.faktum(senesteDato.navn) as Faktum<LocalDate>)
+        return IkkeFør(søknad.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>, søknad.faktum(senesteDato.faktumId) as Faktum<LocalDate>)
     }
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
+    override fun bygg(fakta: Fakta) = IkkeFør(fakta.dato(tidligsteDato.faktumId), fakta.dato(senesteDato.faktumId))
+
+    override fun deepCopy(indeks: Int, fakta: Fakta): Regel {
         return IkkeFør(
-            tidligsteDato.med(indeks, søknad) as Faktum<LocalDate>,
-            senesteDato.med(indeks, søknad) as Faktum<LocalDate>
+            tidligsteDato.deepCopy(indeks, fakta) as Faktum<LocalDate>,
+            senesteDato.deepCopy(indeks, fakta) as Faktum<LocalDate>
         )
     }
 }
@@ -97,15 +105,16 @@ infix fun Faktum<LocalDate>.ikkeFør(senesteDato: Faktum<LocalDate>): Subsumsjon
 private class Minst(private val faktisk: Faktum<Inntekt>, private val terskel: Faktum<Inntekt>) : Regel {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = faktisk.svar() >= terskel.svar()
-    override fun toString() = "Sjekk at '${faktisk.navn}' er minst '${terskel.navn}'"
-    override fun deepCopy(søknad: Søknad): Regel {
-        return Minst(søknad.faktum(faktisk.navn) as Faktum<Inntekt>, søknad.faktum(terskel.navn) as Faktum<Inntekt>)
-    }
+    override fun toString() = "Sjekk at '$faktisk' er minst '$terskel'"
+    override fun deepCopy(søknad: Søknad) =
+        Minst(søknad.faktum(faktisk.faktumId) as Faktum<Inntekt>, søknad.faktum(terskel.faktumId) as Faktum<Inntekt>)
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
+    override fun bygg(fakta: Fakta) = Minst(fakta.inntekt(faktisk.faktumId), fakta.inntekt(terskel.faktumId))
+
+    override fun deepCopy(indeks: Int, fakta: Fakta): Regel {
         return Minst(
-            faktisk.med(indeks, søknad) as Faktum<Inntekt>,
-            terskel.med(indeks, søknad) as Faktum<Inntekt>
+            faktisk.deepCopy(indeks, fakta) as Faktum<Inntekt>,
+            terskel.deepCopy(indeks, fakta) as Faktum<Inntekt>
         )
     }
 }
@@ -121,14 +130,12 @@ infix fun Faktum<Inntekt>.minst(terskel: Faktum<Inntekt>): Subsumsjon {
 private class Er<T : Comparable<T>>(private val faktum: Faktum<*>, private val other: T) : Regel {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = faktum.svar() == other
-    override fun toString() = "Sjekk at `${faktum.navn}` er lik $other"
-    override fun deepCopy(søknad: Søknad): Regel {
-        return Er(søknad.faktum(faktum.navn) as Faktum<T>, other)
-    }
+    override fun toString() = "Sjekk at `$faktum` er lik $other"
+    override fun deepCopy(søknad: Søknad) = Er(søknad.faktum(faktum.faktumId) as Faktum<T>, other)
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
-        return Er(faktum.med(indeks, søknad) as Faktum<T>, other)
-    }
+    override fun bygg(fakta: Fakta) = Er(fakta.id(faktum.faktumId) as Faktum<T>, other)
+
+    override fun deepCopy(indeks: Int, fakta: Fakta) = Er(faktum.deepCopy(indeks, fakta) as Faktum<T>, other)
 }
 
 infix fun <T : Comparable<T>> Faktum<T>.er(other: T): Subsumsjon {
@@ -144,7 +151,7 @@ infix fun GeneratorFaktum.med(makro: MakroSubsumsjon): Subsumsjon {
     }
 
     return MakroSubsumsjon(
-        this.navn.navn,
+        this.navn,
         GeneratorSubsumsjon(
             Er(this, 0),
             this,
@@ -156,14 +163,12 @@ infix fun GeneratorFaktum.med(makro: MakroSubsumsjon): Subsumsjon {
 private class ErIkke(private val faktum: Faktum<Boolean>) : Regel {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = !faktum.svar()
-    override fun toString() = "Sjekk at `${faktum.navn}` ikke er sann"
-    override fun deepCopy(søknad: Søknad): Regel {
-        return ErIkke(søknad.faktum(faktum.navn) as Faktum<Boolean>)
-    }
+    override fun toString() = "Sjekk at `$faktum` ikke er sann"
+    override fun deepCopy(søknad: Søknad) = ErIkke(søknad.faktum(faktum.faktumId) as Faktum<Boolean>)
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
-        return ErIkke(faktum.med(indeks, søknad) as Faktum<Boolean>)
-    }
+    override fun bygg(fakta: Fakta) = ErIkke(fakta.ja(faktum.faktumId))
+
+    override fun deepCopy(indeks: Int, fakta: Fakta) = ErIkke(faktum.deepCopy(indeks, fakta) as Faktum<Boolean>)
 }
 
 fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
@@ -176,14 +181,12 @@ fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
 private class Har(private val faktum: Faktum<Boolean>) : Regel {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = faktum.svar()
-    override fun toString() = "Sjekk at `${faktum.navn}` er sann"
-    override fun deepCopy(søknad: Søknad): Regel {
-        return Har(søknad.faktum(faktum.navn) as Faktum<Boolean>)
-    }
+    override fun toString() = "Sjekk at `$faktum` er sann"
+    override fun deepCopy(søknad: Søknad) = Har(søknad.faktum(faktum.faktumId) as Faktum<Boolean>)
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
-        return Har(faktum.med(indeks, søknad) as Faktum<Boolean>)
-    }
+    override fun bygg(fakta: Fakta) = Har(fakta.ja(faktum.faktumId))
+
+    override fun deepCopy(indeks: Int, fakta: Fakta) = Har(faktum.deepCopy(indeks, fakta) as Faktum<Boolean>)
 }
 
 fun har(faktum: Faktum<Boolean>): Subsumsjon {
@@ -196,14 +199,15 @@ fun har(faktum: Faktum<Boolean>): Subsumsjon {
 private class Av(private val godkjenning: Faktum<Boolean>, private val dokument: Faktum<Dokument>) : Regel {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = dokument.erBesvart() && (!godkjenning.erBesvart() || godkjenning.svar())
-    override fun toString() = "Sjekk at `${dokument.navn}` er ${if (resultat()) "godkjent" else "ikke godkjent"}"
-    override fun deepCopy(søknad: Søknad): Regel {
-        return Av(søknad.faktum(godkjenning.navn) as Faktum<Boolean>, søknad.faktum(dokument.navn) as Faktum<Dokument>)
-    }
+    override fun toString() = "Sjekk at `$dokument` er ${if (resultat()) "godkjent" else "ikke godkjent"}"
+    override fun deepCopy(søknad: Søknad) =
+        Av(søknad.faktum(godkjenning.faktumId) as Faktum<Boolean>, søknad.faktum(dokument.faktumId) as Faktum<Dokument>)
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
-        return Av(godkjenning.med(indeks, søknad) as Faktum<Boolean>, dokument.med(indeks, søknad) as Faktum<Dokument>)
-    }
+    override fun bygg(fakta: Fakta) =
+        Av(fakta.ja(godkjenning.faktumId), fakta.dokument(dokument.faktumId))
+
+    override fun deepCopy(indeks: Int, fakta: Fakta) =
+        Av(godkjenning.deepCopy(indeks, fakta) as Faktum<Boolean>, dokument.deepCopy(indeks, fakta) as Faktum<Dokument>)
 }
 
 infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon {
@@ -213,14 +217,13 @@ infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon {
 private class Under(private val alder: Faktum<Int>, private val maksAlder: Int) : Regel {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = alder.svar() < maksAlder
-    override fun toString() = "Sjekk at '${alder.navn}' er under $maksAlder"
-    override fun deepCopy(søknad: Søknad): Regel {
-        return Under(søknad.faktum(alder.navn) as Faktum<Int>, maksAlder)
-    }
+    override fun toString() = "Sjekk at '$alder' er under $maksAlder"
+    override fun deepCopy(søknad: Søknad) = Under(søknad.faktum(alder.faktumId) as Faktum<Int>, maksAlder)
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
-        return Under(alder.med(indeks, søknad) as Faktum<Int>, maksAlder)
-    }
+    override fun bygg(fakta: Fakta) = Under(fakta.heltall(alder.faktumId), maksAlder)
+
+    override fun deepCopy(indeks: Int, fakta: Fakta) =
+        Under(alder.deepCopy(indeks, fakta) as Faktum<Int>, maksAlder)
 }
 
 infix fun Faktum<Int>.under(maksAlder: Int): Subsumsjon {
@@ -243,3 +246,5 @@ infix fun Subsumsjon.ugyldigGodkjentAv(faktum: Faktum<Boolean>): Subsumsjon {
 }
 
 val MAKS_DATO = UtledetFaktum<LocalDate>::max
+val MAKS_INNTEKT = UtledetFaktum<Inntekt>::max
+val ALLE_JA = UtledetFaktum<Boolean>::alle
