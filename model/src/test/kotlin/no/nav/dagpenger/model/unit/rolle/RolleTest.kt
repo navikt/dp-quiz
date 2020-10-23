@@ -1,9 +1,8 @@
 package no.nav.dagpenger.model.unit.rolle
-
-import no.nav.dagpenger.model.fakta.FaktumNavn
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.faktum
-import no.nav.dagpenger.model.søknad.Seksjon
+import no.nav.dagpenger.model.helpers.testSøknad
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -11,8 +10,8 @@ import org.junit.jupiter.api.assertThrows
 internal class RolleTest {
     @Test
     fun `Faktum må besvares av riktig rolle`() {
-        val faktum = FaktumNavn(1, "ja").faktum<Boolean>(Boolean::class.java)
-        val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
+        val faktum = Fakta(ja nei "ja" id 1).testSøknad().let { it ja 1 }
+
         assertThrows<IllegalAccessError> { faktum.besvar(true, Rolle.saksbehandler) }
         assertThrows<IllegalAccessError> { faktum.besvar(true, Rolle.nav) }
         assertEquals(true, faktum.besvar(true, Rolle.søker).svar())

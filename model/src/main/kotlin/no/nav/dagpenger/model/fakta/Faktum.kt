@@ -104,5 +104,3 @@ fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>) = GrunnleggendeFaktum
 
 fun <R : Comparable<R>> FaktumNavn.faktum(clazz: Class<R>, vararg templates: TemplateFaktum<*>) =
     GeneratorFaktum(this.faktumId, this.navn, templates.asList())
-
-fun <R : Comparable<R>> FaktumNavn.template(clazz: Class<R>) = TemplateFaktum<R>(this.faktumId, this.navn, clazz)

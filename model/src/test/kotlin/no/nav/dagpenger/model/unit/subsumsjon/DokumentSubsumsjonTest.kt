@@ -1,14 +1,14 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.fakta.Dokument
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.FaktumNavn
-import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.helpers.testSøknad
 import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.søknad.Seksjon
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -18,14 +18,16 @@ internal class DokumentSubsumsjonTest {
     private lateinit var dokumentFaktum: Faktum<Dokument>
     private lateinit var dokumentGodkjenning: Faktum<Boolean>
     private lateinit var subsumsjon: Subsumsjon
-    private lateinit var seksjon: Seksjon
 
     @BeforeEach
     fun setUp() {
-        dokumentFaktum = FaktumNavn(1, "dokument").faktum(Dokument::class.java)
-        dokumentGodkjenning = FaktumNavn(2, "saksbehandler godkjenner").faktum(Boolean::class.java)
-        seksjon = Seksjon("seksjon", Rolle.søker, dokumentFaktum, dokumentGodkjenning)
-        dokumentGodkjenning avhengerAv dokumentFaktum
+        val søknad = Fakta(
+                dokument faktum "dokument" id 1,
+                ja nei "saksbehandler godkjenner" id 2 avhengerAv 1
+        ).testSøknad()
+
+        dokumentFaktum = søknad dokument 1
+        dokumentGodkjenning = søknad ja 2
         subsumsjon = dokumentGodkjenning av dokumentFaktum
         assertEquals(null, subsumsjon.resultat())
         dokumentFaktum.besvar(Dokument(1.januar))

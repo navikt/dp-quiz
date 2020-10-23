@@ -4,7 +4,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -18,7 +17,6 @@ internal class GenerertFaktumTest {
         val fakta = Fakta(
             ja nei "template" id 1,
             heltall faktum "generator" id 2 genererer 1
-
         )
 
         val seksjon = Seksjon("seksjon", Rolle.søker, fakta ja 1, fakta generator 2)
