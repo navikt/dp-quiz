@@ -106,7 +106,6 @@ class FaktaTest {
             Fakta(
                 heltall faktum "f11" id 11,
                 dokument faktum "whoops" id 11,
-                heltall faktum "f12" id 12
             )
         }
     }

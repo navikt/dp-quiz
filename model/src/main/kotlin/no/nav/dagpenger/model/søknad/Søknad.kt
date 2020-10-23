@@ -17,7 +17,7 @@ class Søknad private constructor(
 ) : TypedFaktum by fakta, MutableList<Seksjon> by seksjoner {
 
     constructor(vararg seksjoner: Seksjon) : this(
-        Fakta("", mutableMapOf()),
+        Fakta(),
         TomSubsumsjon,
         UUID.randomUUID(),
         seksjoner.toMutableList()

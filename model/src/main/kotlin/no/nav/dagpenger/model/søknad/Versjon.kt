@@ -4,13 +4,14 @@ import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 
 class Versjon(
+    private val versjonId: Int,
     private val prototypeFakta: Fakta,
     private val prototypeSubsumsjon: Subsumsjon,
     private val prototypeSøknader: Map<Type, Søknad>
 ) {
 
     fun søknad(fnr: String, type: Type): Søknad {
-        val fakta = prototypeFakta.bygg(fnr)
+        val fakta = prototypeFakta.bygg(fnr, versjonId)
         val subsumsjon = prototypeSubsumsjon.bygg(fakta)
         return prototypeSøknader[type]?.bygg(fakta, subsumsjon) ?: throw IllegalArgumentException("Kan ikke finne søknad av type $type")
     }

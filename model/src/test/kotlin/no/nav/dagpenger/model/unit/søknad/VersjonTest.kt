@@ -27,7 +27,7 @@ internal class VersjonTest {
         val prototypeSeksjon = Seksjon("seksjon", Rolle.søker, prototypeFakta id 15, prototypeFakta id 16, prototypeFakta id 17, prototypeFakta id 18)
         val prototypeSøknad = Søknad(prototypeSeksjon)
         val prototypeSubsumsjon = prototypeFakta heltall 15 er 6
-        val versjon = Versjon(prototypeFakta, prototypeSubsumsjon, mapOf(Versjon.Type.Web to prototypeSøknad))
+        val versjon = Versjon(1, prototypeFakta, prototypeSubsumsjon, mapOf(Versjon.Type.Web to prototypeSøknad))
 
         val søknad = versjon.søknad(fnr, Versjon.Type.Web)
         søknad.fakta.also { fakta ->

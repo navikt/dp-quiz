@@ -7,20 +7,23 @@ import java.util.UUID
 
 class Fakta private constructor(
     fnr: String,
+    versjonId: Int,
     uuid: UUID,
     private val faktumMap: MutableMap<FaktumId, Faktum<*>>
 ) : TypedFaktum, Iterable<Faktum<*>> {
 
     internal val size get() = faktumMap.size
 
-    internal constructor(fnr: String, faktumMap: MutableMap<FaktumId, Faktum<*>>) : this(
+    internal constructor(fnr: String, versjonId: Int, faktumMap: MutableMap<FaktumId, Faktum<*>>) : this(
         fnr,
+        versjonId,
         UUID.randomUUID(),
         faktumMap
     )
 
     constructor(vararg factories: FaktumFactory<*>) : this(
         "",
+        0,
         UUID.randomUUID(),
         factories.map {
             it.faktum().let { faktum ->
@@ -47,9 +50,9 @@ class Fakta private constructor(
 
     companion object {
         fun Fakta.seksjon(navn: String, rolle: Rolle, vararg ider: Int) = Seksjon(
-                navn,
-                rolle,
-                *(this.map { it }.toTypedArray())
+            navn,
+            rolle,
+            *(this.map { it }.toTypedArray())
         )
     }
 
@@ -82,10 +85,10 @@ class Fakta private constructor(
     override infix fun generator(id: String) = heltall(FaktumId(id))
     internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
 
-    fun bygg(fnr: String): Fakta {
+    fun bygg(fnr: String, versjonId: Int): Fakta {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktumMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
-        return Fakta(fnr, mapOfFakta)
+        return Fakta(fnr, versjonId, mapOfFakta)
     }
 
     override fun iterator(): MutableIterator<Faktum<*>> {
