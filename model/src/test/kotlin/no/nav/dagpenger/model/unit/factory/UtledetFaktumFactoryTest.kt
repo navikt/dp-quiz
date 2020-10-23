@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.factory
+package no.nav.dagpenger.model.unit.factory
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt

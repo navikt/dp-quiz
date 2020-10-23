@@ -1,13 +1,14 @@
-package no.nav.dagpenger.model.factory
+package no.nav.dagpenger.model.unit.factory
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimal
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.factory.BaseFaktumFactoryTest.Companion.Valg.A
-import no.nav.dagpenger.model.factory.BaseFaktumFactoryTest.Companion.Valg.C
+import no.nav.dagpenger.model.unit.factory.BaseFaktumFactoryTest.Companion.Valg.A
+import no.nav.dagpenger.model.unit.factory.BaseFaktumFactoryTest.Companion.Valg.C
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.daglig
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig

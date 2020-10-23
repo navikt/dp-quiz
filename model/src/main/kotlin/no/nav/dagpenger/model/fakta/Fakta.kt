@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.factory.FaktumFactory
+import no.nav.dagpenger.model.søknad.Seksjon
 import java.time.LocalDate
 import java.util.UUID
 
@@ -42,6 +43,14 @@ class Fakta private constructor(
 
     init {
         this.forEach { if (it is GeneratorFaktum) it.fakta = this }
+    }
+
+    companion object {
+        fun Fakta.seksjon(navn: String, rolle: Rolle, vararg ider: Int) = Seksjon(
+                navn,
+                rolle,
+                *(this.map { it }.toTypedArray())
+        )
     }
 
     override infix fun id(rootId: Int) = id(FaktumId(rootId))

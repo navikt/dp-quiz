@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.helpers.bursdag67
 import no.nav.dagpenger.model.helpers.dimisjonsdato
+import no.nav.dagpenger.model.helpers.eksempelSøknad
 import no.nav.dagpenger.model.helpers.inntekt15G
 import no.nav.dagpenger.model.helpers.inntekt3G
 import no.nav.dagpenger.model.helpers.inntektSiste3år
@@ -21,40 +22,38 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class SeksjonTest {
-    private lateinit var comp: Subsumsjon
+    private lateinit var søknad: Søknad
     private lateinit var datofakta: Seksjon
     private lateinit var inntektfakta: Seksjon
-    private lateinit var søknad: Søknad
 
     @BeforeEach
     fun setup() {
-        comp = subsumsjonRoot()
-        datofakta = Seksjon("seksjon", Rolle.søker, bursdag67, sisteDagMedLønn, ønsketdato, søknadsdato, dimisjonsdato)
-        inntektfakta = Seksjon("seksjon", Rolle.søker, inntekt15G, inntekt3G, inntektSiste3år, inntektSisteÅr)
-        søknad = Søknad(datofakta, inntektfakta)
+        søknad = eksempelSøknad()
+        datofakta = søknad[0]
+        inntektfakta = søknad[1]
     }
 
     @Test
     fun `finne faktagrupper som skal spørres neste`() {
-        assertEquals(datofakta, søknad nesteSeksjon comp)
+        assertEquals(datofakta, søknad.nesteSeksjon())
 
         bursdag67.besvar(31.januar)
         sisteDagMedLønn.besvar(1.januar)
-        assertEquals(datofakta, søknad nesteSeksjon comp)
+        assertEquals(datofakta, søknad.nesteSeksjon())
 
         inntekt15G.besvar(100000.månedlig)
         inntekt3G.besvar(1000.månedlig)
-        assertEquals(datofakta, søknad nesteSeksjon comp)
+        assertEquals(datofakta, søknad.nesteSeksjon())
 
         ønsketdato.besvar(1.januar)
         søknadsdato.besvar(1.januar)
         dimisjonsdato.besvar(1.januar)
-        assertEquals(inntektfakta, søknad nesteSeksjon comp)
+        assertEquals(inntektfakta, søknad.nesteSeksjon())
     }
 
     @Test
     fun `søknad er en collection`() {
         assertEquals(2, søknad.size)
-        assertEquals(9, søknad.flatten().size)
+        assertEquals(10, søknad.flatten().size)
     }
 }
