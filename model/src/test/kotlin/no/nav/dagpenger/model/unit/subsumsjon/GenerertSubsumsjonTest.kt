@@ -21,10 +21,10 @@ internal class GenerertSubsumsjonTest {
     private lateinit var fakta: Fakta
 
     @BeforeEach
-    fun setup(){
+    fun setup() {
         fakta = Fakta(
-                ja nei "template" id 1,
-                heltall faktum "generator" id 2 genererer 1
+            ja nei "template" id 1,
+            heltall faktum "generator" id 2 genererer 1
 
         )
     }

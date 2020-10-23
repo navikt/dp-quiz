@@ -22,8 +22,8 @@ internal class DokumentSubsumsjonTest {
     @BeforeEach
     fun setUp() {
         val søknad = Fakta(
-                dokument faktum "dokument" id 1,
-                ja nei "saksbehandler godkjenner" id 2 avhengerAv 1
+            dokument faktum "dokument" id 1,
+            ja nei "saksbehandler godkjenner" id 2 avhengerAv 1
         ).testSøknad()
 
         dokumentFaktum = søknad dokument 1
