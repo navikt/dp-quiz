@@ -1,12 +1,15 @@
 package no.nav.dagpenger.model.unit.marshalling
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.helpers.bursdag67
+import no.nav.dagpenger.model.helpers.eksempelSøknad
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.helpers.subsumsjonRoot
 import no.nav.dagpenger.model.helpers.søknadsdato
 import no.nav.dagpenger.model.helpers.virkningstidspunkt
 import no.nav.dagpenger.model.helpers.ønsketdato
@@ -23,9 +26,12 @@ internal class SubsumsjonJsonBuilderTest {
 
     @Test
     fun `Lage en subsumsjon med fakta`() {
-        val faktumNavnId = 1
-        val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>(Boolean::class.java)
-        val seksjon = Seksjon("seksjon", Rolle.søker, faktum)
+        val fakta = Fakta(
+                ja nei "faktum" id 1
+        )
+
+        val faktum = fakta ja 1
+        Seksjon("seksjon", Rolle.søker, faktum)
 
         var jsonBuilder = SubsumsjonJsonBuilder(har(faktum))
         var jsonfakta = jsonBuilder.resultat()
@@ -34,7 +40,7 @@ internal class SubsumsjonJsonBuilderTest {
         assertFalse(jsonfakta["fakta"].isNull)
         assertTrue(jsonfakta["root"]["fakta"].isArray)
         assertEquals(1, jsonfakta["root"]["fakta"].size())
-        assertEquals(listOf(faktumNavnId), jsonfakta["root"]["fakta"].map { it.asInt() })
+        assertEquals(listOf(1), jsonfakta["root"]["fakta"].map { it.asInt() })
         assertEquals("søker", jsonfakta["fakta"][0]["roller"][0].asText())
         assertEquals("boolean", jsonfakta["fakta"][0]["clazz"].asText())
         assertEquals(null, jsonfakta["fakta"][0]["svar"])
@@ -47,11 +53,12 @@ internal class SubsumsjonJsonBuilderTest {
 
     @Test
     fun `Finner avhengige fakta i json`() {
-        val faktumNavnId = 1
-        val faktum = FaktumNavn(faktumNavnId, "faktum").faktum<Boolean>(Boolean::class.java)
-        val avhengigFaktum = FaktumNavn(2, "faktumto").faktum<Boolean>(Boolean::class.java)
+        val fakta = Fakta(
+                ja nei "faktum" id 1,
+                ja nei "faktum" id 2 avhengerAv 1
+        )
 
-        avhengigFaktum avhengerAv faktum
+        val faktum = fakta ja 1
 
         val jsonBuilder = SubsumsjonJsonBuilder(har(faktum))
         val jsonfakta = jsonBuilder.resultat()
@@ -61,17 +68,17 @@ internal class SubsumsjonJsonBuilderTest {
 
     @Test
     fun `Finner utledet fakta i json`() {
-        subsumsjonRoot()
+        eksempelSøknad()
         val jsonBuilder = SubsumsjonJsonBuilder(virkningstidspunkt etter bursdag67)
         val json = jsonBuilder.resultat()
 
         assertEquals(3, json["fakta"][0]["fakta"].size())
-        assertEquals(listOf(3, 2, 4), json["fakta"][0]["fakta"].map { it.asInt() })
+        assertEquals(listOf(2, 3, 4), json["fakta"][0]["fakta"].map { it.asInt() }.sorted())
     }
 
     @Test
     fun `Komplekse subsumsjoner i json`() {
-        val comp = subsumsjonRoot()
+        val comp = eksempelSøknad().rootSubsumsjon
         bursdag67.besvar(31.januar)
         søknadsdato.besvar(1.januar)
         ønsketdato.besvar(1.februar)

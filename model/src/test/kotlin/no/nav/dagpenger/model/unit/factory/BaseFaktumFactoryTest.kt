@@ -7,11 +7,14 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.fakta.Dokument
+import no.nav.dagpenger.model.fakta.Fakta
+import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.daglig
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.helpers.testSøknad
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.unit.factory.BaseFaktumFactoryTest.Companion.Valg.A
@@ -33,6 +36,8 @@ internal class BaseFaktumFactoryTest {
 
     private object valg { infix fun faktum(navn: String) = BaseFaktumFactory(Valg::class.java, navn) }
 
+    // private object choices { fun <T> faktum(navn: String, enum: Enum<T>) = BaseFaktumFactory(enum::class.java, navn) }
+
     @Test
     fun boolean() {
         (ja nei "boolean" id 3).also { factory ->
@@ -42,9 +47,8 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `boolean factory faktum`() {
-        val faktum = (ja nei "boolean" id 3).faktum().also {
-            Søknad(Seksjon("seksjon", Rolle.søker, it))
-        }
+        val søknad = Fakta(ja nei "boolean" id 3).testSøknad()
+        val faktum = søknad ja 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(true)
@@ -56,9 +60,8 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `heltall factory faktum`() {
-        val faktum = (heltall faktum "heltall" id 3).faktum().also {
-            Søknad(Seksjon("seksjon", Rolle.søker, it))
-        }
+        val søknad = Fakta(heltall faktum "heltall" id 3).testSøknad()
+        val faktum = søknad heltall 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(6)
@@ -70,9 +73,8 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `Inntekt factory faktum`() {
-        val faktum = (inntekt faktum "inntekt" id 3).faktum().also {
-            Søknad(Seksjon("seksjon", Rolle.søker, it))
-        }
+        val søknad = Fakta(inntekt faktum "inntekt" id 3).testSøknad()
+        val faktum = søknad inntekt 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(260.årlig)
@@ -84,9 +86,8 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `Dato factory faktum`() {
-        val faktum = (dato faktum "dato" id 3).faktum().also {
-            Søknad(Seksjon("seksjon", Rolle.søker, it))
-        }
+        val søknad = Fakta(dato faktum "dato" id 3).testSøknad()
+        val faktum = søknad dato 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(6.januar)
@@ -98,9 +99,8 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `Dokument factory faktum`() {
-        val faktum = (dokument faktum "dokument" id 3).faktum().also {
-            Søknad(Seksjon("seksjon", Rolle.søker, it))
-        }
+        val søknad = Fakta(dokument faktum "dokument" id 3).testSøknad()
+        val faktum = søknad dokument 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
         Dokument(1.januar).also {
@@ -111,9 +111,8 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `valg (enum) factory faktum`() {
-        val faktum = (valg faktum "valg" id 3).faktum().also {
-            Søknad(Seksjon("seksjon", Rolle.søker, it))
-        }
+        val søknad = Fakta(valg faktum "valg" id 3).testSøknad()
+        val faktum = søknad.id(3) as Faktum<Valg>
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
 

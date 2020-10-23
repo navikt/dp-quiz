@@ -3,9 +3,9 @@ package no.nav.dagpenger.model.unit.fakta
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.helpers.dimisjonsdato
+import no.nav.dagpenger.model.helpers.eksempelSøknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.sisteDagMedLønn
-import no.nav.dagpenger.model.helpers.subsumsjonRoot
 import no.nav.dagpenger.model.helpers.søknadsdato
 import no.nav.dagpenger.model.helpers.virkningstidspunkt
 import no.nav.dagpenger.model.helpers.ønsketdato
@@ -21,7 +21,7 @@ internal class UtledetFaktumTest {
 
     @BeforeEach
     fun setup() {
-        comp = subsumsjonRoot()
+        comp = eksempelSøknad().rootSubsumsjon
     }
 
     @Test
@@ -42,8 +42,7 @@ internal class UtledetFaktumTest {
         søknadsdato.besvar(2.januar)
         sisteDagMedLønn.besvar(1.januar)
 
-        val blurp = setOf(virkningstidspunkt, dimisjonsdato)
-            .faktum(FaktumNavn(1, "Blurp dato"), MAKS_DATO)
+        val blurp = setOf(virkningstidspunkt, dimisjonsdato).faktum(FaktumNavn(1, "Blurp dato"), MAKS_DATO)
 
         assertThrows<IllegalStateException> { blurp.svar() }
 

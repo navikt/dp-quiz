@@ -3,11 +3,11 @@ package no.nav.dagpenger.model.unit.subsumsjon
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.helpers.bursdag67
 import no.nav.dagpenger.model.helpers.dimisjonsdato
+import no.nav.dagpenger.model.helpers.eksempelSøknad
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.inntektSisteÅr
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.sisteDagMedLønn
-import no.nav.dagpenger.model.helpers.subsumsjonRoot
 import no.nav.dagpenger.model.helpers.søknadsdato
 import no.nav.dagpenger.model.helpers.ønsketdato
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -20,7 +20,7 @@ internal class SammensattSubsumsjonsTest {
 
     @BeforeEach
     fun setup() {
-        comp = subsumsjonRoot()
+        comp = eksempelSøknad().rootSubsumsjon
     }
 
     @Test
