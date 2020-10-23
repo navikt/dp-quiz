@@ -2,7 +2,6 @@ package no.nav.dagpenger.model.helpers
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
-import no.nav.dagpenger.model.factory.UtledetFaktumFactory
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
@@ -98,16 +97,16 @@ internal fun subsumsjonRoot(): Subsumsjon {
 
 internal fun eksempelSøknad(): Søknad {
     val prototypeFakta = Fakta(
-            dato faktum "Datoen du fyller 67" id 1,
-            dato faktum "Datoen du søker om dagpenger" id 2,
-            dato faktum "Datoen du ønsker dagpenger fra" id 3,
-            dato faktum "Siste dag du mottar lønn" id 4,
-            inntekt faktum "Inntekt siste 36 måneder" id 5,
-            inntekt faktum "Inntekt siste 12 måneder" id 6,
-            dato faktum "Dimisjonsdato" id 7,
-            maks dato "Hvilken dato vedtaket skal gjelde fra" av 2 og 3 og 4 id 8,
-            inntekt faktum "3G" id 9,
-            inntekt faktum "1.5G" id 10
+        dato faktum "Datoen du fyller 67" id 1,
+        dato faktum "Datoen du søker om dagpenger" id 2,
+        dato faktum "Datoen du ønsker dagpenger fra" id 3,
+        dato faktum "Siste dag du mottar lønn" id 4,
+        inntekt faktum "Inntekt siste 36 måneder" id 5,
+        inntekt faktum "Inntekt siste 12 måneder" id 6,
+        dato faktum "Dimisjonsdato" id 7,
+        maks dato "Hvilken dato vedtaket skal gjelde fra" av 2 og 3 og 4 id 8,
+        inntekt faktum "3G" id 9,
+        inntekt faktum "1.5G" id 10
     ).also { fakta ->
         bursdag67 = fakta.dato(1) as GrunnleggendeFaktum<LocalDate>
         søknadsdato = fakta.dato(2) as GrunnleggendeFaktum<LocalDate>

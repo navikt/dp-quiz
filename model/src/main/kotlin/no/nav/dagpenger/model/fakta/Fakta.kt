@@ -2,7 +2,6 @@ package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.søknad.Versjon
 import java.time.LocalDate
 import java.util.UUID

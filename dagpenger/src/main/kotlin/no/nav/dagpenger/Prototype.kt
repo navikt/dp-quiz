@@ -154,7 +154,7 @@ class Prototype {
         )
 
     // this should not be in this class
-    private val versjon = Versjon(fakta, inngangsvilkår, mapOf(Versjon.Type.Web to søknad))
+    private val versjon = Versjon(1, fakta, inngangsvilkår, mapOf(Versjon.Type.Web to søknad))
 
     fun søknad(fnr: String) = versjon.søknad(fnr, Versjon.Type.Web)
 }

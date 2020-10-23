@@ -6,7 +6,6 @@ import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
-import no.nav.dagpenger.model.helpers.testSøknad
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
@@ -48,7 +47,7 @@ internal class VersjonTest {
     }
 
     @Test
-    fun `bygg fra fakta`(){
+    fun `bygg fra fakta`() {
         søknad.heltall(15).besvar(2, Rolle.søker)
         var nysøknad = søknad.fakta.søknad(Web)
         nysøknad.heltall("16.1").besvar(1, Rolle.søker)

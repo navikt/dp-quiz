@@ -43,7 +43,7 @@ internal class SøknadApiTest {
         Seksjon("seksjon1", Rolle.søker, ønsketDato, fødselsdato),
         Seksjon("seksjon2", Rolle.søker, dimisjonsdato),
     )
-    private val søknad = Versjon(fakta, prototypeSubsumsjoner, mapOf(Web to søknadPrototype))
+    private val søknad = Versjon(1, fakta, prototypeSubsumsjoner, mapOf(Web to søknadPrototype))
         .søknad("", Web)
 
     private val søknader = InMemorySøknader {

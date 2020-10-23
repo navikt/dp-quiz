@@ -12,7 +12,7 @@ class Versjon(
 
     fun søknad(fnr: String, type: Type): Søknad = søknad(prototypeFakta.bygg(fnr, versjonId), type)
 
-    fun søknad(fakta: Fakta, type: Type): Søknad{
+    fun søknad(fakta: Fakta, type: Type): Søknad {
         val subsumsjon = prototypeSubsumsjon.bygg(fakta)
         return prototypeSøknader[type]?.bygg(fakta, subsumsjon) ?: throw IllegalArgumentException("Kan ikke finne søknad av type $type")
     }
@@ -24,7 +24,7 @@ class Versjon(
     }
 
     init {
-        versjoner[versjonId]=this
+        versjoner[versjonId] = this
     }
 
     enum class Type {

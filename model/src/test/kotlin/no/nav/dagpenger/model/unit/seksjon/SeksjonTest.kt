@@ -9,7 +9,6 @@ import no.nav.dagpenger.model.helpers.inntekt3G
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.sisteDagMedLønn
 import no.nav.dagpenger.model.helpers.søknadsdato
-import no.nav.dagpenger.model.helpers.virkningstidspunkt
 import no.nav.dagpenger.model.helpers.ønsketdato
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
