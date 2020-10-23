@@ -14,9 +14,9 @@ import io.ktor.routing.route
 import io.ktor.routing.routing
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.marshalling.SeksjonJsonBuilder
+import no.nav.dagpenger.model.marshalling.SubsumsjonJsonBuilder
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.visitor.SeksjonJsonBuilder
-import no.nav.dagpenger.model.visitor.SubsumsjonJsonBuilder
 import java.time.LocalDate
 import java.util.UUID
 

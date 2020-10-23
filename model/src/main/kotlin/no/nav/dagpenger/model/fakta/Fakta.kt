@@ -3,13 +3,14 @@ package no.nav.dagpenger.model.fakta
 import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Versjon
+import no.nav.dagpenger.model.visitor.FaktaVisitor
 import java.time.LocalDate
 import java.util.UUID
 
 class Fakta private constructor(
-    fnr: String,
+    private val fnr: String,
     private val versjonId: Int,
-    uuid: UUID,
+    private val uuid: UUID,
     private val faktumMap: MutableMap<FaktumId, Faktum<*>>
 ) : TypedFaktum, Iterable<Faktum<*>> {
 
@@ -113,4 +114,10 @@ class Fakta private constructor(
     }
 
     internal fun søknad(type: Versjon.Type) = Versjon.id(versjonId).søknad(this, type)
+
+    internal fun accept(visitor: FaktaVisitor) {
+        visitor.preVisit(this, fnr, versjonId, uuid)
+        this.forEach { it.accept(visitor) }
+        visitor.postVisit(this, fnr, versjonId, uuid)
+    }
 }

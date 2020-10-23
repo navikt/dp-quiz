@@ -1,11 +1,11 @@
-package no.nav.dagpenger.model.unit.visitor
+package no.nav.dagpenger.model.unit.marshalling
 
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
+import no.nav.dagpenger.model.marshalling.SøknadJsonBuilder
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
-import no.nav.dagpenger.model.visitor.SøknadJsonBuilder
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

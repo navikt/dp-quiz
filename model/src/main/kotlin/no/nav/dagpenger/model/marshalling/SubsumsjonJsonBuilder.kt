@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.visitor
+package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.fakta.Faktum
@@ -8,6 +8,7 @@ import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class SubsumsjonJsonBuilder(private val subsumsjon: Subsumsjon) : FaktumJsonBuilder(), SubsumsjonVisitor {
     private val subsumsjoner = mutableMapOf<Subsumsjon, ObjectNode>()

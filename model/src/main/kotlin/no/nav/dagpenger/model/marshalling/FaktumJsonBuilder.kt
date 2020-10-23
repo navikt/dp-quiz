@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.visitor
+package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.ObjectWriter
@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.fakta.UtledetFaktum
+import no.nav.dagpenger.model.visitor.FaktumVisitor
 import java.time.LocalDate
 
 abstract class FaktumJsonBuilder : FaktumVisitor {
@@ -22,13 +23,13 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     protected val arrayNodes: MutableList<ArrayNode> = mutableListOf(mapper.createArrayNode())
     protected val objectNodes: MutableList<ObjectNode> = mutableListOf()
 
-    private val faktaNode = mapper.createArrayNode()
+    protected val faktaNode = mapper.createArrayNode()
     private val faktumIder = mutableSetOf<String>()
     private lateinit var navn: String
     private var rootId = -1
     private var indeks = -1
 
-    fun resultat(): ObjectNode = mapper.createObjectNode().also {
+    open fun resultat(): ObjectNode = mapper.createObjectNode().also {
         it.set("fakta", faktaNode)
         it.set("root", root)
     }

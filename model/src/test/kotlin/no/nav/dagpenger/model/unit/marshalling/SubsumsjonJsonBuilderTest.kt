@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.unit.visitor
+package no.nav.dagpenger.model.unit.marshalling
 
 import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.Rolle
@@ -10,10 +10,10 @@ import no.nav.dagpenger.model.helpers.subsumsjonRoot
 import no.nav.dagpenger.model.helpers.søknadsdato
 import no.nav.dagpenger.model.helpers.virkningstidspunkt
 import no.nav.dagpenger.model.helpers.ønsketdato
+import no.nav.dagpenger.model.marshalling.SubsumsjonJsonBuilder
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.visitor.SubsumsjonJsonBuilder
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

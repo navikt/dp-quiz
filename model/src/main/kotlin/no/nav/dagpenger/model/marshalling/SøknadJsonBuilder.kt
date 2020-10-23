@@ -1,9 +1,10 @@
-package no.nav.dagpenger.model.visitor
+package no.nav.dagpenger.model.marshalling
 
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.util.UUID
 
 class SøknadJsonBuilder(private val søknad: Søknad) : FaktumJsonBuilder(), SøknadVisitor {
