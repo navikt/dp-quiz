@@ -2,12 +2,14 @@ package no.nav.dagpenger.model.fakta
 
 import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.søknad.Seksjon
+import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.søknad.Versjon
 import java.time.LocalDate
 import java.util.UUID
 
 class Fakta private constructor(
     fnr: String,
-    versjonId: Int,
+    private val versjonId: Int,
     uuid: UUID,
     private val faktumMap: MutableMap<FaktumId, Faktum<*>>
 ) : TypedFaktum, Iterable<Faktum<*>> {
@@ -110,4 +112,6 @@ class Fakta private constructor(
     internal fun add(faktum: Faktum<*>) {
         faktumMap[faktum.faktumId] = faktum
     }
+
+    internal fun søknad(type: Versjon.Type) = Versjon.id(versjonId).søknad(this, type)
 }

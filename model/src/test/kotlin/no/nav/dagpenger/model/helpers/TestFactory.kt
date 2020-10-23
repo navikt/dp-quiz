@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.søknad.Versjon
 
 internal const val UNG_PERSON_FNR_2018 = "12020052345"
 
-internal fun Fakta.søknad(): Søknad {
+internal fun Fakta.testSøknad(): Søknad {
     return Versjon(
         1,
         this,
