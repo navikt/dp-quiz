@@ -1,8 +1,7 @@
-package no.nav.dagpenger.model.unit.marshalling
+package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.marshalling.FaktumJsonBuilder
 import no.nav.dagpenger.model.visitor.FaktaVisitor
 import java.util.UUID
 
