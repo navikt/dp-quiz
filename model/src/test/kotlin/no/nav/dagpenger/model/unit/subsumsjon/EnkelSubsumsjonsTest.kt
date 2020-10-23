@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test
 internal class EnkelSubsumsjonsTest {
 
     val fakta = Fakta(
-            dato faktum "Datoen du fyller 67" id 1,
-            dato faktum "Datoen du søker om dagpenger" id 2
+        dato faktum "Datoen du fyller 67" id 1,
+        dato faktum "Datoen du søker om dagpenger" id 2
     ).testSøknad()
 
     val bursdag67 = fakta dato 1

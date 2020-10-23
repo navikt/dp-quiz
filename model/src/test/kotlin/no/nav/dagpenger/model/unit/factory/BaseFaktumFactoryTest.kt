@@ -12,11 +12,8 @@ import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.daglig
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknad
-import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.unit.factory.BaseFaktumFactoryTest.Companion.Valg.A
 import no.nav.dagpenger.model.unit.factory.BaseFaktumFactoryTest.Companion.Valg.C
 import org.junit.jupiter.api.Assertions.assertNotNull

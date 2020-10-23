@@ -1,9 +1,7 @@
 package no.nav.dagpenger.model.unit.marshalling
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.helpers.bursdag67
@@ -27,7 +25,7 @@ internal class SubsumsjonJsonBuilderTest {
     @Test
     fun `Lage en subsumsjon med fakta`() {
         val fakta = Fakta(
-                ja nei "faktum" id 1
+            ja nei "faktum" id 1
         )
 
         val faktum = fakta ja 1
@@ -54,8 +52,8 @@ internal class SubsumsjonJsonBuilderTest {
     @Test
     fun `Finner avhengige fakta i json`() {
         val fakta = Fakta(
-                ja nei "faktum" id 1,
-                ja nei "faktum" id 2 avhengerAv 1
+            ja nei "faktum" id 1,
+            ja nei "faktum" id 2 avhengerAv 1
         )
 
         val faktum = fakta ja 1
