@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.unit.marshalling
+package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.helpers.NyEksempel
