@@ -10,8 +10,8 @@ import no.nav.dagpenger.model.fakta.TemplateFaktum
 import java.time.LocalDate
 
 class BaseFaktumFactory<T : Comparable<T>> internal constructor(
-        private val clazz: Class<T>,
-        private val navn: String
+    private val clazz: Class<T>,
+    private val navn: String
 ) : FaktumFactory<T>() {
     private val templateIder = mutableListOf<Int>()
 
@@ -48,22 +48,22 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     fun faktum(vararg templates: TemplateFaktum<*>) = GeneratorFaktum(faktumId, navn, templates.asList())
 
     override fun og(otherId: Int): FaktumFactory<T> =
-            if (templateIder.isEmpty()) super.og(otherId)
-            else genererer(otherId) as FaktumFactory<T>
+        if (templateIder.isEmpty()) super.og(otherId)
+        else genererer(otherId) as FaktumFactory<T>
 
     override infix fun genererer(otherId: Int): BaseFaktumFactory<Int> = (this as BaseFaktumFactory<Int>)
-            .also { templateIder.add(otherId) }
+        .also { templateIder.add(otherId) }
 
     override fun tilTemplate(faktumMap: MutableMap<FaktumId, Faktum<*>>) {
         if (templateIder.isEmpty()) return
         templateIder.forEach { otherId ->
             faktumMap[FaktumId(otherId)]
-                    ?.tilTemplate()
-                    ?.also { template -> faktumMap[FaktumId(otherId)] = template }
-                    ?: throw IllegalArgumentException("Faktum $otherId finnes ikke")
+                ?.tilTemplate()
+                ?.also { template -> faktumMap[FaktumId(otherId)] = template }
+                ?: throw IllegalArgumentException("Faktum $otherId finnes ikke")
         }
         GeneratorFaktum(faktumId, navn, templateIder.map { otherId -> faktumMap[FaktumId(otherId)] as TemplateFaktum<*> })
-                .also { generatorfaktum -> faktumMap[faktumId] = generatorfaktum }
+            .also { generatorfaktum -> faktumMap[faktumId] = generatorfaktum }
     }
 
     val template: Faktum<T> get() = TemplateFaktum(faktumId, navn, clazz)

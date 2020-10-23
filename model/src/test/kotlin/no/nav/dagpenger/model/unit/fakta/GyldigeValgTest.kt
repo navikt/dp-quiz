@@ -3,9 +3,7 @@ package no.nav.dagpenger.model.unit.fakta
 import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.Faktum
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -18,10 +16,10 @@ internal class GyldigeValgTest {
     companion object {
         private enum class Choice { A, B, C, D, E }
         private val prototypeFakta = Fakta(
-                choice faktum "multiple choice" id 1,
-                choice faktum "valid choices" id 2,
-                dokument faktum "dokument" id 3,
-                ja nei "approval" id 4,
+            choice faktum "multiple choice" id 1,
+            choice faktum "valid choices" id 2,
+            dokument faktum "dokument" id 3,
+            ja nei "approval" id 4,
         )
     }
 

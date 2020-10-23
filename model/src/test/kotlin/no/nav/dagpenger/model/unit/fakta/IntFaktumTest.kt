@@ -1,8 +1,6 @@
 package no.nav.dagpenger.model.unit.fakta
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
-import no.nav.dagpenger.model.fakta.FaktumNavn
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.faktum
 import no.nav.dagpenger.model.regel.er
@@ -19,7 +17,7 @@ internal class IntFaktumTest {
         val intFaktum = (heltall faktum "int" id 1).faktum()
         val seksjon = Seksjon("seksjon", Rolle.søker, intFaktum)
         assertThrows<IllegalStateException> { intFaktum.svar() }
-        intFaktum.besvar( 5)
+        intFaktum.besvar(5)
         assertEquals(5, intFaktum.svar())
     }
 
