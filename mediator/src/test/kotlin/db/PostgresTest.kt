@@ -21,9 +21,6 @@ internal class PostgresTest {
         }
     }
 
-    companion object {
-    }
-
     fun withCleanDb(test: () -> Unit) {
         System.setProperty(DataSourceBuilder.DB_URL_KEY, PostgresContainer.instance.jdbcUrl)
         System.setProperty(DataSourceBuilder.DB_PASSWORD, PostgresContainer.instance.password)
