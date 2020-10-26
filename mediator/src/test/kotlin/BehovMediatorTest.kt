@@ -23,7 +23,7 @@ internal class BehovMediatorTest {
     }
 
     private companion object {
-        private val meldingsfabrikk = TestBehovMeldingFactory("fødselsnummer", "aktør")
+        private val meldingsfabrikk = TestBehovMeldingFactory("fødselsnummer")
         private val testRapid = TestRapid()
         private lateinit var mediator: BehovMediator
 
@@ -40,17 +40,16 @@ internal class BehovMediatorTest {
         val seksjon = søknad.nesteSeksjon()
         mediator.håndter(seksjon)
         assertEquals(1, testRapid.inspektør.size)
+        assertEquals(TestBehovMeldingFactory("12345678910").behovsMelding(), testRapid.inspektør.message(0))
     }
 }
 
-private class TestBehovMeldingFactory(private val fødselsnummer: String, private val aktørId: String) {
-    fun ønskerRettighetsavklaring(): String = nyHendelse(
-        "ønsker_rettighetsavklaring",
+private class TestBehovMeldingFactory(private val fødselsnummer: String) {
+    fun behovsMelding(): String = nyHendelse(
+        "behov",
         mapOf(
-            "aktørId" to aktørId,
-            "fødselsnummer" to fødselsnummer,
-            "avklaringsId" to UUID.randomUUID(),
-            "opprettet" to LocalDateTime.now()
+            "@behov" to listOf("Personalia"),
+            "fødselsnummer" to fødselsnummer
         )
     )
 
@@ -64,7 +63,6 @@ private class TestBehovMeldingFactory(private val fødselsnummer: String, privat
     )
 }
 
-// Forstår dagpengesøknaden
 private class TestPrototype {
 
     companion object {
