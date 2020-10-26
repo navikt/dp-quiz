@@ -2,6 +2,7 @@ package db
 
 import DataSourceBuilder.dataSource
 import helpers.FaktaEksempel.prototypeFakta
+import helpers.Postgres
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
@@ -11,19 +12,16 @@ import kotlin.test.assertEquals
 internal class FaktumTableTest {
     @Test
     fun `Bygg faktum tabell`() {
-        System.setProperty(DataSourceBuilder.DB_URL_KEY, PostgresTest.PostgresContainer.instance.jdbcUrl)
-        System.setProperty(DataSourceBuilder.DB_PASSWORD, PostgresTest.PostgresContainer.instance.password)
-        System.setProperty(DataSourceBuilder.DB_USERNAME, PostgresTest.PostgresContainer.instance.username)
 
-        DataSourceBuilder.runMigration()
-
-        FaktumTable(prototypeFakta, 1)
-        assertRecordCount(21, "faktum")
-        assertRecordCount(6, "utledet_faktum")
-        assertRecordCount(3, "template_faktum")
-        assertRecordCount(3, "avhengig_faktum")
-        FaktumTable(prototypeFakta, 1)
-        assertRecordCount(21, "faktum")
+        Postgres.withMigratedDb {
+            FaktumTable(prototypeFakta, 1)
+            assertRecordCount(21, "faktum")
+            assertRecordCount(6, "utledet_faktum")
+            assertRecordCount(3, "template_faktum")
+            assertRecordCount(3, "avhengig_faktum")
+            FaktumTable(prototypeFakta, 1)
+            assertRecordCount(21, "faktum")
+        }
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {
