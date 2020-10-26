@@ -16,14 +16,15 @@ import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.visitor.FaktaVisitor
 import java.time.LocalDate
+import java.util.UUID
 
 // Forstår initialisering av faktum tabellen
 class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
 
     private var rootId: Int = 0
     private var indeks: Int = 0
-    private var skipFaktum = false
     private val dbIder = mutableMapOf<Faktum<*>, Int>()
+    private val avhengigheter = mutableMapOf<Faktum<*>, Set<Faktum<*>>>()
 
     init {
         if (!exists(versjonId)) fakta.accept(this)
@@ -47,20 +48,28 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
 
     override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
         skrivFaktum(faktum, clazz)
+        avhengigheter[faktum] = avhengigeFakta
     }
 
     override fun <R : Comparable<R>> visit(faktum: GeneratorFaktum, id: String, avhengigeFakta: Set<Faktum<*>>, templates: List<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
         skrivFaktum(faktum, clazz)
         faktumFaktum(skrivFaktum(faktum, clazz), templates, "template_faktum")
+        avhengigheter[faktum] = avhengigeFakta
     }
 
     override fun <R : Comparable<R>> visit(faktum: TemplateFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
         skrivFaktum(faktum, clazz)
+        avhengigheter[faktum] = avhengigeFakta
     }
 
     override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>) {
         if (dbIder.containsKey(faktum)) return
         faktumFaktum(skrivFaktum(faktum, clazz), children, "utledet_faktum")
+        avhengigheter[faktum] = avhengigeFakta
+    }
+
+    override fun postVisit(fakta: Fakta, fnr: String, versjonId: Int, uuid: UUID) {
+        avhengigheter.forEach { (parent, children) -> faktumFaktum(dbIder[parent]!!, children, "avhengig_faktum") }
     }
 
     private fun faktumFaktum(parentId: Int, children: Collection<Faktum<*>>, table: String) {
