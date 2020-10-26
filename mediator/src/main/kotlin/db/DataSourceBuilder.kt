@@ -1,16 +1,41 @@
-import com.zaxxer.hikari.HikariConfig
+import ch.qos.logback.core.util.OptionHelper.getEnv
+import ch.qos.logback.core.util.OptionHelper.getSystemProperty
 import com.zaxxer.hikari.HikariDataSource
 import org.flywaydb.core.Flyway
-import javax.sql.DataSource
 
 // Understands how to create a data source from environment variables
 internal object DataSourceBuilder {
-    val dataSource = HikariConfig().apply {
-    }.dataSource
+    const val DB_URL_KEY = "DB_URL_KEY"
+    const val DB_USERNAME = "DB_USERNAME_KEY"
+    const val DB_PASSWORD = "DB_PASSWORD_KEY"
 
-    fun clean(dataSource: HikariDataSource) = Flyway.configure().dataSource(dataSource).load().clean()
+    private val jdbcUrl by lazy {
+        val jdbcUrl: String? = getEnv("DB_URL_KEY") ?: getSystemProperty("DB_URL_KEY")
+        requireNotNull(jdbcUrl, { "Fant ingen jdbc url definert for nøkkel: $DB_URL_KEY" })
+    }
 
-    internal fun runMigration(dataSource: DataSource, initSql: String? = null) =
+    private val username by lazy {
+        val jdbcUrl: String? = getEnv(DB_USERNAME) ?: getSystemProperty(DB_USERNAME)
+        requireNotNull(jdbcUrl, { "Fant ingen jdbc url definert for nøkkel: $DB_USERNAME" })
+    }
+
+    private val password by lazy {
+        val jdbcUrl: String? = getEnv(DB_PASSWORD) ?: getSystemProperty(DB_PASSWORD)
+        requireNotNull(jdbcUrl, { "Fant ingen jdbc url definert for nøkkel: $DB_PASSWORD" })
+    }
+
+
+    val dataSource by lazy {
+        HikariDataSource().apply {
+            jdbcUrl = DataSourceBuilder.jdbcUrl
+            username = DataSourceBuilder.username
+            password = DataSourceBuilder.password
+        }
+    }
+
+    fun clean() = Flyway.configure().dataSource(dataSource).load().clean()
+
+    internal fun runMigration(initSql: String? = null) =
         Flyway.configure()
             .dataSource(dataSource)
             .initSql(initSql)
