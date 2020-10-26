@@ -39,8 +39,6 @@ CREATE TABLE IF NOT EXISTS FAKTUM_VERDI
     PRIMARY KEY (id)
 );
 
-
-
 CREATE TABLE IF NOT EXISTS FAKTA
 (
     id         BIGSERIAL                NOT NULL,
@@ -56,5 +54,12 @@ create table IF NOT EXISTS FAKTA_FAKTUM
     fakta_id  BIGSERIAL not null references FAKTA (id),
     faktum_id BIGSERIAL not null references FAKTUM (id),
     primary key (fakta_id, faktum_id)
+);
+
+create table IF NOT EXISTS UTLEDET_FAKTUM
+(
+    parent_id  BIGSERIAL not null references FAKTUM (id),
+    child_id BIGSERIAL not null references FAKTUM (id),
+    primary key (parent_id, child_id)
 );
 

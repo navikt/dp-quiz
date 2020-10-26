@@ -18,18 +18,19 @@ internal class FaktumTableTest {
         DataSourceBuilder.runMigration()
 
         Prototype()
-        assertRecordCount(18)
+        assertRecordCount(19, "faktum")
+        assertRecordCount(4, "utledet_faktum")
         Prototype()
-        assertRecordCount(18)
+        assertRecordCount(19, "faktum")
     }
 
-    private fun assertRecordCount(recordCount: Int) {
+    private fun assertRecordCount(recordCount: Int, table: String) {
         assertEquals(
             recordCount,
             using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        "SELECT COUNT (versjon_id) FROM faktum"
+                        "SELECT COUNT (*) FROM $table"
                     ).map { it.int(1) }.asSingle
                 )
             }
