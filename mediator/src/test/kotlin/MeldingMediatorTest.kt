@@ -1,4 +1,4 @@
-import db.Søknader
+import db.FaktaPersistance
 import io.mockk.mockk
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.søknad.Søknad
@@ -44,7 +44,7 @@ class MeldingMediatorTest {
         }
     }
 
-    private class TestSøknader : Søknader {
+    private class TestSøknader : FaktaPersistance {
         val søknader = mutableMapOf<UUID, List<Faktum<*>>>()
         override fun persister(søknad: Søknad) {
             søknader[UUID.randomUUID()] = emptyList()

@@ -2,6 +2,6 @@ package db
 
 import no.nav.dagpenger.model.søknad.Søknad
 
-internal interface Søknader {
+internal interface FaktaPersistance {
     fun persister(søknad: Søknad)
 }

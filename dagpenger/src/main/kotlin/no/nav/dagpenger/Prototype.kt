@@ -17,6 +17,7 @@ import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.søknad.Versjon
 
+// Forstår dagpengesøknaden
 class Prototype {
 
     private val fakta: Fakta
@@ -153,7 +154,6 @@ class Prototype {
             inntekter
         )
 
-    // this should not be in this class
     private val versjon = Versjon(1, fakta, inngangsvilkår, mapOf(Versjon.Type.Web to søknad))
 
     fun søknad(fnr: String) = versjon.søknad(fnr, Versjon.Type.Web)
