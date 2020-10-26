@@ -1,8 +1,10 @@
 package soknad
 
 import db.FaktumTable
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
-import no.nav.dagpenger.model.factory.UtledetFaktumFactory
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.regel.er
@@ -29,29 +31,29 @@ class Prototype {
 
     private val fakta: Fakta
         get() = Fakta(
-            BaseFaktumFactory.Companion.dato faktum "Fødselsdato" id 1,
-            BaseFaktumFactory.Companion.dato faktum "Ønsker dagpenger fra dato" id 2,
-            BaseFaktumFactory.Companion.dato faktum "Dato for bortfall på grunn av alder" id 3,
-            UtledetFaktumFactory.Companion.maks dato "Virkningstidspunkt" av 2 og 6 og 5 og 7 id 4,
+            dato faktum "Fødselsdato" id 1,
+            dato faktum "Ønsker dagpenger fra dato" id 2,
+            dato faktum "Dato for bortfall på grunn av alder" id 3,
+            maks dato "Virkningstidspunkt" av 2 og 6 og 5 og 7 id 4,
 
-            BaseFaktumFactory.Companion.dato faktum "Siste dag med arbeidsplikt" id 5,
-            BaseFaktumFactory.Companion.dato faktum "Registreringsdato" id 6,
-            BaseFaktumFactory.Companion.dato faktum "Siste dag med lønn" id 7,
+            dato faktum "Siste dag med arbeidsplikt" id 5,
+            dato faktum "Registreringsdato" id 6,
+            dato faktum "Siste dag med lønn" id 7,
 
-            BaseFaktumFactory.Companion.inntekt faktum "Inntekt siste 3 år" id 8,
-            BaseFaktumFactory.Companion.inntekt faktum "Inntekt siste 12 mnd" id 9,
-            BaseFaktumFactory.Companion.dato faktum "Dimisjonsdato" id 10,
-            BaseFaktumFactory.Companion.inntekt faktum "3G" id 11,
-            BaseFaktumFactory.Companion.inntekt faktum "1,5G" id 12,
+            inntekt faktum "Inntekt siste 3 år" id 8,
+            inntekt faktum "Inntekt siste 12 mnd" id 9,
+            dato faktum "Dimisjonsdato" id 10,
+            inntekt faktum "3G" id 11,
+            inntekt faktum "1,5G" id 12,
 
-            BaseFaktumFactory.Companion.ja nei "Eier egen bondegård" id 13,
-            BaseFaktumFactory.Companion.ja nei "Eier egen bedrift" id 14,
-            BaseFaktumFactory.Companion.ja nei "Driver med fangst og fisk" id 15,
+            ja nei "Eier egen bondegård" id 13,
+            ja nei "Eier egen bedrift" id 14,
+            ja nei "Driver med fangst og fisk" id 15,
 
-            BaseFaktumFactory.Companion.ja nei "Villig til deltidsarbeid" id 16,
-            BaseFaktumFactory.Companion.ja nei "Villig til pendling" id 17,
-            BaseFaktumFactory.Companion.ja nei "Villig til helse" id 18,
-            BaseFaktumFactory.Companion.ja nei "Villig til å ta ethvert arbeid" id 19,
+            ja nei "Villig til deltidsarbeid" id 16,
+            ja nei "Villig til pendling" id 17,
+            ja nei "Villig til helse" id 18,
+            ja nei "Villig til å ta ethvert arbeid" id 19,
         )
 
     val fødselsdato = fakta dato 1

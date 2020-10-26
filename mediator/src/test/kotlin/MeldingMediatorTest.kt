@@ -56,7 +56,7 @@ class MeldingMediatorTest {
     }
 }
 
-class TestMeldingFactory(private val fødselsnummer: String, private val aktørId: String) {
+private class TestMeldingFactory(private val fødselsnummer: String, private val aktørId: String) {
     fun ønskerRettighetsavklaring(): String = nyHendelse(
         "ønsker_rettighetsavklaring",
         mapOf(
