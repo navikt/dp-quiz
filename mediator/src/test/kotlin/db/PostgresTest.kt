@@ -14,21 +14,17 @@ internal class PostgresTest {
             PostgreSQLContainer<Nothing>("postgres:11.2").apply {
                 start()
             }
-
-
         }
 
         fun PostgreSQLContainer<Nothing>.fullJdbcUrl(): String {
-            return "jdbc:postgresql://${username}:${password}@${host}:${getMappedPort(POSTGRESQL_PORT)}/$databaseName"
-
+            return "jdbc:postgresql://$username:$password@$host:${getMappedPort(POSTGRESQL_PORT)}/$databaseName"
         }
     }
 
     companion object {
-
     }
 
-     fun withCleanDb(test: () -> Unit) {
+    fun withCleanDb(test: () -> Unit) {
         System.setProperty(DataSourceBuilder.DB_URL_KEY, PostgresContainer.instance.jdbcUrl)
         System.setProperty(DataSourceBuilder.DB_PASSWORD, PostgresContainer.instance.password)
         System.setProperty(DataSourceBuilder.DB_USERNAME, PostgresContainer.instance.username)

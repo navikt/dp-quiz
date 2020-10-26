@@ -24,7 +24,6 @@ internal object DataSourceBuilder {
         requireNotNull(jdbcUrl, { "Fant ingen jdbc url definert for nøkkel: $DB_PASSWORD" })
     }
 
-
     val dataSource by lazy {
         HikariDataSource().apply {
             jdbcUrl = DataSourceBuilder.jdbcUrl
