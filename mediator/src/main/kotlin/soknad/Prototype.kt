@@ -1,11 +1,10 @@
-package no.nav.dagpenger
+package soknad
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import db.FaktumTable
+import no.nav.dagpenger.model.factory.BaseFaktumFactory
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory
 import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.Rolle.søker
+import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
@@ -20,31 +19,39 @@ import no.nav.dagpenger.model.søknad.Versjon
 // Forstår dagpengesøknaden
 class Prototype {
 
+    init {
+        val faktumRecord: FaktumTable = FaktumTable(fakta, VERSJON_ID)
+    }
+
+    companion object {
+        const val VERSJON_ID = 1
+    }
+
     private val fakta: Fakta
         get() = Fakta(
-            dato faktum "Fødselsdato" id 1,
-            dato faktum "Ønsker dagpenger fra dato" id 2,
-            dato faktum "Dato for bortfall på grunn av alder" id 3,
-            maks dato "Virkningstidspunkt" av 2 og 6 og 5 og 7 id 4,
+            BaseFaktumFactory.Companion.dato faktum "Fødselsdato" id 1,
+            BaseFaktumFactory.Companion.dato faktum "Ønsker dagpenger fra dato" id 2,
+            BaseFaktumFactory.Companion.dato faktum "Dato for bortfall på grunn av alder" id 3,
+            UtledetFaktumFactory.Companion.maks dato "Virkningstidspunkt" av 2 og 6 og 5 og 7 id 4,
 
-            dato faktum "Siste dag med arbeidsplikt" id 5,
-            dato faktum "Registreringsdato" id 6,
-            dato faktum "Siste dag med lønn" id 7,
+            BaseFaktumFactory.Companion.dato faktum "Siste dag med arbeidsplikt" id 5,
+            BaseFaktumFactory.Companion.dato faktum "Registreringsdato" id 6,
+            BaseFaktumFactory.Companion.dato faktum "Siste dag med lønn" id 7,
 
-            inntekt faktum "Inntekt siste 3 år" id 8,
-            inntekt faktum "Inntekt siste 12 mnd" id 9,
-            dato faktum "Dimisjonsdato" id 10,
-            inntekt faktum "3G" id 11,
-            inntekt faktum "1,5G" id 12,
+            BaseFaktumFactory.Companion.inntekt faktum "Inntekt siste 3 år" id 8,
+            BaseFaktumFactory.Companion.inntekt faktum "Inntekt siste 12 mnd" id 9,
+            BaseFaktumFactory.Companion.dato faktum "Dimisjonsdato" id 10,
+            BaseFaktumFactory.Companion.inntekt faktum "3G" id 11,
+            BaseFaktumFactory.Companion.inntekt faktum "1,5G" id 12,
 
-            ja nei "Eier egen bondegård" id 13,
-            ja nei "Eier egen bedrift" id 14,
-            ja nei "Driver med fangst og fisk" id 15,
+            BaseFaktumFactory.Companion.ja nei "Eier egen bondegård" id 13,
+            BaseFaktumFactory.Companion.ja nei "Eier egen bedrift" id 14,
+            BaseFaktumFactory.Companion.ja nei "Driver med fangst og fisk" id 15,
 
-            ja nei "Villig til deltidsarbeid" id 16,
-            ja nei "Villig til pendling" id 17,
-            ja nei "Villig til helse" id 18,
-            ja nei "Villig til å ta ethvert arbeid" id 19,
+            BaseFaktumFactory.Companion.ja nei "Villig til deltidsarbeid" id 16,
+            BaseFaktumFactory.Companion.ja nei "Villig til pendling" id 17,
+            BaseFaktumFactory.Companion.ja nei "Villig til helse" id 18,
+            BaseFaktumFactory.Companion.ja nei "Villig til å ta ethvert arbeid" id 19,
         )
 
     val fødselsdato = fakta dato 1
@@ -71,7 +78,7 @@ class Prototype {
     val egenBedrift = fakta ja 14
     val fangstOgFisk = fakta ja 15
 
-    private val personalia = Seksjon("personalia", søker, fødselsdato)
+    private val personalia = Seksjon("personalia", Rolle.søker, fødselsdato)
 
     val inngangsvilkår =
         "Inngangsvilkår".alle(
@@ -103,7 +110,7 @@ class Prototype {
     private val statiske =
         Seksjon(
             "statiske",
-            søker,
+            Rolle.søker,
             inntekt3G,
             inntekt15G
         )
@@ -111,7 +118,7 @@ class Prototype {
     private val datoer =
         Seksjon(
             "datoer",
-            søker,
+            Rolle.søker,
             virkningstidspunkt,
             datoForBortfallPgaAlder,
             dimisjonsdato
@@ -120,7 +127,7 @@ class Prototype {
     private val egenNæring =
         Seksjon(
             "egenNæring",
-            søker,
+            Rolle.søker,
             egenBondegård,
             egenBedrift,
             fangstOgFisk,
@@ -129,7 +136,7 @@ class Prototype {
     private val inntekter =
         Seksjon(
             "inntekter",
-            søker,
+            Rolle.søker,
             inntektSisteÅr,
             inntektSiste3År,
         )
@@ -137,7 +144,7 @@ class Prototype {
     private val reellArbeidssøker =
         Seksjon(
             "reellArbeidssøker",
-            søker,
+            Rolle.søker,
             villigDeltid,
             villigHelse,
             villigJobb,
@@ -154,7 +161,7 @@ class Prototype {
             inntekter
         )
 
-    private val versjon = Versjon(1, fakta, inngangsvilkår, mapOf(Versjon.Type.Web to søknad))
+    private val versjon = Versjon(VERSJON_ID, fakta, inngangsvilkår, mapOf(Versjon.Type.Web to søknad))
 
     fun søknad(fnr: String) = versjon.søknad(fnr, Versjon.Type.Web)
 }

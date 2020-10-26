@@ -1,4 +1,4 @@
-CREATE TABLE NAVN
+CREATE TABLE IF NOT EXISTS NAVN
 (
     id        BIGSERIAL                NOT NULL,
     navn      VARCHAR(256)             not null,
@@ -6,7 +6,7 @@ CREATE TABLE NAVN
     PRIMARY KEY (id)
 );
 
-CREATE TABLE DOKUMENT
+CREATE TABLE IF NOT EXISTS DOKUMENT
 (
     id        BIGSERIAL                NOT NULL,
     opprettet TIMESTAMP WITH TIME ZONE NOT NULL default (now() at time zone 'utc'),
@@ -14,7 +14,7 @@ CREATE TABLE DOKUMENT
     PRIMARY KEY (id)
 );
 
-CREATE TABLE FAKTUM
+CREATE TABLE IF NOT EXISTS FAKTUM
 (
     id          BIGSERIAL,
     versjon_id  int                      not null,
@@ -26,7 +26,7 @@ CREATE TABLE FAKTUM
     PRIMARY KEY (id)
 );
 
-CREATE TABLE FAKTUM_VERDI
+CREATE TABLE IF NOT EXISTS FAKTUM_VERDI
 (
     id             BIGSERIAL,
     faktum_id      BIGSERIAL                not null references FAKTUM (id),
@@ -41,7 +41,7 @@ CREATE TABLE FAKTUM_VERDI
 
 
 
-CREATE TABLE FAKTA
+CREATE TABLE IF NOT EXISTS FAKTA
 (
     id         BIGSERIAL                NOT NULL,
     uuid       uuid                     NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE FAKTA
     PRIMARY KEY (id)
 );
 
-create table FAKTA_FAKTUM
+create table IF NOT EXISTS FAKTA_FAKTUM
 (
     fakta_id  BIGSERIAL not null references FAKTA (id),
     faktum_id BIGSERIAL not null references FAKTUM (id),

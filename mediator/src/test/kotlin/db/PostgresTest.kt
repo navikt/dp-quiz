@@ -1,7 +1,7 @@
 package db
 
 import DataSourceBuilder
-import DataSourceBuilder.Companion.runMigration
+import DataSourceBuilder.runMigration
 import com.zaxxer.hikari.HikariDataSource
 import org.junit.jupiter.api.Test
 import org.testcontainers.containers.PostgreSQLContainer

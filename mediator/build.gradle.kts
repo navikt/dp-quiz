@@ -9,6 +9,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core:6.3.2")
     implementation("com.zaxxer:HikariCP:3.4.1")
     implementation("org.postgresql:postgresql:42.2.11")
+    implementation("com.github.seratch:kotliquery:1.3.1")
     implementation(Kotlin.Logging.kotlinLogging)
 
     testImplementation(Mockk.mockk)

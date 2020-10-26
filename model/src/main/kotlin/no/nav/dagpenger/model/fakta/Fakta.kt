@@ -115,7 +115,7 @@ class Fakta private constructor(
 
     internal fun søknad(type: Versjon.Type) = Versjon.id(versjonId).søknad(this, type)
 
-    internal fun accept(visitor: FaktaVisitor) {
+    fun accept(visitor: FaktaVisitor) {
         visitor.preVisit(this, fnr, versjonId, uuid)
         this.forEach { it.accept(visitor) }
         visitor.postVisit(this, fnr, versjonId, uuid)

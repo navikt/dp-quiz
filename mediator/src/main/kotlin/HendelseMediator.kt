@@ -1,7 +1,7 @@
 import db.FaktaPersistance
 import meldinger.model.ØnskerRettighetsavklaringMelding
-import no.nav.dagpenger.Prototype
 import no.nav.helse.rapids_rivers.RapidsConnection
+import soknad.Prototype
 
 internal class HendelseMediator(private val faktaPersistance: FaktaPersistance, rapidsConnection: RapidsConnection) {
     private val behovMediator = BehovMediator(rapidsConnection)

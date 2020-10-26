@@ -6,6 +6,7 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
@@ -13,12 +14,15 @@ import java.util.UUID
 class MeldingMediatorTest {
 
     @Test
+    @Disabled
     internal fun `Oppretter søknad og persisterer noe ved ønsket rettighetsavklaring`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
         assertEquals(1, søknader.søknader.size)
     }
 
-    @Test fun `Publiserer noe ved ønsket rettighetsavklaring`() {
+    @Test
+    @Disabled
+    fun `Publiserer noe ved ønsket rettighetsavklaring`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
         assertEquals(1, testRapid.inspektør.size)
     }
