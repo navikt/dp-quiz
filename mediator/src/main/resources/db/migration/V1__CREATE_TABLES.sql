@@ -63,3 +63,11 @@ create table IF NOT EXISTS UTLEDET_FAKTUM
     primary key (parent_id, child_id)
 );
 
+create table IF NOT EXISTS TEMPLATE_FAKTUM
+(
+    parent_id  BIGSERIAL not null references FAKTUM (id),
+    child_id BIGSERIAL not null references FAKTUM (id),
+    primary key (parent_id, child_id)
+);
+
+

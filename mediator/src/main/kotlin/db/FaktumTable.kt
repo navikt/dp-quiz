@@ -51,6 +51,7 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
 
     override fun <R : Comparable<R>> visit(faktum: GeneratorFaktum, id: String, avhengigeFakta: Set<Faktum<*>>, templates: List<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
         skrivFaktum(faktum, clazz)
+        faktumFaktum(skrivFaktum(faktum, clazz), templates, "template_faktum")
     }
 
     override fun <R : Comparable<R>> visit(faktum: TemplateFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
@@ -59,13 +60,16 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
 
     override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>) {
         if (dbIder.containsKey(faktum)) return
-        val utledetDbId = skrivFaktum(faktum, clazz)
+        faktumFaktum(skrivFaktum(faktum, clazz), children, "utledet_faktum")
+    }
+
+    private fun faktumFaktum(parentId: Int, children: Collection<Faktum<*>>, table: String) {
         children.forEach { child ->
             using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        "INSERT INTO utledet_faktum (parent_id, child_id) VALUES (?, ?)".trimMargin(),
-                        utledetDbId,
+                        "INSERT INTO $table (parent_id, child_id) VALUES (?, ?)".trimMargin(),
+                        parentId,
                         dbIder[child]
                     ).asExecute
                 )
@@ -73,7 +77,7 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
         }
     }
 
-    private fun <R : Comparable<R>> skrivFaktum(faktum: Faktum<*>, clazz: Class<R>) = if (dbIder.containsKey(faktum)) dbIder[faktum] else
+    private fun <R : Comparable<R>> skrivFaktum(faktum: Faktum<*>, clazz: Class<R>) = if (dbIder.containsKey(faktum)) dbIder[faktum]!! else
         using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
@@ -86,7 +90,7 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
                     indeks
                 ).map { it.int(1) }.asSingle
             )
-        }?.also { dbId ->
+        }!!.also { dbId ->
             dbIder[faktum] = dbId
         }
 
