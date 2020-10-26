@@ -1,11 +1,11 @@
 package db
 
 import DataSourceBuilder.dataSource
+import helpers.FaktaEksempel.prototypeFakta
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import org.junit.jupiter.api.Test
-import soknad.Prototype
 import kotlin.test.assertEquals
 
 internal class FaktumTableTest {
@@ -17,11 +17,11 @@ internal class FaktumTableTest {
 
         DataSourceBuilder.runMigration()
 
-        Prototype()
-        assertRecordCount(19, "faktum")
-        assertRecordCount(4, "utledet_faktum")
-        Prototype()
-        assertRecordCount(19, "faktum")
+        FaktumTable(prototypeFakta, 1)
+        assertRecordCount(21, "faktum")
+        assertRecordCount(6, "utledet_faktum")
+        FaktumTable(prototypeFakta, 1)
+        assertRecordCount(21, "faktum")
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

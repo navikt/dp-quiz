@@ -8,9 +8,11 @@ import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
+import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.visitor.FaktaVisitor
 import java.time.LocalDate
@@ -44,12 +46,19 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
     }
 
     override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
-        if (skipFaktum) return
+        skrivFaktum(faktum, clazz)
+    }
+
+    override fun <R : Comparable<R>> visit(faktum: GeneratorFaktum, id: String, avhengigeFakta: Set<Faktum<*>>, templates: List<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
+        skrivFaktum(faktum, clazz)
+    }
+
+    override fun <R : Comparable<R>> visit(faktum: TemplateFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
         skrivFaktum(faktum, clazz)
     }
 
     override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>) {
-        skipFaktum = true
+        if (dbIder.containsKey(faktum)) return
         val utledetDbId = skrivFaktum(faktum, clazz)
         children.forEach { child ->
             using(sessionOf(dataSource)) { session ->
@@ -64,11 +73,7 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
         }
     }
 
-    override fun <R : Comparable<R>> postVisit(faktum: UtledetFaktum<R>, id: String, children: Set<Faktum<*>>, clazz: Class<R>) {
-        skipFaktum = false
-    }
-
-    private fun <R : Comparable<R>> skrivFaktum(faktum: Faktum<*>, clazz: Class<R>) =
+    private fun <R : Comparable<R>> skrivFaktum(faktum: Faktum<*>, clazz: Class<R>) = if (dbIder.containsKey(faktum)) dbIder[faktum] else
         using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
