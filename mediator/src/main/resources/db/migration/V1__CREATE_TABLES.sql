@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS template_faktum
     PRIMARY KEY (parent_id, child_id)
 );
 
-CREATE TABLE IF NOT EXISTS AVHENGIG_FAKTUM
+CREATE TABLE IF NOT EXISTS avhengig_faktum
 (
     parent_id BIGSERIAL NOT NULL REFERENCES faktum (id),
     child_id  BIGSERIAL NOT NULL REFERENCES faktum (id),
