@@ -6,7 +6,7 @@ internal class BehovMediator(private val rapidsConnection: RapidsConnection) {
 
     internal fun håndter(seksjon: Seksjon, fødselsnummer: String) {
         val behov = seksjon.map { it.navn }
-        val melding = BehovMelding(fødselsnummer = fødselsnummer, behov = *behov.toTypedArray())
-        rapidsConnection.publish("", melding.toJson())
+        val melding = BehovMelding(fødselsnummer = fødselsnummer, seksjon = seksjon)
+        rapidsConnection.publish(melding.toJson())
     }
 }

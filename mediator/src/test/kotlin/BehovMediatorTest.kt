@@ -1,26 +1,15 @@
 
 import com.fasterxml.jackson.databind.JsonNode
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
-import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.Rolle.nav
-import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.regel.før
-import no.nav.dagpenger.model.subsumsjon.alle
-import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
-import no.nav.dagpenger.model.søknad.Versjon
-import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.UUID
+import utils.AvhengerAvTestPrototype
+import utils.FødselsdatoTestPrototype
 import kotlin.test.assertEquals
 
 internal class BehovMediatorTest {
+    private val fnr = "12345678910"
     private val testRapid = TestRapid()
     private val  mediator = BehovMediator(
         rapidsConnection = testRapid,
@@ -32,9 +21,8 @@ internal class BehovMediatorTest {
     }
 
     @Test
-    internal fun `tar imot seksjon og sender ut på kafka`() {
-        val fnr = "12345678910"
-        val søknad = TestPrototype().søknad(fnr)
+    fun `tar imot seksjon og sender ut på kafka`() {
+        val søknad = FødselsdatoTestPrototype().søknad(fnr)
         val seksjon = søknad.nesteSeksjon()
         mediator.håndter(seksjon, fnr)
         assertEquals(1, testRapid.inspektør.size)
@@ -47,36 +35,21 @@ internal class BehovMediatorTest {
             assertEquals(fnr, it["fødselsnummer"].asText())
         }
     }
-}
 
-private class TestPrototype {
+    @Test
+    fun `sender behov med avhengige fakta`(){
+        val søknad = AvhengerAvTestPrototype().delvisBesvartSøknad(fnr)
+        val seksjon = søknad.nesteSeksjon()
+        mediator.håndter(seksjon,fnr)
 
-    companion object {
-        const val VERSJON_ID = 1
+        testRapid.inspektør.message(0).also {
+            assertTrue(it["@behov"].map(JsonNode::asText).containsAll(listOf("InntektSisteÅr", "InntektSiste3År")))
+            assertTrue(it.has("fakta"))
+            assertTrue(it["fakta"].any{ it["navn"].asText() == "Virkningstidspunkt"})
+
+
+        }
+
     }
-
-    private val fakta: Fakta
-        get() = Fakta(
-            dato faktum "Fødselsdato" id 1,
-        )
-
-    val fødselsdato = fakta dato 1
-
-    val inngangsvilkår =
-        "Inngangsvilkår".alle(
-            "alder".alle(
-                fødselsdato er LocalDate.now()
-            )
-        )
-
-    private val personalia = Seksjon("personalia", nav, fødselsdato)
-
-    val søknad: Søknad =
-        Søknad(
-            personalia,
-        )
-
-    private val versjon = Versjon(VERSJON_ID, fakta, inngangsvilkår, mapOf(Versjon.Type.Web to søknad))
-
-    fun søknad(fnr: String) = versjon.søknad(fnr, Versjon.Type.Web)
 }
+
