@@ -92,12 +92,11 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
             session.run(
                 queryOf(
                     """WITH inserted_id as (INSERT INTO navn (navn) values (?) returning id)
-                               INSERT INTO faktum (versjon_id, faktum_type, root_id, indeks,regel, navn_id ) SELECT ?, ?, ?, ?, ?, id from inserted_id returning id""".trimMargin(),
+                               INSERT INTO faktum (versjon_id, faktum_type, root_id, regel, navn_id ) SELECT ?, ?, ?, ?, id from inserted_id returning id""".trimMargin(),
                     faktum.navn,
                     versjonId,
                     clazzCode(clazz),
                     rootId,
-                    indeks,
                     regel?.navn
                 ).map { it.int(1) }.asSingle
             )
