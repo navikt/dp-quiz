@@ -21,20 +21,14 @@ import java.util.UUID
 import kotlin.test.assertEquals
 
 internal class BehovMediatorTest {
+    private val testRapid = TestRapid()
+    private val  mediator = BehovMediator(
+        rapidsConnection = testRapid,
+    )
+
     @BeforeEach
     internal fun reset() {
         testRapid.reset()
-    }
-
-    private companion object {
-        private val testRapid = TestRapid()
-        private lateinit var mediator: BehovMediator
-
-        init {
-            mediator = BehovMediator(
-                rapidsConnection = testRapid,
-            )
-        }
     }
 
     @Test
@@ -45,29 +39,14 @@ internal class BehovMediatorTest {
         mediator.håndter(seksjon, fnr)
         assertEquals(1, testRapid.inspektør.size)
 
-        val behovmelding = TestBehovMeldingFactory(fnr).behovsMelding(listOf("fødselsdato"))
-        assertTrue(testRapid.inspektør.field(0, "@behov").map(JsonNode::asText).contains("Fødselsdato"))
-        assertEquals(fnr, testRapid.inspektør.field(0, "fødselsnummer").asText())
+        testRapid.inspektør.message(0).also {
+            assertTrue(it.has("@behov"))
+            assertTrue(it["@behov"].isArray)
+            assertTrue(it["@behov"].map(JsonNode::asText).contains("Fødselsdato"))
+            assertTrue(it.has("fødselsnummer"))
+            assertEquals(fnr, it["fødselsnummer"].asText())
+        }
     }
-}
-
-private class TestBehovMeldingFactory(private val fødselsnummer: String) {
-    fun behovsMelding(behov: List<String>): String = nyHendelse(
-        "behov",
-        mapOf(
-            "@behov" to behov.toString(),
-            "fødselsnummer" to fødselsnummer
-        )
-    )
-
-    private fun nyHendelse(navn: String, hendelse: Map<String, Any>) =
-        JsonMessage.newMessage(nyHendelse(navn) + hendelse).toJson()
-
-    private fun nyHendelse(navn: String) = mutableMapOf<String, Any>(
-        "@id" to UUID.randomUUID(),
-        "@event_name" to navn,
-        "@opprettet" to LocalDateTime.now()
-    )
 }
 
 private class TestPrototype {
