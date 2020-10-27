@@ -7,7 +7,11 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.regel.av
+import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.søknad.Seksjon
+import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.søknad.Versjon
 
 internal object FaktaEksempel {
 
@@ -34,4 +38,8 @@ internal object FaktaEksempel {
         maks dato "345" av 3 og 4 og 5 id 345,
         maks dato "345213" av 345 og 2 og 13 id 345213
     )
+
+    val søknad = Søknad(Seksjon("seksjon", Rolle.søker, *(prototypeFakta.map { it }.toTypedArray())))
+
+    val v = Versjon(1, prototypeFakta, prototypeFakta ja 1 er true, mapOf(Versjon.Type.Web to søknad))
 }

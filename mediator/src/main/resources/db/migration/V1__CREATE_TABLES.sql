@@ -39,14 +39,6 @@ CREATE TABLE IF NOT EXISTS fakta
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS fakta_faktum
-(
-    id        BIGSERIAL NOT NULL,
-    fakta_id  BIGSERIAL NOT NULL REFERENCES fakta (id),
-    faktum_id BIGSERIAL NOT NULL REFERENCES faktum (id),
-    PRIMARY KEY (id)
-);
-
 CREATE TABLE IF NOT EXISTS utledet_faktum
 (
     parent_id BIGSERIAL NOT NULL REFERENCES faktum (id),
@@ -70,13 +62,14 @@ CREATE TABLE IF NOT EXISTS avhengig_faktum
 
 CREATE TABLE IF NOT EXISTS faktum_verdi
 (
-    id              BIGSERIAL,
-    fakta_faktum_id BIGSERIAL                NOT NULL REFERENCES fakta_faktum (id),
-    ja_nei          bool                     NULL,
-    aarlig_inntekt  decimal                  NULL,
-    dokument_id     BIGSERIAL REFERENCES dokument (ID),
-    dato            TIMESTAMP WITH TIME ZONE NULL,
-    heltall         int                      NULL,
-    opprettet       TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
+    id             BIGSERIAL,
+    fakta_id       BIGSERIAL                NOT NULL REFERENCES fakta (id),
+    faktum_id      BIGSERIAL                NOT NULL REFERENCES faktum (id),
+    ja_nei         bool                     NULL,
+    aarlig_inntekt decimal                  NULL,
+    dokument_id    BIGSERIAL REFERENCES dokument (ID),
+    dato           TIMESTAMP WITH TIME ZONE NULL,
+    heltall        int                      NULL,
+    opprettet      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );

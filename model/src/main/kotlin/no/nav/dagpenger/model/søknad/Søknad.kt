@@ -10,7 +10,7 @@ import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.util.UUID
 
 class Søknad private constructor(
-    internal val fakta: Fakta,
+    val fakta: Fakta,
     internal val rootSubsumsjon: Subsumsjon,
     private val uuid: UUID,
     private val seksjoner: MutableList<Seksjon>

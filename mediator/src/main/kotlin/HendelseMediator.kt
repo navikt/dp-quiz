@@ -10,7 +10,6 @@ internal class HendelseMediator(private val faktaPersistance: FaktaPersistance, 
 
         val prototype = Prototype()
         val enkelSøknad = prototype.søknad(fnr = fødselsnummer)
-        faktaPersistance.persister(enkelSøknad)
         val nesteSeksjon = enkelSøknad.nesteSeksjon(prototype.inngangsvilkår.deepCopy(enkelSøknad))
         behovMediator.håndter(nesteSeksjon)
     }

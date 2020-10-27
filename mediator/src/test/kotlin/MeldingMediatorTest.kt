@@ -1,7 +1,9 @@
 import db.FaktaPersistance
 import io.mockk.mockk
+import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.søknad.Versjon
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -50,8 +52,20 @@ class MeldingMediatorTest {
 
     private class TestSøknader : FaktaPersistance {
         val søknader = mutableMapOf<UUID, List<Faktum<*>>>()
-        override fun persister(søknad: Søknad) {
-            søknader[UUID.randomUUID()] = emptyList()
+        override fun ny(fnr: String, søknadType: Versjon.Type): Søknad {
+            TODO("Not yet implemented")
+        }
+
+        override fun hent(uuid: UUID, søknadType: Versjon.Type): Søknad {
+            TODO("Not yet implemented")
+        }
+
+        override fun lagre(fakta: Fakta): Boolean {
+            TODO("Not yet implemented")
+        }
+
+        override fun opprettede(fnr: String): Map<UUID, LocalDateTime> {
+            TODO("Not yet implemented")
         }
     }
 }
