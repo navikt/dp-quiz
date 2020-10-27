@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS faktum
 CREATE TABLE IF NOT EXISTS faktum_verdi
 (
     id             BIGSERIAL,
-    faktum_id      BIGSERIAL                NOT NULL REFERENCES faktum (id),
+    fakta_faktum_id      BIGSERIAL          NOT NULL REFERENCES fakta_faktum (id),
     ja_nei         bool                     NULL,
     aarlig_inntekt decimal                  NULL,
     dokument_id    BIGSERIAL REFERENCES dokument (ID),
@@ -53,9 +53,10 @@ CREATE TABLE IF NOT EXISTS fakta
 
 CREATE TABLE IF NOT EXISTS fakta_faktum
 (
+    id         BIGSERIAL                NOT NULL,
     fakta_id  BIGSERIAL NOT NULL REFERENCES fakta (id),
     faktum_id BIGSERIAL NOT NULL REFERENCES faktum (id),
-    PRIMARY KEY (fakta_id, faktum_id)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS utledet_faktum
