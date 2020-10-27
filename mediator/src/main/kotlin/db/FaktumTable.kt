@@ -4,6 +4,7 @@ import DataSourceBuilder.dataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
@@ -62,7 +63,7 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
         avhengigheter[faktum] = avhengigeFakta
     }
 
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>) {
+    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>, regel: FaktaRegel<R>) {
         if (dbIder.containsKey(faktum)) return
         faktumFaktum(skrivFaktum(faktum, clazz), children, "utledet_faktum")
         avhengigheter[faktum] = avhengigeFakta
@@ -86,17 +87,18 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
         }
     }
 
-    private fun <R : Comparable<R>> skrivFaktum(faktum: Faktum<*>, clazz: Class<R>) = if (dbIder.containsKey(faktum)) dbIder[faktum]!! else
+    private fun <R : Comparable<R>> skrivFaktum(faktum: Faktum<*>, clazz: Class<R>, regel: FaktaRegel<R>? = null) = if (dbIder.containsKey(faktum)) dbIder[faktum]!! else
         using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
                     """WITH inserted_id as (INSERT INTO navn (navn) values (?) returning id)
-                               INSERT INTO faktum (versjon_id, faktum_type, root_id, indeks, navn_id) SELECT ?, ?, ?, ?, id from inserted_id returning id""".trimMargin(),
+                               INSERT INTO faktum (versjon_id, faktum_type, root_id, indeks,regel, navn_id ) SELECT ?, ?, ?, ?, ?, id from inserted_id returning id""".trimMargin(),
                     faktum.navn,
                     versjonId,
                     clazzCode(clazz),
                     rootId,
-                    indeks
+                    indeks,
+                    regel?.navn
                 ).map { it.int(1) }.asSingle
             )
         }!!.also { dbId ->

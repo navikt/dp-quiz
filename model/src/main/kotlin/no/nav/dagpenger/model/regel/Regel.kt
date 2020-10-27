@@ -5,7 +5,6 @@ import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
-import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.subsumsjon.AvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GeneratorSubsumsjon
@@ -244,7 +243,3 @@ infix fun Subsumsjon.gyldigGodkjentAv(faktum: Faktum<Boolean>): Subsumsjon {
 infix fun Subsumsjon.ugyldigGodkjentAv(faktum: Faktum<Boolean>): Subsumsjon {
     return GodkjenningsSubsumsjon(GodkjenningsSubsumsjon.Action.NeiAction, this, faktum)
 }
-
-val MAKS_DATO = UtledetFaktum<LocalDate>::max
-val MAKS_INNTEKT = UtledetFaktum<Inntekt>::max
-val ALLE_JA = UtledetFaktum<Boolean>::alle

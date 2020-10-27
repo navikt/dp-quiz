@@ -1,12 +1,13 @@
 package no.nav.dagpenger.model.factory
 
-import no.nav.dagpenger.model.fakta.FaktaRegel
+import no.nav.dagpenger.model.factory.FaktaRegel.Companion.ALLE_JA
+import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MAKS_DATO
+import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MAKS_INNTEKT
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
+import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.UtledetFaktum
-import no.nav.dagpenger.model.regel.ALLE_JA
-import no.nav.dagpenger.model.regel.MAKS_DATO
-import no.nav.dagpenger.model.regel.MAKS_INNTEKT
+import java.time.LocalDate
 
 class UtledetFaktumFactory<T : Comparable<T>>(
     private val navn: String,
@@ -47,4 +48,13 @@ class UtledetFaktumFactory<T : Comparable<T>>(
     }
 
     private val faktumId get() = FaktumId(rootId).also { require(rootId != 0) }
+}
+
+class FaktaRegel<R : Comparable<R>> private constructor(val navn: String, internal val strategy: (UtledetFaktum<R>) -> R) {
+
+    companion object {
+        internal val MAKS_DATO = FaktaRegel("MAKS_DATO", UtledetFaktum<LocalDate>::max)
+        internal val MAKS_INNTEKT = FaktaRegel("MAKS_INNTEKT", UtledetFaktum<Inntekt>::max)
+        internal val ALLE_JA = FaktaRegel("ALLE_JA", UtledetFaktum<Boolean>::alle)
+    }
 }

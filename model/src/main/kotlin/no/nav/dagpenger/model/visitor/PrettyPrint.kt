@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.visitor
 
+import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
@@ -61,6 +62,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         avhengigeFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
+        regel: FaktaRegel<R>,
         svar: R
     ) {
         melding("Faktum: $faktum er utledet til $svar")
@@ -72,7 +74,8 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
-        clazz: Class<R>
+        clazz: Class<R>,
+        regel: FaktaRegel<R>
     ) {
         melding("Faktum: $faktum er ubesvart")
         indentTeller++

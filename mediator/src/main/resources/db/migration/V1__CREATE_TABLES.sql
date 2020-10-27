@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS faktum
     root_id     int                      NOT NULL,
     indeks      int                      NOT NULL,
     navn_id     BIGSERIAL                NOT NULL REFERENCES navn (id),
+    regel       VARCHAR(16)              NULL,
     opprettet   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );

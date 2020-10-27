@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.fakta
 
+import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 class UtledetFaktum<R : Comparable<R>> internal constructor(
@@ -20,7 +21,7 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
 
     override fun svar(): R {
         underordnede.forEach { it.svar() }
-        return regel(this)
+        return regel.strategy(this)
     }
 
     internal fun addAll(fakta: List<Faktum<*>>) = this.underordnede.addAll(fakta as List<Faktum<R>>)
@@ -37,8 +38,8 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
 
     override fun accept(visitor: FaktumVisitor) {
         faktumId.accept(visitor)
-        if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, underordnede, clazz(), svar())
-        else visitor.preVisit(this, id, avhengigeFakta, underordnede, clazz())
+        if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, underordnede, clazz(), regel, svar())
+        else visitor.preVisit(this, id, avhengigeFakta, underordnede, clazz(), regel)
         underordnede.forEach { it.accept(visitor) }
         visitor.postVisit(this, id, underordnede, clazz())
     }

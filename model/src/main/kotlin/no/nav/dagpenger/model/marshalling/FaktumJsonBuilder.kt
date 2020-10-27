@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.ObjectWriter
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
@@ -42,6 +43,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         avhengigeFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
+        regel: FaktaRegel<R>,
         svar: R
     ) {
         if (id in faktumIder) return
@@ -57,7 +59,8 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
-        clazz: Class<R>
+        clazz: Class<R>,
+        regel: FaktaRegel<R>
     ) {
         if (id in faktumIder) return
         faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->

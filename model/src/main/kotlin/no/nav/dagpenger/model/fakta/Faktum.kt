@@ -95,4 +95,3 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 }
 
 fun Set<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
-typealias FaktaRegel <R> = (UtledetFaktum<R>) -> R

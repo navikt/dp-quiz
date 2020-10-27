@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.visitor
 
+import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
@@ -67,6 +68,7 @@ interface FaktumVisitor {
         avhengigeFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
+        regel: FaktaRegel<R>,
         svar: R
     ) {}
     fun <R : Comparable<R>> preVisit(
@@ -74,7 +76,8 @@ interface FaktumVisitor {
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
-        clazz: Class<R>
+        clazz: Class<R>,
+        regel: FaktaRegel<R>
     ) {}
     fun <R : Comparable<R>> postVisit(
         faktum: UtledetFaktum<R>,
