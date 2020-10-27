@@ -1,80 +1,82 @@
-CREATE TABLE IF NOT EXISTS NAVN
+-- noinspection SqlNoDataSourceInspectionForFile
+
+CREATE TABLE IF NOT EXISTS navn
 (
     id        BIGSERIAL                NOT NULL,
-    navn      VARCHAR(256)             not null,
-    opprettet TIMESTAMP WITH TIME ZONE NOT NULL default (now() at time zone 'utc'),
+    navn      VARCHAR(256)             NOT NULL,
+    opprettet TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS DOKUMENT
+CREATE TABLE IF NOT EXISTS dokument
 (
     id        BIGSERIAL                NOT NULL,
-    opprettet TIMESTAMP WITH TIME ZONE NOT NULL default (now() at time zone 'utc'),
+    opprettet TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     url       varchar(256)             NOT NULL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS FAKTUM
+CREATE TABLE IF NOT EXISTS faktum
 (
     id          BIGSERIAL,
-    versjon_id  int                      not null,
+    versjon_id  int                      NOT NULL,
     faktum_type INT                      NOT NULL,
-    root_id     int                      not null,
-    indeks      int                      not null,
-    navn_id     BIGSERIAL                not null references NAVN (id),
-    opprettet   TIMESTAMP WITH TIME ZONE NOT NULL default (now() at time zone 'utc'),
+    root_id     int                      NOT NULL,
+    indeks      int                      NOT NULL,
+    navn_id     BIGSERIAL                NOT NULL REFERENCES navn (id),
+    opprettet   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS FAKTUM_VERDI
+CREATE TABLE IF NOT EXISTS faktum_verdi
 (
     id             BIGSERIAL,
-    faktum_id      BIGSERIAL                not null references FAKTUM (id),
+    faktum_id      BIGSERIAL                NOT NULL REFERENCES faktum (id),
     ja_nei         bool                     NULL,
-    aarlig_inntekt decimal                  null,
-    dokument_id    BIGSERIAL references DOKUMENT (ID),
+    aarlig_inntekt decimal                  NULL,
+    dokument_id    BIGSERIAL REFERENCES dokument (ID),
     dato           TIMESTAMP WITH TIME ZONE NULL,
-    heltall        int                      null,
-    opprettet      TIMESTAMP WITH TIME ZONE NOT NULL default (now() at time zone 'utc'),
+    heltall        int                      NULL,
+    opprettet      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS FAKTA
+CREATE TABLE IF NOT EXISTS fakta
 (
     id         BIGSERIAL                NOT NULL,
     uuid       uuid                     NOT NULL,
-    versjon_id int                      not null,
-    fnr        char(11)                 not null,
-    opprettet  TIMESTAMP WITH TIME ZONE NOT NULL default (now() at time zone 'utc'),
+    versjon_id int                      NOT NULL,
+    fnr        char(11)                 NOT NULL,
+    opprettet  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
 
-create table IF NOT EXISTS FAKTA_FAKTUM
+CREATE TABLE IF NOT EXISTS fakta_faktum
 (
-    fakta_id  BIGSERIAL not null references FAKTA (id),
-    faktum_id BIGSERIAL not null references FAKTUM (id),
-    primary key (fakta_id, faktum_id)
+    fakta_id  BIGSERIAL NOT NULL REFERENCES fakta (id),
+    faktum_id BIGSERIAL NOT NULL REFERENCES faktum (id),
+    PRIMARY KEY (fakta_id, faktum_id)
 );
 
-create table IF NOT EXISTS UTLEDET_FAKTUM
+CREATE TABLE IF NOT EXISTS utledet_faktum
 (
-    parent_id  BIGSERIAL not null references FAKTUM (id),
-    child_id BIGSERIAL not null references FAKTUM (id),
-    primary key (parent_id, child_id)
+    parent_id  BIGSERIAL NOT NULL REFERENCES faktum (id),
+    child_id BIGSERIAL NOT NULL REFERENCES faktum (id),
+    PRIMARY KEY (parent_id, child_id)
 );
 
-create table IF NOT EXISTS TEMPLATE_FAKTUM
+CREATE TABLE IF NOT EXISTS template_faktum
 (
-    parent_id  BIGSERIAL not null references FAKTUM (id),
-    child_id BIGSERIAL not null references FAKTUM (id),
-    primary key (parent_id, child_id)
+    parent_id  BIGSERIAL NOT NULL REFERENCES faktum (id),
+    child_id BIGSERIAL NOT NULL REFERENCES faktum (id),
+    PRIMARY KEY (parent_id, child_id)
 );
 
-create table IF NOT EXISTS AVHENGIG_FAKTUM
+CREATE TABLE IF NOT EXISTS AVHENGIG_FAKTUM
 (
-    parent_id  BIGSERIAL not null references FAKTUM (id),
-    child_id BIGSERIAL not null references FAKTUM (id),
-    primary key (parent_id, child_id)
+    parent_id  BIGSERIAL NOT NULL REFERENCES faktum (id),
+    child_id BIGSERIAL NOT NULL REFERENCES faktum (id),
+    PRIMARY KEY (parent_id, child_id)
 );
 
 
