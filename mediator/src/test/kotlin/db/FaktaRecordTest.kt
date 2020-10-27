@@ -19,7 +19,7 @@ internal class FaktaRecordTest {
     fun `ny søknad`() {
         Postgres.withMigratedDb {
             FaktumTable(prototypeFakta, 1)
-            FaktaRecord().ny(UNG_PERSON_FNR_2018, Versjon.Type.Web)
+            val originalSøknad = FaktaRecord().ny(UNG_PERSON_FNR_2018, Versjon.Type.Web)
             assertRecordCount(1, "fakta")
             assertRecordCount(21, "faktum_verdi")
             FaktaRecord().ny(UNG_PERSON_FNR_2018, Versjon.Type.Web)
@@ -27,6 +27,9 @@ internal class FaktaRecordTest {
             assertRecordCount(42, "faktum_verdi")
 
             val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
+            val rehydrertSøknad = FaktaRecord().hent(uuid, Versjon.Type.Web)
+
+            // assertDeepEquals(originalSøknad, rehydrertSøknad)
         }
     }
 

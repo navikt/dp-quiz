@@ -4,7 +4,13 @@ import DataSourceBuilder.dataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.FaktaRegel
+import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
@@ -29,7 +35,59 @@ class FaktaRecord : FaktaPersistance {
     }
 
     override fun hent(uuid: UUID, søknadType: Versjon.Type): Søknad {
-        TODO("Not yet implemented")
+        using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf(
+                    """SELECT fakta.uuid AS uuid,
+                                fakta.versjon_id AS versjon_id,
+                                fakta.fnr AS fnr,
+                                faktum.root_id AS root_id,
+                                faktum_verdi.indeks AS indeks,
+                                faktum.faktum_type AS faktum_type,
+                                navn.navn AS navn
+                                FROM fakta, faktum_verdi, faktum, navn
+                                WHERE fakta.uuid = ?
+                                AND fakta.id = faktum_verdi.fakta_id 
+                                AND faktum.id = faktum_verdi.faktum_id 
+                                AND faktum.navn_id = navn.id 
+                                AND fakta.versjon_id = faktum.versjon_id 
+                            """.trimMargin(),
+                    uuid
+                ).map {
+                    FaktumRow(
+                        uuid = UUID.fromString(it.string(1)),
+                        versjonId = it.int(2),
+                        fnr = it.string(3),
+                        rootId = it.int(4),
+                        indeks = it.int(5),
+                        faktumType = it.int(6),
+                        navn = it.string(7)
+                    )
+                }.asList
+            )
+        }
+        return Søknad()
+    }
+
+    private class FaktumRow(
+        private val uuid: UUID,
+        private val versjonId: Int,
+        private val fnr: String,
+        private val rootId: Int,
+        private val indeks: Int,
+        private val faktumType: Int,
+        private val navn: String
+    ) {
+        fun asGrunnleggendeFaktum(): FaktumFactory<*> {
+            return when (faktumType) {
+                1 -> heltall faktum navn id rootId
+                2 -> ja nei navn id rootId
+                3 -> dato faktum navn id rootId
+                4 -> dokument faktum navn id rootId
+                5 -> inntekt faktum navn id rootId
+                else -> throw IllegalArgumentException("Ukjent faktumtype $faktumType")
+            }
+        }
     }
 
     override fun lagre(fakta: Fakta): Boolean {

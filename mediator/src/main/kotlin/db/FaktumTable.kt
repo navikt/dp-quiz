@@ -95,7 +95,7 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
                                INSERT INTO faktum (versjon_id, faktum_type, root_id, regel, navn_id ) SELECT ?, ?, ?, ?, id from inserted_id returning id""".trimMargin(),
                     faktum.navn,
                     versjonId,
-                    clazzCode(clazz),
+                    ClassKode[clazz],
                     rootId,
                     regel?.navn
                 ).map { it.int(1) }.asSingle
@@ -104,12 +104,26 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
             dbIder[faktum] = dbId
         }
 
-    private fun <R : Comparable<R>> clazzCode(clazz: Class<R>) = when (clazz) {
-        Int::class.java -> 1
-        Boolean::class.java -> 2
-        LocalDate::class.java -> 3
-        Dokument::class.java -> 4
-        Inntekt::class.java -> 5
-        else -> throw IllegalArgumentException("Ukjent clazz $clazz")
+    internal class ClassKode() {
+        companion object {
+            private val clazzMap = mutableMapOf<Int, Class<*>>()
+            private val kodeMap = mutableMapOf<Class<*>, Int>()
+
+            private fun byggMap(clazz: Class<*>, kode: Int) {
+                clazzMap[kode] = clazz
+                kodeMap[clazz] = kode
+            }
+
+            init {
+                byggMap(Int::class.java, 1)
+                byggMap(Boolean::class.java, 2)
+                byggMap(LocalDate::class.java, 3)
+                byggMap(Dokument::class.java, 4)
+                byggMap(Inntekt::class.java, 5)
+            }
+
+            operator fun get(clazz: Class<*>) = kodeMap[clazz] ?: throw NoSuchElementException("Ukjent klasse $clazz")
+            operator fun get(kode: Int) = clazzMap[kode] ?: throw NoSuchElementException("Ukjent kode $kode")
+        }
     }
 }
