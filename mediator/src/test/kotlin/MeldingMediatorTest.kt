@@ -64,7 +64,7 @@ class MeldingMediatorTest {
             TODO("Not yet implemented")
         }
 
-        override fun opprettede(fnr: String): Map<UUID, LocalDateTime> {
+        override fun opprettede(fnr: String): Map<LocalDateTime, UUID> {
             TODO("Not yet implemented")
         }
     }

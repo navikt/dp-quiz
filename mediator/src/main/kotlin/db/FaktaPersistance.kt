@@ -10,5 +10,5 @@ internal interface FaktaPersistance {
     fun ny(fnr: String, søknadType: Versjon.Type): Søknad
     fun hent(uuid: UUID, søknadType: Versjon.Type): Søknad
     fun lagre(fakta: Fakta): Boolean
-    fun opprettede(fnr: String): Map<UUID, LocalDateTime>
+    fun opprettede(fnr: String): Map<LocalDateTime, UUID>
 }

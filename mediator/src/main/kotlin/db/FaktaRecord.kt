@@ -36,8 +36,15 @@ class FaktaRecord : FaktaPersistance {
         TODO("Not yet implemented")
     }
 
-    override fun opprettede(fnr: String): Map<UUID, LocalDateTime> {
-        TODO("Not yet implemented")
+    override fun opprettede(fnr: String): Map<LocalDateTime, UUID> {
+        return using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf(
+                    "SELECT opprettet, uuid FROM fakta WHERE fnr = ?",
+                    fnr
+                ).map { it.localDateTime(1) to UUID.fromString(it.string(2)) }.asList
+            )
+        }.toMap()
     }
 
     private class NyFakta(fakta: Fakta) : FaktaVisitor {

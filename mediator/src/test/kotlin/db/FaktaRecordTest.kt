@@ -24,6 +24,9 @@ internal class FaktaRecordTest {
             assertRecordCount(21, "faktum_verdi")
             FaktaRecord().ny(UNG_PERSON_FNR_2018, Versjon.Type.Web)
             assertRecordCount(2, "fakta")
+            assertRecordCount(42, "faktum_verdi")
+
+            val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         }
     }
 
