@@ -23,10 +23,12 @@ class Fakta private constructor(
         faktumMap
     )
 
-    constructor(vararg factories: FaktumFactory<*>) : this(
-        "",
-        0,
-        UUID.randomUUID(),
+    constructor(vararg factories: FaktumFactory<*>) : this("", 0, UUID.randomUUID(), factories.toList())
+
+    constructor(fnr: String, versjonId: Int, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
+        fnr,
+        versjonId,
+        uuid,
         factories.map {
             it.faktum().let { faktum ->
                 faktum.faktumId to faktum
