@@ -8,8 +8,9 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     navn: String,
     internal val clazz: Class<R>,
     avhengigeFakta: MutableSet<Faktum<*>> = mutableSetOf(),
+    avhengerAvFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     roller: MutableSet<Rolle> = mutableSetOf()
-) : Faktum<R>(faktumId, navn, avhengigeFakta, roller) {
+) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private val seksjoner = mutableListOf<Seksjon>()
 
     override fun clazz() = clazz
@@ -32,7 +33,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
 
     override fun accept(visitor: FaktumVisitor) {
         faktumId.accept(visitor)
-        visitor.visit(this, id, avhengigeFakta, roller, clazz)
+        visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, roller, clazz)
     }
 
     override fun add(seksjon: Seksjon) = seksjoner.add(seksjon)
@@ -44,6 +45,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
                 navn,
                 clazz,
                 avhengigeFakta.deepCopy(indeks, fakta).toMutableSet(),
+                avhengerAvFakta.deepCopy(indeks, fakta).toMutableSet(),
                 roller
             ).also { fakta.add(it) }
     }
@@ -62,6 +64,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
                         navn,
                         clazz,
                         avhengigeFakta.deepCopy(indeks, fakta).toMutableSet(),
+                        avhengerAvFakta.deepCopy(indeks, fakta).toMutableSet(),
                         roller
                     )
                 )
@@ -72,6 +75,6 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
         val avhengigheter = avhengigeFakta.map { it.bygg(byggetFakta) }.toMutableSet()
-        return TemplateFaktum(faktumId, navn, clazz, avhengigheter, roller).also { byggetFakta[faktumId] = it }
+        return TemplateFaktum(faktumId, navn, clazz, avhengigheter, avhengerAvFakta, roller).also { byggetFakta[faktumId] = it }
     }
 }

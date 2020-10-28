@@ -41,13 +41,14 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         faktum: UtledetFaktum<R>,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         regel: FaktaRegel<R>,
         svar: R
     ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, avhengerAvFakta, clazz).also { faktumNode ->
             faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
             faktumNode.putR(svar)
         }
@@ -58,12 +59,13 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         faktum: UtledetFaktum<R>,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         regel: FaktaRegel<R>
     ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, avhengerAvFakta, clazz).also { faktumNode ->
             faktumNode.set("fakta", mapper.valueToTree(children.map { it.id }))
         }
         faktumIder.add(id)
@@ -79,11 +81,12 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         tilstand: Faktum.FaktumTilstand,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, avhengerAvFakta, clazz).also { faktumNode ->
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
         }
         faktumIder.add(id)
@@ -93,11 +96,12 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         faktum: TemplateFaktum<R>,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, avhengerAvFakta, clazz).also { faktumNode ->
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
         }
         faktumIder.add(id)
@@ -108,12 +112,13 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         tilstand: Faktum.FaktumTilstand,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R
     ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, avhengerAvFakta, clazz).also { faktumNode ->
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
             faktumNode.putR(svar)
         }
@@ -124,13 +129,14 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         templates: List<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R
     ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, avhengerAvFakta, clazz).also { faktumNode ->
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
             faktumNode.set("templates", mapper.valueToTree(templates.map { it.id }))
             faktumNode.putR(svar)
@@ -142,12 +148,13 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         templates: List<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
         if (id in faktumIder) return
-        faktumNode(faktum, id, avhengigeFakta, clazz).also { faktumNode ->
+        faktumNode(faktum, id, avhengigeFakta, avhengerAvFakta, clazz).also { faktumNode ->
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
             faktumNode.set("templates", mapper.valueToTree(templates.map { it.id }))
         }
@@ -158,6 +165,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         faktum: Faktum<*>,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         clazz: Class<R>
     ) =
         mapper.createObjectNode().also { faktumNode ->
@@ -165,10 +173,12 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
             faktumNode.put("navn", faktum.navn)
             faktumNode.put("id", id)
             faktumNode.set("avhengigFakta", mapper.valueToTree(avhengigeFakta.map { it.id }))
+            faktumNode.set("avhengerAvFakta", mapper.valueToTree(avhengerAvFakta.map { it.id }))
             faktumNode.put("clazz", clazz.simpleName.toLowerCase())
             faktumNode.put("rootId", rootId)
             faktumNode.put("indeks", indeks)
             faktaNode.add(faktumNode)
+            avhengerAvFakta.forEach { it.accept(this) }
         }
 
     private fun <R : Comparable<R>> ObjectNode.putR(svar: R) {

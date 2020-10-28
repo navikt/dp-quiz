@@ -65,7 +65,6 @@ internal class AvhengerAvTestPrototype {
             inntektSisteÅr er 100000.årlig
         )
 
-
     val søknad: Søknad =
         Søknad(
             Seksjon("Inntekt", Rolle.nav, inntektSiste3År, inntektSisteÅr),
@@ -75,5 +74,5 @@ internal class AvhengerAvTestPrototype {
 
     fun søknad(fnr: String) = versjon.søknad(fnr, Versjon.Type.Web)
 
-    fun delvisBesvartSøknad(fnr: String)  = søknad(fnr).also { (it dato 1).besvar(LocalDate.now()) }
+    fun delvisBesvartSøknad(fnr: String) = søknad(fnr).also { (it dato 1).besvar(LocalDate.now()) }
 }

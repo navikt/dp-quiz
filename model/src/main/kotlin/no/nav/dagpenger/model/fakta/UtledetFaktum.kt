@@ -28,7 +28,8 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
 
     override fun add(rolle: Rolle): Boolean = false // utledet faktum kan ikke settes av roller
 
-    override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> = underordnede.flatMap { it.grunnleggendeFakta() }.toSet()
+    override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> =
+        underordnede.flatMap { it.grunnleggendeFakta() }.toSet()
 
     override fun leggTilHvis(kode: Faktum.FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>) {
         this.underordnede.forEach { it.leggTilHvis(kode, fakta) }
@@ -38,8 +39,17 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
 
     override fun accept(visitor: FaktumVisitor) {
         faktumId.accept(visitor)
-        if (erBesvart()) visitor.preVisit(this, id, avhengigeFakta, underordnede, clazz(), regel, svar())
-        else visitor.preVisit(this, id, avhengigeFakta, underordnede, clazz(), regel)
+        if (erBesvart()) visitor.preVisit(
+            this,
+            id,
+            avhengigeFakta,
+            avhengerAvFakta,
+            underordnede,
+            clazz(),
+            regel,
+            svar()
+        )
+        else visitor.preVisit(this, id, avhengigeFakta, avhengerAvFakta, underordnede, clazz(), regel)
         underordnede.forEach { it.accept(visitor) }
         visitor.postVisit(this, id, underordnede, clazz())
     }

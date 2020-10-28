@@ -32,7 +32,8 @@ class FaktaRecord : FaktaPersistance {
         val (fnr, versjonId) = using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
-                    """SELECT fnr, versjon_id FROM fakta WHERE uuid = ? """, uuid
+                    """SELECT fnr, versjon_id FROM fakta WHERE uuid = ? """,
+                    uuid
                 ).map { row ->
                     row.string(1) to row.int(2)
                 }.asSingle
@@ -99,19 +100,50 @@ class FaktaRecord : FaktaPersistance {
             this.indeks = indeks
         }
 
-        override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
+        override fun <R : Comparable<R>> visit(
+            faktum: GrunnleggendeFaktum<R>,
+            tilstand: Faktum.FaktumTilstand,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFaktum: Set<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>
+        ) {
             skrivFaktumVerdi(faktum)
         }
 
-        override fun <R : Comparable<R>> visit(faktum: GeneratorFaktum, id: String, avhengigeFakta: Set<Faktum<*>>, templates: List<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
+        override fun <R : Comparable<R>> visit(
+            faktum: GeneratorFaktum,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFaktum: Set<Faktum<*>>,
+            templates: List<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>
+        ) {
             skrivFaktumVerdi(faktum)
         }
 
-        override fun <R : Comparable<R>> visit(faktum: TemplateFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
+        override fun <R : Comparable<R>> visit(
+            faktum: TemplateFaktum<R>,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFaktum: Set<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>
+        ) {
             skrivFaktumVerdi(faktum)
         }
 
-        override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>, regel: FaktaRegel<R>) {
+        override fun <R : Comparable<R>> preVisit(
+            faktum: UtledetFaktum<R>,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFaktum: Set<Faktum<*>>,
+            children: Set<Faktum<*>>,
+            clazz: Class<R>,
+            regel: FaktaRegel<R>
+        ) {
             skrivFaktumVerdi(faktum)
         }
 

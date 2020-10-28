@@ -1,6 +1,5 @@
 package meldinger.model
 
-import no.nav.dagpenger.model.marshalling.FaktumJsonBuilder
 import no.nav.dagpenger.model.marshalling.SeksjonJsonBuilder
 import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -12,7 +11,7 @@ internal class BehovMelding(private val fødselsnummer: String, private val seks
     private val id = UUID.randomUUID()
     private val opprettet = LocalDateTime.now()
     private val behov = seksjon.map { it.navn }
-    private val fakta = seksjon.map { it }
+    private val fakta = SeksjonJsonBuilder(seksjon).resultat()["fakta"]
 
     fun toJson() = JsonMessage.newMessage(
         mutableMapOf(
@@ -25,4 +24,3 @@ internal class BehovMelding(private val fødselsnummer: String, private val seks
         )
     ).toJson()
 }
-
