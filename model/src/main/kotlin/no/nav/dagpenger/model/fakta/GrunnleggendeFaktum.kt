@@ -7,12 +7,20 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     navn: String,
     private val clazz: Class<R>,
     avhengigeFakta: MutableSet<Faktum<*>>,
+    avhengerAvFakta: MutableSet<Faktum<*>>,
     roller: MutableSet<Rolle>
-) : Faktum<R>(faktumId, navn, avhengigeFakta, roller) {
+) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private var tilstand: Tilstand = Ukjent
     protected lateinit var gjeldendeSvar: R
 
-    internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>) : this(faktumId, navn, clazz, mutableSetOf(), mutableSetOf())
+    internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>) : this(
+        faktumId,
+        navn,
+        clazz,
+        mutableSetOf(),
+        mutableSetOf(),
+        mutableSetOf()
+    )
 
     override fun clazz() = clazz
 
@@ -26,7 +34,8 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
         val avhengigheter = avhengigeFakta.map { it.bygg(byggetFakta) }.toMutableSet()
 
-        return GrunnleggendeFaktum(faktumId, navn, clazz, avhengigheter, roller).also { byggetFakta[faktumId] = it }
+        return GrunnleggendeFaktum(faktumId, navn, clazz, avhengigheter, avhengerAvFakta, roller)
+            .also { byggetFakta[faktumId] = it }
     }
 
     override fun svar(): R = tilstand.svar(this)
@@ -51,11 +60,11 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     override fun tilTemplate() = TemplateFaktum(faktumId, navn, clazz)
 
     protected open fun acceptUtenSvar(visitor: FaktumVisitor) {
-        visitor.visit(this, Ukjent.kode, id, avhengigeFakta, roller, clazz)
+        visitor.visit(this, Ukjent.kode, id, avhengigeFakta, avhengerAvFakta, roller, clazz)
     }
 
     protected open fun acceptMedSvar(visitor: FaktumVisitor) {
-        visitor.visit(this, Kjent.kode, id, avhengigeFakta, roller, clazz, gjeldendeSvar)
+        visitor.visit(this, Kjent.kode, id, avhengigeFakta, avhengerAvFakta, roller, clazz, gjeldendeSvar)
     }
 
     private interface Tilstand {

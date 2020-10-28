@@ -7,10 +7,9 @@ internal class HendelseMediator(private val faktaPersistance: FaktaPersistance, 
     private val behovMediator = BehovMediator(rapidsConnection)
 
     fun behandle(melding: ØnskerRettighetsavklaringMelding, fødselsnummer: String) {
-
         val prototype = Prototype()
         val enkelSøknad = prototype.søknad(fnr = fødselsnummer)
         val nesteSeksjon = enkelSøknad.nesteSeksjon(prototype.inngangsvilkår.deepCopy(enkelSøknad))
-        behovMediator.håndter(nesteSeksjon)
+        behovMediator.håndter(nesteSeksjon, fødselsnummer)
     }
 }

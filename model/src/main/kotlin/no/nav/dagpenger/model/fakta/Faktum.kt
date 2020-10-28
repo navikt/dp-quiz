@@ -8,19 +8,20 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     internal val faktumId: FaktumId,
     val navn: String,
     protected val avhengigeFakta: MutableSet<Faktum<*>> = mutableSetOf(),
+    protected val avhengerAvFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     protected val roller: MutableSet<Rolle> = mutableSetOf()
 ) : Comparable<Faktum<*>> {
-
     val id: String get() = faktumId.id
 
     companion object {
         private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, søknad: Søknad) {
             faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { søknad.faktum(it.faktumId) })
+            faktum.avhengerAvFakta.addAll(this.avhengerAvFakta.map { søknad.faktum(it.faktumId) })
         }
 
         internal fun Set<Faktum<*>>.deepCopy(søknad: Søknad): Set<Faktum<*>> = this
             .mapNotNull { prototype ->
-                søknad.faktum(prototype.faktumId)?.also {
+                søknad.faktum(prototype.faktumId).also {
                     prototype.deepCopyAvhengigheter(it, søknad)
                 }
             }
@@ -65,6 +66,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     infix fun avhengerAv(other: Faktum<*>) {
         other.avhengigeFakta.add(this)
+        this.avhengerAvFakta.add(other)
     }
 
     internal open fun deepCopy(indeks: Int, fakta: Fakta): Faktum<*> = this

@@ -26,6 +26,7 @@ interface FaktumVisitor {
         tilstand: Faktum.FaktumTilstand,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {}
@@ -34,6 +35,7 @@ interface FaktumVisitor {
         tilstand: Faktum.FaktumTilstand,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R
@@ -42,6 +44,7 @@ interface FaktumVisitor {
         faktum: TemplateFaktum<R>,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {}
@@ -49,6 +52,7 @@ interface FaktumVisitor {
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         templates: List<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
@@ -57,6 +61,7 @@ interface FaktumVisitor {
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         templates: List<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
@@ -66,6 +71,7 @@ interface FaktumVisitor {
         faktum: UtledetFaktum<R>,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         regel: FaktaRegel<R>,
@@ -75,6 +81,7 @@ interface FaktumVisitor {
         faktum: UtledetFaktum<R>,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         regel: FaktaRegel<R>

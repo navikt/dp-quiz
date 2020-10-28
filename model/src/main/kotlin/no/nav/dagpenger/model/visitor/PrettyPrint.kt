@@ -60,6 +60,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         faktum: UtledetFaktum<R>,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         regel: FaktaRegel<R>,
@@ -73,6 +74,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         faktum: UtledetFaktum<R>,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         regel: FaktaRegel<R>
@@ -119,6 +121,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         tilstand: FaktumTilstand,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
@@ -130,6 +133,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         tilstand: FaktumTilstand,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R
