@@ -158,7 +158,11 @@ class FaktaRecord : FaktaPersistance {
             using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        "INSERT INTO faktum_verdi(fakta_id, indeks, faktum_id) VALUES (?, ?, (SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?))",
+                        """INSERT INTO faktum_verdi
+                            (fakta_id, indeks, faktum_id) 
+                            VALUES (?, ?, 
+                                (SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?)
+                            )""".trimMargin(),
                         faktaId,
                         indeks,
                         versjonId,

@@ -12,16 +12,16 @@ CREATE TABLE IF NOT EXISTS dokument
 (
     id        BIGSERIAL                NOT NULL,
     opprettet TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
-    url       varchar(256)             NOT NULL,
+    url       VARCHAR(256)             NOT NULL,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS faktum
 (
     id          BIGSERIAL,
-    versjon_id  int                      NOT NULL,
+    versjon_id  INT                      NOT NULL,
     faktum_type INT                      NOT NULL,
-    root_id     int                      NOT NULL,
+    root_id     INT                      NOT NULL,
     navn_id     BIGSERIAL                NOT NULL REFERENCES navn (id),
     regel       VARCHAR(16)              NULL,
     opprettet   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
@@ -31,9 +31,9 @@ CREATE TABLE IF NOT EXISTS faktum
 CREATE TABLE IF NOT EXISTS fakta
 (
     id         BIGSERIAL                NOT NULL,
-    uuid       uuid                     NOT NULL,
-    versjon_id int                      NOT NULL,
-    fnr        char(11)                 NOT NULL,
+    uuid       UUID                     NOT NULL,
+    versjon_id INT                      NOT NULL,
+    fnr        CHAR(11)                 NOT NULL,
     opprettet  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
@@ -65,11 +65,11 @@ CREATE TABLE IF NOT EXISTS faktum_verdi
     fakta_id       BIGSERIAL                NOT NULL REFERENCES fakta (id),
     faktum_id      BIGSERIAL                NOT NULL REFERENCES faktum (id),
     indeks         INT                      NOT NULL,
-    ja_nei         bool                     NULL,
-    aarlig_inntekt decimal                  NULL,
+    ja_nei         BOOL                     NULL,
+    aarlig_inntekt DECIMAL                  NULL,
     dokument_id    BIGINT NULL REFERENCES dokument (id),
     dato           TIMESTAMP WITH TIME ZONE NULL,
-    heltall        int                      NULL,
+    heltall        INT                      NULL,
     opprettet      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
