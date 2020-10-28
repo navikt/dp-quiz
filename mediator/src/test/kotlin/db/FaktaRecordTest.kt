@@ -7,6 +7,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.søknad.Versjon
+import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -29,7 +30,7 @@ internal class FaktaRecordTest {
             val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
             val rehydrertSøknad = FaktaRecord().hent(uuid, Versjon.Type.Web)
 
-            // assertDeepEquals(originalSøknad, rehydrertSøknad)
+            assertDeepEquals(originalSøknad, rehydrertSøknad)
         }
     }
 

@@ -29,47 +29,16 @@ class FaktaRecord : FaktaPersistance {
     }
 
     override fun hent(uuid: UUID, søknadType: Versjon.Type): Søknad {
-        val fnr: String
-        val versjonId: Int
-        val factories = using(sessionOf(dataSource)) { session ->
+        val (fnr, versjonId) = using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
-                    """SELECT 
-                            fakta.uuid AS uuid,
-                            fakta.versjon_id AS versjon_id,
-                            fakta.fnr AS fnr,
-                            faktum.root_id AS root_id,
-                            faktum_verdi.indeks AS indeks,
-                            faktum.faktum_type AS faktum_type,
-                            navn.navn AS navn
-                        FROM fakta, faktum_verdi, faktum, navn
-                        WHERE fakta.uuid = ?
-                            AND fakta.id = faktum_verdi.fakta_id 
-                            AND faktum.id = faktum_verdi.faktum_id 
-                            AND faktum.navn_id = navn.id 
-                            AND fakta.versjon_id = faktum.versjon_id 
-                        """.trimMargin(),
-                    uuid
-                ).map {
-                    FaktumRow(
-                        uuid = UUID.fromString(it.string(1)),
-                        versjonId = it.int(2),
-                        fnr = it.string(3),
-                        rootId = it.int(4),
-                        indeks = it.int(5),
-                        faktumType = it.int(6),
-                        navn = it.string(7)
-                    )
-                }.asList
+                    """SELECT fnr, versjon_id FROM fakta WHERE uuid = ? """, uuid
+                ).map { row ->
+                    row.string(1) to row.int(2)
+                }.asSingle
             )
-        }
-            .also { // grab a few fields for Fakta from any record
-                fnr = it[0].fnr
-                versjonId = it[0].versjonId
-            }
-            .map { it.asFactory() }
-        val fakta = Fakta(fnr, versjonId, uuid, factories)
-        return Søknad()
+        } ?: throw IllegalArgumentException("Ugyldig uuid: $uuid")
+        return Versjon.id(versjonId).søknad(fnr, søknadType)
     }
 
     private class FaktumRow(
