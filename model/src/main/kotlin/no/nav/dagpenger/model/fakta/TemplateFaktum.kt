@@ -36,7 +36,8 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
         visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, roller, clazz)
     }
 
-    override fun add(seksjon: Seksjon) = seksjoner.add(seksjon)
+    override fun add(seksjon: Seksjon) =
+        seksjoner.add(seksjon)
 
     override fun deepCopy(indeks: Int, fakta: Fakta): Faktum<*> {
         return fakta.idOrNull(faktumId medIndeks indeks)
@@ -75,6 +76,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
         val avhengigheter = avhengigeFakta.map { it.bygg(byggetFakta) }.toMutableSet()
-        return TemplateFaktum(faktumId, navn, clazz, avhengigheter, avhengerAvFakta, roller).also { byggetFakta[faktumId] = it }
+        return TemplateFaktum(faktumId, navn, clazz, avhengigheter, avhengerAvFakta, roller)
+            .also { byggetFakta[faktumId] = it }
     }
 }

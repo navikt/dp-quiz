@@ -39,7 +39,18 @@ internal object FaktaEksempel {
         maks dato "345213" av 345 og 2 og 13 id 345213
     )
 
-    val søknad = Søknad(Seksjon("seksjon", Rolle.søker, *(prototypeFakta.map { it }.toTypedArray())))
+    private val webPrototypeSøknad = Søknad(
+        Seksjon(
+            "seksjon",
+            Rolle.søker,
+            *(prototypeFakta.map { it }.toTypedArray())
+        )
+    )
 
-    val v = Versjon(1, prototypeFakta, prototypeFakta ja 1 er true, mapOf(Versjon.Type.Web to søknad))
+    val v = Versjon(
+        1,
+        prototypeFakta,
+        prototypeFakta ja 1 er true,
+        mapOf(Versjon.Type.Web to webPrototypeSøknad)
+    )
 }

@@ -33,7 +33,7 @@ internal class FaktaRecordTest {
             val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
             val rehydrertSøknad = FaktaRecord().hent(uuid, Versjon.Type.Web)
 
-            //assertDeepEquals(originalSøknad, rehydrertSøknad)
+            // assertDeepEquals(originalSøknad, rehydrertSøknad)
         }
     }
 
@@ -53,7 +53,7 @@ internal class FaktaRecordTest {
 
             val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
             val rehydrertSøknad = FaktaRecord().hent(uuid, Versjon.Type.Web)
-            // assertDeepEquals(originalSøknad, rehydrertSøknad)
+            assertDeepEquals(originalSøknad, rehydrertSøknad)
         }
     }
 

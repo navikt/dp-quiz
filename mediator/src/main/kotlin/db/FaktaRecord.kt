@@ -50,22 +50,20 @@ class FaktaRecord : FaktaPersistance {
             )
         } ?: throw IllegalArgumentException("Ugyldig uuid: $uuid")
 
-        val fakta = Versjon.id(versjonId).søknad(fnr, søknadType).fakta
-
-        fakta.forEach { faktum ->
-            val (rootId, indeks) = faktum.reflection { rootId, indeks -> rootId to indeks }
-            val svar = svar(uuid = uuid, rootId = rootId, indeks = indeks)
-            when (faktum.clazz()) {
-                Int::class.java -> { if (svar.heltall != null) (faktum as Faktum<Int>).besvar(svar.heltall) }
-                Boolean::class.java -> { if (svar.janei != null) (faktum as Faktum<Boolean>).besvar(svar.janei) }
-                LocalDate::class.java -> { if (svar.dato != null) (faktum as Faktum<LocalDate>).besvar(svar.dato) }
-                Dokument::class.java -> {}
-                Inntekt::class.java -> { if (svar.inntekt != null) (faktum as Faktum<Inntekt>).besvar(svar.inntekt) }
-                else -> throw java.lang.IllegalArgumentException("Ukjent faktumklasse ${faktum.clazz()}")
+        return Versjon.id(versjonId).søknad(fnr, søknadType).also { søknad ->
+            søknad.fakta.forEach { faktum ->
+                val (rootId, indeks) = faktum.reflection { rootId, indeks -> rootId to indeks }
+                val svar = svar(uuid = uuid, rootId = rootId, indeks = indeks)
+                when (faktum.clazz()) {
+                    Int::class.java -> { if (svar.heltall != null) (faktum as Faktum<Int>).besvar(svar.heltall) }
+                    Boolean::class.java -> { if (svar.janei != null) (faktum as Faktum<Boolean>).besvar(svar.janei) }
+                    LocalDate::class.java -> { if (svar.dato != null) (faktum as Faktum<LocalDate>).besvar(svar.dato) }
+                    Dokument::class.java -> {}
+                    Inntekt::class.java -> { if (svar.inntekt != null) (faktum as Faktum<Inntekt>).besvar(svar.inntekt) }
+                    else -> throw java.lang.IllegalArgumentException("Ukjent faktumklasse ${faktum.clazz()}")
+                }
             }
         }
-
-        return Versjon.id(versjonId).søknad(fakta, søknadType).also { originalSvar = svarMap(it.fakta) }
     }
 
     private fun svar(uuid: UUID, rootId: Int, indeks: Int): FaktumVerdiRow {
