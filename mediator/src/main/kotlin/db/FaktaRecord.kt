@@ -5,12 +5,14 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.factory.FaktaRegel
+import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
+import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.fakta.UtledetFaktum
@@ -47,27 +49,68 @@ class FaktaRecord : FaktaPersistance {
                 }.asSingle
             )
         } ?: throw IllegalArgumentException("Ugyldig uuid: $uuid")
-        return Versjon.id(versjonId).søknad(fnr, søknadType).also { originalSvar = svarMap(it.fakta) }
+
+        val fakta = Versjon.id(versjonId).søknad(fnr, søknadType).fakta
+
+        fakta.forEach { faktum ->
+            val (rootId, indeks) = faktum.reflection { rootId, indeks -> rootId to indeks }
+            val svar = svar(uuid = uuid, rootId = rootId, indeks = indeks)
+            when (faktum.clazz()) {
+                Int::class.java -> { if (svar.heltall != null) (faktum as Faktum<Int>).besvar(svar.heltall) }
+                Boolean::class.java -> { if (svar.janei != null) (faktum as Faktum<Boolean>).besvar(svar.janei) }
+                LocalDate::class.java -> { if (svar.dato != null) (faktum as Faktum<LocalDate>).besvar(svar.dato) }
+                Dokument::class.java -> {}
+                Inntekt::class.java -> { if (svar.inntekt != null) (faktum as Faktum<Inntekt>).besvar(svar.inntekt) }
+                else -> throw java.lang.IllegalArgumentException("Ukjent faktumklasse ${faktum.clazz()}")
+            }
+        }
+
+        return Versjon.id(versjonId).søknad(fakta, søknadType).also { originalSvar = svarMap(it.fakta) }
     }
 
-    private class FaktumRow(
-        private val uuid: UUID,
-        internal val versjonId: Int,
-        internal val fnr: String,
-        private val rootId: Int,
-        private val indeks: Int,
-        private val faktumType: Int,
-        private val navn: String
-    ) {
-        internal fun asFactory() = FaktumTable.ClassKode[faktumType](navn, rootId)
+    private fun svar(uuid: UUID, rootId: Int, indeks: Int): FaktumVerdiRow {
+        return using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf(
+                    """SELECT 
+                                faktum_verdi.heltall AS heltall, 
+                                faktum_verdi.ja_nei AS ja_nei, 
+                                faktum_verdi.dato AS dato, 
+                                faktum_verdi.dokument_id AS dokument_id, 
+                                faktum_verdi.aarlig_inntekt AS aarlig_inntekt 
+                            FROM faktum_verdi
+                            WHERE faktum_verdi.id = (SELECT faktum_verdi.id FROM faktum_verdi, fakta, faktum
+                                WHERE fakta.id = faktum_verdi.fakta_id AND faktum.id = faktum_verdi.faktum_id AND fakta.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )""",
+                    uuid,
+                    indeks,
+                    rootId
+                ).map {
+                    FaktumVerdiRow(
+                        it.intOrNull("heltall"),
+                        it.anyOrNull("ja_nei") as Boolean?,
+                        it.localDateOrNull("dato"),
+                        it.intOrNull("dokument_id"),
+                        it.doubleOrNull("aarlig_inntekt")?.årlig
+                    )
+                }.asSingle
+            )
+        }!!
     }
+
+    private class FaktumVerdiRow(
+        val heltall: Int?,
+        val janei: Boolean?,
+        val dato: LocalDate?,
+        val dokumentId: Int?,
+        val inntekt: Inntekt?
+    )
 
     private fun insertSQL(svar: Any?): String {
         return when (svar) {
             null -> """UPDATE faktum_verdi  SET ja_nei = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
             is Boolean -> """UPDATE faktum_verdi  SET ja_nei = $svar , opprettet=NOW() AT TIME ZONE 'utc' """
             is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , opprettet=NOW() AT TIME ZONE 'utc' """
-            is LocalDate -> """UPDATE faktum_verdi  SET dato = $svar,  opprettet=NOW() AT TIME ZONE 'utc' """
+            is LocalDate -> """UPDATE faktum_verdi  SET dato = '$svar',  opprettet=NOW() AT TIME ZONE 'utc' """
             is Int -> """UPDATE faktum_verdi  SET heltall = $svar,  opprettet=NOW() AT TIME ZONE 'utc' """
             else -> throw IllegalArgumentException("Ugyldig type: ${svar.javaClass}")
         } + """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, fakta, faktum
