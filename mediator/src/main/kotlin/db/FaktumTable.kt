@@ -4,8 +4,6 @@ import DataSourceBuilder.dataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
@@ -73,7 +71,7 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
 
     override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>, regel: FaktaRegel<R>) {
         if (dbIder.containsKey(faktum)) return
-        faktumFaktum(skrivFaktum(faktum, clazz), children, "utledet_faktum")
+        faktumFaktum(skrivFaktum(faktum, clazz, regel), children, "utledet_faktum")
         avhengigheter[faktum] = avhengigeFakta
     }
 

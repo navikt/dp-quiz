@@ -1,17 +1,10 @@
 package db
 
 import DataSourceBuilder.dataSource
-import db.FaktumTable.ClassKode.Companion
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.FaktaRegel
-import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
@@ -70,11 +63,11 @@ class FaktaRecord : FaktaPersistance {
                 }.asList
             )
         }
-                .also { // grab a few fields for Fakta from any record
-                    fnr = it[0].fnr
-                    versjonId = it[0].versjonId
-                }
-                .map { it.asFactory() }
+            .also { // grab a few fields for Fakta from any record
+                fnr = it[0].fnr
+                versjonId = it[0].versjonId
+            }
+            .map { it.asFactory() }
         val fakta = Fakta(fnr, versjonId, uuid, factories)
         return Søknad()
     }
