@@ -10,23 +10,31 @@ import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.fakta.UtledetFaktum
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.søknad.Versjon
 import no.nav.dagpenger.model.visitor.FaktaVisitor
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
 // Understands a relational representation of a Fakta
 class FaktaRecord : FaktaPersistance {
+    private lateinit var originalSvar: Map<String, Any?>
 
     override fun ny(fnr: String, søknadType: Versjon.Type): Søknad {
         return Versjon.siste.søknad(fnr, søknadType).also { søknad ->
             NyFakta(søknad.fakta)
+            originalSvar = svarMap(søknad.fakta)
         }
     }
+
+    private fun svarMap(fakta: Fakta) = fakta.map { faktum ->
+        faktum.id to (if (faktum.erBesvart()) faktum.svar() else null)
+    }.toMap()
 
     override fun hent(uuid: UUID, søknadType: Versjon.Type): Søknad {
         val (fnr, versjonId) = using(sessionOf(dataSource)) { session ->
@@ -39,7 +47,7 @@ class FaktaRecord : FaktaPersistance {
                 }.asSingle
             )
         } ?: throw IllegalArgumentException("Ugyldig uuid: $uuid")
-        return Versjon.id(versjonId).søknad(fnr, søknadType)
+        return Versjon.id(versjonId).søknad(fnr, søknadType).also { originalSvar = svarMap(it.fakta) }
     }
 
     private class FaktumRow(
@@ -54,8 +62,36 @@ class FaktaRecord : FaktaPersistance {
         internal fun asFactory() = FaktumTable.ClassKode[faktumType](navn, rootId)
     }
 
+    private fun insertSQL(svar: Any?): String {
+        return when (svar) {
+            null -> """UPDATE faktum_verdi  SET ja_nei = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
+            is Boolean -> """UPDATE faktum_verdi  SET ja_nei = $svar , opprettet=NOW() AT TIME ZONE 'utc' """
+            is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , opprettet=NOW() AT TIME ZONE 'utc' """
+            is LocalDate -> """UPDATE faktum_verdi  SET dato = $svar,  opprettet=NOW() AT TIME ZONE 'utc' """
+            is Int -> """UPDATE faktum_verdi  SET heltall = $svar,  opprettet=NOW() AT TIME ZONE 'utc' """
+            else -> throw IllegalArgumentException("Ugyldig type: ${svar.javaClass}")
+        } + """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, fakta, faktum
+            WHERE fakta.id = faktum_verdi.fakta_id AND faktum.id = faktum_verdi.faktum_id AND fakta.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
+    }
+
     override fun lagre(fakta: Fakta): Boolean {
-        TODO("Not yet implemented")
+        val nySvar = svarMap(fakta)
+        originalSvar.forEach { id, svar ->
+            if (nySvar[id] == svar) return@forEach
+            val (rootId, indeks) = fakta.id(id).reflection { rootId, indeks -> rootId to indeks }
+
+            using(sessionOf(dataSource)) { session ->
+                session.run(
+                    queryOf(
+                        insertSQL(nySvar[id]),
+                        fakta.uuid,
+                        indeks,
+                        rootId
+                    ).asExecute
+                )
+            }
+        }
+        return true
     }
 
     override fun opprettede(fnr: String): Map<LocalDateTime, UUID> {

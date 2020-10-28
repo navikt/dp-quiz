@@ -13,6 +13,11 @@ class FaktumId private constructor(private val rootId: Int, private val indeks: 
         require(indeks >= 0) { "Indeks må være en positiv integer større enn null" }
     }
 
+    internal fun <R> reflection(block: (Int, Int) -> R) = block(
+        rootId,
+        indeks
+    )
+
     internal val id: String get() = if (indeks == 0) rootId.toString() else "$rootId.$indeks"
 
     override fun toString() = "Id $id"
@@ -40,4 +45,5 @@ class FaktumId private constructor(private val rootId: Int, private val indeks: 
 
 private fun String.rootId() = "\\d+".toRegex().find(this)?.value?.toInt()
     ?: throw IllegalArgumentException("ugyldig id: $this")
+
 private fun String.indeks(): Int = "\\d+".toRegex().findAll(this).elementAtOrNull(1)?.value?.toInt() ?: 0

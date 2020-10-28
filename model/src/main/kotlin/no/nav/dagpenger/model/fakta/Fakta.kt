@@ -10,7 +10,7 @@ import java.util.UUID
 class Fakta private constructor(
     private val fnr: String,
     private val versjonId: Int,
-    private val uuid: UUID,
+    val uuid: UUID,
     private val faktumMap: MutableMap<FaktumId, Faktum<*>>
 ) : TypedFaktum, Iterable<Faktum<*>> {
 
@@ -62,7 +62,9 @@ class Fakta private constructor(
 
     override infix fun id(rootId: Int) = id(FaktumId(rootId))
     override infix fun id(id: String) = id(FaktumId(id))
-    internal infix fun id(faktumId: FaktumId) = faktumMap[faktumId] ?: throw IllegalArgumentException("Ukjent faktum $faktumId")
+    internal infix fun id(faktumId: FaktumId) = faktumMap[faktumId]
+        ?: throw IllegalArgumentException("Ukjent faktum $faktumId")
+
     internal infix fun idOrNull(faktumId: FaktumId) = faktumMap[faktumId]
 
     override infix fun dokument(rootId: Int) = dokument(FaktumId(rootId))

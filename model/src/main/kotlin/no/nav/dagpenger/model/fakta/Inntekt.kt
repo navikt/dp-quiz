@@ -42,7 +42,7 @@ class Inntekt : Comparable<Inntekt> {
         }
     }
 
-    internal fun <R> reflection(block: (Double, Double, Double, Int) -> R) = block(
+    fun <R> reflection(block: (Double, Double, Double, Int) -> R) = block(
         årlig,
         tilMånedligDouble(),
         tilDagligDouble(),

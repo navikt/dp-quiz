@@ -12,7 +12,7 @@ class Dokument(private val lastOppTidsstempel: LocalDateTime) : Comparable<Dokum
 
     internal fun toUrl() = "http:"
 
-    internal fun <R> reflection(block: (LocalDateTime, String) -> R) = block(
+    fun <R> reflection(block: (LocalDateTime, String) -> R) = block(
         lastOppTidsstempel,
         toUrl()
     )

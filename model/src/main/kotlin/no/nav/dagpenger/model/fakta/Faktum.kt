@@ -37,6 +37,8 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
             .toSet()
     }
 
+    fun <R> reflection(block: (Int, Int) -> R) = faktumId.reflection(block)
+
     abstract fun clazz(): Class<R>
 
     internal abstract fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*>

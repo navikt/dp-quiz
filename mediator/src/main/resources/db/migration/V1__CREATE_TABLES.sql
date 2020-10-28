@@ -67,8 +67,8 @@ CREATE TABLE IF NOT EXISTS faktum_verdi
     indeks         INT                      NOT NULL,
     ja_nei         BOOL                     NULL,
     aarlig_inntekt DECIMAL                  NULL,
-    dokument_id    BIGINT NULL REFERENCES dokument (id),
-    dato           TIMESTAMP WITH TIME ZONE NULL,
+    dokument_id    BIGINT                   NULL REFERENCES dokument (id),
+    dato           DATE                     NULL,
     heltall        INT                      NULL,
     opprettet      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)

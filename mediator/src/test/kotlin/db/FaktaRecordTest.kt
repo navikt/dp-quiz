@@ -6,6 +6,7 @@ import helpers.Postgres
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.søknad.Versjon
 import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Test
@@ -31,6 +32,23 @@ internal class FaktaRecordTest {
             val rehydrertSøknad = FaktaRecord().hent(uuid, Versjon.Type.Web)
 
             assertDeepEquals(originalSøknad, rehydrertSøknad)
+        }
+    }
+
+    @Test
+    fun `lagring og henting av fakta`() {
+        Postgres.withMigratedDb {
+            FaktumTable(prototypeFakta, 1)
+            val faktaRecord = FaktaRecord()
+            val originalSøknad = faktaRecord.ny(UNG_PERSON_FNR_2018, Versjon.Type.Web)
+
+            originalSøknad.ja(1).besvar(true, Rolle.søker)
+
+            faktaRecord.lagre(originalSøknad.fakta)
+
+            val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
+            val rehydrertSøknad = FaktaRecord().hent(uuid, Versjon.Type.Web)
+            // assertDeepEquals(originalSøknad, rehydrertSøknad)
         }
     }
 
