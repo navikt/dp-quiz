@@ -50,7 +50,7 @@ class FaktaRecord : FaktaPersistance {
         } ?: throw IllegalArgumentException("Ugyldig uuid: $uuid")
 
         return Versjon.id(versjonId).søknad(fnr, søknadType, uuid).also { søknad ->
-            svar(uuid).forEach { row ->
+            svarList(uuid).forEach { row ->
                 søknad.fakta.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
                     if (row.heltall != null) (faktum as Faktum<Int>).besvar(row.heltall)
                     if (row.janei != null) (faktum as Faktum<Boolean>).besvar(row.janei)
@@ -65,7 +65,7 @@ class FaktaRecord : FaktaPersistance {
 
     private infix fun Int.indeks(indeks: Int) = if (indeks == 0) this.toString() else "$this.$indeks"
 
-    private fun svar(uuid: UUID): List<FaktumVerdiRow> {
+    private fun svarList(uuid: UUID): List<FaktumVerdiRow> {
         return using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
@@ -111,7 +111,7 @@ class FaktaRecord : FaktaPersistance {
         val inntekt: Inntekt?
     )
 
-    private fun insertSQL(svar: Any?): String {
+    private fun sqlToInsert(svar: Any?): String {
         return when (svar) {
             null -> """UPDATE faktum_verdi  SET ja_nei = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
             is Boolean -> """UPDATE faktum_verdi  SET ja_nei = $svar , opprettet=NOW() AT TIME ZONE 'utc' """
@@ -132,7 +132,32 @@ class FaktaRecord : FaktaPersistance {
             using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        insertSQL(nySvar[id]),
+                        """INSERT INTO gammel_faktum_verdi (fakta_id, faktum_id, indeks, ja_nei, aarlig_inntekt, dokument_id, dato, heltall, opprettet) 
+                                SELECT fakta_id,      
+                                        faktum_verdi.faktum_id,     
+                                        faktum_verdi.indeks,        
+                                        faktum_verdi.ja_nei,        
+                                        faktum_verdi.aarlig_inntekt,
+                                        faktum_verdi.dokument_id,   
+                                        faktum_verdi.dato,          
+                                        faktum_verdi.heltall,       
+                                        faktum_verdi.opprettet 
+                                FROM faktum_verdi, faktum, fakta
+                                WHERE faktum_verdi.faktum_id = faktum.id 
+                                    AND faktum_verdi.fakta_id = fakta.id 
+                                    AND fakta.uuid = ?
+                                    AND faktum.root_id = ?
+                                    AND faktum_verdi.indeks = ?
+                    """.trimMargin(),
+                        fakta.uuid,
+                        rootId,
+                        indeks
+                    ).asExecute
+                )
+
+                session.run(
+                    queryOf(
+                        sqlToInsert(nySvar[id]),
                         fakta.uuid,
                         indeks,
                         rootId
@@ -157,7 +182,7 @@ class FaktaRecord : FaktaPersistance {
                 )
                 if (svar != null) session.run(
                     queryOf(
-                        insertSQL(svar),
+                        sqlToInsert(svar),
                         fakta.uuid,
                         indeks,
                         rootId

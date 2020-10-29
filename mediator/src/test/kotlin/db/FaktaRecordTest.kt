@@ -65,9 +65,11 @@ internal class FaktaRecordTest {
             originalSøknad.dato(13).besvar(13.januar, Rolle.søker)
             originalSøknad.ja(19).besvar(true, Rolle.søker)
             hentFørstFakta()
+            assertRecordCount(3, "gammel_faktum_verdi")
             assertTrue(rehydrertSøknad.ja(19).svar())
             originalSøknad.dato(2).besvar(22.januar, Rolle.søker)
             hentFørstFakta()
+            assertRecordCount(5, "gammel_faktum_verdi")
             assertFalse(rehydrertSøknad.ja(19).erBesvart())
         }
     }

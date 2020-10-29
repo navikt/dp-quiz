@@ -73,3 +73,18 @@ CREATE TABLE IF NOT EXISTS faktum_verdi
     opprettet      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS gammel_faktum_verdi
+(
+    id             BIGSERIAL,
+    fakta_id       BIGSERIAL                NOT NULL REFERENCES fakta (id),
+    faktum_id      BIGSERIAL                NOT NULL REFERENCES faktum (id),
+    indeks         INT                      NOT NULL,
+    ja_nei         BOOL                     NULL,
+    aarlig_inntekt DECIMAL                  NULL,
+    dokument_id    BIGINT                   NULL REFERENCES dokument (id),
+    dato           DATE                     NULL,
+    heltall        INT                      NULL,
+    opprettet      TIMESTAMP WITH TIME ZONE NOT NULL,
+    PRIMARY KEY (id)
+);
