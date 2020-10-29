@@ -1,12 +1,13 @@
 package db
 
 import DataSourceBuilder.dataSource
-import helpers.FaktaEksempel.prototypeFakta
+import helpers.FaktaEksempel1.prototypeFakta1
 import helpers.Postgres
 import helpers.januar
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.søknad.Søknad
@@ -51,6 +52,7 @@ internal class FaktaRecordTest {
             originalSøknad.dato(2).besvar(LocalDate.now(), Rolle.søker)
             originalSøknad.inntekt(6).besvar(10000.årlig, Rolle.søker)
             originalSøknad.heltall(16).besvar(123, Rolle.søker)
+            originalSøknad.dokument(11).besvar(Dokument(1.januar.atStartOfDay()), Rolle.søker)
 
             hentFørstFakta()
         }
@@ -134,7 +136,7 @@ internal class FaktaRecordTest {
     }
 
     private fun byggOriginalSøknad() {
-        FaktumTable(prototypeFakta, 1)
+        FaktumTable(prototypeFakta1, 1)
         faktaRecord = FaktaRecord()
         originalSøknad = faktaRecord.ny(UNG_PERSON_FNR_2018, Versjon.Type.Web)
     }

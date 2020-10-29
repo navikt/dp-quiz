@@ -11,8 +11,9 @@ CREATE TABLE IF NOT EXISTS navn
 CREATE TABLE IF NOT EXISTS dokument
 (
     id        BIGSERIAL                NOT NULL,
-    opprettet TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     url       VARCHAR(256)             NOT NULL,
+    opplastet TIMESTAMP WITH TIME ZONE NOT NULL,
+    opprettet TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
 

@@ -5,6 +5,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.factory.FaktaRegel
+import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
@@ -70,8 +71,8 @@ class FaktaRecord : FaktaPersistance {
             session.run(
                 queryOf(
                     """
-                        WITH fakta_faktum AS (SELECT faktum.id as faktum_id, faktum.root_id AS root_id, fakta.id AS fakta_id, faktum.regel AS regel FROM fakta, faktum
-                                WHERE faktum.versjon_id = fakta.versjon_id AND fakta.uuid = ?)
+                        WITH fakta_faktum AS (SELECT faktum.id as faktum_id, faktum.root_id AS root_id, fakta.id AS fakta_id FROM fakta, faktum
+                                WHERE faktum.versjon_id = fakta.versjon_id AND fakta_faktum.regel IS NULL AND fakta.uuid = ?)
                             SELECT 
                                 fakta_faktum.root_id as root_id,
                                 faktum_verdi.indeks as indeks,
@@ -80,10 +81,10 @@ class FaktaRecord : FaktaPersistance {
                                 faktum_verdi.dato AS dato, 
                                 faktum_verdi.dokument_id AS dokument_id, 
                                 faktum_verdi.aarlig_inntekt AS aarlig_inntekt 
-                            FROM faktum_verdi, fakta_faktum
-                            WHERE faktum_verdi.fakta_id = fakta_faktum.fakta_id 
-                                    AND faktum_verdi.faktum_id = fakta_faktum.faktum_id
-                                    AND fakta_faktum.regel IS NULL
+                            FROM faktum_verdi, fakta_faktum, dokument
+                            JOIN fakta_faktum ON faktum_verdi.fakta_id = fakta_faktum.fakta_id 
+                                AND faktum_verdi.faktum_id = fakta_faktum.faktum_id
+                            LEFT JOIN dokument ON faktum_verdi.dokument_id = dokument.id
                             ORDER BY indeks""",
                     uuid
                 ).map {
@@ -112,12 +113,15 @@ class FaktaRecord : FaktaPersistance {
     )
 
     private fun sqlToInsert(svar: Any?): String {
+
         return when (svar) {
             null -> """UPDATE faktum_verdi  SET ja_nei = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
             is Boolean -> """UPDATE faktum_verdi  SET ja_nei = $svar , opprettet=NOW() AT TIME ZONE 'utc' """
             is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , opprettet=NOW() AT TIME ZONE 'utc' """
             is LocalDate -> """UPDATE faktum_verdi  SET dato = '$svar',  opprettet=NOW() AT TIME ZONE 'utc' """
             is Int -> """UPDATE faktum_verdi  SET heltall = $svar,  opprettet=NOW() AT TIME ZONE 'utc' """
+            is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" } }) returning id) 
+|                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id), opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
             else -> throw IllegalArgumentException("Ugyldig type: ${svar.javaClass}")
         } + """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, fakta, faktum
             WHERE fakta.id = faktum_verdi.fakta_id AND faktum.id = faktum_verdi.faktum_id AND fakta.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""

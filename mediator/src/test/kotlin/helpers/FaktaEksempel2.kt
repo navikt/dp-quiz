@@ -13,9 +13,9 @@ import no.nav.dagpenger.model.søknad.Seksjon
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.søknad.Versjon
 
-internal object FaktaEksempel {
+internal object FaktaEksempel2 {
 
-    val prototypeFakta = Fakta(
+    val prototypeFakta2 = Fakta(
         ja nei "f1" id 1,
         dato faktum "f2" id 2,
         dato faktum "f3" id 3,
@@ -43,14 +43,14 @@ internal object FaktaEksempel {
         Seksjon(
             "seksjon",
             Rolle.søker,
-            *(prototypeFakta.map { it }.toTypedArray())
+            *(prototypeFakta2.map { it }.toTypedArray())
         )
     )
 
     val v = Versjon(
-        1,
-        prototypeFakta,
-        prototypeFakta ja 1 er true,
+        2,
+        prototypeFakta2,
+        prototypeFakta2 ja 1 er true,
         mapOf(Versjon.Type.Web to webPrototypeSøknad)
     )
 }
