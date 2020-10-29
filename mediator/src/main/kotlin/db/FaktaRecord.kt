@@ -70,11 +70,11 @@ class FaktaRecord : FaktaPersistance {
             session.run(
                 queryOf(
                     """
-                        WITH fakta_faktum AS (SELECT faktum.root_id AS root_id, faktum_verdi.indeks AS indeks, fakta.id AS fakta_id, faktum.regel AS regel FROM faktum_verdi, fakta, faktum
-                                WHERE fakta.id = faktum_verdi.fakta_id AND faktum.id = faktum_verdi.faktum_id AND fakta.uuid = ?)
+                        WITH fakta_faktum AS (SELECT faktum.id as faktum_id, faktum.root_id AS root_id, fakta.id AS fakta_id, faktum.regel AS regel FROM fakta, faktum
+                                WHERE faktum.versjon_id = fakta.versjon_id AND fakta.uuid = ?)
                             SELECT 
                                 fakta_faktum.root_id as root_id,
-                                fakta_faktum.indeks as indeks,
+                                faktum_verdi.indeks as indeks,
                                 faktum_verdi.heltall AS heltall, 
                                 faktum_verdi.ja_nei AS ja_nei, 
                                 faktum_verdi.dato AS dato, 
@@ -82,7 +82,8 @@ class FaktaRecord : FaktaPersistance {
                                 faktum_verdi.aarlig_inntekt AS aarlig_inntekt 
                             FROM faktum_verdi, fakta_faktum
                             WHERE faktum_verdi.fakta_id = fakta_faktum.fakta_id 
-                                    AND fakta_faktum.regel = NULL
+                                    AND faktum_verdi.faktum_id = fakta_faktum.faktum_id
+                                    AND fakta_faktum.regel IS NULL
                             ORDER BY indeks""",
                     uuid
                 ).map {
