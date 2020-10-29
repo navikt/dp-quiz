@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class FaktaRecordTest {
     companion object {
@@ -64,6 +65,7 @@ internal class FaktaRecordTest {
             originalSøknad.dato(13).besvar(13.januar, Rolle.søker)
             originalSøknad.ja(19).besvar(true, Rolle.søker)
             hentFørstFakta()
+            assertTrue(rehydrertSøknad.ja(19).svar())
             originalSøknad.dato(2).besvar(22.januar, Rolle.søker)
             hentFørstFakta()
             assertFalse(rehydrertSøknad.ja(19).erBesvart())
@@ -89,7 +91,7 @@ internal class FaktaRecordTest {
 
     @Test
     @Disabled
-    fun `reduced template faktum`() {
+    fun `redusert template faktum`() {
         Postgres.withMigratedDb {
             byggOriginalSøknad()
             assertEquals(21, originalSøknad.fakta.map { it }.size)
@@ -109,7 +111,16 @@ internal class FaktaRecordTest {
     }
 
     @Test
-    fun `utledet faktum with value`() {
+    fun `utledet faktum med verdi`() {
+        Postgres.withMigratedDb {
+            byggOriginalSøknad()
+
+            originalSøknad.dato(3).besvar(3.januar, Rolle.søker)
+            originalSøknad.dato(4).besvar(4.januar, Rolle.søker)
+            originalSøknad.dato(5).besvar(5.januar, Rolle.søker)
+            hentFørstFakta()
+            assertEquals(5.januar, rehydrertSøknad.dato(345).svar())
+        }
     }
 
     private fun hentFørstFakta() {
