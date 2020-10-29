@@ -66,6 +66,7 @@ class Fakta private constructor(
         ?: throw IllegalArgumentException("Ukjent faktum $faktumId")
 
     internal infix fun idOrNull(faktumId: FaktumId) = faktumMap[faktumId]
+    infix fun idOrNull(id: String) = idOrNull(FaktumId(id))
 
     override infix fun dokument(rootId: Int) = dokument(FaktumId(rootId))
     override infix fun dokument(id: String) = dokument(FaktumId(id))

@@ -51,7 +51,7 @@ class FaktaRecord : FaktaPersistance {
 
         return Versjon.id(versjonId).søknad(fnr, søknadType, uuid).also { søknad ->
             svar(uuid).forEach { row ->
-                søknad.fakta.id(row.root_id indeks row.indeks).also { faktum ->
+                søknad.fakta.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
                     if (row.heltall != null) (faktum as Faktum<Int>).besvar(row.heltall)
                     if (row.janei != null) (faktum as Faktum<Boolean>).besvar(row.janei)
                     if (row.dato != null) (faktum as Faktum<LocalDate>).besvar(row.dato)

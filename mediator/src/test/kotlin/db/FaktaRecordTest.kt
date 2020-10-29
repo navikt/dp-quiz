@@ -3,6 +3,7 @@ package db
 import DataSourceBuilder.dataSource
 import helpers.FaktaEksempel.prototypeFakta
 import helpers.Postgres
+import helpers.januar
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
@@ -11,9 +12,11 @@ import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.søknad.Versjon
 import no.nav.helse.serde.assertDeepEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 internal class FaktaRecordTest {
     companion object {
@@ -53,7 +56,18 @@ internal class FaktaRecordTest {
     }
 
     @Test
-    fun `dependent faktum reset`() {
+    fun `Avhengig faktum reset`() {
+        Postgres.withMigratedDb {
+            byggOriginalSøknad()
+
+            originalSøknad.dato(2).besvar(2.januar, Rolle.søker)
+            originalSøknad.dato(13).besvar(13.januar, Rolle.søker)
+            originalSøknad.ja(19).besvar(true, Rolle.søker)
+            hentFørstFakta()
+            originalSøknad.dato(2).besvar(22.januar, Rolle.søker)
+            hentFørstFakta()
+            assertFalse(rehydrertSøknad.ja(19).erBesvart())
+        }
     }
 
     @Test
@@ -74,7 +88,24 @@ internal class FaktaRecordTest {
     }
 
     @Test
+    @Disabled
     fun `reduced template faktum`() {
+        Postgres.withMigratedDb {
+            byggOriginalSøknad()
+            assertEquals(21, originalSøknad.fakta.map { it }.size)
+            hentFørstFakta()
+            originalSøknad = rehydrertSøknad
+
+            originalSøknad.heltall(15).besvar(3, Rolle.søker)
+            originalSøknad.heltall("16.2").besvar(162, Rolle.søker)
+            originalSøknad.heltall("16.3").besvar(163, Rolle.søker)
+            hentFørstFakta()
+            originalSøknad = rehydrertSøknad
+            originalSøknad.heltall(15).besvar(2, Rolle.søker)
+            originalSøknad.heltall("16.1").besvar(161, Rolle.søker)
+            originalSøknad.heltall("16.2").besvar(1622, Rolle.søker)
+            hentFørstFakta()
+        }
     }
 
     @Test
