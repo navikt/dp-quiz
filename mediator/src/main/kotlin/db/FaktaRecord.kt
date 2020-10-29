@@ -57,6 +57,7 @@ class FaktaRecord : FaktaPersistance {
                     if (row.janei != null) (faktum as Faktum<Boolean>).besvar(row.janei)
                     if (row.dato != null) (faktum as Faktum<LocalDate>).besvar(row.dato)
                     if (row.inntekt != null) (faktum as Faktum<Inntekt>).besvar(row.inntekt)
+                    if (row.opplastet != null && row.url != null) (faktum as Faktum<Dokument>).besvar(Dokument(row.opplastet, row.url))
                 }
             }
         }.also { søknad ->
@@ -72,16 +73,17 @@ class FaktaRecord : FaktaPersistance {
                 queryOf(
                     """
                         WITH fakta_faktum AS (SELECT faktum.id as faktum_id, faktum.root_id AS root_id, fakta.id AS fakta_id FROM fakta, faktum
-                                WHERE faktum.versjon_id = fakta.versjon_id AND fakta_faktum.regel IS NULL AND fakta.uuid = ?)
+                                WHERE faktum.versjon_id = fakta.versjon_id AND faktum.regel IS NULL AND fakta.uuid = ?)
                             SELECT 
                                 fakta_faktum.root_id as root_id,
                                 faktum_verdi.indeks as indeks,
                                 faktum_verdi.heltall AS heltall, 
                                 faktum_verdi.ja_nei AS ja_nei, 
                                 faktum_verdi.dato AS dato, 
-                                faktum_verdi.dokument_id AS dokument_id, 
-                                faktum_verdi.aarlig_inntekt AS aarlig_inntekt 
-                            FROM faktum_verdi, fakta_faktum, dokument
+                                faktum_verdi.aarlig_inntekt AS aarlig_inntekt, 
+                                dokument.url AS url, 
+                                dokument.opplastet AS opplastet 
+                            FROM faktum_verdi
                             JOIN fakta_faktum ON faktum_verdi.fakta_id = fakta_faktum.fakta_id 
                                 AND faktum_verdi.faktum_id = fakta_faktum.faktum_id
                             LEFT JOIN dokument ON faktum_verdi.dokument_id = dokument.id
@@ -94,8 +96,9 @@ class FaktaRecord : FaktaPersistance {
                         it.intOrNull("heltall"),
                         it.anyOrNull("ja_nei") as Boolean?,
                         it.localDateOrNull("dato"),
-                        it.intOrNull("dokument_id"),
-                        it.doubleOrNull("aarlig_inntekt")?.årlig
+                        it.doubleOrNull("aarlig_inntekt")?.årlig,
+                        it.stringOrNull("url"),
+                        it.localDateTimeOrNull("opplastet")
                     )
                 }.asList
             )
@@ -108,8 +111,9 @@ class FaktaRecord : FaktaPersistance {
         val heltall: Int?,
         val janei: Boolean?,
         val dato: LocalDate?,
-        val dokumentId: Int?,
-        val inntekt: Inntekt?
+        val inntekt: Inntekt?,
+        val url: String?,
+        val opplastet: LocalDateTime?
     )
 
     private fun sqlToInsert(svar: Any?): String {
@@ -120,7 +124,7 @@ class FaktaRecord : FaktaPersistance {
             is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , opprettet=NOW() AT TIME ZONE 'utc' """
             is LocalDate -> """UPDATE faktum_verdi  SET dato = '$svar',  opprettet=NOW() AT TIME ZONE 'utc' """
             is Int -> """UPDATE faktum_verdi  SET heltall = $svar,  opprettet=NOW() AT TIME ZONE 'utc' """
-            is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" } }) returning id) 
+            is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
 |                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id), opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
             else -> throw IllegalArgumentException("Ugyldig type: ${svar.javaClass}")
         } + """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, fakta, faktum
