@@ -50,49 +50,59 @@ class FaktaRecord : FaktaPersistance {
         } ?: throw IllegalArgumentException("Ugyldig uuid: $uuid")
 
         return Versjon.id(versjonId).søknad(fnr, søknadType, uuid).also { søknad ->
-            søknad.fakta.forEach { faktum ->
-                val (rootId, indeks) = faktum.reflection { rootId, indeks -> rootId to indeks }
-                val svar = svar(uuid = uuid, rootId = rootId, indeks = indeks)
-                if (svar.heltall != null) (faktum as Faktum<Int>).besvar(svar.heltall)
-                if (svar.janei != null) (faktum as Faktum<Boolean>).besvar(svar.janei)
-                if (svar.dato != null) (faktum as Faktum<LocalDate>).besvar(svar.dato)
-                if (svar.inntekt != null) (faktum as Faktum<Inntekt>).besvar(svar.inntekt)
+            svar(uuid).forEach { row ->
+                søknad.fakta.id(row.root_id indeks row.indeks).also { faktum ->
+                    if (row.heltall != null) (faktum as Faktum<Int>).besvar(row.heltall)
+                    if (row.janei != null) (faktum as Faktum<Boolean>).besvar(row.janei)
+                    if (row.dato != null) (faktum as Faktum<LocalDate>).besvar(row.dato)
+                    if (row.inntekt != null) (faktum as Faktum<Inntekt>).besvar(row.inntekt)
+                }
             }
         }.also { søknad ->
             originalSvar = svarMap(søknad.fakta)
         }
     }
 
-    private fun svar(uuid: UUID, rootId: Int, indeks: Int): FaktumVerdiRow {
+    private infix fun Int.indeks(indeks: Int) = if (indeks == 0) this.toString() else "$this.$indeks"
+
+    private fun svar(uuid: UUID): List<FaktumVerdiRow> {
         return using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
-                    """SELECT 
+                    """
+                        WITH fakta_faktum AS (SELECT faktum.root_id AS root_id, faktum_verdi.indeks AS indeks, fakta.id AS fakta_id, faktum.regel AS regel FROM faktum_verdi, fakta, faktum
+                                WHERE fakta.id = faktum_verdi.fakta_id AND faktum.id = faktum_verdi.faktum_id AND fakta.uuid = ?)
+                            SELECT 
+                                fakta_faktum.root_id as root_id,
+                                fakta_faktum.indeks as indeks,
                                 faktum_verdi.heltall AS heltall, 
                                 faktum_verdi.ja_nei AS ja_nei, 
                                 faktum_verdi.dato AS dato, 
                                 faktum_verdi.dokument_id AS dokument_id, 
                                 faktum_verdi.aarlig_inntekt AS aarlig_inntekt 
-                            FROM faktum_verdi
-                            WHERE faktum_verdi.id = (SELECT faktum_verdi.id FROM faktum_verdi, fakta, faktum
-                                WHERE fakta.id = faktum_verdi.fakta_id AND faktum.id = faktum_verdi.faktum_id AND fakta.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )""",
-                    uuid,
-                    indeks,
-                    rootId
+                            FROM faktum_verdi, fakta_faktum
+                            WHERE faktum_verdi.fakta_id = fakta_faktum.fakta_id 
+                                    AND fakta_faktum.regel = NULL
+                            ORDER BY indeks""",
+                    uuid
                 ).map {
                     FaktumVerdiRow(
+                        it.int("root_id"),
+                        it.int("indeks"),
                         it.intOrNull("heltall"),
                         it.anyOrNull("ja_nei") as Boolean?,
                         it.localDateOrNull("dato"),
                         it.intOrNull("dokument_id"),
                         it.doubleOrNull("aarlig_inntekt")?.årlig
                     )
-                }.asSingle
+                }.asList
             )
         }!!
     }
 
     private class FaktumVerdiRow(
+        val root_id: Int,
+        val indeks: Int,
         val heltall: Int?,
         val janei: Boolean?,
         val dato: LocalDate?,
@@ -141,6 +151,14 @@ class FaktaRecord : FaktaPersistance {
                         """.trimMargin(),
                         indeks,
                         fakta.uuid,
+                        rootId
+                    ).asExecute
+                )
+                if (svar != null) session.run(
+                    queryOf(
+                        insertSQL(svar),
+                        fakta.uuid,
+                        indeks,
                         rootId
                     ).asExecute
                 )

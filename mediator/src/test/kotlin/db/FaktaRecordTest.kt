@@ -65,6 +65,7 @@ internal class FaktaRecordTest {
             originalSøknad = rehydrertSøknad
 
             originalSøknad.heltall(15).besvar(3, Rolle.søker)
+            originalSøknad.heltall("16.1").besvar(5, Rolle.søker)
             assertEquals(30, originalSøknad.fakta.map { it }.size)
 
             hentFørstFakta()
