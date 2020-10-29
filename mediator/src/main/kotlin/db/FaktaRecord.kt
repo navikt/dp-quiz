@@ -49,7 +49,7 @@ class FaktaRecord : FaktaPersistance {
             )
         } ?: throw IllegalArgumentException("Ugyldig uuid: $uuid")
 
-        return Versjon.id(versjonId).søknad(fnr, søknadType).also { søknad ->
+        return Versjon.id(versjonId).søknad(fnr, søknadType, uuid).also { søknad ->
             søknad.fakta.forEach { faktum ->
                 val (rootId, indeks) = faktum.reflection { rootId, indeks -> rootId to indeks }
                 val svar = svar(uuid = uuid, rootId = rootId, indeks = indeks)
@@ -58,6 +58,8 @@ class FaktaRecord : FaktaPersistance {
                 if (svar.dato != null) (faktum as Faktum<LocalDate>).besvar(svar.dato)
                 if (svar.inntekt != null) (faktum as Faktum<Inntekt>).besvar(svar.inntekt)
             }
+        }.also { søknad ->
+            originalSvar = svarMap(søknad.fakta)
         }
     }
 
@@ -122,6 +124,23 @@ class FaktaRecord : FaktaPersistance {
                         insertSQL(nySvar[id]),
                         fakta.uuid,
                         indeks,
+                        rootId
+                    ).asExecute
+                )
+            }
+        }
+
+        nySvar.forEach { id, svar ->
+            if (originalSvar.containsKey(id)) return@forEach
+            val (rootId, indeks) = fakta.id(id).reflection { rootId, indeks -> rootId to indeks }
+            using(sessionOf(dataSource)) { session ->
+                session.run(
+                    queryOf(
+                        """INSERT INTO faktum_verdi (indeks, fakta_id, faktum_id) 
+                           SELECT ?, fakta.id, faktum.id FROM fakta, faktum  WHERE fakta.uuid = ? AND faktum.versjon_id = fakta.versjon_id AND faktum.root_id = ?
+                        """.trimMargin(),
+                        indeks,
+                        fakta.uuid,
                         rootId
                     ).asExecute
                 )

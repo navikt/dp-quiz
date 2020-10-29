@@ -91,10 +91,10 @@ class Fakta private constructor(
     override infix fun generator(id: String) = heltall(FaktumId(id))
     internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
 
-    fun bygg(fnr: String, versjonId: Int): Fakta {
+    fun bygg(fnr: String, versjonId: Int, uuid: UUID = UUID.randomUUID()): Fakta {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktumMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
-        return Fakta(fnr, versjonId, mapOfFakta)
+        return Fakta(fnr, versjonId, uuid, mapOfFakta)
     }
 
     override fun iterator(): MutableIterator<Faktum<*>> {

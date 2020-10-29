@@ -19,6 +19,7 @@ internal class FaktaRecordTest {
     companion object {
         internal const val UNG_PERSON_FNR_2018 = "12020052345"
     }
+
     private lateinit var originalSøknad: Søknad
     private lateinit var rehydrertSøknad: Søknad
     private lateinit var faktaRecord: FaktaRecord
@@ -56,7 +57,19 @@ internal class FaktaRecordTest {
     }
 
     @Test
-    fun `expanded template faktum`() {
+    fun `Genererte template faktum`() {
+        Postgres.withMigratedDb {
+            byggOriginalSøknad()
+            assertEquals(21, originalSøknad.fakta.map { it }.size)
+            hentFørstFakta()
+            originalSøknad = rehydrertSøknad
+
+            originalSøknad.heltall(15).besvar(3, Rolle.søker)
+            assertEquals(30, originalSøknad.fakta.map { it }.size)
+
+            hentFørstFakta()
+            assertEquals(30, rehydrertSøknad.fakta.map { it }.size)
+        }
     }
 
     @Test
@@ -70,7 +83,8 @@ internal class FaktaRecordTest {
     private fun hentFørstFakta() {
         faktaRecord.lagre(originalSøknad.fakta)
         val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
-        rehydrertSøknad = FaktaRecord().hent(uuid, Versjon.Type.Web)
+        faktaRecord = FaktaRecord()
+        rehydrertSøknad = faktaRecord.hent(uuid, Versjon.Type.Web)
         assertDeepEquals(originalSøknad, rehydrertSøknad)
     }
 

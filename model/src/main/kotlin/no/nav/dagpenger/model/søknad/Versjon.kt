@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.søknad
 
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import java.util.UUID
 
 class Versjon(
     private val versjonId: Int,
@@ -16,7 +17,7 @@ class Versjon(
         fun id(versjonId: Int) = versjoner[versjonId] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $versjonId")
     }
 
-    fun søknad(fnr: String, type: Type): Søknad = søknad(prototypeFakta.bygg(fnr, versjonId), type)
+    fun søknad(fnr: String, type: Type, uuid: UUID = UUID.randomUUID()): Søknad = søknad(prototypeFakta.bygg(fnr, versjonId, uuid), type)
 
     fun søknad(fakta: Fakta, type: Type): Søknad {
         val subsumsjon = prototypeSubsumsjon.bygg(fakta)
