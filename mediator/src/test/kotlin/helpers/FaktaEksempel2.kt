@@ -1,6 +1,5 @@
 package helpers
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
@@ -16,10 +15,6 @@ import no.nav.dagpenger.model.søknad.Versjon
 
 internal object FaktaEksempel2 {
 
-    internal enum class Valg { A, B, C }
-
-    private object valg { infix fun faktum(navn: String) = BaseFaktumFactory(Valg::class.java, navn) }
-
     val prototypeFakta2 = Fakta(
         ja nei "f1" id 1,
         dato faktum "f2" id 2,
@@ -29,7 +24,7 @@ internal object FaktaEksempel2 {
         inntekt faktum "f6" id 6,
         inntekt faktum "f7" id 7,
         inntekt faktum "f8" id 8,
-        valg faktum "f9" id 9,
+        inntekt faktum "f9" id 9,
         ja nei "f10" id 10,
         dokument faktum "f11" id 11,
         ja nei "f12" id 12 avhengerAv 11,

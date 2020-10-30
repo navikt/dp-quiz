@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.TemplateFaktum
 import java.time.LocalDate
 
-class BaseFaktumFactory<T : Comparable<T>> (
+class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     private val clazz: Class<T>,
     private val navn: String
 ) : FaktumFactory<T>() {
