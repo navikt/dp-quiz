@@ -39,7 +39,7 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : FaktaVisitor {
 
     companion object {
         private fun exists(versjonId: Int): Boolean {
-            val query = queryOf("SELECT VERSJON_ID FROM FAKTUM WHERE VERSJON_ID = $versjonId")
+            val query = queryOf("SELECT versjon_id FROM faktum WHERE versjon_id = $versjonId")
             return using(sessionOf(dataSource)) { session ->
                 session.run(
                     query.map { true }.asSingle

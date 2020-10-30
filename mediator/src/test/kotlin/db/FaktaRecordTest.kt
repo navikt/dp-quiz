@@ -27,17 +27,17 @@ internal class FaktaRecordTest {
 
     private lateinit var originalFaktagrupper: Faktagrupper
     private lateinit var rehydrertFaktagrupper: Faktagrupper
-    private lateinit var faktaRecord: FaktaRecord
+    private lateinit var faktaRecord: SøknadRecord
 
     @Test
     fun `ny faktagrupper`() {
         Postgres.withMigratedDb {
             byggOriginalFaktaGrupper()
 
-            assertRecordCount(1, "fakta")
+            assertRecordCount(1, "soknad")
             assertRecordCount(21, "faktum_verdi")
-            FaktaRecord().ny(UNG_PERSON_FNR_2018, Versjon.FaktagrupperType.Web)
-            assertRecordCount(2, "fakta")
+            SøknadRecord().ny(UNG_PERSON_FNR_2018, Versjon.FaktagrupperType.Web)
+            assertRecordCount(2, "soknad")
             assertRecordCount(42, "faktum_verdi")
             hentFørstFakta()
         }
@@ -129,15 +129,15 @@ internal class FaktaRecordTest {
 
     private fun hentFørstFakta() {
         faktaRecord.lagre(originalFaktagrupper.søknad)
-        val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
-        faktaRecord = FaktaRecord()
+        val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
+        faktaRecord = SøknadRecord()
         rehydrertFaktagrupper = faktaRecord.hent(uuid, Versjon.FaktagrupperType.Web)
         assertDeepEquals(originalFaktagrupper, rehydrertFaktagrupper)
     }
 
     private fun byggOriginalFaktaGrupper() {
         FaktumTable(prototypeFakta1, 1)
-        faktaRecord = FaktaRecord()
+        faktaRecord = SøknadRecord()
         originalFaktagrupper = faktaRecord.ny(UNG_PERSON_FNR_2018, Versjon.FaktagrupperType.Web)
     }
 

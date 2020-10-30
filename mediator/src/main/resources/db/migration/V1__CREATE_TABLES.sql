@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS faktum
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS fakta
+CREATE TABLE IF NOT EXISTS soknad
 (
     id         BIGSERIAL                NOT NULL,
     uuid       UUID                     NOT NULL,
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS avhengig_faktum
 CREATE TABLE IF NOT EXISTS faktum_verdi
 (
     id             BIGSERIAL,
-    fakta_id       BIGSERIAL                NOT NULL REFERENCES fakta (id),
+    soknad_id      BIGSERIAL                NOT NULL REFERENCES soknad (id),
     faktum_id      BIGSERIAL                NOT NULL REFERENCES faktum (id),
     indeks         INT                      NOT NULL,
     ja_nei         BOOL                     NULL,
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS faktum_verdi
 CREATE TABLE IF NOT EXISTS gammel_faktum_verdi
 (
     id             BIGSERIAL,
-    fakta_id       BIGSERIAL                NOT NULL REFERENCES fakta (id),
+    soknad_id      BIGSERIAL                NOT NULL REFERENCES soknad (id),
     faktum_id      BIGSERIAL                NOT NULL REFERENCES faktum (id),
     indeks         INT                      NOT NULL,
     ja_nei         BOOL                     NULL,

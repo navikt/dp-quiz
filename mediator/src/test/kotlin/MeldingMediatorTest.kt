@@ -1,4 +1,4 @@
-import db.FaktaPersistance
+import db.SøknadPersistance
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
@@ -50,7 +50,7 @@ class MeldingMediatorTest {
         }
     }
 
-    private class TestFaktaGrupperer : FaktaPersistance {
+    private class TestFaktaGrupperer : SøknadPersistance {
         val faktaList = mutableMapOf<UUID, List<Faktum<*>>>()
         override fun ny(fnr: String, type: Versjon.FaktagrupperType): Faktagrupper {
             TODO("Not yet implemented")

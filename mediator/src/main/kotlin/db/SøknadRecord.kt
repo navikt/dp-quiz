@@ -24,7 +24,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 // Understands a relational representation of a Fakta
-class FaktaRecord : FaktaPersistance {
+class SøknadRecord : SøknadPersistance {
     private lateinit var originalSvar: Map<String, Any?>
 
     override fun ny(fnr: String, type: Versjon.FaktagrupperType): Faktagrupper {
@@ -42,7 +42,7 @@ class FaktaRecord : FaktaPersistance {
         val (fnr, versjonId) = using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
-                    """SELECT fnr, versjon_id FROM fakta WHERE uuid = ? """,
+                    """SELECT fnr, versjon_id FROM soknad WHERE uuid = ? """,
                     uuid
                 ).map { row ->
                     row.string(1) to row.int(2)
@@ -72,10 +72,10 @@ class FaktaRecord : FaktaPersistance {
             session.run(
                 queryOf(
                     """
-                        WITH fakta_faktum AS (SELECT faktum.id as faktum_id, faktum.root_id AS root_id, fakta.id AS fakta_id FROM fakta, faktum
-                                WHERE faktum.versjon_id = fakta.versjon_id AND faktum.regel IS NULL AND fakta.uuid = ?)
+                        WITH soknad_faktum AS (SELECT faktum.id as faktum_id, faktum.root_id AS root_id, soknad.id AS soknad_id FROM soknad, faktum
+                                WHERE faktum.versjon_id = soknad.versjon_id AND faktum.regel IS NULL AND soknad.uuid = ?)
                             SELECT 
-                                fakta_faktum.root_id as root_id,
+                                soknad_faktum.root_id as root_id,
                                 faktum_verdi.indeks as indeks,
                                 faktum_verdi.heltall AS heltall, 
                                 faktum_verdi.ja_nei AS ja_nei, 
@@ -84,8 +84,8 @@ class FaktaRecord : FaktaPersistance {
                                 dokument.url AS url, 
                                 dokument.opplastet AS opplastet 
                             FROM faktum_verdi
-                            JOIN fakta_faktum ON faktum_verdi.fakta_id = fakta_faktum.fakta_id 
-                                AND faktum_verdi.faktum_id = fakta_faktum.faktum_id
+                            JOIN soknad_faktum ON faktum_verdi.soknad_id = soknad_faktum.soknad_id 
+                                AND faktum_verdi.faktum_id = soknad_faktum.faktum_id
                             LEFT JOIN dokument ON faktum_verdi.dokument_id = dokument.id
                             ORDER BY indeks""",
                     uuid
@@ -127,8 +127,8 @@ class FaktaRecord : FaktaPersistance {
             is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
 |                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id), opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
             else -> throw IllegalArgumentException("Ugyldig type: ${svar.javaClass}")
-        } + """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, fakta, faktum
-            WHERE fakta.id = faktum_verdi.fakta_id AND faktum.id = faktum_verdi.faktum_id AND fakta.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
+        } + """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, soknad, faktum
+            WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id AND soknad.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
     }
 
     override fun lagre(søknad: Søknad): Boolean {
@@ -140,8 +140,8 @@ class FaktaRecord : FaktaPersistance {
             using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        """INSERT INTO gammel_faktum_verdi (fakta_id, faktum_id, indeks, ja_nei, aarlig_inntekt, dokument_id, dato, heltall, opprettet) 
-                                SELECT fakta_id,      
+                        """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, ja_nei, aarlig_inntekt, dokument_id, dato, heltall, opprettet) 
+                                SELECT soknad_id,      
                                         faktum_verdi.faktum_id,     
                                         faktum_verdi.indeks,        
                                         faktum_verdi.ja_nei,        
@@ -150,10 +150,10 @@ class FaktaRecord : FaktaPersistance {
                                         faktum_verdi.dato,          
                                         faktum_verdi.heltall,       
                                         faktum_verdi.opprettet 
-                                FROM faktum_verdi, faktum, fakta
+                                FROM faktum_verdi, faktum, soknad
                                 WHERE faktum_verdi.faktum_id = faktum.id 
-                                    AND faktum_verdi.fakta_id = fakta.id 
-                                    AND fakta.uuid = ?
+                                    AND faktum_verdi.soknad_id = soknad.id 
+                                    AND soknad.uuid = ?
                                     AND faktum.root_id = ?
                                     AND faktum_verdi.indeks = ?
                     """.trimMargin(),
@@ -180,8 +180,8 @@ class FaktaRecord : FaktaPersistance {
             using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        """INSERT INTO faktum_verdi (indeks, fakta_id, faktum_id) 
-                           SELECT ?, fakta.id, faktum.id FROM fakta, faktum  WHERE fakta.uuid = ? AND faktum.versjon_id = fakta.versjon_id AND faktum.root_id = ?
+                        """INSERT INTO faktum_verdi (indeks, soknad_id, faktum_id) 
+                           SELECT ?, soknad.id, faktum.id FROM soknad, faktum  WHERE soknad.uuid = ? AND faktum.versjon_id = soknad.versjon_id AND faktum.root_id = ?
                         """.trimMargin(),
                         indeks,
                         søknad.uuid,
@@ -205,7 +205,7 @@ class FaktaRecord : FaktaPersistance {
         return using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
-                    "SELECT opprettet, uuid FROM fakta WHERE fnr = ?",
+                    "SELECT opprettet, uuid FROM soknad WHERE fnr = ?",
                     fnr
                 ).map { it.localDateTime(1) to UUID.fromString(it.string(2)) }.asList
             )
@@ -229,7 +229,7 @@ class FaktaRecord : FaktaPersistance {
             faktaId = using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        "INSERT INTO fakta(uuid, versjon_id, fnr) VALUES (?, ?, ?) returning id",
+                        "INSERT INTO soknad(uuid, versjon_id, fnr) VALUES (?, ?, ?) returning id",
                         uuid,
                         versjonId,
                         fnr
@@ -296,7 +296,7 @@ class FaktaRecord : FaktaPersistance {
                 session.run(
                     queryOf(
                         """INSERT INTO faktum_verdi
-                            (fakta_id, indeks, faktum_id) 
+                            (soknad_id, indeks, faktum_id) 
                             VALUES (?, ?, 
                                 (SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?)
                             )""".trimMargin(),
