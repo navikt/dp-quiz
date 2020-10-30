@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Faktum.Companion.deepCopy
 import no.nav.dagpenger.model.faktum.Faktum.FaktumTilstand.Ukjent
@@ -35,11 +35,11 @@ open class EnkelSubsumsjon protected constructor(
         gyldigSubsumsjon.deepCopy(faktagrupper),
         ugyldigSubsumsjon.deepCopy(faktagrupper)
     )
-    override fun bygg(fakta: Fakta) = deepCopy(
-        regel.bygg(fakta),
-        this.subsumsjonFakta.map { fakta.id(it.faktumId) }.toSet(),
-        gyldigSubsumsjon.bygg(fakta),
-        ugyldigSubsumsjon.bygg(fakta)
+    override fun bygg(søknad: Søknad) = deepCopy(
+        regel.bygg(søknad),
+        this.subsumsjonFakta.map { søknad.id(it.faktumId) }.toSet(),
+        gyldigSubsumsjon.bygg(søknad),
+        ugyldigSubsumsjon.bygg(søknad)
     )
 
     override fun deepCopy() = deepCopy(
@@ -49,11 +49,11 @@ open class EnkelSubsumsjon protected constructor(
         ugyldigSubsumsjon.deepCopy()
     )
 
-    override fun deepCopy(indeks: Int, fakta: Fakta) = deepCopy(
-        regel.deepCopy(indeks, fakta),
-        subsumsjonFakta.deepCopy(indeks, fakta),
-        gyldigSubsumsjon.deepCopy(indeks, fakta),
-        ugyldigSubsumsjon.deepCopy(indeks, fakta)
+    override fun deepCopy(indeks: Int, søknad: Søknad) = deepCopy(
+        regel.deepCopy(indeks, søknad),
+        subsumsjonFakta.deepCopy(indeks, søknad),
+        gyldigSubsumsjon.deepCopy(indeks, søknad),
+        ugyldigSubsumsjon.deepCopy(indeks, søknad)
     )
 
     private fun deepCopy(

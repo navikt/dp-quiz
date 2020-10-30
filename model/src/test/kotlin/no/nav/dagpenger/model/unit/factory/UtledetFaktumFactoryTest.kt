@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.valg
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.januar
@@ -22,7 +22,7 @@ internal class UtledetFaktumFactoryTest {
 
     @Test
     fun `maks dato`() {
-        val fakta = Fakta(
+        val søknad = Søknad(
             dato faktum "dato1" id 1,
             dato faktum "dato2" id 2,
             dato faktum "dato3" id 3,
@@ -30,14 +30,14 @@ internal class UtledetFaktumFactoryTest {
         )
 
         val faktagrupper = Faktagrupper(
-            fakta,
+            søknad,
             Seksjon(
                 "seksjon",
                 Rolle.søker,
-                fakta dato 1,
-                fakta dato 2,
-                fakta dato 3,
-                fakta dato 123
+                søknad dato 1,
+                søknad dato 2,
+                søknad dato 3,
+                søknad dato 123
             )
         )
 
@@ -56,7 +56,7 @@ internal class UtledetFaktumFactoryTest {
     }
 
     @Test fun `maks inntekt`() {
-        val fakta = Fakta(
+        val søknad = Søknad(
             inntekt faktum "inntekt1" id 1,
             inntekt faktum "inntekt2" id 2,
             inntekt faktum "inntekt3" id 3,
@@ -64,14 +64,14 @@ internal class UtledetFaktumFactoryTest {
         )
 
         val faktagrupper = Faktagrupper(
-            fakta,
+            søknad,
             Seksjon(
                 "seksjon",
                 Rolle.søker,
-                fakta inntekt 1,
-                fakta inntekt 2,
-                fakta inntekt 3,
-                fakta inntekt 123
+                søknad inntekt 1,
+                søknad inntekt 2,
+                søknad inntekt 3,
+                søknad inntekt 123
             )
         )
 
@@ -90,7 +90,7 @@ internal class UtledetFaktumFactoryTest {
     }
 
     @Test fun `boolean and`() {
-        val fakta = Fakta(
+        val søknad = Søknad(
             ja nei "jaNei1" id 1,
             ja nei "jaNei2" id 2,
             ja nei "jaNei3" id 3,
@@ -98,14 +98,14 @@ internal class UtledetFaktumFactoryTest {
         )
 
         val faktagrupper = Faktagrupper(
-            fakta,
+            søknad,
             Seksjon(
                 "seksjon",
                 Rolle.søker,
-                fakta ja 1,
-                fakta ja 2,
-                fakta ja 3,
-                fakta ja 123
+                søknad ja 1,
+                søknad ja 2,
+                søknad ja 3,
+                søknad ja 123
             )
         )
         val faktum = faktagrupper.dato("123")
@@ -123,7 +123,7 @@ internal class UtledetFaktumFactoryTest {
     }
 
     @Test fun `En eller ingen`() {
-        val fakta = Fakta(
+        val søknad = Søknad(
             valg faktum "valg" ja "valg1" ja "valg2" nei "valg3" id 1
         )
     }

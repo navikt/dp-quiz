@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
@@ -34,7 +34,7 @@ internal lateinit var inntekt15G: GrunnleggendeFaktum<Inntekt>
 
 /* ktlint-disable parameter-list-wrapping */
 internal fun eksempelSøknad(): Faktagrupper {
-    val prototypeFakta = Fakta(
+    val prototypeFakta = Søknad(
         dato faktum "Datoen du fyller 67" id 1,
         dato faktum "Datoen du søker om dagpenger" id 2,
         dato faktum "Datoen du ønsker dagpenger fra" id 3,

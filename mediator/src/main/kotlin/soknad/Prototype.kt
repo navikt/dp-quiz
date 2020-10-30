@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktagrupper.Versjon
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.før
@@ -22,15 +22,15 @@ import no.nav.dagpenger.model.subsumsjon.så
 class Prototype {
 
     init {
-        val faktumRecord: FaktumTable = FaktumTable(fakta, VERSJON_ID)
+        val faktumRecord: FaktumTable = FaktumTable(søknad, VERSJON_ID)
     }
 
     companion object {
         const val VERSJON_ID = 1
     }
 
-    private val fakta: Fakta
-        get() = Fakta(
+    private val søknad: Søknad
+        get() = Søknad(
             dato faktum "Fødselsdato" id 1,
             dato faktum "Ønsker dagpenger fra dato" id 2,
             dato faktum "Dato for bortfall på grunn av alder" id 3,
@@ -56,29 +56,29 @@ class Prototype {
             ja nei "Villig til å ta ethvert arbeid" id 19,
         )
 
-    val fødselsdato = fakta dato 1
-    val villigDeltid = fakta ja 16
-    val villigPendle = fakta ja 17
-    val villigHelse = fakta ja 18
-    val villigJobb = fakta ja 19
+    val fødselsdato = søknad dato 1
+    val villigDeltid = søknad ja 16
+    val villigPendle = søknad ja 17
+    val villigHelse = søknad ja 18
+    val villigJobb = søknad ja 19
 
-    val ønsketDato = fakta dato 2
-    val registreringsdato = fakta dato 6
-    val sisteDagMedLønn = fakta dato 7
-    val sisteDagMedArbeidsplikt = fakta dato 5
+    val ønsketDato = søknad dato 2
+    val registreringsdato = søknad dato 6
+    val sisteDagMedLønn = søknad dato 7
+    val sisteDagMedArbeidsplikt = søknad dato 5
 
-    val virkningstidspunkt = fakta dato 4
+    val virkningstidspunkt = søknad dato 4
 
-    val datoForBortfallPgaAlder = fakta dato 3
-    val dimisjonsdato = fakta dato 10
-    val inntektSiste3År = fakta inntekt 8
-    val inntektSisteÅr = fakta inntekt 9
-    val inntekt3G = fakta inntekt 11
-    val inntekt15G = fakta inntekt 12
+    val datoForBortfallPgaAlder = søknad dato 3
+    val dimisjonsdato = søknad dato 10
+    val inntektSiste3År = søknad inntekt 8
+    val inntektSisteÅr = søknad inntekt 9
+    val inntekt3G = søknad inntekt 11
+    val inntekt15G = søknad inntekt 12
 
-    val egenBondegård = fakta ja 13
-    val egenBedrift = fakta ja 14
-    val fangstOgFisk = fakta ja 15
+    val egenBondegård = søknad ja 13
+    val egenBedrift = søknad ja 14
+    val fangstOgFisk = søknad ja 15
 
     private val personalia = Seksjon("personalia", Rolle.søker, fødselsdato)
 
@@ -163,7 +163,7 @@ class Prototype {
             inntekter
         )
 
-    private val versjon = Versjon(VERSJON_ID, fakta, inngangsvilkår, mapOf(Versjon.FaktagrupperType.Web to faktagrupper))
+    private val versjon = Versjon(VERSJON_ID, søknad, inngangsvilkår, mapOf(Versjon.FaktagrupperType.Web to faktagrupper))
 
     fun faktagrupper(fnr: String) = versjon.faktagrupper(fnr, Versjon.FaktagrupperType.Web)
 }

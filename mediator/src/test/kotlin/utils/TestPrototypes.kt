@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktagrupper.Versjon
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.er
@@ -18,12 +18,12 @@ internal class FødselsdatoTestPrototype {
         const val VERSJON_ID = 1
     }
 
-    private val fakta: Fakta
-        get() = Fakta(
+    private val søknad: Søknad
+        get() = Søknad(
             dato faktum "Fødselsdato" id 1,
         )
 
-    val fødselsdato = fakta dato 1
+    val fødselsdato = søknad dato 1
 
     val inngangsvilkår =
         "Inngangsvilkår".alle(
@@ -38,7 +38,7 @@ internal class FødselsdatoTestPrototype {
         Faktagrupper(
             personalia,
         )
-    private val versjon = Versjon(VERSJON_ID, fakta, inngangsvilkår, mapOf(Versjon.FaktagrupperType.Web to faktagrupper))
+    private val versjon = Versjon(VERSJON_ID, søknad, inngangsvilkår, mapOf(Versjon.FaktagrupperType.Web to faktagrupper))
 
     fun faktagrupper(fnr: String) = versjon.faktagrupper(fnr, Versjon.FaktagrupperType.Web)
 }
@@ -48,17 +48,17 @@ internal class AvhengerAvTestPrototype {
         const val VERSJON_ID = 1
     }
 
-    private val fakta: Fakta
-        get() = Fakta(
+    private val søknad: Søknad
+        get() = Søknad(
             dato faktum "Virkningstidspunkt" id 1,
             inntekt faktum "InntektSisteÅr" id 2 avhengerAv 1,
             inntekt faktum "InntektSiste3År" id 3 avhengerAv 1
 
         )
 
-    val virkningstidpunkt = fakta dato 1
-    val inntektSisteÅr = fakta inntekt 2
-    val inntektSiste3År = fakta inntekt 3
+    val virkningstidpunkt = søknad dato 1
+    val inntektSisteÅr = søknad inntekt 2
+    val inntektSiste3År = søknad inntekt 3
 
     val inngangsvilkår =
         "Inngangsvilkår".alle(
@@ -70,7 +70,7 @@ internal class AvhengerAvTestPrototype {
             Seksjon("Inntekt", Rolle.nav, inntektSiste3År, inntektSisteÅr),
             Seksjon("Virkningstidspunkt", Rolle.søker, virkningstidpunkt)
         )
-    private val versjon = Versjon(VERSJON_ID, fakta, inngangsvilkår, mapOf(Versjon.FaktagrupperType.Web to faktagrupper))
+    private val versjon = Versjon(VERSJON_ID, søknad, inngangsvilkår, mapOf(Versjon.FaktagrupperType.Web to faktagrupper))
 
     fun faktagrupper(fnr: String) = versjon.faktagrupper(fnr, Versjon.FaktagrupperType.Web)
 

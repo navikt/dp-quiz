@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Rolle
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -14,7 +14,7 @@ internal class GenerertFaktumTest {
     @Test
     fun `Enkel template`() {
 
-        val fakta = Fakta(
+        val fakta = Søknad(
             ja nei "template" id 1,
             heltall faktum "generator" id 2 genererer 1
         )
@@ -32,7 +32,7 @@ internal class GenerertFaktumTest {
     @Test
     fun `Flere templates`() {
 
-        val fakta = Fakta(
+        val fakta = Søknad(
             ja nei "template" id 1,
             ja nei "template" id 2,
             ja nei "template" id 3,
@@ -57,7 +57,7 @@ internal class GenerertFaktumTest {
 
     @Test
     fun `Generere seksjoner`() {
-        val fakta = Fakta(
+        val fakta = Søknad(
             ja nei "template" id 1,
             heltall faktum "generator" id 2 genererer 1
         )
@@ -74,7 +74,7 @@ internal class GenerertFaktumTest {
 
     @Test
     fun `Seksjon med kun og flere templates`() {
-        val fakta = Fakta(
+        val fakta = Søknad(
             ja nei "template" id 1,
             ja nei "template" id 2,
             ja nei "template" id 3,

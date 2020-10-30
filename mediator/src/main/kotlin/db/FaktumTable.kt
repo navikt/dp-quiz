@@ -12,7 +12,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
@@ -26,7 +26,7 @@ import java.time.LocalDate
 import java.util.UUID
 
 // Forstår initialisering av faktum tabellen
-class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
+class FaktumTable(søknad: Søknad, private val versjonId: Int) : FaktaVisitor {
 
     private var rootId: Int = 0
     private var indeks: Int = 0
@@ -34,7 +34,7 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
     private val avhengigheter = mutableMapOf<Faktum<*>, Set<Faktum<*>>>()
 
     init {
-        if (!exists(versjonId)) fakta.accept(this)
+        if (!exists(versjonId)) søknad.accept(this)
     }
 
     companion object {
@@ -75,7 +75,7 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
         avhengigheter[faktum] = avhengigeFakta
     }
 
-    override fun postVisit(fakta: Fakta, fnr: String, versjonId: Int, uuid: UUID) {
+    override fun postVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
         avhengigheter.forEach { (parent, children) -> faktumFaktum(dbIder[parent]!!, children, "avhengig_faktum") }
     }
 

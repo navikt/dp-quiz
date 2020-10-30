@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.unit.subsumsjon
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.er
@@ -80,8 +80,8 @@ internal class GodkjenningsSubsumsjonTest {
         assertEquals(true, godkjenningsSubsumsjon.resultat())
     }
 
-    private fun faktagrupper(block: (Fakta) -> Subsumsjon): Faktagrupper {
-        val fakta = Fakta(
+    private fun faktagrupper(block: (Søknad) -> Subsumsjon): Faktagrupper {
+        val fakta = Søknad(
             ja nei "faktum" id 1,
             ja nei "godkjenning" id 2 avhengerAv 1
         )

@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.regel.Regel
@@ -43,12 +43,12 @@ internal class AvSubsumsjon private constructor(
         ugyldigSubsumsjon.deepCopy(faktagrupper)
     )
 
-    override fun bygg(fakta: Fakta) = AvSubsumsjon(
-        regel.bygg(fakta),
-        fakta.dokument(dokument.faktumId),
-        fakta.ja(godkjenning.faktumId),
-        gyldigSubsumsjon.bygg(fakta),
-        ugyldigSubsumsjon.bygg(fakta)
+    override fun bygg(søknad: Søknad) = AvSubsumsjon(
+        regel.bygg(søknad),
+        søknad.dokument(dokument.faktumId),
+        søknad.ja(godkjenning.faktumId),
+        gyldigSubsumsjon.bygg(søknad),
+        ugyldigSubsumsjon.bygg(søknad)
     )
 
     override fun deepCopy() = AvSubsumsjon(
@@ -59,11 +59,11 @@ internal class AvSubsumsjon private constructor(
         ugyldigSubsumsjon.deepCopy()
     )
 
-    override fun deepCopy(indeks: Int, fakta: Fakta) = AvSubsumsjon(
-        regel.deepCopy(indeks, fakta),
-        dokument.deepCopy(indeks, fakta) as Faktum<Dokument>,
-        godkjenning.deepCopy(indeks, fakta) as Faktum<Boolean>,
-        gyldigSubsumsjon.deepCopy(indeks, fakta),
-        ugyldigSubsumsjon.deepCopy(indeks, fakta)
+    override fun deepCopy(indeks: Int, søknad: Søknad) = AvSubsumsjon(
+        regel.deepCopy(indeks, søknad),
+        dokument.deepCopy(indeks, søknad) as Faktum<Dokument>,
+        godkjenning.deepCopy(indeks, søknad) as Faktum<Boolean>,
+        gyldigSubsumsjon.deepCopy(indeks, søknad),
+        ugyldigSubsumsjon.deepCopy(indeks, søknad)
     )
 }

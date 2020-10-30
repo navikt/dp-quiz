@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
@@ -29,12 +29,12 @@ class FaktaRecord : FaktaPersistance {
 
     override fun ny(fnr: String, type: Versjon.FaktagrupperType): Faktagrupper {
         return Versjon.siste.faktagrupper(fnr, type).also { faktagrupper ->
-            NyFakta(faktagrupper.fakta)
-            originalSvar = svarMap(faktagrupper.fakta)
+            NyFakta(faktagrupper.søknad)
+            originalSvar = svarMap(faktagrupper.søknad)
         }
     }
 
-    private fun svarMap(fakta: Fakta) = fakta.map { faktum ->
+    private fun svarMap(søknad: Søknad) = søknad.map { faktum ->
         faktum.id to (if (faktum.erBesvart()) faktum.svar() else null)
     }.toMap()
 
@@ -52,7 +52,7 @@ class FaktaRecord : FaktaPersistance {
 
         return Versjon.id(versjonId).faktagrupper(fnr, type, uuid).also { faktagrupper ->
             svarList(uuid).forEach { row ->
-                faktagrupper.fakta.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
+                faktagrupper.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
                     if (row.heltall != null) (faktum as Faktum<Int>).besvar(row.heltall)
                     if (row.janei != null) (faktum as Faktum<Boolean>).besvar(row.janei)
                     if (row.dato != null) (faktum as Faktum<LocalDate>).besvar(row.dato)
@@ -61,7 +61,7 @@ class FaktaRecord : FaktaPersistance {
                 }
             }
         }.also { faktagrupper ->
-            originalSvar = svarMap(faktagrupper.fakta)
+            originalSvar = svarMap(faktagrupper.søknad)
         }
     }
 
@@ -131,11 +131,11 @@ class FaktaRecord : FaktaPersistance {
             WHERE fakta.id = faktum_verdi.fakta_id AND faktum.id = faktum_verdi.faktum_id AND fakta.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
     }
 
-    override fun lagre(fakta: Fakta): Boolean {
-        val nySvar = svarMap(fakta)
+    override fun lagre(søknad: Søknad): Boolean {
+        val nySvar = svarMap(søknad)
         originalSvar.forEach { id, svar ->
             if (nySvar[id] == svar) return@forEach
-            val (rootId, indeks) = fakta.id(id).reflection { rootId, indeks -> rootId to indeks }
+            val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
 
             using(sessionOf(dataSource)) { session ->
                 session.run(
@@ -157,7 +157,7 @@ class FaktaRecord : FaktaPersistance {
                                     AND faktum.root_id = ?
                                     AND faktum_verdi.indeks = ?
                     """.trimMargin(),
-                        fakta.uuid,
+                        søknad.uuid,
                         rootId,
                         indeks
                     ).asExecute
@@ -166,7 +166,7 @@ class FaktaRecord : FaktaPersistance {
                 session.run(
                     queryOf(
                         sqlToInsert(nySvar[id]),
-                        fakta.uuid,
+                        søknad.uuid,
                         indeks,
                         rootId
                     ).asExecute
@@ -176,7 +176,7 @@ class FaktaRecord : FaktaPersistance {
 
         nySvar.forEach { id, svar ->
             if (originalSvar.containsKey(id)) return@forEach
-            val (rootId, indeks) = fakta.id(id).reflection { rootId, indeks -> rootId to indeks }
+            val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
             using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
@@ -184,14 +184,14 @@ class FaktaRecord : FaktaPersistance {
                            SELECT ?, fakta.id, faktum.id FROM fakta, faktum  WHERE fakta.uuid = ? AND faktum.versjon_id = fakta.versjon_id AND faktum.root_id = ?
                         """.trimMargin(),
                         indeks,
-                        fakta.uuid,
+                        søknad.uuid,
                         rootId
                     ).asExecute
                 )
                 if (svar != null) session.run(
                     queryOf(
                         sqlToInsert(svar),
-                        fakta.uuid,
+                        søknad.uuid,
                         indeks,
                         rootId
                     ).asExecute
@@ -212,7 +212,7 @@ class FaktaRecord : FaktaPersistance {
         }.toMap()
     }
 
-    private class NyFakta(fakta: Fakta) : FaktaVisitor {
+    private class NyFakta(søknad: Søknad) : FaktaVisitor {
         private var faktaId = 0
         private var versjonId = 0
         private var rootId = 0
@@ -221,10 +221,10 @@ class FaktaRecord : FaktaPersistance {
         private val faktumList = mutableListOf<Faktum<*>>()
 
         init {
-            fakta.accept(this)
+            søknad.accept(this)
         }
 
-        override fun preVisit(fakta: Fakta, fnr: String, versjonId: Int, uuid: UUID) {
+        override fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
             this.versjonId = versjonId
             faktaId = using(sessionOf(dataSource)) { session ->
                 session.run(

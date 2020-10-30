@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.visitor.FaktaVisitor
 import java.time.LocalDate
 import java.util.UUID
 
-class Fakta private constructor(
+class Søknad private constructor(
     private val fnr: String,
     private val versjonId: Int,
     val uuid: UUID,
@@ -49,11 +49,11 @@ class Fakta private constructor(
     )
 
     init {
-        this.forEach { if (it is GeneratorFaktum) it.fakta = this }
+        this.forEach { if (it is GeneratorFaktum) it.søknad = this }
     }
 
     companion object {
-        fun Fakta.seksjon(navn: String, rolle: Rolle, vararg ider: Int) = Seksjon(
+        fun Søknad.seksjon(navn: String, rolle: Rolle, vararg ider: Int) = Seksjon(
             navn,
             rolle,
             *(this.map { it }.toTypedArray())
@@ -92,10 +92,10 @@ class Fakta private constructor(
     override infix fun generator(id: String) = heltall(FaktumId(id))
     internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
 
-    fun bygg(fnr: String, versjonId: Int, uuid: UUID = UUID.randomUUID()): Fakta {
+    fun bygg(fnr: String, versjonId: Int, uuid: UUID = UUID.randomUUID()): Søknad {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktumMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
-        return Fakta(fnr, versjonId, uuid, mapOfFakta)
+        return Søknad(fnr, versjonId, uuid, mapOfFakta)
     }
 
     override fun iterator(): MutableIterator<Faktum<*>> {

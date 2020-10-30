@@ -1,14 +1,14 @@
 package no.nav.dagpenger.model.faktagrupper
 
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
 
 class Versjon(
-    private val versjonId: Int,
-    private val prototypeFakta: Fakta,
-    private val prototypeSubsumsjon: Subsumsjon,
-    private val prototypeFaktaGrupper: Map<FaktagrupperType, Faktagrupper>
+        private val versjonId: Int,
+        private val prototypeSøknad: Søknad,
+        private val prototypeSubsumsjon: Subsumsjon,
+        private val prototypeFaktaGrupper: Map<FaktagrupperType, Faktagrupper>
 ) {
 
     companion object {
@@ -17,11 +17,11 @@ class Versjon(
         fun id(versjonId: Int) = versjoner[versjonId] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $versjonId")
     }
 
-    fun faktagrupper(fnr: String, type: FaktagrupperType, uuid: UUID = UUID.randomUUID()): Faktagrupper = faktagrupper(prototypeFakta.bygg(fnr, versjonId, uuid), type)
+    fun faktagrupper(fnr: String, type: FaktagrupperType, uuid: UUID = UUID.randomUUID()): Faktagrupper = faktagrupper(prototypeSøknad.bygg(fnr, versjonId, uuid), type)
 
-    fun faktagrupper(fakta: Fakta, type: FaktagrupperType): Faktagrupper {
-        val subsumsjon = prototypeSubsumsjon.bygg(fakta)
-        return prototypeFaktaGrupper[type]?.bygg(fakta, subsumsjon) ?: throw IllegalArgumentException("Kan ikke finne faktagrupper av type $type")
+    fun faktagrupper(søknad: Søknad, type: FaktagrupperType): Faktagrupper {
+        val subsumsjon = prototypeSubsumsjon.bygg(søknad)
+        return prototypeFaktaGrupper[type]?.bygg(søknad, subsumsjon) ?: throw IllegalArgumentException("Kan ikke finne faktagrupper av type $type")
     }
 
     init {

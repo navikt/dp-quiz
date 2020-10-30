@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.helpers.testSøknad
 import no.nav.dagpenger.model.regel.er
@@ -21,7 +21,7 @@ internal class EnumFaktaTest {
 
     @Test
     fun `enum-fakta`() {
-        val faktagrupper = Fakta(språk faktum "språk" id 1).testSøknad()
+        val faktagrupper = Søknad(språk faktum "språk" id 1).testSøknad()
         val faktum = faktagrupper.id(1) as Faktum<SpråkEnum>
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(SpråkEnum.engelsk)
@@ -30,7 +30,7 @@ internal class EnumFaktaTest {
 
     @Test
     fun `subsumsjon test`() {
-        val faktagrupper = Fakta(språk faktum "språk" id 1).testSøknad()
+        val faktagrupper = Søknad(språk faktum "språk" id 1).testSøknad()
         val faktum = faktagrupper.id(1) as Faktum<SpråkEnum>
         val subsumsjon = faktum er SpråkEnum.engelsk
 

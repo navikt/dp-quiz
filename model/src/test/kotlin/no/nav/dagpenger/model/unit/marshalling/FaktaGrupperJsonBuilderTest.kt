@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.unit.marshalling
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.FaktaGrupperJsonBuilder
 import org.junit.jupiter.api.Test
@@ -25,7 +25,7 @@ class FaktaGrupperJsonBuilderTest {
 
     @Test
     fun `Lage faktagrupper med seksjoner`() {
-        val fakta = Fakta(
+        val fakta = Søknad(
             ja nei "navn1" id 1,
             ja nei "navn2" id 2
         )

@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.unit.marshalling
 
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.NyEksempel
 import no.nav.dagpenger.model.marshalling.FaktaJsonBuilder
@@ -10,16 +10,16 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 internal class FaktaJsonBuilderTest {
-    private lateinit var fakta: Fakta
+    private lateinit var søknad: Søknad
 
     @BeforeEach
     fun setup() {
-        fakta = NyEksempel().faktagrupper.fakta
+        søknad = NyEksempel().faktagrupper.søknad
     }
 
     @Test
     fun `bygger json`() {
-        val json = FaktaJsonBuilder(fakta).resultat()
+        val json = FaktaJsonBuilder(søknad).resultat()
 
         assertEquals(20, json["fakta"]["faktum"].size())
         assertEquals(Rolle.nav.name, json["fakta"]["faktum"][0]["roller"][0].asText())

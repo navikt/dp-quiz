@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -23,7 +23,7 @@ class FaktaTest {
 
     @Test
     fun `fakta med ett faktum`() {
-        val fakta = Fakta(ja nei "janei" id 3)
+        val fakta = Søknad(ja nei "janei" id 3)
         assertFalse((fakta id 3).erBesvart())
         assertFalse((fakta id "3").erBesvart())
         assertEquals(1, fakta.size)
@@ -32,7 +32,7 @@ class FaktaTest {
 
     @Test
     fun `fakta med avhengigheter`() {
-        val fakta = Fakta(
+        val fakta = Søknad(
             dokument faktum "f11" id 11,
             ja nei "f12" id 12 avhengerAv 11
         )
@@ -49,7 +49,7 @@ class FaktaTest {
 
     @Test
     fun `sammensatte fakta`() {
-        val fakta = Fakta(
+        val fakta = Søknad(
             dato faktum "f3" id 3,
             dato faktum "f4" id 4,
             dato faktum "f5" id 5,
@@ -70,7 +70,7 @@ class FaktaTest {
 
     @Test
     fun `fakta templater `() {
-        val fakta = Fakta(
+        val fakta = Søknad(
             heltall faktum "antall barn" id 15 genererer 16 og 17 og 18,
             heltall faktum "alder barn" id 16,
             ja nei "skal du ha penger for barn" id 17,
@@ -88,7 +88,7 @@ class FaktaTest {
 
     @Test
     fun `sortere utledede faktum`() {
-        val fakta = Fakta(
+        val fakta = Søknad(
             dato faktum "f3" id 3,
             dato faktum "f4" id 4,
             dato faktum "f5" id 5,
@@ -103,18 +103,18 @@ class FaktaTest {
     @Test
     fun `Fakta med duplikate ider `() {
         assertThrows<IllegalArgumentException> {
-            Fakta(
+            Søknad(
                 heltall faktum "f11" id 11,
                 dokument faktum "whoops" id 11,
             )
         }
     }
 
-    private fun assertIder(fakta: Fakta, vararg ider: Int) {
-        assertEquals(ider.map { it.toString() }, fakta.map { it.id })
+    private fun assertIder(søknad: Søknad, vararg ider: Int) {
+        assertEquals(ider.map { it.toString() }, søknad.map { it.id })
     }
 
-    private fun assertIder(fakta: Fakta, vararg ider: String) {
-        assertEquals(ider.toList(), fakta.map { it.id })
+    private fun assertIder(søknad: Søknad, vararg ider: String) {
+        assertEquals(ider.toList(), søknad.map { it.id })
     }
 }

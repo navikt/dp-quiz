@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.regel
 
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
@@ -19,8 +19,8 @@ interface Regel {
     val typeNavn: String
     fun resultat(): Boolean
     fun deepCopy(faktagrupper: Faktagrupper): Regel
-    fun bygg(fakta: Fakta): Regel
-    fun deepCopy(indeks: Int, fakta: Fakta): Regel
+    fun bygg(søknad: Søknad): Regel
+    fun deepCopy(indeks: Int, søknad: Søknad): Regel
 }
 
 private class Etter(private val senesteDato: Faktum<LocalDate>, private val tidligsteDato: Faktum<LocalDate>) : Regel {
@@ -31,12 +31,12 @@ private class Etter(private val senesteDato: Faktum<LocalDate>, private val tidl
     override fun deepCopy(faktagrupper: Faktagrupper): Regel {
         return Etter(faktagrupper.faktum(senesteDato.faktumId) as Faktum<LocalDate>, faktagrupper.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>)
     }
-    override fun bygg(fakta: Fakta) = Etter(fakta.dato(senesteDato.faktumId), fakta.dato(tidligsteDato.faktumId))
+    override fun bygg(søknad: Søknad) = Etter(søknad.dato(senesteDato.faktumId), søknad.dato(tidligsteDato.faktumId))
 
-    override fun deepCopy(indeks: Int, fakta: Fakta): Regel {
+    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
         return Etter(
-            senesteDato.deepCopy(indeks, fakta) as Faktum<LocalDate>,
-            tidligsteDato.deepCopy(indeks, fakta) as Faktum<LocalDate>
+            senesteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>,
+            tidligsteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>
         )
     }
 }
@@ -57,12 +57,12 @@ private class Før(private val tidligsteDato: Faktum<LocalDate>, private val sen
         return Før(faktagrupper.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>, faktagrupper.faktum(senesteDato.faktumId) as Faktum<LocalDate>)
     }
 
-    override fun bygg(fakta: Fakta) = Før(fakta.dato(tidligsteDato.faktumId), fakta.dato(senesteDato.faktumId))
+    override fun bygg(søknad: Søknad) = Før(søknad.dato(tidligsteDato.faktumId), søknad.dato(senesteDato.faktumId))
 
-    override fun deepCopy(indeks: Int, fakta: Fakta): Regel {
+    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
         return Før(
-            tidligsteDato.deepCopy(indeks, fakta) as Faktum<LocalDate>,
-            senesteDato.deepCopy(indeks, fakta) as Faktum<LocalDate>
+            tidligsteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>,
+            senesteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>
         )
     }
 }
@@ -83,12 +83,12 @@ private class IkkeFør(private val tidligsteDato: Faktum<LocalDate>, private val
         return IkkeFør(faktagrupper.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>, faktagrupper.faktum(senesteDato.faktumId) as Faktum<LocalDate>)
     }
 
-    override fun bygg(fakta: Fakta) = IkkeFør(fakta.dato(tidligsteDato.faktumId), fakta.dato(senesteDato.faktumId))
+    override fun bygg(søknad: Søknad) = IkkeFør(søknad.dato(tidligsteDato.faktumId), søknad.dato(senesteDato.faktumId))
 
-    override fun deepCopy(indeks: Int, fakta: Fakta): Regel {
+    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
         return IkkeFør(
-            tidligsteDato.deepCopy(indeks, fakta) as Faktum<LocalDate>,
-            senesteDato.deepCopy(indeks, fakta) as Faktum<LocalDate>
+            tidligsteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>,
+            senesteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>
         )
     }
 }
@@ -108,12 +108,12 @@ private class Minst(private val faktisk: Faktum<Inntekt>, private val terskel: F
     override fun deepCopy(faktagrupper: Faktagrupper) =
         Minst(faktagrupper.faktum(faktisk.faktumId) as Faktum<Inntekt>, faktagrupper.faktum(terskel.faktumId) as Faktum<Inntekt>)
 
-    override fun bygg(fakta: Fakta) = Minst(fakta.inntekt(faktisk.faktumId), fakta.inntekt(terskel.faktumId))
+    override fun bygg(søknad: Søknad) = Minst(søknad.inntekt(faktisk.faktumId), søknad.inntekt(terskel.faktumId))
 
-    override fun deepCopy(indeks: Int, fakta: Fakta): Regel {
+    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
         return Minst(
-            faktisk.deepCopy(indeks, fakta) as Faktum<Inntekt>,
-            terskel.deepCopy(indeks, fakta) as Faktum<Inntekt>
+            faktisk.deepCopy(indeks, søknad) as Faktum<Inntekt>,
+            terskel.deepCopy(indeks, søknad) as Faktum<Inntekt>
         )
     }
 }
@@ -132,9 +132,9 @@ private class Er<T : Comparable<T>>(private val faktum: Faktum<*>, private val o
     override fun toString() = "Sjekk at `$faktum` er lik $other"
     override fun deepCopy(faktagrupper: Faktagrupper) = Er(faktagrupper.faktum(faktum.faktumId) as Faktum<T>, other)
 
-    override fun bygg(fakta: Fakta) = Er(fakta.id(faktum.faktumId) as Faktum<T>, other)
+    override fun bygg(søknad: Søknad) = Er(søknad.id(faktum.faktumId) as Faktum<T>, other)
 
-    override fun deepCopy(indeks: Int, fakta: Fakta) = Er(faktum.deepCopy(indeks, fakta) as Faktum<T>, other)
+    override fun deepCopy(indeks: Int, søknad: Søknad) = Er(faktum.deepCopy(indeks, søknad) as Faktum<T>, other)
 }
 
 infix fun <T : Comparable<T>> Faktum<T>.er(other: T): Subsumsjon {
@@ -165,9 +165,9 @@ private class ErIkke(private val faktum: Faktum<Boolean>) : Regel {
     override fun toString() = "Sjekk at `$faktum` ikke er sann"
     override fun deepCopy(faktagrupper: Faktagrupper) = ErIkke(faktagrupper.faktum(faktum.faktumId) as Faktum<Boolean>)
 
-    override fun bygg(fakta: Fakta) = ErIkke(fakta.ja(faktum.faktumId))
+    override fun bygg(søknad: Søknad) = ErIkke(søknad.ja(faktum.faktumId))
 
-    override fun deepCopy(indeks: Int, fakta: Fakta) = ErIkke(faktum.deepCopy(indeks, fakta) as Faktum<Boolean>)
+    override fun deepCopy(indeks: Int, søknad: Søknad) = ErIkke(faktum.deepCopy(indeks, søknad) as Faktum<Boolean>)
 }
 
 fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
@@ -183,9 +183,9 @@ private class Har(private val faktum: Faktum<Boolean>) : Regel {
     override fun toString() = "Sjekk at `$faktum` er sann"
     override fun deepCopy(faktagrupper: Faktagrupper) = Har(faktagrupper.faktum(faktum.faktumId) as Faktum<Boolean>)
 
-    override fun bygg(fakta: Fakta) = Har(fakta.ja(faktum.faktumId))
+    override fun bygg(søknad: Søknad) = Har(søknad.ja(faktum.faktumId))
 
-    override fun deepCopy(indeks: Int, fakta: Fakta) = Har(faktum.deepCopy(indeks, fakta) as Faktum<Boolean>)
+    override fun deepCopy(indeks: Int, søknad: Søknad) = Har(faktum.deepCopy(indeks, søknad) as Faktum<Boolean>)
 }
 
 fun har(faktum: Faktum<Boolean>): Subsumsjon {
@@ -202,11 +202,11 @@ private class Av(private val godkjenning: Faktum<Boolean>, private val dokument:
     override fun deepCopy(faktagrupper: Faktagrupper) =
         Av(faktagrupper.faktum(godkjenning.faktumId) as Faktum<Boolean>, faktagrupper.faktum(dokument.faktumId) as Faktum<Dokument>)
 
-    override fun bygg(fakta: Fakta) =
-        Av(fakta.ja(godkjenning.faktumId), fakta.dokument(dokument.faktumId))
+    override fun bygg(søknad: Søknad) =
+        Av(søknad.ja(godkjenning.faktumId), søknad.dokument(dokument.faktumId))
 
-    override fun deepCopy(indeks: Int, fakta: Fakta) =
-        Av(godkjenning.deepCopy(indeks, fakta) as Faktum<Boolean>, dokument.deepCopy(indeks, fakta) as Faktum<Dokument>)
+    override fun deepCopy(indeks: Int, søknad: Søknad) =
+        Av(godkjenning.deepCopy(indeks, søknad) as Faktum<Boolean>, dokument.deepCopy(indeks, søknad) as Faktum<Dokument>)
 }
 
 infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon {
@@ -219,10 +219,10 @@ private class Under(private val alder: Faktum<Int>, private val maksAlder: Int) 
     override fun toString() = "Sjekk at '$alder' er under $maksAlder"
     override fun deepCopy(faktagrupper: Faktagrupper) = Under(faktagrupper.faktum(alder.faktumId) as Faktum<Int>, maksAlder)
 
-    override fun bygg(fakta: Fakta) = Under(fakta.heltall(alder.faktumId), maksAlder)
+    override fun bygg(søknad: Søknad) = Under(søknad.heltall(alder.faktumId), maksAlder)
 
-    override fun deepCopy(indeks: Int, fakta: Fakta) =
-        Under(alder.deepCopy(indeks, fakta) as Faktum<Int>, maksAlder)
+    override fun deepCopy(indeks: Int, søknad: Søknad) =
+        Under(alder.deepCopy(indeks, søknad) as Faktum<Int>, maksAlder)
 }
 
 infix fun Faktum<Int>.under(maksAlder: Int): Subsumsjon {

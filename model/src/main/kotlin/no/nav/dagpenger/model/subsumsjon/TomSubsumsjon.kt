@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
@@ -9,9 +9,9 @@ internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
 
     override fun deepCopy(faktagrupper: Faktagrupper) = this
 
-    override fun deepCopy(indeks: Int, fakta: Fakta) = this
+    override fun deepCopy(indeks: Int, søknad: Søknad) = this
 
-    override fun bygg(fakta: Fakta) = this
+    override fun bygg(søknad: Søknad) = this
 
     override fun deepCopy() = this
 

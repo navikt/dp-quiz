@@ -1,16 +1,16 @@
 package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.node.ObjectNode
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.visitor.FaktaVisitor
 import java.util.UUID
 
-internal class FaktaJsonBuilder(fakta: Fakta) : FaktumJsonBuilder(), FaktaVisitor {
+internal class FaktaJsonBuilder(søknad: Søknad) : FaktumJsonBuilder(), FaktaVisitor {
     init {
-        fakta.accept(this)
+        søknad.accept(this)
     }
 
-    override fun preVisit(fakta: Fakta, fnr: String, versjonId: Int, uuid: UUID) {
+    override fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
         mapper.createObjectNode().also { faktaNode ->
             objectNodes.add(0, faktaNode)
             faktaNode.put("fnr", fnr)
@@ -19,7 +19,7 @@ internal class FaktaJsonBuilder(fakta: Fakta) : FaktumJsonBuilder(), FaktaVisito
         }
     }
 
-    override fun postVisit(fakta: Fakta, fnr: String, versjonId: Int, uuid: UUID) {
+    override fun postVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
         objectNodes.removeAt(0).also { jsonNode ->
             root = jsonNode
             jsonNode.set("faktum", faktaNode)

@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.visitor
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
@@ -101,8 +101,8 @@ interface FaktumVisitor {
 }
 
 interface FaktaVisitor : FaktumVisitor {
-    fun preVisit(fakta: Fakta, fnr: String, versjonId: Int, uuid: UUID) {}
-    fun postVisit(fakta: Fakta, fnr: String, versjonId: Int, uuid: UUID) {}
+    fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {}
+    fun postVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {}
 }
 
 interface SøknadVisitor : FaktumVisitor {

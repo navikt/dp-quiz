@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.unit.marshalling
 import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.testSøknad
 import no.nav.dagpenger.model.marshalling.SeksjonJsonBuilder
@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 class SeksjonJsonBuilderTest {
     @Test
     fun `Hente ut enkelt seksjon`() {
-        val seksjon = Fakta(
+        val seksjon = Søknad(
             ja nei "navn" id 1
         ).testSøknad().let {
             it[0]
@@ -29,7 +29,7 @@ class SeksjonJsonBuilderTest {
 
     @Test
     fun `bygger faktaavhengigheter for seksjon`() {
-        val fakta = Fakta(
+        val fakta = Søknad(
             BaseFaktumFactory.Companion.ja nei "navn" id 1,
             BaseFaktumFactory.Companion.ja nei "jo" id 2 avhengerAv 1
         )

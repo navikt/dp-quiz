@@ -2,7 +2,7 @@ import db.FaktaPersistance
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -60,7 +60,7 @@ class MeldingMediatorTest {
             TODO("Not yet implemented")
         }
 
-        override fun lagre(fakta: Fakta): Boolean {
+        override fun lagre(søknad: Søknad): Boolean {
             TODO("Not yet implemented")
         }
 

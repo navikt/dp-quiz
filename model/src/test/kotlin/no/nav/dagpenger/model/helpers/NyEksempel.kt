@@ -10,7 +10,7 @@ import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.regel.er
@@ -30,7 +30,7 @@ import no.nav.dagpenger.model.subsumsjon.uansett
 
 internal class NyEksempel {
 
-    val prototypeFakta = Fakta(
+    val prototypeFakta = Søknad(
         ja nei "f1" id 1,
         dato faktum "f2" id 2,
         dato faktum "f3" id 3,

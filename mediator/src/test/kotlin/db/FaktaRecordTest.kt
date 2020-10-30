@@ -80,16 +80,16 @@ internal class FaktaRecordTest {
     fun `Genererte template faktum`() {
         Postgres.withMigratedDb {
             byggOriginalFaktaGrupper()
-            assertEquals(21, originalFaktagrupper.fakta.map { it }.size)
+            assertEquals(21, originalFaktagrupper.søknad.map { it }.size)
             hentFørstFakta()
             originalFaktagrupper = rehydrertFaktagrupper
 
             originalFaktagrupper.heltall(15).besvar(3, Rolle.søker)
             originalFaktagrupper.heltall("16.1").besvar(5, Rolle.søker)
-            assertEquals(30, originalFaktagrupper.fakta.map { it }.size)
+            assertEquals(30, originalFaktagrupper.søknad.map { it }.size)
 
             hentFørstFakta()
-            assertEquals(30, rehydrertFaktagrupper.fakta.map { it }.size)
+            assertEquals(30, rehydrertFaktagrupper.søknad.map { it }.size)
         }
     }
 
@@ -98,7 +98,7 @@ internal class FaktaRecordTest {
     fun `redusert template faktum`() {
         Postgres.withMigratedDb {
             byggOriginalFaktaGrupper()
-            assertEquals(21, originalFaktagrupper.fakta.map { it }.size)
+            assertEquals(21, originalFaktagrupper.søknad.map { it }.size)
             hentFørstFakta()
             originalFaktagrupper = rehydrertFaktagrupper
 
@@ -128,7 +128,7 @@ internal class FaktaRecordTest {
     }
 
     private fun hentFørstFakta() {
-        faktaRecord.lagre(originalFaktagrupper.fakta)
+        faktaRecord.lagre(originalFaktagrupper.søknad)
         val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         faktaRecord = FaktaRecord()
         rehydrertFaktagrupper = faktaRecord.hent(uuid, Versjon.FaktagrupperType.Web)

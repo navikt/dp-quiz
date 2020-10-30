@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Faktum.Companion.deepCopy
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.regel.Regel
@@ -18,7 +18,7 @@ class GeneratorSubsumsjon internal constructor(
                 false -> {
                     (ugyldig as AlleSubsumsjon).also { alleSubsumsjon ->
                         if (alleSubsumsjon.isEmpty())
-                            alleSubsumsjon.addAll((1..faktum.svar()).map { makro.deepCopy(it, faktum.fakta) })
+                            alleSubsumsjon.addAll((1..faktum.svar()).map { makro.deepCopy(it, faktum.søknad) })
                     }
                 }
                 else -> {
@@ -34,10 +34,10 @@ class GeneratorSubsumsjon internal constructor(
         makro.deepCopy(faktagrupper)
     )
 
-    override fun bygg(fakta: Fakta) = GeneratorSubsumsjon(
-        regel.bygg(fakta),
-        fakta.id(faktum.faktumId) as GeneratorFaktum,
-        makro.bygg(fakta) as MakroSubsumsjon
+    override fun bygg(søknad: Søknad) = GeneratorSubsumsjon(
+        regel.bygg(søknad),
+        søknad.id(faktum.faktumId) as GeneratorFaktum,
+        makro.bygg(søknad) as MakroSubsumsjon
     )
 
     override fun deepCopy() = GeneratorSubsumsjon(
@@ -46,9 +46,9 @@ class GeneratorSubsumsjon internal constructor(
         makro.deepCopy() as MakroSubsumsjon
     )
 
-    override fun deepCopy(indeks: Int, fakta: Fakta) = GeneratorSubsumsjon(
-        regel.deepCopy(indeks, fakta),
-        setOf(faktum).deepCopy(indeks, fakta).first() as GeneratorFaktum,
-        makro.deepCopy(indeks, fakta) as MakroSubsumsjon
+    override fun deepCopy(indeks: Int, søknad: Søknad) = GeneratorSubsumsjon(
+        regel.deepCopy(indeks, søknad),
+        setOf(faktum).deepCopy(indeks, søknad).first() as GeneratorFaktum,
+        makro.deepCopy(indeks, søknad) as MakroSubsumsjon
     )
 }

@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.unit.marshalling
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.bursdag67
 import no.nav.dagpenger.model.helpers.eksempelSøknad
@@ -23,7 +23,7 @@ internal class SubsumsjonJsonBuilderTest {
 
     @Test
     fun `Lage en subsumsjon med fakta`() {
-        val fakta = Fakta(
+        val fakta = Søknad(
             ja nei "faktum" id 1
         )
 
@@ -50,7 +50,7 @@ internal class SubsumsjonJsonBuilderTest {
 
     @Test
     fun `Finner avhengige fakta i json`() {
-        val fakta = Fakta(
+        val fakta = Søknad(
             ja nei "faktum" id 1,
             ja nei "faktum" id 2 avhengerAv 1
         )

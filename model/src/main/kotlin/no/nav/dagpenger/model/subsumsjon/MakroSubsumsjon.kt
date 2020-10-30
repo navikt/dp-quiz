@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class MakroSubsumsjon private constructor(
@@ -20,11 +20,11 @@ class MakroSubsumsjon private constructor(
         ugyldigSubsumsjon.deepCopy(faktagrupper)
     )
 
-    override fun bygg(fakta: Fakta) = MakroSubsumsjon(
+    override fun bygg(søknad: Søknad) = MakroSubsumsjon(
         navn,
-        child.bygg(fakta),
-        gyldigSubsumsjon.bygg(fakta),
-        ugyldigSubsumsjon.bygg(fakta)
+        child.bygg(søknad),
+        gyldigSubsumsjon.bygg(søknad),
+        ugyldigSubsumsjon.bygg(søknad)
     )
 
     override fun deepCopy(): Subsumsjon {
@@ -36,12 +36,12 @@ class MakroSubsumsjon private constructor(
         )
     }
 
-    override fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon {
+    override fun deepCopy(indeks: Int, søknad: Søknad): Subsumsjon {
         return MakroSubsumsjon(
             "$navn [$indeks]",
-            child.deepCopy(indeks, fakta),
-            gyldigSubsumsjon.deepCopy(indeks, fakta),
-            ugyldigSubsumsjon.deepCopy(indeks, fakta)
+            child.deepCopy(indeks, søknad),
+            gyldigSubsumsjon.deepCopy(indeks, søknad),
+            ugyldigSubsumsjon.deepCopy(indeks, søknad)
         )
     }
 

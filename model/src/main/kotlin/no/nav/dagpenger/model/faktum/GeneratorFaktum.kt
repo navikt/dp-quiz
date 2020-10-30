@@ -17,11 +17,11 @@ class GeneratorFaktum internal constructor(
     avhengerAvFakta,
     roller
 ) {
-    internal lateinit var fakta: Fakta
+    internal lateinit var søknad: Søknad
 
     override fun besvar(r: Int, rolle: Rolle): GrunnleggendeFaktum<Int> = this.also {
         super.besvar(r, rolle)
-        templates.forEach { template -> template.generate(r, fakta) }
+        templates.forEach { template -> template.generate(r, søknad) }
     }
 
     override fun acceptUtenSvar(visitor: FaktumVisitor) {

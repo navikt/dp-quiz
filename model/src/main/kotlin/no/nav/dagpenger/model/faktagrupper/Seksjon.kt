@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.faktagrupper
 
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
@@ -34,7 +34,7 @@ class Seksjon private constructor(
 
     internal fun bareTemplates() = seksjonFakta.all { it is TemplateFaktum }
 
-    internal fun deepCopy(indeks: Int, fakta: Fakta): Seksjon {
+    internal fun deepCopy(indeks: Int, søknad: Søknad): Seksjon {
         return if (indeks <= genererteSeksjoner.size) genererteSeksjoner[indeks - 1]
         else Seksjon(navn, rolle, mutableSetOf()).also {
             faktagrupper.add(faktagrupper.indexOf(this) + indeks, it)
@@ -61,5 +61,5 @@ class Seksjon private constructor(
             }
         }
 
-    internal fun bygg(fakta: Fakta) = Seksjon(navn, rolle, this.seksjonFakta.map { fakta.id(it.faktumId) }.toMutableSet())
+    internal fun bygg(søknad: Søknad) = Seksjon(navn, rolle, this.seksjonFakta.map { søknad.id(it.faktumId) }.toMutableSet())
 }

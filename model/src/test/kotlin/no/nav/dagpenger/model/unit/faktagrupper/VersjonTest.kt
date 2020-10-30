@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
-import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -20,7 +20,7 @@ internal class VersjonTest {
     @BeforeEach
     fun setup() {
         val fnr = "12345678910"
-        val prototypeFakta = Fakta(
+        val prototypeFakta = Søknad(
             heltall faktum "f15" id 15 genererer 16 og 17 og 18,
             heltall faktum "f16" id 16,
             ja nei "f17" id 17,
@@ -35,7 +35,7 @@ internal class VersjonTest {
 
     @Test
     fun ` bygg fra prototype `() {
-        faktagrupper.fakta.also { fakta ->
+        faktagrupper.søknad.also { fakta ->
             assertEquals(TemplateFaktum::class, fakta.id(16)::class)
             assertEquals(GeneratorFaktum::class, fakta.id(15)::class)
             assertEquals(4, fakta.size)
@@ -49,7 +49,7 @@ internal class VersjonTest {
     @Test
     fun `bygg fra fakta`() {
         faktagrupper.heltall(15).besvar(2, Rolle.søker)
-        var nysøknad = faktagrupper.fakta.faktagrupper(Web)
+        var nysøknad = faktagrupper.søknad.faktagrupper(Web)
         nysøknad.heltall("16.1").besvar(1, Rolle.søker)
         assertEquals(1, nysøknad.heltall("16.1").svar())
     }
