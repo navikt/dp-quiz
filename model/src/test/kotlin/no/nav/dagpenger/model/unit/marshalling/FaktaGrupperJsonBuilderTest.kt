@@ -25,13 +25,13 @@ class FaktagrupperJsonBuilderTest {
 
     @Test
     fun `Lage faktagrupper med seksjoner`() {
-        val fakta = Søknad(
+        val søknad = Søknad(
             ja nei "navn1" id 1,
             ja nei "navn2" id 2
         )
 
-        val seksjon = Seksjon("seksjon", Rolle.søker, fakta ja 1)
-        val seksjon2 = Seksjon("seksjon", Rolle.søker, fakta ja 1, fakta ja 2)
+        val seksjon = Seksjon("seksjon", Rolle.søker, søknad ja 1)
+        val seksjon2 = Seksjon("seksjon", Rolle.søker, søknad ja 1, søknad ja 2)
         val faktagrupper = Faktagrupper(seksjon, seksjon2)
 
         val jsonBuilder = FaktagrupperJsonBuilder(faktagrupper)

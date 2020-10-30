@@ -81,17 +81,17 @@ internal class GodkjenningsSubsumsjonTest {
     }
 
     private fun faktagrupper(block: (Søknad) -> Subsumsjon): Faktagrupper {
-        val fakta = Søknad(
+        val søknad = Søknad(
             ja nei "faktum" id 1,
             ja nei "godkjenning" id 2 avhengerAv 1
         )
 
-        faktum = fakta ja 1
-        godkjenning = fakta ja 2
+        faktum = søknad ja 1
+        godkjenning = søknad ja 2
 
-        godkjenningsSubsumsjon = block(fakta)
+        godkjenningsSubsumsjon = block(søknad)
         return Faktagrupper(
-            fakta,
+            søknad,
             Seksjon("seksjon", Rolle.søker, faktum),
             Seksjon("seksjon", Rolle.saksbehandler, godkjenning),
             rootSubsumsjon = godkjenningsSubsumsjon

@@ -29,12 +29,12 @@ class SeksjonJsonBuilderTest {
 
     @Test
     fun `bygger faktaavhengigheter for seksjon`() {
-        val fakta = Søknad(
+        val søknad = Søknad(
             BaseFaktumFactory.Companion.ja nei "navn" id 1,
             BaseFaktumFactory.Companion.ja nei "jo" id 2 avhengerAv 1
         )
 
-        val avhengigFakta = fakta ja 2
+        val avhengigFakta = søknad ja 2
         val avhengigSeksjon = Seksjon("Avhengig", Rolle.nav, avhengigFakta)
 
         val jsonBuilder = SeksjonJsonBuilder(avhengigSeksjon)

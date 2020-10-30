@@ -12,13 +12,13 @@ import org.junit.jupiter.api.Test
 
 internal class EnkelSubsumsjonsTest {
 
-    val fakta = Søknad(
+    val faktagrupper = Søknad(
         dato faktum "Datoen du fyller 67" id 1,
         dato faktum "Datoen du søker om dagpenger" id 2
     ).testFaktagrupper()
 
-    val bursdag67 = fakta dato 1
-    val søknadsdato = fakta dato 2
+    val bursdag67 = faktagrupper dato 1
+    val søknadsdato = faktagrupper dato 2
 
     @Test
     fun `subsumsjonen kan konkludere`() {
