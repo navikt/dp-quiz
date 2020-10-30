@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.fakta
 
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 abstract class Faktum<R : Comparable<R>> internal constructor(
@@ -14,15 +14,15 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     val id: String get() = faktumId.id
 
     companion object {
-        private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, søknad: Søknad) {
-            faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { søknad.faktum(it.faktumId) })
-            faktum.avhengerAvFakta.addAll(this.avhengerAvFakta.map { søknad.faktum(it.faktumId) })
+        private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, faktagrupper: Faktagrupper) {
+            faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { faktagrupper.faktum(it.faktumId) })
+            faktum.avhengerAvFakta.addAll(this.avhengerAvFakta.map { faktagrupper.faktum(it.faktumId) })
         }
 
-        internal fun Set<Faktum<*>>.deepCopy(søknad: Søknad): Set<Faktum<*>> = this
+        internal fun Set<Faktum<*>>.deepCopy(faktagrupper: Faktagrupper): Set<Faktum<*>> = this
             .mapNotNull { prototype ->
-                søknad.faktum(prototype.faktumId).also {
-                    prototype.deepCopyAvhengigheter(it, søknad)
+                faktagrupper.faktum(prototype.faktumId).also {
+                    prototype.deepCopyAvhengigheter(it, faktagrupper)
                 }
             }
             .toSet()

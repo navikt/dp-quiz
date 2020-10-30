@@ -15,8 +15,8 @@ import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.eller
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.søknad.Versjon
 import no.nav.dagpenger.model.søknad.Versjon.Type.Web
 import java.time.LocalDate
@@ -33,7 +33,7 @@ internal lateinit var inntekt3G: GrunnleggendeFaktum<Inntekt>
 internal lateinit var inntekt15G: GrunnleggendeFaktum<Inntekt>
 
 /* ktlint-disable parameter-list-wrapping */
-internal fun eksempelSøknad(): Søknad {
+internal fun eksempelSøknad(): Faktagrupper {
     val prototypeFakta = Fakta(
         dato faktum "Datoen du fyller 67" id 1,
         dato faktum "Datoen du søker om dagpenger" id 2,
@@ -80,7 +80,7 @@ internal fun eksempelSøknad(): Søknad {
         ønsketdato ikkeFør sisteDagMedLønn
     )
 
-    val prototypeWebSøknad = Søknad(
+    val prototypeWebSøknad = Faktagrupper(
         Seksjon(
             "seksjon1",
             Rolle.søker,

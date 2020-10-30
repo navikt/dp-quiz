@@ -9,8 +9,8 @@ import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.gyldigGodkjentAv
 import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -80,7 +80,7 @@ internal class GodkjenningsSubsumsjonTest {
         assertEquals(true, godkjenningsSubsumsjon.resultat())
     }
 
-    private fun søknad(block: (Fakta) -> Subsumsjon): Søknad {
+    private fun søknad(block: (Fakta) -> Subsumsjon): Faktagrupper {
         val fakta = Fakta(
             ja nei "faktum" id 1,
             ja nei "godkjenning" id 2 avhengerAv 1
@@ -90,7 +90,7 @@ internal class GodkjenningsSubsumsjonTest {
         godkjenning = fakta ja 2
 
         godkjenningsSubsumsjon = block(fakta)
-        return Søknad(
+        return Faktagrupper(
             fakta,
             Seksjon("seksjon", Rolle.søker, faktum),
             Seksjon("seksjon", Rolle.saksbehandler, godkjenning),

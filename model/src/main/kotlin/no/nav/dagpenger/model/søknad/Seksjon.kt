@@ -12,7 +12,7 @@ class Seksjon private constructor(
     private val rolle: Rolle,
     private val seksjonFakta: MutableSet<Faktum<*>>
 ) : MutableSet<Faktum<*>> by seksjonFakta {
-    internal lateinit var søknad: Søknad
+    internal lateinit var faktagrupper: Faktagrupper
     private val genererteSeksjoner = mutableListOf<Seksjon>()
 
     init {
@@ -28,8 +28,8 @@ class Seksjon private constructor(
         return nesteFakta.any { it in seksjonFakta }
     }
 
-    internal fun søknad(søknad: Søknad) {
-        this.søknad = søknad
+    internal fun søknad(faktagrupper: Faktagrupper) {
+        this.faktagrupper = faktagrupper
     }
 
     internal fun bareTemplates() = seksjonFakta.all { it is TemplateFaktum }
@@ -37,9 +37,9 @@ class Seksjon private constructor(
     internal fun deepCopy(indeks: Int, fakta: Fakta): Seksjon {
         return if (indeks <= genererteSeksjoner.size) genererteSeksjoner[indeks - 1]
         else Seksjon(navn, rolle, mutableSetOf()).also {
-            søknad.add(søknad.indexOf(this) + indeks, it)
+            faktagrupper.add(faktagrupper.indexOf(this) + indeks, it)
             genererteSeksjoner.add(it)
-            it.søknad(this.søknad)
+            it.søknad(this.faktagrupper)
         }
     }
 
@@ -50,11 +50,11 @@ class Seksjon private constructor(
     }
 
     internal fun add(faktum: GrunnleggendeFaktum<*>): Boolean =
-        søknad.idOrNull(faktum.faktumId).let { eksisterendeFaktum ->
+        faktagrupper.idOrNull(faktum.faktumId).let { eksisterendeFaktum ->
             (eksisterendeFaktum == null).also {
                 if (it) { // Use existing Faktum
                     seksjonFakta.add(faktum)
-                    søknad.add(faktum)
+                    faktagrupper.add(faktum)
                 } else { // Use new Faktum
                     seksjonFakta.add(eksisterendeFaktum as GrunnleggendeFaktum<*>)
                 }

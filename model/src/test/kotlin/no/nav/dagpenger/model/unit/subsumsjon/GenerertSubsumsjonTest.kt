@@ -10,8 +10,8 @@ import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.så
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -42,7 +42,7 @@ internal class GenerertSubsumsjonTest {
 
         val makro = "makro template".makro(fakta ja 1 er true)
         val subsumsjon = fakta generator 2 med makro
-        val søknad = Søknad(fakta, Seksjon("seksjon", Rolle.søker, fakta generator 2, fakta ja 1), rootSubsumsjon = subsumsjon)
+        val søknad = Faktagrupper(fakta, Seksjon("seksjon", Rolle.søker, fakta generator 2, fakta ja 1), rootSubsumsjon = subsumsjon)
 
         søknad.generator(2).besvar(3)
         subsumsjon.resultat()

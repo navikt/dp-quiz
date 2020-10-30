@@ -16,8 +16,8 @@ import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import java.util.UUID
 
 interface FaktumVisitor {
@@ -106,8 +106,8 @@ interface FaktaVisitor : FaktumVisitor {
 }
 
 interface SøknadVisitor : FaktumVisitor {
-    fun preVisit(søknad: Søknad, uuid: UUID) {}
-    fun postVisit(søknad: Søknad) {}
+    fun preVisit(faktagrupper: Faktagrupper, uuid: UUID) {}
+    fun postVisit(faktagrupper: Faktagrupper) {}
     fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {}
     fun postVisit(seksjon: Seksjon, rolle: Rolle) {}
 }

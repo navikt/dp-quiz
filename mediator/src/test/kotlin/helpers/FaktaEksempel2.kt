@@ -9,8 +9,8 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.søknad.Versjon
 
 internal object FaktaEksempel2 {
@@ -39,7 +39,7 @@ internal object FaktaEksempel2 {
         maks dato "345213" av 345 og 2 og 13 id 345213
     )
 
-    private val webPrototypeSøknad = Søknad(
+    private val webPrototypeSøknad = Faktagrupper(
         Seksjon(
             "seksjon",
             Rolle.søker,

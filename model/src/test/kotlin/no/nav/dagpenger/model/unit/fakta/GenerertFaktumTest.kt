@@ -4,8 +4,8 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -20,7 +20,7 @@ internal class GenerertFaktumTest {
         )
 
         val seksjon = Seksjon("seksjon", Rolle.søker, fakta ja 1, fakta generator 2)
-        val søknad = Søknad(fakta, seksjon)
+        val søknad = Faktagrupper(fakta, seksjon)
         val originalSize = seksjon.size
         søknad.generator(2).besvar(5)
 
@@ -43,7 +43,7 @@ internal class GenerertFaktumTest {
 
         val seksjon1 = Seksjon("seksjon", Rolle.søker, fakta ja 1, fakta generator 4)
         val seksjon2 = Seksjon("seksjon", Rolle.søker, fakta ja 2, fakta ja 3, fakta ja 5)
-        val søknad = Søknad(fakta, seksjon1, seksjon2)
+        val søknad = Faktagrupper(fakta, seksjon1, seksjon2)
         val originalSize1 = seksjon1.size
         val originalSize2 = seksjon2.size
         søknad.generator(4).besvar(3)
@@ -63,7 +63,7 @@ internal class GenerertFaktumTest {
         )
         val generatorSeksjon = Seksjon("seksjon", Rolle.søker, fakta generator 2)
         val templateSeksjon = Seksjon("seksjon", Rolle.søker, fakta ja 1)
-        val søknad = Søknad(fakta, generatorSeksjon, templateSeksjon)
+        val søknad = Faktagrupper(fakta, generatorSeksjon, templateSeksjon)
         søknad.generator(2).besvar(3)
         assertEquals(5, søknad.size)
         assertEquals(1, generatorSeksjon.size)
@@ -84,7 +84,7 @@ internal class GenerertFaktumTest {
         val generatorSeksjon = Seksjon("seksjon", Rolle.søker, fakta generator 4)
         val templateSeksjon1 = Seksjon("seksjon", Rolle.søker, fakta ja 1, fakta ja 2)
         val templateSeksjon2 = Seksjon("seksjon", Rolle.søker, fakta ja 3)
-        val søknad = Søknad(fakta, generatorSeksjon, templateSeksjon1, templateSeksjon2)
+        val søknad = Faktagrupper(fakta, generatorSeksjon, templateSeksjon1, templateSeksjon2)
         søknad.generator(4).besvar(3)
 
         assertEquals(9, søknad.size)

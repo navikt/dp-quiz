@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.regel.Regel
-import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.søknad.Faktagrupper
 
 internal class AvSubsumsjon private constructor(
     regel: Regel,
@@ -35,12 +35,12 @@ internal class AvSubsumsjon private constructor(
     override fun ukjenteFakta(): Set<GrunnleggendeFaktum<*>> =
         if (dokument.erBesvart()) emptySet() else dokument.grunnleggendeFakta()
 
-    override fun deepCopy(søknad: Søknad) = AvSubsumsjon(
-        regel.deepCopy(søknad),
-        søknad.faktum(dokument.faktumId) as Faktum<Dokument>,
-        søknad.faktum(godkjenning.faktumId) as Faktum<Boolean>,
-        gyldigSubsumsjon.deepCopy(søknad),
-        ugyldigSubsumsjon.deepCopy(søknad)
+    override fun deepCopy(faktagrupper: Faktagrupper) = AvSubsumsjon(
+        regel.deepCopy(faktagrupper),
+        faktagrupper.faktum(dokument.faktumId) as Faktum<Dokument>,
+        faktagrupper.faktum(godkjenning.faktumId) as Faktum<Boolean>,
+        gyldigSubsumsjon.deepCopy(faktagrupper),
+        ugyldigSubsumsjon.deepCopy(faktagrupper)
     )
 
     override fun bygg(fakta: Fakta) = AvSubsumsjon(

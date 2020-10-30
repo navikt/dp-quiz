@@ -14,8 +14,8 @@ import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.søknad.Versjon
 
 // Forstår dagpengesøknaden
@@ -153,8 +153,8 @@ class Prototype {
             villigPendle,
         )
 
-    internal val søknad: Søknad =
-        Søknad(
+    internal val faktagrupper: Faktagrupper =
+        Faktagrupper(
             statiske,
             reellArbeidssøker,
             personalia,
@@ -163,7 +163,7 @@ class Prototype {
             inntekter
         )
 
-    private val versjon = Versjon(VERSJON_ID, fakta, inngangsvilkår, mapOf(Versjon.Type.Web to søknad))
+    private val versjon = Versjon(VERSJON_ID, fakta, inngangsvilkår, mapOf(Versjon.Type.Web to faktagrupper))
 
     fun søknad(fnr: String) = versjon.søknad(fnr, Versjon.Type.Web)
 }

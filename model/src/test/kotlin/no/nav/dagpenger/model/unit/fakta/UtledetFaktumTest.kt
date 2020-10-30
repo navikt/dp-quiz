@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknad
-import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -13,7 +13,7 @@ import java.time.LocalDate
 import kotlin.test.assertEquals
 
 internal class UtledetFaktumTest {
-    private lateinit var søknad: Søknad
+    private lateinit var faktagrupper: Faktagrupper
     private lateinit var maks4: Faktum<LocalDate>
     private lateinit var maks3: Faktum<LocalDate>
     private lateinit var dato1: Faktum<LocalDate>
@@ -23,7 +23,7 @@ internal class UtledetFaktumTest {
 
     @BeforeEach
     fun setup() {
-        søknad = Fakta(
+        faktagrupper = Fakta(
             maks dato "maks dato" av 1 og 3 og 6 id 4,
             maks dato "maks dato" av 1 og 2 og 5 id 3,
             dato faktum "dato1" id 1,
@@ -32,12 +32,12 @@ internal class UtledetFaktumTest {
             dato faktum "dato6" id 6
         ).testSøknad()
 
-        maks4 = søknad dato 4
-        maks3 = søknad dato 3
-        dato1 = søknad dato 1
-        dato2 = søknad dato 2
-        dato5 = søknad dato 5
-        dato6 = søknad dato 6
+        maks4 = faktagrupper dato 4
+        maks3 = faktagrupper dato 3
+        dato1 = faktagrupper dato 1
+        dato2 = faktagrupper dato 2
+        dato5 = faktagrupper dato 5
+        dato6 = faktagrupper dato 6
     }
 
     @Test

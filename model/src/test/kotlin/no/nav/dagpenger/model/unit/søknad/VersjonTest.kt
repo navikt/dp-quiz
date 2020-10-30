@@ -7,8 +7,8 @@ import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.søknad.Versjon
 import no.nav.dagpenger.model.søknad.Versjon.Type.Web
 import org.junit.jupiter.api.BeforeEach
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class VersjonTest {
-    private lateinit var søknad: Søknad
+    private lateinit var faktagrupper: Faktagrupper
     @BeforeEach
     fun setup() {
         val fnr = "12345678910"
@@ -27,29 +27,29 @@ internal class VersjonTest {
             ja nei "f18" id 18
         )
         val prototypeSeksjon = Seksjon("seksjon", Rolle.søker, prototypeFakta id 15, prototypeFakta id 16, prototypeFakta id 17, prototypeFakta id 18)
-        val prototypeSøknad = Søknad(prototypeSeksjon)
+        val prototypeSøknad = Faktagrupper(prototypeSeksjon)
         val prototypeSubsumsjon = prototypeFakta heltall 15 er 6
         val versjon = Versjon(1, prototypeFakta, prototypeSubsumsjon, mapOf(Web to prototypeSøknad))
-        søknad = versjon.søknad(fnr, Web)
+        faktagrupper = versjon.søknad(fnr, Web)
     }
 
     @Test
     fun ` bygg fra prototype `() {
-        søknad.fakta.also { fakta ->
+        faktagrupper.fakta.also { fakta ->
             assertEquals(TemplateFaktum::class, fakta.id(16)::class)
             assertEquals(GeneratorFaktum::class, fakta.id(15)::class)
             assertEquals(4, fakta.size)
-            assertEquals(4, søknad[0].size)
+            assertEquals(4, faktagrupper[0].size)
             (fakta heltall 15).besvar(2, Rolle.søker)
             assertEquals(10, fakta.size)
-            assertEquals(10, søknad[0].size)
+            assertEquals(10, faktagrupper[0].size)
         }
     }
 
     @Test
     fun `bygg fra fakta`() {
-        søknad.heltall(15).besvar(2, Rolle.søker)
-        var nysøknad = søknad.fakta.søknad(Web)
+        faktagrupper.heltall(15).besvar(2, Rolle.søker)
+        var nysøknad = faktagrupper.fakta.søknad(Web)
         nysøknad.heltall("16.1").besvar(1, Rolle.søker)
         assertEquals(1, nysøknad.heltall("16.1").svar())
     }

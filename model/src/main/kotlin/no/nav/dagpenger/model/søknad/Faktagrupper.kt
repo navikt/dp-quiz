@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.util.UUID
 
-class Søknad private constructor(
+class Faktagrupper private constructor(
     val fakta: Fakta,
     internal val rootSubsumsjon: Subsumsjon,
     private val uuid: UUID,
@@ -59,7 +59,7 @@ class Søknad private constructor(
     fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
 
     internal fun bygg(fakta: Fakta, subsumsjon: Subsumsjon) =
-        Søknad(fakta, subsumsjon, UUID.randomUUID(), seksjoner.map { it.bygg(fakta) }.toMutableList())
+        Faktagrupper(fakta, subsumsjon, UUID.randomUUID(), seksjoner.map { it.bygg(fakta) }.toMutableList())
 
     internal fun nesteFakta() = rootSubsumsjon.nesteFakta()
 

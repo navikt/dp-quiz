@@ -2,25 +2,25 @@ package no.nav.dagpenger.model.marshalling
 
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.util.UUID
 
-class SøknadJsonBuilder(private val søknad: Søknad) : FaktumJsonBuilder(), SøknadVisitor {
+class SøknadJsonBuilder(private val faktagrupper: Faktagrupper) : FaktumJsonBuilder(), SøknadVisitor {
 
     init {
-        søknad.accept(this)
+        faktagrupper.accept(this)
     }
 
-    override fun preVisit(søknad: Søknad, uuid: UUID) {
+    override fun preVisit(faktagrupper: Faktagrupper, uuid: UUID) {
         mapper.createObjectNode().also { søknadNode ->
             objectNodes.add(0, søknadNode)
             søknadNode.put("uuid", uuid.toString())
         }
     }
 
-    override fun postVisit(søknad: Søknad) {
+    override fun postVisit(faktagrupper: Faktagrupper) {
         objectNodes.removeAt(0).also { søknadNode ->
             root = søknadNode
             søknadNode.set("seksjoner", arrayNodes.removeAt(0))

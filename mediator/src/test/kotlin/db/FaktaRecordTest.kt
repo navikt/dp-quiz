@@ -10,7 +10,7 @@ import kotliquery.using
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Versjon
 import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Disabled
@@ -25,8 +25,8 @@ internal class FaktaRecordTest {
         internal const val UNG_PERSON_FNR_2018 = "12020052345"
     }
 
-    private lateinit var originalSøknad: Søknad
-    private lateinit var rehydrertSøknad: Søknad
+    private lateinit var originalFaktagrupper: Faktagrupper
+    private lateinit var rehydrertFaktagrupper: Faktagrupper
     private lateinit var faktaRecord: FaktaRecord
 
     @Test
@@ -48,11 +48,11 @@ internal class FaktaRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknad()
 
-            originalSøknad.ja(1).besvar(true, Rolle.søker)
-            originalSøknad.dato(2).besvar(LocalDate.now(), Rolle.søker)
-            originalSøknad.inntekt(6).besvar(10000.årlig, Rolle.søker)
-            originalSøknad.heltall(16).besvar(123, Rolle.søker)
-            originalSøknad.dokument(11).besvar(Dokument(1.januar.atStartOfDay()), Rolle.søker)
+            originalFaktagrupper.ja(1).besvar(true, Rolle.søker)
+            originalFaktagrupper.dato(2).besvar(LocalDate.now(), Rolle.søker)
+            originalFaktagrupper.inntekt(6).besvar(10000.årlig, Rolle.søker)
+            originalFaktagrupper.heltall(16).besvar(123, Rolle.søker)
+            originalFaktagrupper.dokument(11).besvar(Dokument(1.januar.atStartOfDay()), Rolle.søker)
 
             hentFørstFakta()
         }
@@ -63,16 +63,16 @@ internal class FaktaRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknad()
 
-            originalSøknad.dato(2).besvar(2.januar, Rolle.søker)
-            originalSøknad.dato(13).besvar(13.januar, Rolle.søker)
-            originalSøknad.ja(19).besvar(true, Rolle.søker)
+            originalFaktagrupper.dato(2).besvar(2.januar, Rolle.søker)
+            originalFaktagrupper.dato(13).besvar(13.januar, Rolle.søker)
+            originalFaktagrupper.ja(19).besvar(true, Rolle.søker)
             hentFørstFakta()
             assertRecordCount(3, "gammel_faktum_verdi")
-            assertTrue(rehydrertSøknad.ja(19).svar())
-            originalSøknad.dato(2).besvar(22.januar, Rolle.søker)
+            assertTrue(rehydrertFaktagrupper.ja(19).svar())
+            originalFaktagrupper.dato(2).besvar(22.januar, Rolle.søker)
             hentFørstFakta()
             assertRecordCount(5, "gammel_faktum_verdi")
-            assertFalse(rehydrertSøknad.ja(19).erBesvart())
+            assertFalse(rehydrertFaktagrupper.ja(19).erBesvart())
         }
     }
 
@@ -80,16 +80,16 @@ internal class FaktaRecordTest {
     fun `Genererte template faktum`() {
         Postgres.withMigratedDb {
             byggOriginalSøknad()
-            assertEquals(21, originalSøknad.fakta.map { it }.size)
+            assertEquals(21, originalFaktagrupper.fakta.map { it }.size)
             hentFørstFakta()
-            originalSøknad = rehydrertSøknad
+            originalFaktagrupper = rehydrertFaktagrupper
 
-            originalSøknad.heltall(15).besvar(3, Rolle.søker)
-            originalSøknad.heltall("16.1").besvar(5, Rolle.søker)
-            assertEquals(30, originalSøknad.fakta.map { it }.size)
+            originalFaktagrupper.heltall(15).besvar(3, Rolle.søker)
+            originalFaktagrupper.heltall("16.1").besvar(5, Rolle.søker)
+            assertEquals(30, originalFaktagrupper.fakta.map { it }.size)
 
             hentFørstFakta()
-            assertEquals(30, rehydrertSøknad.fakta.map { it }.size)
+            assertEquals(30, rehydrertFaktagrupper.fakta.map { it }.size)
         }
     }
 
@@ -98,18 +98,18 @@ internal class FaktaRecordTest {
     fun `redusert template faktum`() {
         Postgres.withMigratedDb {
             byggOriginalSøknad()
-            assertEquals(21, originalSøknad.fakta.map { it }.size)
+            assertEquals(21, originalFaktagrupper.fakta.map { it }.size)
             hentFørstFakta()
-            originalSøknad = rehydrertSøknad
+            originalFaktagrupper = rehydrertFaktagrupper
 
-            originalSøknad.heltall(15).besvar(3, Rolle.søker)
-            originalSøknad.heltall("16.2").besvar(162, Rolle.søker)
-            originalSøknad.heltall("16.3").besvar(163, Rolle.søker)
+            originalFaktagrupper.heltall(15).besvar(3, Rolle.søker)
+            originalFaktagrupper.heltall("16.2").besvar(162, Rolle.søker)
+            originalFaktagrupper.heltall("16.3").besvar(163, Rolle.søker)
             hentFørstFakta()
-            originalSøknad = rehydrertSøknad
-            originalSøknad.heltall(15).besvar(2, Rolle.søker)
-            originalSøknad.heltall("16.1").besvar(161, Rolle.søker)
-            originalSøknad.heltall("16.2").besvar(1622, Rolle.søker)
+            originalFaktagrupper = rehydrertFaktagrupper
+            originalFaktagrupper.heltall(15).besvar(2, Rolle.søker)
+            originalFaktagrupper.heltall("16.1").besvar(161, Rolle.søker)
+            originalFaktagrupper.heltall("16.2").besvar(1622, Rolle.søker)
             hentFørstFakta()
         }
     }
@@ -119,26 +119,26 @@ internal class FaktaRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknad()
 
-            originalSøknad.dato(3).besvar(3.januar, Rolle.søker)
-            originalSøknad.dato(4).besvar(4.januar, Rolle.søker)
-            originalSøknad.dato(5).besvar(5.januar, Rolle.søker)
+            originalFaktagrupper.dato(3).besvar(3.januar, Rolle.søker)
+            originalFaktagrupper.dato(4).besvar(4.januar, Rolle.søker)
+            originalFaktagrupper.dato(5).besvar(5.januar, Rolle.søker)
             hentFørstFakta()
-            assertEquals(5.januar, rehydrertSøknad.dato(345).svar())
+            assertEquals(5.januar, rehydrertFaktagrupper.dato(345).svar())
         }
     }
 
     private fun hentFørstFakta() {
-        faktaRecord.lagre(originalSøknad.fakta)
+        faktaRecord.lagre(originalFaktagrupper.fakta)
         val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         faktaRecord = FaktaRecord()
-        rehydrertSøknad = faktaRecord.hent(uuid, Versjon.Type.Web)
-        assertDeepEquals(originalSøknad, rehydrertSøknad)
+        rehydrertFaktagrupper = faktaRecord.hent(uuid, Versjon.Type.Web)
+        assertDeepEquals(originalFaktagrupper, rehydrertFaktagrupper)
     }
 
     private fun byggOriginalSøknad() {
         FaktumTable(prototypeFakta1, 1)
         faktaRecord = FaktaRecord()
-        originalSøknad = faktaRecord.ny(UNG_PERSON_FNR_2018, Versjon.Type.Web)
+        originalFaktagrupper = faktaRecord.ny(UNG_PERSON_FNR_2018, Versjon.Type.Web)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

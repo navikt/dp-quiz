@@ -14,7 +14,7 @@ internal class FaktaJsonBuilderTest {
 
     @BeforeEach
     fun setup() {
-        fakta = NyEksempel().søknad.fakta
+        fakta = NyEksempel().faktagrupper.fakta
     }
 
     @Test

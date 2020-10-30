@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand.Ukjent
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.erBesvart
 import no.nav.dagpenger.model.regel.Regel
-import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 open class EnkelSubsumsjon protected constructor(
@@ -29,11 +29,11 @@ open class EnkelSubsumsjon protected constructor(
         }
     }
 
-    override fun deepCopy(søknad: Søknad) = deepCopy(
-        regel.deepCopy(søknad),
-        subsumsjonFakta.deepCopy(søknad),
-        gyldigSubsumsjon.deepCopy(søknad),
-        ugyldigSubsumsjon.deepCopy(søknad)
+    override fun deepCopy(faktagrupper: Faktagrupper) = deepCopy(
+        regel.deepCopy(faktagrupper),
+        subsumsjonFakta.deepCopy(faktagrupper),
+        gyldigSubsumsjon.deepCopy(faktagrupper),
+        ugyldigSubsumsjon.deepCopy(faktagrupper)
     )
     override fun bygg(fakta: Fakta) = deepCopy(
         regel.bygg(fakta),

@@ -23,8 +23,8 @@ import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
 import no.nav.dagpenger.model.subsumsjon.uansett
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import no.nav.dagpenger.model.søknad.Versjon
 import no.nav.dagpenger.model.søknad.Versjon.Type.Web
 
@@ -117,8 +117,8 @@ internal class NyEksempel {
     private val prototypeSeksjon8 =
         Seksjon("seksjon8", Rolle.saksbehandler, p6Inntekt, p7Inntekt, p12Boolean, p14Boolean, p18Boolean, p19Boolean)
 
-    private val webPrototypeSøknad: Søknad =
-        Søknad(
+    private val webPrototypeFaktagrupper: Faktagrupper =
+        Faktagrupper(
             prototypeSeksjon1,
             prototypeSeksjon2,
             prototypeSeksjon3,
@@ -139,9 +139,9 @@ internal class NyEksempel {
     internal lateinit var seksjon8: Seksjon
     internal lateinit var rootSubsumsjon: Subsumsjon
 
-    private val versjon = Versjon(1, prototypeFakta, prototypeSubsumsjon, mapOf(Web to webPrototypeSøknad))
+    private val versjon = Versjon(1, prototypeFakta, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
 
-    internal val søknad: Søknad by lazy {
+    internal val faktagrupper: Faktagrupper by lazy {
 
         versjon.søknad("12345678901", Web).also {
             seksjon1 = it[0]

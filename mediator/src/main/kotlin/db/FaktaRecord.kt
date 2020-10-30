@@ -16,7 +16,7 @@ import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.fakta.UtledetFaktum
-import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Versjon
 import no.nav.dagpenger.model.visitor.FaktaVisitor
 import java.time.LocalDate
@@ -27,7 +27,7 @@ import java.util.UUID
 class FaktaRecord : FaktaPersistance {
     private lateinit var originalSvar: Map<String, Any?>
 
-    override fun ny(fnr: String, søknadType: Versjon.Type): Søknad {
+    override fun ny(fnr: String, søknadType: Versjon.Type): Faktagrupper {
         return Versjon.siste.søknad(fnr, søknadType).also { søknad ->
             NyFakta(søknad.fakta)
             originalSvar = svarMap(søknad.fakta)
@@ -38,7 +38,7 @@ class FaktaRecord : FaktaPersistance {
         faktum.id to (if (faktum.erBesvart()) faktum.svar() else null)
     }.toMap()
 
-    override fun hent(uuid: UUID, søknadType: Versjon.Type): Søknad {
+    override fun hent(uuid: UUID, søknadType: Versjon.Type): Faktagrupper {
         val (fnr, versjonId) = using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(

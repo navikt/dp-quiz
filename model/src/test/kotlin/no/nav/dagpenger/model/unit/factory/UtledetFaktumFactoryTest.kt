@@ -10,11 +10,10 @@ import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.lang.IllegalStateException
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -30,7 +29,7 @@ internal class UtledetFaktumFactoryTest {
             maks dato "maks dato" av 1 og 2 og 3 id 123
         )
 
-        val søknad = Søknad(
+        val søknad = Faktagrupper(
             fakta,
             Seksjon(
                 "seksjon",
@@ -64,7 +63,7 @@ internal class UtledetFaktumFactoryTest {
             maks inntekt "maks inntekt" av 1 og 2 og 3 id 123
         )
 
-        val søknad = Søknad(
+        val søknad = Faktagrupper(
             fakta,
             Seksjon(
                 "seksjon",
@@ -98,7 +97,7 @@ internal class UtledetFaktumFactoryTest {
             alle ja "alle ja" av 1 og 2 og 3 id 123
         )
 
-        val søknad = Søknad(
+        val søknad = Faktagrupper(
             fakta,
             Seksjon(
                 "seksjon",

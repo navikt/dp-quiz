@@ -10,45 +10,45 @@ import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.sisteDagMedLønn
 import no.nav.dagpenger.model.helpers.søknadsdato
 import no.nav.dagpenger.model.helpers.ønsketdato
+import no.nav.dagpenger.model.søknad.Faktagrupper
 import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Søknad
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class SeksjonTest {
-    private lateinit var søknad: Søknad
+    private lateinit var faktagrupper: Faktagrupper
     private lateinit var datofakta: Seksjon
     private lateinit var inntektfakta: Seksjon
 
     @BeforeEach
     fun setup() {
-        søknad = eksempelSøknad()
-        datofakta = søknad[0]
-        inntektfakta = søknad[1]
+        faktagrupper = eksempelSøknad()
+        datofakta = faktagrupper[0]
+        inntektfakta = faktagrupper[1]
     }
 
     @Test
     fun `finne faktagrupper som skal spørres neste`() {
-        assertEquals(datofakta, søknad.nesteSeksjon())
+        assertEquals(datofakta, faktagrupper.nesteSeksjon())
 
         bursdag67.besvar(31.januar)
         sisteDagMedLønn.besvar(1.januar)
-        assertEquals(datofakta, søknad.nesteSeksjon())
+        assertEquals(datofakta, faktagrupper.nesteSeksjon())
 
         inntekt15G.besvar(100000.månedlig)
         inntekt3G.besvar(1000.månedlig)
-        assertEquals(datofakta, søknad.nesteSeksjon())
+        assertEquals(datofakta, faktagrupper.nesteSeksjon())
 
         ønsketdato.besvar(1.januar)
         søknadsdato.besvar(1.januar)
         dimisjonsdato.besvar(1.januar)
-        assertEquals(inntektfakta, søknad.nesteSeksjon())
+        assertEquals(inntektfakta, faktagrupper.nesteSeksjon())
     }
 
     @Test
     fun `søknad er en collection`() {
-        assertEquals(2, søknad.size)
-        assertEquals(10, søknad.flatten().size)
+        assertEquals(2, faktagrupper.size)
+        assertEquals(10, faktagrupper.flatten().size)
     }
 }

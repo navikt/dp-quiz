@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum.Companion.deepCopy
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.regel.Regel
-import no.nav.dagpenger.model.søknad.Søknad
+import no.nav.dagpenger.model.søknad.Faktagrupper
 
 class GeneratorSubsumsjon internal constructor(
     regel: Regel,
@@ -28,10 +28,10 @@ class GeneratorSubsumsjon internal constructor(
         }
     }
 
-    override fun deepCopy(søknad: Søknad) = GeneratorSubsumsjon(
-        regel.deepCopy(søknad),
-        setOf(faktum).deepCopy(søknad).first() as GeneratorFaktum,
-        makro.deepCopy(søknad)
+    override fun deepCopy(faktagrupper: Faktagrupper) = GeneratorSubsumsjon(
+        regel.deepCopy(faktagrupper),
+        setOf(faktum).deepCopy(faktagrupper).first() as GeneratorFaktum,
+        makro.deepCopy(faktagrupper)
     )
 
     override fun bygg(fakta: Fakta) = GeneratorSubsumsjon(
