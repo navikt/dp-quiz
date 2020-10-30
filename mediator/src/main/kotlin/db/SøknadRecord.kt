@@ -23,7 +23,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-// Understands a relational representation of a Fakta
+// Understands a relational representation of a Søknad
 class SøknadRecord : SøknadPersistance {
     private lateinit var originalSvar: Map<String, Any?>
 

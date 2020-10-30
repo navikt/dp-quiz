@@ -20,28 +20,28 @@ internal class VersjonTest {
     @BeforeEach
     fun setup() {
         val fnr = "12345678910"
-        val prototypeFakta = Søknad(
+        val prototypeSøknad = Søknad(
             heltall faktum "f15" id 15 genererer 16 og 17 og 18,
             heltall faktum "f16" id 16,
             ja nei "f17" id 17,
             ja nei "f18" id 18
         )
-        val prototypeSeksjon = Seksjon("seksjon", Rolle.søker, prototypeFakta id 15, prototypeFakta id 16, prototypeFakta id 17, prototypeFakta id 18)
+        val prototypeSeksjon = Seksjon("seksjon", Rolle.søker, prototypeSøknad id 15, prototypeSøknad id 16, prototypeSøknad id 17, prototypeSøknad id 18)
         val prototypeFaktagrupper = Faktagrupper(prototypeSeksjon)
-        val prototypeSubsumsjon = prototypeFakta heltall 15 er 6
-        val versjon = Versjon(1, prototypeFakta, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
+        val prototypeSubsumsjon = prototypeSøknad heltall 15 er 6
+        val versjon = Versjon(1, prototypeSøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
         faktagrupper = versjon.faktagrupper(fnr, Web)
     }
 
     @Test
     fun ` bygg fra prototype `() {
-        faktagrupper.søknad.also { fakta ->
-            assertEquals(TemplateFaktum::class, fakta.id(16)::class)
-            assertEquals(GeneratorFaktum::class, fakta.id(15)::class)
-            assertEquals(4, fakta.size)
+        faktagrupper.søknad.also { søknad ->
+            assertEquals(TemplateFaktum::class, søknad.id(16)::class)
+            assertEquals(GeneratorFaktum::class, søknad.id(15)::class)
+            assertEquals(4, søknad.size)
             assertEquals(4, faktagrupper[0].size)
-            (fakta heltall 15).besvar(2, Rolle.søker)
-            assertEquals(10, fakta.size)
+            (søknad heltall 15).besvar(2, Rolle.søker)
+            assertEquals(10, søknad.size)
             assertEquals(10, faktagrupper[0].size)
         }
     }

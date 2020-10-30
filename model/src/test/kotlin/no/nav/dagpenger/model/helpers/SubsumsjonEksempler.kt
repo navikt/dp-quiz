@@ -34,7 +34,7 @@ internal lateinit var inntekt15G: GrunnleggendeFaktum<Inntekt>
 
 /* ktlint-disable parameter-list-wrapping */
 internal fun eksempelSøknad(): Faktagrupper {
-    val prototypeFakta = Søknad(
+    val prototypeSøknad = Søknad(
         dato faktum "Datoen du fyller 67" id 1,
         dato faktum "Datoen du søker om dagpenger" id 2,
         dato faktum "Datoen du ønsker dagpenger fra" id 3,
@@ -45,17 +45,17 @@ internal fun eksempelSøknad(): Faktagrupper {
         maks dato "Hvilken dato vedtaket skal gjelde fra" av 2 og 3 og 4 id 8,
         inntekt faktum "3G" id 9,
         inntekt faktum "1.5G" id 10
-    ).also { fakta ->
-        bursdag67 = fakta.dato(1) as GrunnleggendeFaktum<LocalDate>
-        søknadsdato = fakta.dato(2) as GrunnleggendeFaktum<LocalDate>
-        ønsketdato = fakta.dato(3) as GrunnleggendeFaktum<LocalDate>
-        sisteDagMedLønn = fakta.dato(4) as GrunnleggendeFaktum<LocalDate>
-        inntektSiste3år = fakta.inntekt(5) as GrunnleggendeFaktum<Inntekt>
-        inntektSisteÅr = fakta.inntekt(6) as GrunnleggendeFaktum<Inntekt>
-        dimisjonsdato = fakta.dato(7) as GrunnleggendeFaktum<LocalDate>
-        virkningstidspunkt = fakta.dato(8)
-        inntekt3G = fakta.inntekt(9) as GrunnleggendeFaktum<Inntekt>
-        inntekt15G = fakta.inntekt(10) as GrunnleggendeFaktum<Inntekt>
+    ).also { søknad ->
+        bursdag67 = søknad.dato(1) as GrunnleggendeFaktum<LocalDate>
+        søknadsdato = søknad.dato(2) as GrunnleggendeFaktum<LocalDate>
+        ønsketdato = søknad.dato(3) as GrunnleggendeFaktum<LocalDate>
+        sisteDagMedLønn = søknad.dato(4) as GrunnleggendeFaktum<LocalDate>
+        inntektSiste3år = søknad.inntekt(5) as GrunnleggendeFaktum<Inntekt>
+        inntektSisteÅr = søknad.inntekt(6) as GrunnleggendeFaktum<Inntekt>
+        dimisjonsdato = søknad.dato(7) as GrunnleggendeFaktum<LocalDate>
+        virkningstidspunkt = søknad.dato(8)
+        inntekt3G = søknad.inntekt(9) as GrunnleggendeFaktum<Inntekt>
+        inntekt15G = søknad.inntekt(10) as GrunnleggendeFaktum<Inntekt>
     }
 
     val prototypeSubsumsjon = "inngangsvilkår".alle(
@@ -104,7 +104,7 @@ internal fun eksempelSøknad(): Faktagrupper {
 
     return Versjon(
         1,
-        prototypeFakta,
+        prototypeSøknad,
         prototypeSubsumsjon,
         mapOf(Web to prototypeWebSøknad)
     ).faktagrupper("", Web).also { faktagrupper ->

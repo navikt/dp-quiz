@@ -15,7 +15,7 @@ internal class GyldigeValgTest {
 
     companion object {
         private enum class Choice { A, B, C, D, E }
-        private val prototypeFakta = Søknad(
+        private val prototypeSøknad = Søknad(
             choice faktum "multiple choice" id 1,
             choice faktum "valid choices" id 2,
             dokument faktum "dokument" id 3,

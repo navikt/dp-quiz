@@ -30,7 +30,7 @@ import no.nav.dagpenger.model.subsumsjon.uansett
 
 internal class NyEksempel {
 
-    val prototypeFakta = Søknad(
+    val prototypeSøknad = Søknad(
         ja nei "f1" id 1,
         dato faktum "f2" id 2,
         dato faktum "f3" id 3,
@@ -53,26 +53,26 @@ internal class NyEksempel {
         maks dato "345" av 3 og 4 og 5 id 345
     )
 
-    private val p1Boolean = prototypeFakta ja 1
-    private val p2Dato = prototypeFakta dato 2
-    private val p3Dato = prototypeFakta dato 3
-    private val p4Dato = prototypeFakta dato 4
-    private val p5Dato = prototypeFakta dato 5
-    private val p_3_4_5Dato = prototypeFakta dato 345
-    private val p6Inntekt = prototypeFakta inntekt 6
-    private val p7Inntekt = prototypeFakta inntekt 7
-    private val p8Inntekt = prototypeFakta inntekt 8
-    private val p9Inntekt = prototypeFakta inntekt 9
-    private val p10Boolean = prototypeFakta ja 10
-    private val p11Dokument = prototypeFakta dokument 11
-    private val p12Boolean = prototypeFakta ja 12
-    private val p13Dato = prototypeFakta dato 13
-    private val p14Boolean = prototypeFakta ja 14
-    private val p15Int = prototypeFakta generator 15
-    private val p16Int = prototypeFakta heltall 16
-    private val p17Boolean = prototypeFakta ja 17
-    private val p18Boolean = prototypeFakta ja 18
-    private val p19Boolean = prototypeFakta ja 19
+    private val p1Boolean = prototypeSøknad ja 1
+    private val p2Dato = prototypeSøknad dato 2
+    private val p3Dato = prototypeSøknad dato 3
+    private val p4Dato = prototypeSøknad dato 4
+    private val p5Dato = prototypeSøknad dato 5
+    private val p_3_4_5Dato = prototypeSøknad dato 345
+    private val p6Inntekt = prototypeSøknad inntekt 6
+    private val p7Inntekt = prototypeSøknad inntekt 7
+    private val p8Inntekt = prototypeSøknad inntekt 8
+    private val p9Inntekt = prototypeSøknad inntekt 9
+    private val p10Boolean = prototypeSøknad ja 10
+    private val p11Dokument = prototypeSøknad dokument 11
+    private val p12Boolean = prototypeSøknad ja 12
+    private val p13Dato = prototypeSøknad dato 13
+    private val p14Boolean = prototypeSøknad ja 14
+    private val p15Int = prototypeSøknad generator 15
+    private val p16Int = prototypeSøknad heltall 16
+    private val p17Boolean = prototypeSøknad ja 17
+    private val p18Boolean = prototypeSøknad ja 18
+    private val p19Boolean = prototypeSøknad ja 19
 
     private val datosjekk = "datosjekk".alle(
         p1Boolean er true,
@@ -139,7 +139,7 @@ internal class NyEksempel {
     internal lateinit var seksjon8: Seksjon
     internal lateinit var rootSubsumsjon: Subsumsjon
 
-    private val versjon = Versjon(1, prototypeFakta, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
+    private val versjon = Versjon(1, prototypeSøknad, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
 
     internal val faktagrupper: Faktagrupper by lazy {
 

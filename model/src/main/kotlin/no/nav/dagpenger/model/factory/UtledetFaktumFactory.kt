@@ -38,10 +38,6 @@ class UtledetFaktumFactory<T : Comparable<T>>(
 
     infix fun nei(navn: String) = this.also { childNeiNavn.add(navn) }
 
-    infix fun av(factum: Faktum<T>) = this.also { fakta.add(factum) }
-
-    infix fun og(factum: Faktum<T>) = this.also { fakta.add(factum) }
-
     override fun og(otherId: Int) = this.also { childIder.add(otherId) }
 
     infix fun av(otherId: Int) = this.also { childIder.add(otherId) }
