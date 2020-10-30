@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.fakta
+package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.faktagrupper.Seksjon

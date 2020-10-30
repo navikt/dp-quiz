@@ -7,11 +7,11 @@ import helpers.januar
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.dagpenger.model.fakta.Dokument
-import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
+import no.nav.dagpenger.model.faktum.Dokument
+import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test

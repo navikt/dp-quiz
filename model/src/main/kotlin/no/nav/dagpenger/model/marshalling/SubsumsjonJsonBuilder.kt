@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.node.ObjectNode
-import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon

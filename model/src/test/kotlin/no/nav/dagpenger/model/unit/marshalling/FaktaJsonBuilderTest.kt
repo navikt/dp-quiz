@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.unit.marshalling
 
-import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.NyEksempel
 import no.nav.dagpenger.model.marshalling.FaktaJsonBuilder
 import org.junit.jupiter.api.BeforeEach

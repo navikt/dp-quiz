@@ -1,9 +1,9 @@
-package no.nav.dagpenger.model.unit.fakta
+package no.nav.dagpenger.model.unit.faktum
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknad
 import org.junit.jupiter.api.BeforeEach

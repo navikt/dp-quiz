@@ -1,9 +1,9 @@
 package no.nav.dagpenger.model.faktagrupper
 
-import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.FaktumId
-import no.nav.dagpenger.model.fakta.TypedFaktum
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.FaktumId
+import no.nav.dagpenger.model.faktum.TypedFaktum
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor

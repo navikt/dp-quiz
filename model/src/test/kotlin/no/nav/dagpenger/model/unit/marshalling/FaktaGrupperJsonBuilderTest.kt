@@ -1,10 +1,10 @@
 package no.nav.dagpenger.model.unit.marshalling
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.FaktaGrupperJsonBuilder
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

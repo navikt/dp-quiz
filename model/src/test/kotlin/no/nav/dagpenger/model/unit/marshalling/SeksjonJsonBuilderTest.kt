@@ -2,9 +2,9 @@ package no.nav.dagpenger.model.unit.marshalling
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.faktagrupper.Seksjon
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.testSøknad
 import no.nav.dagpenger.model.marshalling.SeksjonJsonBuilder
 import org.junit.jupiter.api.Test

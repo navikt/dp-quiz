@@ -1,17 +1,17 @@
-package no.nav.dagpenger.model.unit.fakta
+package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.fakta.Dokument
-import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.GeneratorFaktum
-import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
+import no.nav.dagpenger.model.faktum.Dokument
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.GeneratorFaktum
+import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.januar
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue

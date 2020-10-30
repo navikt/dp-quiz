@@ -1,10 +1,10 @@
 package no.nav.dagpenger.model.faktagrupper
 
-import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
-import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.TemplateFaktum
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 
 class Seksjon private constructor(

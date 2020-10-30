@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.factory
 
-import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.FaktumId
+import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.FaktumId
 
 abstract class FaktumFactory<T : Comparable<T>> {
     protected var rootId = 0

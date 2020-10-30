@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.subsumsjon
 
-import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.visitor.PrettyPrint
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 

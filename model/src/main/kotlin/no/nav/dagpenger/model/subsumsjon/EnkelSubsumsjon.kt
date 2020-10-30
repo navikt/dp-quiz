@@ -1,12 +1,12 @@
 package no.nav.dagpenger.model.subsumsjon
 
-import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.Faktum.Companion.deepCopy
-import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand.Ukjent
-import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
-import no.nav.dagpenger.model.fakta.erBesvart
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.Faktum.Companion.deepCopy
+import no.nav.dagpenger.model.faktum.Faktum.FaktumTilstand.Ukjent
+import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.erBesvart
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 

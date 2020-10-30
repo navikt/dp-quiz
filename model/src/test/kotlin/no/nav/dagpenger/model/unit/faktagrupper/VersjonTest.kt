@@ -2,14 +2,14 @@ package no.nav.dagpenger.model.unit.faktagrupper
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.GeneratorFaktum
-import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.GeneratorFaktum
+import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.regel.er
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

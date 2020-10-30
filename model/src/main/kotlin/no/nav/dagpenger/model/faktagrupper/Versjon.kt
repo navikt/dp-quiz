@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.faktagrupper
 
-import no.nav.dagpenger.model.fakta.Fakta
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
 

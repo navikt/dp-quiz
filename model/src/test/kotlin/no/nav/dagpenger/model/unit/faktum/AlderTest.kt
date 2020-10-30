@@ -1,6 +1,6 @@
-package no.nav.dagpenger.model.unit.fakta
+package no.nav.dagpenger.model.unit.faktum
 
-import no.nav.dagpenger.model.fakta.Alder
+import no.nav.dagpenger.model.faktum.Alder
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import org.junit.jupiter.api.Assertions.assertEquals

@@ -1,8 +1,8 @@
 package db
 
-import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
+import no.nav.dagpenger.model.faktum.Fakta
 import java.time.LocalDateTime
 import java.util.UUID
 

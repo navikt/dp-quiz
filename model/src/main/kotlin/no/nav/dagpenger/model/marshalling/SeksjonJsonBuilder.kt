@@ -1,8 +1,8 @@
 package no.nav.dagpenger.model.marshalling
 
-import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.faktagrupper.Seksjon
+import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 
 class SeksjonJsonBuilder(private val seksjon: Seksjon) : FaktumJsonBuilder(), SøknadVisitor {

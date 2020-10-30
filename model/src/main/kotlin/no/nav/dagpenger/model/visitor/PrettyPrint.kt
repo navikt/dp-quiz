@@ -1,11 +1,11 @@
 package no.nav.dagpenger.model.visitor
 
 import no.nav.dagpenger.model.factory.FaktaRegel
-import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.Faktum.FaktumTilstand
-import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
-import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.UtledetFaktum
+import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.Faktum.FaktumTilstand
+import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon

@@ -4,11 +4,10 @@ import no.nav.dagpenger.model.factory.FaktaRegel.Companion.ALLE_JA
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.EN_ELLER_INGEN
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MAKS_DATO
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MAKS_INNTEKT
-import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.valg
-import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.FaktumId
-import no.nav.dagpenger.model.fakta.Inntekt
-import no.nav.dagpenger.model.fakta.UtledetFaktum
+import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.FaktumId
+import no.nav.dagpenger.model.faktum.Inntekt
+import no.nav.dagpenger.model.faktum.UtledetFaktum
 import java.time.LocalDate
 
 class UtledetFaktumFactory<T : Comparable<T>>(

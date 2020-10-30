@@ -1,6 +1,6 @@
-package no.nav.dagpenger.model.unit.fakta
+package no.nav.dagpenger.model.unit.faktum
 
-import no.nav.dagpenger.model.fakta.FaktumId
+import no.nav.dagpenger.model.faktum.FaktumId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test

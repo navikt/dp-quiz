@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.fakta
+package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor

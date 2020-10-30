@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
-import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
+import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.helpers.bursdag67
 import no.nav.dagpenger.model.helpers.dimisjonsdato
 import no.nav.dagpenger.model.helpers.eksempelSøknad

@@ -6,12 +6,12 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.fakta.Dokument
-import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.Inntekt.Companion.daglig
-import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
-import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.Dokument
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.Inntekt.Companion.daglig
+import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
+import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknad
 import no.nav.dagpenger.model.unit.factory.BaseFaktumFactoryTest.Companion.Valg.A
@@ -19,7 +19,6 @@ import no.nav.dagpenger.model.unit.factory.BaseFaktumFactoryTest.Companion.Valg.
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.lang.IllegalStateException
 import kotlin.math.roundToInt
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

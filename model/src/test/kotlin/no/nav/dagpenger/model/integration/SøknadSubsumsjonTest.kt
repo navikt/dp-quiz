@@ -1,13 +1,13 @@
 package no.nav.dagpenger.model.integration
 
-import no.nav.dagpenger.model.fakta.Dokument
-import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
-import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
-import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
+import no.nav.dagpenger.model.faktum.Dokument
+import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
+import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.NyEksempel
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar

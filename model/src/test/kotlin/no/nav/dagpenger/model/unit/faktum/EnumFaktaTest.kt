@@ -1,8 +1,8 @@
-package no.nav.dagpenger.model.unit.fakta
+package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory
-import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.helpers.testSøknad
 import no.nav.dagpenger.model.regel.er
 import org.junit.jupiter.api.Test

@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.fakta
+package no.nav.dagpenger.model.faktum
 
 import java.time.LocalDate
 
