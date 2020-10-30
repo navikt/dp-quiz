@@ -4,13 +4,7 @@ import DataSourceBuilder.dataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.FaktaRegel
-import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
@@ -113,24 +107,22 @@ class FaktumTable(fakta: Fakta, private val versjonId: Int) : FaktaVisitor {
     // Understands an encoding of basic Faktum types
     internal class ClassKode() {
         companion object {
-            private val factoryMap = mutableMapOf<Int, (String, Int) -> FaktumFactory<*>>()
             private val kodeMap = mutableMapOf<Class<*>, Int>()
 
-            private fun byggMap(clazz: Class<*>, kode: Int, block: (String, Int) -> FaktumFactory<*>) {
-                factoryMap[kode] = block
+            private fun byggMap(clazz: Class<*>, kode: Int) {
                 kodeMap[clazz] = kode
             }
 
             init {
-                byggMap(Int::class.java, 1) { navn, rootId -> heltall faktum navn id rootId }
-                byggMap(Boolean::class.java, 2) { navn, rootId -> ja nei navn id rootId }
-                byggMap(LocalDate::class.java, 3) { navn, rootId -> dato faktum navn id rootId }
-                byggMap(Dokument::class.java, 4) { navn, rootId -> dokument faktum navn id rootId }
-                byggMap(Inntekt::class.java, 5) { navn, rootId -> inntekt faktum navn id rootId }
+                byggMap(Int::class.java, 1)
+                byggMap(Boolean::class.java, 2)
+                byggMap(LocalDate::class.java, 3)
+                byggMap(Dokument::class.java, 4)
+                byggMap(Inntekt::class.java, 5)
+                byggMap(Enum::class.java, 6)
             }
 
             operator fun get(clazz: Class<*>) = kodeMap[clazz] ?: throw NoSuchElementException("Ukjent klasse $clazz")
-            operator fun get(kode: Int) = factoryMap[kode] ?: throw NoSuchElementException("Ukjent kode $kode")
         }
     }
 }

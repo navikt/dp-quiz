@@ -58,6 +58,7 @@ class FaktaRecord : FaktaPersistance {
                     if (row.dato != null) (faktum as Faktum<LocalDate>).besvar(row.dato)
                     if (row.inntekt != null) (faktum as Faktum<Inntekt>).besvar(row.inntekt)
                     if (row.opplastet != null && row.url != null) (faktum as Faktum<Dokument>).besvar(Dokument(row.opplastet, row.url))
+                    // if (row.valg != null) (faktum)
                 }
             }
         }.also { søknad ->
@@ -81,6 +82,7 @@ class FaktaRecord : FaktaPersistance {
                                 faktum_verdi.ja_nei AS ja_nei, 
                                 faktum_verdi.dato AS dato, 
                                 faktum_verdi.aarlig_inntekt AS aarlig_inntekt, 
+                                faktum_verdi.valg AS valg,
                                 dokument.url AS url, 
                                 dokument.opplastet AS opplastet 
                             FROM faktum_verdi
@@ -97,6 +99,7 @@ class FaktaRecord : FaktaPersistance {
                         it.anyOrNull("ja_nei") as Boolean?,
                         it.localDateOrNull("dato"),
                         it.doubleOrNull("aarlig_inntekt")?.årlig,
+                        it.intOrNull("valg"),
                         it.stringOrNull("url"),
                         it.localDateTimeOrNull("opplastet")
                     )
@@ -112,6 +115,7 @@ class FaktaRecord : FaktaPersistance {
         val janei: Boolean?,
         val dato: LocalDate?,
         val inntekt: Inntekt?,
+        val valg: Int?,
         val url: String?,
         val opplastet: LocalDateTime?
     )
@@ -126,6 +130,7 @@ class FaktaRecord : FaktaPersistance {
             is Int -> """UPDATE faktum_verdi  SET heltall = $svar,  opprettet=NOW() AT TIME ZONE 'utc' """
             is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
 |                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id), opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
+            is Enum<*> -> """UPDATE faktum_verdi  SET valg = ${svar.ordinal},  opprettet=NOW() AT TIME ZONE 'utc' """
             else -> throw IllegalArgumentException("Ugyldig type: ${svar.javaClass}")
         } + """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, fakta, faktum
             WHERE fakta.id = faktum_verdi.fakta_id AND faktum.id = faktum_verdi.faktum_id AND fakta.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
@@ -140,7 +145,7 @@ class FaktaRecord : FaktaPersistance {
             using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        """INSERT INTO gammel_faktum_verdi (fakta_id, faktum_id, indeks, ja_nei, aarlig_inntekt, dokument_id, dato, heltall, opprettet) 
+                        """INSERT INTO gammel_faktum_verdi (fakta_id, faktum_id, indeks, ja_nei, aarlig_inntekt, dokument_id, dato, heltall, valg, opprettet) 
                                 SELECT fakta_id,      
                                         faktum_verdi.faktum_id,     
                                         faktum_verdi.indeks,        
@@ -148,7 +153,8 @@ class FaktaRecord : FaktaPersistance {
                                         faktum_verdi.aarlig_inntekt,
                                         faktum_verdi.dokument_id,   
                                         faktum_verdi.dato,          
-                                        faktum_verdi.heltall,       
+                                        faktum_verdi.heltall,
+                                        faktum_verdi.valg,
                                         faktum_verdi.opprettet 
                                 FROM faktum_verdi, faktum, fakta
                                 WHERE faktum_verdi.faktum_id = faktum.id 
