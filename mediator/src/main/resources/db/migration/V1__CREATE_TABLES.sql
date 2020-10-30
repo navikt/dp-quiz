@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS faktum
 (
     id          BIGSERIAL,
     versjon_id  INT                      NOT NULL,
+    faktum_type INT                      NOT NULL,
     root_id     INT                      NOT NULL,
     navn_id     BIGSERIAL                NOT NULL REFERENCES navn (id),
     regel       VARCHAR(16)              NULL,

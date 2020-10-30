@@ -102,7 +102,7 @@ class FaktaRecord : FaktaPersistance {
                     )
                 }.asList
             )
-        }
+        }!!
     }
 
     private class FaktumVerdiRow(
@@ -116,7 +116,7 @@ class FaktaRecord : FaktaPersistance {
         val opplastet: LocalDateTime?
     )
 
-    private fun sqlToUpdate(svar: Any?): String {
+    private fun sqlToInsert(svar: Any?): String {
 
         return when (svar) {
             null -> """UPDATE faktum_verdi  SET ja_nei = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
@@ -125,7 +125,7 @@ class FaktaRecord : FaktaPersistance {
             is LocalDate -> """UPDATE faktum_verdi  SET dato = '$svar',  opprettet=NOW() AT TIME ZONE 'utc' """
             is Int -> """UPDATE faktum_verdi  SET heltall = $svar,  opprettet=NOW() AT TIME ZONE 'utc' """
             is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
-                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id), opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
+|                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id), opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
             else -> throw IllegalArgumentException("Ugyldig type: ${svar.javaClass}")
         } + """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, fakta, faktum
             WHERE fakta.id = faktum_verdi.fakta_id AND faktum.id = faktum_verdi.faktum_id AND fakta.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
@@ -133,7 +133,7 @@ class FaktaRecord : FaktaPersistance {
 
     override fun lagre(fakta: Fakta): Boolean {
         val nySvar = svarMap(fakta)
-        originalSvar.forEach { (id, svar) ->
+        originalSvar.forEach { id, svar ->
             if (nySvar[id] == svar) return@forEach
             val (rootId, indeks) = fakta.id(id).reflection { rootId, indeks -> rootId to indeks }
 
@@ -165,7 +165,7 @@ class FaktaRecord : FaktaPersistance {
 
                 session.run(
                     queryOf(
-                        sqlToUpdate(nySvar[id]),
+                        sqlToInsert(nySvar[id]),
                         fakta.uuid,
                         indeks,
                         rootId
@@ -190,7 +190,7 @@ class FaktaRecord : FaktaPersistance {
                 )
                 if (svar != null) session.run(
                     queryOf(
-                        sqlToUpdate(svar),
+                        sqlToInsert(svar),
                         fakta.uuid,
                         indeks,
                         rootId
