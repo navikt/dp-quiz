@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.søknad
+package no.nav.dagpenger.model.faktagrupper
 
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
@@ -32,7 +32,7 @@ class Faktagrupper private constructor(
 
     init {
         seksjoner.forEach {
-            it.søknad(this)
+            it.faktagrupper(this)
         }
     }
 

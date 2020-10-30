@@ -9,6 +9,8 @@ import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.fakta.UtledetFaktum
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
@@ -16,8 +18,6 @@ import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Seksjon
 import java.util.UUID
 
 interface FaktumVisitor {

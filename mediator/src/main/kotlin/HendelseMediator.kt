@@ -8,8 +8,8 @@ internal class HendelseMediator(private val faktaPersistance: FaktaPersistance, 
 
     fun behandle(melding: ØnskerRettighetsavklaringMelding, fødselsnummer: String) {
         val prototype = Prototype()
-        val enkelSøknad = prototype.søknad(fnr = fødselsnummer)
-        val nesteSeksjon = enkelSøknad.nesteSeksjon(prototype.inngangsvilkår.deepCopy(enkelSøknad))
+        val enkelFaktaGrupper = prototype.faktagrupper(fnr = fødselsnummer)
+        val nesteSeksjon = enkelFaktaGrupper.nesteSeksjon(prototype.inngangsvilkår.deepCopy(enkelFaktaGrupper))
         behovMediator.håndter(nesteSeksjon, fødselsnummer)
     }
 }

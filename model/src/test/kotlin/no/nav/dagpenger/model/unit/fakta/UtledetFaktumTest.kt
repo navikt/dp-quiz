@@ -3,9 +3,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknad
-import no.nav.dagpenger.model.søknad.Faktagrupper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

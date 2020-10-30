@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.søknad
+package no.nav.dagpenger.model.faktagrupper
 
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -8,7 +8,7 @@ class Versjon(
     private val versjonId: Int,
     private val prototypeFakta: Fakta,
     private val prototypeSubsumsjon: Subsumsjon,
-    private val prototypeSøknader: Map<Type, Faktagrupper>
+    private val prototypeFaktaGrupper: Map<FaktagrupperType, Faktagrupper>
 ) {
 
     companion object {
@@ -17,18 +17,18 @@ class Versjon(
         fun id(versjonId: Int) = versjoner[versjonId] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $versjonId")
     }
 
-    fun søknad(fnr: String, type: Type, uuid: UUID = UUID.randomUUID()): Faktagrupper = søknad(prototypeFakta.bygg(fnr, versjonId, uuid), type)
+    fun faktagrupper(fnr: String, type: FaktagrupperType, uuid: UUID = UUID.randomUUID()): Faktagrupper = faktagrupper(prototypeFakta.bygg(fnr, versjonId, uuid), type)
 
-    fun søknad(fakta: Fakta, type: Type): Faktagrupper {
+    fun faktagrupper(fakta: Fakta, type: FaktagrupperType): Faktagrupper {
         val subsumsjon = prototypeSubsumsjon.bygg(fakta)
-        return prototypeSøknader[type]?.bygg(fakta, subsumsjon) ?: throw IllegalArgumentException("Kan ikke finne søknad av type $type")
+        return prototypeFaktaGrupper[type]?.bygg(fakta, subsumsjon) ?: throw IllegalArgumentException("Kan ikke finne faktagrupper av type $type")
     }
 
     init {
         versjoner[versjonId] = this
     }
 
-    enum class Type {
+    enum class FaktagrupperType {
         Web,
         Mobile
     }

@@ -2,8 +2,8 @@ import db.FaktaPersistance
 import io.mockk.mockk
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Versjon
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -17,9 +17,9 @@ class MeldingMediatorTest {
 
     @Test
     @Disabled
-    internal fun `Oppretter søknad og persisterer noe ved ønsket rettighetsavklaring`() {
+    internal fun `Oppretter faktagrupper og persisterer noe ved ønsket rettighetsavklaring`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
-        assertEquals(1, søknader.søknader.size)
+        assertEquals(1, grupperer.faktaList.size)
     }
 
     @Test
@@ -32,14 +32,14 @@ class MeldingMediatorTest {
     @BeforeEach
     internal fun reset() {
         testRapid.reset()
-        søknader.søknader.clear()
+        grupperer.faktaList.clear()
     }
 
     private companion object {
         private val meldingsfabrikk = TestMeldingFactory("fødselsnummer", "aktør")
         private val testRapid = TestRapid()
-        private val søknader = TestSøknader()
-        private val hendelseMediator = HendelseMediator(søknader, testRapid)
+        private val grupperer = TestFaktaGrupperer()
+        private val hendelseMediator = HendelseMediator(grupperer, testRapid)
 
         init {
             MeldingMediator(
@@ -50,13 +50,13 @@ class MeldingMediatorTest {
         }
     }
 
-    private class TestSøknader : FaktaPersistance {
-        val søknader = mutableMapOf<UUID, List<Faktum<*>>>()
-        override fun ny(fnr: String, søknadType: Versjon.Type): Faktagrupper {
+    private class TestFaktaGrupperer : FaktaPersistance {
+        val faktaList = mutableMapOf<UUID, List<Faktum<*>>>()
+        override fun ny(fnr: String, type: Versjon.FaktagrupperType): Faktagrupper {
             TODO("Not yet implemented")
         }
 
-        override fun hent(uuid: UUID, søknadType: Versjon.Type): Faktagrupper {
+        override fun hent(uuid: UUID, type: Versjon.FaktagrupperType): Faktagrupper {
             TODO("Not yet implemented")
         }
 

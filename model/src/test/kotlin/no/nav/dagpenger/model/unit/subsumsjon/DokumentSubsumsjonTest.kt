@@ -21,13 +21,13 @@ internal class DokumentSubsumsjonTest {
 
     @BeforeEach
     fun setUp() {
-        val søknad = Fakta(
+        val faktagrupper = Fakta(
             dokument faktum "dokument" id 1,
             ja nei "saksbehandler godkjenner" id 2 avhengerAv 1
         ).testSøknad()
 
-        dokumentFaktum = søknad dokument 1
-        dokumentGodkjenning = søknad ja 2
+        dokumentFaktum = faktagrupper dokument 1
+        dokumentGodkjenning = faktagrupper ja 2
         subsumsjon = dokumentGodkjenning av dokumentFaktum
         assertEquals(null, subsumsjon.resultat())
         dokumentFaktum.besvar(Dokument(1.januar))

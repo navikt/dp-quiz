@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.subsumsjon.AvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GeneratorSubsumsjon
@@ -12,7 +13,6 @@ import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
-import no.nav.dagpenger.model.søknad.Faktagrupper
 import java.time.LocalDate
 
 interface Regel {

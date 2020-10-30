@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.søknad
+package no.nav.dagpenger.model.faktagrupper
 
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
@@ -28,7 +28,7 @@ class Seksjon private constructor(
         return nesteFakta.any { it in seksjonFakta }
     }
 
-    internal fun søknad(faktagrupper: Faktagrupper) {
+    internal fun faktagrupper(faktagrupper: Faktagrupper) {
         this.faktagrupper = faktagrupper
     }
 
@@ -39,7 +39,7 @@ class Seksjon private constructor(
         else Seksjon(navn, rolle, mutableSetOf()).also {
             faktagrupper.add(faktagrupper.indexOf(this) + indeks, it)
             genererteSeksjoner.add(it)
-            it.søknad(this.faktagrupper)
+            it.faktagrupper(this.faktagrupper)
         }
     }
 

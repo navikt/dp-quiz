@@ -4,8 +4,8 @@ import no.nav.dagpenger.model.fakta.Dokument
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.regel.Regel
-import no.nav.dagpenger.model.søknad.Faktagrupper
 
 internal class AvSubsumsjon private constructor(
     regel: Regel,

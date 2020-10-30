@@ -20,13 +20,13 @@ internal class MakroTest {
 
     @BeforeEach
     fun setup() {
-        val søknad = Fakta(
+        val faktagrupper = Fakta(
             ja nei "f1" id 1,
             ja nei "f2" id 2
         ).testSøknad()
 
-        f1 = søknad ja 1
-        f2 = søknad ja 2
+        f1 = faktagrupper ja 1
+        f2 = faktagrupper ja 2
 
         val s1 = f1 er true
         val s2 = f2 er true

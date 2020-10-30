@@ -5,11 +5,11 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Seksjon
+import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.subsumsjon.alle
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Versjon
 import java.time.LocalDate
 
 internal class FødselsdatoTestPrototype {
@@ -38,9 +38,9 @@ internal class FødselsdatoTestPrototype {
         Faktagrupper(
             personalia,
         )
-    private val versjon = Versjon(VERSJON_ID, fakta, inngangsvilkår, mapOf(Versjon.Type.Web to faktagrupper))
+    private val versjon = Versjon(VERSJON_ID, fakta, inngangsvilkår, mapOf(Versjon.FaktagrupperType.Web to faktagrupper))
 
-    fun søknad(fnr: String) = versjon.søknad(fnr, Versjon.Type.Web)
+    fun faktagrupper(fnr: String) = versjon.faktagrupper(fnr, Versjon.FaktagrupperType.Web)
 }
 
 internal class AvhengerAvTestPrototype {
@@ -70,9 +70,9 @@ internal class AvhengerAvTestPrototype {
             Seksjon("Inntekt", Rolle.nav, inntektSiste3År, inntektSisteÅr),
             Seksjon("Virkningstidspunkt", Rolle.søker, virkningstidpunkt)
         )
-    private val versjon = Versjon(VERSJON_ID, fakta, inngangsvilkår, mapOf(Versjon.Type.Web to faktagrupper))
+    private val versjon = Versjon(VERSJON_ID, fakta, inngangsvilkår, mapOf(Versjon.FaktagrupperType.Web to faktagrupper))
 
-    fun søknad(fnr: String) = versjon.søknad(fnr, Versjon.Type.Web)
+    fun faktagrupper(fnr: String) = versjon.faktagrupper(fnr, Versjon.FaktagrupperType.Web)
 
-    fun delvisBesvartSøknad(fnr: String) = søknad(fnr).also { (it dato 1).besvar(LocalDate.now()) }
+    fun delvisBesvartSøknad(fnr: String) = faktagrupper(fnr).also { (it dato 1).besvar(LocalDate.now()) }
 }

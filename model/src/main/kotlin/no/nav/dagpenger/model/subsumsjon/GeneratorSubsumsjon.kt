@@ -3,8 +3,8 @@ package no.nav.dagpenger.model.subsumsjon
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum.Companion.deepCopy
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.regel.Regel
-import no.nav.dagpenger.model.søknad.Faktagrupper
 
 class GeneratorSubsumsjon internal constructor(
     regel: Regel,

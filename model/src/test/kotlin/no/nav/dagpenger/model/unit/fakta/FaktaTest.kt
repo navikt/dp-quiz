@@ -10,9 +10,9 @@ import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.GeneratorFaktum
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Seksjon
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

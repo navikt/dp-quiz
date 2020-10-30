@@ -1,13 +1,13 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.helpers.NyEksempel
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.marshalling.SubsumsjonJsonBuilder
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
-import no.nav.dagpenger.model.søknad.Faktagrupper
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

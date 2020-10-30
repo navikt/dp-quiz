@@ -7,6 +7,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Seksjon
+import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
@@ -14,9 +17,6 @@ import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Versjon
 
 // Forstår dagpengesøknaden
 class Prototype {
@@ -163,7 +163,7 @@ class Prototype {
             inntekter
         )
 
-    private val versjon = Versjon(VERSJON_ID, fakta, inngangsvilkår, mapOf(Versjon.Type.Web to faktagrupper))
+    private val versjon = Versjon(VERSJON_ID, fakta, inngangsvilkår, mapOf(Versjon.FaktagrupperType.Web to faktagrupper))
 
-    fun søknad(fnr: String) = versjon.søknad(fnr, Versjon.Type.Web)
+    fun faktagrupper(fnr: String) = versjon.faktagrupper(fnr, Versjon.FaktagrupperType.Web)
 }

@@ -2,10 +2,10 @@ package no.nav.dagpenger.model.helpers
 
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Seksjon
+import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Versjon
 
 internal const val UNG_PERSON_FNR_2018 = "12020052345"
 
@@ -15,7 +15,7 @@ internal fun Fakta.testSøknad(): Faktagrupper {
         this,
         TomSubsumsjon,
         mapOf(
-            Versjon.Type.Web to Faktagrupper(
+            Versjon.FaktagrupperType.Web to Faktagrupper(
                 Seksjon(
                     "seksjon",
                     Rolle.søker,
@@ -23,5 +23,5 @@ internal fun Fakta.testSøknad(): Faktagrupper {
                 )
             )
         )
-    ).søknad(UNG_PERSON_FNR_2018, Versjon.Type.Web)
+    ).faktagrupper(UNG_PERSON_FNR_2018, Versjon.FaktagrupperType.Web)
 }

@@ -9,9 +9,9 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.valg
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Seksjon
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
@@ -29,7 +29,7 @@ internal class UtledetFaktumFactoryTest {
             maks dato "maks dato" av 1 og 2 og 3 id 123
         )
 
-        val søknad = Faktagrupper(
+        val faktagrupper = Faktagrupper(
             fakta,
             Seksjon(
                 "seksjon",
@@ -41,17 +41,17 @@ internal class UtledetFaktumFactoryTest {
             )
         )
 
-        val faktum = søknad.dato("123")
+        val faktum = faktagrupper.dato("123")
 
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
-        søknad.dato("1").besvar(1.januar)
-        søknad.dato("2").besvar(2.januar)
+        faktagrupper.dato("1").besvar(1.januar)
+        faktagrupper.dato("2").besvar(2.januar)
         assertFalse(faktum.erBesvart())
-        søknad.dato("3").besvar(3.januar)
+        faktagrupper.dato("3").besvar(3.januar)
         assertTrue(faktum.erBesvart())
         assertEquals(3.januar, faktum.svar())
-        søknad.dato("1").besvar(4.januar)
+        faktagrupper.dato("1").besvar(4.januar)
         assertEquals(4.januar, faktum.svar())
     }
 
@@ -63,7 +63,7 @@ internal class UtledetFaktumFactoryTest {
             maks inntekt "maks inntekt" av 1 og 2 og 3 id 123
         )
 
-        val søknad = Faktagrupper(
+        val faktagrupper = Faktagrupper(
             fakta,
             Seksjon(
                 "seksjon",
@@ -75,17 +75,17 @@ internal class UtledetFaktumFactoryTest {
             )
         )
 
-        val faktum = søknad.inntekt("123")
+        val faktum = faktagrupper.inntekt("123")
 
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
-        søknad.inntekt("1").besvar(260.årlig)
-        søknad.inntekt("2").besvar(520.årlig)
+        faktagrupper.inntekt("1").besvar(260.årlig)
+        faktagrupper.inntekt("2").besvar(520.årlig)
         assertFalse(faktum.erBesvart())
-        søknad.inntekt("3").besvar(130.årlig)
+        faktagrupper.inntekt("3").besvar(130.årlig)
         assertTrue(faktum.erBesvart())
         assertEquals(520.årlig, faktum.svar())
-        søknad.inntekt("1").besvar(1040.årlig)
+        faktagrupper.inntekt("1").besvar(1040.årlig)
         assertEquals(1040.årlig, faktum.svar())
     }
 
@@ -97,7 +97,7 @@ internal class UtledetFaktumFactoryTest {
             alle ja "alle ja" av 1 og 2 og 3 id 123
         )
 
-        val søknad = Faktagrupper(
+        val faktagrupper = Faktagrupper(
             fakta,
             Seksjon(
                 "seksjon",
@@ -108,17 +108,17 @@ internal class UtledetFaktumFactoryTest {
                 fakta ja 123
             )
         )
-        val faktum = søknad.dato("123")
+        val faktum = faktagrupper.dato("123")
 
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
-        søknad.ja("1").besvar(true)
-        søknad.ja("2").besvar(true)
+        faktagrupper.ja("1").besvar(true)
+        faktagrupper.ja("2").besvar(true)
         assertFalse(faktum.erBesvart())
-        søknad.ja("3").besvar(true)
+        faktagrupper.ja("3").besvar(true)
         assertTrue(faktum.erBesvart())
         assertEquals(true, faktum.svar())
-        søknad.ja("1").besvar(false)
+        faktagrupper.ja("1").besvar(false)
         assertEquals(false, faktum.svar())
     }
 

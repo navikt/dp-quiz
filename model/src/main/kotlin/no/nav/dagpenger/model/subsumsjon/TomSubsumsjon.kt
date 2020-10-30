@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
-import no.nav.dagpenger.model.søknad.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {

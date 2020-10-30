@@ -8,6 +8,10 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Seksjon
+import no.nav.dagpenger.model.faktagrupper.Versjon
+import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
 import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
@@ -23,10 +27,6 @@ import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
 import no.nav.dagpenger.model.subsumsjon.uansett
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Versjon
-import no.nav.dagpenger.model.søknad.Versjon.Type.Web
 
 internal class NyEksempel {
 
@@ -143,7 +143,7 @@ internal class NyEksempel {
 
     internal val faktagrupper: Faktagrupper by lazy {
 
-        versjon.søknad("12345678901", Web).also {
+        versjon.faktagrupper("12345678901", Web).also {
             seksjon1 = it[0]
             seksjon2 = it[1]
             seksjon3 = it[2]

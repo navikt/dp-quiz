@@ -16,8 +16,8 @@ import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
 import no.nav.dagpenger.model.fakta.UtledetFaktum
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Versjon
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.visitor.FaktaVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -27,10 +27,10 @@ import java.util.UUID
 class FaktaRecord : FaktaPersistance {
     private lateinit var originalSvar: Map<String, Any?>
 
-    override fun ny(fnr: String, søknadType: Versjon.Type): Faktagrupper {
-        return Versjon.siste.søknad(fnr, søknadType).also { søknad ->
-            NyFakta(søknad.fakta)
-            originalSvar = svarMap(søknad.fakta)
+    override fun ny(fnr: String, type: Versjon.FaktagrupperType): Faktagrupper {
+        return Versjon.siste.faktagrupper(fnr, type).also { faktagrupper ->
+            NyFakta(faktagrupper.fakta)
+            originalSvar = svarMap(faktagrupper.fakta)
         }
     }
 
@@ -38,7 +38,7 @@ class FaktaRecord : FaktaPersistance {
         faktum.id to (if (faktum.erBesvart()) faktum.svar() else null)
     }.toMap()
 
-    override fun hent(uuid: UUID, søknadType: Versjon.Type): Faktagrupper {
+    override fun hent(uuid: UUID, type: Versjon.FaktagrupperType): Faktagrupper {
         val (fnr, versjonId) = using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
@@ -50,9 +50,9 @@ class FaktaRecord : FaktaPersistance {
             )
         } ?: throw IllegalArgumentException("Ugyldig uuid: $uuid")
 
-        return Versjon.id(versjonId).søknad(fnr, søknadType, uuid).also { søknad ->
+        return Versjon.id(versjonId).faktagrupper(fnr, type, uuid).also { faktagrupper ->
             svarList(uuid).forEach { row ->
-                søknad.fakta.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
+                faktagrupper.fakta.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
                     if (row.heltall != null) (faktum as Faktum<Int>).besvar(row.heltall)
                     if (row.janei != null) (faktum as Faktum<Boolean>).besvar(row.janei)
                     if (row.dato != null) (faktum as Faktum<LocalDate>).besvar(row.dato)
@@ -60,8 +60,8 @@ class FaktaRecord : FaktaPersistance {
                     if (row.opplastet != null && row.url != null) (faktum as Faktum<Dokument>).besvar(Dokument(row.opplastet, row.url))
                 }
             }
-        }.also { søknad ->
-            originalSvar = svarMap(søknad.fakta)
+        }.also { faktagrupper ->
+            originalSvar = svarMap(faktagrupper.fakta)
         }
     }
 

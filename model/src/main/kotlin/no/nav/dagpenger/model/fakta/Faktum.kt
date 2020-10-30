@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.fakta
 
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Seksjon
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 abstract class Faktum<R : Comparable<R>> internal constructor(

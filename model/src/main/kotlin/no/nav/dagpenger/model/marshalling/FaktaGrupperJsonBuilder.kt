@@ -2,12 +2,12 @@ package no.nav.dagpenger.model.marshalling
 
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Rolle
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Seksjon
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.util.UUID
 
-class SøknadJsonBuilder(private val faktagrupper: Faktagrupper) : FaktumJsonBuilder(), SøknadVisitor {
+class FaktaGrupperJsonBuilder(private val faktagrupper: Faktagrupper) : FaktumJsonBuilder(), SøknadVisitor {
 
     init {
         faktagrupper.accept(this)

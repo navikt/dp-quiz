@@ -4,13 +4,13 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.gyldigGodkjentAv
 import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Seksjon
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -22,7 +22,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning uansett resultat av child`() {
-        søknad { fakta -> fakta ja 1 er true godkjentAv (fakta ja 2) }
+        faktagrupper { fakta -> fakta ja 1 er true godkjentAv (fakta ja 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true, Rolle.søker)
@@ -42,7 +42,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning av gyldig sti av child`() {
-        søknad { fakta -> fakta ja 1 er true gyldigGodkjentAv (fakta ja 2) }
+        faktagrupper { fakta -> fakta ja 1 er true gyldigGodkjentAv (fakta ja 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true, Rolle.søker)
@@ -62,7 +62,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning av ugyldig sti av child`() {
-        søknad { fakta -> fakta ja 1 er true ugyldigGodkjentAv (fakta ja 2) }
+        faktagrupper { fakta -> fakta ja 1 er true ugyldigGodkjentAv (fakta ja 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true, Rolle.søker)
@@ -80,7 +80,7 @@ internal class GodkjenningsSubsumsjonTest {
         assertEquals(true, godkjenningsSubsumsjon.resultat())
     }
 
-    private fun søknad(block: (Fakta) -> Subsumsjon): Faktagrupper {
+    private fun faktagrupper(block: (Fakta) -> Subsumsjon): Faktagrupper {
         val fakta = Fakta(
             ja nei "faktum" id 1,
             ja nei "godkjenning" id 2 avhengerAv 1

@@ -6,12 +6,12 @@ import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.fakta.Rolle
 import no.nav.dagpenger.model.fakta.TemplateFaktum
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.helpers.NyEksempel
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Seksjon
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,7 +26,7 @@ internal class SøknadSubsumsjonTest {
     }
 
     @Test
-    fun `Søknad subsumsjon integrasjonstest`() {
+    fun `FaktaGrupper subsumsjon integrasjonstest`() {
         faktagrupper.nesteFakta().also { fakta ->
             assertEquals(5, fakta.size)
             assertIder(fakta, 1, 2, 3, 4, 5)

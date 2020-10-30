@@ -8,10 +8,10 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Seksjon
+import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Versjon
 
 internal object FaktaEksempel1 {
 
@@ -51,6 +51,6 @@ internal object FaktaEksempel1 {
         1,
         prototypeFakta1,
         prototypeFakta1 ja 1 er true,
-        mapOf(Versjon.Type.Web to webPrototypeSøknad)
+        mapOf(Versjon.FaktagrupperType.Web to webPrototypeSøknad)
     )
 }

@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.fakta.Fakta
-import no.nav.dagpenger.model.søknad.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class MinstEnAvSubsumsjon private constructor(

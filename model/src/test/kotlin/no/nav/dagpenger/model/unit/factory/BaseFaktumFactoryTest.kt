@@ -44,8 +44,8 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `boolean factory faktum`() {
-        val søknad = Fakta(ja nei "boolean" id 3).testSøknad()
-        val faktum = søknad ja 3
+        val faktagrupper = Fakta(ja nei "boolean" id 3).testSøknad()
+        val faktum = faktagrupper ja 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(true)
@@ -57,8 +57,8 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `heltall factory faktum`() {
-        val søknad = Fakta(heltall faktum "heltall" id 3).testSøknad()
-        val faktum = søknad heltall 3
+        val faktagrupper = Fakta(heltall faktum "heltall" id 3).testSøknad()
+        val faktum = faktagrupper heltall 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(6)
@@ -70,8 +70,8 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `Inntekt factory faktum`() {
-        val søknad = Fakta(inntekt faktum "inntekt" id 3).testSøknad()
-        val faktum = søknad inntekt 3
+        val faktagrupper = Fakta(inntekt faktum "inntekt" id 3).testSøknad()
+        val faktum = faktagrupper inntekt 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(260.årlig)
@@ -83,8 +83,8 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `Dato factory faktum`() {
-        val søknad = Fakta(dato faktum "dato" id 3).testSøknad()
-        val faktum = søknad dato 3
+        val faktagrupper = Fakta(dato faktum "dato" id 3).testSøknad()
+        val faktum = faktagrupper dato 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(6.januar)
@@ -96,8 +96,8 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `Dokument factory faktum`() {
-        val søknad = Fakta(dokument faktum "dokument" id 3).testSøknad()
-        val faktum = søknad dokument 3
+        val faktagrupper = Fakta(dokument faktum "dokument" id 3).testSøknad()
+        val faktum = faktagrupper dokument 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
         Dokument(1.januar).also {
@@ -108,8 +108,8 @@ internal class BaseFaktumFactoryTest {
     }
 
     @Test fun `valg (enum) factory faktum`() {
-        val søknad = Fakta(valg faktum "valg" id 3).testSøknad()
-        val faktum = søknad.id(3) as Faktum<Valg>
+        val faktagrupper = Fakta(valg faktum "valg" id 3).testSøknad()
+        val faktum = faktagrupper.id(3) as Faktum<Valg>
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
 

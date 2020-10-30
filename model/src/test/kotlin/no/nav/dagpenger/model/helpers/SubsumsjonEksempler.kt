@@ -8,6 +8,10 @@ import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.GrunnleggendeFaktum
 import no.nav.dagpenger.model.fakta.Inntekt
 import no.nav.dagpenger.model.fakta.Rolle
+import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktagrupper.Seksjon
+import no.nav.dagpenger.model.faktagrupper.Versjon
+import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.minst
@@ -15,10 +19,6 @@ import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.eller
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
-import no.nav.dagpenger.model.søknad.Faktagrupper
-import no.nav.dagpenger.model.søknad.Seksjon
-import no.nav.dagpenger.model.søknad.Versjon
-import no.nav.dagpenger.model.søknad.Versjon.Type.Web
 import java.time.LocalDate
 
 internal lateinit var bursdag67: GrunnleggendeFaktum<LocalDate>
@@ -107,16 +107,16 @@ internal fun eksempelSøknad(): Faktagrupper {
         prototypeFakta,
         prototypeSubsumsjon,
         mapOf(Web to prototypeWebSøknad)
-    ).søknad("", Web).also { søknad ->
-        bursdag67 = søknad.dato(1) as GrunnleggendeFaktum<LocalDate>
-        søknadsdato = søknad.dato(2) as GrunnleggendeFaktum<LocalDate>
-        ønsketdato = søknad.dato(3) as GrunnleggendeFaktum<LocalDate>
-        sisteDagMedLønn = søknad.dato(4) as GrunnleggendeFaktum<LocalDate>
-        inntektSiste3år = søknad.inntekt(5) as GrunnleggendeFaktum<Inntekt>
-        inntektSisteÅr = søknad.inntekt(6) as GrunnleggendeFaktum<Inntekt>
-        dimisjonsdato = søknad.dato(7) as GrunnleggendeFaktum<LocalDate>
-        virkningstidspunkt = søknad.dato(8)
-        inntekt3G = søknad.inntekt(9) as GrunnleggendeFaktum<Inntekt>
-        inntekt15G = søknad.inntekt(10) as GrunnleggendeFaktum<Inntekt>
+    ).faktagrupper("", Web).also { faktagrupper ->
+        bursdag67 = faktagrupper.dato(1) as GrunnleggendeFaktum<LocalDate>
+        søknadsdato = faktagrupper.dato(2) as GrunnleggendeFaktum<LocalDate>
+        ønsketdato = faktagrupper.dato(3) as GrunnleggendeFaktum<LocalDate>
+        sisteDagMedLønn = faktagrupper.dato(4) as GrunnleggendeFaktum<LocalDate>
+        inntektSiste3år = faktagrupper.inntekt(5) as GrunnleggendeFaktum<Inntekt>
+        inntektSisteÅr = faktagrupper.inntekt(6) as GrunnleggendeFaktum<Inntekt>
+        dimisjonsdato = faktagrupper.dato(7) as GrunnleggendeFaktum<LocalDate>
+        virkningstidspunkt = faktagrupper.dato(8)
+        inntekt3G = faktagrupper.inntekt(9) as GrunnleggendeFaktum<Inntekt>
+        inntekt15G = faktagrupper.inntekt(10) as GrunnleggendeFaktum<Inntekt>
     }
 }

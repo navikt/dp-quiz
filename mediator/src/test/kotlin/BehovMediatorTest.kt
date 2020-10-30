@@ -23,8 +23,8 @@ internal class BehovMediatorTest {
 
     @Test
     fun `tar imot seksjon og sender ut på kafka`() {
-        val søknad = FødselsdatoTestPrototype().søknad(fnr)
-        val seksjon = søknad.nesteSeksjon()
+        val faktagrupper = FødselsdatoTestPrototype().faktagrupper(fnr)
+        val seksjon = faktagrupper.nesteSeksjon()
         mediator.håndter(seksjon, fnr)
         assertEquals(1, testRapid.inspektør.size)
 
@@ -39,8 +39,8 @@ internal class BehovMediatorTest {
 
     @Test
     fun `sender behov med avhengige fakta`() {
-        val søknad = AvhengerAvTestPrototype().delvisBesvartSøknad(fnr)
-        val seksjon = søknad.nesteSeksjon()
+        val faktagrupper = AvhengerAvTestPrototype().delvisBesvartSøknad(fnr)
+        val seksjon = faktagrupper.nesteSeksjon()
         mediator.håndter(seksjon, fnr)
 
         SeksjonJsonBuilder(seksjon).resultat()["fakta"]
