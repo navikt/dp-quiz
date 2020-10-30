@@ -8,7 +8,7 @@ class Versjon(
     private val versjonId: Int,
     private val prototypeSøknad: Søknad,
     private val prototypeSubsumsjon: Subsumsjon,
-    private val prototypeFaktaGrupper: Map<FaktagrupperType, Faktagrupper>
+    private val prototypeFaktagrupper: Map<FaktagrupperType, Faktagrupper>
 ) {
 
     companion object {
@@ -21,7 +21,7 @@ class Versjon(
 
     fun faktagrupper(søknad: Søknad, type: FaktagrupperType): Faktagrupper {
         val subsumsjon = prototypeSubsumsjon.bygg(søknad)
-        return prototypeFaktaGrupper[type]?.bygg(søknad, subsumsjon) ?: throw IllegalArgumentException("Kan ikke finne faktagrupper av type $type")
+        return prototypeFaktagrupper[type]?.bygg(søknad, subsumsjon) ?: throw IllegalArgumentException("Kan ikke finne faktagrupper av type $type")
     }
 
     init {

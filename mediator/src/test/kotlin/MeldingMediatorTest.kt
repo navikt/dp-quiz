@@ -38,7 +38,7 @@ class MeldingMediatorTest {
     private companion object {
         private val meldingsfabrikk = TestMeldingFactory("fødselsnummer", "aktør")
         private val testRapid = TestRapid()
-        private val grupperer = TestFaktaGrupperer()
+        private val grupperer = TestFaktagrupperer()
         private val hendelseMediator = HendelseMediator(grupperer, testRapid)
 
         init {
@@ -50,7 +50,7 @@ class MeldingMediatorTest {
         }
     }
 
-    private class TestFaktaGrupperer : SøknadPersistance {
+    private class TestFaktagrupperer : SøknadPersistance {
         val faktaList = mutableMapOf<UUID, List<Faktum<*>>>()
         override fun ny(fnr: String, type: Versjon.FaktagrupperType): Faktagrupper {
             TODO("Not yet implemented")

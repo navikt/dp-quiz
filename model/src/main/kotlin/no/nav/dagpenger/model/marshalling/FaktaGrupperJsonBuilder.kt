@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.util.UUID
 
-class FaktaGrupperJsonBuilder(private val faktagrupper: Faktagrupper) : FaktumJsonBuilder(), SøknadVisitor {
+class FaktagrupperJsonBuilder(private val faktagrupper: Faktagrupper) : FaktumJsonBuilder(), SøknadVisitor {
 
     init {
         faktagrupper.accept(this)

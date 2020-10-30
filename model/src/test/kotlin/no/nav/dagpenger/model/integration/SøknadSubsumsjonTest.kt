@@ -26,7 +26,7 @@ internal class SøknadSubsumsjonTest {
     }
 
     @Test
-    fun `FaktaGrupper subsumsjon integrasjonstest`() {
+    fun `Faktagrupper subsumsjon integrasjonstest`() {
         faktagrupper.nesteFakta().also { fakta ->
             assertEquals(5, fakta.size)
             assertIder(fakta, 1, 2, 3, 4, 5)

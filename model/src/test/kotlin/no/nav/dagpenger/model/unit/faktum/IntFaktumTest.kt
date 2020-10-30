@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.helpers.testSøknad
+import no.nav.dagpenger.model.helpers.testFaktagrupper
 import no.nav.dagpenger.model.regel.er
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -12,7 +12,7 @@ internal class IntFaktumTest {
 
     @Test
     fun `Støtte fakta med type int`() {
-        val intFaktum = Søknad(heltall faktum "int" id 1).testSøknad().let { it heltall 1 }
+        val intFaktum = Søknad(heltall faktum "int" id 1).testFaktagrupper().let { it heltall 1 }
 
         assertThrows<IllegalStateException> { intFaktum.svar() }
         intFaktum.besvar(5)
@@ -21,7 +21,7 @@ internal class IntFaktumTest {
 
     @Test
     fun `Subsumsjon med fakta av typen int`() {
-        val intFaktum = Søknad(heltall faktum "int" id 1).testSøknad().let { it heltall 1 }
+        val intFaktum = Søknad(heltall faktum "int" id 1).testFaktagrupper().let { it heltall 1 }
         val subsumsjon = intFaktum er 0
 
         assertEquals(null, subsumsjon.resultat())

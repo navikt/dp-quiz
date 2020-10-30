@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 
 internal const val UNG_PERSON_FNR_2018 = "12020052345"
 
-internal fun Søknad.testSøknad(): Faktagrupper {
+internal fun Søknad.testFaktagrupper(): Faktagrupper {
     return Versjon(
         1,
         this,

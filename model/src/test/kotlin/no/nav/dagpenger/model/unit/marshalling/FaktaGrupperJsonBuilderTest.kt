@@ -5,19 +5,19 @@ import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.marshalling.FaktaGrupperJsonBuilder
+import no.nav.dagpenger.model.marshalling.FaktagrupperJsonBuilder
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class FaktaGrupperJsonBuilderTest {
+class FaktagrupperJsonBuilderTest {
 
     @Test
     fun `Lage faktagrupper med uuid`() {
 
         val faktagrupper = Faktagrupper()
 
-        val jsonBuilder = FaktaGrupperJsonBuilder(faktagrupper)
+        val jsonBuilder = FaktagrupperJsonBuilder(faktagrupper)
         val json = jsonBuilder.resultat()
 
         assertNotNull(json["root"]["uuid"])
@@ -34,7 +34,7 @@ class FaktaGrupperJsonBuilderTest {
         val seksjon2 = Seksjon("seksjon", Rolle.søker, fakta ja 1, fakta ja 2)
         val faktagrupper = Faktagrupper(seksjon, seksjon2)
 
-        val jsonBuilder = FaktaGrupperJsonBuilder(faktagrupper)
+        val jsonBuilder = FaktagrupperJsonBuilder(faktagrupper)
         val json = jsonBuilder.resultat()
 
         assertEquals(2, json["root"]["seksjoner"].size())

@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.helpers.testSøknad
+import no.nav.dagpenger.model.helpers.testFaktagrupper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -30,7 +30,7 @@ internal class UtledetFaktumTest {
             dato faktum "dato2" id 2,
             dato faktum "dato5" id 5,
             dato faktum "dato6" id 6
-        ).testSøknad()
+        ).testFaktagrupper()
 
         maks4 = faktagrupper dato 4
         maks3 = faktagrupper dato 3

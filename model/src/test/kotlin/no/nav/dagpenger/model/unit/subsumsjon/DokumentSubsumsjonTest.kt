@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.helpers.testSøknad
+import no.nav.dagpenger.model.helpers.testFaktagrupper
 import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -24,7 +24,7 @@ internal class DokumentSubsumsjonTest {
         val faktagrupper = Søknad(
             dokument faktum "dokument" id 1,
             ja nei "saksbehandler godkjenner" id 2 avhengerAv 1
-        ).testSøknad()
+        ).testFaktagrupper()
 
         dokumentFaktum = faktagrupper dokument 1
         dokumentGodkjenning = faktagrupper ja 2

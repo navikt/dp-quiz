@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.unit.subsumsjon
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.helpers.testSøknad
+import no.nav.dagpenger.model.helpers.testFaktagrupper
 import no.nav.dagpenger.model.regel.etter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -15,7 +15,7 @@ internal class EnkelSubsumsjonsTest {
     val fakta = Søknad(
         dato faktum "Datoen du fyller 67" id 1,
         dato faktum "Datoen du søker om dagpenger" id 2
-    ).testSøknad()
+    ).testFaktagrupper()
 
     val bursdag67 = fakta dato 1
     val søknadsdato = fakta dato 2

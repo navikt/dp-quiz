@@ -32,7 +32,7 @@ internal class FaktaRecordTest {
     @Test
     fun `ny faktagrupper`() {
         Postgres.withMigratedDb {
-            byggOriginalFaktaGrupper()
+            byggOriginalFaktagrupper()
 
             assertRecordCount(1, "soknad")
             assertRecordCount(21, "faktum_verdi")
@@ -46,7 +46,7 @@ internal class FaktaRecordTest {
     @Test
     fun `lagring og henting av fakta`() {
         Postgres.withMigratedDb {
-            byggOriginalFaktaGrupper()
+            byggOriginalFaktagrupper()
 
             originalFaktagrupper.ja(1).besvar(true, Rolle.søker)
             originalFaktagrupper.dato(2).besvar(LocalDate.now(), Rolle.søker)
@@ -61,7 +61,7 @@ internal class FaktaRecordTest {
     @Test
     fun `Avhengig faktum reset`() {
         Postgres.withMigratedDb {
-            byggOriginalFaktaGrupper()
+            byggOriginalFaktagrupper()
 
             originalFaktagrupper.dato(2).besvar(2.januar, Rolle.søker)
             originalFaktagrupper.dato(13).besvar(13.januar, Rolle.søker)
@@ -79,7 +79,7 @@ internal class FaktaRecordTest {
     @Test
     fun `Genererte template faktum`() {
         Postgres.withMigratedDb {
-            byggOriginalFaktaGrupper()
+            byggOriginalFaktagrupper()
             assertEquals(21, originalFaktagrupper.søknad.map { it }.size)
             hentFørstFakta()
             originalFaktagrupper = rehydrertFaktagrupper
@@ -97,7 +97,7 @@ internal class FaktaRecordTest {
     @Disabled
     fun `redusert template faktum`() {
         Postgres.withMigratedDb {
-            byggOriginalFaktaGrupper()
+            byggOriginalFaktagrupper()
             assertEquals(21, originalFaktagrupper.søknad.map { it }.size)
             hentFørstFakta()
             originalFaktagrupper = rehydrertFaktagrupper
@@ -117,7 +117,7 @@ internal class FaktaRecordTest {
     @Test
     fun `utledet faktum med verdi`() {
         Postgres.withMigratedDb {
-            byggOriginalFaktaGrupper()
+            byggOriginalFaktagrupper()
 
             originalFaktagrupper.dato(3).besvar(3.januar, Rolle.søker)
             originalFaktagrupper.dato(4).besvar(4.januar, Rolle.søker)
@@ -135,7 +135,7 @@ internal class FaktaRecordTest {
         assertDeepEquals(originalFaktagrupper, rehydrertFaktagrupper)
     }
 
-    private fun byggOriginalFaktaGrupper() {
+    private fun byggOriginalFaktagrupper() {
         FaktumTable(prototypeFakta1, 1)
         faktaRecord = SøknadRecord()
         originalFaktagrupper = faktaRecord.ny(UNG_PERSON_FNR_2018, Versjon.FaktagrupperType.Web)
