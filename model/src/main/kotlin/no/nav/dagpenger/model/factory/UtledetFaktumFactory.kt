@@ -1,8 +1,10 @@
 package no.nav.dagpenger.model.factory
 
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.ALLE_JA
+import no.nav.dagpenger.model.factory.FaktaRegel.Companion.EN_ELLER_INGEN
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MAKS_DATO
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MAKS_INNTEKT
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.valg
 import no.nav.dagpenger.model.fakta.Faktum
 import no.nav.dagpenger.model.fakta.FaktumId
 import no.nav.dagpenger.model.fakta.Inntekt
@@ -15,6 +17,8 @@ class UtledetFaktumFactory<T : Comparable<T>>(
 ) : FaktumFactory<T>() {
     private val fakta = mutableSetOf<Faktum<T>>()
     private val childIder = mutableSetOf<Int>()
+    private val childJaNavn = mutableSetOf<String>()
+    private val childNeiNavn = mutableSetOf<String>()
 
     companion object {
         object maks {
@@ -25,7 +29,15 @@ class UtledetFaktumFactory<T : Comparable<T>>(
         object alle {
             infix fun ja(navn: String) = UtledetFaktumFactory(navn, ALLE_JA)
         }
+
+        object valg {
+            infix fun faktum(navn: String) = UtledetFaktumFactory(navn, EN_ELLER_INGEN)
+        }
     }
+
+    infix fun ja(navn: String) = this.also { childJaNavn.add(navn) }
+
+    infix fun nei(navn: String) = this.also { childNeiNavn.add(navn) }
 
     infix fun av(factum: Faktum<T>) = this.also { fakta.add(factum) }
 
@@ -56,5 +68,6 @@ class FaktaRegel<R : Comparable<R>> private constructor(val navn: String, intern
         internal val MAKS_DATO = FaktaRegel("MAKS_DATO", UtledetFaktum<LocalDate>::max)
         internal val MAKS_INNTEKT = FaktaRegel("MAKS_INNTEKT", UtledetFaktum<Inntekt>::max)
         internal val ALLE_JA = FaktaRegel("ALLE_JA", UtledetFaktum<Boolean>::alle)
+        internal val EN_ELLER_INGEN = FaktaRegel("EN_ELLER_INGEN", UtledetFaktum<Boolean>::valg)
     }
 }

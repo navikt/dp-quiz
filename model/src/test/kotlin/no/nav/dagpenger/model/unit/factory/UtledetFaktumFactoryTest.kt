@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.alle
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.valg
 import no.nav.dagpenger.model.fakta.Fakta
 import no.nav.dagpenger.model.fakta.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.fakta.Rolle
@@ -120,5 +121,11 @@ internal class UtledetFaktumFactoryTest {
         assertEquals(true, faktum.svar())
         søknad.ja("1").besvar(false)
         assertEquals(false, faktum.svar())
+    }
+
+    @Test fun `En eller ingen`() {
+        val fakta = Fakta(
+            valg faktum "valg" ja "valg1" ja "valg2" nei "valg3" id 1
+        )
     }
 }
