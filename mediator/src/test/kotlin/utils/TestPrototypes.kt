@@ -5,9 +5,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktagrupper.Versjon
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.subsumsjon.alle
 import java.time.LocalDate

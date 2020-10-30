@@ -1,8 +1,8 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 abstract class Subsumsjon protected constructor(

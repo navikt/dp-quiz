@@ -5,10 +5,10 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
 
 class Versjon(
-        private val versjonId: Int,
-        private val prototypeSøknad: Søknad,
-        private val prototypeSubsumsjon: Subsumsjon,
-        private val prototypeFaktaGrupper: Map<FaktagrupperType, Faktagrupper>
+    private val versjonId: Int,
+    private val prototypeSøknad: Søknad,
+    private val prototypeSubsumsjon: Subsumsjon,
+    private val prototypeFaktaGrupper: Map<FaktagrupperType, Faktagrupper>
 ) {
 
     companion object {

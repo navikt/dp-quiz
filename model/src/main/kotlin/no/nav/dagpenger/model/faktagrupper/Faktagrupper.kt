@@ -1,8 +1,8 @@
 package no.nav.dagpenger.model.faktagrupper
 
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TypedFaktum
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
@@ -10,10 +10,10 @@ import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.util.UUID
 
 class Faktagrupper private constructor(
-        val søknad: Søknad,
-        internal val rootSubsumsjon: Subsumsjon,
-        private val uuid: UUID,
-        private val seksjoner: MutableList<Seksjon>
+    val søknad: Søknad,
+    internal val rootSubsumsjon: Subsumsjon,
+    private val uuid: UUID,
+    private val seksjoner: MutableList<Seksjon>
 ) : TypedFaktum by søknad, MutableList<Seksjon> by seksjoner {
 
     constructor(vararg seksjoner: Seksjon) : this(

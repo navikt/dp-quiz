@@ -2,8 +2,8 @@ package no.nav.dagpenger.model.unit.marshalling
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.bursdag67
 import no.nav.dagpenger.model.helpers.eksempelSøknad
 import no.nav.dagpenger.model.helpers.februar
@@ -14,10 +14,10 @@ import no.nav.dagpenger.model.helpers.ønsketdato
 import no.nav.dagpenger.model.marshalling.SubsumsjonJsonBuilder
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.har
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
 internal class SubsumsjonJsonBuilderTest {
 
