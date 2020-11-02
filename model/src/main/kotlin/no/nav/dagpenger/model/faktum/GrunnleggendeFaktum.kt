@@ -32,10 +32,13 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
-        val avhengigheter = avhengigeFakta.map { it.bygg(byggetFakta) }.toMutableSet()
 
-        return GrunnleggendeFaktum(faktumId, navn, clazz, avhengigheter, avhengerAvFakta, roller)
-            .also { byggetFakta[faktumId] = it }
+        return GrunnleggendeFaktum(faktumId, navn, clazz, mutableSetOf(), mutableSetOf(), roller)
+            .also { nyttFaktum ->
+                byggetFakta[faktumId] = nyttFaktum
+                this.avhengigeFakta.forEach { nyttFaktum.avhengigeFakta.add(it.bygg(byggetFakta)) }
+                this.avhengerAvFakta.forEach { nyttFaktum.avhengerAvFakta.add(it.bygg(byggetFakta)) }
+            }
     }
 
     override fun svar(): R = tilstand.svar(this)

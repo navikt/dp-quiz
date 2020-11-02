@@ -12,6 +12,7 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.helpers.testFaktagrupper
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
@@ -125,6 +126,14 @@ internal class UtledetFaktumFactoryTest {
     @Test fun `En eller ingen`() {
         val søknad = Søknad(
             valg faktum "valg" ja "valg1" ja "valg2" nei "valg3" id 1
-        )
+        ).testFaktagrupper()
+        assertFalse(søknad.ja(2).erBesvart())
+        assertFalse(søknad.ja(3).erBesvart())
+        assertFalse(søknad.ja(4).erBesvart())
+        søknad.ja(2).besvar(true, Rolle.søker)
+        assertTrue(søknad.ja(2).erBesvart())
+        søknad.ja(3).besvar(true, Rolle.søker)
+        assertTrue(søknad.ja(3).erBesvart())
+        assertFalse(søknad.ja(2).erBesvart())
     }
 }
