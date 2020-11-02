@@ -11,10 +11,10 @@ class Søknad private constructor(
     private val fnr: String,
     private val versjonId: Int,
     val uuid: UUID,
-    private val faktumMap: MutableMap<FaktumId, Faktum<*>>
+    private val faktaMap: MutableMap<FaktumId, Faktum<*>>
 ) : TypedFaktum, Iterable<Faktum<*>> {
 
-    internal val size get() = faktumMap.size
+    internal val size get() = faktaMap.size
 
     internal constructor(fnr: String, versjonId: Int, faktumMap: MutableMap<FaktumId, Faktum<*>>) : this(
         fnr,
@@ -29,23 +29,7 @@ class Søknad private constructor(
         fnr,
         versjonId,
         uuid,
-        factories.map {
-            it.faktum().let { faktum ->
-                faktum.faktumId to faktum
-            }
-        }.also { fakta ->
-            fakta.groupingBy { it.first }.eachCount().forEach {
-                require(it.value == 1) { "Faktum med ${it.key} er definert mer en 1 gang" }
-            }
-        }.toMap().toMutableMap().also { faktumMap ->
-            factories.forEach { factory ->
-                factory.tilTemplate(faktumMap)
-            }
-            factories.forEach { factory ->
-                factory.avhengerAv(faktumMap)
-                factory.sammensattAv(faktumMap)
-            }
-        }
+        factories.toFaktaMap()
     )
 
     init {
@@ -58,14 +42,41 @@ class Søknad private constructor(
             rolle,
             *(this.map { it }.toTypedArray())
         )
+
+        private fun List<FaktumFactory<*>>.toFaktaMap() = this.map { factory ->
+            factory.faktum().let { faktum ->
+                faktum.faktumId to faktum
+            }
+        }
+                .sjekkIder()
+                .tilTemplate(this)
+        .also { faktumMap ->
+            this.forEach { factory ->
+                factory.avhengerAv(faktumMap)
+                factory.sammensattAv(faktumMap)
+            }
+        }
+
+        private fun List<Pair<FaktumId, Faktum<*>>>.sjekkIder(): List<Pair<FaktumId, Faktum<*>>> =
+                this.also { fakta ->
+                    fakta.groupingBy { it.first }.eachCount().forEach {
+                        require(it.value == 1) { "Faktum med ${it.key} er definert mer en 1 gang" }
+                    }
+                }
+        private fun List<Pair<FaktumId, Faktum<*>>>.tilTemplate(factories: List<FaktumFactory<*>>): MutableMap<FaktumId, Faktum<*>>  = this.toMap().toMutableMap().also { faktumMap ->
+            factories.forEach { factory ->
+                factory.tilTemplate(faktumMap)
+            }
+        }
+        private fun MutableMap<FaktumId, Faktum<*>>.angiAvhengigheter() {}
     }
 
     override infix fun id(rootId: Int) = id(FaktumId(rootId))
     override infix fun id(id: String) = id(FaktumId(id))
-    internal infix fun id(faktumId: FaktumId) = faktumMap[faktumId]
+    internal infix fun id(faktumId: FaktumId) = faktaMap[faktumId]
         ?: throw IllegalArgumentException("Ukjent faktum $faktumId")
 
-    internal infix fun idOrNull(faktumId: FaktumId) = faktumMap[faktumId]
+    internal infix fun idOrNull(faktumId: FaktumId) = faktaMap[faktumId]
     infix fun idOrNull(id: String) = idOrNull(FaktumId(id))
 
     override infix fun dokument(rootId: Int) = dokument(FaktumId(rootId))
@@ -94,12 +105,12 @@ class Søknad private constructor(
 
     fun bygg(fnr: String, versjonId: Int, uuid: UUID = UUID.randomUUID()): Søknad {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
-        val mapOfFakta = faktumMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
+        val mapOfFakta = faktaMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
         return Søknad(fnr, versjonId, uuid, mapOfFakta)
     }
 
     override fun iterator(): MutableIterator<Faktum<*>> {
-        return faktumMap.values.sorted().sortUtledet().iterator()
+        return faktaMap.values.sorted().sortUtledet().iterator()
     }
 
     private fun List<Faktum<*>>.sortUtledet(): MutableList<Faktum<*>> {
@@ -115,7 +126,7 @@ class Søknad private constructor(
     }
 
     internal fun add(faktum: Faktum<*>) {
-        faktumMap[faktum.faktumId] = faktum
+        faktaMap[faktum.faktumId] = faktum
     }
 
     internal fun faktagrupper(type: Versjon.FaktagrupperType) = Versjon.id(versjonId).faktagrupper(this, type)
