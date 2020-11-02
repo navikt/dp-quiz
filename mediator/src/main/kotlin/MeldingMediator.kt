@@ -1,4 +1,5 @@
 import db.HendelseRecorder
+import meldinger.FaktumSvarRiver
 import meldinger.model.HendelseMelding
 import meldinger.ØnskerRettighetsavklaringerRiver
 import mu.KotlinLogging
@@ -18,6 +19,7 @@ internal class MeldingMediator(
     init {
         DelegatedRapid(rapidsConnection).also {
             ØnskerRettighetsavklaringerRiver(it, this)
+            FaktumSvarRiver(it, this)
         }
     }
 
@@ -60,7 +62,7 @@ internal class MeldingMediator(
     }
 
     fun onRiverError(riverName: String, problems: MessageProblems, context: RapidsConnection.MessageContext) {
-        TODO("Not yet implemented")
+        println("$riverName, $problems")
     }
 
     private inner class DelegatedRapid(private val rapidsConnection: RapidsConnection) :
