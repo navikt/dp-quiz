@@ -32,6 +32,8 @@ class UtledetFaktumFactory<T : Comparable<T>>(
         object valg {
             infix fun faktum(navn: String) = UtledetFaktumFactory(navn, EN_ELLER_INGEN)
         }
+
+        private fun List<FaktumFactory<*>>.maksIndeks() = this.maxOf { it.rootId }
     }
 
     infix fun ja(navn: String) = this.also { childJaNavn.add(navn) }
@@ -46,7 +48,22 @@ class UtledetFaktumFactory<T : Comparable<T>>(
 
     override fun faktum() = UtledetFaktum(faktumId, navn, fakta, regel)
 
-    internal fun leggTilBarn(faktumMap: Map<FaktumId, Faktum<*>>) {}
+    internal fun ekspanderValg(factories: MutableList<FaktumFactory<*>>) {
+        val førsteIndeks = factories.maksIndeks() + 1
+        val maksIndeks = førsteIndeks + childJaNavn.size + childNeiNavn.size - 1
+        var nesteIndeks = førsteIndeks
+
+        (childJaNavn + childNeiNavn).map { navn ->
+            (BaseFaktumFactory.Companion.ja nei navn id nesteIndeks).also { factory ->
+                (førsteIndeks..maksIndeks).forEach {
+                    if (it != nesteIndeks) factory avhengerAv it
+                }
+                factories.add(factory)
+                childIder.add(nesteIndeks)
+                nesteIndeks++
+            }
+        }
+    }
 
     override fun sammensattAv(faktumMap: Map<FaktumId, Faktum<*>>) {
         (faktumMap[FaktumId(rootId)] as UtledetFaktum).addAll(

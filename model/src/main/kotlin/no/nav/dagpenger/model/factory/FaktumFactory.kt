@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 
 abstract class FaktumFactory<T : Comparable<T>> {
-    protected var rootId = 0
+    internal var rootId = 0
     private val avhengigheter = mutableListOf<Int>()
 
     internal abstract fun faktum(): Faktum<T>
