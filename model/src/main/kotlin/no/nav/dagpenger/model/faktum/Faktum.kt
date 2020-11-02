@@ -33,6 +33,14 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
             .map { faktum ->
                 faktum.deepCopy(indeks, søknad)
             }
+
+        private val prioritet = listOf(
+            GrunnleggendeFaktum::class.java,
+            TemplateFaktum::class.java,
+            GeneratorFaktum::class.java,
+            ValgFaktum::class.java,
+            UtledetFaktum::class.java
+        )
     }
 
     fun <R> reflection(block: (Int, Int) -> R) = faktumId.reflection(block)
@@ -82,17 +90,12 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     override fun compareTo(challenger: Faktum<*>): Int {
         if (this::class.java == challenger::class.java) return this.faktumId.compareTo(challenger.faktumId)
 
-        if (this::class.java == GrunnleggendeFaktum::class.java) return -1
-        if (challenger::class.java == GrunnleggendeFaktum::class.java) return 1
-        if (this::class.java == TemplateFaktum::class.java) return -1
-        if (challenger::class.java == TemplateFaktum::class.java) return 1
-        if (this::class.java == GeneratorFaktum::class.java) return -1
-        if (challenger::class.java == GeneratorFaktum::class.java) return 1
-        if (this::class.java == ValgFaktum::class.java) return -1
-        if (challenger::class.java == ValgFaktum::class.java) return 1
-
-        throw ClassCastException("Vet ikke hvilken av ${this::class.java} og ${challenger::class.java} som skal sorteres først")
+        return prioritet(this) - prioritet(challenger)
     }
+
+    private fun prioritet(faktum: Faktum<*>) =
+        if (!prioritet.contains(faktum::class.java)) throw Exception("Mangler prioritet for ${faktum::class.simpleName}")
+        else prioritet.indexOf(faktum::class.java)
 
     internal fun leggTilAvhengigheter(fakta: MutableSet<Faktum<*>>) {
         fakta.addAll(avhengerAvFakta)
