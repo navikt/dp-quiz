@@ -84,18 +84,20 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
         throw IllegalArgumentException("Kan ikke lage template av faktum: $navn $id")
     }
 
-    override fun compareTo(challenger: Faktum<*>) =
-        when (this::class.java to challenger::class.java) {
-            GrunnleggendeFaktum::class.java to TemplateFaktum::class.java -> -1
-            TemplateFaktum::class.java to GrunnleggendeFaktum::class.java -> 1
-            GeneratorFaktum::class.java to TemplateFaktum::class.java -> 1
-            TemplateFaktum::class.java to GeneratorFaktum::class.java -> -1
-            GeneratorFaktum::class.java to UtledetFaktum::class.java -> -1
-            UtledetFaktum::class.java to GeneratorFaktum::class.java -> 1
-            else -> {
-                this.faktumId.compareTo(challenger.faktumId)
-            }
-        }
+    override fun compareTo(challenger: Faktum<*>): Int {
+        if (this::class.java == challenger::class.java) return this.faktumId.compareTo(challenger.faktumId)
+
+        if (this is GrunnleggendeFaktum) return -1
+        if (challenger is GrunnleggendeFaktum) return 1
+        if (this is TemplateFaktum) return -1
+        if (challenger is TemplateFaktum) return 1
+        if (this is GeneratorFaktum) return -1
+        if (challenger is GeneratorFaktum) return 1
+        if (this is ValgFaktum) return -1
+        if (challenger is ValgFaktum) return 1
+
+        throw ClassCastException("Vet ikke hvilken av ${this::class.java} og ${challenger::class.java} som skal sorteres først")
+    }
 }
 
 fun Set<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
