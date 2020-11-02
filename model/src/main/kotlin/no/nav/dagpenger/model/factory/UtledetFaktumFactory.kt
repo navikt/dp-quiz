@@ -46,6 +46,8 @@ class UtledetFaktumFactory<T : Comparable<T>>(
 
     override fun faktum() = UtledetFaktum(faktumId, navn, fakta, regel)
 
+    internal fun leggTilBarn(faktumMap: Map<FaktumId, Faktum<*>>) {}
+
     override fun sammensattAv(faktumMap: Map<FaktumId, Faktum<*>>) {
         (faktumMap[FaktumId(rootId)] as UtledetFaktum).addAll(
             childIder.map { otherId ->

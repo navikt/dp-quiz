@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.factory.FaktumFactory
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.visitor.FaktaVisitor
@@ -43,32 +44,49 @@ class Søknad private constructor(
             *(this.map { it }.toTypedArray())
         )
 
-        private fun List<FaktumFactory<*>>.toFaktaMap() = this.map { factory ->
+        private fun List<FaktumFactory<*>>.toFaktaMap() =
+            tilFakta()
+                .sjekkIder()
+                .tilValg(this)
+                .tilTemplate(this)
+                .angiAvhengigheter(this)
+                .tilUtledet(this)
+
+        private fun List<FaktumFactory<*>>.tilFakta() = this.map { factory ->
             factory.faktum().let { faktum ->
                 faktum.faktumId to faktum
             }
         }
-                .sjekkIder()
-                .tilTemplate(this)
-        .also { faktumMap ->
-            this.forEach { factory ->
+
+        private fun List<Pair<FaktumId, Faktum<*>>>.sjekkIder(): List<Pair<FaktumId, Faktum<*>>> =
+            this.also { fakta ->
+                fakta.groupingBy { it.first }.eachCount().forEach {
+                    require(it.value == 1) { "Faktum med ${it.key} er definert mer en 1 gang" }
+                }
+            }
+        private fun MutableMap<FaktumId, Faktum<*>>.tilTemplate(factories: List<FaktumFactory<*>>): MutableMap<FaktumId, Faktum<*>> =
+            this.also { faktumMap ->
+                factories.forEach { factory ->
+                    factory.tilTemplate(faktumMap)
+                }
+            }
+
+        private fun List<Pair<FaktumId, Faktum<*>>>.tilValg(factories: List<FaktumFactory<*>>): MutableMap<FaktumId, Faktum<*>> =
+            this.toMap().toMutableMap().also { faktumMap ->
+                factories.forEach { if (it is UtledetFaktumFactory) it.leggTilBarn(faktumMap) }
+            }
+
+        private fun MutableMap<FaktumId, Faktum<*>>.angiAvhengigheter(factories: List<FaktumFactory<*>>): MutableMap<FaktumId, Faktum<*>> = this.also { faktumMap ->
+            factories.forEach { factory ->
                 factory.avhengerAv(faktumMap)
-                factory.sammensattAv(faktumMap)
             }
         }
 
-        private fun List<Pair<FaktumId, Faktum<*>>>.sjekkIder(): List<Pair<FaktumId, Faktum<*>>> =
-                this.also { fakta ->
-                    fakta.groupingBy { it.first }.eachCount().forEach {
-                        require(it.value == 1) { "Faktum med ${it.key} er definert mer en 1 gang" }
-                    }
-                }
-        private fun List<Pair<FaktumId, Faktum<*>>>.tilTemplate(factories: List<FaktumFactory<*>>): MutableMap<FaktumId, Faktum<*>>  = this.toMap().toMutableMap().also { faktumMap ->
+        private fun MutableMap<FaktumId, Faktum<*>>.tilUtledet(factories: List<FaktumFactory<*>>): MutableMap<FaktumId, Faktum<*>> = this.also { faktumMap ->
             factories.forEach { factory ->
-                factory.tilTemplate(faktumMap)
+                factory.sammensattAv(faktumMap)
             }
         }
-        private fun MutableMap<FaktumId, Faktum<*>>.angiAvhengigheter() {}
     }
 
     override infix fun id(rootId: Int) = id(FaktumId(rootId))
