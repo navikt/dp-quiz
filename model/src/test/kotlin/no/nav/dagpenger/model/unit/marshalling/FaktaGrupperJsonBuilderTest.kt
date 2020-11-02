@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class FaktagrupperJsonBuilderTest {
+class FaktaGrupperJsonBuilderTest {
 
     @Test
     fun `Lage faktagrupper med uuid`() {

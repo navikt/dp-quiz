@@ -3,13 +3,11 @@ import helpers.SøknadEksempel
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
-import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
@@ -29,9 +27,9 @@ class MeldingMediatorTest {
 
         init {
             MeldingMediator(
-                    rapidsConnection = testRapid,
-                    hendelseRecorder = mockk(relaxed = true),
-                    hendelseMediator = hendelseMediator
+                rapidsConnection = testRapid,
+                hendelseRecorder = mockk(relaxed = true),
+                hendelseMediator = hendelseMediator
             )
             SøknadEksempel
         }
@@ -70,7 +68,7 @@ private class TestMeldingFactory(private val fødselsnummer: String, private val
             "fødselsnummer" to fødselsnummer,
             "avklaringsId" to UUID.randomUUID(),
             "opprettet" to LocalDateTime.now(),
-                "faktagruppertype" to Versjon.FaktagrupperType.Web.toString()
+            "faktagruppertype" to Versjon.FaktagrupperType.Web.toString()
         )
     )
 
