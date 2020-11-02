@@ -21,8 +21,8 @@ internal class FaktumSvarMelding(packet: JsonMessage) : HendelseMelding(packet) 
             "boolean" -> mediator.behandle(this, søknadId, faktumId, svar.asBoolean(), faktagrupperType, rolle)
             "heltall" -> mediator.behandle(this, søknadId, faktumId, svar.asInt(), faktagrupperType, rolle)
             "dato" -> mediator.behandle(this, søknadId, faktumId, svar.asLocalDate(), faktagrupperType, rolle)
-            //"inntekt" -> mediator.behandle(this, søknadId, faktumId, svar.asText(), faktagrupperType, rolle)
-            //"dokument" -> mediator.behandle(this, søknadId, faktumId, svar.asText(), faktagrupperType, rolle)
+            // "inntekt" -> mediator.behandle(this, søknadId, faktumId, svar.asText(), faktagrupperType, rolle)
+            // "dokument" -> mediator.behandle(this, søknadId, faktumId, svar.asText(), faktagrupperType, rolle)
             else -> throw IllegalArgumentException("Ukjent faktum type: $faktumType")
         }
     }

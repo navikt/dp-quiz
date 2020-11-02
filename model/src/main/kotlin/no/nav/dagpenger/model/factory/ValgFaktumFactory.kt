@@ -9,8 +9,8 @@ class ValgFaktumFactory(
 ) : FaktumFactory<Boolean>() {
     private val jaIder = mutableSetOf<Int>()
     private val neiIder = mutableSetOf<Int>()
-    private val childJaNavn = mutableSetOf<String>()
-    private val childNeiNavn = mutableSetOf<String>()
+    private val underordnedeJaNavn = mutableSetOf<String>()
+    private val underordnedeNeiNavn = mutableSetOf<String>()
 
     companion object {
         object valg {
@@ -20,9 +20,9 @@ class ValgFaktumFactory(
         private fun List<FaktumFactory<*>>.maksIndeks() = this.maxOf { it.rootId }
     }
 
-    infix fun ja(navn: String) = this.also { childJaNavn.add(navn) }
+    infix fun ja(navn: String) = this.also { underordnedeJaNavn.add(navn) }
 
-    infix fun nei(navn: String) = this.also { childNeiNavn.add(navn) }
+    infix fun nei(navn: String) = this.also { underordnedeNeiNavn.add(navn) }
 
     infix fun id(rootId: Int) = this.also { this.rootId = rootId }
 
@@ -30,30 +30,30 @@ class ValgFaktumFactory(
 
     internal fun ekspanderValg(factories: MutableList<FaktumFactory<*>>) {
         val førsteIndeks = factories.maksIndeks() + 1
-        val maksIndeks = førsteIndeks + childJaNavn.size + childNeiNavn.size - 1
-        var nesteIndeks = førsteIndeks
+        val maksIndeks = førsteIndeks + underordnedeJaNavn.size + underordnedeNeiNavn.size - 1
 
-        childJaNavn.map { navn ->
-            (BaseFaktumFactory.Companion.ja nei navn id nesteIndeks).also {
-                jaIder.add(nesteIndeks)
-            }.also { factory ->
-                (førsteIndeks..maksIndeks).forEach {
+        val antallFaktum = førsteIndeks..maksIndeks
+
+        underordnedeJaNavn.opprettUnderordnedeFactories(factories, førsteIndeks, antallFaktum)
+            .also { jaIder.addAll(it) }
+        underordnedeNeiNavn.opprettUnderordnedeFactories(factories, førsteIndeks + underordnedeJaNavn.size, antallFaktum)
+            .also { neiIder.addAll(it) }
+    }
+
+    private fun MutableSet<String>.opprettUnderordnedeFactories(
+        factories: MutableList<FaktumFactory<*>>,
+        førsteIndeks: Int,
+        faktumIndeks: IntRange
+    ): List<Int> {
+        var nesteIndeks = førsteIndeks
+        return this.map { navn ->
+            (BaseFaktumFactory.Companion.ja nei navn id nesteIndeks).also { factory ->
+                faktumIndeks.forEach {
                     if (it != nesteIndeks) factory avhengerAv it
                 }
                 factories.add(factory)
-                nesteIndeks++
             }
-        }
-        childNeiNavn.map { navn ->
-            (BaseFaktumFactory.Companion.ja nei navn id nesteIndeks).also {
-                neiIder.add(nesteIndeks)
-            }.also { factory ->
-                (førsteIndeks..maksIndeks).forEach {
-                    if (it != nesteIndeks) factory avhengerAv it
-                }
-                factories.add(factory)
-                nesteIndeks++
-            }
+            nesteIndeks++
         }
     }
 

@@ -87,14 +87,14 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     override fun compareTo(challenger: Faktum<*>): Int {
         if (this::class.java == challenger::class.java) return this.faktumId.compareTo(challenger.faktumId)
 
-        if (this is GrunnleggendeFaktum) return -1
-        if (challenger is GrunnleggendeFaktum) return 1
-        if (this is TemplateFaktum) return -1
-        if (challenger is TemplateFaktum) return 1
-        if (this is GeneratorFaktum) return -1
-        if (challenger is GeneratorFaktum) return 1
-        if (this is ValgFaktum) return -1
-        if (challenger is ValgFaktum) return 1
+        if (this::class.java == GrunnleggendeFaktum::class.java) return -1
+        if (challenger::class.java == GrunnleggendeFaktum::class.java) return 1
+        if (this::class.java == TemplateFaktum::class.java) return -1
+        if (challenger::class.java == TemplateFaktum::class.java) return 1
+        if (this::class.java::class.java == GeneratorFaktum::class.java) return -1
+        if (challenger::class.java == GeneratorFaktum::class.java) return 1
+        if (this::class.java == ValgFaktum::class.java) return -1
+        if (challenger::class.java == ValgFaktum::class.java) return 1
 
         throw ClassCastException("Vet ikke hvilken av ${this::class.java} og ${challenger::class.java} som skal sorteres først")
     }

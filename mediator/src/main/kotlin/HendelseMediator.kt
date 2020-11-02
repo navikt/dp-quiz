@@ -1,7 +1,6 @@
 import db.SøknadPersistance
 import meldinger.model.FaktumSvarMelding
 import meldinger.model.ØnskerRettighetsavklaringMelding
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Dokument
