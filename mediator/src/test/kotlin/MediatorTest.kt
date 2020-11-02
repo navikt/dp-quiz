@@ -1,5 +1,6 @@
 import db.SøknadPersistance
 import helpers.SøknadEksempel
+import helpers.desember
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
@@ -46,8 +47,10 @@ class MeldingMediatorTest {
     internal fun `ta imot svar`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
         val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknadId"].asText())
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid))
-        assertEquals(2, testRapid.inspektør.size)
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 1, "boolean", "true"))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 3, "heltall", "2"))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 4, "dato", 24.desember.toString()))
+        assertEquals(4, testRapid.inspektør.size)
     }
 
     private class TestFaktagrupperer : SøknadPersistance {
@@ -93,19 +96,19 @@ private class TestMeldingFactory(private val fødselsnummer: String, private val
         "@opprettet" to LocalDateTime.now()
     )
 
-    fun besvarFaktum(søknadId: UUID) = nyHendelse(
+    fun besvarFaktum(søknadId: UUID, faktumId: Int, faktumType: String, svar: String) = nyHendelse(
         "faktum_svar",
         mapOf(
             "aktørId" to aktørId,
             "fødselsnummer" to fødselsnummer,
             "avklaringsId" to UUID.randomUUID(),
             "opprettet" to LocalDateTime.now(),
-            "faktumId" to 1,
+            "faktumId" to faktumId,
             "søknadId" to søknadId,
-            "svar" to true,
+            "svar" to svar,
             "faktagrupperType" to Versjon.FaktagrupperType.Web.toString(),
             "rolle" to Rolle.søker,
-            "faktumType" to "boolean"
+            "faktumType" to faktumType
         )
     )
 }
