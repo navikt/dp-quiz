@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.alle
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.valg
+import no.nav.dagpenger.model.factory.ValgFaktumFactory.Companion.valg
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
@@ -56,7 +56,8 @@ internal class UtledetFaktumFactoryTest {
         assertEquals(4.januar, faktum.svar())
     }
 
-    @Test fun `maks inntekt`() {
+    @Test
+    fun `maks inntekt`() {
         val søknad = Søknad(
             inntekt faktum "inntekt1" id 1,
             inntekt faktum "inntekt2" id 2,
@@ -90,7 +91,8 @@ internal class UtledetFaktumFactoryTest {
         assertEquals(1040.årlig, faktum.svar())
     }
 
-    @Test fun `boolean and`() {
+    @Test
+    fun `boolean and`() {
         val søknad = Søknad(
             ja nei "jaNei1" id 1,
             ja nei "jaNei2" id 2,
@@ -123,17 +125,21 @@ internal class UtledetFaktumFactoryTest {
         assertEquals(false, faktum.svar())
     }
 
-    @Test fun `En eller ingen`() {
+    @Test
+    fun `En eller ingen`() {
         val søknad = Søknad(
             valg faktum "valg" ja "valg1" ja "valg2" nei "valg3" id 1
         ).testFaktagrupper()
         assertFalse(søknad.ja(2).erBesvart())
         assertFalse(søknad.ja(3).erBesvart())
         assertFalse(søknad.ja(4).erBesvart())
+        assertFalse(søknad.ja(1).erBesvart())
         søknad.ja(2).besvar(true, Rolle.søker)
         assertTrue(søknad.ja(2).erBesvart())
-        søknad.ja(3).besvar(true, Rolle.søker)
-        assertTrue(søknad.ja(3).erBesvart())
+        assertTrue(søknad.ja(1).svar())
+        søknad.ja(4).besvar(true, Rolle.søker)
+        assertTrue(søknad.ja(4).erBesvart())
         assertFalse(søknad.ja(2).erBesvart())
+        assertFalse(søknad.ja(1).svar())
     }
 }

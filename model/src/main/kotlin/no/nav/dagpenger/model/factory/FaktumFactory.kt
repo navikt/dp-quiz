@@ -23,5 +23,7 @@ abstract class FaktumFactory<T : Comparable<T>> {
 
     internal open fun sammensattAv(faktumMap: Map<FaktumId, Faktum<*>>) {}
 
+    internal open fun valgMellom(faktumMap: Map<FaktumId, Faktum<*>>) {}
+
     internal open fun tilTemplate(faktumMap: MutableMap<FaktumId, Faktum<*>>) {}
 }
