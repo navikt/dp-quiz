@@ -1,4 +1,5 @@
 import db.SøknadPersistance
+import helpers.SøknadEksempel
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
@@ -15,24 +16,9 @@ import java.util.UUID
 
 class MeldingMediatorTest {
 
-    @Test
-    @Disabled
-    internal fun `Oppretter faktagrupper og persisterer noe ved ønsket rettighetsavklaring`() {
-        testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
-        assertEquals(1, grupperer.faktaList.size)
-    }
-
-    @Test
-    @Disabled
-    fun `Publiserer noe ved ønsket rettighetsavklaring`() {
-        testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
-        assertEquals(1, testRapid.inspektør.size)
-    }
-
     @BeforeEach
     internal fun reset() {
         testRapid.reset()
-        grupperer.faktaList.clear()
     }
 
     private companion object {
@@ -43,17 +29,23 @@ class MeldingMediatorTest {
 
         init {
             MeldingMediator(
-                rapidsConnection = testRapid,
-                hendelseRecorder = mockk(relaxed = true),
-                hendelseMediator = hendelseMediator
+                    rapidsConnection = testRapid,
+                    hendelseRecorder = mockk(relaxed = true),
+                    hendelseMediator = hendelseMediator
             )
+            SøknadEksempel
         }
     }
 
+    @Test
+    internal fun `Oppretter faktagrupper og persisterer noe ved ønsket rettighetsavklaring`() {
+        testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
+        assertEquals(1, testRapid.inspektør.size)
+    }
+
     private class TestFaktagrupperer : SøknadPersistance {
-        val faktaList = mutableMapOf<UUID, List<Faktum<*>>>()
         override fun ny(fnr: String, type: Versjon.FaktagrupperType): Faktagrupper {
-            TODO("Not yet implemented")
+            return Versjon.siste.faktagrupper(fnr, type)
         }
 
         override fun hent(uuid: UUID, type: Versjon.FaktagrupperType): Faktagrupper {
@@ -77,7 +69,8 @@ private class TestMeldingFactory(private val fødselsnummer: String, private val
             "aktørId" to aktørId,
             "fødselsnummer" to fødselsnummer,
             "avklaringsId" to UUID.randomUUID(),
-            "opprettet" to LocalDateTime.now()
+            "opprettet" to LocalDateTime.now(),
+                "faktagruppertype" to Versjon.FaktagrupperType.Web.toString()
         )
     )
 
