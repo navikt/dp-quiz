@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -19,6 +20,7 @@ class MeldingMediatorTest {
     @BeforeEach
     internal fun reset() {
         testRapid.reset()
+        grupperer.faktagrupper = null
     }
 
     private companion object {
@@ -38,9 +40,10 @@ class MeldingMediatorTest {
     }
 
     @Test
-    internal fun `Oppretter faktagrupper og persisterer noe ved ønsket rettighetsavklaring`() {
+    internal fun `Start ny søknad, og send første seksjon`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
         assertEquals(1, testRapid.inspektør.size)
+        assertNotNull(grupperer.faktagrupper)
     }
 
     @Test
@@ -54,15 +57,12 @@ class MeldingMediatorTest {
     }
 
     private class TestFaktagrupperer : SøknadPersistance {
-        private lateinit var faktagrupper: Faktagrupper
+        var faktagrupper: Faktagrupper? = null
 
-        override fun ny(fnr: String, type: Versjon.FaktagrupperType): Faktagrupper {
-            return Versjon.siste.faktagrupper(fnr, type).also { faktagrupper = it }
-        }
+        override fun ny(fnr: String, type: Versjon.FaktagrupperType) =
+            Versjon.siste.faktagrupper(fnr, type).also { faktagrupper = it }
 
-        override fun hent(uuid: UUID, type: Versjon.FaktagrupperType): Faktagrupper {
-            return faktagrupper
-        }
+        override fun hent(uuid: UUID, type: Versjon.FaktagrupperType) = faktagrupper!!
 
         override fun lagre(søknad: Søknad): Boolean {
             faktagrupper = Versjon.siste.faktagrupper(søknad, Versjon.FaktagrupperType.Web)

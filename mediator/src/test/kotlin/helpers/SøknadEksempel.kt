@@ -1,6 +1,5 @@
 package helpers
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
@@ -47,7 +46,7 @@ internal object SøknadEksempel {
     private val subsumsjon = "reell arbeidssøker".alle(
         prototypeSøknad1 ja 1 er true,
         prototypeSøknad1 ja 2 er true,
-        prototypeSøknad1 heltall 3  er 2,
+        prototypeSøknad1 heltall 3 er 2,
         prototypeSøknad1 dato 4 er 24.desember
     )
 

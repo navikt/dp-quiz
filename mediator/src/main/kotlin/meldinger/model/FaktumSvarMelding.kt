@@ -17,13 +17,12 @@ internal class FaktumSvarMelding(packet: JsonMessage) : HendelseMelding(packet) 
     private val svar = packet["svar"]
 
     override fun behandle(mediator: HendelseMediator) {
-        when (faktumType) {
-            "boolean" -> mediator.behandle(this, søknadId, faktumId, svar.asBoolean(), faktagrupperType, rolle)
-            "heltall" -> mediator.behandle(this, søknadId, faktumId, svar.asInt(), faktagrupperType, rolle)
-            "dato" -> mediator.behandle(this, søknadId, faktumId, svar.asLocalDate(), faktagrupperType, rolle)
-            //"inntekt" -> mediator.behandle(this, søknadId, faktumId, svar.asText(), faktagrupperType, rolle)
-            //"dokument" -> mediator.behandle(this, søknadId, faktumId, svar.asText(), faktagrupperType, rolle)
+        val typedSvar = when (faktumType) {
+            "boolean" -> svar.asBoolean()
+            "heltall" -> svar.asInt()
+            "dato" -> svar.asLocalDate()
             else -> throw IllegalArgumentException("Ukjent faktum type: $faktumType")
         }
+        mediator.behandle(this, søknadId, faktumId, typedSvar, faktagrupperType, rolle)
     }
 }
