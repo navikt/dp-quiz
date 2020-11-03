@@ -26,5 +26,7 @@ internal class SøknadJsonBuilderTest {
         assertEquals("1", json["fakta"]["versjonId"].asText())
         assertEquals("12345678901", json["fakta"]["fnr"].asText())
         assertNotNull(json["fakta"]["uuid"])
+        assertEquals(listOf("346","347"), json["fakta"]["faktum"][23]["faktaJa"].toList().map { it.asText() })
+        assertEquals(listOf("348","349"), json["fakta"]["faktum"][23]["faktaNei"].toList().map { it.asText() })
     }
 }
