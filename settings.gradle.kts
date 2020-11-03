@@ -9,3 +9,4 @@ pluginManagement {
 }
 
 include("mediator", "dagpenger", "model")
+include("nav-mediator")
