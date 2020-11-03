@@ -4,6 +4,7 @@ import helpers.desember
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
+import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -54,7 +55,9 @@ class MeldingMediatorTest {
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 2, "boolean", "true"))
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 3, "heltall", "2"))
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 4, "dato", 24.desember.toString()))
-        assertEquals(4, testRapid.inspektør.size)
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 5, "inntekt", 1000.årlig.toString()))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 6, "inntekt", 1050.årlig.toString()))
+        assertEquals(6, testRapid.inspektør.size)
     }
 
     private class TestLagring : SøknadPersistence {

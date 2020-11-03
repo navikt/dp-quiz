@@ -2,6 +2,7 @@ package meldinger.model
 
 import HendelseMediator
 import no.nav.dagpenger.model.faktagrupper.Versjon
+import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.asLocalDate
@@ -21,6 +22,7 @@ internal class FaktumSvarMelding(packet: JsonMessage) : HendelseMelding(packet) 
             "boolean" -> svar.asBoolean()
             "heltall" -> svar.asInt()
             "dato" -> svar.asLocalDate()
+            "inntekt" -> svar.asDouble().årlig
             else -> throw IllegalArgumentException("Ukjent faktum type: $clazz")
         }
         mediator.behandle(this, søknadId, faktumId, typedSvar, faktagrupperType, rolle)
