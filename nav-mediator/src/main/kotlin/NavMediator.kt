@@ -6,7 +6,7 @@ class NavMediator(private val rapidsConnection: RapidsConnection) : River.Packet
 
     init {
         River(rapidsConnection).apply {
-            validate { it.demandAll("@behov", listOf("Inntekt")) }
+            validate { it.requireKey("@behov") }
             validate { it.demandValue("@event_name", "behov") }
             validate { it.rejectKey("@løsning") }
             validate { it.requireKey("@id", "@opprettet") }
@@ -15,6 +15,23 @@ class NavMediator(private val rapidsConnection: RapidsConnection) : River.Packet
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
-        context.send(packet.toJson())
+
+        val behov = packet["@behov"].map { it.asText() }
+
+        // For hvert behov i fakta ->
+        // Gitt faktum SisteInntektår  - avhenger virkningstidspunkt og om søker er fra fangst og fiske
+        // hent inntekt siste 36 måneder (virkningstidspunkt = dato)
+        // summer inntekt på siste år (basert inntektsklasser? )
+        // svar SisteInntektår med inntekt
+
+        context.send(
+            JsonMessage.newMessage(
+                mapOf(
+                    "faktum" to "InntektSiste3år",
+                    "id" to "1123",
+                    "svar" to "10000"
+                )
+            ).toJson()
+        )
     }
 }
