@@ -118,7 +118,10 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor
         clazz: Class<Boolean>
     ) {
         if (dbIder.containsKey(faktum)) return
-        faktumFaktum(skrivFaktum(faktum, clazz, VALG), underordnedeJa + underordnedeNei, "utledet_faktum")
+        skrivFaktum(faktum, clazz, VALG).also {
+            valgFaktum(it, underordnedeJa, true)
+            valgFaktum(it, underordnedeNei, false)
+        }
         avhengigheter[faktum] = avhengigeFakta
     }
 
@@ -134,6 +137,21 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor
                         "INSERT INTO $table (parent_id, child_id) VALUES (?, ?)".trimMargin(),
                         parentId,
                         dbIder[child]
+                    ).asExecute
+                )
+            }
+        }
+    }
+
+    private fun valgFaktum(parentId: Int, children: Collection<Faktum<*>>, type: Boolean) {
+        children.forEach { child ->
+            using(sessionOf(dataSource)) { session ->
+                session.run(
+                    queryOf(
+                        "INSERT INTO valg_faktum (parent_id, child_id, ja_nei) VALUES (?, ?, ?)".trimMargin(),
+                        parentId,
+                        dbIder[child],
+                        type
                     ).asExecute
                 )
             }
