@@ -6,8 +6,9 @@ class NavMediatorTest {
     private val testRapid = TestRapid().apply { NavMediator(this) }
 
     @Test
-    fun `Skal kunne lese behov fra kafka`(){
-        testRapid.sendTestMessage("""
+    fun `Skal kunne lese behov fra kafka`() {
+        testRapid.sendTestMessage(
+            """
              {
                 "@behov": ["Inntekt"],
                 "@event_name": "behov",
@@ -17,7 +18,8 @@ class NavMediatorTest {
                 "søknadId" : "12345",
                 "fakta": ""
              }
-            """.trimIndent())
+            """.trimIndent()
+        )
 
         val inspektør = testRapid.inspektør
         assertDoesNotThrow { inspektør.message(0) }
