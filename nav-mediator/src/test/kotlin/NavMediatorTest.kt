@@ -10,12 +10,11 @@ class NavMediatorTest {
         testRapid.sendTestMessage("""
              {
                 "@behov": ["Inntekt"],
-                "@event_name": "innhentFaktum",
+                "@event_name": "behov",
                 "@id" : "12345", 
-                "aktørId" : "1234",
                 "fødselsnummer" : "1234",
-                "vedtakId" : "12345",
-                "beregningsdato": "2020-04-21"
+                "søknadId" : "12345",
+                "fakta": ""
              }
             """.trimIndent())
 

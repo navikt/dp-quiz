@@ -7,10 +7,10 @@ class NavMediator(private val rapidsConnection: RapidsConnection): River.PacketL
     init {
         River(rapidsConnection).apply {
             validate { it.demandAll("@behov", listOf("Inntekt")) }
-            validate { it.demandValue("@event_name", "innhentFaktum") }
+            validate { it.demandValue("@event_name", "behov") }
             validate { it.rejectKey("@løsning") }
             validate { it.requireKey("@id") }
-            validate { it.requireKey("beregningsdato", "aktørId", "fødselsnummer", "vedtakId") }
+            validate { it.requireKey("fødselsnummer", "fakta", "søknadId") }
         }.register(this)
     }
 
