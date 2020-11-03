@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.unit.marshalling
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Rolle
@@ -7,7 +8,6 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testFaktagrupper
 import no.nav.dagpenger.model.marshalling.SeksjonJsonBuilder
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class SeksjonJsonBuilderTest {
@@ -28,20 +28,26 @@ class SeksjonJsonBuilderTest {
     }
 
     @Test
-    @Disabled
     fun `bygger faktaavhengigheter for seksjon`() {
         val søknad = Søknad(
-            ja nei "navn" id 1,
-            ja nei "jo" id 2 avhengerAv 1
+            ja nei "verneplikt" id 1,
+            inntekt faktum "inntekt" id 2 avhengerAv 1
         )
 
-        val avhengigFakta = søknad ja 2
-        val avhengigSeksjon = Seksjon("Avhengig", Rolle.nav, avhengigFakta)
+        val vernepliktFaktum = søknad ja 1
+        val vernepliktSeksjon = Seksjon("Verneplikt", Rolle.nav, vernepliktFaktum)
+        SeksjonJsonBuilder(vernepliktSeksjon).resultat().also {
+            assertEquals(1, it["fakta"].size())
+            assertEquals(listOf(1), it["root"]["fakta"].map { it.asInt() })
+        }
 
-        val jsonBuilder = SeksjonJsonBuilder(avhengigSeksjon)
-        val json = jsonBuilder.resultat()
+        vernepliktFaktum.besvar(true, Rolle.nav)
 
-        assertEquals(2, json["fakta"].size())
-        assertEquals(listOf(2), json["root"]["fakta"].map { it.asInt() })
+        val avhengigSeksjon = Seksjon("Inntekt", Rolle.nav, søknad id 2)
+
+        SeksjonJsonBuilder(avhengigSeksjon).resultat().also {
+            assertEquals(2, it["fakta"].size())
+            assertEquals(listOf(2, 1), it["root"]["fakta"].map { it.asInt() })
+        }
     }
 }

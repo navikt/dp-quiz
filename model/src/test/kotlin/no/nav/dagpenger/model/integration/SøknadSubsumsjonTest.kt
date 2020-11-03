@@ -117,8 +117,8 @@ internal class SøknadSubsumsjonTest {
         }
 
         assertEquals(faktagrupper[9], faktagrupper.nesteSeksjon())
-        assertEquals(7, faktagrupper[9].fakta().size)
-        assertEquals(listOf("6", "7", "12", "14", "18.1", "18.2", "19").sorted(), faktagrupper[9].fakta().map { it.id }.sorted())
+        assertEquals(10, faktagrupper[9].fakta().size)
+        assertEquals(listOf("6", "7", "12", "14", "18.1", "18.2", "19", "2", "11", "13").sorted(), faktagrupper[9].fakta().map { it.id }.sorted())
         faktagrupper.ja(14).besvar(true, Rolle.saksbehandler)
         faktagrupper.nesteFakta().also { fakta ->
             assertEquals(0, fakta.size)

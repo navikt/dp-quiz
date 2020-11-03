@@ -9,6 +9,9 @@ import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.Rolle.nav
+import no.nav.dagpenger.model.faktum.Rolle.saksbehandler
+import no.nav.dagpenger.model.faktum.Rolle.søker
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -18,9 +21,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
-import no.nav.dagpenger.model.faktum.Rolle.nav
-import no.nav.dagpenger.model.faktum.Rolle.saksbehandler
-import no.nav.dagpenger.model.faktum.Rolle.søker
 
 class MeldingMediatorTest {
 

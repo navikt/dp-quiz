@@ -16,9 +16,10 @@ class Seksjon private constructor(
     private val genererteSeksjoner = mutableListOf<Seksjon>()
 
     init {
-        seksjonFakta.forEach {
+        seksjonFakta.toSet().forEach {
             it.add(rolle)
             it.add(this)
+            it.leggTilAvhengigheter(seksjonFakta)
         }
     }
 
