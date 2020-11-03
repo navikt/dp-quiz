@@ -2,13 +2,13 @@ package meldinger.model
 
 import HendelseMediator
 import no.nav.dagpenger.model.faktagrupper.Versjon
+import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.asLocalDate
-import java.util.UUID
-import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.helse.rapids_rivers.asLocalDateTime
+import java.util.UUID
 
 internal class FaktumSvarMelding(packet: JsonMessage) : HendelseMelding(packet) {
     override val fødselsnummer = packet["fødselsnummer"].asText()

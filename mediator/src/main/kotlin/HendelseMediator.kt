@@ -4,6 +4,7 @@ import meldinger.model.ØnskerRettighetsavklaringMelding
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
+import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -46,6 +47,7 @@ internal class HendelseMediator(private val søknadPersistence: SøknadPersisten
             is Int -> faktagrupper.heltall(faktumId).besvar(svar, rolle)
             is LocalDate -> faktagrupper.dato(faktumId).besvar(svar, rolle)
             is Inntekt -> faktagrupper.inntekt(faktumId).besvar(svar, rolle)
+            is Dokument -> faktagrupper.dokument(faktumId).besvar(svar, rolle)
             else -> throw IllegalArgumentException("Ukjent svar-type: ${svar::class.java}")
         }
     }
