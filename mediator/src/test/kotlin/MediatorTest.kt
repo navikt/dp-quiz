@@ -1,4 +1,4 @@
-import db.SøknadPersistance
+import db.SøknadPersistence
 import helpers.SøknadEksempel
 import helpers.desember
 import io.mockk.mockk
@@ -26,7 +26,7 @@ class MeldingMediatorTest {
     private companion object {
         private val meldingsfabrikk = TestMeldingFactory("fødselsnummer", "aktør")
         private val testRapid = TestRapid()
-        private val grupperer = TestFaktagrupperer()
+        private val grupperer = TestLagring()
         private val hendelseMediator = HendelseMediator(grupperer, testRapid)
 
         init {
@@ -56,7 +56,7 @@ class MeldingMediatorTest {
         assertEquals(4, testRapid.inspektør.size)
     }
 
-    private class TestFaktagrupperer : SøknadPersistance {
+    private class TestLagring : SøknadPersistence {
         var faktagrupper: Faktagrupper? = null
 
         override fun ny(fnr: String, type: Versjon.FaktagrupperType) =
@@ -96,7 +96,7 @@ private class TestMeldingFactory(private val fødselsnummer: String, private val
         "@opprettet" to LocalDateTime.now()
     )
 
-    fun besvarFaktum(søknadId: UUID, faktumId: Int, faktumType: String, svar: String) = nyHendelse(
+    fun besvarFaktum(søknadId: UUID, faktumId: Int, clazz: String, svar: String) = nyHendelse(
         "faktum_svar",
         mapOf(
             "aktørId" to aktørId,
@@ -108,7 +108,7 @@ private class TestMeldingFactory(private val fødselsnummer: String, private val
             "svar" to svar,
             "faktagrupperType" to Versjon.FaktagrupperType.Web.toString(),
             "rolle" to Rolle.søker,
-            "faktumType" to faktumType
+            "clazz" to clazz
         )
     )
 }

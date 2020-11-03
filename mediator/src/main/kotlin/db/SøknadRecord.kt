@@ -24,7 +24,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 // Understands a relational representation of a Søknad
-class SøknadRecord : SøknadPersistance {
+class SøknadRecord : SøknadPersistence {
     private lateinit var originalSvar: Map<String, Any?>
 
     override fun ny(fnr: String, type: Versjon.FaktagrupperType): Faktagrupper {
