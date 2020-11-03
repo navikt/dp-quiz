@@ -20,8 +20,8 @@ internal object SøknadEksempel {
         ja nei "f2_bool" id 2,
         heltall faktum "f3_heltall" id 3,
         dato faktum "f4_dato" id 4,
-            inntekt faktum "f5_inntekt" id 5,
-            inntekt faktum "f6_inntekt" id 6
+        inntekt faktum "f5_inntekt" id 5,
+        inntekt faktum "f6_inntekt" id 6
     )
 
     private val webPrototypeSøknad = Faktagrupper(
@@ -45,12 +45,12 @@ internal object SøknadEksempel {
             Rolle.søker,
             prototypeSøknad1.dato(4)
         ),
-            Seksjon(
-                    "seksjon5",
-                    Rolle.søker,
-                    prototypeSøknad1.inntekt(5),
-                    prototypeSøknad1.inntekt(6)
-            )
+        Seksjon(
+            "seksjon5",
+            Rolle.søker,
+            prototypeSøknad1.inntekt(5),
+            prototypeSøknad1.inntekt(6)
+        )
     )
 
     private val subsumsjon = "reell arbeidssøker".alle(
@@ -58,7 +58,8 @@ internal object SøknadEksempel {
         prototypeSøknad1 ja 2 er true,
         prototypeSøknad1 heltall 3 er 2,
         prototypeSøknad1 dato 4 er 24.desember,
-        prototypeSøknad1 inntekt 5 minst (prototypeSøknad1 inntekt 6))
+        prototypeSøknad1 inntekt 5 minst (prototypeSøknad1 inntekt 6)
+    )
 
     val v = Versjon(
         3,

@@ -10,7 +10,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import java.time.LocalDate
 import java.util.UUID
 
-private val log = KotlinLogging.logger{}
+private val log = KotlinLogging.logger {}
 
 internal class HendelseMediator(private val søknadPersistence: SøknadPersistence, rapidsConnection: RapidsConnection) {
     private val behovMediator = BehovMediator(rapidsConnection)
@@ -25,7 +25,7 @@ internal class HendelseMediator(private val søknadPersistence: SøknadPersisten
         søknadPersistence.hent(søknadId, type).also { faktagrupper ->
             besvar(faktagrupper, faktumId, rolle, svar)
             søknadPersistence.lagre(faktagrupper.søknad)
-            if(faktagrupper.resultat()==null)
+            if (faktagrupper.resultat() == null)
                 behovMediator.håndter(
                     faktagrupper.nesteSeksjon(),
                     melding.fødselsnummer,

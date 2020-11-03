@@ -18,6 +18,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
+import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -286,6 +287,18 @@ class SøknadRecord : SøknadPersistence {
             children: Set<Faktum<*>>,
             clazz: Class<R>,
             regel: FaktaRegel<R>
+        ) {
+            skrivFaktumVerdi(faktum)
+        }
+
+        override fun preVisit(
+            faktum: ValgFaktum,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            underordnedeJa: Set<Faktum<Boolean>>,
+            underordnedeNei: Set<Faktum<Boolean>>,
+            clazz: Class<Boolean>
         ) {
             skrivFaktumVerdi(faktum)
         }

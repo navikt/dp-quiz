@@ -21,6 +21,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
+import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.util.UUID
@@ -53,25 +54,70 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor
         this.indeks = indeks
     }
 
-    override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, avhengerAvFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
+    override fun <R : Comparable<R>> visit(
+        faktum: GrunnleggendeFaktum<R>,
+        tilstand: Faktum.FaktumTilstand,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {
         skrivFaktum(faktum, clazz)
         avhengigheter[faktum] = avhengigeFakta
     }
 
-    override fun <R : Comparable<R>> visit(faktum: GeneratorFaktum, id: String, avhengigeFakta: Set<Faktum<*>>, avhengerAvFakta: Set<Faktum<*>>, templates: List<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
+    override fun <R : Comparable<R>> visit(
+        faktum: GeneratorFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        templates: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {
         skrivFaktum(faktum, clazz)
         faktumFaktum(skrivFaktum(faktum, clazz), templates, "template_faktum")
         avhengigheter[faktum] = avhengigeFakta
     }
 
-    override fun <R : Comparable<R>> visit(faktum: TemplateFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, avhengerAvFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
+    override fun <R : Comparable<R>> visit(
+        faktum: TemplateFaktum<R>,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {
         skrivFaktum(faktum, clazz)
         avhengigheter[faktum] = avhengigeFakta
     }
 
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, avhengerAvFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>, regel: FaktaRegel<R>) {
+    override fun <R : Comparable<R>> preVisit(
+        faktum: UtledetFaktum<R>,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        children: Set<Faktum<*>>,
+        clazz: Class<R>,
+        regel: FaktaRegel<R>
+    ) {
         if (dbIder.containsKey(faktum)) return
         faktumFaktum(skrivFaktum(faktum, clazz, regel), children, "utledet_faktum")
+        avhengigheter[faktum] = avhengigeFakta
+    }
+
+    override fun preVisit(
+        faktum: ValgFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        underordnedeJa: Set<Faktum<Boolean>>,
+        underordnedeNei: Set<Faktum<Boolean>>,
+        clazz: Class<Boolean>
+    ) {
+        if (dbIder.containsKey(faktum)) return
+        faktumFaktum(skrivFaktum(faktum, clazz), underordnedeJa + underordnedeNei, "utledet_faktum")
         avhengigheter[faktum] = avhengigeFakta
     }
 
@@ -93,22 +139,23 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor
         }
     }
 
-    private fun <R : Comparable<R>> skrivFaktum(faktum: Faktum<*>, clazz: Class<R>, regel: FaktaRegel<R>? = null) = if (dbIder.containsKey(faktum)) dbIder[faktum]!! else
-        using(sessionOf(dataSource)) { session ->
-            session.run(
-                queryOf(
-                    """WITH inserted_id as (INSERT INTO navn (navn) values (?) returning id)
+    private fun <R : Comparable<R>> skrivFaktum(faktum: Faktum<*>, clazz: Class<R>, regel: FaktaRegel<R>? = null) =
+        if (dbIder.containsKey(faktum)) dbIder[faktum]!! else
+            using(sessionOf(dataSource)) { session ->
+                session.run(
+                    queryOf(
+                        """WITH inserted_id as (INSERT INTO navn (navn) values (?) returning id)
                                INSERT INTO faktum (versjon_id, faktum_type, root_id, regel, navn_id ) SELECT ?, ?, ?, ?, id from inserted_id returning id""".trimMargin(),
-                    faktum.navn,
-                    versjonId,
-                    ClassKode[clazz],
-                    rootId,
-                    regel?.navn
-                ).map { it.int(1) }.asSingle
-            )
-        }!!.also { dbId ->
-            dbIder[faktum] = dbId
-        }
+                        faktum.navn,
+                        versjonId,
+                        ClassKode[clazz],
+                        rootId,
+                        regel?.navn
+                    ).map { it.int(1) }.asSingle
+                )
+            }!!.also { dbId ->
+                dbIder[faktum] = dbId
+            }
 
     // Understands an encoding of basic Faktum types
     internal class ClassKode() {

@@ -91,7 +91,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
         if (challenger::class.java == GrunnleggendeFaktum::class.java) return 1
         if (this::class.java == TemplateFaktum::class.java) return -1
         if (challenger::class.java == TemplateFaktum::class.java) return 1
-        if (this::class.java::class.java == GeneratorFaktum::class.java) return -1
+        if (this::class.java == GeneratorFaktum::class.java) return -1
         if (challenger::class.java == GeneratorFaktum::class.java) return 1
         if (this::class.java == ValgFaktum::class.java) return -1
         if (challenger::class.java == ValgFaktum::class.java) return 1
