@@ -15,12 +15,12 @@ internal class FaktumTableTest {
 
         Postgres.withMigratedDb {
             FaktumTable(prototypeFakta1, 1)
-            assertRecordCount(21, "faktum")
-            assertRecordCount(6, "utledet_faktum")
+            assertRecordCount(26, "faktum")
+            assertRecordCount(10, "utledet_faktum")
             assertRecordCount(3, "template_faktum")
-            assertRecordCount(3, "avhengig_faktum")
+            assertRecordCount(15, "avhengig_faktum")
             FaktumTable(prototypeFakta1, 1)
-            assertRecordCount(21, "faktum")
+            assertRecordCount(26, "faktum")
         }
     }
 

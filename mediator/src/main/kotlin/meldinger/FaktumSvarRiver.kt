@@ -18,7 +18,7 @@ internal class FaktumSvarRiver(rapidsConnection: RapidsConnection, mediator: Mel
             "faktumId",
             "svar",
             "søknadId",
-            "faktumType",
+            "clazz",
             "rolle",
             "faktagrupperType"
         )

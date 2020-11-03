@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TypedFaktum
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
-import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.model.visitor.FaktagruppeVisitor
 import java.util.UUID
 
 class Faktagrupper private constructor(
@@ -48,7 +48,7 @@ class Faktagrupper private constructor(
 
     fun nesteSeksjon() = nesteSeksjon(rootSubsumsjon)
 
-    fun accept(visitor: SøknadVisitor) {
+    fun accept(visitor: FaktagruppeVisitor) {
         visitor.preVisit(this, uuid)
         seksjoner.forEach { it.accept(visitor) }
         visitor.postVisit(this)

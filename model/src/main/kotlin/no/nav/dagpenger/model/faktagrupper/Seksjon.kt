@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
-import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.model.visitor.FaktagruppeVisitor
 
 class Seksjon private constructor(
     val navn: String,
@@ -43,7 +43,7 @@ class Seksjon private constructor(
         }
     }
 
-    fun accept(visitor: SøknadVisitor) {
+    fun accept(visitor: FaktagruppeVisitor) {
         visitor.preVisit(this, rolle, seksjonFakta)
         seksjonFakta.forEach { it.accept(visitor) }
         visitor.postVisit(this, rolle)

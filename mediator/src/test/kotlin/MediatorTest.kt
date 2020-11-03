@@ -1,9 +1,10 @@
-import db.SøknadPersistance
+import db.SøknadPersistence
 import helpers.SøknadEksempel
 import helpers.desember
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
+import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -26,7 +27,7 @@ class MeldingMediatorTest {
     private companion object {
         private val meldingsfabrikk = TestMeldingFactory("fødselsnummer", "aktør")
         private val testRapid = TestRapid()
-        private val grupperer = TestFaktagrupperer()
+        private val grupperer = TestLagring()
         private val hendelseMediator = HendelseMediator(grupperer, testRapid)
 
         init {
@@ -51,12 +52,15 @@ class MeldingMediatorTest {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
         val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknadId"].asText())
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 1, "boolean", "true"))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 2, "boolean", "true"))
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 3, "heltall", "2"))
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 4, "dato", 24.desember.toString()))
-        assertEquals(4, testRapid.inspektør.size)
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 5, "inntekt", 1000.årlig.toString()))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 6, "inntekt", 1050.årlig.toString()))
+        assertEquals(6, testRapid.inspektør.size)
     }
 
-    private class TestFaktagrupperer : SøknadPersistance {
+    private class TestLagring : SøknadPersistence {
         var faktagrupper: Faktagrupper? = null
 
         override fun ny(fnr: String, type: Versjon.FaktagrupperType) =
@@ -96,7 +100,7 @@ private class TestMeldingFactory(private val fødselsnummer: String, private val
         "@opprettet" to LocalDateTime.now()
     )
 
-    fun besvarFaktum(søknadId: UUID, faktumId: Int, faktumType: String, svar: String) = nyHendelse(
+    fun besvarFaktum(søknadId: UUID, faktumId: Int, clazz: String, svar: String) = nyHendelse(
         "faktum_svar",
         mapOf(
             "aktørId" to aktørId,
@@ -108,7 +112,7 @@ private class TestMeldingFactory(private val fødselsnummer: String, private val
             "svar" to svar,
             "faktagrupperType" to Versjon.FaktagrupperType.Web.toString(),
             "rolle" to Rolle.søker,
-            "faktumType" to faktumType
+            "clazz" to clazz
         )
     )
 }

@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
-import no.nav.dagpenger.model.helpers.NyEksempel
+import no.nav.dagpenger.model.helpers.NyttEksempel
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
@@ -22,7 +22,7 @@ internal class SøknadSubsumsjonTest {
 
     @BeforeEach
     fun setUp() {
-        faktagrupper = NyEksempel().faktagrupper
+        faktagrupper = NyttEksempel().faktagrupper
     }
 
     @Test
@@ -75,8 +75,8 @@ internal class SøknadSubsumsjonTest {
         }
 
         assertEquals(faktagrupper[1], faktagrupper.nesteSeksjon())
-        assertEquals(4, faktagrupper[1].fakta().size)
-        assertIder(faktagrupper[1].fakta(), 6, 7, 8, 9)
+        assertEquals(5, faktagrupper[1].fakta().size)
+        assertIder(faktagrupper[1].fakta(), 6, 7, 8, 9, 20)
 
         faktagrupper.inntekt(6).besvar(20000.månedlig, Rolle.nav)
         faktagrupper.inntekt(7).besvar(10000.månedlig, Rolle.nav)

@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.factory.ValgFaktumFactory.Companion.valg
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktagrupper.Versjon
@@ -28,7 +29,7 @@ import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
 import no.nav.dagpenger.model.subsumsjon.uansett
 
-internal class NyEksempel {
+internal class NyttEksempel {
 
     val prototypeSøknad = Søknad(
         ja nei "f1" id 1,
@@ -50,7 +51,8 @@ internal class NyEksempel {
         ja nei "f17" id 17,
         ja nei "f18" id 18,
         ja nei "f19" id 19 avhengerAv 2 og 13,
-        maks dato "345" av 3 og 4 og 5 id 345
+        maks dato "345" av 3 og 4 og 5 id 345,
+        valg faktum "f20" ja "jaValg1" ja "jaValg2" nei "neiValg1" nei "neiValg2" id 20
     )
 
     private val p1Boolean = prototypeSøknad ja 1
@@ -73,6 +75,7 @@ internal class NyEksempel {
     private val p17Boolean = prototypeSøknad ja 17
     private val p18Boolean = prototypeSøknad ja 18
     private val p19Boolean = prototypeSøknad ja 19
+    private val p20Valg = prototypeSøknad valg 20
 
     private val datosjekk = "datosjekk".alle(
         p1Boolean er true,
@@ -87,7 +90,7 @@ internal class NyEksempel {
     private val inntektValidering = "inntektvalidering".minstEnAv(
         p6Inntekt minst p8Inntekt,
         p7Inntekt minst p9Inntekt
-    )
+    ) eller (p20Valg er true)
 
     private val alderSjekk = "aldersjekk" makro (
         p16Int under 18 så (p17Boolean er true)
@@ -108,7 +111,7 @@ internal class NyEksempel {
             )
 
     private val prototypeSeksjon1 = Seksjon("seksjon1", Rolle.nav, p1Boolean, p2Dato)
-    private val prototypeSeksjon2 = Seksjon("seksjon2", Rolle.nav, p6Inntekt, p7Inntekt, p8Inntekt, p9Inntekt)
+    private val prototypeSeksjon2 = Seksjon("seksjon2", Rolle.nav, p6Inntekt, p7Inntekt, p8Inntekt, p9Inntekt, p20Valg)
     private val prototypeSeksjon3 = Seksjon("seksjon3", Rolle.nav, p15Int, p16Int)
     private val prototypeSeksjon4 = Seksjon("seksjon4", Rolle.søker, p3Dato, p4Dato, p5Dato, p_3_4_5Dato, p13Dato)
     private val prototypeSeksjon5 = Seksjon("seksjon5", Rolle.søker, p10Boolean, p11Dokument)

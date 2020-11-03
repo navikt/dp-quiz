@@ -3,9 +3,9 @@ package no.nav.dagpenger.model.marshalling
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.model.visitor.FaktagruppeVisitor
 
-class SeksjonJsonBuilder(private val seksjon: Seksjon) : FaktumJsonBuilder(), SøknadVisitor {
+class SeksjonJsonBuilder(private val seksjon: Seksjon) : FaktumJsonBuilder(), FaktagruppeVisitor {
 
     init {
         seksjon.accept(this)

@@ -15,7 +15,8 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import java.time.LocalDate
 
-interface Regel {
+interface
+Regel {
     val typeNavn: String
     fun resultat(): Boolean
     fun deepCopy(faktagrupper: Faktagrupper): Regel

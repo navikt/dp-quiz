@@ -30,7 +30,9 @@ interface FaktumVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
-    ) {}
+    ) {
+    }
+
     fun <R : Comparable<R>> visit(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
@@ -40,7 +42,9 @@ interface FaktumVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R
-    ) {}
+    ) {
+    }
+
     fun <R : Comparable<R>> visit(
         faktum: TemplateFaktum<R>,
         id: String,
@@ -48,7 +52,9 @@ interface FaktumVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
-    ) {}
+    ) {
+    }
+
     fun <R : Comparable<R>> visit(
         faktum: GeneratorFaktum,
         id: String,
@@ -57,7 +63,9 @@ interface FaktumVisitor {
         templates: List<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
-    ) {}
+    ) {
+    }
+
     fun <R : Comparable<R>> visit(
         faktum: GeneratorFaktum,
         id: String,
@@ -67,7 +75,9 @@ interface FaktumVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R
-    ) {}
+    ) {
+    }
+
     fun <R : Comparable<R>> preVisit(
         faktum: UtledetFaktum<R>,
         id: String,
@@ -77,7 +87,9 @@ interface FaktumVisitor {
         clazz: Class<R>,
         regel: FaktaRegel<R>,
         svar: R
-    ) {}
+    ) {
+    }
+
     fun <R : Comparable<R>> preVisit(
         faktum: UtledetFaktum<R>,
         id: String,
@@ -86,13 +98,17 @@ interface FaktumVisitor {
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         regel: FaktaRegel<R>
-    ) {}
+    ) {
+    }
+
     fun <R : Comparable<R>> postVisit(
         faktum: UtledetFaktum<R>,
         id: String,
         children: Set<Faktum<*>>,
         clazz: Class<R>
-    ) {}
+    ) {
+    }
+
     fun preVisit(
         faktum: ValgFaktum,
         id: String,
@@ -102,7 +118,9 @@ interface FaktumVisitor {
         underordnedeNei: Set<Faktum<Boolean>>,
         clazz: Class<Boolean>,
         svar: Boolean
-    ) {}
+    ) {
+    }
+
     fun preVisit(
         faktum: ValgFaktum,
         id: String,
@@ -111,28 +129,37 @@ interface FaktumVisitor {
         underordnedeJa: Set<Faktum<Boolean>>,
         underordnedeNei: Set<Faktum<Boolean>>,
         clazz: Class<Boolean>,
-    ) {}
+    ) {
+    }
+
     fun postVisit(
         faktum: ValgFaktum,
         id: String,
         underordnedeJa: Set<Faktum<Boolean>>,
         underordnedeNei: Set<Faktum<Boolean>>,
         clazz: Class<Boolean>
-    ) {}
+    ) {
+    }
 
     fun visit(
         faktumId: FaktumId,
         rootId: Int,
         indeks: Int
-    ) {}
+    ) {
+    }
+
+    fun <R : Comparable<R>> preVisitAvhengerAvFakta(faktum: Faktum<R>, avhengerAvFakta: MutableSet<Faktum<*>>) {}
+    fun <R : Comparable<R>> postVisitAvhengerAvFakta(faktum: Faktum<R>, avhengerAvFakta: MutableSet<Faktum<*>>) {}
+    fun <R : Comparable<R>> preVisitAvhengigeFakta(faktum: Faktum<R>, avhengigeFakta: MutableSet<Faktum<*>>) {}
+    fun <R : Comparable<R>> postVisitAvhengigeFakta(faktum: Faktum<R>, avhengigeFakta: MutableSet<Faktum<*>>) {}
 }
 
-interface FaktaVisitor : FaktumVisitor {
+interface SøknadVisitor : FaktumVisitor {
     fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {}
     fun postVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {}
 }
 
-interface SøknadVisitor : FaktumVisitor {
+interface FaktagruppeVisitor : FaktumVisitor {
     fun preVisit(faktagrupper: Faktagrupper, uuid: UUID) {}
     fun postVisit(faktagrupper: Faktagrupper) {}
     fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {}

@@ -18,18 +18,19 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.visitor.FaktaVisitor
+import no.nav.dagpenger.model.faktum.ValgFaktum
+import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
 // Understands a relational representation of a Søknad
-class SøknadRecord : SøknadPersistance {
+class SøknadRecord : SøknadPersistence {
     private lateinit var originalSvar: Map<String, Any?>
 
     override fun ny(fnr: String, type: Versjon.FaktagrupperType): Faktagrupper {
         return Versjon.siste.faktagrupper(fnr, type).also { faktagrupper ->
-            NyFakta(faktagrupper.søknad)
+            NySøknad(faktagrupper.søknad)
             originalSvar = svarMap(faktagrupper.søknad)
         }
     }
@@ -212,7 +213,7 @@ class SøknadRecord : SøknadPersistance {
         }.toMap()
     }
 
-    private class NyFakta(søknad: Søknad) : FaktaVisitor {
+    private class NySøknad(søknad: Søknad) : SøknadVisitor {
         private var faktaId = 0
         private var versjonId = 0
         private var rootId = 0
@@ -286,6 +287,18 @@ class SøknadRecord : SøknadPersistance {
             children: Set<Faktum<*>>,
             clazz: Class<R>,
             regel: FaktaRegel<R>
+        ) {
+            skrivFaktumVerdi(faktum)
+        }
+
+        override fun preVisit(
+            faktum: ValgFaktum,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            underordnedeJa: Set<Faktum<Boolean>>,
+            underordnedeNei: Set<Faktum<Boolean>>,
+            clazz: Class<Boolean>
         ) {
             skrivFaktumVerdi(faktum)
         }

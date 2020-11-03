@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.helpers.NyEksempel
+import no.nav.dagpenger.model.helpers.NyttEksempel
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.marshalling.SubsumsjonJsonBuilder
@@ -15,13 +15,13 @@ import kotlin.test.assertNull
 
 internal class MuligeSubsumsjonerTest {
 
-    private lateinit var m: NyEksempel
+    private lateinit var m: NyttEksempel
     private lateinit var rootSubsumsjon: Subsumsjon
     private lateinit var faktagrupper: Faktagrupper
 
     @BeforeEach
     fun setUp() {
-        m = NyEksempel()
+        m = NyttEksempel()
         faktagrupper = m.faktagrupper
         rootSubsumsjon = faktagrupper.rootSubsumsjon
     }

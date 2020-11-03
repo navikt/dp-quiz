@@ -35,10 +35,10 @@ internal class FaktaRecordTest {
             byggOriginalFaktagrupper()
 
             assertRecordCount(1, "soknad")
-            assertRecordCount(21, "faktum_verdi")
+            assertRecordCount(26, "faktum_verdi")
             SøknadRecord().ny(UNG_PERSON_FNR_2018, Versjon.FaktagrupperType.Web)
             assertRecordCount(2, "soknad")
-            assertRecordCount(42, "faktum_verdi")
+            assertRecordCount(52, "faktum_verdi")
             hentFørstFakta()
         }
     }
@@ -80,17 +80,21 @@ internal class FaktaRecordTest {
     fun `Genererte template faktum`() {
         Postgres.withMigratedDb {
             byggOriginalFaktagrupper()
-            assertEquals(21, originalFaktagrupper.søknad.map { it }.size)
+            assertEquals(26, originalFaktagrupper.søknad.map { it }.size)
             hentFørstFakta()
             originalFaktagrupper = rehydrertFaktagrupper
 
             originalFaktagrupper.heltall(15).besvar(3, Rolle.søker)
             originalFaktagrupper.heltall("16.1").besvar(5, Rolle.søker)
-            assertEquals(30, originalFaktagrupper.søknad.map { it }.size)
+            assertEquals(26 + 9, originalFaktagrupper.søknad.map { it }.size)
 
             hentFørstFakta()
-            assertEquals(30, rehydrertFaktagrupper.søknad.map { it }.size)
+            assertEquals(26 + 9, rehydrertFaktagrupper.søknad.map { it }.size)
         }
+    }
+
+    @Test
+    fun `lagre og hydrerer valg`() {
     }
 
     @Test
