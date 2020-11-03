@@ -25,7 +25,8 @@ internal object SøknadEksempel {
         inntekt faktum "f5_inntekt" id 5,
         inntekt faktum "f6_inntekt" id 6,
         dokument faktum "f7_dokument" id 7,
-        ja nei "f8_bool" id 8
+        ja nei "f8_bool" id 8,
+
     )
 
     private val webPrototypeSøknad = Faktagrupper(
@@ -51,7 +52,7 @@ internal object SøknadEksempel {
         ),
         Seksjon(
             "seksjon5",
-            Rolle.søker,
+            Rolle.nav,
             prototypeSøknad1.inntekt(5),
             prototypeSøknad1.inntekt(6)
         ),
@@ -62,7 +63,7 @@ internal object SøknadEksempel {
         ),
         Seksjon(
             "seksjon7",
-            Rolle.søker,
+            Rolle.saksbehandler,
             prototypeSøknad1.ja(8)
         )
     )

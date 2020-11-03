@@ -18,6 +18,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
+import no.nav.dagpenger.model.faktum.Rolle.nav
+import no.nav.dagpenger.model.faktum.Rolle.saksbehandler
+import no.nav.dagpenger.model.faktum.Rolle.søker
 
 class MeldingMediatorTest {
 
@@ -54,14 +57,14 @@ class MeldingMediatorTest {
     internal fun `ta imot svar`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
         val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknadId"].asText())
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 1, "boolean", "true"))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 2, "boolean", "true"))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 3, "heltall", "2"))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 4, "dato", 24.desember.toString()))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 5, "inntekt", 1000.årlig.toString()))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 6, "inntekt", 1050.årlig.toString()))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 7, "dokument", Dokument(1.januar.atStartOfDay(), "https://nav.no")))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 8, "boolean", "true"))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 1, "boolean", "true", søker))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 2, "boolean", "true", søker))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 3, "heltall", "2", søker))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 4, "dato", 24.desember.toString(), søker))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 5, "inntekt", 1000.årlig.toString(), nav))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 6, "inntekt", 1050.årlig.toString(), nav))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 7, "dokument", Dokument(1.januar.atStartOfDay(), "https://nav.no"), søker))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 8, "boolean", "true", saksbehandler))
         assertEquals(7, testRapid.inspektør.size)
     }
 
@@ -105,7 +108,7 @@ private class TestMeldingFactory(private val fødselsnummer: String, private val
         "@opprettet" to LocalDateTime.now()
     )
 
-    fun besvarFaktum(søknadId: UUID, faktumId: Int, clazz: String, svar: Any) = nyHendelse(
+    fun besvarFaktum(søknadId: UUID, faktumId: Int, clazz: String, svar: Any, rolle: Rolle) = nyHendelse(
         "faktum_svar",
         mapOf(
             "aktørId" to aktørId,
@@ -125,7 +128,7 @@ private class TestMeldingFactory(private val fødselsnummer: String, private val
                 else -> throw IllegalArgumentException("Ustøtta svar-type")
             },
             "faktagrupperType" to Versjon.FaktagrupperType.Web.toString(),
-            "rolle" to Rolle.søker,
+            "rolle" to rolle,
             "clazz" to clazz
         )
     )
