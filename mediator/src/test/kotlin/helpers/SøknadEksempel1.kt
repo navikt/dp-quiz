@@ -14,7 +14,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
 
-internal object FaktaEksempel1 {
+internal object SøknadEksempel1 {
 
     val prototypeFakta1 = Søknad(
         ja nei "f1" id 1,

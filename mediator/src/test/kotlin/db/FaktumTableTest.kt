@@ -1,8 +1,8 @@
 package db
 
 import DataSourceBuilder.dataSource
-import helpers.FaktaEksempel1.prototypeFakta1
 import helpers.Postgres
+import helpers.SøknadEksempel1.prototypeFakta1
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using

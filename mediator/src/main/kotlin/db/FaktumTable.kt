@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.FaktaRegel
+import no.nav.dagpenger.model.factory.FaktaRegel.Companion.VALG
 import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
@@ -117,7 +118,7 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor
         clazz: Class<Boolean>
     ) {
         if (dbIder.containsKey(faktum)) return
-        faktumFaktum(skrivFaktum(faktum, clazz), underordnedeJa + underordnedeNei, "utledet_faktum")
+        faktumFaktum(skrivFaktum(faktum, clazz, VALG), underordnedeJa + underordnedeNei, "utledet_faktum")
         avhengigheter[faktum] = avhengigeFakta
     }
 

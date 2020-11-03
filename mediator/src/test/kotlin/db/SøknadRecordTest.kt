@@ -1,8 +1,8 @@
 package db
 
 import DataSourceBuilder.dataSource
-import helpers.FaktaEksempel1.prototypeFakta1
 import helpers.Postgres
+import helpers.SøknadEksempel1.prototypeFakta1
 import helpers.januar
 import kotliquery.queryOf
 import kotliquery.sessionOf
@@ -20,14 +20,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class FaktaRecordTest {
+internal class SøknadRecordTest {
     companion object {
         internal const val UNG_PERSON_FNR_2018 = "12020052345"
     }
 
     private lateinit var originalFaktagrupper: Faktagrupper
     private lateinit var rehydrertFaktagrupper: Faktagrupper
-    private lateinit var faktaRecord: SøknadRecord
+    private lateinit var søknadRecord: SøknadRecord
 
     @Test
     fun `ny faktagrupper`() {
@@ -94,7 +94,20 @@ internal class FaktaRecordTest {
     }
 
     @Test
-    fun `lagre og hydrerer valg`() {
+    fun `lagrer og rehydrerer valg`() {
+        Postgres.withMigratedDb {
+            byggOriginalFaktagrupper()
+            originalFaktagrupper.ja(345214).besvar(true, Rolle.søker)
+            hentFørstFakta()
+            assertTrue(rehydrertFaktagrupper.ja(345214).svar())
+            assertTrue(rehydrertFaktagrupper.ja(20).svar())
+
+            originalFaktagrupper = rehydrertFaktagrupper
+            originalFaktagrupper.ja(345216).besvar(true, Rolle.søker)
+            hentFørstFakta()
+            assertTrue(rehydrertFaktagrupper.ja(345216).svar())
+            assertFalse(rehydrertFaktagrupper.ja(20).svar())
+        }
     }
 
     @Test
@@ -132,17 +145,17 @@ internal class FaktaRecordTest {
     }
 
     private fun hentFørstFakta() {
-        faktaRecord.lagre(originalFaktagrupper.søknad)
+        søknadRecord.lagre(originalFaktagrupper.søknad)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
-        faktaRecord = SøknadRecord()
-        rehydrertFaktagrupper = faktaRecord.hent(uuid, Versjon.FaktagrupperType.Web)
+        søknadRecord = SøknadRecord()
+        rehydrertFaktagrupper = søknadRecord.hent(uuid, Versjon.FaktagrupperType.Web)
         assertDeepEquals(originalFaktagrupper, rehydrertFaktagrupper)
     }
 
     private fun byggOriginalFaktagrupper() {
         FaktumTable(prototypeFakta1, 1)
-        faktaRecord = SøknadRecord()
-        originalFaktagrupper = faktaRecord.ny(UNG_PERSON_FNR_2018, Versjon.FaktagrupperType.Web)
+        søknadRecord = SøknadRecord()
+        originalFaktagrupper = søknadRecord.ny(UNG_PERSON_FNR_2018, Versjon.FaktagrupperType.Web)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {
