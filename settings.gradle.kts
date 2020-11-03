@@ -8,4 +8,6 @@ pluginManagement {
     }
 }
 
-include("mediator", "dagpenger", "model", "soknad")
+
+include("mediator", "dagpenger", "model", "soknad", "nav-mediator")
+
