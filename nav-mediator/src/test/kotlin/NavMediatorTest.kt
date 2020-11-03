@@ -12,6 +12,7 @@ class NavMediatorTest {
                 "@behov": ["Inntekt"],
                 "@event_name": "behov",
                 "@id" : "12345", 
+                "@opprettet" : "2020-11-03",
                 "fødselsnummer" : "1234",
                 "søknadId" : "12345",
                 "fakta": ""
