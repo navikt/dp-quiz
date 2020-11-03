@@ -13,7 +13,7 @@ class ValgFaktum internal constructor(
     override fun clazz() = Boolean::class.java
 
     override fun besvar(r: Boolean, rolle: Rolle): Faktum<Boolean> {
-        throw IllegalArgumentException("Kan ikke besvare sammensatte faktum")
+        throw IllegalArgumentException("Kan ikke besvare valgfaktum")
     }
 
     override fun svar(): Boolean {
