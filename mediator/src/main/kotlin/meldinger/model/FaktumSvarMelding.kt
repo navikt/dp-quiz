@@ -7,6 +7,8 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.asLocalDate
 import java.util.UUID
+import no.nav.dagpenger.model.faktum.Dokument
+import no.nav.helse.rapids_rivers.asLocalDateTime
 
 internal class FaktumSvarMelding(packet: JsonMessage) : HendelseMelding(packet) {
     override val fødselsnummer = packet["fødselsnummer"].asText()
@@ -23,6 +25,7 @@ internal class FaktumSvarMelding(packet: JsonMessage) : HendelseMelding(packet) 
             "heltall" -> svar.asInt()
             "dato" -> svar.asLocalDate()
             "inntekt" -> svar.asDouble().årlig
+            "dokument" -> Dokument(svar["lastOppTidsstempel"].asLocalDateTime(), svar["url"].asText())
             else -> throw IllegalArgumentException("Ukjent faktum type: $clazz")
         }
         mediator.behandle(this, søknadId, faktumId, typedSvar, faktagrupperType, rolle)

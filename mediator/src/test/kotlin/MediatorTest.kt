@@ -1,6 +1,9 @@
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import db.SøknadPersistence
 import helpers.SøknadEksempel
 import helpers.desember
+import helpers.januar
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
@@ -15,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
+import no.nav.dagpenger.model.faktum.Dokument
 
 class MeldingMediatorTest {
 
@@ -57,6 +61,7 @@ class MeldingMediatorTest {
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 4, "dato", 24.desember.toString()))
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 5, "inntekt", 1000.årlig.toString()))
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 6, "inntekt", 1050.årlig.toString()))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 7, "dokument", Dokument(1.januar.atStartOfDay(), "https://nav.no").toJson()))
         assertEquals(6, testRapid.inspektør.size)
     }
 
@@ -109,10 +114,18 @@ private class TestMeldingFactory(private val fødselsnummer: String, private val
             "opprettet" to LocalDateTime.now(),
             "faktumId" to faktumId,
             "søknadId" to søknadId,
-            "svar" to svar,
+            "svar" to JsonNode(),
             "faktagrupperType" to Versjon.FaktagrupperType.Web.toString(),
             "rolle" to Rolle.søker,
             "clazz" to clazz
         )
     )
+}
+
+private val mapper = ObjectMapper()
+private fun Dokument.toJson() = this.reflection { lastOppTidsstempel, url ->
+    mapper.createObjectNode().also {
+        it.put("lastOppTidsstempel", lastOppTidsstempel.toString())
+        it.put("url", url)
+    }
 }
