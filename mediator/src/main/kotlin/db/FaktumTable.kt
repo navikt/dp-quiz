@@ -21,12 +21,12 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.visitor.FaktaVisitor
+import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.util.UUID
 
 // Forstår initialisering av faktum tabellen
-class FaktumTable(søknad: Søknad, private val versjonId: Int) : FaktaVisitor {
+class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor {
 
     private var rootId: Int = 0
     private var indeks: Int = 0

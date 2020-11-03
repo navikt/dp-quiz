@@ -2,10 +2,10 @@ package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.visitor.FaktaVisitor
+import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.util.UUID
 
-internal class FaktaJsonBuilder(søknad: Søknad) : FaktumJsonBuilder(), FaktaVisitor {
+internal class SøknadJsonBuilder(søknad: Søknad) : FaktumJsonBuilder(), SøknadVisitor {
     init {
         søknad.accept(this)
     }

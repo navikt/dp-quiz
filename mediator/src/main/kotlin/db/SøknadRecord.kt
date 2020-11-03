@@ -18,7 +18,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.visitor.FaktaVisitor
+import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -29,7 +29,7 @@ class SøknadRecord : SøknadPersistence {
 
     override fun ny(fnr: String, type: Versjon.FaktagrupperType): Faktagrupper {
         return Versjon.siste.faktagrupper(fnr, type).also { faktagrupper ->
-            NyFakta(faktagrupper.søknad)
+            NySøknad(faktagrupper.søknad)
             originalSvar = svarMap(faktagrupper.søknad)
         }
     }
@@ -212,7 +212,7 @@ class SøknadRecord : SøknadPersistence {
         }.toMap()
     }
 
-    private class NyFakta(søknad: Søknad) : FaktaVisitor {
+    private class NySøknad(søknad: Søknad) : SøknadVisitor {
         private var faktaId = 0
         private var versjonId = 0
         private var rootId = 0

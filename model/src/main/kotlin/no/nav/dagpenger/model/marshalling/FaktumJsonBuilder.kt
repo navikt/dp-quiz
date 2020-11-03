@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
+import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 import java.time.LocalDate
 
@@ -36,6 +37,42 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
 
     override fun toString(): String =
         ObjectMapper().writerWithDefaultPrettyPrinter<ObjectWriter>().writeValueAsString(resultat())
+
+    override fun preVisit(
+        faktum: ValgFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        underordnedeJa: Set<Faktum<Boolean>>,
+        underordnedeNei: Set<Faktum<Boolean>>,
+        clazz: Class<Boolean>
+    ) {
+        if (id in faktumIder) return
+        faktumNode(faktum, id, avhengigeFakta, avhengerAvFakta, clazz).also { faktumNode ->
+            faktumNode.set("faktaJa", mapper.valueToTree(underordnedeJa.map { it.id }))
+            faktumNode.set("faktaNei", mapper.valueToTree(underordnedeNei.map { it.id }))
+        }
+        faktumIder.add(id)
+    }
+
+    override fun preVisit(
+        faktum: ValgFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        underordnedeJa: Set<Faktum<Boolean>>,
+        underordnedeNei: Set<Faktum<Boolean>>,
+        clazz: Class<Boolean>,
+        svar: Boolean
+    ) {
+        if (id in faktumIder) return
+        faktumNode(faktum, id, avhengigeFakta, avhengerAvFakta, clazz).also { faktumNode ->
+            faktumNode.set("faktaJa", mapper.valueToTree(underordnedeJa.map { it.id }))
+            faktumNode.set("faktaNei", mapper.valueToTree(underordnedeNei.map { it.id }))
+            faktumNode.putR(svar)
+        }
+        faktumIder.add(id)
+    }
 
     override fun <R : Comparable<R>> preVisit(
         faktum: UtledetFaktum<R>,
@@ -161,7 +198,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         faktumIder.add(id)
     }
 
-    private fun <R : Comparable<R>> faktumNode(
+    protected fun <R : Comparable<R>> faktumNode(
         faktum: Faktum<*>,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
@@ -178,7 +215,6 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
             faktumNode.put("rootId", rootId)
             faktumNode.put("indeks", indeks)
             faktaNode.add(faktumNode)
-            avhengerAvFakta.forEach { it.accept(this) }
         }
 
     private fun <R : Comparable<R>> ObjectNode.putR(svar: R) {

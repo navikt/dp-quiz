@@ -4,10 +4,10 @@ import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.model.visitor.FaktagruppeVisitor
 import java.util.UUID
 
-class FaktagrupperJsonBuilder(private val faktagrupper: Faktagrupper) : FaktumJsonBuilder(), SøknadVisitor {
+class FaktagrupperJsonBuilder(private val faktagrupper: Faktagrupper) : FaktumJsonBuilder(), FaktagruppeVisitor {
 
     init {
         faktagrupper.accept(this)

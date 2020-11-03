@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.factory.ValgFaktumFactory
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktagrupper.Versjon
-import no.nav.dagpenger.model.visitor.FaktaVisitor
+import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.util.UUID
 
@@ -130,8 +130,12 @@ class Søknad private constructor(
     internal infix fun heltall(faktumId: FaktumId) = id(faktumId) as Faktum<Int>
 
     override infix fun generator(rootId: Int) = generator(FaktumId(rootId))
-    override infix fun generator(id: String) = heltall(FaktumId(id))
+    override infix fun generator(id: String) = generator(FaktumId(id))
     internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
+
+    override infix fun valg(rootId: Int) = valg(FaktumId(rootId))
+    override infix fun valg(id: String) = valg(FaktumId(id))
+    internal infix fun valg(faktumId: FaktumId) = id(faktumId) as ValgFaktum
 
     fun bygg(fnr: String, versjonId: Int, uuid: UUID = UUID.randomUUID()): Søknad {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
@@ -161,7 +165,7 @@ class Søknad private constructor(
 
     internal fun faktagrupper(type: Versjon.FaktagrupperType) = Versjon.id(versjonId).faktagrupper(this, type)
 
-    fun accept(visitor: FaktaVisitor) {
+    fun accept(visitor: SøknadVisitor) {
         visitor.preVisit(this, fnr, versjonId, uuid)
         this.forEach { it.accept(visitor) }
         visitor.postVisit(this, fnr, versjonId, uuid)
