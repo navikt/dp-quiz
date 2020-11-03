@@ -4,8 +4,7 @@ import org.junit.jupiter.api.Test
 class placeholder {
 
     @Test
-    fun `true test`(){
+    fun `true test`() {
         assertTrue(true)
     }
-
 }

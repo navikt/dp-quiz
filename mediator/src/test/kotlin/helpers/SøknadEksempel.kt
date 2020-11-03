@@ -73,7 +73,7 @@ internal object SøknadEksempel {
         prototypeSøknad1 heltall 3 er 2,
         prototypeSøknad1 dato 4 er 24.desember,
         prototypeSøknad1 inntekt 5 minst (prototypeSøknad1 inntekt 6),
-            prototypeSøknad1 ja 8 av (prototypeSøknad1 dokument 7)
+        prototypeSøknad1 ja 8 av (prototypeSøknad1 dokument 7)
     )
 
     val v = Versjon(
