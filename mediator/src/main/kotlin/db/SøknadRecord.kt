@@ -1,6 +1,7 @@
 package db
 
 import DataSourceBuilder.dataSource
+import kotliquery.action.ExecuteQueryAction
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
@@ -35,7 +36,7 @@ class SøknadRecord : SøknadPersistence {
         }
     }
 
-    private fun svarMap(søknad: Søknad) = søknad.map { faktum ->
+    private fun svarMap(søknad: Søknad): Map<String, Any?> = søknad.map { faktum ->
         faktum.id to (if (faktum.erBesvart()) faktum.svar() else null)
     }.toMap()
 
@@ -44,14 +45,14 @@ class SøknadRecord : SøknadPersistence {
 
         val rad = using(sessionOf(dataSource)) { session ->
             if (type != null) {
-                session.run(
-                    queryOf("""UPDATE soknad SET sesjon_type_id = ? WHERE uuid = ?""", type.id, uuid).asUpdate
+                session.run( //language=PostgreSQL
+                    queryOf("UPDATE soknad SET sesjon_type_id = ? WHERE uuid = ?", type.id, uuid).asUpdate
                 )
             }
 
             session.run(
-                queryOf(
-                    """SELECT fnr, versjon_id, sesjon_type_id FROM soknad WHERE uuid = ? """,
+                queryOf( //language=PostgreSQL
+                    "SELECT fnr, versjon_id, sesjon_type_id FROM soknad WHERE uuid = ?",
                     uuid
                 ).map { row ->
                     SoknadRad(row.string(1), row.int(2), row.int(3))
@@ -86,7 +87,7 @@ class SøknadRecord : SøknadPersistence {
     private fun svarList(uuid: UUID): List<FaktumVerdiRow> {
         return using(sessionOf(dataSource)) { session ->
             session.run(
-                queryOf(
+                queryOf( //language=PostgreSQL
                     """
                         WITH soknad_faktum AS (SELECT faktum.id as faktum_id, faktum.root_id AS root_id, soknad.id AS soknad_id FROM soknad, faktum
                                 WHERE faktum.versjon_id = soknad.versjon_id AND faktum.regel IS NULL AND soknad.uuid = ?)
@@ -133,7 +134,7 @@ class SøknadRecord : SøknadPersistence {
     )
 
     private fun sqlToInsert(svar: Any?): String {
-
+        //language=PostgreSQL
         return when (svar) {
             null -> """UPDATE faktum_verdi  SET ja_nei = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
             is Boolean -> """UPDATE faktum_verdi  SET ja_nei = $svar , opprettet=NOW() AT TIME ZONE 'utc' """
@@ -150,78 +151,74 @@ class SøknadRecord : SøknadPersistence {
     override fun lagre(søknad: Søknad, type: Versjon.FaktagrupperType): Boolean {
         val nyeSvar = svarMap(søknad)
 
-        originalSvar.forEach { id, svar ->
-            if (nyeSvar[id] == svar) return@forEach
+        originalSvar.filterNot { (id, svar) -> nyeSvar[id] == svar }.forEach { (id, svar) ->
             val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
 
             using(sessionOf(dataSource)) { session ->
-                session.run(
-                    queryOf(
-                        """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, ja_nei, aarlig_inntekt, dokument_id, dato, heltall, opprettet) 
-                                SELECT soknad_id,      
-                                        faktum_verdi.faktum_id,     
-                                        faktum_verdi.indeks,        
-                                        faktum_verdi.ja_nei,        
-                                        faktum_verdi.aarlig_inntekt,
-                                        faktum_verdi.dokument_id,   
-                                        faktum_verdi.dato,          
-                                        faktum_verdi.heltall,       
-                                        faktum_verdi.opprettet 
-                                FROM faktum_verdi, faktum, soknad
-                                WHERE faktum_verdi.faktum_id = faktum.id 
-                                    AND faktum_verdi.soknad_id = soknad.id 
-                                    AND soknad.uuid = ?
-                                    AND faktum.root_id = ?
-                                    AND faktum_verdi.indeks = ?
-                    """.trimMargin(),
-                        søknad.uuid,
-                        rootId,
-                        indeks
-                    ).asExecute
-                )
-
-                session.run(
-                    queryOf(
-                        sqlToInsert(nyeSvar[id]),
-                        søknad.uuid,
-                        indeks,
-                        rootId
-                    ).asExecute
-                )
+                session.run(arkiverFaktum(søknad, rootId, indeks))
+                session.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId))
             }
         }
 
-        nyeSvar.forEach { id, svar ->
-            if (originalSvar.containsKey(id)) return@forEach
+        nyeSvar.filterNot { (id, _) -> originalSvar.containsKey(id) }.forEach { (id, svar) ->
             val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
             using(sessionOf(dataSource)) { session ->
-                session.run(
-                    queryOf(
-                        """INSERT INTO faktum_verdi (indeks, soknad_id, faktum_id) 
-                           SELECT ?, soknad.id, faktum.id FROM soknad, faktum  WHERE soknad.uuid = ? AND faktum.versjon_id = soknad.versjon_id AND faktum.root_id = ?
-                        """.trimMargin(),
-                        indeks,
-                        søknad.uuid,
-                        rootId
-                    ).asExecute
-                )
-                if (svar != null) session.run(
-                    queryOf(
-                        sqlToInsert(svar),
-                        søknad.uuid,
-                        indeks,
-                        rootId
-                    ).asExecute
-                )
+                session.run(opprettTemplateFaktum(indeks, søknad, rootId))
+                if (svar != null) session.run(oppdaterFaktum(svar, søknad, indeks, rootId))
             }
         }
+
         return true
     }
+
+    private fun oppdaterFaktum(svar: Any?, søknad: Søknad, indeks: Int, rootId: Int): ExecuteQueryAction =
+        queryOf(sqlToInsert(svar), søknad.uuid, indeks, rootId).asExecute
+
+    private fun arkiverFaktum(søknad: Søknad, rootId: Int, indeks: Int): ExecuteQueryAction =
+        queryOf( //language=PostgreSQL
+            """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, ja_nei, aarlig_inntekt, dokument_id, dato, heltall, opprettet)
+            SELECT soknad_id,
+                   faktum_verdi.faktum_id,
+                   faktum_verdi.indeks,
+                   faktum_verdi.ja_nei,
+                   faktum_verdi.aarlig_inntekt,
+                   faktum_verdi.dokument_id,
+                   faktum_verdi.dato,
+                   faktum_verdi.heltall,
+                   faktum_verdi.opprettet
+            FROM faktum_verdi,
+                 faktum,
+                 soknad
+            WHERE faktum_verdi.faktum_id = faktum.id
+              AND faktum_verdi.soknad_id = soknad.id
+              AND soknad.uuid = ?
+              AND faktum.root_id = ?
+              AND faktum_verdi.indeks = ?
+                """.trimMargin(),
+            søknad.uuid,
+            rootId,
+            indeks
+        ).asExecute
+
+    private fun opprettTemplateFaktum(indeks: Int, søknad: Søknad, rootId: Int): ExecuteQueryAction =
+        queryOf( //language=PostgreSQL
+            """INSERT INTO faktum_verdi (indeks, soknad_id, faktum_id)
+            SELECT ?, soknad.id, faktum.id
+            FROM soknad,
+                 faktum
+            WHERE soknad.uuid = ?
+              AND faktum.versjon_id = soknad.versjon_id
+              AND faktum.root_id = ?
+            """.trimMargin(),
+            indeks,
+            søknad.uuid,
+            rootId
+        ).asExecute
 
     override fun opprettede(fnr: String): Map<LocalDateTime, UUID> {
         return using(sessionOf(dataSource)) { session ->
             session.run(
-                queryOf(
+                queryOf( //language=PostgreSQL
                     "SELECT opprettet, uuid FROM soknad WHERE fnr = ?",
                     fnr
                 ).map { it.localDateTime(1) to UUID.fromString(it.string(2)) }.asList
@@ -234,7 +231,6 @@ class SøknadRecord : SøknadPersistence {
         private var versjonId = 0
         private var rootId = 0
         private var indeks = 0
-
         private val faktumList = mutableListOf<Faktum<*>>()
 
         init {
@@ -324,12 +320,11 @@ class SøknadRecord : SøknadPersistence {
             if (faktum in faktumList) return else faktumList.add(faktum)
             using(sessionOf(dataSource)) { session ->
                 session.run(
-                    queryOf(
+                    queryOf( //language=PostgreSQL
                         """INSERT INTO faktum_verdi
-                            (soknad_id, indeks, faktum_id) 
-                            VALUES (?, ?, 
-                                (SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?)
-                            )""".trimMargin(),
+                            (soknad_id, indeks, faktum_id)
+                        VALUES (?, ?,
+                                (SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?))""".trimMargin(),
                         faktaId,
                         indeks,
                         versjonId,
