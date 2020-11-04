@@ -50,7 +50,7 @@ internal object SøknadEksempel1 {
     )
 
     val v = Versjon(
-        1,
+        1000, // må være siste versjon pga databasetester
         prototypeFakta1,
         prototypeFakta1 ja 1 er true,
         mapOf(Versjon.FaktagrupperType.Web to webPrototypeSøknad)

@@ -153,7 +153,7 @@ internal class SøknadRecordTest {
     }
 
     private fun byggOriginalFaktagrupper() {
-        FaktumTable(prototypeFakta1, 1)
+        FaktumTable(prototypeFakta1, 1000)
         søknadRecord = SøknadRecord()
         originalFaktagrupper = søknadRecord.ny(UNG_PERSON_FNR_2018, Versjon.FaktagrupperType.Web)
     }

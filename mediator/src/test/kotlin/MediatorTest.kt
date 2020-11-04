@@ -66,14 +66,15 @@ class MeldingMediatorTest {
 
     private class TestLagring : SøknadPersistence {
         var faktagrupper: Faktagrupper? = null
+        private val versjon = 3
 
         override fun ny(fnr: String, type: Versjon.FaktagrupperType) =
-            Versjon.siste.faktagrupper(fnr, type).also { faktagrupper = it }
+            Versjon.id(versjon).faktagrupper(fnr, type).also { faktagrupper = it }
 
         override fun hent(uuid: UUID, type: Versjon.FaktagrupperType) = faktagrupper!!
 
         override fun lagre(søknad: Søknad): Boolean {
-            faktagrupper = Versjon.siste.faktagrupper(søknad, Versjon.FaktagrupperType.Web)
+            faktagrupper = Versjon.id(versjon).faktagrupper(søknad, Versjon.FaktagrupperType.Web)
             return true
         }
 

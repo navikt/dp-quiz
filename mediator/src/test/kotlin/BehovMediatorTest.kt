@@ -1,9 +1,10 @@
 
+import helpers.SøknadEksempel
+import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import utils.FødselsdatoTestPrototype
 import kotlin.test.assertEquals
 
 internal class BehovMediatorTest {
@@ -20,7 +21,7 @@ internal class BehovMediatorTest {
 
     @Test
     fun `tar imot seksjon og sender ut på kafka`() {
-        val faktagrupper = FødselsdatoTestPrototype().faktagrupper(fnr)
+        val faktagrupper = SøknadEksempel.v.faktagrupper(fnr, Web)
         val seksjon = faktagrupper.nesteSeksjon()
         mediator.håndter(seksjon, fnr, faktagrupper.søknad.uuid)
         assertEquals(1, testRapid.inspektør.size)
