@@ -36,17 +36,19 @@ CREATE TABLE IF NOT EXISTS sesjon_type
     PRIMARY KEY (id)
 );
 
-INSERT INTO sesjon_type VALUES (1, 'web');
-INSERT INTO sesjon_type VALUES (2, 'mobile');
+INSERT INTO sesjon_type
+VALUES (1, 'web');
+INSERT INTO sesjon_type
+VALUES (2, 'mobile');
 
 CREATE TABLE IF NOT EXISTS soknad
 (
-    id         BIGSERIAL                NOT NULL,
-    uuid       UUID                     NOT NULL,
-    versjon_id INT                      NOT NULL,
-    fnr        CHAR(11)                 NOT NULL,
-    sesjon_type_id BIGINT               NOT NULL REFERENCES sesjon_type (id),
-    opprettet  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
+    id             BIGSERIAL                NOT NULL,
+    uuid           UUID                     NOT NULL,
+    versjon_id     INT                      NOT NULL,
+    fnr            CHAR(11)                 NOT NULL,
+    sesjon_type_id BIGINT                   NOT NULL REFERENCES sesjon_type (id),
+    opprettet      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
 
@@ -61,7 +63,7 @@ CREATE TABLE IF NOT EXISTS valg_faktum
 (
     parent_id BIGSERIAL NOT NULL REFERENCES faktum (id),
     child_id  BIGSERIAL NOT NULL REFERENCES faktum (id),
-    ja_nei    BOOL NOT NULL,
+    ja_nei    BOOL      NOT NULL,
     PRIMARY KEY (parent_id, child_id)
 );
 
