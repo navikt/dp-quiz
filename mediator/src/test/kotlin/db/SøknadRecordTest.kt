@@ -9,6 +9,8 @@ import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
+import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Mobile
+import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
@@ -36,7 +38,7 @@ internal class SøknadRecordTest {
 
             assertRecordCount(1, "soknad")
             assertRecordCount(26, "faktum_verdi")
-            SøknadRecord().ny(UNG_PERSON_FNR_2018, Versjon.FaktagrupperType.Web)
+            SøknadRecord().ny(UNG_PERSON_FNR_2018, Web)
             assertRecordCount(2, "soknad")
             assertRecordCount(52, "faktum_verdi")
             hentFørstFakta()
@@ -97,14 +99,19 @@ internal class SøknadRecordTest {
     fun `lagrer og rehydrerer valg`() {
         Postgres.withMigratedDb {
             byggOriginalFaktagrupper()
+            assertSesjonType(Web)
             originalFaktagrupper.ja(345214).besvar(true, Rolle.søker)
+
             hentFørstFakta()
+            assertSesjonType(Web)
             assertTrue(rehydrertFaktagrupper.ja(345214).svar())
             assertTrue(rehydrertFaktagrupper.ja(20).svar())
 
             originalFaktagrupper = rehydrertFaktagrupper
             originalFaktagrupper.ja(345216).besvar(true, Rolle.søker)
-            hentFørstFakta()
+
+            hentFørstFakta(Mobile)
+            assertSesjonType(Mobile)
             assertTrue(rehydrertFaktagrupper.ja(345216).svar())
             assertFalse(rehydrertFaktagrupper.ja(20).svar())
         }
@@ -144,18 +151,18 @@ internal class SøknadRecordTest {
         }
     }
 
-    private fun hentFørstFakta() {
-        søknadRecord.lagre(originalFaktagrupper.søknad)
+    private fun hentFørstFakta(faktagrupperType: Versjon.FaktagrupperType = Web) {
+        søknadRecord.lagre(originalFaktagrupper.søknad, faktagrupperType)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         søknadRecord = SøknadRecord()
-        rehydrertFaktagrupper = søknadRecord.hent(uuid, Versjon.FaktagrupperType.Web)
+        rehydrertFaktagrupper = søknadRecord.hent(uuid, faktagrupperType)
         assertDeepEquals(originalFaktagrupper, rehydrertFaktagrupper)
     }
 
     private fun byggOriginalFaktagrupper() {
         FaktumTable(prototypeFakta1, 1000)
         søknadRecord = SøknadRecord()
-        originalFaktagrupper = søknadRecord.ny(UNG_PERSON_FNR_2018, Versjon.FaktagrupperType.Web)
+        originalFaktagrupper = søknadRecord.ny(UNG_PERSON_FNR_2018, Web)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {
@@ -165,6 +172,21 @@ internal class SøknadRecordTest {
                 session.run(
                     queryOf(
                         "SELECT COUNT (*) FROM $table"
+                    ).map { it.int(1) }.asSingle
+                )
+            }
+        )
+    }
+
+    private fun assertSesjonType(sesjonType: Versjon.FaktagrupperType) {
+        val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
+        assertEquals(
+            sesjonType.id,
+            using(sessionOf(dataSource)) { session ->
+                session.run(
+                    queryOf(
+                        "SELECT sesjon_type_id FROM soknad WHERE uuid = ?",
+                        uuid
                     ).map { it.int(1) }.asSingle
                 )
             }

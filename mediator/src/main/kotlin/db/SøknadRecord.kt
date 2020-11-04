@@ -30,7 +30,7 @@ class SøknadRecord : SøknadPersistence {
 
     override fun ny(fnr: String, type: Versjon.FaktagrupperType): Faktagrupper {
         return Versjon.siste.faktagrupper(fnr, type).also { faktagrupper ->
-            NySøknad(faktagrupper.søknad)
+            NySøknad(faktagrupper.søknad, type)
             originalSvar = svarMap(faktagrupper.søknad)
         }
     }
@@ -39,31 +39,46 @@ class SøknadRecord : SøknadPersistence {
         faktum.id to (if (faktum.erBesvart()) faktum.svar() else null)
     }.toMap()
 
-    override fun hent(uuid: UUID, type: Versjon.FaktagrupperType): Faktagrupper {
-        val (fnr, versjonId) = using(sessionOf(dataSource)) { session ->
+    override fun hent(uuid: UUID, type: Versjon.FaktagrupperType?): Faktagrupper {
+        data class SoknadRad(val fnr: String, val versjonId: Int, var typeId: Int)
+
+        val rad = using(sessionOf(dataSource)) { session ->
+            if (type != null) {
+                session.run(
+                    queryOf("""UPDATE soknad SET sesjon_type_id = ? WHERE uuid = ?""", type.id, uuid).asUpdate
+                )
+            }
+
             session.run(
                 queryOf(
-                    """SELECT fnr, versjon_id FROM soknad WHERE uuid = ? """,
+                    """SELECT fnr, versjon_id, sesjon_type_id FROM soknad WHERE uuid = ? """,
                     uuid
                 ).map { row ->
-                    row.string(1) to row.int(2)
+                    SoknadRad(row.string(1), row.int(2), row.int(3))
                 }.asSingle
             )
         } ?: throw IllegalArgumentException("Ugyldig uuid: $uuid")
 
-        return Versjon.id(versjonId).faktagrupper(fnr, type, uuid).also { faktagrupper ->
-            svarList(uuid).forEach { row ->
-                faktagrupper.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
-                    if (row.heltall != null) (faktum as Faktum<Int>).besvar(row.heltall)
-                    if (row.janei != null) (faktum as Faktum<Boolean>).besvar(row.janei)
-                    if (row.dato != null) (faktum as Faktum<LocalDate>).besvar(row.dato)
-                    if (row.inntekt != null) (faktum as Faktum<Inntekt>).besvar(row.inntekt)
-                    if (row.opplastet != null && row.url != null) (faktum as Faktum<Dokument>).besvar(Dokument(row.opplastet, row.url))
+        return Versjon.id(rad.versjonId)
+            .faktagrupper(rad.fnr, Versjon.FaktagrupperType.fromId(rad.typeId), uuid)
+            .also { faktagrupper ->
+                svarList(uuid).forEach { row ->
+                    faktagrupper.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
+                        if (row.heltall != null) (faktum as Faktum<Int>).besvar(row.heltall)
+                        if (row.janei != null) (faktum as Faktum<Boolean>).besvar(row.janei)
+                        if (row.dato != null) (faktum as Faktum<LocalDate>).besvar(row.dato)
+                        if (row.inntekt != null) (faktum as Faktum<Inntekt>).besvar(row.inntekt)
+                        if (row.opplastet != null && row.url != null) (faktum as Faktum<Dokument>).besvar(
+                            Dokument(
+                                row.opplastet,
+                                row.url
+                            )
+                        )
+                    }
                 }
+            }.also { faktagrupper ->
+                originalSvar = svarMap(faktagrupper.søknad)
             }
-        }.also { faktagrupper ->
-            originalSvar = svarMap(faktagrupper.søknad)
-        }
     }
 
     private infix fun Int.indeks(indeks: Int) = if (indeks == 0) this.toString() else "$this.$indeks"
@@ -132,10 +147,11 @@ class SøknadRecord : SøknadPersistence {
             WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id AND soknad.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
     }
 
-    override fun lagre(søknad: Søknad): Boolean {
-        val nySvar = svarMap(søknad)
+    override fun lagre(søknad: Søknad, type: Versjon.FaktagrupperType): Boolean {
+        val nyeSvar = svarMap(søknad)
+
         originalSvar.forEach { id, svar ->
-            if (nySvar[id] == svar) return@forEach
+            if (nyeSvar[id] == svar) return@forEach
             val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
 
             using(sessionOf(dataSource)) { session ->
@@ -166,7 +182,7 @@ class SøknadRecord : SøknadPersistence {
 
                 session.run(
                     queryOf(
-                        sqlToInsert(nySvar[id]),
+                        sqlToInsert(nyeSvar[id]),
                         søknad.uuid,
                         indeks,
                         rootId
@@ -175,7 +191,7 @@ class SøknadRecord : SøknadPersistence {
             }
         }
 
-        nySvar.forEach { id, svar ->
+        nyeSvar.forEach { id, svar ->
             if (originalSvar.containsKey(id)) return@forEach
             val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
             using(sessionOf(dataSource)) { session ->
@@ -213,7 +229,7 @@ class SøknadRecord : SøknadPersistence {
         }.toMap()
     }
 
-    private class NySøknad(søknad: Søknad) : SøknadVisitor {
+    private class NySøknad(søknad: Søknad, private val type: Versjon.FaktagrupperType) : SøknadVisitor {
         private var faktaId = 0
         private var versjonId = 0
         private var rootId = 0
@@ -230,10 +246,11 @@ class SøknadRecord : SøknadPersistence {
             faktaId = using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        "INSERT INTO soknad(uuid, versjon_id, fnr) VALUES (?, ?, ?) returning id",
+                        "INSERT INTO soknad(uuid, versjon_id, fnr, sesjon_type_id) VALUES (?, ?, ?, ?) returning id",
                         uuid,
                         versjonId,
-                        fnr
+                        fnr,
+                        type.id
                     ).map { it.int(1) }.asSingle
                 )!!
             }

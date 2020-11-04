@@ -163,7 +163,14 @@ class Prototype {
             inntekter
         )
 
-    private val versjon = Versjon(VERSJON_ID, søknad, inngangsvilkår, mapOf(Versjon.FaktagrupperType.Web to faktagrupper))
+    private val versjon = Versjon(
+        versjonId = VERSJON_ID,
+        prototypeSøknad = søknad,
+        prototypeSubsumsjon = inngangsvilkår,
+        prototypeFaktagrupper = mapOf(
+            Versjon.FaktagrupperType.Web to faktagrupper
+        )
+    )
 
     fun faktagrupper(fnr: String) = versjon.faktagrupper(fnr, Versjon.FaktagrupperType.Web)
 }

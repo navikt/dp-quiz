@@ -13,23 +13,33 @@ class Versjon(
 
     companion object {
         val versjoner = mutableMapOf<Int, Versjon>()
-        val siste: Versjon get() = versjoner.maxByOrNull { it.key }?.value ?: throw IllegalArgumentException("Det finnes ingen versjoner!")
-        fun id(versjonId: Int) = versjoner[versjonId] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $versjonId")
+        val siste: Versjon
+            get() = versjoner.maxByOrNull { it.key }?.value
+                ?: throw IllegalArgumentException("Det finnes ingen versjoner!")
+
+        fun id(versjonId: Int) =
+            versjoner[versjonId] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $versjonId")
     }
 
-    fun faktagrupper(fnr: String, type: FaktagrupperType, uuid: UUID = UUID.randomUUID()): Faktagrupper = faktagrupper(prototypeSøknad.bygg(fnr, versjonId, uuid), type)
+    fun faktagrupper(fnr: String, type: FaktagrupperType, uuid: UUID = UUID.randomUUID()): Faktagrupper =
+        faktagrupper(prototypeSøknad.bygg(fnr, versjonId, uuid), type)
 
     fun faktagrupper(søknad: Søknad, type: FaktagrupperType): Faktagrupper {
         val subsumsjon = prototypeSubsumsjon.bygg(søknad)
-        return prototypeFaktagrupper[type]?.bygg(søknad, subsumsjon) ?: throw IllegalArgumentException("Kan ikke finne faktagrupper av type $type")
+        return prototypeFaktagrupper[type]?.bygg(søknad, subsumsjon)
+            ?: throw IllegalArgumentException("Kan ikke finne faktagrupper av type $type")
     }
 
     init {
         versjoner[versjonId] = this
     }
 
-    enum class FaktagrupperType {
-        Web,
-        Mobile
+    enum class FaktagrupperType(val id: Int) {
+        Web(1),
+        Mobile(2);
+
+        companion object {
+            fun fromId(id: Int): FaktagrupperType = values().first { it.id == id }
+        }
     }
 }

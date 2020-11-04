@@ -22,7 +22,7 @@ internal class HendelseMediator(private val søknadPersistence: SøknadPersisten
     fun behandle(fnr: String, søknadId: UUID, faktumId: Int, svar: Any) {
         søknadPersistence.hent(søknadId, Versjon.FaktagrupperType.Web).also { faktagrupper ->
             besvar(faktagrupper, faktumId, svar)
-            søknadPersistence.lagre(faktagrupper.søknad)
+            søknadPersistence.lagre(faktagrupper.søknad, Versjon.FaktagrupperType.Web)
             if (faktagrupper.resultat() == null)
                 behovMediator.håndter(
                     faktagrupper.nesteSeksjon(),

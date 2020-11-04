@@ -49,10 +49,21 @@ internal object SøknadEksempel1 {
         )
     )
 
+    private val mobilePrototypeSøknad = Faktagrupper(
+        Seksjon(
+            "seksjon",
+            Rolle.søker,
+            *(prototypeFakta1.map { it }.toTypedArray())
+        )
+    )
+
     val v = Versjon(
         1000, // må være siste versjon pga databasetester
         prototypeFakta1,
         prototypeFakta1 ja 1 er true,
-        mapOf(Versjon.FaktagrupperType.Web to webPrototypeSøknad)
+        mapOf(
+            Versjon.FaktagrupperType.Web to webPrototypeSøknad,
+            Versjon.FaktagrupperType.Mobile to mobilePrototypeSøknad
+        )
     )
 }
