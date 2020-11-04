@@ -9,7 +9,7 @@ internal abstract class HendelseMelding(private val packet: JsonMessage) {
     internal val navn = packet["@event_name"].asText()
     internal val opprettet = packet["@opprettet"].asLocalDateTime()
 
-    internal abstract val fødselsnummer: String
+    internal abstract val fnr: String
 
     internal abstract fun behandle(mediator: HendelseMediator)
 

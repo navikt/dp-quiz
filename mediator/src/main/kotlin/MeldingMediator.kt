@@ -6,7 +6,6 @@ import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
-import java.lang.IllegalStateException
 
 private val log = KotlinLogging.logger {}
 private val sikkerLogg = KotlinLogging.logger("tjenestekall")
@@ -39,7 +38,7 @@ internal class MeldingMediator(
             "melding_id" to melding.id.toString(),
             "melding_type" to (melding::class.simpleName ?: "ukjent")
         ) {
-            sikkerLogg.info { "gjenkjente melding for fnr=${melding.fødselsnummer}" }
+            sikkerLogg.info { "gjenkjente melding for fnr=${melding.fnr}" }
             håndterMelding(melding, context)
         }
     }

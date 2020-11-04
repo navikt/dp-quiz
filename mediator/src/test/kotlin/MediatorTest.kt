@@ -8,10 +8,6 @@ import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Rolle.nav
-import no.nav.dagpenger.model.faktum.Rolle.saksbehandler
-import no.nav.dagpenger.model.faktum.Rolle.søker
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -56,15 +52,15 @@ class MeldingMediatorTest {
     @Test
     internal fun `ta imot svar`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
-        val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknadId"].asText())
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 1, "boolean", "true", søker))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 2, "boolean", "true", søker))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 3, "heltall", "2", søker))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 4, "dato", 24.desember.toString(), søker))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 5, "inntekt", 1000.årlig.toString(), nav))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 6, "inntekt", 1050.årlig.toString(), nav))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 7, "dokument", Dokument(1.januar.atStartOfDay(), "https://nav.no"), søker))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 8, "boolean", "true", saksbehandler))
+        val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknadUuid"].asText())
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 1, "boolean", "true"))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 2, "boolean", "true"))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 3, "heltall", "2"))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 4, "dato", 24.desember.toString()))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 5, "inntekt", 1000.årlig.toString()))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 6, "inntekt", 1050.årlig.toString()))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 7, "dokument", Dokument(1.januar.atStartOfDay(), "https://nav.no")))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 8, "boolean", "true"))
         assertEquals(7, testRapid.inspektør.size)
     }
 
@@ -87,13 +83,11 @@ class MeldingMediatorTest {
     }
 }
 
-private class TestMeldingFactory(private val fødselsnummer: String, private val aktørId: String) {
+private class TestMeldingFactory(private val fnr: String, private val aktørId: String) {
     fun ønskerRettighetsavklaring(): String = nyHendelse(
         "ønsker_rettighetsavklaring",
         mapOf(
-            "aktørId" to aktørId,
-            "fødselsnummer" to fødselsnummer,
-            "avklaringsId" to UUID.randomUUID(),
+            "fnr" to fnr,
             "opprettet" to LocalDateTime.now(),
             "faktagrupperType" to Versjon.FaktagrupperType.Web.toString()
         )
@@ -108,15 +102,13 @@ private class TestMeldingFactory(private val fødselsnummer: String, private val
         "@opprettet" to LocalDateTime.now()
     )
 
-    fun besvarFaktum(søknadId: UUID, faktumId: Int, clazz: String, svar: Any, rolle: Rolle) = nyHendelse(
+    fun besvarFaktum(søknadUuid: UUID, faktumId: Int, clazz: String, svar: Any) = nyHendelse(
         "faktum_svar",
         mapOf(
-            "aktørId" to aktørId,
-            "fødselsnummer" to fødselsnummer,
-            "avklaringsId" to UUID.randomUUID(),
+            "fnr" to fnr,
             "opprettet" to LocalDateTime.now(),
             "faktumId" to faktumId,
-            "søknadId" to søknadId,
+            "søknadUuid" to søknadUuid,
             "svar" to when (svar) {
                 is String -> svar
                 is Dokument -> svar.reflection { lastOppTidsstempel, url ->
@@ -127,8 +119,6 @@ private class TestMeldingFactory(private val fødselsnummer: String, private val
                 }
                 else -> throw IllegalArgumentException("Ustøtta svar-type")
             },
-            "faktagrupperType" to Versjon.FaktagrupperType.Web.toString(),
-            "rolle" to rolle,
             "clazz" to clazz
         )
     )

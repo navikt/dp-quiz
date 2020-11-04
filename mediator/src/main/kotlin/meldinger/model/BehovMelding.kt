@@ -6,7 +6,7 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class BehovMelding(private val fødselsnummer: String, private val seksjon: Seksjon, private val søknadId: UUID) {
+internal class BehovMelding(private val fødselsnummer: String, private val seksjon: Seksjon, private val søknadUuid: UUID) {
     private val eventName = "behov"
     private val id = UUID.randomUUID()
     private val opprettet = LocalDateTime.now()
@@ -21,7 +21,10 @@ internal class BehovMelding(private val fødselsnummer: String, private val seks
             "@behov" to behov,
             "fødselsnummer" to fødselsnummer,
             "fakta" to fakta,
-            "søknadId" to søknadId
+            "søknadUuid" to søknadUuid,
+            "seksjonNavn" to seksjon.navn,
+            // "versjonId" to versjonId,
+
         )
     ).toJson()
 }

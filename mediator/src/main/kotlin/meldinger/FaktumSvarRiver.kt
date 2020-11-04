@@ -13,14 +13,12 @@ internal class FaktumSvarRiver(rapidsConnection: RapidsConnection, mediator: Mel
 
     override fun validate(packet: JsonMessage) {
         packet.requireKey(
-            "fødselsnummer",
+            "fnr",
             "opprettet",
             "faktumId",
             "svar",
-            "søknadId",
+            "søknadUuid",
             "clazz",
-            "rolle",
-            "faktagrupperType"
         )
     }
 

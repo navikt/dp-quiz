@@ -12,7 +12,7 @@ internal class ØnskerRettighetsavklaringerRiver(rapidsConnection: RapidsConnect
     override val riverName = "Ønsker rettighetsavklaring"
 
     override fun validate(packet: JsonMessage) {
-        packet.requireKey("fødselsnummer", "opprettet", "avklaringsId", "faktagrupperType")
+        packet.requireKey("fnr", "opprettet", "faktagrupperType")
     }
 
     override fun createMessage(packet: JsonMessage) = ØnskerRettighetsavklaringMelding(packet)

@@ -52,7 +52,7 @@ internal object SøknadEksempel {
         ),
         Seksjon(
             "seksjon5",
-            Rolle.nav,
+            Rolle.søker,
             prototypeSøknad1.inntekt(5),
             prototypeSøknad1.inntekt(6)
         ),
@@ -63,7 +63,7 @@ internal object SøknadEksempel {
         ),
         Seksjon(
             "seksjon7",
-            Rolle.saksbehandler,
+            Rolle.søker,
             prototypeSøknad1.ja(8)
         )
     )

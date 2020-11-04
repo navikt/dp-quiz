@@ -1,22 +1,18 @@
 package meldinger.model
 
 import HendelseMediator
-import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.util.UUID
 
 internal class FaktumSvarMelding(packet: JsonMessage) : HendelseMelding(packet) {
-    override val fødselsnummer = packet["fødselsnummer"].asText()
-    private val søknadId = UUID.fromString(packet["søknadId"].asText())
+    override val fnr = packet["fnr"].asText()
+    private val søknadUuid = UUID.fromString(packet["søknadUuid"].asText())
     private val faktumId = packet["faktumId"].asInt()
     private val clazz = packet["clazz"].asText()
-    private val faktagrupperType = Versjon.FaktagrupperType.valueOf(packet["faktagrupperType"].asText())
-    private val rolle = Rolle.valueOf(packet["rolle"].asText())
     private val svar = packet["svar"]
 
     override fun behandle(mediator: HendelseMediator) {
@@ -28,6 +24,6 @@ internal class FaktumSvarMelding(packet: JsonMessage) : HendelseMelding(packet) 
             "dokument" -> Dokument(svar["lastOppTidsstempel"].asLocalDateTime(), svar["url"].asText())
             else -> throw IllegalArgumentException("Ukjent faktum type: $clazz")
         }
-        mediator.behandle(this, søknadId, faktumId, typedSvar, faktagrupperType, rolle)
+        mediator.behandle(fnr, søknadUuid, faktumId, typedSvar)
     }
 }
