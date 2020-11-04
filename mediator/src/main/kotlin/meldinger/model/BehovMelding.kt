@@ -6,11 +6,10 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class BehovMelding(private val fødselsnummer: String, private val seksjon: Seksjon, private val søknadUuid: UUID) {
+internal class BehovMelding(private val fnr: String, private val seksjon: Seksjon, private val søknadUuid: UUID) {
     private val eventName = "behov"
     private val id = UUID.randomUUID()
     private val opprettet = LocalDateTime.now()
-    private val behov = seksjon.map { it.navn }
     private val fakta = SeksjonJsonBuilder(seksjon).resultat()["fakta"]
 
     fun toJson() = JsonMessage.newMessage(
@@ -18,13 +17,11 @@ internal class BehovMelding(private val fødselsnummer: String, private val seks
             "@event_name" to eventName,
             "@opprettet" to opprettet,
             "@id" to id,
-            "@behov" to behov,
-            "fødselsnummer" to fødselsnummer,
+            "fnr" to fnr,
             "fakta" to fakta,
             "søknadUuid" to søknadUuid,
-            "seksjonNavn" to seksjon.navn,
+            "seksjonsnavn" to seksjon.navn,
             // "versjonId" to versjonId,
-
         )
     ).toJson()
 }

@@ -5,9 +5,8 @@ import java.util.UUID
 
 internal class BehovMediator(private val rapidsConnection: RapidsConnection) {
 
-    internal fun håndter(seksjon: Seksjon, fødselsnummer: String, søknadId: UUID) {
-        val behov = seksjon.map { it.navn }
-        val melding = BehovMelding(fødselsnummer = fødselsnummer, seksjon = seksjon, søknadId)
+    internal fun håndter(seksjon: Seksjon, fnr: String, søknadId: UUID) {
+        val melding = BehovMelding(fnr = fnr, seksjon = seksjon, søknadId)
         rapidsConnection.publish(melding.toJson())
     }
 }
