@@ -6,7 +6,6 @@ plugins {
     application
     kotlin("jvm") version Kotlin.version
     id(Spotless.spotless) version Spotless.version
-    // id(Shadow.shadow) version Shadow.version
 }
 
 buildscript {
