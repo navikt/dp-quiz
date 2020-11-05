@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.faktagrupper
 
+import no.nav.dagpenger.model.faktagrupper.Seksjon.Companion.saksbehandlerSeksjoner
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.Søknad
@@ -45,7 +46,7 @@ class Faktagrupper private constructor(
     fun <T : Comparable<T>> faktum(id: Int): Faktum<T> = (søknad.id(id) as Faktum<T>)
 
     fun nesteSeksjoner(): List<Seksjon> {
-        if (rootSubsumsjon.resultat() != null) return emptyList()
+        if (rootSubsumsjon.resultat() != null) return saksbehandlerSeksjoner()
         return listOf(seksjoner.first { rootSubsumsjon.nesteFakta() in it })
     }
 

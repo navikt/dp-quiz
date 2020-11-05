@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.faktum.erBesvart
 import no.nav.dagpenger.model.visitor.FaktagruppeVisitor
 
 class Seksjon private constructor(
@@ -21,6 +22,11 @@ class Seksjon private constructor(
             it.add(this)
             it.leggTilAvhengigheter(seksjonFakta)
         }
+    }
+
+    companion object {
+        internal fun List<Seksjon>.saksbehandlerSeksjoner() =
+            this.filter { it.rolle == Rolle.saksbehandler && !it.erBesvart() }
     }
 
     constructor(navn: String, rolle: Rolle, vararg fakta: Faktum<*>) : this(navn, rolle, fakta.toMutableSet())
