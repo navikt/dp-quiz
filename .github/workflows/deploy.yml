@@ -26,5 +26,5 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build with Gradle
-        run: ./gradlew clean build --info
+        run: ./gradlew build --info
 
