@@ -3,11 +3,17 @@ package no.nav.dagpenger.model.faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon.Companion.saksbehandlerSeksjoner
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
+import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TypedFaktum
+import no.nav.dagpenger.model.regel.Regel
+import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.FaktagruppeVisitor
+import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 import java.util.UUID
 
 class Faktagrupper private constructor(
@@ -45,10 +51,11 @@ class Faktagrupper private constructor(
 
     fun <T : Comparable<T>> faktum(id: Int): Faktum<T> = (søknad.id(id) as Faktum<T>)
 
-    fun nesteSeksjoner(): List<Seksjon> {
-        if (rootSubsumsjon.resultat() != null) return saksbehandlerSeksjoner()
-        return listOf(seksjoner.first { rootSubsumsjon.nesteFakta() in it })
-    }
+    fun nesteSeksjoner(): List<Seksjon> =
+        if (rootSubsumsjon.resultat() != null)
+            saksbehandlerSeksjoner(RelevanteFakta(rootSubsumsjon).resultater)
+        else
+            listOf(seksjoner.first { rootSubsumsjon.nesteFakta() in it })
 
     fun accept(visitor: FaktagruppeVisitor) {
         visitor.preVisit(this, uuid)
@@ -66,4 +73,75 @@ class Faktagrupper private constructor(
     internal fun nesteFakta() = rootSubsumsjon.nesteFakta()
 
     fun resultat() = rootSubsumsjon.resultat()
+
+    private class RelevanteFakta(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
+        val resultater = mutableSetOf<Faktum<*>>()
+        private var ignore = false
+
+        init {
+            subsumsjon.accept(this)
+        }
+
+        override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, resultat: Boolean?) {
+            // println(subsumsjon)
+        }
+
+        override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
+            ignore = parent.lokaltResultat() != true
+            // println("gyldig parent:$parent \n child: $child")
+        }
+
+        override fun postVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
+            ignore = false
+        }
+
+        override fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
+            ignore = parent.lokaltResultat() != false
+            // println("ugyldig parent:$parent \n child: $child")
+        }
+
+        override fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
+            ignore = false
+        }
+
+        override fun preVisit(
+            subsumsjon: GodkjenningsSubsumsjon,
+            action: GodkjenningsSubsumsjon.Action,
+            resultat: Boolean?
+        ) {
+            ignore = when (action) {
+                GodkjenningsSubsumsjon.Action.JaAction -> resultat == false
+                GodkjenningsSubsumsjon.Action.NeiAction -> resultat == true
+                GodkjenningsSubsumsjon.Action.UansettAction -> false
+            }
+        }
+        override fun <R : Comparable<R>> visit(
+            faktum: GrunnleggendeFaktum<R>,
+            tilstand: Faktum.FaktumTilstand,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>
+        ) {
+            if (!ignore) {
+                resultater.add(faktum)
+            }
+        }
+
+        override fun <R : Comparable<R>> visit(
+            faktum: GrunnleggendeFaktum<R>,
+            tilstand: Faktum.FaktumTilstand,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>,
+            svar: R
+        ) {
+            if (!ignore) {
+                resultater.add(faktum)
+            }
+        }
+    }
 }

@@ -13,6 +13,8 @@ import no.nav.dagpenger.model.subsumsjon.så
 import org.junit.jupiter.api.Test
 import java.util.UUID
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class SaksbehandlerSeksjonerTest {
     companion object {
@@ -38,19 +40,34 @@ internal class SaksbehandlerSeksjonerTest {
     private val version = Versjon(1, prototypeSøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
 
     @Test
-    fun `hjkl `() {
+    fun `sorter ut irrelevante saksbehandler seksjoner `() {
         val seksjoner = Versjon.siste.faktagrupper(UNG_PERSON_FNR_2018, Web, uuid)
         assertEquals(listOf(seksjoner[0]), seksjoner.nesteSeksjoner())
         seksjoner.ja(1).besvar(true, Rolle.søker)
         assertEquals(listOf(seksjoner[0]), seksjoner.nesteSeksjoner())
         seksjoner.ja(3).besvar(true, Rolle.søker)
-        assertEquals(listOf(seksjoner[1], seksjoner[2]), seksjoner.nesteSeksjoner())
+        seksjoner.nesteSeksjoner().also {
+            assertEquals(2, it.size)
+            assertTrue(seksjoner.ja(2) in it[0] && !seksjoner.ja(2).erBesvart())
+            assertTrue(seksjoner.ja(4) in it[1] && !seksjoner.ja(4).erBesvart())
+        }
         seksjoner.ja(2).besvar(true, Rolle.saksbehandler)
-        assertEquals(listOf(seksjoner[2]), seksjoner.nesteSeksjoner())
+        seksjoner.nesteSeksjoner().also {
+            assertEquals(2, it.size)
+            assertTrue(seksjoner.ja(2) in it[0] && seksjoner.ja(2).erBesvart())
+            assertTrue(seksjoner.ja(4) in it[1] && !seksjoner.ja(4).erBesvart())
+        }
         seksjoner.ja(4).besvar(true, Rolle.saksbehandler)
-        assertEquals(emptyList(), seksjoner.nesteSeksjoner())
-
+        seksjoner.nesteSeksjoner().also {
+            assertEquals(2, it.size)
+            assertTrue(seksjoner.ja(2) in it[0] && seksjoner.ja(2).erBesvart())
+            assertTrue(seksjoner.ja(4) in it[1] && seksjoner.ja(4).erBesvart())
+        }
         seksjoner.ja(1).besvar(false, Rolle.søker)
-        //   assertEquals(emptyList(), seksjoner.nesteSeksjoner())
+        seksjoner.nesteSeksjoner().also {
+            assertEquals(2, it.size)
+            assertFalse(seksjoner.ja(2) in it[0])
+            assertTrue(seksjoner.ja(4) in it[1] && seksjoner.ja(4).erBesvart())
+        }
     }
 }

@@ -25,8 +25,10 @@ class Seksjon private constructor(
     }
 
     companion object {
-        internal fun List<Seksjon>.saksbehandlerSeksjoner() =
-            this.filter { it.rolle == Rolle.saksbehandler && !it.erBesvart() }
+        internal fun List<Seksjon>.saksbehandlerSeksjoner(relevanteFakta: Set<Faktum<*>>) =
+            this.filter { it.rolle == Rolle.saksbehandler }.map {
+                Seksjon(it.navn, it.rolle, it.seksjonFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet())
+            }
     }
 
     constructor(navn: String, rolle: Rolle, vararg fakta: Faktum<*>) : this(navn, rolle, fakta.toMutableSet())

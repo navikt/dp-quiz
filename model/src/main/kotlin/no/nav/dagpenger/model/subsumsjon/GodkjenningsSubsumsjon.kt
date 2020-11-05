@@ -17,7 +17,7 @@ class GodkjenningsSubsumsjon private constructor(
     internal constructor(action: Action, child: Subsumsjon, godkjenning: Faktum<Boolean>) :
         this("${child.navn} godkjenning", action, child, godkjenning, TomSubsumsjon, TomSubsumsjon)
 
-    internal enum class Action(internal val strategy: (Boolean, Boolean?) -> Boolean?) {
+    enum class Action(internal val strategy: (Boolean, Boolean?) -> Boolean?) {
         JaAction({ childResultat: Boolean, godkjenningResultat: Boolean? -> childResultat && godkjenningResultat != false }),
         NeiAction({ childResultat: Boolean, godkjenningResultat: Boolean? -> childResultat || godkjenningResultat == false }),
         UansettAction({ childResultat: Boolean, godkjenningResultat: Boolean? ->
@@ -77,7 +77,9 @@ class GodkjenningsSubsumsjon private constructor(
         resultat().also {
             visitor.preVisit(this, it)
             super.accept(visitor)
+            visitor.preVisit(this, action, it)
             godkjenning.accept(visitor)
+            visitor.postVisit(this, action, it)
             visitor.postVisit(this, it)
         }
     }
