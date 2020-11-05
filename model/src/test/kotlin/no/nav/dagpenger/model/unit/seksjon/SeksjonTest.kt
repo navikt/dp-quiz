@@ -30,20 +30,20 @@ internal class SeksjonTest {
 
     @Test
     fun `finne faktagrupper som skal spørres neste`() {
-        assertEquals(datofakta, faktagrupper.nesteSeksjon())
+        assertEquals(datofakta, faktagrupper.nesteSeksjoner().first())
 
         bursdag67.besvar(31.januar)
         sisteDagMedLønn.besvar(1.januar)
-        assertEquals(datofakta, faktagrupper.nesteSeksjon())
+        assertEquals(datofakta, faktagrupper.nesteSeksjoner().first())
 
         inntekt15G.besvar(100000.månedlig)
         inntekt3G.besvar(1000.månedlig)
-        assertEquals(datofakta, faktagrupper.nesteSeksjon())
+        assertEquals(datofakta, faktagrupper.nesteSeksjoner().first())
 
         ønsketdato.besvar(1.januar)
         søknadsdato.besvar(1.januar)
         dimisjonsdato.besvar(1.januar)
-        assertEquals(inntektfakta, faktagrupper.nesteSeksjon())
+        assertEquals(inntektfakta, faktagrupper.nesteSeksjoner().first())
     }
 
     @Test

@@ -22,7 +22,7 @@ internal class BehovMediatorTest {
     @Test
     fun `tar imot seksjon og sender ut på kafka`() {
         val faktagrupper = SøknadEksempel.v.faktagrupper(fnr, Web)
-        val seksjon = faktagrupper.nesteSeksjon()
+        val seksjon = faktagrupper.nesteSeksjoner().first()
         mediator.håndter(seksjon, fnr, faktagrupper.søknad.uuid)
         assertEquals(1, testRapid.inspektør.size)
 

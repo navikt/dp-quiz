@@ -32,7 +32,7 @@ internal class SøknadSubsumsjonTest {
             assertIder(fakta, 1, 2, 3, 4, 5)
         }
 
-        assertEquals(faktagrupper[0], faktagrupper.nesteSeksjon())
+        assertEquals(faktagrupper[0], faktagrupper.nesteSeksjoner().first())
         assertEquals(2, faktagrupper[0].fakta().size)
         assertIder(faktagrupper[0].fakta(), 1, 2)
 
@@ -43,7 +43,7 @@ internal class SøknadSubsumsjonTest {
             assertIder(fakta, 3, 4, 5)
         }
 
-        assertEquals(faktagrupper[3], faktagrupper.nesteSeksjon())
+        assertEquals(faktagrupper[3], faktagrupper.nesteSeksjoner().first())
         assertEquals(5, faktagrupper[3].fakta().size)
 
         assertIder(faktagrupper[3].fakta(), 3, 4, 5, 345, 13)
@@ -55,7 +55,7 @@ internal class SøknadSubsumsjonTest {
             assertIder(fakta, 10)
         }
 
-        assertEquals(faktagrupper[4], faktagrupper.nesteSeksjon())
+        assertEquals(faktagrupper[4], faktagrupper.nesteSeksjoner().first())
         assertEquals(2, faktagrupper[4].fakta().size)
         assertIder(faktagrupper[4].fakta(), 10, 11)
         faktagrupper.ja(10).besvar(false)
@@ -64,7 +64,7 @@ internal class SøknadSubsumsjonTest {
             assertIder(fakta, 11)
         }
 
-        assertEquals(faktagrupper[4], faktagrupper.nesteSeksjon())
+        assertEquals(faktagrupper[4], faktagrupper.nesteSeksjoner().first())
         assertEquals(2, faktagrupper[4].fakta().size)
         assertIder(faktagrupper[4].fakta(), 10, 11)
         faktagrupper.dokument(11).besvar(Dokument(4.januar))
@@ -74,7 +74,7 @@ internal class SøknadSubsumsjonTest {
             assertIder(fakta, 6, 8, 7, 9)
         }
 
-        assertEquals(faktagrupper[1], faktagrupper.nesteSeksjon())
+        assertEquals(faktagrupper[1], faktagrupper.nesteSeksjoner().first())
         assertEquals(5, faktagrupper[1].fakta().size)
         assertIder(faktagrupper[1].fakta(), 6, 7, 8, 9, 20)
 
@@ -87,7 +87,7 @@ internal class SøknadSubsumsjonTest {
             assertIder(fakta, 15)
         }
 
-        assertEquals(faktagrupper[2], faktagrupper.nesteSeksjon())
+        assertEquals(faktagrupper[2], faktagrupper.nesteSeksjoner().first())
         assertEquals(1, faktagrupper[2].fakta().size)
         assertIder(faktagrupper[2].fakta(), 15)
         faktagrupper.generator(15).besvar(2, Rolle.nav)
@@ -97,7 +97,7 @@ internal class SøknadSubsumsjonTest {
             assertEquals(listOf("16.1", "16.2"), fakta.map { it.id })
         }
 
-        assertEquals(faktagrupper[2], faktagrupper.nesteSeksjon())
+        assertEquals(faktagrupper[2], faktagrupper.nesteSeksjoner().first())
         assertEquals(3, faktagrupper[2].fakta().size)
         assertEquals(listOf("15", "16.1", "16.2"), faktagrupper[2].fakta().map { it.id })
         (faktagrupper[2].first { it.id == "16.1" } as Faktum<Int>).besvar(17, Rolle.nav)
@@ -107,7 +107,7 @@ internal class SøknadSubsumsjonTest {
             assertEquals(listOf("17.1"), fakta.map { it.id })
         }
 
-        assertEquals(faktagrupper[7], faktagrupper.nesteSeksjon())
+        assertEquals(faktagrupper[7], faktagrupper.nesteSeksjoner().first())
         assertEquals(2, faktagrupper[7].fakta().size)
         assertEquals(listOf("16.1", "17.1"), faktagrupper[7].fakta().map { it.id })
         (faktagrupper[7].first { it.id == "17.1" } as Faktum<Boolean>).besvar(true)
@@ -116,7 +116,7 @@ internal class SøknadSubsumsjonTest {
             assertIder(fakta, 14)
         }
 
-        assertEquals(faktagrupper[9], faktagrupper.nesteSeksjon())
+        assertEquals(faktagrupper[9], faktagrupper.nesteSeksjoner().first())
         assertEquals(10, faktagrupper[9].fakta().size)
         assertEquals(listOf("6", "7", "12", "14", "18.1", "18.2", "19", "2", "11", "13").sorted(), faktagrupper[9].fakta().map { it.id }.sorted())
         faktagrupper.ja(14).besvar(true, Rolle.saksbehandler)

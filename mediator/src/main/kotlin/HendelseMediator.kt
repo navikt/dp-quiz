@@ -14,21 +14,28 @@ internal class HendelseMediator(private val søknadPersistence: SøknadPersisten
     private val behovMediator = BehovMediator(rapidsConnection)
 
     fun behandle(fnr: String, type: Versjon.FaktagrupperType) {
-        søknadPersistence.ny(fnr, type).also {
-            behovMediator.håndter(it.nesteSeksjon(), fnr, it.søknad.uuid)
-        }
+        søknadPersistence.ny(fnr, type)
+            .also { faktagrupper ->
+                faktagrupper.nesteSeksjoner()
+                    .forEach { seksjon ->
+                        behovMediator.håndter(seksjon, fnr, faktagrupper.søknad.uuid)
+                    }
+            }
     }
 
     fun behandle(fnr: String, søknadId: UUID, faktumId: Int, svar: Any) {
         søknadPersistence.hent(søknadId, Versjon.FaktagrupperType.Web).also { faktagrupper ->
             besvar(faktagrupper, faktumId, svar)
             søknadPersistence.lagre(faktagrupper.søknad, Versjon.FaktagrupperType.Web)
-            if (faktagrupper.resultat() == null)
-                behovMediator.håndter(
-                    faktagrupper.nesteSeksjon(),
-                    fnr,
-                    faktagrupper.søknad.uuid
-                )
+            if (faktagrupper.resultat() == null) // TODO: move guardclause to faktagrupper
+                faktagrupper.nesteSeksjoner().forEach { seksjon ->
+                    behovMediator.håndter(
+                        seksjon,
+                        fnr,
+                        faktagrupper.søknad.uuid
+
+                    )
+                }
             else
                 behandleFerdigResultat()
         }
