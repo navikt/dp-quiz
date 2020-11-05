@@ -27,17 +27,15 @@ internal class HendelseMediator(private val søknadPersistence: SøknadPersisten
         søknadPersistence.hent(søknadId, Versjon.FaktagrupperType.Web).also { faktagrupper ->
             besvar(faktagrupper, faktumId, svar)
             søknadPersistence.lagre(faktagrupper.søknad, Versjon.FaktagrupperType.Web)
-            if (faktagrupper.resultat() == null) // TODO: move guardclause to faktagrupper
-                faktagrupper.nesteSeksjoner().forEach { seksjon ->
+            faktagrupper.nesteSeksjoner()
+                .onEach { seksjon ->
                     behovMediator.håndter(
                         seksjon,
                         fnr,
                         faktagrupper.søknad.uuid
-
                     )
                 }
-            else
-                behandleFerdigResultat()
+                .also { if (it.isEmpty()) behandleFerdigResultat() }
         }
     }
 

@@ -44,7 +44,10 @@ class Faktagrupper private constructor(
 
     fun <T : Comparable<T>> faktum(id: Int): Faktum<T> = (søknad.id(id) as Faktum<T>)
 
-    fun nesteSeksjoner() = listOf(seksjoner.first { rootSubsumsjon.nesteFakta() in it })
+    fun nesteSeksjoner(): List<Seksjon> {
+        if (rootSubsumsjon.resultat() != null) return emptyList()
+        return listOf(seksjoner.first { rootSubsumsjon.nesteFakta() in it })
+    }
 
     fun accept(visitor: FaktagruppeVisitor) {
         visitor.preVisit(this, uuid)
