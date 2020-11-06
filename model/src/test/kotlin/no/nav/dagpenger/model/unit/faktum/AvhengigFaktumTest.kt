@@ -1,14 +1,11 @@
 package no.nav.dagpenger.model.unit.faktum
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.gyldigGodkjentAv
+import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.UUID
@@ -23,9 +20,10 @@ internal class AvhengigFaktumTest {
         ja nei "approve1" id 2
     )
 
-
     @Test
-    fun `har avhengigheter`(){
-        assertThrows<IllegalArgumentException> {  prototypeSøknad.ja(1) er true gyldigGodkjentAv prototypeSøknad.ja(2) }
+    fun `har avhengigheter`() {
+        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true gyldigGodkjentAv prototypeSøknad.ja(2) }
+        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true ugyldigGodkjentAv  prototypeSøknad.ja(2) }
+        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true godkjentAv  prototypeSøknad.ja(2) }
     }
 }
