@@ -7,8 +7,6 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TypedFaktum
-import no.nav.dagpenger.model.regel.Regel
-import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
@@ -79,42 +77,30 @@ class Faktagrupper private constructor(
         private var ignore = false
 
         init {
-            subsumsjon.accept(this)
-        }
-
-        override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, resultat: Boolean?) {
-            // println(subsumsjon)
-        }
-
-        override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
-            ignore = parent.lokaltResultat() != true
-            // println("gyldig parent:$parent \n child: $child")
-        }
-
-        override fun postVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
-            ignore = false
-        }
-
-        override fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
-            ignore = parent.lokaltResultat() != false
-            // println("ugyldig parent:$parent \n child: $child")
-        }
-
-        override fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
-            ignore = false
+            subsumsjon.mulige().accept(this)
         }
 
         override fun preVisit(
             subsumsjon: GodkjenningsSubsumsjon,
             action: GodkjenningsSubsumsjon.Action,
-            resultat: Boolean?
+            lokaltResultat: Boolean?
         ) {
             ignore = when (action) {
-                GodkjenningsSubsumsjon.Action.JaAction -> resultat == false
-                GodkjenningsSubsumsjon.Action.NeiAction -> resultat == true
+                GodkjenningsSubsumsjon.Action.JaAction -> lokaltResultat == false
+                GodkjenningsSubsumsjon.Action.NeiAction -> lokaltResultat == true
                 GodkjenningsSubsumsjon.Action.UansettAction -> false
             }
         }
+
+        override fun postVisit(
+            subsumsjon: GodkjenningsSubsumsjon,
+            action: GodkjenningsSubsumsjon.Action,
+            lokaltResultat: Boolean?
+        ) {
+            ignore = false
+        }
+
+
         override fun <R : Comparable<R>> visit(
             faktum: GrunnleggendeFaktum<R>,
             tilstand: Faktum.FaktumTilstand,

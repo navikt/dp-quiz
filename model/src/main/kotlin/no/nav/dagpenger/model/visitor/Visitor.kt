@@ -177,8 +177,8 @@ interface SubsumsjonVisitor : FaktumVisitor {
     fun postVisit(subsumsjon: MakroSubsumsjon, resultat: Boolean?) {}
     fun preVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {}
     fun postVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {}
-    fun preVisit(subsumsjon: GodkjenningsSubsumsjon, action: GodkjenningsSubsumsjon.Action, resultat: Boolean?) {}
-    fun postVisit(subsumsjon: GodkjenningsSubsumsjon, action: GodkjenningsSubsumsjon.Action, resultat: Boolean?) {}
+    fun preVisit(subsumsjon: GodkjenningsSubsumsjon, action: GodkjenningsSubsumsjon.Action, lokaltResultat: Boolean?) {}
+    fun postVisit(subsumsjon: GodkjenningsSubsumsjon, action: GodkjenningsSubsumsjon.Action, lokaltResultat: Boolean?) {}
     fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {}
     fun postVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {}
     fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {}
