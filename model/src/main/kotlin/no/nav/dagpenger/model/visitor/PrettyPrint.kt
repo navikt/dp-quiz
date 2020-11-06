@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -53,6 +54,14 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     }
 
     override fun postVisit(subsumsjon: MakroSubsumsjon, resultat: Boolean?) {
+        indentTeller--
+    }
+
+    override fun preVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {
+        melding("${status(resultat)} Resultat av subsumsjon ${subsumsjon.navn}")
+        indentTeller++
+    }
+    override fun postVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {
         indentTeller--
     }
 
