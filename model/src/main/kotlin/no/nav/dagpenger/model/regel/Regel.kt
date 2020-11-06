@@ -232,14 +232,17 @@ infix fun Faktum<Int>.under(maksAlder: Int): Subsumsjon {
     )
 }
 
-infix fun Subsumsjon.godkjentAv(faktum: Faktum<Boolean>): Subsumsjon {
-    return GodkjenningsSubsumsjon(GodkjenningsSubsumsjon.Action.UansettAction, this, faktum)
-}
+infix fun Subsumsjon.godkjentAv(faktum: Faktum<Boolean>) =
+    GodkjenningsSubsumsjon(GodkjenningsSubsumsjon.Action.UansettAction, this, faktum).also {
+        faktum.sjekkAvhengigheter()
+    }
 
-infix fun Subsumsjon.gyldigGodkjentAv(faktum: Faktum<Boolean>): Subsumsjon {
-    return GodkjenningsSubsumsjon(GodkjenningsSubsumsjon.Action.JaAction, this, faktum)
-}
+infix fun Subsumsjon.gyldigGodkjentAv(faktum: Faktum<Boolean>) =
+    GodkjenningsSubsumsjon(GodkjenningsSubsumsjon.Action.JaAction, this, faktum).also {
+        faktum.sjekkAvhengigheter()
+    }
 
-infix fun Subsumsjon.ugyldigGodkjentAv(faktum: Faktum<Boolean>): Subsumsjon {
-    return GodkjenningsSubsumsjon(GodkjenningsSubsumsjon.Action.NeiAction, this, faktum)
-}
+infix fun Subsumsjon.ugyldigGodkjentAv(faktum: Faktum<Boolean>) =
+    GodkjenningsSubsumsjon(GodkjenningsSubsumsjon.Action.NeiAction, this, faktum).also {
+        faktum.sjekkAvhengigheter()
+    }

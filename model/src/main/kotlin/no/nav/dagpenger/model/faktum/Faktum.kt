@@ -99,6 +99,11 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     internal fun leggTilAvhengigheter(seksjonFakta: MutableSet<Faktum<*>>) {
         seksjonFakta.addAll(avhengerAvFakta)
     }
+
+    internal fun sjekkAvhengigheter() {
+        if (avhengerAvFakta.isEmpty())
+            throw IllegalArgumentException("Mangler avhengighet på godkjenningsfaktum: $this")
+    }
 }
 
 fun Set<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
