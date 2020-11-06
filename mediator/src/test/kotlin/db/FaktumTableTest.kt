@@ -12,7 +12,6 @@ import kotlin.test.assertEquals
 internal class FaktumTableTest {
     @Test
     fun `Bygg faktum tabell`() {
-
         Postgres.withMigratedDb {
             FaktumTable(prototypeFakta1, 1)
             assertRecordCount(26, "faktum")

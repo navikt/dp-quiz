@@ -52,4 +52,9 @@ class MinstEnAvSubsumsjon private constructor(
             visitor.postVisit(this, it)
         }
     }
+
+    override fun lokaltResultat(): Boolean? {
+        if (subsumsjoner.any { it.lokaltResultat() == null }) return null
+        return subsumsjoner.any { it.lokaltResultat()!! }
+    }
 }
