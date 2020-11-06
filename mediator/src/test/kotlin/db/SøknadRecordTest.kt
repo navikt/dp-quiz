@@ -13,7 +13,6 @@ import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Mobile
 import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -50,11 +49,11 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalFaktagrupper()
 
-            originalFaktagrupper.ja(1).besvar(true, Rolle.søker)
-            originalFaktagrupper.dato(2).besvar(LocalDate.now(), Rolle.søker)
-            originalFaktagrupper.inntekt(6).besvar(10000.årlig, Rolle.søker)
-            originalFaktagrupper.heltall(16).besvar(123, Rolle.søker)
-            originalFaktagrupper.dokument(11).besvar(Dokument(1.januar.atStartOfDay()), Rolle.søker)
+            originalFaktagrupper.ja(1).besvar(true)
+            originalFaktagrupper.dato(2).besvar(LocalDate.now())
+            originalFaktagrupper.inntekt(6).besvar(10000.årlig)
+            originalFaktagrupper.heltall(16).besvar(123)
+            originalFaktagrupper.dokument(11).besvar(Dokument(1.januar.atStartOfDay()))
 
             hentFørstFakta()
         }
@@ -65,13 +64,13 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalFaktagrupper()
 
-            originalFaktagrupper.dato(2).besvar(2.januar, Rolle.søker)
-            originalFaktagrupper.dato(13).besvar(13.januar, Rolle.søker)
-            originalFaktagrupper.ja(19).besvar(true, Rolle.søker)
+            originalFaktagrupper.dato(2).besvar(2.januar)
+            originalFaktagrupper.dato(13).besvar(13.januar)
+            originalFaktagrupper.ja(19).besvar(true)
             hentFørstFakta()
             assertRecordCount(3, "gammel_faktum_verdi")
             assertTrue(rehydrertFaktagrupper.ja(19).svar())
-            originalFaktagrupper.dato(2).besvar(22.januar, Rolle.søker)
+            originalFaktagrupper.dato(2).besvar(22.januar)
             hentFørstFakta()
             assertRecordCount(5, "gammel_faktum_verdi")
             assertFalse(rehydrertFaktagrupper.ja(19).erBesvart())
@@ -86,8 +85,8 @@ internal class SøknadRecordTest {
             hentFørstFakta()
             originalFaktagrupper = rehydrertFaktagrupper
 
-            originalFaktagrupper.heltall(15).besvar(3, Rolle.søker)
-            originalFaktagrupper.heltall("16.1").besvar(5, Rolle.søker)
+            originalFaktagrupper.heltall(15).besvar(3)
+            originalFaktagrupper.heltall("16.1").besvar(5)
             assertEquals(26 + 9, originalFaktagrupper.søknad.map { it }.size)
 
             hentFørstFakta()
@@ -100,7 +99,7 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalFaktagrupper()
             assertSesjonType(Web)
-            originalFaktagrupper.ja(345214).besvar(true, Rolle.søker)
+            originalFaktagrupper.ja(345214).besvar(true)
 
             hentFørstFakta()
             assertSesjonType(Web)
@@ -108,7 +107,7 @@ internal class SøknadRecordTest {
             assertTrue(rehydrertFaktagrupper.ja(20).svar())
 
             originalFaktagrupper = rehydrertFaktagrupper
-            originalFaktagrupper.ja(345216).besvar(true, Rolle.søker)
+            originalFaktagrupper.ja(345216).besvar(true)
 
             hentFørstFakta(Mobile)
             assertSesjonType(Mobile)
@@ -126,14 +125,14 @@ internal class SøknadRecordTest {
             hentFørstFakta()
             originalFaktagrupper = rehydrertFaktagrupper
 
-            originalFaktagrupper.heltall(15).besvar(3, Rolle.søker)
-            originalFaktagrupper.heltall("16.2").besvar(162, Rolle.søker)
-            originalFaktagrupper.heltall("16.3").besvar(163, Rolle.søker)
+            originalFaktagrupper.heltall(15).besvar(3)
+            originalFaktagrupper.heltall("16.2").besvar(162)
+            originalFaktagrupper.heltall("16.3").besvar(163)
             hentFørstFakta()
             originalFaktagrupper = rehydrertFaktagrupper
-            originalFaktagrupper.heltall(15).besvar(2, Rolle.søker)
-            originalFaktagrupper.heltall("16.1").besvar(161, Rolle.søker)
-            originalFaktagrupper.heltall("16.2").besvar(1622, Rolle.søker)
+            originalFaktagrupper.heltall(15).besvar(2)
+            originalFaktagrupper.heltall("16.1").besvar(161)
+            originalFaktagrupper.heltall("16.2").besvar(1622)
             hentFørstFakta()
         }
     }
@@ -143,9 +142,9 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalFaktagrupper()
 
-            originalFaktagrupper.dato(3).besvar(3.januar, Rolle.søker)
-            originalFaktagrupper.dato(4).besvar(4.januar, Rolle.søker)
-            originalFaktagrupper.dato(5).besvar(5.januar, Rolle.søker)
+            originalFaktagrupper.dato(3).besvar(3.januar)
+            originalFaktagrupper.dato(4).besvar(4.januar)
+            originalFaktagrupper.dato(5).besvar(5.januar)
             hentFørstFakta()
             assertEquals(5.januar, rehydrertFaktagrupper.dato(345).svar())
         }

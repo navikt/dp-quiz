@@ -1,7 +1,6 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.NyttEksempel
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
@@ -28,8 +27,8 @@ internal class MuligeSubsumsjonerTest {
 
     @Test
     fun `Fjerner umulig gyldig vei fra root`() {
-        faktagrupper.ja(1).besvar(false, Rolle.nav)
-        faktagrupper.dato(2).besvar(1.februar, Rolle.nav)
+        faktagrupper.ja(1).besvar(false)
+        faktagrupper.dato(2).besvar(1.februar)
         faktagrupper.dato(3).besvar(3.januar)
         faktagrupper.dato(4).besvar(4.januar)
         faktagrupper.dato(5).besvar(5.januar)

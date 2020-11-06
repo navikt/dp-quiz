@@ -40,13 +40,13 @@ internal class SaksbehandlerSeksjonerTest {
 
     private val prototypeFaktagrupper = Faktagrupper(
         prototypeSøknad,
-        Seksjon("søker", Rolle.søker, prototypeSøknad.ja(1), prototypeSøknad.ja(3), prototypeSøknad.ja(5) ),
+        Seksjon("søker", Rolle.søker, prototypeSøknad.ja(1), prototypeSøknad.ja(3), prototypeSøknad.ja(5)),
         Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeSøknad.ja(2)),
         Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.ja(4), prototypeSøknad.ja(6))
     )
 
     private val version = Versjon(1, prototypeSøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
-    private  lateinit var seksjoner: Faktagrupper
+    private lateinit var seksjoner: Faktagrupper
     private lateinit var f1: Faktum<Boolean>
     private lateinit var f3: Faktum<Boolean>
     private lateinit var f5: Faktum<Boolean>
@@ -63,7 +63,6 @@ internal class SaksbehandlerSeksjonerTest {
         approve1 = seksjoner.ja(2)
         approve3 = seksjoner.ja(4)
         approve5 = seksjoner.ja(6)
-
     }
 
     @Test
@@ -118,16 +117,15 @@ internal class SaksbehandlerSeksjonerTest {
             assertFalse(approve1 in it[0])
             assertTrue(approve5 in it[1] && approve5.erBesvart())
         }
-
     }
 
-    private fun beTrue(vararg ider: Faktum<Boolean> ){
+    private fun beTrue(vararg ider: Faktum<Boolean>) {
         ider.forEach {
             it.besvar(true)
         }
     }
 
-    private fun beFalse(vararg ider: Faktum<Boolean> ){
+    private fun beFalse(vararg ider: Faktum<Boolean>) {
         ider.forEach {
             it.besvar(false)
         }

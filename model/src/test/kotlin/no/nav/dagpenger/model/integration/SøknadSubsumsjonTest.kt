@@ -6,7 +6,6 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
-import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.NyttEksempel
 import no.nav.dagpenger.model.helpers.desember
@@ -36,8 +35,8 @@ internal class SøknadSubsumsjonTest {
         assertEquals(2, faktagrupper[0].fakta().size)
         assertIder(faktagrupper[0].fakta(), 1, 2)
 
-        faktagrupper.ja(1).besvar(true, Rolle.nav)
-        faktagrupper.dato(2).besvar(31.desember, Rolle.nav)
+        faktagrupper.ja(1).besvar(true)
+        faktagrupper.dato(2).besvar(31.desember)
         faktagrupper.nesteFakta().also { fakta ->
             assertEquals(3, fakta.size)
             assertIder(fakta, 3, 4, 5)
@@ -78,10 +77,10 @@ internal class SøknadSubsumsjonTest {
         assertEquals(5, faktagrupper[1].fakta().size)
         assertIder(faktagrupper[1].fakta(), 6, 7, 8, 9, 20)
 
-        faktagrupper.inntekt(6).besvar(20000.månedlig, Rolle.nav)
-        faktagrupper.inntekt(7).besvar(10000.månedlig, Rolle.nav)
-        faktagrupper.inntekt(8).besvar(5000.månedlig, Rolle.nav)
-        faktagrupper.inntekt(9).besvar(2500.månedlig, Rolle.nav)
+        faktagrupper.inntekt(6).besvar(20000.månedlig)
+        faktagrupper.inntekt(7).besvar(10000.månedlig)
+        faktagrupper.inntekt(8).besvar(5000.månedlig)
+        faktagrupper.inntekt(9).besvar(2500.månedlig)
         faktagrupper.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
             assertIder(fakta, 15)
@@ -90,7 +89,7 @@ internal class SøknadSubsumsjonTest {
         assertEquals(faktagrupper[2], faktagrupper.nesteSeksjoner().first())
         assertEquals(1, faktagrupper[2].fakta().size)
         assertIder(faktagrupper[2].fakta(), 15)
-        faktagrupper.generator(15).besvar(2, Rolle.nav)
+        faktagrupper.generator(15).besvar(2)
         assertEquals(3, faktagrupper[2].fakta().size) // Genererte 2 til
         faktagrupper.nesteFakta().also { fakta ->
             assertEquals(2, fakta.size) // Feltene i første genererte subsumsjon
@@ -100,8 +99,8 @@ internal class SøknadSubsumsjonTest {
         assertEquals(faktagrupper[2], faktagrupper.nesteSeksjoner().first())
         assertEquals(3, faktagrupper[2].fakta().size)
         assertEquals(listOf("15", "16.1", "16.2"), faktagrupper[2].fakta().map { it.id })
-        (faktagrupper[2].first { it.id == "16.1" } as Faktum<Int>).besvar(17, Rolle.nav)
-        (faktagrupper[2].first { it.id == "16.2" } as Faktum<Int>).besvar(19, Rolle.nav)
+        (faktagrupper[2].first { it.id == "16.1" } as Faktum<Int>).besvar(17)
+        (faktagrupper[2].first { it.id == "16.2" } as Faktum<Int>).besvar(19)
         faktagrupper.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
             assertEquals(listOf("17.1"), fakta.map { it.id })
@@ -119,7 +118,7 @@ internal class SøknadSubsumsjonTest {
         assertEquals(faktagrupper[9], faktagrupper.nesteSeksjoner().first())
         assertEquals(10, faktagrupper[9].fakta().size)
         assertEquals(listOf("6", "7", "12", "14", "18.1", "18.2", "19", "2", "11", "13").sorted(), faktagrupper[9].fakta().map { it.id }.sorted())
-        faktagrupper.ja(14).besvar(true, Rolle.saksbehandler)
+        faktagrupper.ja(14).besvar(true)
         faktagrupper.nesteFakta().also { fakta ->
             assertEquals(0, fakta.size)
             assertEquals(emptySet<GrunnleggendeFaktum<*>>(), fakta)
@@ -128,8 +127,8 @@ internal class SøknadSubsumsjonTest {
 
     @Test
     fun `Avvisning av søker faktum`() {
-        faktagrupper.ja(1).besvar(true, Rolle.nav)
-        faktagrupper.dato(2).besvar(31.desember, Rolle.nav)
+        faktagrupper.ja(1).besvar(true)
+        faktagrupper.dato(2).besvar(31.desember)
         faktagrupper.dato(3).besvar(1.januar)
         faktagrupper.dato(4).besvar(2.januar)
         faktagrupper.dato(5).besvar(3.januar)
@@ -141,7 +140,7 @@ internal class SøknadSubsumsjonTest {
 
         faktagrupper.ja(10).besvar(false)
         faktagrupper.dokument(11).besvar(Dokument(1.januar))
-        faktagrupper.ja(12).besvar(false, Rolle.saksbehandler)
+        faktagrupper.ja(12).besvar(false)
 
         faktagrupper.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
@@ -151,7 +150,7 @@ internal class SøknadSubsumsjonTest {
         faktagrupper.dato(13).besvar(1.februar)
         assertEquals(true, faktagrupper.resultat())
 
-        faktagrupper.ja(19).besvar(false, Rolle.saksbehandler)
+        faktagrupper.ja(19).besvar(false)
         assertEquals(false, faktagrupper.resultat())
     }
 

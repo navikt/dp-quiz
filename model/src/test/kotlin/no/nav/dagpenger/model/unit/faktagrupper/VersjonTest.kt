@@ -40,7 +40,7 @@ internal class VersjonTest {
             assertEquals(GeneratorFaktum::class, søknad.id(15)::class)
             assertEquals(4, søknad.size)
             assertEquals(4, faktagrupper[0].size)
-            (søknad heltall 15).besvar(2, Rolle.søker)
+            (søknad heltall 15).besvar(2)
             assertEquals(10, søknad.size)
             assertEquals(10, faktagrupper[0].size)
         }
@@ -48,9 +48,9 @@ internal class VersjonTest {
 
     @Test
     fun `bygg fra fakta`() {
-        faktagrupper.heltall(15).besvar(2, Rolle.søker)
+        faktagrupper.heltall(15).besvar(2)
         var nysøknad = faktagrupper.søknad.faktagrupper(Web)
-        nysøknad.heltall("16.1").besvar(1, Rolle.søker)
+        nysøknad.heltall("16.1").besvar(1)
         assertEquals(1, nysøknad.heltall("16.1").svar())
     }
 }

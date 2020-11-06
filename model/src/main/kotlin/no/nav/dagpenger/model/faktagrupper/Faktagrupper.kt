@@ -100,7 +100,6 @@ class Faktagrupper private constructor(
             ignore = false
         }
 
-
         override fun <R : Comparable<R>> visit(
             faktum: GrunnleggendeFaktum<R>,
             tilstand: Faktum.FaktumTilstand,

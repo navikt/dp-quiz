@@ -24,8 +24,8 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     override fun clazz() = clazz
 
-    override fun besvar(r: R, rolle: Rolle) = this.apply {
-        super.besvar(r, rolle)
+    override fun besvar(r: R) = this.apply {
+        super.besvar(r)
         gjeldendeSvar = r
         tilstand = Kjent
     }

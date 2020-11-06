@@ -39,11 +39,11 @@ class SøknadTest {
 
         Faktagrupper(Seksjon("seksjon", Rolle.søker, søknad id 11, søknad id 12))
         assertEquals(2, søknad.size)
-        søknad.dokument(11).besvar(Dokument(1.januar), Rolle.søker)
-        søknad.ja(12).besvar(true, Rolle.søker)
+        søknad.dokument(11).besvar(Dokument(1.januar))
+        søknad.ja(12).besvar(true)
 
         assertTrue(søknad.ja(12).erBesvart())
-        søknad.dokument(11).besvar(Dokument(2.januar), Rolle.søker)
+        søknad.dokument(11).besvar(Dokument(2.januar))
         assertFalse(søknad.ja(12).erBesvart())
     }
 
@@ -81,7 +81,7 @@ class SøknadTest {
         assertEquals(TemplateFaktum::class, søknad.id(16)::class)
         assertEquals(GeneratorFaktum::class, søknad.id(15)::class)
         assertEquals(4, søknad.size)
-        (søknad generator 15).besvar(2, Rolle.søker)
+        (søknad generator 15).besvar(2)
         assertEquals(10, søknad.size)
         assertIder(søknad, "16.1", "16.2", "17.1", "17.2", "18.1", "18.2", "16", "17", "18", "15")
     }

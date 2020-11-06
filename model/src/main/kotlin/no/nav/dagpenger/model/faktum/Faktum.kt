@@ -43,10 +43,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     internal abstract fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*>
 
-    open fun besvar(r: R, rolle: Rolle = Rolle.søker): Faktum<R> = this.also {
-      //  if (rolle !in roller) throw IllegalAccessError("Rollen $rolle kan ikke besvare faktum")
-        avhengigeFakta.forEach { it.tilUbesvart() }
-    }
+    open infix fun besvar(r: R): Faktum<R> = this.also { avhengigeFakta.forEach { it.tilUbesvart() } }
 
     protected open fun tilUbesvart() {
         throw IllegalStateException("Kan ikke sette utleda faktum til ubesvart")

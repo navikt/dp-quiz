@@ -25,18 +25,18 @@ internal class GodkjenningsSubsumsjonTest {
         faktagrupper { fakta -> fakta ja 1 er true godkjentAv (fakta ja 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
-        faktum.besvar(true, Rolle.søker)
+        faktum.besvar(true)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
-        godkjenning.besvar(false, Rolle.saksbehandler)
+        godkjenning.besvar(false)
         assertEquals(false, godkjenningsSubsumsjon.resultat())
-        godkjenning.besvar(true, Rolle.saksbehandler)
+        godkjenning.besvar(true)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
-        faktum.besvar(false, Rolle.søker)
+        faktum.besvar(false)
         assertEquals(false, godkjenningsSubsumsjon.resultat())
         assertFalse(godkjenning.erBesvart())
-        godkjenning.besvar(true, Rolle.saksbehandler)
+        godkjenning.besvar(true)
         assertEquals(false, godkjenningsSubsumsjon.resultat())
-        godkjenning.besvar(false, Rolle.saksbehandler)
+        godkjenning.besvar(false)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
     }
 
@@ -45,18 +45,18 @@ internal class GodkjenningsSubsumsjonTest {
         faktagrupper { fakta -> fakta ja 1 er true gyldigGodkjentAv (fakta ja 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
-        faktum.besvar(true, Rolle.søker)
+        faktum.besvar(true)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
-        godkjenning.besvar(false, Rolle.saksbehandler)
+        godkjenning.besvar(false)
         assertEquals(false, godkjenningsSubsumsjon.resultat())
-        godkjenning.besvar(true, Rolle.saksbehandler)
+        godkjenning.besvar(true)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
-        faktum.besvar(false, Rolle.søker)
+        faktum.besvar(false)
         assertEquals(false, godkjenningsSubsumsjon.resultat())
         assertFalse(godkjenning.erBesvart())
-        godkjenning.besvar(true, Rolle.saksbehandler)
+        godkjenning.besvar(true)
         assertEquals(false, godkjenningsSubsumsjon.resultat())
-        godkjenning.besvar(false, Rolle.saksbehandler)
+        godkjenning.besvar(false)
         assertEquals(false, godkjenningsSubsumsjon.resultat())
     }
 
@@ -65,18 +65,18 @@ internal class GodkjenningsSubsumsjonTest {
         faktagrupper { fakta -> fakta ja 1 er true ugyldigGodkjentAv (fakta ja 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
-        faktum.besvar(true, Rolle.søker)
+        faktum.besvar(true)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
-        godkjenning.besvar(false, Rolle.saksbehandler)
+        godkjenning.besvar(false)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
-        godkjenning.besvar(true, Rolle.saksbehandler)
+        godkjenning.besvar(true)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
-        faktum.besvar(false, Rolle.søker)
+        faktum.besvar(false)
         assertEquals(false, godkjenningsSubsumsjon.resultat())
         assertFalse(godkjenning.erBesvart())
-        godkjenning.besvar(true, Rolle.saksbehandler)
+        godkjenning.besvar(true)
         assertEquals(false, godkjenningsSubsumsjon.resultat())
-        godkjenning.besvar(false, Rolle.saksbehandler)
+        godkjenning.besvar(false)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
     }
 

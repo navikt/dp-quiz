@@ -41,7 +41,7 @@ class SeksjonJsonBuilderTest {
             assertEquals(listOf(1), it["root"]["fakta"].map { it.asInt() })
         }
 
-        vernepliktFaktum.besvar(true, Rolle.nav)
+        vernepliktFaktum.besvar(true)
 
         val avhengigSeksjon = Seksjon("Inntekt", Rolle.nav, søknad id 2)
 
