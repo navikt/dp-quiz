@@ -26,65 +26,35 @@ internal class AvslagPåMinsteinntektTest {
 
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
-        faktagrupper.nesteSeksjoner().also { seksjoner ->
-            assertEquals(1, seksjoner.size)
-
-            seksjoner.first().also { seksjon ->
-                assertEquals("datoer", seksjon.navn)
-                assertEquals(5, seksjon.size)
-            }
-        }.also {
-            faktagrupper.dato(1).besvar(1.januar)
-            faktagrupper.dato(2).besvar(1.januar)
-            faktagrupper.dato(3).besvar(1.januar)
-            faktagrupper.dato(4).besvar(1.januar)
-            faktagrupper.dato(11).besvar(1.januar)
+        assertNesteSeksjon("datoer", 5) {
+            it.besvar(faktagrupper.dato(1), 1.januar)
+            it.besvar(faktagrupper.dato(2), 1.januar)
+            it.besvar(faktagrupper.dato(3), 1.januar)
+            it.besvar(faktagrupper.dato(4), 1.januar)
+            it.besvar(faktagrupper.dato(11), 1.januar)
+            it.validerSvar()
         }
 
-        faktagrupper.nesteSeksjoner().also { seksjoner ->
-            assertEquals(1, seksjoner.size)
-
-            seksjoner.first().also { seksjon ->
-                assertEquals("egenNæring", seksjon.navn)
-                assertEquals(1, seksjon.size)
-            }
-        }.also {
-            faktagrupper.ja(6).besvar(false)
+        assertNesteSeksjon("egenNæring", 1) {
+            it.besvar(faktagrupper.ja(6), false)
+            it.validerSvar()
         }
 
-        faktagrupper.nesteSeksjoner().also { seksjoner ->
-            assertEquals(1, seksjoner.size)
-
-            seksjoner.first().also { seksjon ->
-                assertEquals("statiske", seksjon.navn)
-                assertEquals(2, seksjon.size)
-            }
-        }.also {
-            faktagrupper.inntekt(9).besvar(300000.årlig)
-            faktagrupper.inntekt(10).besvar(150000.årlig)
+        assertNesteSeksjon("statiske", 2) {
+            it.besvar(faktagrupper.inntekt(9), 300000.årlig)
+            it.besvar(faktagrupper.inntekt(10), 150000.årlig)
+            it.validerSvar()
         }
 
-        faktagrupper.nesteSeksjoner().also { seksjoner ->
-            assertEquals(1, seksjoner.size)
-
-            seksjoner.first().also { seksjon ->
-                assertEquals("verneplikt", seksjon.navn)
-                assertEquals(1, seksjon.size)
-            }
-        }.also {
-            faktagrupper.ja(12).besvar(false)
+        assertNesteSeksjon("verneplikt", 1) {
+            it.besvar(faktagrupper.ja(12), false)
+            it.validerSvar()
         }
 
-        faktagrupper.nesteSeksjoner().also { seksjoner ->
-            assertEquals(1, seksjoner.size)
-
-            seksjoner.first().also { seksjon ->
-                assertEquals("inntekter", seksjon.navn)
-                assertEquals(4, seksjon.size)
-            }
-        }.also {
-            faktagrupper.inntekt(7).besvar(200000.årlig)
-            faktagrupper.inntekt(8).besvar(50000.årlig)
+        assertNesteSeksjon("inntekter", 4) {
+            it.besvar(faktagrupper.inntekt(7), 200000.årlig)
+            it.besvar(faktagrupper.inntekt(8), 50000.årlig)
+            it.validerSvar()
         }
         /*
         faktagrupper.nesteSeksjon().also { seksjon ->
@@ -99,12 +69,37 @@ internal class AvslagPåMinsteinntektTest {
         assertFalse(faktagrupper.resultat()!!)
     }
 
-    private fun assertIder(fakta: Set<Faktum<*>>, vararg ider: Int) {
-        assertIder(fakta, *(ider.map { it.toString() }.toTypedArray()))
+    private fun assertNesteSeksjon(
+        navn: String,
+        antallFaktum: Int,
+        block: (it: SvarSpion) -> Unit = {}
+    ) {
+        faktagrupper.nesteSeksjoner().also { seksjoner ->
+            assertEquals(1, seksjoner.size)
+
+            seksjoner.first().also { seksjon ->
+                assertEquals(navn, seksjon.navn)
+                assertEquals(antallFaktum, seksjon.size)
+            }.also {
+                SvarSpion(it.fakta()).also { spion ->
+                    block(spion)
+                }
+            }
+        }
     }
 
-    private fun assertIder(fakta: Set<Faktum<*>>, vararg ider: String) {
-        assertEquals(ider.toList(), fakta.map { it.id })
+    // Sjekker at testen svarer på alle nødvendige faktum i hver seksjon
+    private class SvarSpion(fakta: Set<Faktum<*>>) {
+        val skalBesvares = fakta.filterNot { faktum -> faktum.erBesvart() }.map { it.id }
+        var besvarteFaktum = mutableListOf<String>()
+
+        fun <R : Comparable<R>> besvar(f: Faktum<R>, svar: R) {
+            besvarteFaktum.add(f.id)
+            f.besvar(svar)
+        }
+
+        fun validerSvar() =
+            assertEquals(skalBesvares.sorted(), besvarteFaktum.sorted(), "Det er ubesvarte faktum i seksjonen")
     }
 
     private fun Seksjon.fakta() = this.filter { it !is TemplateFaktum }.toSet()
