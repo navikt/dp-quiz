@@ -4,10 +4,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.assertEquals
 
-class NavMediatorTest {
+class MinsteinntektTest {
     private val testRapid = TestRapid().apply {
-        MinsteinntektRiver(this)
-        MinsteinntektLøsningRiver(this)
+        NavMediator(this)
     }
 
     @Test
