@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -61,6 +62,18 @@ class SubsumsjonJsonBuilder(private val subsumsjon: Subsumsjon) : FaktumJsonBuil
     }
 
     override fun postVisit(subsumsjon: MakroSubsumsjon, resultat: Boolean?) {
+        objectNodes.removeAt(0).also {
+            it.set("child", arrayNodes.removeAt(0).first())
+            root = it
+        }
+    }
+
+    override fun preVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {
+        subsumsjonNode(subsumsjon, "godkjenning", resultat)
+        arrayNodes.add(0, mapper.createArrayNode())
+    }
+
+    override fun postVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {
         objectNodes.removeAt(0).also {
             it.set("child", arrayNodes.removeAt(0).first())
             root = it

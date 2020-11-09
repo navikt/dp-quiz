@@ -23,7 +23,7 @@ internal class AvhengigFaktumTest {
     @Test
     fun `har avhengigheter`() {
         assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true gyldigGodkjentAv prototypeSøknad.ja(2) }
-        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true ugyldigGodkjentAv  prototypeSøknad.ja(2) }
-        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true godkjentAv  prototypeSøknad.ja(2) }
+        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true ugyldigGodkjentAv prototypeSøknad.ja(2) }
+        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true godkjentAv prototypeSøknad.ja(2) }
     }
 }
