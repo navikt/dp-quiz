@@ -5,15 +5,34 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.assertEquals
 
 class NavMediatorTest {
-    private val testRapid = TestRapid().apply { MeldingMediator(this, HendelseMediator(this)) }
+    private val testRapid = TestRapid().apply {
+        MinsteinntektRiver(this)
+        MinsteinntektLøsningRiver(this)
+    }
 
     @Test
-    fun `Skal kunne lese behov fra kafka`() {
+    fun `Skal behandle melding fra modelmeditator `() {
         testRapid.sendTestMessage(eksempelBehov)
 
         val inspektør = testRapid.inspektør
-        assertDoesNotThrow { inspektør.message(0) }
-        assertEquals("2020-01-01", inspektør.message(0)["beregningsdato"].asText())
+        val behovMelding = inspektør.message(0)
+        assertDoesNotThrow { behovMelding }
+
+        assertEquals("2020-01-01", behovMelding["beregningsdato"].asText())
+        assertEquals("Minsteinntekt", behovMelding["@behov"][0].asText())
+    }
+
+    @Test
+    fun `Skal håndtere svar fra behov løsningen`() {
+        testRapid.sendTestMessage(eksempelBehovInput)
+        val inspektør = testRapid.inspektør
+
+        assertEquals(2, inspektør.size)
+
+        assertEquals(2, inspektør.message(0)["faktumId"].asInt())
+        assertEquals(3, inspektør.message(1)["faktumId"].asInt())
+        assertEquals(132.0, inspektør.message(0)["svar"].asDouble())
+        assertEquals(1234.0, inspektør.message(1)["svar"].asDouble())
     }
 
     @Language("json")
@@ -118,9 +137,7 @@ class NavMediatorTest {
           "@id": "12345",
           "aktørId": "1234",
           "beregningsdato": "2020-04-21",
-          "faktum": [
-              "søknadUuid": "dfa1caa5-46d0-40f3-b1e7-365a112e1911"
-          ]
+          "søknadUuid": "dfa1caa5-46d0-40f3-b1e7-365a112e1911"
         }"""
 
     @Language("json")
