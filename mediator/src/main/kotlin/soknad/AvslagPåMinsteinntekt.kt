@@ -70,14 +70,17 @@ internal class AvslagPåMinsteinntekt {
         inntektSiste3År minst inntekt3G,
         inntektSisteÅr minst inntekt15G,
         verneplikt er true
-    ) godkjentAv godkjenningVirkningstidspunkt
+    )
 
     private val sjekkFangstOgFisk = "fangst og fisk er dokumentert" makro (
         fangstOgFisk er false eller (godkjenningFangstOgFisk av dokumentasjonFangstOgFisk)
         )
 
     private val inngangsvilkår =
-        (søknadstidspunkt ikkeFør virkningstidspunkt) så (
+        (
+            (søknadstidspunkt ikkeFør virkningstidspunkt)
+                godkjentAv godkjenningVirkningstidspunkt
+            ) så (
             sjekkFangstOgFisk så (
                 minsteArbeidsinntekt
                 )

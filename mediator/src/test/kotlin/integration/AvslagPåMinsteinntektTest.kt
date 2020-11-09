@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.faktum.TemplateFaktum
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import soknad.AvslagPåMinsteinntekt
@@ -70,7 +71,8 @@ internal class AvslagPåMinsteinntektTest {
         assertFalse(fakta.resultat()!!)
 
         // Vi må slutte å spørre om det samme hver gang
-        assertEquals(0, fakta.nesteSeksjoner().size)
+        // assertEquals(0, fakta.nesteSeksjoner().size)
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 2) { it.validerSvar() }
 
         // Om saksbehandler ikke godkjenner virkningstidspunkt kan ikke det føre til innvilgelse
         assertNesteSeksjon("godkjenn virkningstidspunkt", 2) {
@@ -78,6 +80,13 @@ internal class AvslagPåMinsteinntektTest {
         }
 
         assertFalse(fakta.resultat()!!)
+        fakta.inntekt(7).besvar(2000000.årlig)
+        fakta.inntekt(8).besvar(2000000.årlig)
+        assertFalse(fakta.resultat()!!)
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 2) {
+            it.besvar(fakta.ja(13), true)
+        }
+        assertTrue(fakta.resultat()!!)
     }
 
     private fun assertNesteSeksjon(

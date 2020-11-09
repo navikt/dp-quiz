@@ -7,7 +7,6 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TypedFaktum
-import no.nav.dagpenger.model.marshalling.SubsumsjonJsonBuilder
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
@@ -71,7 +70,7 @@ class Faktagrupper private constructor(
 
     internal fun nesteFakta() = rootSubsumsjon.nesteFakta()
 
-    fun resultat() = rootSubsumsjon.resultat().also { println(SubsumsjonJsonBuilder(rootSubsumsjon)) }
+    fun resultat() = rootSubsumsjon.resultat()
 
     private class RelevanteFakta(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         val resultater = mutableSetOf<Faktum<*>>()
