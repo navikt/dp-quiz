@@ -142,4 +142,24 @@ internal class UtledetFaktumFactoryTest {
         assertFalse(søknad.ja(2).erBesvart())
         assertFalse(søknad.ja(1).svar())
     }
+
+    @Test
+    fun `avhengigheter til utledetfaktum`() {
+
+        val søknad = Søknad(
+            ja nei "ja nei" id 4 avhengerAv 123,
+            dato faktum "dato1" id 1,
+            dato faktum "dato2" id 2,
+            dato faktum "dato3" id 3,
+            maks dato "maks dato" av 1 og 2 og 3 id 123
+        ).testFaktagrupper()
+        søknad.dato(1).besvar(1.januar)
+        søknad.dato(2).besvar(2.januar)
+        søknad.dato(3).besvar(3.januar)
+        assertTrue(søknad.dato(123).erBesvart())
+        søknad.ja(4).besvar(true)
+        assertTrue(søknad.ja(4).erBesvart())
+        søknad.dato(3).besvar(4.januar)
+        assertFalse(søknad.ja(4).erBesvart())
+    }
 }

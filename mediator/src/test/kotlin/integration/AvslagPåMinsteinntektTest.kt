@@ -28,11 +28,11 @@ internal class AvslagPåMinsteinntektTest {
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
         assertNesteSeksjon("datoer", 5) {
-            it.besvar(fakta.dato(1), 1.januar)
-            it.besvar(fakta.dato(2), 1.januar)
-            it.besvar(fakta.dato(3), 1.januar)
-            it.besvar(fakta.dato(4), 1.januar)
-            it.besvar(fakta.dato(11), 1.januar)
+            it.besvar(fakta.dato(1), 2.januar)
+            it.besvar(fakta.dato(2), 2.januar)
+            it.besvar(fakta.dato(3), 2.januar)
+            it.besvar(fakta.dato(4), 2.januar)
+            it.besvar(fakta.dato(11), 2.januar)
             it.validerSvar()
         }
 
@@ -54,7 +54,7 @@ internal class AvslagPåMinsteinntektTest {
 
         assertNull(fakta.resultat())
 
-        assertNesteSeksjon("inntekter", 4) {
+        assertNesteSeksjon("inntekter", 9) {
             it.besvar(fakta.inntekt(7), 200000.årlig)
             it.besvar(fakta.inntekt(8), 50000.årlig)
             it.validerSvar()
@@ -64,18 +64,15 @@ internal class AvslagPåMinsteinntektTest {
         assertFalse(fakta.resultat()!!)
         assertEquals(1, fakta.nesteSeksjoner().size)
 
-        assertNesteSeksjon("godkjenn virkningstidspunkt", 2) {
-            it.besvar(fakta.ja(13), true)
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 7) {
+            it.besvar(fakta.ja(13), false)
+            it.validerSvar()
         }
 
         assertFalse(fakta.resultat()!!)
 
-        // Vi må slutte å spørre om det samme hver gang
-        // assertEquals(0, fakta.nesteSeksjoner().size)
-        assertNesteSeksjon("godkjenn virkningstidspunkt", 2) { it.validerSvar() }
-
         // Om saksbehandler ikke godkjenner virkningstidspunkt kan ikke det føre til innvilgelse
-        assertNesteSeksjon("godkjenn virkningstidspunkt", 2) {
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 7) {
             it.besvar(fakta.ja(13), false)
         }
 
@@ -83,10 +80,32 @@ internal class AvslagPåMinsteinntektTest {
         fakta.inntekt(7).besvar(2000000.årlig)
         fakta.inntekt(8).besvar(2000000.årlig)
         assertFalse(fakta.resultat()!!)
-        assertNesteSeksjon("godkjenn virkningstidspunkt", 2) {
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 7) {
             it.besvar(fakta.ja(13), true)
         }
+
         assertTrue(fakta.resultat()!!)
+
+        // En dato som gjøre at søknadsfristen ikke er overholdt
+        fakta.dato(2).besvar(1.januar)
+
+        // gjør at virkningstidspunkt må godkjennes på nytt
+        assertFalse(fakta.dato(13).erBesvart())
+
+        // og når inntekt blir besvart på nytt
+        assertNesteSeksjon("inntekter", 9) {
+            it.besvar(fakta.ja(13), true)
+            it.besvar(fakta.inntekt(7), 2000000.årlig)
+            it.besvar(fakta.inntekt(8), 2000000.årlig)
+        }
+
+        // og det spiller ikke noe rolle at saksbehandler godkjenner ny virkningstidspunkt
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 7) {
+            it.besvar(fakta.ja(13), true)
+        }
+
+        // Søknadsdato er fortsatt før virkningstidspunkt som burde gjøre at subsumsjonstreet svarer, NEI!
+        assertFalse(fakta.resultat()!!)
     }
 
     private fun assertNesteSeksjon(
