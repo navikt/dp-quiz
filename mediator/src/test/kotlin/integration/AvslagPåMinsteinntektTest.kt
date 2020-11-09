@@ -9,64 +9,84 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import soknad.AvslagPåMinsteinntekt
 
 internal class AvslagPåMinsteinntektTest {
-    private lateinit var faktagrupper: Faktagrupper
+    private lateinit var fakta: Faktagrupper
 
     @BeforeEach
     fun setup() {
         Postgres.withMigratedDb {
-            faktagrupper = AvslagPåMinsteinntekt().faktagrupper("123123123")
+            fakta = AvslagPåMinsteinntekt().faktagrupper("123123123")
         }
     }
 
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
         assertNesteSeksjon("datoer", 5) {
-            it.besvar(faktagrupper.dato(1), 1.januar)
-            it.besvar(faktagrupper.dato(2), 1.januar)
-            it.besvar(faktagrupper.dato(3), 1.januar)
-            it.besvar(faktagrupper.dato(4), 1.januar)
-            it.besvar(faktagrupper.dato(11), 1.januar)
+            it.besvar(fakta.dato(1), 1.januar)
+            it.besvar(fakta.dato(2), 1.januar)
+            it.besvar(fakta.dato(3), 1.januar)
+            it.besvar(fakta.dato(4), 1.januar)
+            it.besvar(fakta.dato(11), 1.januar)
             it.validerSvar()
         }
 
         assertNesteSeksjon("egenNæring", 1) {
-            it.besvar(faktagrupper.ja(6), false)
+            it.besvar(fakta.ja(6), false)
             it.validerSvar()
         }
 
         assertNesteSeksjon("statiske", 2) {
-            it.besvar(faktagrupper.inntekt(9), 300000.årlig)
-            it.besvar(faktagrupper.inntekt(10), 150000.årlig)
+            it.besvar(fakta.inntekt(9), 300000.årlig)
+            it.besvar(fakta.inntekt(10), 150000.årlig)
             it.validerSvar()
         }
 
         assertNesteSeksjon("verneplikt", 1) {
-            it.besvar(faktagrupper.ja(12), false)
+            it.besvar(fakta.ja(12), false)
             it.validerSvar()
         }
+
+        assertNull(fakta.resultat())
 
         assertNesteSeksjon("inntekter", 4) {
-            it.besvar(faktagrupper.inntekt(7), 200000.årlig)
-            it.besvar(faktagrupper.inntekt(8), 50000.årlig)
+            it.besvar(fakta.inntekt(7), 200000.årlig)
+            it.besvar(fakta.inntekt(8), 50000.årlig)
             it.validerSvar()
         }
-        /*
-        faktagrupper.nesteSeksjon().also { seksjon ->
-            assertEquals("godkjenn virkningstidspunkt", seksjon.navn)
-            assertEquals(1, seksjon.size)
-        }.also {
-            faktagrupper.ja(13).besvar(true, Rolle.saksbehandler)
-        }
-         */
 
-        assertNotNull(faktagrupper.resultat())
-        assertFalse(faktagrupper.resultat()!!)
+        // Vi har et resultat, men det er fortsatt seksjoner igjen
+        assertFalse(fakta.resultat()!!)
+        assertEquals(1, fakta.nesteSeksjoner().size)
+
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 2) {
+            it.besvar(fakta.ja(13), true)
+        }
+
+        assertFalse(fakta.resultat()!!)
+
+        // Vi må slutte å spørre om det samme hver gang
+        // assertEquals(0, fakta.nesteSeksjoner().size)
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 2) { it.validerSvar() }
+
+        // Om saksbehandler ikke godkjenner virkningstidspunkt kan ikke det føre til innvilgelse
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 2) {
+            it.besvar(fakta.ja(13), false)
+        }
+
+        assertFalse(fakta.resultat()!!)
+        fakta.inntekt(7).besvar(2000000.årlig)
+        fakta.inntekt(8).besvar(2000000.årlig)
+        assertFalse(fakta.resultat()!!)
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 2) {
+            it.besvar(fakta.ja(13), true)
+        }
+        assertTrue(fakta.resultat()!!)
     }
 
     private fun assertNesteSeksjon(
@@ -74,7 +94,7 @@ internal class AvslagPåMinsteinntektTest {
         antallFaktum: Int,
         block: (it: SvarSpion) -> Unit = {}
     ) {
-        faktagrupper.nesteSeksjoner().also { seksjoner ->
+        fakta.nesteSeksjoner().also { seksjoner ->
             assertEquals(1, seksjoner.size)
 
             seksjoner.first().also { seksjon ->
