@@ -8,7 +8,7 @@ import java.util.UUID
 
 internal interface SøknadPersistence {
     fun ny(fnr: String, type: Versjon.FaktagrupperType): Faktagrupper
-    fun hent(uuid: UUID, type: Versjon.FaktagrupperType?): Faktagrupper
+    fun hent(uuid: UUID, type: Versjon.FaktagrupperType? = null): Faktagrupper
     fun lagre(søknad: Søknad, type: Versjon.FaktagrupperType): Boolean
     fun opprettede(fnr: String): Map<LocalDateTime, UUID>
 }
