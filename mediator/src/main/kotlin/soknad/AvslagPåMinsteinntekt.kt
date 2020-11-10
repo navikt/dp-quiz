@@ -46,7 +46,7 @@ internal class AvslagPåMinsteinntekt {
             inntekt faktum "1,5G" id 10,
             dato faktum "Søknadstidspunkt" id 11,
             ja nei "Verneplikt" id 12,
-            ja nei "Godjenning av virkingstidspunkt" id 13 avhengerAv 1 og 2 og 3 og 4 og 11, //denne bør avhenge av id 5, men dette fungerer ikke per i dag
+            ja nei "Godjenning av virkingstidspunkt" id 13 avhengerAv 5,
             dokument faktum "dokumentasjon for fangst og fisk" id 14 avhengerAv 6,
             ja nei "Godkjenning av dokumentasjon for fangst og fisk" id 15 avhengerAv 14,
         )

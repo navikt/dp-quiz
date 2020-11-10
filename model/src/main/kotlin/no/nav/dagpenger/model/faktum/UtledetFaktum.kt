@@ -58,7 +58,17 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): UtledetFaktum<R> {
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId] as UtledetFaktum<R>
         val childFakta = underordnede.map { it.bygg(byggetFakta) as Faktum<R> }.toMutableSet()
-        return UtledetFaktum(faktumId, navn, childFakta, regel).also { byggetFakta[faktumId] = it }
+
+        return UtledetFaktum(faktumId, navn, childFakta, regel).also { utledetFaktum ->
+            byggetFakta[faktumId] = utledetFaktum
+            this.avhengigeFakta.forEach {
+                it.bygg(byggetFakta).also { avhengighet ->
+                    utledetFaktum.avhengigeFakta.add(avhengighet)
+                    childFakta.forEach { underordnet -> avhengighet.avhengerAv(underordnet) }
+                }
+            }
+            this.avhengerAvFakta.forEach { utledetFaktum.avhengerAvFakta.add(it.bygg(byggetFakta)) }
+        }
     }
 
     internal fun erDefinert(faktaList: List<Faktum<*>>, indeks: Int) = underordnede.all { faktum ->
