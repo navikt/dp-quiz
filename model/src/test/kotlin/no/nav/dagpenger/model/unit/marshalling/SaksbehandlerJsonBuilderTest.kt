@@ -74,7 +74,7 @@ internal class SaksbehandlerJsonBuilderTest {
     }
 
     @Test
-    fun test() {
+    fun `Genererte seksjoner kan bli sendt`() {
         val fakta = NyttEksempel().faktagrupper
         fakta.heltall(15).besvar(3)
         var json = SaksbehandlerJsonBuilder(fakta, "seksjon8").resultat()

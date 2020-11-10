@@ -55,7 +55,7 @@ class Seksjon private constructor(
     fun accept(visitor: FaktagrupperVisitor) {
         visitor.preVisit(this, rolle, seksjonFakta, indeks)
         seksjonFakta.sorted().forEach { it.accept(visitor) }
-        visitor.postVisit(this, rolle, 0)
+        visitor.postVisit(this, rolle, indeks)
     }
 
     internal fun add(faktum: GrunnleggendeFaktum<*>): Boolean =
