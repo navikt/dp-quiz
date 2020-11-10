@@ -54,7 +54,7 @@ internal class AvslagPåMinsteinntektTest {
 
         assertNull(fakta.resultat())
 
-        assertNesteSeksjon("inntekter", 4) {
+        assertNesteSeksjon("inntekter", 9) {
             it.besvar(fakta.inntekt(7), 200000.årlig)
             it.besvar(fakta.inntekt(8), 50000.årlig)
             it.validerSvar()
@@ -64,39 +64,39 @@ internal class AvslagPåMinsteinntektTest {
         assertFalse(fakta.resultat()!!)
         assertEquals(1, fakta.nesteSeksjoner().size)
 
-        assertNesteSeksjon("godkjenn virkningstidspunkt", 6) {
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 7) {
             it.besvar(fakta.ja(13), true)
         }
 
         assertFalse(fakta.resultat()!!)
 
         // Om saksbehandler ikke godkjenner virkningstidspunkt kan ikke det føre til innvilgelse
-        assertNesteSeksjon("godkjenn virkningstidspunkt", 6) {
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 7) {
             it.besvar(fakta.ja(13), false)
         }
         assertFalse(fakta.resultat()!!)
 
-        //om vi endrer inntekt til å tilfredstille minimumsinntekt
+        // om vi endrer inntekt til å tilfredstille minimumsinntekt
         // vil det fortsatt ikke være innvilgelses pga virkningstidspunkt ikke er godkjent
         fakta.inntekt(7).besvar(2000000.årlig)
         fakta.inntekt(8).besvar(2000000.årlig)
         assertFalse(fakta.resultat()!!)
 
-        //Når vi godkjenner virkningstidspunkt vil det føre til innvilgelse
-        assertNesteSeksjon("godkjenn virkningstidspunkt", 6) {
+        // Når vi godkjenner virkningstidspunkt vil det føre til innvilgelse
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 7) {
             it.besvar(fakta.ja(13), true)
         }
         assertTrue(fakta.resultat()!!)
 
-        //om vi så endrer søknadstidspunkt til å være før virkningstidspunkt vil det ikke føre til innvilgelse
+        // om vi så endrer søknadstidspunkt til å være før virkningstidspunkt vil det ikke føre til innvilgelse
         fakta.dato(11).besvar(4.januar)
         assertFalse(fakta.resultat()!!)
 
-        //selv om virkningstidspunkt godkjennes
+        // selv om virkningstidspunkt godkjennes
         fakta.ja(13).besvar(true)
         assertFalse(fakta.resultat()!!)
 
-        //Være sikker på at godkjenning av virkningstidspunkt resettes når de
+        // Være sikker på at godkjenning av virkningstidspunkt resettes når de
         // underliggende datoene for virkningstidspunkt endres
         fakta.dato(11).besvar(6.januar)
         assertFalse(fakta.ja(13).erBesvart())
@@ -112,7 +112,7 @@ internal class AvslagPåMinsteinntektTest {
 
             seksjoner.first().also { seksjon ->
                 assertEquals(navn, seksjon.navn)
-                //assertEquals(antallFaktum, seksjon.size)
+                assertEquals(antallFaktum, seksjon.size)
             }.also {
                 SvarSpion(it.fakta()).also { spion ->
                     block(spion)
