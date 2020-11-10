@@ -159,7 +159,7 @@ interface SøknadVisitor : FaktumVisitor {
     fun postVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {}
 }
 
-interface FaktagruppeVisitor : FaktumVisitor {
+interface FaktagrupperVisitor : SubsumsjonVisitor, SøknadVisitor {
     fun preVisit(faktagrupper: Faktagrupper, uuid: UUID) {}
     fun postVisit(faktagrupper: Faktagrupper) {}
     fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {}
