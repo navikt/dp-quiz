@@ -10,7 +10,7 @@ import no.nav.dagpenger.model.faktum.TypedFaktum
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
-import no.nav.dagpenger.model.visitor.FaktagruppeVisitor
+import no.nav.dagpenger.model.visitor.FaktagrupperVisitor
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 import java.util.UUID
 
@@ -55,9 +55,11 @@ class Faktagrupper private constructor(
         else
             listOf(seksjoner.first { rootSubsumsjon.nesteFakta() in it })
 
-    fun accept(visitor: FaktagruppeVisitor) {
+    fun accept(visitor: FaktagrupperVisitor) {
         visitor.preVisit(this, uuid)
+        søknad.accept(visitor)
         seksjoner.forEach { it.accept(visitor) }
+        rootSubsumsjon.accept(visitor)
         visitor.postVisit(this)
     }
 
