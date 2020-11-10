@@ -5,6 +5,7 @@ import helpers.Postgres
 import helpers.SøknadEksempel1
 import meldinger.HentSeksjonService
 import no.nav.dagpenger.model.faktagrupper.Versjon
+import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Mobile
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -14,7 +15,7 @@ import kotlin.test.assertEquals
 internal class HentSeksjonServiceTest {
 
     @Test
-    fun ` henter seksjon`() {
+    fun `henter vanlig seksjon`() {
         val rapid = TestRapid()
 
         Postgres.withMigratedDb {
@@ -28,14 +29,33 @@ internal class HentSeksjonServiceTest {
             assertEquals(1, rapid.inspektør.size)
         }
     }
+
+    @Test
+    fun `Henter generert seksjon`() {
+        val rapid = TestRapid()
+
+        Postgres.withMigratedDb {
+            FaktumTable(SøknadEksempel1.prototypeFakta1, 1000)
+            val søknadRecord = SøknadRecord()
+            val fakta = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Mobile)
+            fakta.heltall(15).besvar(3)
+            søknadRecord.lagre(fakta.søknad)
+            val uuid = SøknadRecord().opprettede(SøknadRecordTest.UNG_PERSON_FNR_2018).toSortedMap().values.first()
+
+            HentSeksjonService(rapid)
+            rapid.sendTestMessage(hentSeksjonJsonString(uuid, 1, "template seksjon"))
+            assertEquals(1, rapid.inspektør.size)
+        }
+    }
 }
 
-private fun hentSeksjonJsonString(uuid: UUID) =
+private fun hentSeksjonJsonString(uuid: UUID, indeks: Int = 0, seksjon: String = "seksjon") =
     """{
     "@event_name": "hent_seksjon",
     "@opprettet": "${LocalDateTime.now()}",
     "@id": "${UUID.randomUUID()}",
-    "fnr": "121212555555",
+    "fnr": "12020052345",
     "soknad_uuid": "$uuid",
-    "seksjon_navn": "seksjon"
+    "seksjon_navn": "$seksjon",
+    "indeks": $indeks
 }""".trimMargin()

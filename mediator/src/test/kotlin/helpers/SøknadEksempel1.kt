@@ -54,6 +54,12 @@ internal object SøknadEksempel1 {
             "seksjon",
             Rolle.søker,
             *(prototypeFakta1.map { it }.toTypedArray())
+        ),
+        Seksjon(
+            "template seksjon",
+            Rolle.søker,
+            prototypeFakta1.heltall(16),
+            prototypeFakta1.ja(17)
         )
     )
 

@@ -18,7 +18,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class SaksbehandlerJsonBuilder(
+class SaksbehandlerJsonBuilder(
     fakta: Faktagrupper,
     private val seksjonNavn: String,
     private val indeks: Int = 0
@@ -33,14 +33,14 @@ internal class SaksbehandlerJsonBuilder(
         fakta.accept(this)
     }
 
-    internal fun resultat() = root
+    fun resultat() = root
 
     override fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
         root.put("@event_name", "oppgave")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("fnr", fnr)
-        root.put("uuid", "$uuid")
+        root.put("soknad_uuid", "$uuid")
         root.put("seksjon_navn", seksjonNavn)
         root.put("indeks", indeks)
         root.set("fakta", faktaNode)

@@ -11,7 +11,7 @@ class Seksjon private constructor(
     val navn: String,
     private val rolle: Rolle,
     private val seksjonFakta: MutableSet<Faktum<*>>,
-    private val indeks: Int = 0
+    val indeks: Int = 0
 ) : MutableSet<Faktum<*>> by seksjonFakta {
     internal lateinit var faktagrupper: Faktagrupper
     private val genererteSeksjoner = mutableListOf<Seksjon>()

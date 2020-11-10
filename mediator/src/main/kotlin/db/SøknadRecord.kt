@@ -148,7 +148,7 @@ class SøknadRecord : SøknadPersistence {
             WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id AND soknad.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
     }
 
-    override fun lagre(søknad: Søknad, type: Versjon.FaktagrupperType): Boolean {
+    override fun lagre(søknad: Søknad): Boolean {
         val nyeSvar = svarMap(søknad)
 
         originalSvar.filterNot { (id, svar) -> nyeSvar[id] == svar }.forEach { (id, svar) ->

@@ -73,7 +73,7 @@ class MeldingMediatorTest {
 
         override fun hent(uuid: UUID, type: Versjon.FaktagrupperType?) = faktagrupper!!
 
-        override fun lagre(søknad: Søknad, type: Versjon.FaktagrupperType): Boolean {
+        override fun lagre(søknad: Søknad): Boolean {
             faktagrupper = Versjon.id(versjon).faktagrupper(søknad, Versjon.FaktagrupperType.Web)
             return true
         }

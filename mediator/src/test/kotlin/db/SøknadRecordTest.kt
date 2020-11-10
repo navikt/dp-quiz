@@ -9,7 +9,6 @@ import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
-import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Mobile
 import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
@@ -109,8 +108,8 @@ internal class SøknadRecordTest {
             originalFaktagrupper = rehydrertFaktagrupper
             originalFaktagrupper.ja(345216).besvar(true)
 
-            hentFørstFakta(Mobile)
-            assertSesjonType(Mobile)
+            hentFørstFakta()
+            assertSesjonType(Web)
             assertTrue(rehydrertFaktagrupper.ja(345216).svar())
             assertFalse(rehydrertFaktagrupper.ja(20).svar())
         }
@@ -151,7 +150,7 @@ internal class SøknadRecordTest {
     }
 
     private fun hentFørstFakta(faktagrupperType: Versjon.FaktagrupperType = Web) {
-        søknadRecord.lagre(originalFaktagrupper.søknad, faktagrupperType)
+        søknadRecord.lagre(originalFaktagrupper.søknad)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         søknadRecord = SøknadRecord()
         rehydrertFaktagrupper = søknadRecord.hent(uuid, faktagrupperType)
