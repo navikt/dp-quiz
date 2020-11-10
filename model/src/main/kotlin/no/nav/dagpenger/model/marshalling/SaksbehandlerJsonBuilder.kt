@@ -20,7 +20,8 @@ import java.util.UUID
 
 internal class SaksbehandlerJsonBuilder(
     fakta: Faktagrupper,
-    private val seksjonNavn: String
+    private val seksjonNavn: String,
+    private val indeks: Int = 0
 ) : FaktagrupperVisitor {
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
@@ -41,15 +42,15 @@ internal class SaksbehandlerJsonBuilder(
         root.put("fnr", fnr)
         root.put("uuid", "$uuid")
         root.put("seksjon_navn", seksjonNavn)
+        root.put("indeks", indeks)
         root.set("fakta", faktaNode)
     }
 
-    override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
-        if (seksjonNavn != seksjon.navn) return
-        ignore = false
+    override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
+        if (seksjonNavn == seksjon.navn && indeks == this.indeks) ignore = false
     }
 
-    override fun postVisit(seksjon: Seksjon, rolle: Rolle) {
+    override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
         ignore = true
     }
 

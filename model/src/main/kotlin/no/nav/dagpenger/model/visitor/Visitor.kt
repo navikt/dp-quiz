@@ -162,8 +162,8 @@ interface SøknadVisitor : FaktumVisitor {
 interface FaktagrupperVisitor : SubsumsjonVisitor, SøknadVisitor {
     fun preVisit(faktagrupper: Faktagrupper, uuid: UUID) {}
     fun postVisit(faktagrupper: Faktagrupper) {}
-    fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {}
-    fun postVisit(seksjon: Seksjon, rolle: Rolle) {}
+    fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {}
+    fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {}
 }
 
 interface SubsumsjonVisitor : FaktumVisitor {

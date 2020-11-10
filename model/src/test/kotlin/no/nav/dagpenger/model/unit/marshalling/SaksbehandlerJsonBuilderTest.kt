@@ -73,6 +73,16 @@ internal class SaksbehandlerJsonBuilderTest {
         assertSeksjonSize(9, "seksjon2")
     }
 
+    @Test
+    fun test() {
+        val fakta = NyttEksempel().faktagrupper
+        fakta.heltall(15).besvar(3)
+        var json = SaksbehandlerJsonBuilder(fakta, "seksjon8").resultat()
+        assertEquals(11, json["fakta"].size())
+        json = SaksbehandlerJsonBuilder(fakta, "seksjon7", 1).resultat()
+        assertEquals(2, json["fakta"].size())
+    }
+
     private fun assertSeksjonSize(expected: Int, seksjonNavn: String) {
         val json = SaksbehandlerJsonBuilder(NyttEksempel().faktagrupper, seksjonNavn).resultat()
         assertEquals(expected, json["fakta"].size())

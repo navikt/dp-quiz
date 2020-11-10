@@ -10,7 +10,8 @@ import no.nav.dagpenger.model.visitor.FaktagrupperVisitor
 class Seksjon private constructor(
     val navn: String,
     private val rolle: Rolle,
-    private val seksjonFakta: MutableSet<Faktum<*>>
+    private val seksjonFakta: MutableSet<Faktum<*>>,
+    private val indeks: Int = 0
 ) : MutableSet<Faktum<*>> by seksjonFakta {
     internal lateinit var faktagrupper: Faktagrupper
     private val genererteSeksjoner = mutableListOf<Seksjon>()
@@ -44,7 +45,7 @@ class Seksjon private constructor(
 
     internal fun deepCopy(indeks: Int, søknad: Søknad): Seksjon {
         return if (indeks <= genererteSeksjoner.size) genererteSeksjoner[indeks - 1]
-        else Seksjon(navn, rolle, mutableSetOf()).also {
+        else Seksjon(navn, rolle, mutableSetOf(), indeks).also {
             faktagrupper.add(faktagrupper.indexOf(this) + indeks, it)
             genererteSeksjoner.add(it)
             it.faktagrupper(this.faktagrupper)
@@ -52,9 +53,9 @@ class Seksjon private constructor(
     }
 
     fun accept(visitor: FaktagrupperVisitor) {
-        visitor.preVisit(this, rolle, seksjonFakta)
+        visitor.preVisit(this, rolle, seksjonFakta, indeks)
         seksjonFakta.sorted().forEach { it.accept(visitor) }
-        visitor.postVisit(this, rolle)
+        visitor.postVisit(this, rolle, 0)
     }
 
     internal fun add(faktum: GrunnleggendeFaktum<*>): Boolean =

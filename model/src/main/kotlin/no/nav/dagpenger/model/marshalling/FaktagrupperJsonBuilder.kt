@@ -27,7 +27,7 @@ class FaktagrupperJsonBuilder(private val faktagrupper: Faktagrupper) : FaktumJs
         }
     }
 
-    override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
+    override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
         mapper.createObjectNode().also { seksjonNode ->
             arrayNodes.first().add(seksjonNode)
             seksjonNode.put("navn", seksjon.navn)

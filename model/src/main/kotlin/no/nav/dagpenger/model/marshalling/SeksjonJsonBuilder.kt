@@ -11,7 +11,7 @@ class SeksjonJsonBuilder(private val seksjon: Seksjon) : FaktumJsonBuilder(), Fa
         seksjon.accept(this)
     }
 
-    override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>) {
+    override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
         mapper.createObjectNode().also { seksjonNode ->
             root = seksjonNode
             seksjonNode.put("rolle", rolle.name)
