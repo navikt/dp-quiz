@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.NyttEksempel
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.gyldigGodkjentAv
@@ -19,7 +20,7 @@ import java.util.UUID
 
 internal class SaksbehandlerJsonBuilderTest {
     @Test
-    fun ` byggger oppgave event`() {
+    fun `byggger oppgave event`() {
         val prototypeSøknad = Søknad(
             ja nei "f1" id 1,
             ja nei "f2" id 2 avhengerAv 1,
@@ -63,5 +64,17 @@ internal class SaksbehandlerJsonBuilderTest {
             setOf(Rolle.saksbehandler),
             json["fakta"][1]["roller"].map { Rolle.valueOf(it.asText()) }.toSet()
         )
+    }
+
+    @Test
+    fun `Komplekse seksjoner`() {
+        assertSeksjonSize(8, "seksjon8")
+        assertSeksjonSize(5, "seksjon4")
+        assertSeksjonSize(9, "seksjon2")
+    }
+
+    private fun assertSeksjonSize(expected: Int, seksjonNavn: String) {
+        val json = SaksbehandlerJsonBuilder(NyttEksempel().faktagrupper, seksjonNavn).resultat()
+        assertEquals(expected, json["fakta"].size())
     }
 }

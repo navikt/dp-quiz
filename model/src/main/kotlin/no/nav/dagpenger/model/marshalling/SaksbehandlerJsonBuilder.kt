@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
+import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Dokument
@@ -10,6 +11,8 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.UtledetFaktum
+import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.visitor.FaktagrupperVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -23,6 +26,7 @@ internal class SaksbehandlerJsonBuilder(
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
     private var ignore = true
+    private val faktumIder = mutableSetOf<String>()
 
     init {
         fakta.accept(this)
@@ -58,11 +62,7 @@ internal class SaksbehandlerJsonBuilder(
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
-        if (ignore) return
-        faktaNode.addObject().also { faktumNode ->
-            faktumNode.put("id", id)
-            faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
-        }
+        lagFaktumNode<R>(id, roller)
     }
 
     override fun <R : Comparable<R>> visit(
@@ -75,12 +75,68 @@ internal class SaksbehandlerJsonBuilder(
         clazz: Class<R>,
         svar: R
     ) {
+        lagFaktumNode(id, roller, svar)
+    }
+
+    override fun <R : Comparable<R>> preVisit(
+        faktum: UtledetFaktum<R>,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        children: Set<Faktum<*>>,
+        clazz: Class<R>,
+        regel: FaktaRegel<R>
+    ) {
+        lagFaktumNode<R>(id)
+    }
+
+    override fun <R : Comparable<R>> preVisit(
+        faktum: UtledetFaktum<R>,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        children: Set<Faktum<*>>,
+        clazz: Class<R>,
+        regel: FaktaRegel<R>,
+        svar: R
+    ) {
+        lagFaktumNode(id, svar = svar)
+    }
+
+    override fun preVisit(
+        faktum: ValgFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        underordnedeJa: Set<Faktum<Boolean>>,
+        underordnedeNei: Set<Faktum<Boolean>>,
+        clazz: Class<Boolean>
+    ) {
+        lagFaktumNode<Boolean>(id)
+    }
+
+    override fun preVisit(
+        faktum: ValgFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        underordnedeJa: Set<Faktum<Boolean>>,
+        underordnedeNei: Set<Faktum<Boolean>>,
+        clazz: Class<Boolean>,
+        svar: Boolean
+    ) {
+        lagFaktumNode(id, svar = svar)
+    }
+
+    private fun <R : Comparable<R>> lagFaktumNode(id: String, roller: Set<Rolle> = emptySet(), svar: R? = null) {
         if (ignore) return
+        if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("id", id)
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
-            faktumNode.putR(svar)
+            svar?.also { faktumNode.putR(it) }
         }
+        faktumIder.add(id)
     }
 
     private fun <R : Comparable<R>> ObjectNode.putR(svar: R) {
