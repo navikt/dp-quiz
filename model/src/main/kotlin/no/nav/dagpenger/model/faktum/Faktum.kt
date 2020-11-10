@@ -57,7 +57,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     abstract fun erBesvart(): Boolean
 
-    internal abstract fun accept(visitor: FaktumVisitor)
+    abstract fun accept(visitor: FaktumVisitor)
 
     internal open fun add(rolle: Rolle): Boolean = roller.add(rolle)
 
