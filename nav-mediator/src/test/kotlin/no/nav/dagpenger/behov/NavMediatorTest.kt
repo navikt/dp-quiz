@@ -12,25 +12,19 @@ import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class NavMediatorTest {
 
     private val rapid = TestRapid()
+    private val navMediator = NavMediator(rapid)
 
     private val fnr = "12345678910"
     private val søknadUuid = UUID.randomUUID()
 
-    @BeforeEach
-    fun reset() {
-        rapid.reset()
-    }
-
     @Test
     fun `Sende ut ett behov for uavhengig faktum`() {
-        val navMediator = NavMediator(rapid)
 
         navMediator.sendBehov(seksjon1, fnr, søknadUuid)
 
@@ -43,7 +37,6 @@ internal class NavMediatorTest {
 
     @Test
     fun `Sende ut to behov for faktum verneplikt og egen næring`() {
-        val navMediator = NavMediator(rapid)
 
         navMediator.sendBehov(seksjon2, fnr, søknadUuid)
 
@@ -61,8 +54,6 @@ internal class NavMediatorTest {
 
     @Test
     fun `Ignorere faktum med ubesvarte avhengigheter`() {
-        val navMediator = NavMediator(rapid)
-
         navMediator.sendBehov(seksjon3, fnr, søknadUuid)
 
         assertEquals(1, rapid.inspektør.size)
@@ -74,8 +65,6 @@ internal class NavMediatorTest {
 
     @Test
     fun `Sende ut behov med avhengig data`() {
-        val navMediator = NavMediator(rapid)
-
         navMediator.sendBehov(seksjon4, fnr, søknadUuid)
         assertEquals(6, rapid.inspektør.size)
 
@@ -97,8 +86,6 @@ internal class NavMediatorTest {
 
     @Test
     fun `Godkjenning av dokumentasjon for fangst og fisk`() {
-        val navMediator = NavMediator(rapid)
-
         val seksjon = Seksjon(
             "seksjon",
             Rolle.nav,
@@ -109,7 +96,7 @@ internal class NavMediatorTest {
         navMediator.sendBehov(seksjon, fnr, søknadUuid)
 
         assertEquals(1, rapid.inspektør.size)
-        assertEquals("14", rapid.inspektør.message(0)["@behov"].asText())
+        assertEquals("GodkjenningDokumentasjonFangstOgFisk", rapid.inspektør.message(0)["@behov"].asText())
     }
 
     @Language("json")

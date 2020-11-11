@@ -14,20 +14,19 @@ import java.util.UUID
 class NavMediator(private val rapidsConnection: RapidsConnection) {
     fun sendBehov(seksjon: Seksjon, fnr: String, søknadUuid: UUID) {
 
-        seksjon.map{it to Visitor(it)}
-                .filter { (faktum, visitor) -> faktum.godkjentType() && faktum.erUbesvart() && visitor.alleAvhengigFaktumBesvart }
-                .forEach { (faktum, visitor) ->
+        seksjon.filter { it.godkjentType() && it.erUbesvart() && it.alleAvhengigFaktumBesvart() }.forEach {
+            val visitor = Visitor(it)
 
-            if (faktum.id == "7") {
+            if (it.id == "7") {
                 behovJson(
                     fnr,
                     søknadUuid,
-                        faktum.id,
+                    it.id,
                     "EgenNæring" to visitor.avhengerAv["6"]!!.svar(),
                     "Virkningstidspunkt" to visitor.avhengerAv["5"]!!.svar()
                 )
             } else {
-                behovJson(fnr, søknadUuid, faktum.id)
+                behovJson(fnr, søknadUuid, it.id)
             }.also {
                 rapidsConnection.publish(it)
             }
