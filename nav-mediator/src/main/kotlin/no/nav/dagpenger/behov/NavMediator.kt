@@ -11,38 +11,42 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 import java.util.UUID
 
-internal enum class BehovType(internal val id: Int) {
-    ØnskerDagpengerFraDato(1),
-    SisteDagMedArbeidsplikt(2),
-    Registreringsdato(3),
-    SisteDagMedLønn(4),
-    Virkningstidspunkt(5),
-    EgenNæring(6),
-    InntektSiste3År(7),
-    InntektSiste12Mnd(8),
-    G3(9),
-    G15(10),
-    Søknadstidspunkt(11),
-    Verneplikt(12),
-    GodkjenningDokumentasjonFangstOgFisk(14);
-
-    companion object {
-        fun fromId(id: Int) = values().firstOrNull() { it.id == id } ?: throw IllegalArgumentException("Ukjent faktum id $id")
-    }
+class FaktumBehov(private val delegate: Map<Int, String>) : Map<Int, String> by delegate {
+    override operator fun get(id: Int): String = delegate[id] ?: throw IllegalArgumentException("Ukjent faktum id $id")
 }
+
+val BehovtypeVersjon1 = mapOf<Int, String>(
+    1 to "ØnskerDagpengerFraDato",
+    2 to "SisteDagMedArbeidsplikt",
+    3 to "Registreringsdato",
+    4 to "SisteDagMedLønn",
+    5 to "Virkningstidspunkt",
+    6 to "EgenNæring",
+    7 to "InntektSiste3År",
+    8 to "InntektSiste12Mnd",
+    9 to "G3",
+    10 to "G15",
+    11 to "Søknadstidspunkt",
+    12 to "Verneplikt",
+    14 to "GodkjenningDokumentasjonFangstOgFisk"
+)
 
 class NavMediator(private val rapidsConnection: RapidsConnection) {
-    fun sendBehov(seksjon: Seksjon, fnr: String, søknadUuid: UUID) {
 
-        seksjon.map { BehovBuilder(it) }.filter { behovBuilder -> behovBuilder.behovKanSendes }.forEach { behovBuilder ->
-            behovBuilder.build(fnr, søknadUuid).also {
-                rapidsConnection.publish(it)
+    val versjonToBuilder = mapOf(1 to FaktumBehov(BehovtypeVersjon1))
+
+    fun sendBehov(versjon: Int, seksjon: Seksjon, fnr: String, søknadUuid: UUID) {
+        require(versjonToBuilder.containsKey(versjon)) { "Vet ikke om versjon $versjon" }
+        seksjon.map { BehovBuilder(it, versjonToBuilder[versjon]!!) }
+            .filter { behovBuilder -> behovBuilder.behovKanSendes }.forEach { behovBuilder ->
+                behovBuilder.build(fnr, søknadUuid).also {
+                    rapidsConnection.publish(it)
+                }
             }
-        }
     }
 }
 
-private class BehovBuilder(private val faktum: Faktum<*>) : FaktumVisitor {
+private class BehovBuilder(private val faktum: Faktum<*>, private val faktumBehov: FaktumBehov) : FaktumVisitor {
     private var alleAvhengigFaktumBesvart = true
     private val avhengerAv = mutableMapOf<String, Faktum<*>>()
 
@@ -57,12 +61,12 @@ private class BehovBuilder(private val faktum: Faktum<*>) : FaktumVisitor {
     fun build(fnr: String, søknadUuid: UUID): String {
         return JsonMessage.newMessage(
             mutableMapOf(
-                "@behov" to BehovType.fromId(faktum.rootId).name,
+                "@behov" to faktumBehov[faktum.rootId],
                 "@id" to UUID.randomUUID(),
                 "faktumId" to faktum.id,
                 "fnr" to fnr,
                 "søknadUuid" to søknadUuid
-            ) + avhengerAv.map { (id, faktum) -> BehovType.fromId(faktum.rootId).name to faktum.svar() }
+            ) + avhengerAv.map { (id, faktum) -> faktumBehov[faktum.rootId] to faktum.svar() }
         ).toJson()
     }
 
@@ -87,7 +91,15 @@ private class BehovBuilder(private val faktum: Faktum<*>) : FaktumVisitor {
         avhengerAvFakta.forEach { avhengerAv[it.id] = it }
     }
 
-    override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, avhengerAvFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>, regel: FaktaRegel<R>) {
+    override fun <R : Comparable<R>> preVisit(
+        faktum: UtledetFaktum<R>,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        children: Set<Faktum<*>>,
+        clazz: Class<R>,
+        regel: FaktaRegel<R>
+    ) {
         alleAvhengigFaktumBesvart = avhengerAvFakta.all { it.erBesvart() }
         avhengerAvFakta.forEach { avhengerAv[it.id] = it }
     }

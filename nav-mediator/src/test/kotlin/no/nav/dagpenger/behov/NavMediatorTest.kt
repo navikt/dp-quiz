@@ -15,6 +15,7 @@ import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 
 internal class NavMediatorTest {
@@ -50,13 +51,13 @@ internal class NavMediatorTest {
         val seksjon = Seksjon(
             "seksjon1",
             Rolle.nav,
-            prototypeSøknad.ja(BehovType.Verneplikt.id),
+            prototypeSøknad.ja(12),
             prototypeSøknad.ja(100)
         )
 
-        navMediator.sendBehov(seksjon, fnr, søknadUuid)
+        navMediator.sendBehov(1, seksjon, fnr, søknadUuid)
         assertEquals(1, rapid.inspektør.size)
-        rapid.inspektør.message(0).assertBehov(BehovType.Verneplikt)
+        rapid.inspektør.message(0).assertBehov("Verneplikt", 12)
     }
 
     @Test
@@ -65,18 +66,17 @@ internal class NavMediatorTest {
         val seksjon = Seksjon(
             "seksjon2",
             Rolle.nav,
-            prototypeSøknad.ja(BehovType.Verneplikt.id),
+            prototypeSøknad.ja(12),
             prototypeSøknad.ja(100),
-            prototypeSøknad.ja(BehovType.EgenNæring.id)
+            prototypeSøknad.ja(6)
         )
 
-        navMediator.sendBehov(seksjon, fnr, søknadUuid)
+        navMediator.sendBehov(1, seksjon, fnr, søknadUuid)
 
         assertEquals(2, rapid.inspektør.size)
-        rapid.inspektør.message(0).assertBehov(BehovType.Verneplikt)
-        rapid.inspektør.message(1).assertBehov(BehovType.EgenNæring)
+        rapid.inspektør.message(0).assertBehov("Verneplikt", 12)
+        rapid.inspektør.message(1).assertBehov("EgenNæring", 6)
     }
-
 
     @Test
     fun `Ignorere utledet faktum og faktum med ubesvarte avhengigheter`() {
@@ -89,14 +89,12 @@ internal class NavMediatorTest {
             prototypeSøknad.ja(7)
         )
 
-        navMediator.sendBehov(seksjon, fnr, søknadUuid)
+        navMediator.sendBehov(1, seksjon, fnr, søknadUuid)
         assertEquals(6, rapid.inspektør.size)
 
         assertTrue(rapid.inspektør.messages().none { it.has("InntektSiste3År") })
         assertTrue(rapid.inspektør.messages().none { it.has("Virkningstidspunkt") })
     }
-
-
 
     @Test
     fun `Sende ut behov med avhengig data`() {
@@ -114,7 +112,7 @@ internal class NavMediatorTest {
             prototypeSøknad.dato(11)
         )
 
-        navMediator.sendBehov(seksjon, fnr, søknadUuid)
+        navMediator.sendBehov(1, seksjon, fnr, søknadUuid)
         assertEquals(6, rapid.inspektør.size)
 
         prototypeSøknad.dato(1).besvar(2.januar)
@@ -125,7 +123,7 @@ internal class NavMediatorTest {
         prototypeSøknad.ja(6).besvar(true)
 
         rapid.reset()
-        navMediator.sendBehov(seksjon, fnr, søknadUuid)
+        navMediator.sendBehov(1, seksjon, fnr, søknadUuid)
         assertEquals(1, rapid.inspektør.size)
 
         val message = rapid.inspektør.message(0)
@@ -143,7 +141,7 @@ internal class NavMediatorTest {
         )
 
         prototypeSøknad.ja(6).besvar(true)
-        navMediator.sendBehov(seksjon, fnr, søknadUuid)
+        navMediator.sendBehov(1, seksjon, fnr, søknadUuid)
 
         assertEquals(1, rapid.inspektør.size)
         assertEquals("GodkjenningDokumentasjonFangstOgFisk", rapid.inspektør.message(0)["@behov"].asText())
@@ -151,11 +149,25 @@ internal class NavMediatorTest {
 
     fun TestRapid.RapidInspector.messages(): List<JsonNode> = (0 until this.size).map { message(it) }
 
-    private fun JsonNode.assertBehov(behovtype: BehovType) {
-        assertEquals(behovtype.name, this["@behov"].asText())
+    private fun JsonNode.assertBehov(behovnavn: String, faktumId: Int) {
+        assertEquals(behovnavn, this["@behov"].asText())
         assertEquals(fnr, this["fnr"].asText())
         assertEquals(søknadUuid, UUID.fromString(this["søknadUuid"].asText()))
-        assertEquals(behovtype.id, this["faktumId"].asInt())
+        assertEquals(faktumId, this["faktumId"].asInt())
     }
 
+    @Test
+    fun `Vet bare om spesifikke versjoner`() {
+        val prototypeSøknad = prototypeSøknad()
+        val seksjon = Seksjon(
+            "seksjon",
+            Rolle.nav,
+            prototypeSøknad.dokument(14)
+        )
+
+        prototypeSøknad.ja(6).besvar(true)
+        assertThrows<IllegalArgumentException> {
+            navMediator.sendBehov(Integer.MAX_VALUE, seksjon, fnr, søknadUuid)
+        }
+    }
 }
