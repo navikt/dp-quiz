@@ -50,17 +50,13 @@ internal class NavMediatorTest {
         val seksjon = Seksjon(
             "seksjon1",
             Rolle.nav,
-            prototypeSøknad.ja(12),
+            prototypeSøknad.ja(BehovType.Verneplikt.id),
             prototypeSøknad.ja(100)
         )
 
         navMediator.sendBehov(seksjon, fnr, søknadUuid)
-
-        val message = rapid.inspektør.message(0)
         assertEquals(1, rapid.inspektør.size)
-        assertEquals("Verneplikt", message["@behov"].asText())
-        assertEquals(fnr, message["fnr"].asText())
-        assertEquals(søknadUuid, UUID.fromString(message["søknadUuid"].asText()))
+        rapid.inspektør.message(0).assertBehov(BehovType.Verneplikt)
     }
 
     @Test
@@ -69,24 +65,18 @@ internal class NavMediatorTest {
         val seksjon = Seksjon(
             "seksjon2",
             Rolle.nav,
-            prototypeSøknad.ja(12),
+            prototypeSøknad.ja(BehovType.Verneplikt.id),
             prototypeSøknad.ja(100),
-            prototypeSøknad.ja(6)
+            prototypeSøknad.ja(BehovType.EgenNæring.id)
         )
 
         navMediator.sendBehov(seksjon, fnr, søknadUuid)
 
         assertEquals(2, rapid.inspektør.size)
-        val message = rapid.inspektør.message(0)
-        assertEquals("Verneplikt", message["@behov"].asText())
-        assertEquals(fnr, message["fnr"].asText())
-        assertEquals(søknadUuid, UUID.fromString(message["søknadUuid"].asText()))
-
-        val message2 = rapid.inspektør.message(1)
-        assertEquals("EgenNæring", message2["@behov"].asText())
-        assertEquals(fnr, message2["fnr"].asText())
-        assertEquals(søknadUuid, UUID.fromString(message2["søknadUuid"].asText()))
+        rapid.inspektør.message(0).assertBehov(BehovType.Verneplikt)
+        rapid.inspektør.message(1).assertBehov(BehovType.EgenNæring)
     }
+
 
     @Test
     fun `Ignorere utledet faktum og faktum med ubesvarte avhengigheter`() {
@@ -160,4 +150,12 @@ internal class NavMediatorTest {
     }
 
     fun TestRapid.RapidInspector.messages(): List<JsonNode> = (0 until this.size).map { message(it) }
+
+    private fun JsonNode.assertBehov(behovtype: BehovType) {
+        assertEquals(behovtype.name, this["@behov"].asText())
+        assertEquals(fnr, this["fnr"].asText())
+        assertEquals(søknadUuid, UUID.fromString(this["søknadUuid"].asText()))
+        assertEquals(behovtype.id, this["faktumId"].asInt())
+    }
+
 }

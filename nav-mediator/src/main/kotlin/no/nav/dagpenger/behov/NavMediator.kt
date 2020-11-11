@@ -11,23 +11,23 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 import java.util.UUID
 
-private enum class BehovType(private val id: String) {
-    ØnskerDagpengerFraDato("1"),
-    SisteDagMedArbeidsplikt("2"),
-    Registreringsdato("3"),
-    SisteDagMedLønn("4"),
-    Virkningstidspunkt("5"),
-    EgenNæring("6"),
-    InntektSiste3År("7"),
-    InntektSiste12Mnd("8"),
-    G3("9"),
-    G15("10"),
-    Søknadstidspunkt("11"),
-    Verneplikt("12"),
-    GodkjenningDokumentasjonFangstOgFisk("14");
+internal enum class BehovType(internal val id: Int) {
+    ØnskerDagpengerFraDato(1),
+    SisteDagMedArbeidsplikt(2),
+    Registreringsdato(3),
+    SisteDagMedLønn(4),
+    Virkningstidspunkt(5),
+    EgenNæring(6),
+    InntektSiste3År(7),
+    InntektSiste12Mnd(8),
+    G3(9),
+    G15(10),
+    Søknadstidspunkt(11),
+    Verneplikt(12),
+    GodkjenningDokumentasjonFangstOgFisk(14);
 
     companion object {
-        fun fromId(id: String) = values().firstOrNull() { it.id == id } ?: throw IllegalArgumentException("Ukjent faktum id $id")
+        fun fromId(id: Int) = values().firstOrNull() { it.id == id } ?: throw IllegalArgumentException("Ukjent faktum id $id")
     }
 }
 
@@ -57,12 +57,12 @@ private class BehovBuilder(private val faktum: Faktum<*>) : FaktumVisitor {
     fun build(fnr: String, søknadUuid: UUID): String {
         return JsonMessage.newMessage(
             mutableMapOf(
-                "@behov" to BehovType.fromId(faktum.id).name,
+                "@behov" to BehovType.fromId(faktum.rootId).name,
                 "@id" to UUID.randomUUID(),
                 "faktumId" to faktum.id,
                 "fnr" to fnr,
                 "søknadUuid" to søknadUuid
-            ) + avhengerAv.map { (id, faktum) -> BehovType.fromId(id).name to faktum.svar() }
+            ) + avhengerAv.map { (id, faktum) -> BehovType.fromId(faktum.rootId).name to faktum.svar() }
         ).toJson()
     }
 
@@ -72,7 +72,17 @@ private class BehovBuilder(private val faktum: Faktum<*>) : FaktumVisitor {
 
     private fun Faktum<*>.erUbesvart() = !this.erBesvart()
 
-    override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, avhengerAvFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
+    private val Faktum<*>.rootId get() = this.reflection { rootId, _ -> rootId }
+
+    override fun <R : Comparable<R>> visit(
+        faktum: GrunnleggendeFaktum<R>,
+        tilstand: Faktum.FaktumTilstand,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {
         alleAvhengigFaktumBesvart = avhengerAvFakta.all { it.erBesvart() }
         avhengerAvFakta.forEach { avhengerAv[it.id] = it }
     }
