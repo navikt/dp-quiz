@@ -1,4 +1,4 @@
-package no.nav.dagpenger.behov
+package behov
 
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktagrupper.Seksjon

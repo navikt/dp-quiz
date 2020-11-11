@@ -1,4 +1,4 @@
-package no.nav.dagpenger.behov
+package behov
 
 import com.fasterxml.jackson.databind.JsonNode
 import helpers.januar
