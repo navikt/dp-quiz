@@ -156,5 +156,4 @@ internal class NavMediatorTest {
         assertEquals(1, rapid.inspektør.size)
         assertEquals("GodkjenningDokumentasjonFangstOgFisk", rapid.inspektør.message(0)["@behov"].asText())
     }
-
 }

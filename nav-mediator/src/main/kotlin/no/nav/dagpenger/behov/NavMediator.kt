@@ -14,7 +14,7 @@ import java.util.UUID
 class NavMediator(private val rapidsConnection: RapidsConnection) {
     fun sendBehov(seksjon: Seksjon, fnr: String, søknadUuid: UUID) {
 
-        seksjon.map { it to Visitor(it) }.filter { (faktum, visitor) -> faktum.godkjentType() && faktum.erUbesvart() && faktum.alleAvhengigFaktumBesvart() }.forEach { (faktum, visitor) ->
+        seksjon.map { it to BehovBuilder(it) }.filter { (faktum, behovBuilder) -> behovBuilder.behovKanSendes }.forEach { (faktum, behovBuilder) ->
 
             when (faktum.id) {
                 "1" -> behovJson(faktum.id, fnr, søknadUuid, "ØnskerDagpengerFraDato")
@@ -27,8 +27,8 @@ class NavMediator(private val rapidsConnection: RapidsConnection) {
                     fnr,
                     søknadUuid,
                     "InntektSiste3År",
-                    "EgenNæring" to visitor.avhengerAv["6"]!!.svar(),
-                    "Virkningstidspunkt" to visitor.avhengerAv["5"]!!.svar()
+                    "EgenNæring" to behovBuilder.avhengerAv["6"]!!.svar(),
+                    "Virkningstidspunkt" to behovBuilder.avhengerAv["5"]!!.svar()
                 )
                 "8" -> behovJson(faktum.id, fnr, søknadUuid, "InntektSiste12Mnd")
                 "9" -> behovJson(faktum.id, fnr, søknadUuid, "3G")
@@ -60,12 +60,16 @@ private fun Faktum<*>.godkjentType(): Boolean {
 
 private fun Faktum<*>.erUbesvart() = !this.erBesvart()
 
-private class Visitor(faktum: Faktum<*>) : FaktumVisitor {
+private class BehovBuilder(private val faktum: Faktum<*>) : FaktumVisitor {
     var alleAvhengigFaktumBesvart = true
     val avhengerAv = mutableMapOf<String, Faktum<*>>()
 
     init {
         faktum.accept(this)
+    }
+
+    val behovKanSendes by lazy {
+        faktum.godkjentType() && faktum.erUbesvart() && alleAvhengigFaktumBesvart
     }
 
     override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, avhengerAvFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
@@ -80,6 +84,6 @@ private class Visitor(faktum: Faktum<*>) : FaktumVisitor {
 }
 
 private fun <R : Comparable<R>> Faktum<R>.alleAvhengigFaktumBesvart(): Boolean {
-    val visitor = Visitor(this)
+    val visitor = BehovBuilder(this)
     return visitor.alleAvhengigFaktumBesvart
 }
