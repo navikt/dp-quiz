@@ -89,6 +89,8 @@ internal class NavMediatorTest {
             prototypeSøknad.ja(7)
         )
 
+        assertEquals(0, rapid.inspektør.size)
+
         navMediator.sendBehov(1, seksjon, fnr, søknadUuid)
         assertEquals(6, rapid.inspektør.size)
 

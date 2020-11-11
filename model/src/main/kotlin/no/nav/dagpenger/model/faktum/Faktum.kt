@@ -104,6 +104,8 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
         if (avhengerAvFakta.isEmpty())
             throw IllegalArgumentException("Mangler avhengighet på godkjenningsfaktum: $this")
     }
+
+    fun harRolle(rolle: Rolle) = rolle in roller
 }
 
 fun Set<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }

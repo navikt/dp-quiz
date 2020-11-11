@@ -13,6 +13,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.faktum.ValgFaktum
+import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.visitor.FaktagrupperVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -127,6 +128,9 @@ class SaksbehandlerJsonBuilder(
         svar: Boolean
     ) {
         lagFaktumNode(id, svar = svar)
+    }
+
+    override fun preVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {
     }
 
     private fun <R : Comparable<R>> lagFaktumNode(id: String, roller: Set<Rolle> = emptySet(), svar: R? = null) {

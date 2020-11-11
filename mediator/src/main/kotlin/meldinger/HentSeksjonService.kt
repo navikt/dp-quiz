@@ -27,7 +27,6 @@ internal class HentSeksjonService(rapidsConnection: RapidsConnection) :
         val søknadUuid = UUID.fromString(packet["soknad_uuid"].asText())
         val seksjonNavn = packet["seksjon_navn"].asText()
         val indeks = packet["indeks"].asInt()
-
         val fakta = SøknadRecord().hent(søknadUuid)
 
         val json = SaksbehandlerJsonBuilder(fakta, seksjonNavn, indeks).resultat()
