@@ -147,11 +147,12 @@ internal class UtledetFaktumFactoryTest {
     fun `avhengigheter til utledetfaktum`() {
 
         val søknad = Søknad(
-            ja nei "ja nei" id 4 avhengerAv 123,
             dato faktum "dato1" id 1,
             dato faktum "dato2" id 2,
             dato faktum "dato3" id 3,
-            maks dato "maks dato" av 1 og 2 og 3 id 123
+            maks dato "maks dato" av 1 og 2 og 3 id 123,
+            ja nei "ja nei" id 4 avhengerAv 1123,
+            maks dato "maks dato 3" av 1 og 123 id 1123
         ).testFaktagrupper()
         søknad.dato(1).besvar(1.januar)
         søknad.dato(2).besvar(2.januar)

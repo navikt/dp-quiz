@@ -25,7 +25,17 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
         return regel.strategy(this)
     }
 
-    internal fun addAll(fakta: List<Faktum<*>>) = this.underordnede.addAll(fakta as List<Faktum<R>>)
+    internal fun addAll(fakta: List<Faktum<*>>) = fakta.forEach { underordnet ->
+        underordnede.add(underordnet as Faktum<R>)
+        avhengigeFakta.forEach { avhengig ->
+            underordnet.harAvhengighet(avhengig)
+        }
+    }
+
+    override fun harAvhengighet(other: Faktum<*>) {
+        super.harAvhengighet(other)
+        underordnede.forEach { it.harAvhengighet(other) }
+    }
 
     override fun add(rolle: Rolle): Boolean = false // utledet faktum kan ikke settes av roller
 
@@ -61,12 +71,7 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
 
         return UtledetFaktum(faktumId, navn, childFakta, regel).also { utledetFaktum ->
             byggetFakta[faktumId] = utledetFaktum
-            this.avhengigeFakta.forEach {
-                it.bygg(byggetFakta).also { avhengighet ->
-                    utledetFaktum.avhengigeFakta.add(avhengighet)
-                    childFakta.forEach { underordnet -> avhengighet.avhengerAv(underordnet) }
-                }
-            }
+            this.avhengigeFakta.forEach { utledetFaktum.avhengigeFakta.add(it.bygg(byggetFakta)) }
             this.avhengerAvFakta.forEach { utledetFaktum.avhengerAvFakta.add(it.bygg(byggetFakta)) }
         }
     }

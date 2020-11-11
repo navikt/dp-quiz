@@ -63,9 +63,9 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     internal open fun add(seksjon: Seksjon): Boolean = false
 
-    infix fun avhengerAv(other: Faktum<*>) {
-        other.avhengigeFakta.add(this)
-        this.avhengerAvFakta.add(other)
+    internal open infix fun harAvhengighet(other: Faktum<*>) {
+        this.avhengigeFakta.add(other)
+        other.avhengerAvFakta.add(this)
     }
 
     internal open fun deepCopy(indeks: Int, søknad: Søknad): Faktum<*> = this
