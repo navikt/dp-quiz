@@ -24,13 +24,13 @@ internal class NavMediatorTest {
     private val søknadUuid = UUID.randomUUID()
 
     @Test
-    fun `Sende ut ett behov for uavhengig faktum`() {
+    fun `Sende ut ett behov for faktum verneplikt`() {
 
         navMediator.sendBehov(seksjon1, fnr, søknadUuid)
 
         val message = rapid.inspektør.message(0)
         assertEquals(1, rapid.inspektør.size)
-        assertEquals("12", message["@behov"].asText())
+        assertEquals("Verneplikt", message["@behov"].asText())
         assertEquals(fnr, message["fnr"].asText())
         assertEquals(søknadUuid, UUID.fromString(message["søknadUuid"].asText()))
     }
@@ -42,12 +42,12 @@ internal class NavMediatorTest {
 
         assertEquals(2, rapid.inspektør.size)
         val message = rapid.inspektør.message(0)
-        assertEquals("12", message["@behov"].asText())
+        assertEquals("Verneplikt", message["@behov"].asText())
         assertEquals(fnr, message["fnr"].asText())
         assertEquals(søknadUuid, UUID.fromString(message["søknadUuid"].asText()))
 
         val message2 = rapid.inspektør.message(1)
-        assertEquals("6", message2["@behov"].asText())
+        assertEquals("EgenNæring", message2["@behov"].asText())
         assertEquals(fnr, message2["fnr"].asText())
         assertEquals(søknadUuid, UUID.fromString(message2["søknadUuid"].asText()))
     }
@@ -58,7 +58,7 @@ internal class NavMediatorTest {
 
         assertEquals(1, rapid.inspektør.size)
         val message = rapid.inspektør.message(0)
-        assertEquals("6", message["@behov"].asText())
+        assertEquals("EgenNæring", message["@behov"].asText())
         assertEquals(fnr, message["fnr"].asText())
         assertEquals(søknadUuid, UUID.fromString(message["søknadUuid"].asText()))
     }

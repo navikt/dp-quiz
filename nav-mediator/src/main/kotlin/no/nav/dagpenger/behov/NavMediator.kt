@@ -16,17 +16,23 @@ class NavMediator(private val rapidsConnection: RapidsConnection) {
 
         seksjon.filter { it.godkjentType() && it.erUbesvart() && it.alleAvhengigFaktumBesvart() }.forEach {
             val visitor = Visitor(it)
-
-            if (it.id == "7") {
-                behovJson(
+            when (it.id) {
+                "1" -> behovJson(fnr, søknadUuid, "ØnskerDagpengerFraDato")
+                "2" -> behovJson(fnr, søknadUuid, "SisteDagMedArbeidsplikt")
+                "3" -> behovJson(fnr, søknadUuid, "Registreringsdato")
+                "4" -> behovJson(fnr, søknadUuid, "SisteDagMedLønn")
+                "6" -> behovJson(fnr, søknadUuid, "EgenNæring")
+                "7" -> behovJson(
                     fnr,
                     søknadUuid,
-                    it.id,
+                    "InntektSiste3År",
                     "EgenNæring" to visitor.avhengerAv["6"]!!.svar(),
                     "Virkningstidspunkt" to visitor.avhengerAv["5"]!!.svar()
                 )
-            } else {
-                behovJson(fnr, søknadUuid, it.id)
+                "11" -> behovJson(fnr, søknadUuid, "Søknadstidspunkt")
+                "12" -> behovJson(fnr, søknadUuid, "Verneplikt")
+                "14" -> behovJson(fnr, søknadUuid, "GodkjenningDokumentasjonFangstOgFisk")
+                else -> throw IllegalArgumentException("Ukjent faktum id ${it.id}")
             }.also {
                 rapidsConnection.publish(it)
             }
