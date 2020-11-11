@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.FaktagrupperVisitor
 
 class Seksjon private constructor(
@@ -27,11 +28,16 @@ class Seksjon private constructor(
     companion object {
         internal fun List<Seksjon>.saksbehandlerSeksjoner(relevanteFakta: Set<Faktum<*>>) =
             this.filter { it.rolle == Rolle.saksbehandler }.map {
-                Seksjon(it.navn, it.rolle, it.seksjonFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet())
+                it.filtrertSeksjon(relevanteFakta)
             }
     }
 
     constructor(navn: String, rolle: Rolle, vararg fakta: Faktum<*>) : this(navn, rolle, fakta.toMutableSet())
+
+    internal fun filtrertSeksjon(subsumsjon: Subsumsjon) = filtrertSeksjon(subsumsjon.relevanteFakta())
+
+    private fun filtrertSeksjon(relevanteFakta: Set<Faktum<*>>) =
+        Seksjon(navn, rolle, seksjonFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet())
 
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>): Boolean {
         return nesteFakta.any { it in seksjonFakta }

@@ -27,14 +27,20 @@ class SaksbehandlerJsonBuilder(
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
+    private lateinit var subsumsjonRoot: ObjectNode
     private var ignore = true
     private val faktumIder = mutableSetOf<String>()
+    private val subsumsjonNoder = mutableListOf<ObjectNode>()
 
     init {
-        fakta.accept(this)
+        fakta.søknad.accept(this)
+        fakta.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(fakta.rootSubsumsjon).accept(this)
+        fakta.rootSubsumsjon.mulige().accept(this)
     }
 
-    fun resultat() = root
+    fun resultat() = root.also {
+        // root.set("subsumsjon", subsumsjonRoot)
+    }
 
     override fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
         root.put("@event_name", "oppgave")
@@ -48,7 +54,7 @@ class SaksbehandlerJsonBuilder(
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
-        if (seksjonNavn == seksjon.navn && indeks == this.indeks) ignore = false
+        ignore = false
     }
 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
@@ -131,6 +137,11 @@ class SaksbehandlerJsonBuilder(
     }
 
     override fun preVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {
+        subsumsjonNoder.add(0, mapper.createObjectNode())
+    }
+
+    override fun postVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {
+        subsumsjonRoot = subsumsjonNoder.removeAt(0)
     }
 
     private fun <R : Comparable<R>> lagFaktumNode(id: String, roller: Set<Rolle> = emptySet(), svar: R? = null) {

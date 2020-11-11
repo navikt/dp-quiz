@@ -37,7 +37,7 @@ class NavMediator(private val rapidsConnection: RapidsConnection) {
 
     fun sendBehov(versjon: Int, seksjon: Seksjon, fnr: String, søknadUuid: UUID) {
         require(versjonToBuilder.containsKey(versjon)) { "Vet ikke om versjon $versjon" }
-        seksjon.map { BehovBuilder(it, versjonToBuilder[versjon]!!) }
+        seksjon.map { BehovBuilder(it, versjonToBuilder[versjon]!!) } // TODO: Fakta må ha NAV-roller
             .filter { behovBuilder -> behovBuilder.behovKanSendes }.forEach { behovBuilder ->
                 behovBuilder.build(fnr, søknadUuid).also {
                     rapidsConnection.publish(it)

@@ -1,8 +1,13 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
+import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.UtledetFaktum
+import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 abstract class Subsumsjon protected constructor(
@@ -77,6 +82,137 @@ abstract class Subsumsjon protected constructor(
                 copy.gyldigSubsumsjon._mulige()
                 copy.ugyldigSubsumsjon._mulige()
             }
+        }
+    }
+
+    internal fun relevanteFakta() = RelevanteFakta(this).resultater
+
+    private class RelevanteFakta(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
+        val resultater = mutableSetOf<Faktum<*>>()
+        private var ignore = false
+        private var iValg = false
+
+        init {
+            subsumsjon.mulige().accept(this)
+        }
+
+        override fun preVisit(
+            subsumsjon: GodkjenningsSubsumsjon,
+            action: GodkjenningsSubsumsjon.Action,
+            lokaltResultat: Boolean?
+        ) {
+            ignore = when (action) {
+                GodkjenningsSubsumsjon.Action.JaAction -> lokaltResultat == false
+                GodkjenningsSubsumsjon.Action.NeiAction -> lokaltResultat == true
+                GodkjenningsSubsumsjon.Action.UansettAction -> false
+            }
+        }
+
+        override fun postVisit(
+            subsumsjon: GodkjenningsSubsumsjon,
+            action: GodkjenningsSubsumsjon.Action,
+            lokaltResultat: Boolean?
+        ) {
+            ignore = false
+        }
+
+        override fun <R : Comparable<R>> visit(
+            faktum: GrunnleggendeFaktum<R>,
+            tilstand: Faktum.FaktumTilstand,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>
+        ) {
+            if (!ignore && !iValg) {
+                resultater.add(faktum)
+            }
+        }
+
+        override fun <R : Comparable<R>> visit(
+            faktum: GrunnleggendeFaktum<R>,
+            tilstand: Faktum.FaktumTilstand,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>,
+            svar: R
+        ) {
+            if (!ignore) {
+                resultater.add(faktum)
+            }
+        }
+
+        override fun <R : Comparable<R>> preVisit(
+            faktum: UtledetFaktum<R>,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            children: Set<Faktum<*>>,
+            clazz: Class<R>,
+            regel: FaktaRegel<R>
+        ) {
+            if (!ignore) {
+                resultater.add(faktum)
+            }
+        }
+
+        override fun <R : Comparable<R>> preVisit(
+            faktum: UtledetFaktum<R>,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            children: Set<Faktum<*>>,
+            clazz: Class<R>,
+            regel: FaktaRegel<R>,
+            svar: R
+        ) {
+            if (!ignore) {
+                resultater.add(faktum)
+            }
+        }
+
+        override fun preVisit(
+            faktum: ValgFaktum,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            underordnedeJa: Set<Faktum<Boolean>>,
+            underordnedeNei: Set<Faktum<Boolean>>,
+            clazz: Class<Boolean>
+        ) {
+            if (!ignore) {
+                resultater.add(faktum)
+                iValg = true
+            }
+        }
+
+        override fun preVisit(
+            faktum: ValgFaktum,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            underordnedeJa: Set<Faktum<Boolean>>,
+            underordnedeNei: Set<Faktum<Boolean>>,
+            clazz: Class<Boolean>,
+            svar: Boolean
+        ) {
+            if (!ignore) {
+                resultater.add(faktum)
+                iValg = true
+            }
+        }
+
+        override fun postVisit(
+            faktum: ValgFaktum,
+            id: String,
+            underordnedeJa: Set<Faktum<Boolean>>,
+            underordnedeNei: Set<Faktum<Boolean>>,
+            clazz: Class<Boolean>
+        ) {
+            iValg = false
         }
     }
 }
