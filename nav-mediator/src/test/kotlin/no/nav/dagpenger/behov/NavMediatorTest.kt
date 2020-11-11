@@ -99,7 +99,7 @@ internal class NavMediatorTest {
 
         navMediator.sendBehov(seksjon, fnr, søknadUuid)
 
-        assertEquals(1, rapid.inspektør.size)
+        assertEquals(6, rapid.inspektør.size)
         val message = rapid.inspektør.message(0)
         assertEquals("EgenNæring", message["@behov"].asText())
         assertEquals(fnr, message["fnr"].asText())
