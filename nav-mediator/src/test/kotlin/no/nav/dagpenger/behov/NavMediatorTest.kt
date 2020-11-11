@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behov
 
+import com.fasterxml.jackson.databind.JsonNode
 import helpers.januar
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
@@ -12,6 +13,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
@@ -87,7 +89,7 @@ internal class NavMediatorTest {
     }
 
     @Test
-    fun `Ignorere faktum med ubesvarte avhengigheter`() {
+    fun `Ignorere utledet faktum og faktum med ubesvarte avhengigheter`() {
         val prototypeSøknad = prototypeSøknad()
 
         val seksjon = Seksjon(
@@ -98,13 +100,13 @@ internal class NavMediatorTest {
         )
 
         navMediator.sendBehov(seksjon, fnr, søknadUuid)
-
         assertEquals(6, rapid.inspektør.size)
-        val message = rapid.inspektør.message(0)
-        assertEquals("EgenNæring", message["@behov"].asText())
-        assertEquals(fnr, message["fnr"].asText())
-        assertEquals(søknadUuid, UUID.fromString(message["søknadUuid"].asText()))
+
+        assertTrue(rapid.inspektør.messages().none { it.has("InntektSiste3År") })
+        assertTrue(rapid.inspektør.messages().none { it.has("Virkningstidspunkt") })
     }
+
+
 
     @Test
     fun `Sende ut behov med avhengig data`() {
@@ -156,4 +158,6 @@ internal class NavMediatorTest {
         assertEquals(1, rapid.inspektør.size)
         assertEquals("GodkjenningDokumentasjonFangstOgFisk", rapid.inspektør.message(0)["@behov"].asText())
     }
+
+    fun TestRapid.RapidInspector.messages(): List<JsonNode> = (0 until this.size).map { message(it) }
 }

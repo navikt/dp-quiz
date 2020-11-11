@@ -11,10 +11,30 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 import java.util.UUID
 
+private enum class BehovType(private val id: String) {
+    ØnskerDagpengerFraDato("1"),
+    SisteDagMedArbeidsplikt("2"),
+    Registreringsdato("3"),
+    SisteDagMedLønn("4"),
+    Virkningstidspunkt("5"),
+    EgenNæring("6"),
+    InntektSiste3År("7"),
+    InntektSiste12Mnd("8"),
+    G3("9"),
+    G15("10"),
+    Søknadstidspunkt("11"),
+    Verneplikt("12"),
+    GodkjenningDokumentasjonFangstOgFisk("14");
+
+    companion object {
+        fun fromId(id: String) = values().firstOrNull() { it.id == id } ?: throw IllegalArgumentException("Ukjent faktum id $id")
+    }
+}
+
 class NavMediator(private val rapidsConnection: RapidsConnection) {
     fun sendBehov(seksjon: Seksjon, fnr: String, søknadUuid: UUID) {
 
-        seksjon.map { it to BehovBuilder(it) }.filter { (_, behovBuilder) -> behovBuilder.behovKanSendes }.forEach { (faktum, behovBuilder) ->
+        seksjon.map { BehovBuilder(it) }.filter { behovBuilder -> behovBuilder.behovKanSendes }.forEach { behovBuilder ->
             behovBuilder.build(fnr, søknadUuid).also {
                 rapidsConnection.publish(it)
             }
@@ -22,15 +42,9 @@ class NavMediator(private val rapidsConnection: RapidsConnection) {
     }
 }
 
-private fun Faktum<*>.godkjentType(): Boolean {
-    return this !is UtledetFaktum<*>
-}
-
-private fun Faktum<*>.erUbesvart() = !this.erBesvart()
-
 private class BehovBuilder(private val faktum: Faktum<*>) : FaktumVisitor {
-    var alleAvhengigFaktumBesvart = true
-    val avhengerAv = mutableMapOf<String, Faktum<*>>()
+    private var alleAvhengigFaktumBesvart = true
+    private val avhengerAv = mutableMapOf<String, Faktum<*>>()
 
     init {
         faktum.accept(this)
@@ -52,6 +66,12 @@ private class BehovBuilder(private val faktum: Faktum<*>) : FaktumVisitor {
         ).toJson()
     }
 
+    private fun Faktum<*>.godkjentType(): Boolean {
+        return this !is UtledetFaktum<*>
+    }
+
+    private fun Faktum<*>.erUbesvart() = !this.erBesvart()
+
     override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, avhengerAvFakta: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>) {
         alleAvhengigFaktumBesvart = avhengerAvFakta.all { it.erBesvart() }
         avhengerAvFakta.forEach { avhengerAv[it.id] = it }
@@ -60,25 +80,5 @@ private class BehovBuilder(private val faktum: Faktum<*>) : FaktumVisitor {
     override fun <R : Comparable<R>> preVisit(faktum: UtledetFaktum<R>, id: String, avhengigeFakta: Set<Faktum<*>>, avhengerAvFakta: Set<Faktum<*>>, children: Set<Faktum<*>>, clazz: Class<R>, regel: FaktaRegel<R>) {
         alleAvhengigFaktumBesvart = avhengerAvFakta.all { it.erBesvart() }
         avhengerAvFakta.forEach { avhengerAv[it.id] = it }
-    }
-}
-
-private enum class BehovType(private val id: String) {
-    ØnskerDagpengerFraDato("1"),
-    SisteDagMedArbeidsplikt("2"),
-    Registreringsdato("3"),
-    SisteDagMedLønn("4"),
-    Virkningstidspunkt("5"),
-    EgenNæring("6"),
-    InntektSiste3År("7"),
-    InntektSiste12Mnd("8"),
-    G3("9"),
-    G15("10"),
-    Søknadstidspunkt("11"),
-    Verneplikt("12"),
-    GodkjenningDokumentasjonFangstOgFisk("14");
-
-    companion object {
-        fun fromId(id: String) = values().firstOrNull() { it.id == id } ?: throw IllegalArgumentException("Ukjent faktum id $id")
     }
 }
