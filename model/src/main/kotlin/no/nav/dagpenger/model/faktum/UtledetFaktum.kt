@@ -66,7 +66,6 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     }
 
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): UtledetFaktum<R> {
-        // if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId] as UtledetFaktum<R>
         val childFakta = underordnede.map { it.bygg(byggetFakta) as Faktum<R> }.toMutableSet()
 
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId] as UtledetFaktum<R>
