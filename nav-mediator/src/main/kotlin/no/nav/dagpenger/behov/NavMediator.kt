@@ -26,9 +26,9 @@ private fun Faktum<*>.godkjentType(): Boolean {
     return this !is UtledetFaktum<*>
 }
 
-    private fun Faktum<*>.erUbesvart() = !this.erBesvart()
+private fun Faktum<*>.erUbesvart() = !this.erBesvart()
 
-    private class BehovBuilder(private val faktum: Faktum<*>) : FaktumVisitor {
+private class BehovBuilder(private val faktum: Faktum<*>) : FaktumVisitor {
     var alleAvhengigFaktumBesvart = true
     val avhengerAv = mutableMapOf<String, Faktum<*>>()
 
@@ -42,13 +42,13 @@ private fun Faktum<*>.godkjentType(): Boolean {
 
     fun build(fnr: String, søknadUuid: UUID): String {
         return JsonMessage.newMessage(
-                mutableMapOf(
-                        "@behov" to BehovType.fromId(faktum.id).name,
-                        "@id" to UUID.randomUUID(),
-                        "faktumId" to faktum.id,
-                        "fnr" to fnr,
-                        "søknadUuid" to søknadUuid
-                ) + avhengerAv.map { (id, faktum) -> BehovType.fromId(id).name to faktum.svar() }
+            mutableMapOf(
+                "@behov" to BehovType.fromId(faktum.id).name,
+                "@id" to UUID.randomUUID(),
+                "faktumId" to faktum.id,
+                "fnr" to fnr,
+                "søknadUuid" to søknadUuid
+            ) + avhengerAv.map { (id, faktum) -> BehovType.fromId(id).name to faktum.svar() }
         ).toJson()
     }
 
