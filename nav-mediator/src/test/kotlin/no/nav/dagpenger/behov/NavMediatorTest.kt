@@ -1,13 +1,11 @@
 package no.nav.dagpenger.behov
 
-import helpers.SeksjonEksempel.prototypeSøknad1
-import helpers.SeksjonEksempel.seksjon1
-import helpers.SeksjonEksempel.seksjon2
-import helpers.SeksjonEksempel.seksjon3
-import helpers.SeksjonEksempel.seksjon4
 import helpers.januar
+import no.nav.dagpenger.model.factory.BaseFaktumFactory
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.intellij.lang.annotations.Language
@@ -23,10 +21,36 @@ internal class NavMediatorTest {
     private val fnr = "12345678910"
     private val søknadUuid = UUID.randomUUID()
 
+    fun prototypeSøknad() = Søknad(
+        BaseFaktumFactory.Companion.dato faktum "Ønsker dagpenger fra dato" id 1,
+        BaseFaktumFactory.Companion.dato faktum "Siste dag med arbeidsplikt" id 2,
+        BaseFaktumFactory.Companion.dato faktum "Registreringsdato" id 3,
+        BaseFaktumFactory.Companion.dato faktum "Siste dag med lønn" id 4,
+        UtledetFaktumFactory.Companion.maks dato "Virkningstidspunkt" av 1 og 2 og 3 og 4 og 11 id 5,
+        BaseFaktumFactory.Companion.ja nei "EgenNæring" id 6,
+        BaseFaktumFactory.Companion.inntekt faktum "Inntekt siste 3 år" id 7 avhengerAv 5 og 6,
+        BaseFaktumFactory.Companion.inntekt faktum "Inntekt siste 12 mnd" id 8 avhengerAv 5 og 6,
+        BaseFaktumFactory.Companion.inntekt faktum "3G" id 9,
+        BaseFaktumFactory.Companion.inntekt faktum "1,5G" id 10,
+        BaseFaktumFactory.Companion.dato faktum "Søknadstidspunkt" id 11,
+        BaseFaktumFactory.Companion.ja nei "Verneplikt" id 12,
+        BaseFaktumFactory.Companion.dokument faktum "dokumentasjon for fangst og fisk" id 14 avhengerAv 6,
+        BaseFaktumFactory.Companion.ja nei "Boolean" id 100
+    ).also {
+        it.ja(100).besvar(true)
+    }
+
     @Test
     fun `Sende ut ett behov for faktum verneplikt`() {
+        val prototypeSøknad = prototypeSøknad()
+        val seksjon = Seksjon(
+            "seksjon1",
+            Rolle.nav,
+            prototypeSøknad.ja(12),
+            prototypeSøknad.ja(100)
+        )
 
-        navMediator.sendBehov(seksjon1, fnr, søknadUuid)
+        navMediator.sendBehov(seksjon, fnr, søknadUuid)
 
         val message = rapid.inspektør.message(0)
         assertEquals(1, rapid.inspektør.size)
@@ -37,8 +61,16 @@ internal class NavMediatorTest {
 
     @Test
     fun `Sende ut to behov for faktum verneplikt og egen næring`() {
+        val prototypeSøknad = prototypeSøknad()
+        val seksjon = Seksjon(
+            "seksjon2",
+            Rolle.nav,
+            prototypeSøknad.ja(12),
+            prototypeSøknad.ja(100),
+            prototypeSøknad.ja(6)
+        )
 
-        navMediator.sendBehov(seksjon2, fnr, søknadUuid)
+        navMediator.sendBehov(seksjon, fnr, søknadUuid)
 
         assertEquals(2, rapid.inspektør.size)
         val message = rapid.inspektør.message(0)
@@ -54,7 +86,16 @@ internal class NavMediatorTest {
 
     @Test
     fun `Ignorere faktum med ubesvarte avhengigheter`() {
-        navMediator.sendBehov(seksjon3, fnr, søknadUuid)
+        val prototypeSøknad = prototypeSøknad()
+
+        val seksjon = Seksjon(
+            "seksjon3",
+            Rolle.nav,
+            prototypeSøknad.ja(6),
+            prototypeSøknad.ja(7)
+        )
+
+        navMediator.sendBehov(seksjon, fnr, søknadUuid)
 
         assertEquals(1, rapid.inspektør.size)
         val message = rapid.inspektør.message(0)
@@ -65,18 +106,32 @@ internal class NavMediatorTest {
 
     @Test
     fun `Sende ut behov med avhengig data`() {
-        navMediator.sendBehov(seksjon4, fnr, søknadUuid)
+        val prototypeSøknad = prototypeSøknad()
+        val seksjon = Seksjon(
+            "seksjon4",
+            Rolle.nav,
+            prototypeSøknad.dato(1),
+            prototypeSøknad.dato(2),
+            prototypeSøknad.dato(3),
+            prototypeSøknad.dato(4),
+            prototypeSøknad.dato(5),
+            prototypeSøknad.ja(6),
+            prototypeSøknad.inntekt(7),
+            prototypeSøknad.dato(11)
+        )
+
+        navMediator.sendBehov(seksjon, fnr, søknadUuid)
         assertEquals(6, rapid.inspektør.size)
 
-        prototypeSøknad1.dato(1).besvar(2.januar)
-        prototypeSøknad1.dato(2).besvar(1.januar)
-        prototypeSøknad1.dato(3).besvar(1.januar)
-        prototypeSøknad1.dato(4).besvar(1.januar)
-        prototypeSøknad1.dato(11).besvar(1.januar)
-        prototypeSøknad1.ja(6).besvar(true)
+        prototypeSøknad.dato(1).besvar(2.januar)
+        prototypeSøknad.dato(2).besvar(1.januar)
+        prototypeSøknad.dato(3).besvar(1.januar)
+        prototypeSøknad.dato(4).besvar(1.januar)
+        prototypeSøknad.dato(11).besvar(1.januar)
+        prototypeSøknad.ja(6).besvar(true)
 
         rapid.reset()
-        navMediator.sendBehov(seksjon4, fnr, søknadUuid)
+        navMediator.sendBehov(seksjon, fnr, søknadUuid)
         assertEquals(1, rapid.inspektør.size)
 
         val message = rapid.inspektør.message(0)
@@ -86,13 +141,14 @@ internal class NavMediatorTest {
 
     @Test
     fun `Godkjenning av dokumentasjon for fangst og fisk`() {
+        val prototypeSøknad = prototypeSøknad()
         val seksjon = Seksjon(
             "seksjon",
             Rolle.nav,
-            prototypeSøknad1.dokument(14)
+            prototypeSøknad.dokument(14)
         )
 
-        prototypeSøknad1.ja(6).besvar(true)
+        prototypeSøknad.ja(6).besvar(true)
         navMediator.sendBehov(seksjon, fnr, søknadUuid)
 
         assertEquals(1, rapid.inspektør.size)

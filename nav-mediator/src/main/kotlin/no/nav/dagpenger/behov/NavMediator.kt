@@ -14,35 +14,37 @@ import java.util.UUID
 class NavMediator(private val rapidsConnection: RapidsConnection) {
     fun sendBehov(seksjon: Seksjon, fnr: String, søknadUuid: UUID) {
 
-        seksjon.filter { it.godkjentType() && it.erUbesvart() && it.alleAvhengigFaktumBesvart() }.forEach {
-            val visitor = Visitor(it)
-            when (it.id) {
-                "1" -> behovJson(fnr, søknadUuid, "ØnskerDagpengerFraDato")
-                "2" -> behovJson(fnr, søknadUuid, "SisteDagMedArbeidsplikt")
-                "3" -> behovJson(fnr, søknadUuid, "Registreringsdato")
-                "4" -> behovJson(fnr, søknadUuid, "SisteDagMedLønn")
-                "6" -> behovJson(fnr, søknadUuid, "EgenNæring")
+        seksjon.map { it to Visitor(it) }.filter { (faktum, visitor) -> faktum.godkjentType() && faktum.erUbesvart() && faktum.alleAvhengigFaktumBesvart() }.forEach { (faktum, visitor) ->
+
+            when (faktum.id) {
+                "1" -> behovJson(faktum.id, fnr, søknadUuid, "ØnskerDagpengerFraDato")
+                "2" -> behovJson(faktum.id, fnr, søknadUuid, "SisteDagMedArbeidsplikt")
+                "3" -> behovJson(faktum.id, fnr, søknadUuid, "Registreringsdato")
+                "4" -> behovJson(faktum.id, fnr, søknadUuid, "SisteDagMedLønn")
+                "6" -> behovJson(faktum.id, fnr, søknadUuid, "EgenNæring")
                 "7" -> behovJson(
+                    faktum.id,
                     fnr,
                     søknadUuid,
                     "InntektSiste3År",
                     "EgenNæring" to visitor.avhengerAv["6"]!!.svar(),
                     "Virkningstidspunkt" to visitor.avhengerAv["5"]!!.svar()
                 )
-                "11" -> behovJson(fnr, søknadUuid, "Søknadstidspunkt")
-                "12" -> behovJson(fnr, søknadUuid, "Verneplikt")
-                "14" -> behovJson(fnr, søknadUuid, "GodkjenningDokumentasjonFangstOgFisk")
-                else -> throw IllegalArgumentException("Ukjent faktum id ${it.id}")
+                "11" -> behovJson(faktum.id, fnr, søknadUuid, "Søknadstidspunkt")
+                "12" -> behovJson(faktum.id, fnr, søknadUuid, "Verneplikt")
+                "14" -> behovJson(faktum.id, fnr, søknadUuid, "GodkjenningDokumentasjonFangstOgFisk")
+                else -> throw IllegalArgumentException("Ukjent faktum id ${faktum.id}")
             }.also {
                 rapidsConnection.publish(it)
             }
         }
     }
 
-    private fun behovJson(fnr: String, søknadUuid: UUID, behovType: String, vararg svar: Pair<String, Any>) = JsonMessage.newMessage(
+    private fun behovJson(faktumId: String, fnr: String, søknadUuid: UUID, behovType: String, vararg svar: Pair<String, Any>) = JsonMessage.newMessage(
         mutableMapOf(
             "@behov" to behovType,
             "@id" to UUID.randomUUID(),
+            "faktumId" to faktumId,
             "fnr" to fnr,
             "søknadUuid" to søknadUuid
         ) + svar.asList().toMap()
