@@ -30,6 +30,9 @@ class NavMediator(private val rapidsConnection: RapidsConnection) {
                     "EgenNæring" to visitor.avhengerAv["6"]!!.svar(),
                     "Virkningstidspunkt" to visitor.avhengerAv["5"]!!.svar()
                 )
+                "8" -> behovJson(faktum.id, fnr, søknadUuid, "InntektSiste12Mnd")
+                "9" -> behovJson(faktum.id, fnr, søknadUuid, "3G")
+                "10" -> behovJson(faktum.id, fnr, søknadUuid, "1.5G")
                 "11" -> behovJson(faktum.id, fnr, søknadUuid, "Søknadstidspunkt")
                 "12" -> behovJson(faktum.id, fnr, søknadUuid, "Verneplikt")
                 "14" -> behovJson(faktum.id, fnr, søknadUuid, "GodkjenningDokumentasjonFangstOgFisk")

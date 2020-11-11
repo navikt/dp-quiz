@@ -1,14 +1,16 @@
 package no.nav.dagpenger.behov
 
 import helpers.januar
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
-import no.nav.dagpenger.model.factory.UtledetFaktumFactory
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
-import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -22,20 +24,20 @@ internal class NavMediatorTest {
     private val søknadUuid = UUID.randomUUID()
 
     fun prototypeSøknad() = Søknad(
-        BaseFaktumFactory.Companion.dato faktum "Ønsker dagpenger fra dato" id 1,
-        BaseFaktumFactory.Companion.dato faktum "Siste dag med arbeidsplikt" id 2,
-        BaseFaktumFactory.Companion.dato faktum "Registreringsdato" id 3,
-        BaseFaktumFactory.Companion.dato faktum "Siste dag med lønn" id 4,
-        UtledetFaktumFactory.Companion.maks dato "Virkningstidspunkt" av 1 og 2 og 3 og 4 og 11 id 5,
-        BaseFaktumFactory.Companion.ja nei "EgenNæring" id 6,
-        BaseFaktumFactory.Companion.inntekt faktum "Inntekt siste 3 år" id 7 avhengerAv 5 og 6,
-        BaseFaktumFactory.Companion.inntekt faktum "Inntekt siste 12 mnd" id 8 avhengerAv 5 og 6,
-        BaseFaktumFactory.Companion.inntekt faktum "3G" id 9,
-        BaseFaktumFactory.Companion.inntekt faktum "1,5G" id 10,
-        BaseFaktumFactory.Companion.dato faktum "Søknadstidspunkt" id 11,
-        BaseFaktumFactory.Companion.ja nei "Verneplikt" id 12,
-        BaseFaktumFactory.Companion.dokument faktum "dokumentasjon for fangst og fisk" id 14 avhengerAv 6,
-        BaseFaktumFactory.Companion.ja nei "Boolean" id 100
+        dato faktum "Ønsker dagpenger fra dato" id 1,
+        dato faktum "Siste dag med arbeidsplikt" id 2,
+        dato faktum "Registreringsdato" id 3,
+        dato faktum "Siste dag med lønn" id 4,
+        maks dato "Virkningstidspunkt" av 1 og 2 og 3 og 4 og 11 id 5,
+        ja nei "EgenNæring" id 6,
+        inntekt faktum "Inntekt siste 3 år" id 7 avhengerAv 5 og 6,
+        inntekt faktum "Inntekt siste 12 mnd" id 8 avhengerAv 5 og 6,
+        inntekt faktum "3G" id 9,
+        inntekt faktum "1,5G" id 10,
+        dato faktum "Søknadstidspunkt" id 11,
+        ja nei "Verneplikt" id 12,
+        dokument faktum "dokumentasjon for fangst og fisk" id 14 avhengerAv 6,
+        ja nei "Boolean" id 100
     ).also {
         it.ja(100).besvar(true)
     }
@@ -155,12 +157,4 @@ internal class NavMediatorTest {
         assertEquals("GodkjenningDokumentasjonFangstOgFisk", rapid.inspektør.message(0)["@behov"].asText())
     }
 
-    @Language("json")
-    private val eksempelOutput =
-        """{
-          "@behov": "Verneplikt",
-          "@id": "12345",
-          "fnr": "$fnr",
-          "søknadUuid": "$søknadUuid"
-        }"""
 }
