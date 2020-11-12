@@ -11,33 +11,10 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 import java.util.UUID
 
-class FaktumBehov(private val delegate: Map<Int, String>) : Map<Int, String> by delegate {
-    override operator fun get(id: Int): String = delegate[id] ?: throw IllegalArgumentException("Ukjent faktum id $id")
-}
-
-val BehovtypeVersjon1 = mapOf<Int, String>(
-    1 to "ØnskerDagpengerFraDato",
-    2 to "SisteDagMedArbeidsplikt",
-    3 to "Registreringsdato",
-    4 to "SisteDagMedLønn",
-    5 to "Virkningstidspunkt",
-    6 to "EgenNæring",
-    7 to "InntektSiste3År",
-    8 to "InntektSiste12Mnd",
-    9 to "G3",
-    10 to "G15",
-    11 to "Søknadstidspunkt",
-    12 to "Verneplikt",
-    14 to "GodkjenningDokumentasjonFangstOgFisk"
-)
-
 class NavMediator(private val rapidsConnection: RapidsConnection) {
 
-    val versjonToBuilder = mapOf(1 to FaktumBehov(BehovtypeVersjon1))
-
     fun sendBehov(versjon: Int, seksjon: Seksjon, fnr: String, søknadUuid: UUID) {
-        require(versjonToBuilder.containsKey(versjon)) { "Vet ikke om versjon $versjon" }
-        seksjon.map { BehovBuilder(it, versjonToBuilder[versjon]!!) } // TODO: Fakta må ha NAV-roller
+        seksjon.map { BehovBuilder(it, FaktumBehov.id(versjon)) } // TODO: Fakta må ha NAV-roller
             .filter { behovBuilder -> behovBuilder.behovKanSendes }.forEach { behovBuilder ->
                 behovBuilder.build(fnr, søknadUuid).also {
                     rapidsConnection.publish(it)

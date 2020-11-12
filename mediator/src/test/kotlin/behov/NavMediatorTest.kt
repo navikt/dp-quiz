@@ -23,6 +23,26 @@ internal class NavMediatorTest {
     private val rapid = TestRapid()
     private val navMediator = NavMediator(rapid)
 
+    private val versjon = FaktumBehov(
+        1,
+        mapOf(
+            1 to "ØnskerDagpengerFraDato",
+            2 to "SisteDagMedArbeidsplikt",
+            3 to "Registreringsdato",
+            4 to "SisteDagMedLønn",
+            5 to "Virkningstidspunkt",
+            6 to "EgenNæring",
+            7 to "InntektSiste3År",
+            8 to "InntektSiste12Mnd",
+            9 to "G3",
+            10 to "G15",
+            11 to "Søknadstidspunkt",
+            12 to "Verneplikt",
+            14 to "GodkjenningDokumentasjonFangstOgFisk"
+        )
+
+    )
+
     private val fnr = "12345678910"
     private val søknadUuid = UUID.randomUUID()
 

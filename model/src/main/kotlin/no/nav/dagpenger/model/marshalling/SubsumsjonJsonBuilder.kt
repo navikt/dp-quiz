@@ -22,13 +22,13 @@ class SubsumsjonJsonBuilder(private val subsumsjon: Subsumsjon) : FaktumJsonBuil
         fun mulige(subsumsjon: Subsumsjon) = SubsumsjonJsonBuilder(subsumsjon.mulige())
     }
 
-    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, resultat: Boolean?) {
+    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
         subsumsjonNode(subsumsjon, regel.typeNavn, resultat).also { it ->
             it.set("fakta", mapper.valueToTree(fakta.map { it.id }))
         }
     }
 
-    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, resultat: Boolean?) {
+    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
         root = objectNodes.removeAt(0)
     }
 
