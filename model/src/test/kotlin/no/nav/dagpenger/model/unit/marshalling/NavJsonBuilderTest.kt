@@ -17,44 +17,43 @@ class NavJsonBuilderTest {
     @Test
     fun `bygger behov event`() {
         val prototypeSøknad = Søknad(
-                ja nei "f1" id 1,
-                ja nei "f1" id 2 avhengerAv 1,
-                ja nei "f3" id 3,
-                ja nei "f3" id 4 avhengerAv 3,
+            ja nei "f1" id 1,
+            ja nei "f1" id 2 avhengerAv 1,
+            ja nei "f3" id 3,
+            ja nei "f3" id 4 avhengerAv 3,
         )
 
         val prototypeSubsumsjon =
-                prototypeSøknad.ja(1) er true så
-                        "alle".alle (
-                            prototypeSøknad.ja(2) er true,
-                            prototypeSøknad.ja(3) er true,
-                            prototypeSøknad.ja(4) er true
-                        )
+            prototypeSøknad.ja(1) er true så
+                "alle".alle(
+                    prototypeSøknad.ja(2) er true,
+                    prototypeSøknad.ja(3) er true,
+                    prototypeSøknad.ja(4) er true
+                )
 
         val søkerSeksjon = Seksjon("seksjon søker", Rolle.søker, prototypeSøknad.ja(1))
         val navSeksjon = Seksjon("seksjon nav", Rolle.nav, prototypeSøknad.ja(2), prototypeSøknad.ja(3), prototypeSøknad.ja(4))
 
         val prototypeFaktagrupper = Faktagrupper(
-                prototypeSøknad,
-                søkerSeksjon,
-                navSeksjon,
-                rootSubsumsjon = prototypeSubsumsjon
+            prototypeSøknad,
+            søkerSeksjon,
+            navSeksjon,
+            rootSubsumsjon = prototypeSubsumsjon
         )
 
         Versjon(
-                1,
-                prototypeSøknad,
-                prototypeSubsumsjon,
-                mapOf(Versjon.FaktagrupperType.Web to prototypeFaktagrupper)
+            1,
+            prototypeSøknad,
+            prototypeSubsumsjon,
+            mapOf(Versjon.FaktagrupperType.Web to prototypeFaktagrupper)
         )
 
-        prototypeSøknad.ja(1).besvar(true)
-
         val fakta = Versjon.siste.faktagrupper(fnr = "12345678910", Versjon.FaktagrupperType.Web)
+        fakta.ja(1).besvar(true)
         val json = NavJsonBuilder(fakta).resultat()
 
         assertEquals("behov", json["@event_name"].asText())
         assertEquals("12345678910", json["fnr"].asText())
-        //assertEquals(1, json["fakta"].size())
+        assertEquals(2, json["fakta"].size())
     }
 }
