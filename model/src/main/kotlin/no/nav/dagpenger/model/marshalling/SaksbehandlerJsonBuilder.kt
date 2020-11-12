@@ -13,6 +13,8 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.faktum.ValgFaktum
+import no.nav.dagpenger.model.regel.Regel
+import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.visitor.FaktagrupperVisitor
 import java.time.LocalDate
@@ -27,7 +29,7 @@ class SaksbehandlerJsonBuilder(
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
-    private lateinit var subsumsjonRoot: ObjectNode
+    private val subsumsjonRoot = mapper.createArrayNode()
     private var ignore = true
     private var iValg = false
     private val faktumIder = mutableSetOf<String>()
@@ -39,9 +41,7 @@ class SaksbehandlerJsonBuilder(
         fakta.rootSubsumsjon.mulige().accept(this)
     }
 
-    fun resultat() = root.also {
-        // root.set("subsumsjon", subsumsjonRoot)
-    }
+    fun resultat() = root
 
     override fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
         root.put("@event_name", "oppgave")
@@ -52,6 +52,7 @@ class SaksbehandlerJsonBuilder(
         root.put("seksjon_navn", seksjonNavn)
         root.put("indeks", indeks)
         root.set("fakta", faktaNode)
+        root.set("subsumsjoner", subsumsjonRoot)
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
@@ -151,11 +152,24 @@ class SaksbehandlerJsonBuilder(
     }
 
     override fun preVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {
-        subsumsjonNoder.add(0, mapper.createObjectNode())
+        subsumsjonNoder.add(0, subsumsjonRoot.addObject())
     }
 
     override fun postVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {
-        subsumsjonRoot = subsumsjonNoder.removeAt(0)
+        subsumsjonNoder.removeAt(0)
+    }
+
+    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, resultat: Boolean?) {
+        subsumsjonRoot.addObject().also { subsumsjonNode ->
+            subsumsjonNoder.add(0, subsumsjonNode)
+            subsumsjonNode.put("resultat", resultat)
+            subsumsjonNode.put("navn", subsumsjon.navn)
+            subsumsjonNode.put("type", "Enkel subsumsjon")
+        }
+    }
+
+    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, resultat: Boolean?) {
+        subsumsjonNoder.removeAt(0)
     }
 
     private fun <R : Comparable<R>> lagFaktumNode(id: String, roller: Set<Rolle> = emptySet(), svar: R? = null) {
