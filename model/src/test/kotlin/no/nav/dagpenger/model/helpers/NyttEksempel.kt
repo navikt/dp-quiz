@@ -116,9 +116,9 @@ internal class NyttEksempel {
     private val prototypeSeksjon4 = Seksjon("seksjon4", Rolle.søker, p3Dato, p4Dato, p5Dato, p_3_4_5Dato, p13Dato)
     private val prototypeSeksjon5 = Seksjon("seksjon5", Rolle.søker, p10Boolean, p11Dokument)
     private val prototypeSeksjon6 = Seksjon("seksjon6", Rolle.søker, p15Int)
-    private val prototypeSeksjon7 = Seksjon("seksjon7", Rolle.søker, p16Int, p17Boolean)
+    private val prototypeSeksjon7 = Seksjon("seksjon7", Rolle.søker, p17Boolean, p18Boolean)
     private val prototypeSeksjon8 =
-        Seksjon("seksjon8", Rolle.saksbehandler, p6Inntekt, p7Inntekt, p12Boolean, p14Boolean, p18Boolean, p19Boolean)
+        Seksjon("seksjon8", Rolle.saksbehandler, p6Inntekt, p7Inntekt, p12Boolean, p14Boolean, p16Int, p19Boolean)
 
     private val webPrototypeFaktagrupper: Faktagrupper =
         Faktagrupper(

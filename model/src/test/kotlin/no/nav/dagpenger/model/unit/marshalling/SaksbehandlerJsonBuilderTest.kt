@@ -14,7 +14,6 @@ import no.nav.dagpenger.model.regel.gyldigGodkjentAv
 import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
 import no.nav.dagpenger.model.subsumsjon.så
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.util.UUID
@@ -68,7 +67,6 @@ internal class SaksbehandlerJsonBuilderTest {
     }
 
     @Test
-    @Disabled
     fun `Komplekse seksjoner`() {
         assertSeksjonSize(8, "seksjon8")
         assertSeksjonSize(5, "seksjon4")
@@ -76,14 +74,13 @@ internal class SaksbehandlerJsonBuilderTest {
     }
 
     @Test
-    @Disabled
     fun `Genererte seksjoner kan bli sendt`() {
         val fakta = NyttEksempel().faktagrupper
         fakta.heltall(15).besvar(3)
         var json = SaksbehandlerJsonBuilder(fakta, "seksjon8").resultat()
         assertEquals(11, json["fakta"].size())
         json = SaksbehandlerJsonBuilder(fakta, "seksjon7", 1).resultat()
-        assertEquals(2, json["fakta"].size())
+        assertEquals(1, json["fakta"].size())
     }
 
     private fun assertSeksjonSize(expected: Int, seksjonNavn: String) {

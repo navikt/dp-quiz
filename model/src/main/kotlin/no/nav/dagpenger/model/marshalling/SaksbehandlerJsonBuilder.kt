@@ -29,6 +29,7 @@ class SaksbehandlerJsonBuilder(
     private val faktaNode = mapper.createArrayNode()
     private lateinit var subsumsjonRoot: ObjectNode
     private var ignore = true
+    private var iValg = false
     private val faktumIder = mutableSetOf<String>()
     private val subsumsjonNoder = mutableListOf<ObjectNode>()
 
@@ -70,6 +71,7 @@ class SaksbehandlerJsonBuilder(
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
+        if (iValg) return
         lagFaktumNode<R>(id, roller)
     }
 
@@ -121,6 +123,7 @@ class SaksbehandlerJsonBuilder(
         clazz: Class<Boolean>
     ) {
         lagFaktumNode<Boolean>(id)
+        iValg = true
     }
 
     override fun preVisit(
@@ -134,6 +137,17 @@ class SaksbehandlerJsonBuilder(
         svar: Boolean
     ) {
         lagFaktumNode(id, svar = svar)
+        iValg = true
+    }
+
+    override fun postVisit(
+        faktum: ValgFaktum,
+        id: String,
+        underordnedeJa: Set<Faktum<Boolean>>,
+        underordnedeNei: Set<Faktum<Boolean>>,
+        clazz: Class<Boolean>
+    ) {
+        iValg = false
     }
 
     override fun preVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {
