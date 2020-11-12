@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
@@ -14,12 +15,16 @@ import no.nav.dagpenger.model.visitor.FaktagrupperVisitor
 import java.time.LocalDate
 import java.util.UUID
 
-class NavJsonBuilder(fakta: Faktagrupper) : FaktagrupperVisitor {
+class NavJsonBuilder(fakta: Faktagrupper, versjonId: Int) : FaktagrupperVisitor {
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
     private var ignore = true
     private val faktumIder = mutableSetOf<String>()
+    private val faktumBehov = FaktumBehov.id(versjonId)
+    private val behovNode = mapper.createArrayNode()
+
+    private var rootId = 0
 
     init {
         fakta.accept(this)
@@ -32,10 +37,15 @@ class NavJsonBuilder(fakta: Faktagrupper) : FaktagrupperVisitor {
         root.put("fnr", fnr)
         root.put("soknad_uuid", "$uuid")
         root.set("fakta", faktaNode)
+        root.set("@behov", behovNode)
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
         ignore = rolle != Rolle.nav
+    }
+
+    override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
+        this.rootId = rootId
     }
 
     override fun <R : Comparable<R>> visit(
@@ -47,96 +57,36 @@ class NavJsonBuilder(fakta: Faktagrupper) : FaktagrupperVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
-        if (avhengerAvFakta.all { it.erBesvart() })
-            lagFaktumNode<R>(id, roller)
+        if (ignore) return
+        if (id in faktumIder) return
+        if (avhengerAvFakta.all { it.erBesvart() }) {
+            behovNode.add(faktumBehov[rootId])
+            lagFaktumNode(id)
+            avhengerAvFakta.forEach {
+                root.putR(faktumBehov[it.reflection { rootId, _ -> rootId }], it.svar())
+            }
+        }
     }
 
-    /*
-    override fun <R : Comparable<R>> visit(
-            faktum: GrunnleggendeFaktum<R>,
-            tilstand: Faktum.FaktumTilstand,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFakta: Set<Faktum<*>>,
-            roller: Set<Rolle>,
-            clazz: Class<R>,
-            svar: R
-    ) {
-        //lagFaktumNode(id, roller, svar)
-    }
-
-    override fun <R : Comparable<R>> preVisit(
-            faktum: UtledetFaktum<R>,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFakta: Set<Faktum<*>>,
-            children: Set<Faktum<*>>,
-            clazz: Class<R>,
-            regel: FaktaRegel<R>
-    ) {
-        lagFaktumNode<R>(id)
-    }
-
-    override fun <R : Comparable<R>> preVisit(
-            faktum: UtledetFaktum<R>,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFakta: Set<Faktum<*>>,
-            children: Set<Faktum<*>>,
-            clazz: Class<R>,
-            regel: FaktaRegel<R>,
-            svar: R
-    ) {
-        //lagFaktumNode(id, svar = svar)
-    }
-
-    override fun preVisit(
-            faktum: ValgFaktum,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFakta: Set<Faktum<*>>,
-            underordnedeJa: Set<Faktum<Boolean>>,
-            underordnedeNei: Set<Faktum<Boolean>>,
-            clazz: Class<Boolean>
-    ) {
-        lagFaktumNode<Boolean>(id)
-    }
-
-    override fun preVisit(
-            faktum: ValgFaktum,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFakta: Set<Faktum<*>>,
-            underordnedeJa: Set<Faktum<Boolean>>,
-            underordnedeNei: Set<Faktum<Boolean>>,
-            clazz: Class<Boolean>,
-            svar: Boolean
-    ) {
-        //lagFaktumNode(id, svar = svar)
-    }
-
-     */
-
-    private fun <R : Comparable<R>> lagFaktumNode(id: String, roller: Set<Rolle> = emptySet(), svar: R? = null) {
+    private fun lagFaktumNode(id: String) {
         if (ignore) return
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("id", id)
-            faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
-            svar?.also { faktumNode.putR(it) }
+            faktumNode.put("behov", faktumBehov[rootId])
         }
         faktumIder.add(id)
     }
 
-    private fun <R : Comparable<R>> ObjectNode.putR(svar: R) {
+    private fun ObjectNode.putR(key: String, svar: Any) {
         when (svar) {
-            is Boolean -> this.put("svar", svar)
-            is Int -> this.put("svar", svar)
-            is Double -> this.put("svar", svar)
-            is String -> this.put("svar", svar)
-            is LocalDate -> this.put("svar", svar.toString())
+            is Boolean -> this.put(key, svar)
+            is Int -> this.put(key, svar)
+            is Double -> this.put(key, svar)
+            is String -> this.put(key, svar)
+            is LocalDate -> this.put(key, svar.toString())
             is Dokument -> this.set(
-                "svar",
+                key,
                 svar.reflection { lastOppTidsstempel, url ->
                     mapper.createObjectNode().also {
                         it.put("lastOppTidsstempel", lastOppTidsstempel.toString())
@@ -144,7 +94,7 @@ class NavJsonBuilder(fakta: Faktagrupper) : FaktagrupperVisitor {
                     }
                 }
             )
-            is Inntekt -> this.put("svar", svar.reflection { årlig, _, _, _ -> årlig })
+            is Inntekt -> this.put(key, svar.reflection { årlig, _, _, _ -> årlig })
             else -> throw IllegalArgumentException("Ukjent datatype")
         }
     }

@@ -1,11 +1,16 @@
 package no.nav.dagpenger.model.unit.marshalling
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.factory.ValgFaktumFactory.Companion.valg
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.marshalling.FaktumBehov
 import no.nav.dagpenger.model.marshalling.NavJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -15,13 +20,33 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
 class NavJsonBuilderTest {
+
+    private val versjon = FaktumBehov(
+        1,
+        mapOf(
+            1 to "f1Behov",
+            2 to "f2Behov",
+            3 to "f3Behov",
+            4 to "f4Behov",
+            5 to "f5Behov",
+            6 to "f6Behov",
+            7 to "f7Behov",
+            8 to "f8Behov"
+        )
+
+    )
+
     @Test
     fun `bygger behov event`() {
         val prototypeSøknad = Søknad(
             ja nei "f1" id 1,
             ja nei "f1" id 2 avhengerAv 1,
             ja nei "f3" id 3,
-            ja nei "f3" id 4 avhengerAv 3,
+            ja nei "f4" id 4 avhengerAv 7 og 8,
+            dato faktum "f5" id 5,
+            dato faktum "f6" id 6,
+            maks dato "f56" av 5 og 6 id 7,
+            valg faktum "f8" ja "jaValg1" ja "jaValg2" nei "neiValg1" nei "neiValg2" id 8
         )
 
         val prototypeSubsumsjon =
@@ -29,11 +54,19 @@ class NavJsonBuilderTest {
                 "alle".alle(
                     prototypeSøknad.ja(2) er true,
                     prototypeSøknad.ja(3) er true,
-                    prototypeSøknad.ja(4) er true
+                    prototypeSøknad.ja(4) er true,
+                    prototypeSøknad.valg(8) er true
                 )
 
         val søkerSeksjon = Seksjon("seksjon søker", Rolle.søker, prototypeSøknad.ja(1))
-        val navSeksjon = Seksjon("seksjon nav", Rolle.nav, prototypeSøknad.ja(2), prototypeSøknad.ja(3), prototypeSøknad.ja(4))
+        val navSeksjon = Seksjon(
+            "seksjon nav",
+            Rolle.nav,
+            prototypeSøknad.ja(2),
+            prototypeSøknad.ja(3),
+            prototypeSøknad.ja(4),
+            prototypeSøknad.dato(7)
+        )
 
         val prototypeFaktagrupper = Faktagrupper(
             prototypeSøknad,
@@ -49,25 +82,27 @@ class NavJsonBuilderTest {
         )
 
         val fakta = Versjon.siste.faktagrupper(fnr = "12345678910", Versjon.FaktagrupperType.Web)
+
         fakta.ja(1).besvar(true)
-        NavJsonBuilder(fakta).resultat().also {
+        fakta.dato(5).besvar(1.januar)
+
+        NavJsonBuilder(fakta, 1).resultat().also {
             assertEquals("behov", it["@event_name"].asText())
             assertEquals("12345678910", it["fnr"].asText())
-            assertEquals(2, it["fakta"].size())
+            assertEquals(3, it["fakta"].size())
+            assertEquals(listOf("f2Behov", "f3Behov", "f6Behov"), it["@behov"].map { it.asText() })
             assertTrue(it["fakta"].any { it["id"].asText() == "3" })
+            assertTrue(it["fakta"].any { it["id"].asText() == "2" })
+            assertTrue(it["fakta"].any { it["id"].asText() == "6" })
+            assertEquals(true, it["f1Behov"].asBoolean())
         }
 
-        fakta.ja(2).besvar(true)
-        NavJsonBuilder(fakta).resultat().also {
-            assertEquals(1, it["fakta"].size())
-            assertTrue(it["fakta"].any { it["id"].asText() == "3" })
-        }
+        fakta.dato(6).besvar(1.januar)
+        fakta.ja(9).besvar(true)
 
-        fakta.ja(3).besvar(true)
-
-        NavJsonBuilder(fakta).resultat().also {
-            assertEquals(1, it["fakta"].size())
-            assertTrue(it["fakta"].any { it["id"].asText() == "4" })
+        NavJsonBuilder(fakta, 1).resultat().also {
+            assertTrue(it.has("f7Behov"))
+            assertTrue(it.has("f8Behov"))
         }
     }
 }
