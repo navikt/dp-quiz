@@ -10,7 +10,7 @@ import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.marshalling.FaktumBehov
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.marshalling.NavJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -21,8 +21,7 @@ import kotlin.test.assertTrue
 
 class NavJsonBuilderTest {
 
-    private val versjon = FaktumBehov(
-        1,
+    private val versjon = FaktumNavBehov(
         mapOf(
             1 to "f1Behov",
             2 to "f2Behov",
@@ -86,7 +85,7 @@ class NavJsonBuilderTest {
         fakta.ja(1).besvar(true)
         fakta.dato(5).besvar(1.januar)
 
-        NavJsonBuilder(fakta, 1).resultat().also {
+        NavJsonBuilder(fakta, FaktumNavBehov.siste).resultat().also {
             assertEquals("behov", it["@event_name"].asText())
             assertEquals("12345678910", it["fnr"].asText())
             assertEquals(3, it["fakta"].size())
@@ -100,7 +99,7 @@ class NavJsonBuilderTest {
         fakta.dato(6).besvar(1.januar)
         fakta.ja(9).besvar(true)
 
-        NavJsonBuilder(fakta, 1).resultat().also {
+        NavJsonBuilder(fakta, FaktumNavBehov.siste).resultat().also {
             assertTrue(it.has("f7Behov"))
             assertTrue(it.has("f8Behov"))
         }

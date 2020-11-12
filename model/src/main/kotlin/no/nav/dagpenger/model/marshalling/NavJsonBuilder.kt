@@ -15,13 +15,12 @@ import no.nav.dagpenger.model.visitor.FaktagrupperVisitor
 import java.time.LocalDate
 import java.util.UUID
 
-class NavJsonBuilder(fakta: Faktagrupper, versjonId: Int) : FaktagrupperVisitor {
+class NavJsonBuilder(fakta: Faktagrupper, private val faktaNavBehov: FaktumNavBehov) : FaktagrupperVisitor {
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
     private var ignore = true
     private val faktumIder = mutableSetOf<String>()
-    private val faktumBehov = FaktumBehov.id(versjonId)
     private val behovNode = mapper.createArrayNode()
 
     private var rootId = 0
@@ -60,10 +59,10 @@ class NavJsonBuilder(fakta: Faktagrupper, versjonId: Int) : FaktagrupperVisitor 
         if (ignore) return
         if (id in faktumIder) return
         if (avhengerAvFakta.all { it.erBesvart() }) {
-            behovNode.add(faktumBehov[rootId])
+            behovNode.add(faktaNavBehov[rootId])
             lagFaktumNode(id)
             avhengerAvFakta.forEach {
-                root.putR(faktumBehov[it.reflection { rootId, _ -> rootId }], it.svar())
+                root.putR(faktaNavBehov[it.reflection { rootId, _ -> rootId }], it.svar())
             }
         }
     }
@@ -73,7 +72,7 @@ class NavJsonBuilder(fakta: Faktagrupper, versjonId: Int) : FaktagrupperVisitor 
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("id", id)
-            faktumNode.put("behov", faktumBehov[rootId])
+            faktumNode.put("behov", faktaNavBehov[rootId])
         }
         faktumIder.add(id)
     }
