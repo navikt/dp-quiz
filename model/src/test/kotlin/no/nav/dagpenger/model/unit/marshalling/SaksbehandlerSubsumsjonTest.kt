@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.så
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -58,13 +59,35 @@ internal class SaksbehandlerSubsumsjonTest {
     }
 
     @Test
-    fun test() {
+    fun `enkel subsumsjon`() {
         val fakta = faktagrupper(prototypeSøknad.ja(1) er true)
         fakta.ja(1).besvar(true)
-        val json = SaksbehandlerJsonBuilder(fakta, "saksbehandler2").resultat()
+        SaksbehandlerJsonBuilder(fakta, "saksbehandler2").resultat().also { json ->
+            assertEquals(1, json["subsumsjoner"].size())
+            assertTrue(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+        }
+    }
 
-        assertEquals(1, json["subsumsjoner"].size())
-        assertTrue(json["subsumsjoner"][0]["resultat"].asBoolean())
+    @Test
+    fun `subsumsjon med gyldig sti`() {
+        val fakta = faktagrupper(
+            prototypeSøknad.ja(1) er true så (
+                prototypeSøknad.ja(3) er true
+                )
+        )
+        fakta.ja(1).besvar(true)
+        fakta.ja(3).besvar(false)
+        SaksbehandlerJsonBuilder(fakta, "saksbehandler2").resultat().also { json ->
+            assertEquals(2, json["subsumsjoner"].size())
+            assertTrue(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+            assertFalse(json["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
+        }
+
+        fakta.ja(1).besvar(false)
+        SaksbehandlerJsonBuilder(fakta, "saksbehandler2").resultat().also { json ->
+            assertEquals(1, json["subsumsjoner"].size())
+            assertFalse(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+        }
     }
 
     private fun faktagrupper(prototypeSubsumsjon: Subsumsjon): Faktagrupper {

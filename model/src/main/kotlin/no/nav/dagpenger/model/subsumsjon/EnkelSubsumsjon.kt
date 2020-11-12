@@ -22,10 +22,10 @@ open class EnkelSubsumsjon protected constructor(
 
     override fun accept(visitor: SubsumsjonVisitor) {
         resultat().also {
-            visitor.preVisit(this, regel, subsumsjonFakta, it)
+            visitor.preVisit(this, regel, subsumsjonFakta, lokaltResultat(), it)
             subsumsjonFakta.forEach { it.accept(visitor) }
             super.accept(visitor)
-            visitor.postVisit(this, regel, subsumsjonFakta, it)
+            visitor.postVisit(this, regel, subsumsjonFakta, lokaltResultat(), it)
         }
     }
 

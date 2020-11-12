@@ -11,11 +11,10 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 import java.util.UUID
 
-
 class NavMediator(private val rapidsConnection: RapidsConnection) {
 
     fun sendBehov(versjon: Int, seksjon: Seksjon, fnr: String, søknadUuid: UUID) {
-        seksjon.map { BehovBuilder(it, FaktumBehov.id(versjon)) }  // TODO: Fakta må ha NAV-roller
+        seksjon.map { BehovBuilder(it, FaktumBehov.id(versjon)) } // TODO: Fakta må ha NAV-roller
             .filter { behovBuilder -> behovBuilder.behovKanSendes }.forEach { behovBuilder ->
                 behovBuilder.build(fnr, søknadUuid).also {
                     rapidsConnection.publish(it)

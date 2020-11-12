@@ -159,16 +159,17 @@ class SaksbehandlerJsonBuilder(
         subsumsjonNoder.removeAt(0)
     }
 
-    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, resultat: Boolean?) {
+    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
         subsumsjonRoot.addObject().also { subsumsjonNode ->
             subsumsjonNoder.add(0, subsumsjonNode)
             subsumsjonNode.put("resultat", resultat)
+            subsumsjonNode.put("lokalt_resultat", lokaltResultat)
             subsumsjonNode.put("navn", subsumsjon.navn)
             subsumsjonNode.put("type", "Enkel subsumsjon")
         }
     }
 
-    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, resultat: Boolean?) {
+    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
         subsumsjonNoder.removeAt(0)
     }
 
