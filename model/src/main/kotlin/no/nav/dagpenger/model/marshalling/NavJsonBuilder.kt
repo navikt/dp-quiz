@@ -13,6 +13,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.visitor.FaktagrupperVisitor
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 class NavJsonBuilder(fakta: Faktagrupper, private val faktaNavBehov: FaktumNavBehov) : FaktagrupperVisitor {
@@ -33,6 +34,8 @@ class NavJsonBuilder(fakta: Faktagrupper, private val faktaNavBehov: FaktumNavBe
 
     override fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
         root.put("@event_name", "behov")
+        root.put("@opprettet", "${LocalDateTime.now()}")
+        root.put("@id", "${UUID.randomUUID()}")
         root.put("fnr", fnr)
         root.put("soknad_uuid", "$uuid")
         root.set("fakta", faktaNode)

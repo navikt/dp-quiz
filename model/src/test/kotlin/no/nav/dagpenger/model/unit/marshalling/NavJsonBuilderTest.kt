@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.unit.marshalling
 
+import com.fasterxml.jackson.databind.JsonNode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
@@ -16,24 +17,27 @@ import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.så
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import kotlin.test.assertTrue
+
 
 class NavJsonBuilderTest {
 
-    private val versjon = FaktumNavBehov(
-        mapOf(
-            1 to "f1Behov",
-            2 to "f2Behov",
-            3 to "f3Behov",
-            4 to "f4Behov",
-            5 to "f5Behov",
-            6 to "f6Behov",
-            7 to "f7Behov",
-            8 to "f8Behov"
+    init {
+        FaktumNavBehov(
+            mapOf(
+                1 to "f1Behov",
+                2 to "f2Behov",
+                3 to "f3Behov",
+                4 to "f4Behov",
+                5 to "f5Behov",
+                6 to "f6Behov",
+                7 to "f7Behov",
+                8 to "f8Behov"
+            )
         )
-
-    )
+    }
 
     @Test
     fun `bygger behov event`() {
@@ -85,23 +89,54 @@ class NavJsonBuilderTest {
         fakta.ja(1).besvar(true)
         fakta.dato(5).besvar(1.januar)
 
-        NavJsonBuilder(fakta, FaktumNavBehov.siste).resultat().also {
-            assertEquals("behov", it["@event_name"].asText())
-            assertEquals("12345678910", it["fnr"].asText())
-            assertEquals(3, it["fakta"].size())
-            assertEquals(listOf("f2Behov", "f3Behov", "f6Behov"), it["@behov"].map { it.asText() })
-            assertTrue(it["fakta"].any { it["id"].asText() == "3" })
-            assertTrue(it["fakta"].any { it["id"].asText() == "2" })
-            assertTrue(it["fakta"].any { it["id"].asText() == "6" })
-            assertEquals(true, it["f1Behov"].asBoolean())
-        }
+        assertBehovJson(
+            json = NavJsonBuilder(fakta, FaktumNavBehov.siste).resultat(),
+            faktumOgBehov = listOf(2 to "f2Behov", 3 to "f3Behov", 6 to "f6Behov"),
+            avhengigeBehov = listOf("f1Behov")
+        )
 
         fakta.dato(6).besvar(1.januar)
         fakta.ja(9).besvar(true)
 
-        NavJsonBuilder(fakta, FaktumNavBehov.siste).resultat().also {
-            assertTrue(it.has("f7Behov"))
-            assertTrue(it.has("f8Behov"))
+        assertBehovJson(
+            json = NavJsonBuilder(fakta, FaktumNavBehov.siste).resultat(),
+            faktumOgBehov = listOf(2 to "f2Behov", 3 to "f3Behov", 4 to "f4Behov"),
+            avhengigeBehov = listOf("f7Behov", "f8Behov")
+        )
+
+        fakta.dato(2).besvar(1.januar)
+        fakta.dato(4).besvar(1.januar)
+
+        assertBehovJson(
+            json = NavJsonBuilder(fakta, FaktumNavBehov.siste).resultat(),
+            faktumOgBehov = listOf(3 to "f3Behov"),
+            avhengigeBehov = emptyList()
+        )
+
+        fakta.dato(3).besvar(1.januar)
+
+        assertBehovJson(
+            json = NavJsonBuilder(fakta, FaktumNavBehov.siste).resultat(),
+            faktumOgBehov = emptyList(),
+            avhengigeBehov = emptyList()
+        )
+    }
+
+    private fun assertBehovJson(
+        json: JsonNode,
+        faktumOgBehov: List<Pair<Int, String>>,
+        avhengigeBehov: List<String>
+    ) {
+        val faktumOgBehov = faktumOgBehov.toMap()
+        assertEquals("behov", json["@event_name"].asText())
+        assertEquals("12345678910", json["fnr"].asText())
+        assertTrue(json.has("@id"))
+        assertTrue(json.has("@opprettet"))
+        assertEquals(faktumOgBehov.values.toList(), json["@behov"].map { it.asText() })
+        assertEquals(faktumOgBehov.keys.toString(), json["fakta"].map { it["id"].asText() }.toString())
+        avhengigeBehov.forEach { avhengigBehov ->
+            assertTrue(json.has(avhengigBehov))
+            assertNotNull(json[avhengigBehov])
         }
     }
 }
