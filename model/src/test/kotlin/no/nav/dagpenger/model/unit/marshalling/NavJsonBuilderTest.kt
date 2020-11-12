@@ -12,6 +12,7 @@ import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.så
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import kotlin.test.assertTrue
 
 class NavJsonBuilderTest {
     @Test
@@ -50,10 +51,25 @@ class NavJsonBuilderTest {
 
         val fakta = Versjon.siste.faktagrupper(fnr = "12345678910", Versjon.FaktagrupperType.Web)
         fakta.ja(1).besvar(true)
-        val json = NavJsonBuilder(fakta).resultat()
+        NavJsonBuilder(fakta).resultat().also {
+            assertEquals("behov", it["@event_name"].asText())
+            assertEquals("12345678910", it["fnr"].asText())
+            assertEquals(2, it["fakta"].size())
+            assertTrue(it["fakta"].any { it["id"].asText() == "3" })
+        }
 
-        assertEquals("behov", json["@event_name"].asText())
-        assertEquals("12345678910", json["fnr"].asText())
-        assertEquals(2, json["fakta"].size())
+        fakta.ja(2).besvar(true)
+        NavJsonBuilder(fakta).resultat().also {
+            assertEquals(1, it["fakta"].size())
+            assertTrue(it["fakta"].any { it["id"].asText() == "3" })
+        }
+
+        fakta.ja(3).besvar(true)
+
+        NavJsonBuilder(fakta).resultat().also {
+            assertEquals(1, it["fakta"].size())
+            assertTrue(it["fakta"].any { it["id"].asText() == "4" })
+        }
+
     }
 }

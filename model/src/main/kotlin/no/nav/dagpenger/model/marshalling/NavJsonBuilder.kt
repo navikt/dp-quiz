@@ -22,14 +22,12 @@ class NavJsonBuilder(fakta: Faktagrupper) : FaktagrupperVisitor {
     private val faktumIder = mutableSetOf<String>()
 
     init {
-        // fakta.søknad.accept(this)
         fakta.accept(this)
     }
 
     fun resultat() = root
 
     override fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
-        root.put("@event_name", "behov")
         root.put("@event_name", "behov")
         root.put("fnr", fnr)
         root.put("soknad_uuid", "$uuid")
