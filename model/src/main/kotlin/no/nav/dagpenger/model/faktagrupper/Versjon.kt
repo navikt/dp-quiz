@@ -19,7 +19,20 @@ class Versjon(
 
         fun id(versjonId: Int) =
             versjoner[versjonId] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $versjonId")
+
+        private fun nesteId(): Int = (versjoner.keys.maxOrNull() ?: 0) + 1
     }
+
+    init {
+        require(versjonId !in versjoner.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider" }
+        versjoner[versjonId] = this
+    }
+
+    constructor(
+        prototypeSøknad: Søknad,
+        prototypeSubsumsjon: Subsumsjon,
+        prototypeFaktagrupper: Map<FaktagrupperType, Faktagrupper>
+    ) : this(nesteId(), prototypeSøknad, prototypeSubsumsjon, prototypeFaktagrupper)
 
     fun faktagrupper(fnr: String, type: FaktagrupperType, uuid: UUID = UUID.randomUUID()): Faktagrupper =
         faktagrupper(prototypeSøknad.bygg(fnr, versjonId, uuid), type)
@@ -28,10 +41,6 @@ class Versjon(
         val subsumsjon = prototypeSubsumsjon.bygg(søknad)
         return prototypeFaktagrupper[type]?.bygg(søknad, subsumsjon)
             ?: throw IllegalArgumentException("Kan ikke finne faktagrupper av type $type")
-    }
-
-    init {
-        versjoner[versjonId] = this
     }
 
     enum class FaktagrupperType(val id: Int) {

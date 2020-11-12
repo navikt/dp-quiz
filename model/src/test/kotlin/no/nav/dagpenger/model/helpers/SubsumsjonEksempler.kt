@@ -103,7 +103,6 @@ internal fun eksempelSøknad(): Faktagrupper {
     )
 
     return Versjon(
-        1,
         prototypeSøknad,
         prototypeSubsumsjon,
         mapOf(Web to prototypeWebSøknad)

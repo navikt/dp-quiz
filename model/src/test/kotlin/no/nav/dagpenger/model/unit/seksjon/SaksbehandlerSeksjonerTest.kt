@@ -45,7 +45,12 @@ internal class SaksbehandlerSeksjonerTest {
         Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.ja(4), prototypeSøknad.ja(6))
     )
 
-    private val version = Versjon(1, prototypeSøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
+    private val version = Versjon(
+        prototypeSøknad,
+        prototypeSubsumsjon,
+        mapOf(Web to prototypeFaktagrupper)
+    )
+
     private lateinit var seksjoner: Faktagrupper
     private lateinit var f1: Faktum<Boolean>
     private lateinit var f3: Faktum<Boolean>

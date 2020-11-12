@@ -28,8 +28,6 @@ internal class SaksbehandlerSubsumsjonTest {
             ja nei "f3" id 3,
             ja nei "f4" id 4 avhengerAv 3,
         )
-
-        private var versjonId = 1
     }
 
     @Test
@@ -100,7 +98,6 @@ internal class SaksbehandlerSubsumsjonTest {
         )
 
         Versjon(
-            versjonId++,
             prototypeSøknad,
             prototypeSubsumsjon,
             mapOf(Web to prototypeFaktagrupper)

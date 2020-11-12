@@ -142,7 +142,7 @@ internal class NyttEksempel {
     internal lateinit var seksjon8: Seksjon
     internal lateinit var rootSubsumsjon: Subsumsjon
 
-    private val versjon = Versjon(1, prototypeSøknad, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
+    private val versjon = Versjon(prototypeSøknad, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
 
     internal val faktagrupper: Faktagrupper by lazy {
 

@@ -43,7 +43,6 @@ class NavJsonBuilderTest {
         )
 
         Versjon(
-            1,
             prototypeSøknad,
             prototypeSubsumsjon,
             mapOf(Versjon.FaktagrupperType.Web to prototypeFaktagrupper)
@@ -70,6 +69,5 @@ class NavJsonBuilderTest {
             assertEquals(1, it["fakta"].size())
             assertTrue(it["fakta"].any { it["id"].asText() == "4" })
         }
-
     }
 }
