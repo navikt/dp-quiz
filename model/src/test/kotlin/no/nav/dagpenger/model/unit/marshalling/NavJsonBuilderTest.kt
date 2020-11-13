@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-
 class NavJsonBuilderTest {
 
     init {
@@ -127,13 +126,13 @@ class NavJsonBuilderTest {
         faktumOgBehov: List<Pair<Int, String>>,
         avhengigeBehov: List<String>
     ) {
-        val faktumOgBehov = faktumOgBehov.toMap()
+        val faktumOgBehovMap = faktumOgBehov.toMap()
         assertEquals("behov", json["@event_name"].asText())
         assertEquals("12345678910", json["fnr"].asText())
         assertTrue(json.has("@id"))
         assertTrue(json.has("@opprettet"))
-        assertEquals(faktumOgBehov.values.toList(), json["@behov"].map { it.asText() })
-        assertEquals(faktumOgBehov.keys.toString(), json["fakta"].map { it["id"].asText() }.toString())
+        assertEquals(faktumOgBehovMap.values.toList(), json["@behov"].map { it.asText() })
+        assertEquals(faktumOgBehovMap.keys.toString(), json["fakta"].map { it["id"].asText() }.toString())
         avhengigeBehov.forEach { avhengigBehov ->
             assertTrue(json.has(avhengigBehov))
             assertNotNull(json[avhengigBehov])

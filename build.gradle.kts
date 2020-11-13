@@ -44,10 +44,6 @@ allprojects {
         }
     }
 
-/*tasks.named("compileKotlin") {
-    dependsOn("spotlessCheck")
-}*/
-
     tasks.withType<Test> {
         useJUnitPlatform()
         testLogging {
@@ -56,6 +52,9 @@ allprojects {
             exceptionFormat = TestExceptionFormat.FULL
             showStandardStreams = true
             events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
+        }
+        reports {
+            junitXml.isOutputPerTestCase = true
         }
     }
 }
