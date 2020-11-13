@@ -12,16 +12,24 @@ internal object PostgresDataSourceBuilder {
     const val DB_HOST_KEY = "DB_HOST"
     const val DB_PORT_KEY = "DB_PORT"
 
-    private val jdbcUrl by lazy {
-        val host: String? = getEnv(DB_HOST_KEY) ?: getSystemProperty(DB_HOST_KEY)
-        val port: String? = getEnv(DB_PORT_KEY) ?: getSystemProperty(DB_PORT_KEY)
-        val databaseNavn: String? = getEnv(DB_DATABASE_KEY) ?: getSystemProperty(DB_DATABASE_KEY)
-        "jdbc:postgresql://$host:$port/$databaseNavn"
-    }
-
     private val username by lazy {
         val jdbcUrl: String? = getEnv(DB_USERNAME_KEY) ?: getSystemProperty(DB_USERNAME_KEY)
         requireNotNull(jdbcUrl, { "Fant ingen db.username definert for nøkkel: $DB_USERNAME_KEY" })
+    }
+
+    private val host by lazy {
+        val jdbcUrl: String? = getEnv(DB_HOST_KEY) ?: getSystemProperty(DB_HOST_KEY)
+        requireNotNull(jdbcUrl, { "Fant ingen verdi for nøkkel: $DB_HOST_KEY" })
+    }
+
+    private val port by lazy {
+        val jdbcUrl: String? = getEnv(DB_PORT_KEY) ?: getSystemProperty(DB_PORT_KEY)
+        requireNotNull(jdbcUrl, { "Fant ingen verdi for nøkkel: $DB_PORT_KEY" })
+    }
+
+    private val databaseNavn by lazy {
+        val jdbcUrl: String? = getEnv(DB_DATABASE_KEY) ?: getSystemProperty(DB_DATABASE_KEY)
+        requireNotNull(jdbcUrl, { "Fant ingen verdi for nøkkel: $DB_DATABASE_KEY" })
     }
 
     private val password by lazy {
@@ -31,10 +39,12 @@ internal object PostgresDataSourceBuilder {
 
     val dataSource by lazy {
         HikariDataSource().apply {
-            jdbcUrl = PostgresDataSourceBuilder.jdbcUrl
-            username = PostgresDataSourceBuilder.username
-            password = PostgresDataSourceBuilder.password
-            driverClassName = "org.postgresql.Driver"
+            dataSourceClassName = "org.postgresql.ds.PGSimpleDataSource"
+            this.addDataSourceProperty("serverName", host)
+            this.addDataSourceProperty("portNumber", port)
+            this.addDataSourceProperty("databaseName", PostgresDataSourceBuilder.databaseNavn)
+            this.addDataSourceProperty("user", PostgresDataSourceBuilder.username)
+            this.addDataSourceProperty("password", PostgresDataSourceBuilder.password)
             maximumPoolSize = 10
             minimumIdle = 1
             idleTimeout = 10001
