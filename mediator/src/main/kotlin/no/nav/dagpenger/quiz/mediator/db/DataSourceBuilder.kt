@@ -8,11 +8,14 @@ internal object DataSourceBuilder {
     const val DB_URL_KEY = "DB_URL"
     const val DB_USERNAME_KEY = "DB_USERNAME"
     const val DB_PASSWORD_KEY = "DB_PASSWORD"
+    const val DB_JDBC_URL = "DB_JDBC_URL"
 
     private val jdbcUrl by lazy {
-        val jdbcUrl: String? = getEnv(DB_URL_KEY) ?: getSystemProperty(DB_URL_KEY)
-        requireNotNull(jdbcUrl, { "Fant ingen jdbc url definert for nøkkel: $DB_URL_KEY" })
+        val jdbcUrl: String? = getEnv(DB_JDBC_URL) ?: getSystemProperty(DB_JDBC_URL)
+        requireNotNull(jdbcUrl, { "Fant ingen jdbc url definert for nøkkel: $DB_JDBC_URL" })
     }
+
+    private val url: String = getEnv(DB_URL_KEY)?.let { "jdbc:$it" } ?: jdbcUrl
 
     private val username by lazy {
         val jdbcUrl: String? = getEnv(DB_USERNAME_KEY) ?: getSystemProperty(DB_USERNAME_KEY)
@@ -26,7 +29,7 @@ internal object DataSourceBuilder {
 
     val dataSource by lazy {
         HikariDataSource().apply {
-            jdbcUrl = DataSourceBuilder.jdbcUrl
+            jdbcUrl = DataSourceBuilder.url
             username = DataSourceBuilder.username
             password = DataSourceBuilder.password
         }

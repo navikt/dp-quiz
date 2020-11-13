@@ -19,7 +19,7 @@ internal object Postgres {
     }
 
     fun withCleanDb(block: () -> Unit) {
-        System.setProperty(DataSourceBuilder.DB_URL_KEY, instance.jdbcUrl)
+        System.setProperty(DataSourceBuilder.DB_JDBC_URL, instance.jdbcUrl)
         System.setProperty(DataSourceBuilder.DB_PASSWORD_KEY, instance.password)
         System.setProperty(DataSourceBuilder.DB_USERNAME_KEY, instance.username)
         DataSourceBuilder.clean().run {
