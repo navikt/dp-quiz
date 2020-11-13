@@ -28,7 +28,6 @@ internal object Postgres {
         PostgresDataSourceBuilder.clean().run {
             block()
         }.also {
-            System.clearProperty(PostgresDataSourceBuilder.DB_URL_KEY)
             System.clearProperty(PostgresDataSourceBuilder.DB_PASSWORD_KEY)
             System.clearProperty(PostgresDataSourceBuilder.DB_USERNAME_KEY)
             System.clearProperty(PostgresDataSourceBuilder.DB_HOST_KEY)
