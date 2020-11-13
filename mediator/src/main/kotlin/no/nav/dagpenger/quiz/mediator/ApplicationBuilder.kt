@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator
 
+import DataSourceBuilder.runMigration
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -22,6 +23,7 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
+        runMigration()
     }
 
     private fun sendToRapid(behov: Map<*, *>) {
