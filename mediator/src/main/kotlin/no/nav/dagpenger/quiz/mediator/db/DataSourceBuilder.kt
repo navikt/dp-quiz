@@ -5,23 +5,23 @@ import org.flywaydb.core.Flyway
 
 // Understands how to create a data source from environment variables
 internal object DataSourceBuilder {
-    const val DB_URL_KEY = "DB_URL_KEY"
-    const val DB_USERNAME_KEY = "DB_USERNAME_KEY"
-    const val DB_PASSWORD_KEY = "DB_PASSWORD_KEY"
+    const val DB_URL_KEY = "DB_JDBCURL"
+    const val DB_USERNAME_KEY = "DB_USERNAME"
+    const val DB_PASSWORD_KEY = "DB_PASSWORD"
 
     private val jdbcUrl by lazy {
-        val jdbcUrl: String? = getEnv("DB_URL_KEY") ?: getSystemProperty("DB_URL_KEY")
+        val jdbcUrl: String? = getEnv(DB_URL_KEY) ?: getSystemProperty(DB_URL_KEY)
         requireNotNull(jdbcUrl, { "Fant ingen jdbc url definert for nøkkel: $DB_URL_KEY" })
     }
 
     private val username by lazy {
         val jdbcUrl: String? = getEnv(DB_USERNAME_KEY) ?: getSystemProperty(DB_USERNAME_KEY)
-        requireNotNull(jdbcUrl, { "Fant ingen jdbc url definert for nøkkel: $DB_USERNAME_KEY" })
+        requireNotNull(jdbcUrl, { "Fant ingen db.username definert for nøkkel: $DB_USERNAME_KEY" })
     }
 
     private val password by lazy {
         val jdbcUrl: String? = getEnv(DB_PASSWORD_KEY) ?: getSystemProperty(DB_PASSWORD_KEY)
-        requireNotNull(jdbcUrl, { "Fant ingen jdbc url definert for nøkkel: $DB_PASSWORD_KEY" })
+        requireNotNull(jdbcUrl, { "Fant ingen db.passord definert for nøkkel: $DB_PASSWORD_KEY" })
     }
 
     val dataSource by lazy {

@@ -38,3 +38,17 @@ spec:
       mountPath: "/var/run/secrets/nais.io/service_user"
   envFrom:
     - configmap: kafka-bootstrap-servers
+  gcp:
+    sqlInstances:
+      - name: dp-quiz-mediator
+        type: POSTGRES_12
+        tier:  {{ db_tier }}
+        diskType: SSD
+        highAvailability: false
+        diskSize: {{ db_size }}
+        diskAutoresize: true
+        autoBackupTime: "03:00"
+        databases:
+          - name: quiz
+            envVarPrefix: DB
+        cascadingDelete: false
