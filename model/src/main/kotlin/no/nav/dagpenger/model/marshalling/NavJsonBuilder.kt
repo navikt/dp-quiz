@@ -30,7 +30,7 @@ class NavJsonBuilder(fakta: Faktagrupper, private val faktaNavBehov: FaktumNavBe
         fakta.accept(this)
     }
 
-    fun resultat() = root
+    fun resultatOrNull() = if (behovNode.size() != 0) root else null
 
     override fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
         root.put("@event_name", "behov")

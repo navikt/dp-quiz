@@ -89,7 +89,7 @@ class NavJsonBuilderTest {
         fakta.dato(5).besvar(1.januar)
 
         assertBehovJson(
-            json = NavJsonBuilder(fakta, FaktumNavBehov.siste).resultat(),
+            json = NavJsonBuilder(fakta, FaktumNavBehov.siste).resultatOrNull()!!,
             faktumOgBehov = listOf(2 to "f2Behov", 3 to "f3Behov", 6 to "f6Behov"),
             avhengigeBehov = listOf("f1Behov")
         )
@@ -98,7 +98,7 @@ class NavJsonBuilderTest {
         fakta.ja(9).besvar(true)
 
         assertBehovJson(
-            json = NavJsonBuilder(fakta, FaktumNavBehov.siste).resultat(),
+            json = NavJsonBuilder(fakta, FaktumNavBehov.siste).resultatOrNull()!!,
             faktumOgBehov = listOf(2 to "f2Behov", 3 to "f3Behov", 4 to "f4Behov"),
             avhengigeBehov = listOf("f7Behov", "f8Behov")
         )
@@ -107,18 +107,14 @@ class NavJsonBuilderTest {
         fakta.dato(4).besvar(1.januar)
 
         assertBehovJson(
-            json = NavJsonBuilder(fakta, FaktumNavBehov.siste).resultat(),
+            json = NavJsonBuilder(fakta, FaktumNavBehov.siste).resultatOrNull()!!,
             faktumOgBehov = listOf(3 to "f3Behov"),
             avhengigeBehov = emptyList()
         )
 
         fakta.dato(3).besvar(1.januar)
 
-        assertBehovJson(
-            json = NavJsonBuilder(fakta, FaktumNavBehov.siste).resultat(),
-            faktumOgBehov = emptyList(),
-            avhengigeBehov = emptyList()
-        )
+        assertEquals(null, NavJsonBuilder(fakta, FaktumNavBehov.siste).resultatOrNull())
     }
 
     private fun assertBehovJson(
