@@ -1,6 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.db
 
-import DataSourceBuilder.runMigration
+import PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres.withCleanDb
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

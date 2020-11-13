@@ -1,6 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.db
 
-import DataSourceBuilder.dataSource
+import PostgresDataSourceBuilder.dataSource
 import kotliquery.action.ExecuteQueryAction
 import kotliquery.queryOf
 import kotliquery.sessionOf

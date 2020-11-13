@@ -1,6 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.helpers
 
-import DataSourceBuilder
+import PostgresDataSourceBuilder
 import org.testcontainers.containers.PostgreSQLContainer
 
 internal object Postgres {
@@ -13,21 +13,21 @@ internal object Postgres {
 
     fun withMigratedDb(block: () -> Unit) {
         withCleanDb {
-            DataSourceBuilder.runMigration()
+            PostgresDataSourceBuilder.runMigration()
             block()
         }
     }
 
     fun withCleanDb(block: () -> Unit) {
-        System.setProperty(DataSourceBuilder.DB_JDBC_URL, instance.jdbcUrl)
-        System.setProperty(DataSourceBuilder.DB_PASSWORD_KEY, instance.password)
-        System.setProperty(DataSourceBuilder.DB_USERNAME_KEY, instance.username)
-        DataSourceBuilder.clean().run {
+        System.setProperty(PostgresDataSourceBuilder.DB_URL_KEY, instance.jdbcUrl)
+        System.setProperty(PostgresDataSourceBuilder.DB_PASSWORD_KEY, instance.password)
+        System.setProperty(PostgresDataSourceBuilder.DB_USERNAME_KEY, instance.username)
+        PostgresDataSourceBuilder.clean().run {
             block()
         }.also {
-            System.clearProperty(DataSourceBuilder.DB_URL_KEY)
-            System.clearProperty(DataSourceBuilder.DB_PASSWORD_KEY)
-            System.clearProperty(DataSourceBuilder.DB_USERNAME_KEY)
+            System.clearProperty(PostgresDataSourceBuilder.DB_URL_KEY)
+            System.clearProperty(PostgresDataSourceBuilder.DB_PASSWORD_KEY)
+            System.clearProperty(PostgresDataSourceBuilder.DB_USERNAME_KEY)
         }
     }
 }

@@ -1,6 +1,6 @@
 package no.nav.dagpenger.quiz.mediator
 
-import DataSourceBuilder.runMigration
+import PostgresDataSourceBuilder.runMigration
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
