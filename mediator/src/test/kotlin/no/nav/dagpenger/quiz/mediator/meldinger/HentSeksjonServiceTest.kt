@@ -1,3 +1,5 @@
+package no.nav.dagpenger.quiz.mediator.meldinger
+
 import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Mobile
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
@@ -5,7 +7,6 @@ import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecordTest
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
-import no.nav.dagpenger.quiz.mediator.meldinger.HentSeksjonService
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
