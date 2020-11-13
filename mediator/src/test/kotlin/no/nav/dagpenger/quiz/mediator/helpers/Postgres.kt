@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.helpers
 
 import PostgresDataSourceBuilder
 import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.containers.PostgreSQLContainer.POSTGRESQL_PORT
 
 internal object Postgres {
 
@@ -19,7 +20,9 @@ internal object Postgres {
     }
 
     fun withCleanDb(block: () -> Unit) {
-        System.setProperty(PostgresDataSourceBuilder.DB_URL_KEY, instance.jdbcUrl)
+        System.setProperty(PostgresDataSourceBuilder.DB_HOST_KEY, instance.host)
+        System.setProperty(PostgresDataSourceBuilder.DB_PORT_KEY, instance.getMappedPort(POSTGRESQL_PORT).toString())
+        System.setProperty(PostgresDataSourceBuilder.DB_DATABASE_KEY, instance.databaseName)
         System.setProperty(PostgresDataSourceBuilder.DB_PASSWORD_KEY, instance.password)
         System.setProperty(PostgresDataSourceBuilder.DB_USERNAME_KEY, instance.username)
         PostgresDataSourceBuilder.clean().run {
@@ -28,6 +31,9 @@ internal object Postgres {
             System.clearProperty(PostgresDataSourceBuilder.DB_URL_KEY)
             System.clearProperty(PostgresDataSourceBuilder.DB_PASSWORD_KEY)
             System.clearProperty(PostgresDataSourceBuilder.DB_USERNAME_KEY)
+            System.setProperty(PostgresDataSourceBuilder.DB_HOST_KEY, instance.host)
+            System.setProperty(PostgresDataSourceBuilder.DB_PORT_KEY, instance.getMappedPort(POSTGRESQL_PORT).toString())
+            System.setProperty(PostgresDataSourceBuilder.DB_DATABASE_KEY, instance.databaseName)
         }
     }
 }

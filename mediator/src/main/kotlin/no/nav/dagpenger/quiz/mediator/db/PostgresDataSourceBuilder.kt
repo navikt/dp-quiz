@@ -8,10 +8,15 @@ internal object PostgresDataSourceBuilder {
     const val DB_URL_KEY = "DB_URL"
     const val DB_USERNAME_KEY = "DB_USERNAME"
     const val DB_PASSWORD_KEY = "DB_PASSWORD"
+    const val DB_DATABASE_KEY = "DB_DATABASE"
+    const val DB_HOST_KEY = "DB_HOST"
+    const val DB_PORT_KEY = "DB_PORT"
 
     private val jdbcUrl by lazy {
-        val jdbcUrl: String? = getEnv(DB_URL_KEY) ?: getSystemProperty(DB_URL_KEY)
-        requireNotNull(jdbcUrl, { "Fant ingen jdbc url definert for nøkkel: $DB_URL_KEY" })
+        val host: String? = getEnv(DB_HOST_KEY) ?: getSystemProperty(DB_HOST_KEY)
+        val port: String? = getEnv(DB_PORT_KEY) ?: getSystemProperty(DB_PORT_KEY)
+        val databaseNavn: String? = getEnv(DB_DATABASE_KEY) ?: getSystemProperty(DB_DATABASE_KEY)
+        "jdbc:postgresql://$host:$port/$databaseNavn"
     }
 
     private val username by lazy {
