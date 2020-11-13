@@ -5,7 +5,7 @@ import org.flywaydb.core.Flyway
 
 // Understands how to create a data source from environment variables
 internal object DataSourceBuilder {
-    const val DB_URL_KEY = "DB_JDBCURL"
+    const val DB_URL_KEY = "DB_URL"
     const val DB_USERNAME_KEY = "DB_USERNAME"
     const val DB_PASSWORD_KEY = "DB_PASSWORD"
 
