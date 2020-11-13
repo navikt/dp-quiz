@@ -1,0 +1,17 @@
+package no.nav.dagpenger.quiz.mediator.meldinger.model
+import no.nav.dagpenger.quiz.mediator.meldinger.HendelseMediator
+import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.asLocalDateTime
+import java.util.UUID
+
+internal abstract class HendelseMelding(private val packet: JsonMessage) {
+    internal val id: UUID = UUID.fromString(packet["@id"].asText())
+    internal val navn = packet["@event_name"].asText()
+    internal val opprettet = packet["@opprettet"].asLocalDateTime()
+
+    internal abstract val fnr: String
+
+    internal abstract fun behandle(mediator: HendelseMediator)
+
+    fun toJson() = packet.toJson()
+}
