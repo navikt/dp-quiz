@@ -3,11 +3,11 @@ name: API - Build and deploy
 on:
   push:
     paths-ignore:
-      - mediator/**
-
+      - dagpenger/**
+      - soknad/**
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-quiz-api:${{ github.sha }}
-  LATEST_IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-quiz-api:latest
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-quiz-mediator:${{ github.sha }}
+  LATEST_IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-quiz-mediator:latest
 
 jobs:
   build:
@@ -33,7 +33,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build with Gradle
-        run: ./gradlew :dagpenger:build --info
+        run: ./gradlew :mediator:build --info
 
       - name: Login to GitHub Package Repository
         uses: docker/login-action@v1
@@ -46,7 +46,7 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
         run: |
-          docker build dagpenger -t ${{ env.IMAGE }} -t ${{ env.LATEST_IMAGE }}
+          docker build mediator -t ${{ env.IMAGE }} -t ${{ env.LATEST_IMAGE }}
           docker push ${{ env.IMAGE }}
           docker push ${{ env.LATEST_IMAGE }}
 
@@ -56,7 +56,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: nais-yaml
-          path: dagpenger/nais
+          path: mediator/nais
 
   deploy-dev:
     name: Deploy to dev
@@ -74,7 +74,7 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: nais/alerts.yaml,nais/nais.yaml
+          RESOURCE: nais/nais.yaml
           VARS: nais/dev/vars.yaml
           PRINT_PAYLOAD: true
 
@@ -94,7 +94,7 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
-          RESOURCE: nais/alerts.yaml,nais/nais.yaml
+          RESOURCE: nais/nais.yaml
           VARS: nais/prod/vars.yaml
           PRINT_PAYLOAD: true
 
@@ -109,5 +109,5 @@ jobs:
         env:
           USERNAME: "Github Actions"
           MESSAGE: "The build is broken!"
-          CHANNEL: "#team-dagpenger-quizshow"
+          CHANNEL: "#team-dagpenger-build"
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
