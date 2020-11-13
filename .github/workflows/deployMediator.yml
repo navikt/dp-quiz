@@ -1,10 +1,6 @@
-name: API - Build and deploy
+name: Mediator - Build and deploy
+on: [push]
 
-on:
-  push:
-    paths-ignore:
-      - dagpenger/**
-      - soknad/**
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-quiz-mediator:${{ github.sha }}
   LATEST_IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-quiz-mediator:latest
