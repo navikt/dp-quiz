@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
@@ -26,6 +27,25 @@ internal class AvslagPåMinsteinntekt {
 
     init {
         val faktumRecord: FaktumTable = FaktumTable(søknad, VERSJON_ID)
+
+        FaktumNavBehov(
+            VERSJON_ID,
+            mapOf(
+                1 to "ØnskerDagpengerFraDato",
+                2 to "SisteDagMedArbeidsplikt",
+                3 to "Registreringsdato",
+                4 to "SisteDagMedLønn",
+                5 to "Virkningstidspunkt",
+                6 to "EgenNæring",
+                7 to "InntektSiste3År",
+                8 to "InntektSiste12Mnd",
+                9 to "G3",
+                10 to "G15",
+                11 to "Søknadstidspunkt",
+                12 to "Verneplikt",
+                14 to "GodkjenningDokumentasjonFangstOgFisk"
+            )
+        )
     }
 
     private companion object {
