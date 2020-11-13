@@ -1,7 +1,17 @@
+plugins {
+    application
+    id(Shadow.shadow) version Shadow.version
+}
+
 repositories {
     jcenter()
     maven("https://jitpack.io")
 }
+
+application {
+    mainClassName = "no.nav.dagpenger.quiz.mediator.AppKt"
+}
+
 dependencies {
     implementation(project(":model"))
     implementation("com.github.navikt:rapids-and-rivers:1.20a7b92")
