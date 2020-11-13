@@ -2,5 +2,5 @@ app: dp-quiz-mediator
 namespace: teamdagpenger
 team: teamdagpenger
 alerts_slack_channel: "#team-dagpenger-alert-non-prod"
-db_tier: db-n1-standard-1
+db_tier: db-custom-1-3840
 db_size: 10
