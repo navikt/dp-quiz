@@ -39,9 +39,10 @@ class Seksjon private constructor(
     private fun filtrertSeksjon(relevanteFakta: Set<Faktum<*>>) =
         Seksjon(navn, rolle, seksjonFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet())
 
-    internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>): Boolean {
-        return nesteFakta.any { it in seksjonFakta }
-    }
+    internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>) =
+        seksjonFakta.filter { it.harRolle(this.rolle) }.let { filtrertFakta ->
+            nesteFakta.any { it in filtrertFakta }
+        }
 
     internal fun faktagrupper(faktagrupper: Faktagrupper) {
         this.faktagrupper = faktagrupper
@@ -76,5 +77,12 @@ class Seksjon private constructor(
             }
         }
 
-    internal fun bygg(søknad: Søknad) = Seksjon(navn, rolle, this.seksjonFakta.map { søknad.id(it.faktumId) }.toMutableSet())
+    internal fun bygg(søknad: Søknad) = Seksjon(
+        navn,
+        rolle,
+        seksjonFakta
+            .filter { it.harRolle(rolle) }
+            .map { søknad.id(it.faktumId) }
+            .toMutableSet()
+    )
 }
