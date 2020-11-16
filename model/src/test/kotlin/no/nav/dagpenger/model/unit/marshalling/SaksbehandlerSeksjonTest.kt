@@ -16,7 +16,7 @@ internal class SaksbehandlerSeksjonTest {
 
     @Test
     fun `Genererte seksjoner kan bli sendt`() {
-        val fakta = NyttEksempel().faktagrupper
+        val fakta = NyttEksempel().søknadprosess
         fakta.heltall(15).besvar(3)
         var json = SaksbehandlerJsonBuilder(fakta, "seksjon8").resultat()
         assertEquals(11, json["fakta"].size())
@@ -25,7 +25,7 @@ internal class SaksbehandlerSeksjonTest {
     }
 
     private fun assertSeksjonSize(expected: Int, seksjonNavn: String) {
-        val json = SaksbehandlerJsonBuilder(NyttEksempel().faktagrupper, seksjonNavn).resultat()
+        val json = SaksbehandlerJsonBuilder(NyttEksempel().søknadprosess, seksjonNavn).resultat()
         assertEquals(expected, json["fakta"].size())
     }
 }

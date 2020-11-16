@@ -1,13 +1,13 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.factory.FaktaRegel
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.faktum.ValgFaktum
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 abstract class Subsumsjon protected constructor(
@@ -31,7 +31,7 @@ abstract class Subsumsjon protected constructor(
         null -> null
     }
 
-    abstract fun deepCopy(faktagrupper: Faktagrupper): Subsumsjon
+    abstract fun deepCopy(søknadprosess: Søknadprosess): Subsumsjon
 
     internal abstract fun bygg(søknad: Søknad): Subsumsjon
 

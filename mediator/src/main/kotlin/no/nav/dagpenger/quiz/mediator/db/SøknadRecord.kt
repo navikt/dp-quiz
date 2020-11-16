@@ -6,8 +6,6 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.factory.FaktaRegel
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
@@ -20,6 +18,8 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.faktum.ValgFaktum
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -29,10 +29,10 @@ import java.util.UUID
 class SøknadRecord : SøknadPersistence {
     private lateinit var originalSvar: Map<String, Any?>
 
-    override fun ny(fnr: String, type: Versjon.FaktagrupperType): Faktagrupper {
-        return Versjon.siste.faktagrupper(fnr, type).also { faktagrupper ->
-            NySøknad(faktagrupper.søknad, type)
-            originalSvar = svarMap(faktagrupper.søknad)
+    override fun ny(fnr: String, type: Versjon.UserInterfaceType): Søknadprosess {
+        return Versjon.siste.søknadprosess(fnr, type).also { søknadprosess ->
+            NySøknad(søknadprosess.søknad, type)
+            originalSvar = svarMap(søknadprosess.søknad)
         }
     }
 
@@ -40,7 +40,7 @@ class SøknadRecord : SøknadPersistence {
         faktum.id to (if (faktum.erBesvart()) faktum.svar() else null)
     }.toMap()
 
-    override fun hent(uuid: UUID, type: Versjon.FaktagrupperType?): Faktagrupper {
+    override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?): Søknadprosess {
         data class SoknadRad(val fnr: String, val versjonId: Int, var typeId: Int)
 
         val rad = using(sessionOf(dataSource)) { session ->
@@ -61,10 +61,10 @@ class SøknadRecord : SøknadPersistence {
         } ?: throw IllegalArgumentException("Ugyldig uuid: $uuid")
 
         return Versjon.id(rad.versjonId)
-            .faktagrupper(rad.fnr, Versjon.FaktagrupperType.fromId(rad.typeId), uuid)
-            .also { faktagrupper ->
+            .søknadprosess(rad.fnr, Versjon.UserInterfaceType.fromId(rad.typeId), uuid)
+            .also { søknadprosess ->
                 svarList(uuid).forEach { row ->
-                    faktagrupper.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
+                    søknadprosess.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
                         if (row.heltall != null) (faktum as Faktum<Int>).besvar(row.heltall)
                         if (row.janei != null) (faktum as Faktum<Boolean>).besvar(row.janei)
                         if (row.dato != null) (faktum as Faktum<LocalDate>).besvar(row.dato)
@@ -77,8 +77,8 @@ class SøknadRecord : SøknadPersistence {
                         )
                     }
                 }
-            }.also { faktagrupper ->
-                originalSvar = svarMap(faktagrupper.søknad)
+            }.also { søknadprosess ->
+                originalSvar = svarMap(søknadprosess.søknad)
             }
     }
 
@@ -226,7 +226,7 @@ class SøknadRecord : SøknadPersistence {
         }.toMap()
     }
 
-    private class NySøknad(søknad: Søknad, private val type: Versjon.FaktagrupperType) : SøknadVisitor {
+    private class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) : SøknadVisitor {
         private var faktaId = 0
         private var versjonId = 0
         private var rootId = 0

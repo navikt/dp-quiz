@@ -1,16 +1,16 @@
-package no.nav.dagpenger.model.faktagrupper
+package no.nav.dagpenger.model.seksjon
 
-import no.nav.dagpenger.model.faktagrupper.Seksjon.Companion.saksbehandlerSeksjoner
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TypedFaktum
+import no.nav.dagpenger.model.seksjon.Seksjon.Companion.saksbehandlerSeksjoner
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
-import no.nav.dagpenger.model.visitor.FaktagrupperVisitor
+import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.util.UUID
 
-class Faktagrupper private constructor(
+class Søknadprosess private constructor(
     val søknad: Søknad,
     internal val rootSubsumsjon: Subsumsjon,
     private val uuid: UUID,
@@ -33,7 +33,7 @@ class Faktagrupper private constructor(
 
     init {
         seksjoner.forEach {
-            it.faktagrupper(this)
+            it.søknadprosess(this)
         }
     }
 
@@ -51,7 +51,7 @@ class Faktagrupper private constructor(
         else
             listOf(seksjoner.first { rootSubsumsjon.nesteFakta() in it })
 
-    fun accept(visitor: FaktagrupperVisitor) {
+    fun accept(visitor: SøknadprosessVisitor) {
         visitor.preVisit(this, uuid)
         søknad.accept(visitor)
         seksjoner.forEach { it.accept(visitor) }
@@ -64,7 +64,7 @@ class Faktagrupper private constructor(
     fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
 
     internal fun bygg(søknad: Søknad, subsumsjon: Subsumsjon) =
-        Faktagrupper(søknad, subsumsjon, UUID.randomUUID(), seksjoner.map { it.bygg(søknad) }.toMutableList())
+        Søknadprosess(søknad, subsumsjon, UUID.randomUUID(), seksjoner.map { it.bygg(søknad) }.toMutableList())
 
     internal fun nesteFakta() = rootSubsumsjon.nesteFakta()
 

@@ -1,11 +1,11 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
 import com.fasterxml.jackson.databind.JsonNode
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -41,12 +41,12 @@ internal class FaktumSvarService(
         val faktumId = packet["faktumId"].asInt()
         val typedSvar = typedSvar(packet["svar"], packet["clazz"].asText())
 
-        søknadPersistence.hent(søknadUuid, Versjon.FaktagrupperType.Web).also { faktagrupper ->
-            besvar(faktagrupper, faktumId, typedSvar)
-            søknadPersistence.lagre(faktagrupper.søknad)
-            faktagrupper.nesteSeksjoner()
+        søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web).also { søknadprosess ->
+            besvar(søknadprosess, faktumId, typedSvar)
+            søknadPersistence.lagre(søknadprosess.søknad)
+            søknadprosess.nesteSeksjoner()
                 .onEach { seksjon ->
-                    behovMediator.håndter(seksjon, fnr, faktagrupper.søknad.uuid)
+                    behovMediator.håndter(seksjon, fnr, søknadprosess.søknad.uuid)
                 }
             // .also { if (it.isEmpty()) behandleFerdigResultat() }
         }
@@ -61,13 +61,13 @@ internal class FaktumSvarService(
         else -> throw IllegalArgumentException("Ukjent faktum type: $clazz")
     }
 
-    private fun besvar(faktagrupper: Faktagrupper, faktumId: Int, svar: Any) {
+    private fun besvar(søknadprosess: Søknadprosess, faktumId: Int, svar: Any) {
         when (svar) {
-            is Boolean -> faktagrupper.ja(faktumId).besvar(svar)
-            is Int -> faktagrupper.heltall(faktumId).besvar(svar)
-            is LocalDate -> faktagrupper.dato(faktumId).besvar(svar)
-            is Inntekt -> faktagrupper.inntekt(faktumId).besvar(svar)
-            is Dokument -> faktagrupper.dokument(faktumId).besvar(svar)
+            is Boolean -> søknadprosess.ja(faktumId).besvar(svar)
+            is Int -> søknadprosess.heltall(faktumId).besvar(svar)
+            is LocalDate -> søknadprosess.dato(faktumId).besvar(svar)
+            is Inntekt -> søknadprosess.inntekt(faktumId).besvar(svar)
+            is Dokument -> søknadprosess.dokument(faktumId).besvar(svar)
             else -> throw IllegalArgumentException("Ukjent svar-type: ${svar::class.java}")
         }
     }

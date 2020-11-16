@@ -7,12 +7,12 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.factory.ValgFaktumFactory.Companion.valg
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 
 internal object SøknadEksempel1 {
 
@@ -41,7 +41,7 @@ internal object SøknadEksempel1 {
         valg faktum "f20" ja "ja1" ja "ja2" nei "nei1" nei "nei2" id 20
     )
 
-    private val webPrototypeSøknad = Faktagrupper(
+    private val webPrototypeSøknad = Søknadprosess(
         Seksjon(
             "seksjon",
             Rolle.søker,
@@ -49,7 +49,7 @@ internal object SøknadEksempel1 {
         )
     )
 
-    private val mobilePrototypeSøknad = Faktagrupper(
+    private val mobilePrototypeSøknad = Søknadprosess(
         Seksjon(
             "seksjon",
             Rolle.søker,
@@ -68,8 +68,8 @@ internal object SøknadEksempel1 {
         prototypeFakta1,
         prototypeFakta1 ja 1 er true,
         mapOf(
-            Versjon.FaktagrupperType.Web to webPrototypeSøknad,
-            Versjon.FaktagrupperType.Mobile to mobilePrototypeSøknad
+            Versjon.UserInterfaceType.Web to webPrototypeSøknad,
+            Versjon.UserInterfaceType.Mobile to mobilePrototypeSøknad
         )
     )
 }

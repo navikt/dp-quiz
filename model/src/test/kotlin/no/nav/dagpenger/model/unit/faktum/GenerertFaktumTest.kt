@@ -2,10 +2,10 @@ package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -20,9 +20,9 @@ internal class GenerertFaktumTest {
         )
 
         val seksjon = Seksjon("seksjon", Rolle.søker, søknad ja 1, søknad generator 2)
-        val faktagrupper = Faktagrupper(søknad, seksjon)
+        val søknadprosess = Søknadprosess(søknad, seksjon)
         val originalSize = seksjon.size
-        faktagrupper.generator(2).besvar(5)
+        søknadprosess.generator(2).besvar(5)
 
         assertEquals(5, seksjon.size - originalSize)
         assertEquals("1.1", seksjon[1].id)
@@ -43,10 +43,10 @@ internal class GenerertFaktumTest {
 
         val seksjon1 = Seksjon("seksjon", Rolle.søker, søknad ja 1, søknad generator 4)
         val seksjon2 = Seksjon("seksjon", Rolle.søker, søknad ja 2, søknad ja 3, søknad ja 5)
-        val faktagrupper = Faktagrupper(søknad, seksjon1, seksjon2)
+        val søknadprosess = Søknadprosess(søknad, seksjon1, seksjon2)
         val originalSize1 = seksjon1.size
         val originalSize2 = seksjon2.size
-        faktagrupper.generator(4).besvar(3)
+        søknadprosess.generator(4).besvar(3)
 
         assertEquals(3, seksjon1.size - originalSize1)
         assertEquals(6, seksjon2.size - originalSize2)
@@ -63,13 +63,13 @@ internal class GenerertFaktumTest {
         )
         val generatorSeksjon = Seksjon("seksjon", Rolle.søker, søknad generator 2)
         val templateSeksjon = Seksjon("seksjon", Rolle.søker, søknad ja 1)
-        val faktagrupper = Faktagrupper(søknad, generatorSeksjon, templateSeksjon)
-        faktagrupper.generator(2).besvar(3)
-        assertEquals(5, faktagrupper.size)
+        val søknadprosess = Søknadprosess(søknad, generatorSeksjon, templateSeksjon)
+        søknadprosess.generator(2).besvar(3)
+        assertEquals(5, søknadprosess.size)
         assertEquals(1, generatorSeksjon.size)
         assertEquals(1, templateSeksjon.size)
-        assertEquals(1, faktagrupper[4].size)
-        assertEquals("1.3", faktagrupper[4][0].id)
+        assertEquals(1, søknadprosess[4].size)
+        assertEquals("1.3", søknadprosess[4][0].id)
     }
 
     @Test
@@ -84,16 +84,16 @@ internal class GenerertFaktumTest {
         val generatorSeksjon = Seksjon("seksjon", Rolle.søker, søknad generator 4)
         val templateSeksjon1 = Seksjon("seksjon", Rolle.søker, søknad ja 1, søknad ja 2)
         val templateSeksjon2 = Seksjon("seksjon", Rolle.søker, søknad ja 3)
-        val faktagrupper = Faktagrupper(søknad, generatorSeksjon, templateSeksjon1, templateSeksjon2)
-        faktagrupper.generator(4).besvar(3)
+        val søknadprosess = Søknadprosess(søknad, generatorSeksjon, templateSeksjon1, templateSeksjon2)
+        søknadprosess.generator(4).besvar(3)
 
-        assertEquals(9, faktagrupper.size)
+        assertEquals(9, søknadprosess.size)
         assertEquals(1, generatorSeksjon.size)
         assertEquals(2, templateSeksjon1.size)
         assertEquals(1, templateSeksjon2.size)
-        assertEquals(2, faktagrupper[4].size)
-        assertEquals("2.3", faktagrupper[4][1].id)
-        assertEquals("3.3", faktagrupper[8][0].id)
+        assertEquals(2, søknadprosess[4].size)
+        assertEquals("2.3", søknadprosess[4][1].id)
+        assertEquals("3.3", søknadprosess[8][0].id)
     }
 
     private operator fun Seksjon.get(indeks: Int) = this.sortedBy { it.id }[indeks]

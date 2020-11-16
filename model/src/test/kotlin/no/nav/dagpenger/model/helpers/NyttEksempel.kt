@@ -7,10 +7,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.factory.ValgFaktumFactory.Companion.valg
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktagrupper.Versjon
-import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.av
@@ -21,6 +17,10 @@ import no.nav.dagpenger.model.regel.gyldigGodkjentAv
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.under
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.eller
@@ -120,8 +120,8 @@ internal class NyttEksempel {
     private val prototypeSeksjon8 =
         Seksjon("seksjon8", Rolle.saksbehandler, p6Inntekt, p7Inntekt, p12Boolean, p14Boolean, p16Int, p19Boolean)
 
-    private val webPrototypeFaktagrupper: Faktagrupper =
-        Faktagrupper(
+    private val webPrototypeFaktagrupper: Søknadprosess =
+        Søknadprosess(
             prototypeSeksjon1,
             prototypeSeksjon2,
             prototypeSeksjon3,
@@ -144,9 +144,9 @@ internal class NyttEksempel {
 
     private val versjon = Versjon(prototypeSøknad, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
 
-    internal val faktagrupper: Faktagrupper by lazy {
+    internal val søknadprosess: Søknadprosess by lazy {
 
-        versjon.faktagrupper("12345678901", Web).also {
+        versjon.søknadprosess("12345678901", Web).also {
             seksjon1 = it[0]
             seksjon2 = it[1]
             seksjon3 = it[2]

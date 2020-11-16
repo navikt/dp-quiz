@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.unit.faktum
 import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.helpers.testFaktagrupper
+import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.regel.er
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -21,8 +21,8 @@ internal class EnumFaktaTest {
 
     @Test
     fun `enum-fakta`() {
-        val faktagrupper = Søknad(språk faktum "språk" id 1).testFaktagrupper()
-        val faktum = faktagrupper.id(1) as Faktum<SpråkEnum>
+        val søknadprosess = Søknad(språk faktum "språk" id 1).testSøknadprosess()
+        val faktum = søknadprosess.id(1) as Faktum<SpråkEnum>
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(SpråkEnum.engelsk)
         assertEquals(SpråkEnum.engelsk, faktum.svar())
@@ -30,8 +30,8 @@ internal class EnumFaktaTest {
 
     @Test
     fun `subsumsjon test`() {
-        val faktagrupper = Søknad(språk faktum "språk" id 1).testFaktagrupper()
-        val faktum = faktagrupper.id(1) as Faktum<SpråkEnum>
+        val søknadprosess = Søknad(språk faktum "språk" id 1).testSøknadprosess()
+        val faktum = søknadprosess.id(1) as Faktum<SpråkEnum>
         val subsumsjon = faktum er SpråkEnum.engelsk
 
         assertEquals(null, subsumsjon.resultat())

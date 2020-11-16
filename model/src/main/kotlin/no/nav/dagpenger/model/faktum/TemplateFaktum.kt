@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.faktum
 
-import no.nav.dagpenger.model.faktagrupper.Seksjon
+import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 class TemplateFaktum<R : Comparable<R>> internal constructor(

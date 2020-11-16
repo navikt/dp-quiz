@@ -5,15 +5,15 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.factory.ValgFaktumFactory.Companion.valg
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.marshalling.NavJsonBuilder
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.så
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -70,7 +70,7 @@ class NavJsonBuilderTest {
             prototypeSøknad.dato(7)
         )
 
-        val prototypeFaktagrupper = Faktagrupper(
+        val prototypeFaktagrupper = Søknadprosess(
             prototypeSøknad,
             søkerSeksjon,
             navSeksjon,
@@ -80,10 +80,10 @@ class NavJsonBuilderTest {
         Versjon(
             prototypeSøknad,
             prototypeSubsumsjon,
-            mapOf(Versjon.FaktagrupperType.Web to prototypeFaktagrupper)
+            mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
         )
 
-        val fakta = Versjon.siste.faktagrupper(fnr = "12345678910", Versjon.FaktagrupperType.Web)
+        val fakta = Versjon.siste.søknadprosess(fnr = "12345678910", Versjon.UserInterfaceType.Web)
 
         fakta.ja(1).besvar(true)
         fakta.dato(5).besvar(1.januar)

@@ -1,4 +1,4 @@
-package no.nav.dagpenger.model.faktagrupper
+package no.nav.dagpenger.model.seksjon
 
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -8,7 +8,7 @@ class Versjon(
     private val versjonId: Int,
     private val prototypeSøknad: Søknad,
     private val prototypeSubsumsjon: Subsumsjon,
-    private val prototypeFaktagrupper: Map<FaktagrupperType, Faktagrupper>
+    private val prototypeUserInterfaces: Map<UserInterfaceType, Søknadprosess>
 ) {
 
     companion object {
@@ -31,24 +31,24 @@ class Versjon(
     constructor(
         prototypeSøknad: Søknad,
         prototypeSubsumsjon: Subsumsjon,
-        prototypeFaktagrupper: Map<FaktagrupperType, Faktagrupper>
-    ) : this(nesteId(), prototypeSøknad, prototypeSubsumsjon, prototypeFaktagrupper)
+        prototypeUserInterfaces: Map<UserInterfaceType, Søknadprosess>
+    ) : this(nesteId(), prototypeSøknad, prototypeSubsumsjon, prototypeUserInterfaces)
 
-    fun faktagrupper(fnr: String, type: FaktagrupperType, uuid: UUID = UUID.randomUUID()): Faktagrupper =
-        faktagrupper(prototypeSøknad.bygg(fnr, versjonId, uuid), type)
+    fun søknadprosess(fnr: String, type: UserInterfaceType, uuid: UUID = UUID.randomUUID()): Søknadprosess =
+        søknadprosess(prototypeSøknad.bygg(fnr, versjonId, uuid), type)
 
-    fun faktagrupper(søknad: Søknad, type: FaktagrupperType): Faktagrupper {
+    fun søknadprosess(søknad: Søknad, type: UserInterfaceType): Søknadprosess {
         val subsumsjon = prototypeSubsumsjon.bygg(søknad)
-        return prototypeFaktagrupper[type]?.bygg(søknad, subsumsjon)
-            ?: throw IllegalArgumentException("Kan ikke finne faktagrupper av type $type")
+        return prototypeUserInterfaces[type]?.bygg(søknad, subsumsjon)
+            ?: throw IllegalArgumentException("Kan ikke finne søknadprosess av type $type")
     }
 
-    enum class FaktagrupperType(val id: Int) {
+    enum class UserInterfaceType(val id: Int) {
         Web(1),
         Mobile(2);
 
         companion object {
-            fun fromId(id: Int): FaktagrupperType = values().first { it.id == id }
+            fun fromId(id: Int): UserInterfaceType = values().first { it.id == id }
         }
     }
 }

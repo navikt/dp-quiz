@@ -5,14 +5,14 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.minst
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 
 internal object SøknadEksempel {
@@ -29,7 +29,7 @@ internal object SøknadEksempel {
 
     )
 
-    private val webPrototypeSøknad = Faktagrupper(
+    private val webPrototypeSøknad = Søknadprosess(
         Seksjon(
             "seksjon1",
             Rolle.søker,
@@ -81,6 +81,6 @@ internal object SøknadEksempel {
         3,
         prototypeSøknad1,
         subsumsjon,
-        mapOf(Versjon.FaktagrupperType.Web to webPrototypeSøknad)
+        mapOf(Versjon.UserInterfaceType.Web to webPrototypeSøknad)
     )
 }

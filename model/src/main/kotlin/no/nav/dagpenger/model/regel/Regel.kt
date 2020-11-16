@@ -1,11 +1,11 @@
 package no.nav.dagpenger.model.regel
 
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.AvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GeneratorSubsumsjon
@@ -18,7 +18,7 @@ import java.time.LocalDate
 interface Regel {
     val typeNavn: String
     fun resultat(): Boolean
-    fun deepCopy(faktagrupper: Faktagrupper): Regel
+    fun deepCopy(søknadprosess: Søknadprosess): Regel
     fun bygg(søknad: Søknad): Regel
     fun deepCopy(indeks: Int, søknad: Søknad): Regel
 }
@@ -28,8 +28,8 @@ private class Etter(private val senesteDato: Faktum<LocalDate>, private val tidl
     override fun resultat() = tidligsteDato.svar() < senesteDato.svar()
     override fun toString() = "Sjekk at '$senesteDato' er etter '$tidligsteDato'"
 
-    override fun deepCopy(faktagrupper: Faktagrupper): Regel {
-        return Etter(faktagrupper.faktum(senesteDato.faktumId) as Faktum<LocalDate>, faktagrupper.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>)
+    override fun deepCopy(søknadprosess: Søknadprosess): Regel {
+        return Etter(søknadprosess.faktum(senesteDato.faktumId) as Faktum<LocalDate>, søknadprosess.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>)
     }
     override fun bygg(søknad: Søknad) = Etter(søknad.dato(senesteDato.faktumId), søknad.dato(tidligsteDato.faktumId))
 
@@ -53,8 +53,8 @@ private class Før(private val tidligsteDato: Faktum<LocalDate>, private val sen
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = tidligsteDato.svar() < senesteDato.svar()
     override fun toString() = "Sjekk at '$tidligsteDato' er før '$senesteDato'"
-    override fun deepCopy(faktagrupper: Faktagrupper): Regel {
-        return Før(faktagrupper.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>, faktagrupper.faktum(senesteDato.faktumId) as Faktum<LocalDate>)
+    override fun deepCopy(søknadprosess: Søknadprosess): Regel {
+        return Før(søknadprosess.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>, søknadprosess.faktum(senesteDato.faktumId) as Faktum<LocalDate>)
     }
 
     override fun bygg(søknad: Søknad) = Før(søknad.dato(tidligsteDato.faktumId), søknad.dato(senesteDato.faktumId))
@@ -79,8 +79,8 @@ private class IkkeFør(private val tidligsteDato: Faktum<LocalDate>, private val
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = tidligsteDato.svar() >= senesteDato.svar()
     override fun toString() = "Sjekk at '$tidligsteDato' ikke er før '$senesteDato'"
-    override fun deepCopy(faktagrupper: Faktagrupper): Regel {
-        return IkkeFør(faktagrupper.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>, faktagrupper.faktum(senesteDato.faktumId) as Faktum<LocalDate>)
+    override fun deepCopy(søknadprosess: Søknadprosess): Regel {
+        return IkkeFør(søknadprosess.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>, søknadprosess.faktum(senesteDato.faktumId) as Faktum<LocalDate>)
     }
 
     override fun bygg(søknad: Søknad) = IkkeFør(søknad.dato(tidligsteDato.faktumId), søknad.dato(senesteDato.faktumId))
@@ -105,8 +105,8 @@ private class Minst(private val faktisk: Faktum<Inntekt>, private val terskel: F
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = faktisk.svar() >= terskel.svar()
     override fun toString() = "Sjekk at '$faktisk' er minst '$terskel'"
-    override fun deepCopy(faktagrupper: Faktagrupper) =
-        Minst(faktagrupper.faktum(faktisk.faktumId) as Faktum<Inntekt>, faktagrupper.faktum(terskel.faktumId) as Faktum<Inntekt>)
+    override fun deepCopy(søknadprosess: Søknadprosess) =
+        Minst(søknadprosess.faktum(faktisk.faktumId) as Faktum<Inntekt>, søknadprosess.faktum(terskel.faktumId) as Faktum<Inntekt>)
 
     override fun bygg(søknad: Søknad) = Minst(søknad.inntekt(faktisk.faktumId), søknad.inntekt(terskel.faktumId))
 
@@ -130,7 +130,7 @@ private class Er<T : Comparable<T>>(private val faktum: Faktum<*>, private val o
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = faktum.svar() == other
     override fun toString() = "Sjekk at `$faktum` er lik $other"
-    override fun deepCopy(faktagrupper: Faktagrupper) = Er(faktagrupper.faktum(faktum.faktumId) as Faktum<T>, other)
+    override fun deepCopy(søknadprosess: Søknadprosess) = Er(søknadprosess.faktum(faktum.faktumId) as Faktum<T>, other)
 
     override fun bygg(søknad: Søknad) = Er(søknad.id(faktum.faktumId) as Faktum<T>, other)
 
@@ -163,7 +163,7 @@ private class ErIkke(private val faktum: Faktum<Boolean>) : Regel {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = !faktum.svar()
     override fun toString() = "Sjekk at `$faktum` ikke er sann"
-    override fun deepCopy(faktagrupper: Faktagrupper) = ErIkke(faktagrupper.faktum(faktum.faktumId) as Faktum<Boolean>)
+    override fun deepCopy(søknadprosess: Søknadprosess) = ErIkke(søknadprosess.faktum(faktum.faktumId) as Faktum<Boolean>)
 
     override fun bygg(søknad: Søknad) = ErIkke(søknad.ja(faktum.faktumId))
 
@@ -181,7 +181,7 @@ private class Har(private val faktum: Faktum<Boolean>) : Regel {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = faktum.svar()
     override fun toString() = "Sjekk at `$faktum` er sann"
-    override fun deepCopy(faktagrupper: Faktagrupper) = Har(faktagrupper.faktum(faktum.faktumId) as Faktum<Boolean>)
+    override fun deepCopy(søknadprosess: Søknadprosess) = Har(søknadprosess.faktum(faktum.faktumId) as Faktum<Boolean>)
 
     override fun bygg(søknad: Søknad) = Har(søknad.ja(faktum.faktumId))
 
@@ -199,8 +199,8 @@ private class Av(private val godkjenning: Faktum<Boolean>, private val dokument:
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = dokument.erBesvart() && (!godkjenning.erBesvart() || godkjenning.svar())
     override fun toString() = "Sjekk at `$dokument` er ${if (resultat()) "godkjent" else "ikke godkjent"}"
-    override fun deepCopy(faktagrupper: Faktagrupper) =
-        Av(faktagrupper.faktum(godkjenning.faktumId) as Faktum<Boolean>, faktagrupper.faktum(dokument.faktumId) as Faktum<Dokument>)
+    override fun deepCopy(søknadprosess: Søknadprosess) =
+        Av(søknadprosess.faktum(godkjenning.faktumId) as Faktum<Boolean>, søknadprosess.faktum(dokument.faktumId) as Faktum<Dokument>)
 
     override fun bygg(søknad: Søknad) =
         Av(søknad.ja(godkjenning.faktumId), søknad.dokument(dokument.faktumId))
@@ -217,7 +217,7 @@ private class Under(private val alder: Faktum<Int>, private val maksAlder: Int) 
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun resultat() = alder.svar() < maksAlder
     override fun toString() = "Sjekk at '$alder' er under $maksAlder"
-    override fun deepCopy(faktagrupper: Faktagrupper) = Under(faktagrupper.faktum(alder.faktumId) as Faktum<Int>, maksAlder)
+    override fun deepCopy(søknadprosess: Søknadprosess) = Under(søknadprosess.faktum(alder.faktumId) as Faktum<Int>, maksAlder)
 
     override fun bygg(søknad: Søknad) = Under(søknad.heltall(alder.faktumId), maksAlder)
 

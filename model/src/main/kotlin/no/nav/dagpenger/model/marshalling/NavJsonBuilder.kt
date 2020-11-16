@@ -2,8 +2,6 @@ package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
@@ -11,12 +9,14 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.visitor.FaktagrupperVisitor
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class NavJsonBuilder(fakta: Faktagrupper, private val faktaNavBehov: FaktumNavBehov) : FaktagrupperVisitor {
+class NavJsonBuilder(fakta: Søknadprosess, private val faktaNavBehov: FaktumNavBehov) : SøknadprosessVisitor {
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()

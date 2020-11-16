@@ -1,12 +1,12 @@
 package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.node.ArrayNode
-import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.visitor.FaktagrupperVisitor
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 
-class SeksjonJsonBuilder(private val seksjon: Seksjon) : FaktumJsonBuilder(), FaktagrupperVisitor {
+class SeksjonJsonBuilder(private val seksjon: Seksjon) : FaktumJsonBuilder(), SøknadprosessVisitor {
 
     init {
         seksjon.accept(this)

@@ -3,10 +3,6 @@ package no.nav.dagpenger.model.helpers
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktagrupper.Versjon
-import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
@@ -15,6 +11,10 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.minst
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.eller
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
@@ -33,7 +33,7 @@ internal lateinit var inntekt3G: GrunnleggendeFaktum<Inntekt>
 internal lateinit var inntekt15G: GrunnleggendeFaktum<Inntekt>
 
 /* ktlint-disable parameter-list-wrapping */
-internal fun eksempelSøknad(): Faktagrupper {
+internal fun eksempelSøknad(): Søknadprosess {
     val prototypeSøknad = Søknad(
         dato faktum "Datoen du fyller 67" id 1,
         dato faktum "Datoen du søker om dagpenger" id 2,
@@ -80,7 +80,7 @@ internal fun eksempelSøknad(): Faktagrupper {
         ønsketdato ikkeFør sisteDagMedLønn
     )
 
-    val prototypeWebSøknad = Faktagrupper(
+    val prototypeWebSøknad = Søknadprosess(
         Seksjon(
             "seksjon1",
             Rolle.søker,
@@ -106,16 +106,16 @@ internal fun eksempelSøknad(): Faktagrupper {
         prototypeSøknad,
         prototypeSubsumsjon,
         mapOf(Web to prototypeWebSøknad)
-    ).faktagrupper("", Web).also { faktagrupper ->
-        bursdag67 = faktagrupper.dato(1) as GrunnleggendeFaktum<LocalDate>
-        søknadsdato = faktagrupper.dato(2) as GrunnleggendeFaktum<LocalDate>
-        ønsketdato = faktagrupper.dato(3) as GrunnleggendeFaktum<LocalDate>
-        sisteDagMedLønn = faktagrupper.dato(4) as GrunnleggendeFaktum<LocalDate>
-        inntektSiste3år = faktagrupper.inntekt(5) as GrunnleggendeFaktum<Inntekt>
-        inntektSisteÅr = faktagrupper.inntekt(6) as GrunnleggendeFaktum<Inntekt>
-        dimisjonsdato = faktagrupper.dato(7) as GrunnleggendeFaktum<LocalDate>
-        virkningstidspunkt = faktagrupper.dato(8)
-        inntekt3G = faktagrupper.inntekt(9) as GrunnleggendeFaktum<Inntekt>
-        inntekt15G = faktagrupper.inntekt(10) as GrunnleggendeFaktum<Inntekt>
+    ).søknadprosess("", Web).also { søknadprosess ->
+        bursdag67 = søknadprosess.dato(1) as GrunnleggendeFaktum<LocalDate>
+        søknadsdato = søknadprosess.dato(2) as GrunnleggendeFaktum<LocalDate>
+        ønsketdato = søknadprosess.dato(3) as GrunnleggendeFaktum<LocalDate>
+        sisteDagMedLønn = søknadprosess.dato(4) as GrunnleggendeFaktum<LocalDate>
+        inntektSiste3år = søknadprosess.inntekt(5) as GrunnleggendeFaktum<Inntekt>
+        inntektSisteÅr = søknadprosess.inntekt(6) as GrunnleggendeFaktum<Inntekt>
+        dimisjonsdato = søknadprosess.dato(7) as GrunnleggendeFaktum<LocalDate>
+        virkningstidspunkt = søknadprosess.dato(8)
+        inntekt3G = søknadprosess.inntekt(9) as GrunnleggendeFaktum<Inntekt>
+        inntekt15G = søknadprosess.inntekt(10) as GrunnleggendeFaktum<Inntekt>
     }
 }

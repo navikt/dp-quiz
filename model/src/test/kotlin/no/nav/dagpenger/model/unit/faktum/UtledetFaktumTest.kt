@@ -1,11 +1,11 @@
 package no.nav.dagpenger.model.unit.faktum
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.helpers.testFaktagrupper
+import no.nav.dagpenger.model.helpers.testSøknadprosess
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -13,7 +13,7 @@ import java.time.LocalDate
 import kotlin.test.assertEquals
 
 internal class UtledetFaktumTest {
-    private lateinit var faktagrupper: Faktagrupper
+    private lateinit var søknadprosess: Søknadprosess
     private lateinit var maks4: Faktum<LocalDate>
     private lateinit var maks3: Faktum<LocalDate>
     private lateinit var dato1: Faktum<LocalDate>
@@ -23,21 +23,21 @@ internal class UtledetFaktumTest {
 
     @BeforeEach
     fun setup() {
-        faktagrupper = Søknad(
+        søknadprosess = Søknad(
             maks dato "maks dato" av 1 og 3 og 6 id 4,
             maks dato "maks dato" av 1 og 2 og 5 id 3,
             dato faktum "dato1" id 1,
             dato faktum "dato2" id 2,
             dato faktum "dato5" id 5,
             dato faktum "dato6" id 6
-        ).testFaktagrupper()
+        ).testSøknadprosess()
 
-        maks4 = faktagrupper dato 4
-        maks3 = faktagrupper dato 3
-        dato1 = faktagrupper dato 1
-        dato2 = faktagrupper dato 2
-        dato5 = faktagrupper dato 5
-        dato6 = faktagrupper dato 6
+        maks4 = søknadprosess dato 4
+        maks3 = søknadprosess dato 3
+        dato1 = søknadprosess dato 1
+        dato2 = søknadprosess dato 2
+        dato5 = søknadprosess dato 5
+        dato6 = søknadprosess dato 6
     }
 
     @Test

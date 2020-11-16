@@ -2,12 +2,12 @@ package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.med
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.makro
@@ -42,9 +42,9 @@ internal class GenerertSubsumsjonTest {
 
         val makro = "makro template".makro(søknad ja 1 er true)
         val subsumsjon = søknad generator 2 med makro
-        val faktagrupper = Faktagrupper(søknad, Seksjon("seksjon", Rolle.søker, søknad generator 2, søknad ja 1), rootSubsumsjon = subsumsjon)
+        val søknadprosess = Søknadprosess(søknad, Seksjon("seksjon", Rolle.søker, søknad generator 2, søknad ja 1), rootSubsumsjon = subsumsjon)
 
-        faktagrupper.generator(2).besvar(3)
+        søknadprosess.generator(2).besvar(3)
         subsumsjon.resultat()
 
         assertEquals(3, (subsumsjon[0].ugyldig as AlleSubsumsjon).size)

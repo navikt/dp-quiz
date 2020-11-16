@@ -1,8 +1,6 @@
 package no.nav.dagpenger.model.visitor
 
 import no.nav.dagpenger.model.factory.FaktaRegel
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
@@ -13,6 +11,8 @@ import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.regel.Regel
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
@@ -159,9 +159,9 @@ interface SøknadVisitor : FaktumVisitor {
     fun postVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {}
 }
 
-interface FaktagrupperVisitor : SubsumsjonVisitor, SøknadVisitor {
-    fun preVisit(faktagrupper: Faktagrupper, uuid: UUID) {}
-    fun postVisit(faktagrupper: Faktagrupper) {}
+interface SøknadprosessVisitor : SubsumsjonVisitor, SøknadVisitor {
+    fun preVisit(søknadprosess: Søknadprosess, uuid: UUID) {}
+    fun postVisit(søknadprosess: Søknadprosess) {}
     fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {}
     fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {}
     fun preVisitAvhengerAv(seksjon: Seksjon, avhengerAvFakta: Set<Faktum<*>>) {}

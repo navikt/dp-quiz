@@ -5,9 +5,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
@@ -16,6 +13,9 @@ import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.minst
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.eller
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
@@ -153,8 +153,8 @@ internal class AvslagPåMinsteinntekt {
             Rolle.saksbehandler,
             godkjenningVirkningstidspunkt
         )
-    internal val faktagrupper: Faktagrupper =
-        Faktagrupper(
+    internal val søknadprosess: Søknadprosess =
+        Søknadprosess(
             statiske,
             datoer,
             vernepliktSeksjon,
@@ -167,10 +167,10 @@ internal class AvslagPåMinsteinntekt {
         versjonId = VERSJON_ID,
         prototypeSøknad = søknad,
         prototypeSubsumsjon = inngangsvilkår,
-        prototypeFaktagrupper = mapOf(
-            Versjon.FaktagrupperType.Web to faktagrupper
+        prototypeUserInterfaces = mapOf(
+            Versjon.UserInterfaceType.Web to søknadprosess
         )
     )
 
-    fun faktagrupper(fnr: String) = versjon.faktagrupper(fnr, Versjon.FaktagrupperType.Web)
+    fun søknadprosess(fnr: String) = versjon.søknadprosess(fnr, Versjon.UserInterfaceType.Web)
 }
