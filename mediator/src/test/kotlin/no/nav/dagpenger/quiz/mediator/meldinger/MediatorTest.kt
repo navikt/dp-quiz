@@ -1,5 +1,4 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
-import io.mockk.mockk
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Dokument
@@ -30,14 +29,11 @@ class MeldingMediatorTest {
         private val meldingsfabrikk = TestMeldingFactory("fødselsnummer", "aktør")
         private val testRapid = TestRapid()
         private val grupperer = TestLagring()
-        private val hendelseMediator = HendelseMediator(grupperer, testRapid)
 
         init {
-            MeldingMediator(
-                rapidsConnection = testRapid,
-                hendelseRecorder = mockk(relaxed = true),
-                hendelseMediator = hendelseMediator
-            )
+            val behovMediator = BehovMediator(testRapid)
+            ØnskerRettighetsavklaringerService(grupperer, behovMediator, testRapid)
+            FaktumSvarService(grupperer, behovMediator, testRapid)
             SøknadEksempel
         }
     }
