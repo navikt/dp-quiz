@@ -22,7 +22,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class SaksbehandlerJsonBuilder(
-    fakta: Søknadprosess,
+    søknadprosess: Søknadprosess,
     private val seksjonNavn: String,
     private val indeks: Int = 0
 ) : SøknadprosessVisitor {
@@ -36,9 +36,9 @@ class SaksbehandlerJsonBuilder(
     private val subsumsjonNoder = mutableListOf<ObjectNode>()
 
     init {
-        fakta.søknad.accept(this)
-        fakta.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(fakta.rootSubsumsjon).accept(this)
-        fakta.rootSubsumsjon.mulige().accept(this)
+        søknadprosess.søknad.accept(this)
+        søknadprosess.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(søknadprosess.rootSubsumsjon).accept(this)
+        søknadprosess.rootSubsumsjon.mulige().accept(this)
     }
 
     fun resultat() = root

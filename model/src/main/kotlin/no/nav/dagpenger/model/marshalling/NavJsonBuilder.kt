@@ -16,7 +16,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class NavJsonBuilder(fakta: Søknadprosess, private val faktaNavBehov: FaktumNavBehov) : SøknadprosessVisitor {
+class NavJsonBuilder(søknadprosess: Søknadprosess, private val faktaNavBehov: FaktumNavBehov) : SøknadprosessVisitor {
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
@@ -27,7 +27,7 @@ class NavJsonBuilder(fakta: Søknadprosess, private val faktaNavBehov: FaktumNav
     private var rootId = 0
 
     init {
-        fakta.accept(this)
+        søknadprosess.accept(this)
     }
 
     fun resultatOrNull() = if (behovNode.size() != 0) root else null
