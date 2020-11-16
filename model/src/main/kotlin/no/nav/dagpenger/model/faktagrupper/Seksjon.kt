@@ -12,6 +12,7 @@ class Seksjon private constructor(
     val navn: String,
     private val rolle: Rolle,
     private val seksjonFakta: MutableSet<Faktum<*>>,
+    private val avhengerAvFakta: MutableSet<Faktum<*>>,
     val indeks: Int = 0
 ) : MutableSet<Faktum<*>> by seksjonFakta {
     internal lateinit var faktagrupper: Faktagrupper
@@ -21,7 +22,7 @@ class Seksjon private constructor(
         seksjonFakta.toSet().forEach {
             it.add(rolle)
             it.add(this)
-            it.leggTilAvhengigheter(seksjonFakta)
+            it.leggTilAvhengigheter(avhengerAvFakta)
         }
     }
 
@@ -32,17 +33,20 @@ class Seksjon private constructor(
             }
     }
 
-    constructor(navn: String, rolle: Rolle, vararg fakta: Faktum<*>) : this(navn, rolle, fakta.toMutableSet())
+    constructor(navn: String, rolle: Rolle, vararg fakta: Faktum<*>) : this(navn, rolle, fakta.toMutableSet(), mutableSetOf<Faktum<*>>())
 
     internal fun filtrertSeksjon(subsumsjon: Subsumsjon) = filtrertSeksjon(subsumsjon.relevanteFakta())
 
     private fun filtrertSeksjon(relevanteFakta: Set<Faktum<*>>) =
-        Seksjon(navn, rolle, seksjonFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet())
+        Seksjon(
+            navn,
+            rolle,
+            seksjonFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet(),
+            avhengerAvFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet()
+        )
 
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>) =
-        seksjonFakta.filter { it.harRolle(this.rolle) }.let { filtrertFakta ->
-            nesteFakta.any { it in filtrertFakta }
-        }
+        nesteFakta.any { it in seksjonFakta }
 
     internal fun faktagrupper(faktagrupper: Faktagrupper) {
         this.faktagrupper = faktagrupper
@@ -52,7 +56,7 @@ class Seksjon private constructor(
 
     internal fun deepCopy(indeks: Int, søknad: Søknad): Seksjon {
         return if (indeks <= genererteSeksjoner.size) genererteSeksjoner[indeks - 1]
-        else Seksjon(navn, rolle, mutableSetOf(), indeks).also {
+        else Seksjon(navn, rolle, mutableSetOf(), avhengerAvFakta.toMutableSet(), indeks).also {
             faktagrupper.add(faktagrupper.indexOf(this) + indeks, it)
             genererteSeksjoner.add(it)
             it.faktagrupper(this.faktagrupper)
@@ -62,6 +66,9 @@ class Seksjon private constructor(
     fun accept(visitor: FaktagrupperVisitor) {
         visitor.preVisit(this, rolle, seksjonFakta, indeks)
         seksjonFakta.sorted().forEach { it.accept(visitor) }
+        visitor.preVisitAvhengerAv(this, avhengerAvFakta)
+        avhengerAvFakta.sorted().forEach { it.accept(visitor) }
+        visitor.postVisitAvhengerAv(this, avhengerAvFakta)
         visitor.postVisit(this, rolle, indeks)
     }
 
@@ -81,7 +88,9 @@ class Seksjon private constructor(
         navn,
         rolle,
         seksjonFakta
-            .filter { it.harRolle(rolle) }
+            .map { søknad.id(it.faktumId) }
+            .toMutableSet(),
+        avhengerAvFakta
             .map { søknad.id(it.faktumId) }
             .toMutableSet()
     )

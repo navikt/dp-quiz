@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.marshalling
 
+import com.fasterxml.jackson.databind.node.ArrayNode
 import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
@@ -18,5 +19,9 @@ class SeksjonJsonBuilder(private val seksjon: Seksjon) : FaktumJsonBuilder(), Fa
             seksjonNode.put("navn", seksjon.navn)
             seksjonNode.set("fakta", mapper.valueToTree(fakta.map { it.id }))
         }
+    }
+
+    override fun preVisitAvhengerAv(seksjon: Seksjon, avhengerAvFakta: Set<Faktum<*>>) {
+        avhengerAvFakta.forEach { (root["fakta"] as ArrayNode).add(it.id) }
     }
 }

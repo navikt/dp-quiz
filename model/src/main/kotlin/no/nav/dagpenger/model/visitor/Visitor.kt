@@ -164,6 +164,8 @@ interface FaktagrupperVisitor : SubsumsjonVisitor, SøknadVisitor {
     fun postVisit(faktagrupper: Faktagrupper) {}
     fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {}
     fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {}
+    fun preVisitAvhengerAv(seksjon: Seksjon, avhengerAvFakta: Set<Faktum<*>>) {}
+    fun postVisitAvhengerAv(seksjon: Seksjon, avhengerAvFakta: Set<Faktum<*>>) {}
 }
 
 interface SubsumsjonVisitor : FaktumVisitor {

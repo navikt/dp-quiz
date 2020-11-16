@@ -96,8 +96,8 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
         throw ClassCastException("Vet ikke hvilken av ${this::class.java} og ${challenger::class.java} som skal sorteres først")
     }
 
-    internal fun leggTilAvhengigheter(seksjonFakta: MutableSet<Faktum<*>>) {
-        seksjonFakta.addAll(avhengerAvFakta)
+    internal fun leggTilAvhengigheter(fakta: MutableSet<Faktum<*>>) {
+        fakta.addAll(avhengerAvFakta)
     }
 
     internal fun sjekkAvhengigheter() {

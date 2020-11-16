@@ -54,7 +54,7 @@ internal class AvslagPåMinsteinntektTest {
 
         assertNull(fakta.resultat())
 
-        assertNesteSeksjon("inntekter", 9) {
+        assertNesteSeksjon("inntekter", 2) {
             it.besvar(fakta.inntekt(7), 200000.årlig)
             it.besvar(fakta.inntekt(8), 50000.årlig)
             it.validerSvar()
@@ -64,14 +64,14 @@ internal class AvslagPåMinsteinntektTest {
         assertFalse(fakta.resultat()!!)
         assertEquals(1, fakta.nesteSeksjoner().size)
 
-        assertNesteSeksjon("godkjenn virkningstidspunkt", 7) {
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 1) {
             it.besvar(fakta.ja(13), true)
         }
 
         assertFalse(fakta.resultat()!!)
 
         // Om saksbehandler ikke godkjenner virkningstidspunkt kan ikke det føre til innvilgelse
-        assertNesteSeksjon("godkjenn virkningstidspunkt", 7) {
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 1) {
             it.besvar(fakta.ja(13), false)
         }
         assertFalse(fakta.resultat()!!)
@@ -83,7 +83,7 @@ internal class AvslagPåMinsteinntektTest {
         assertFalse(fakta.resultat()!!)
 
         // Når vi godkjenner virkningstidspunkt vil det føre til innvilgelse
-        assertNesteSeksjon("godkjenn virkningstidspunkt", 7) {
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 1) {
             it.besvar(fakta.ja(13), true)
         }
         assertTrue(fakta.resultat()!!)

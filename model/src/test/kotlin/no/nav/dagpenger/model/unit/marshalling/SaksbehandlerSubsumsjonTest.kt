@@ -44,14 +44,14 @@ internal class SaksbehandlerSubsumsjonTest {
         assertDoesNotThrow { UUID.fromString(json["soknad_uuid"].asText()) }
         assertEquals("saksbehandler2", json["seksjon_navn"].asText())
         assertEquals(2, json["fakta"].size())
-        assertEquals("1", json["fakta"][0]["id"].asText())
-        assertEquals(
-            setOf(Rolle.saksbehandler, Rolle.søker),
-            json["fakta"][0]["roller"].map { Rolle.valueOf(it.asText()) }.toSet()
-        )
-        assertEquals("2", json["fakta"][1]["id"].asText())
+        assertEquals("2", json["fakta"][0]["id"].asText())
+        assertEquals("1", json["fakta"][1]["id"].asText())
         assertEquals(
             setOf(Rolle.saksbehandler),
+            json["fakta"][0]["roller"].map { Rolle.valueOf(it.asText()) }.toSet()
+        )
+        assertEquals(
+            setOf(Rolle.søker),
             json["fakta"][1]["roller"].map { Rolle.valueOf(it.asText()) }.toSet()
         )
     }
