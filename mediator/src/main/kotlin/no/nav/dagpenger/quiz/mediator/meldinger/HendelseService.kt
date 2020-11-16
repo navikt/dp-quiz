@@ -33,5 +33,6 @@ internal abstract class HendelseService(rapidsConnection: RapidsConnection) : Ri
 
     override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
         sikkerLogg.error("$riverName, $problems")
+        log.error("$riverName, $problems")
     }
 }

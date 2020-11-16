@@ -1,4 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
+
 import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Dokument
@@ -49,15 +50,23 @@ class MeldingMediatorTest {
     internal fun `ta imot svar`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
         val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknadUuid"].asText())
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 1, "boolean", "true"))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 2, "boolean", "true"))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 3, "heltall", "2"))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 4, "dato", 24.desember.toString()))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 5, "inntekt", 1000.årlig.toString()))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 6, "inntekt", 1050.årlig.toString()))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 7, "dokument", Dokument(1.januar.atStartOfDay(), "https://nav.no")))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, 8, "boolean", "true"))
-        assertEquals(7, testRapid.inspektør.size)
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(1, "boolean", "true"), FaktumSvar(2, "boolean", "true")))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(3, "heltall", "2")))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(4, "dato", 24.desember.toString())))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(5, "inntekt", 1000.årlig.toString())))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(6, "inntekt", 1050.årlig.toString())))
+        testRapid.sendTestMessage(
+            meldingsfabrikk.besvarFaktum(
+                uuid,
+                FaktumSvar(
+                    7,
+                    "dokument",
+                    Dokument(1.januar.atStartOfDay(), "https://nav.no")
+                )
+            )
+        )
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(8, "boolean", "true")))
+        assertEquals(6, testRapid.inspektør.size)
     }
 
     private class TestLagring : SøknadPersistence {
@@ -80,6 +89,8 @@ class MeldingMediatorTest {
     }
 }
 
+private data class FaktumSvar(val faktumId: Int, val clazz: String, val svar: Any)
+
 private class TestMeldingFactory(private val fnr: String, private val aktørId: String) {
     fun ønskerRettighetsavklaring(): String = nyHendelse(
         "ønsker_rettighetsavklaring",
@@ -99,24 +110,28 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
         "@opprettet" to LocalDateTime.now()
     )
 
-    fun besvarFaktum(søknadUuid: UUID, faktumId: Int, clazz: String, svar: Any) = nyHendelse(
+    fun besvarFaktum(søknadUuid: UUID, vararg faktumSvarListe: FaktumSvar) = nyHendelse(
         "faktum_svar",
         mapOf(
             "fnr" to fnr,
             "opprettet" to LocalDateTime.now(),
-            "faktumId" to faktumId,
             "søknadUuid" to søknadUuid,
-            "svar" to when (svar) {
-                is String -> svar
-                is Dokument -> svar.reflection { lastOppTidsstempel, url ->
-                    mapOf(
-                        "lastOppTidsstempel" to lastOppTidsstempel,
-                        "url" to url
-                    )
-                }
-                else -> throw IllegalArgumentException("Ustøtta svar-type")
-            },
-            "clazz" to clazz
+            "fakta" to faktumSvarListe.asList().map { faktumSvar ->
+                mapOf(
+                    "faktumId" to faktumSvar.faktumId,
+                    "svar" to when (faktumSvar.svar) {
+                        is String -> faktumSvar.svar
+                        is Dokument -> faktumSvar.svar.reflection { lastOppTidsstempel, url ->
+                            mapOf(
+                                "lastOppTidsstempel" to lastOppTidsstempel,
+                                "url" to url
+                            )
+                        }
+                        else -> throw IllegalArgumentException("Ustøtta svar-type")
+                    },
+                    "clazz" to faktumSvar.clazz
+                )
+            }
         )
     )
 }

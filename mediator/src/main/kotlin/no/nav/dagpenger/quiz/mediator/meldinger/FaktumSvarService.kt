@@ -13,40 +13,43 @@ import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.util.UUID
 
 internal class FaktumSvarService(
-        private val søknadPersistence: SøknadPersistence,
-        private val behovMediator: BehovMediator,
-        rapidsConnection: RapidsConnection
+    private val søknadPersistence: SøknadPersistence,
+    private val behovMediator: BehovMediator,
+    rapidsConnection: RapidsConnection
 ) :
-        HendelseService(rapidsConnection) {
+    HendelseService(rapidsConnection) {
 
     override val eventName = "faktum_svar"
     override val riverName = "Faktum svar"
 
     override fun validate(packet: JsonMessage) {
         packet.requireKey(
-                "fnr",
-                "opprettet",
-                "faktumId",
-                "svar",
-                "søknadUuid",
-                "clazz",
+            "fnr",
+            "opprettet",
+            "søknadUuid",
+            "fakta"
         )
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         val fnr = packet["fnr"].asText()
         val søknadUuid = UUID.fromString(packet["søknadUuid"].asText())
-        val faktumId = packet["faktumId"].asInt()
-        val svar = packet["svar"]
-        val clazz = packet["clazz"].asText()
+        val fakta = packet["fakta"]
 
         søknadPersistence.hent(søknadUuid, Versjon.FaktagrupperType.Web).also { faktagrupper ->
-            besvar(faktagrupper, faktumId, svar, clazz)
+            fakta.filter { faktumNode -> faktumNode.has("svar") }
+                .forEach { faktumNode ->
+                    val faktumId = faktumNode["faktumId"].asInt()
+                    val svar = faktumNode["svar"]
+                    val clazz = faktumNode["clazz"].asText()
+
+                    besvar(faktagrupper, faktumId, svar, clazz)
+                }
             søknadPersistence.lagre(faktagrupper.søknad)
             faktagrupper.nesteSeksjoner()
-                    .onEach { seksjon ->
-                        behovMediator.håndter(seksjon, fnr, faktagrupper.søknad.uuid)
-                    }
+                .onEach { seksjon ->
+                    behovMediator.håndter(seksjon, fnr, faktagrupper.søknad.uuid)
+                }
             // .also { if (it.isEmpty()) behandleFerdigResultat() }
         }
     }
@@ -57,7 +60,9 @@ internal class FaktumSvarService(
             "heltall" -> faktagrupper.heltall(faktumId).besvar(svar.asInt())
             "dato" -> faktagrupper.dato(faktumId).besvar(svar.asLocalDate())
             "inntekt" -> faktagrupper.inntekt(faktumId).besvar(svar.asDouble().årlig)
-            "dokument" -> faktagrupper.dokument(faktumId).besvar(Dokument(svar["lastOppTidsstempel"].asLocalDateTime(), svar["url"].asText()))
+            "dokument" ->
+                faktagrupper.dokument(faktumId)
+                    .besvar(Dokument(svar["lastOppTidsstempel"].asLocalDateTime(), svar["url"].asText()))
             else -> throw IllegalArgumentException("Ukjent svar-type: ${svar::class.java}")
         }
     }
