@@ -163,6 +163,12 @@ class Søknad private constructor(
         faktaMap[faktum.faktumId] = faktum
     }
 
+    internal fun removeAll(templates: List<TemplateFaktum<*>>) {
+        faktaMap.keys.toList().forEach { faktumId ->
+            if (templates.any { faktumId.generertFra(it.faktumId) }) faktaMap.remove(faktumId)
+        }
+    }
+
     internal fun søknadprosess(type: Versjon.UserInterfaceType) = Versjon.id(versjonId).søknadprosess(this, type)
 
     fun accept(visitor: SøknadVisitor) {

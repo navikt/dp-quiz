@@ -18,6 +18,8 @@ class FaktumId private constructor(private val rootId: Int, private val indeks: 
         indeks
     )
 
+    internal fun generertFra(other: FaktumId) = this.indeks != 0 && this.rootId == other.rootId
+
     internal val id: String get() = if (indeks == 0) rootId.toString() else "$rootId.$indeks"
 
     override fun toString() = "Id $id"
