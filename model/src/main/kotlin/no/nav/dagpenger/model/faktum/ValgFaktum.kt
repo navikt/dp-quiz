@@ -25,7 +25,7 @@ class ValgFaktum internal constructor(
     internal fun addAllJa(fakta: List<Faktum<*>>) = underordnedeJa.addAll(fakta as List<Faktum<Boolean>>)
     internal fun addAllNei(fakta: List<Faktum<*>>) = underordnedeNei.addAll(fakta as List<Faktum<Boolean>>)
 
-    override fun add(rolle: Rolle) = underordnede.all { it.add(rolle) }
+    override fun add(rolle: Rolle) = super.add(rolle) && underordnede.all { it.add(rolle) }
 
     override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> =
         underordnede.flatMap { it.grunnleggendeFakta() }.toSet()

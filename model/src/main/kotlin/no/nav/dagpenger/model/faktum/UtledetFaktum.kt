@@ -37,8 +37,6 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
         underordnede.forEach { it.harAvhengighet(other) }
     }
 
-    override fun add(rolle: Rolle): Boolean = false // utledet faktum kan ikke settes av roller
-
     override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> =
         underordnede.flatMap { it.grunnleggendeFakta() }.toSet()
 
