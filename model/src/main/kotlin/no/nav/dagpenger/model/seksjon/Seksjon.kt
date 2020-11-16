@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.seksjon
 
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -94,4 +95,13 @@ class Seksjon private constructor(
             .map { søknad.id(it.faktumId) }
             .toMutableSet()
     )
+
+    internal fun tilbakestill(templateFaktumId: FaktumId) {
+        seksjonFakta.removeIf { it.faktumId.generertFra(templateFaktumId) }
+        genererteSeksjoner.toSet().forEach {
+            it.tilbakestill(templateFaktumId)
+            if (it.isEmpty()) genererteSeksjoner.remove(it)
+        }
+        søknadprosess.removeIf { it.isEmpty() }
+    }
 }

@@ -20,8 +20,14 @@ class GeneratorFaktum internal constructor(
     internal lateinit var søknad: Søknad
 
     override fun besvar(r: Int): GrunnleggendeFaktum<Int> = this.also {
+        if (erBesvart() && svar() != r) tilbakestill()
         super.besvar(r)
         templates.forEach { template -> template.generate(r, søknad) }
+    }
+
+    private fun tilbakestill() {
+        templates.forEach { template -> template.tilbakestill() }
+        søknad.removeAll(templates)
     }
 
     override fun acceptUtenSvar(visitor: FaktumVisitor) {

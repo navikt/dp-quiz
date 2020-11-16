@@ -73,6 +73,10 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
         }
     }
 
+    internal fun tilbakestill() {
+        seksjoner.forEach { seksjon -> seksjon.tilbakestill(faktumId) }
+    }
+
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
         val avhengigheter = avhengigeFakta.map { it.bygg(byggetFakta) }.toMutableSet()
