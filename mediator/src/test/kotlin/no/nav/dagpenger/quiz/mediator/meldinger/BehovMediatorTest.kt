@@ -1,5 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
-import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
+import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -21,9 +21,9 @@ internal class BehovMediatorTest {
 
     @Test
     fun `tar imot seksjon og sender ut på kafka`() {
-        val faktagrupper = SøknadEksempel.v.faktagrupper(fnr, Web)
-        val seksjon = faktagrupper.nesteSeksjoner().first()
-        mediator.håndter(seksjon, fnr, faktagrupper.søknad.uuid)
+        val søknadprosess = SøknadEksempel.v.søknadprosess(fnr, Web)
+        val seksjon = søknadprosess.nesteSeksjoner().first()
+        mediator.håndter(seksjon, fnr, søknadprosess.søknad.uuid)
         assertEquals(1, testRapid.inspektør.size)
 
         testRapid.inspektør.message(0).also {

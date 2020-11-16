@@ -4,15 +4,15 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.minst
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
@@ -153,8 +153,8 @@ class Prototype {
             villigPendle,
         )
 
-    internal val faktagrupper: Faktagrupper =
-        Faktagrupper(
+    internal val søknadprosess: Søknadprosess =
+        Søknadprosess(
             statiske,
             reellArbeidssøker,
             personalia,
@@ -167,10 +167,10 @@ class Prototype {
         versjonId = VERSJON_ID,
         prototypeSøknad = søknad,
         prototypeSubsumsjon = inngangsvilkår,
-        prototypeFaktagrupper = mapOf(
-            Versjon.FaktagrupperType.Web to faktagrupper
+        prototypeUserInterfaces = mapOf(
+            Versjon.UserInterfaceType.Web to søknadprosess
         )
     )
 
-    fun faktagrupper(fnr: String) = versjon.faktagrupper(fnr, Versjon.FaktagrupperType.Web)
+    fun søknadprosess(fnr: String) = versjon.søknadprosess(fnr, Versjon.UserInterfaceType.Web)
 }

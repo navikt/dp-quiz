@@ -1,8 +1,8 @@
 package no.nav.dagpenger.model.subsumsjon
 
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class GodkjenningsSubsumsjon private constructor(
@@ -33,13 +33,13 @@ class GodkjenningsSubsumsjon private constructor(
         }
     }
 
-    override fun deepCopy(faktagrupper: Faktagrupper) = GodkjenningsSubsumsjon(
+    override fun deepCopy(søknadprosess: Søknadprosess) = GodkjenningsSubsumsjon(
         navn,
         action,
-        child.deepCopy(faktagrupper),
-        faktagrupper.ja(godkjenning.id),
-        gyldigSubsumsjon.deepCopy(faktagrupper),
-        ugyldigSubsumsjon.deepCopy(faktagrupper)
+        child.deepCopy(søknadprosess),
+        søknadprosess.ja(godkjenning.id),
+        gyldigSubsumsjon.deepCopy(søknadprosess),
+        ugyldigSubsumsjon.deepCopy(søknadprosess)
     )
 
     override fun bygg(søknad: Søknad) = GodkjenningsSubsumsjon(

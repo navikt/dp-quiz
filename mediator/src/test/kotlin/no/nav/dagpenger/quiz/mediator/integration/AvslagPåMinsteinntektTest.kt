@@ -1,10 +1,10 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt
@@ -16,12 +16,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class AvslagPåMinsteinntektTest {
-    private lateinit var fakta: Faktagrupper
+    private lateinit var fakta: Søknadprosess
 
     @BeforeEach
     fun setup() {
         Postgres.withMigratedDb {
-            fakta = AvslagPåMinsteinntekt().faktagrupper("123123123")
+            fakta = AvslagPåMinsteinntekt().søknadprosess("123123123")
         }
     }
 

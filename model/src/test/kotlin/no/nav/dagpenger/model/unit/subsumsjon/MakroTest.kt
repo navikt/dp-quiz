@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.unit.subsumsjon
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.helpers.testFaktagrupper
+import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.eller
@@ -20,13 +20,13 @@ internal class MakroTest {
 
     @BeforeEach
     fun setup() {
-        val faktagrupper = Søknad(
+        val søknadprosess = Søknad(
             ja nei "f1" id 1,
             ja nei "f2" id 2
-        ).testFaktagrupper()
+        ).testSøknadprosess()
 
-        f1 = faktagrupper ja 1
-        f2 = faktagrupper ja 2
+        f1 = søknadprosess ja 1
+        f2 = søknadprosess ja 2
 
         val s1 = f1 er true
         val s2 = f2 er true

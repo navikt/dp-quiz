@@ -4,11 +4,11 @@ import PostgresDataSourceBuilder.dataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Versjon
-import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1.prototypeFakta1
 import no.nav.dagpenger.quiz.mediator.helpers.januar
@@ -25,12 +25,12 @@ internal class SøknadRecordTest {
         internal const val UNG_PERSON_FNR_2018 = "12020052345"
     }
 
-    private lateinit var originalFaktagrupper: Faktagrupper
-    private lateinit var rehydrertFaktagrupper: Faktagrupper
+    private lateinit var originalFaktagrupper: Søknadprosess
+    private lateinit var rehydrertFaktagrupper: Søknadprosess
     private lateinit var søknadRecord: SøknadRecord
 
     @Test
-    fun `ny faktagrupper`() {
+    fun `ny søknadprosess`() {
         Postgres.withMigratedDb {
             byggOriginalFaktagrupper()
 
@@ -149,11 +149,11 @@ internal class SøknadRecordTest {
         }
     }
 
-    private fun hentFørstFakta(faktagrupperType: Versjon.FaktagrupperType = Web) {
+    private fun hentFørstFakta(userInterfaceType: Versjon.UserInterfaceType = Web) {
         søknadRecord.lagre(originalFaktagrupper.søknad)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         søknadRecord = SøknadRecord()
-        rehydrertFaktagrupper = søknadRecord.hent(uuid, faktagrupperType)
+        rehydrertFaktagrupper = søknadRecord.hent(uuid, userInterfaceType)
         assertDeepEquals(originalFaktagrupper, rehydrertFaktagrupper)
     }
 
@@ -176,7 +176,7 @@ internal class SøknadRecordTest {
         )
     }
 
-    private fun assertSesjonType(sesjonType: Versjon.FaktagrupperType) {
+    private fun assertSesjonType(sesjonType: Versjon.UserInterfaceType) {
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         assertEquals(
             sesjonType.id,

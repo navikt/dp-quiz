@@ -1,10 +1,10 @@
 package no.nav.dagpenger.model.subsumsjon
 
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.faktum.Faktum.Companion.deepCopy
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.Regel
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 
 class GeneratorSubsumsjon internal constructor(
     regel: Regel,
@@ -28,10 +28,10 @@ class GeneratorSubsumsjon internal constructor(
         }
     }
 
-    override fun deepCopy(faktagrupper: Faktagrupper) = GeneratorSubsumsjon(
-        regel.deepCopy(faktagrupper),
-        setOf(faktum).deepCopy(faktagrupper).first() as GeneratorFaktum,
-        makro.deepCopy(faktagrupper)
+    override fun deepCopy(søknadprosess: Søknadprosess) = GeneratorSubsumsjon(
+        regel.deepCopy(søknadprosess),
+        setOf(faktum).deepCopy(søknadprosess).first() as GeneratorFaktum,
+        makro.deepCopy(søknadprosess)
     )
 
     override fun bygg(søknad: Søknad) = GeneratorSubsumsjon(

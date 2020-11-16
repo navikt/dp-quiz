@@ -1,7 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.meldinger.model
 
-import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.marshalling.SeksjonJsonBuilder
+import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.helse.rapids_rivers.JsonMessage
 import java.time.LocalDateTime
 import java.util.UUID

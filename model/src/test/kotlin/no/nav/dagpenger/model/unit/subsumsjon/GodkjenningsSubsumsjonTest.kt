@@ -1,8 +1,6 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -10,6 +8,8 @@ import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.gyldigGodkjentAv
 import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
@@ -22,7 +22,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning uansett resultat av child`() {
-        faktagrupper { fakta -> fakta ja 1 er true godkjentAv (fakta ja 2) }
+        søknadprosess { fakta -> fakta ja 1 er true godkjentAv (fakta ja 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true)
@@ -42,7 +42,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning av gyldig sti av child`() {
-        faktagrupper { fakta -> fakta ja 1 er true gyldigGodkjentAv (fakta ja 2) }
+        søknadprosess { fakta -> fakta ja 1 er true gyldigGodkjentAv (fakta ja 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true)
@@ -62,7 +62,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning av ugyldig sti av child`() {
-        faktagrupper { fakta -> fakta ja 1 er true ugyldigGodkjentAv (fakta ja 2) }
+        søknadprosess { fakta -> fakta ja 1 er true ugyldigGodkjentAv (fakta ja 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true)
@@ -80,7 +80,7 @@ internal class GodkjenningsSubsumsjonTest {
         assertEquals(true, godkjenningsSubsumsjon.resultat())
     }
 
-    private fun faktagrupper(block: (Søknad) -> Subsumsjon): Faktagrupper {
+    private fun søknadprosess(block: (Søknad) -> Subsumsjon): Søknadprosess {
         val søknad = Søknad(
             ja nei "faktum" id 1,
             ja nei "godkjenning" id 2 avhengerAv 1
@@ -90,7 +90,7 @@ internal class GodkjenningsSubsumsjonTest {
         godkjenning = søknad ja 2
 
         godkjenningsSubsumsjon = block(søknad)
-        return Faktagrupper(
+        return Søknadprosess(
             søknad,
             Seksjon("seksjon", Rolle.søker, faktum),
             Seksjon("seksjon", Rolle.saksbehandler, godkjenning),

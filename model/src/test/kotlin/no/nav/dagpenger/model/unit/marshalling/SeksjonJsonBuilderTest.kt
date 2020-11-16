@@ -2,11 +2,11 @@ package no.nav.dagpenger.model.unit.marshalling
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.helpers.testFaktagrupper
+import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.marshalling.SeksjonJsonBuilder
+import no.nav.dagpenger.model.seksjon.Seksjon
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -15,7 +15,7 @@ class SeksjonJsonBuilderTest {
     fun `Hente ut enkelt seksjon`() {
         val seksjon = Søknad(
             ja nei "navn" id 1
-        ).testFaktagrupper().let {
+        ).testSøknadprosess().let {
             it[0]
         }
 

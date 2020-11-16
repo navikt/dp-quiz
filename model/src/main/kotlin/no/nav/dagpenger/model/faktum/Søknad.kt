@@ -2,8 +2,8 @@ package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.factory.ValgFaktumFactory
-import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktagrupper.Versjon
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.util.UUID
@@ -163,7 +163,7 @@ class Søknad private constructor(
         faktaMap[faktum.faktumId] = faktum
     }
 
-    internal fun faktagrupper(type: Versjon.FaktagrupperType) = Versjon.id(versjonId).faktagrupper(this, type)
+    internal fun søknadprosess(type: Versjon.UserInterfaceType) = Versjon.id(versjonId).søknadprosess(this, type)
 
     fun accept(visitor: SøknadVisitor) {
         visitor.preVisit(this, fnr, versjonId, uuid)

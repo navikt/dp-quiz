@@ -1,22 +1,22 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
 import no.nav.dagpenger.model.helpers.NyttEksempel
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class PrettyPrintTest {
-    private lateinit var faktagrupper: Faktagrupper
+    private lateinit var søknadprosess: Søknadprosess
 
     @BeforeEach
     fun setUp() {
-        faktagrupper = NyttEksempel().faktagrupper
+        søknadprosess = NyttEksempel().søknadprosess
     }
 
     @Test
     fun `printer ett subsumsjonstre uten verdier`() {
-        faktagrupper.rootSubsumsjon.toString().also {
+        søknadprosess.rootSubsumsjon.toString().also {
             assertEquals(17, Regex("ukjent").findAll(it).count())
         }
     }
@@ -27,8 +27,8 @@ internal class PrettyPrintTest {
 
     @Test
     fun `printer ett subsumsjonstre med genererte fakta`() {
-        faktagrupper.heltall(15).besvar(3)
-        faktagrupper.rootSubsumsjon.toString().also {
+        søknadprosess.heltall(15).besvar(3)
+        søknadprosess.rootSubsumsjon.toString().also {
             assertEquals(17 + 1 + (3 * 3), Regex("ukjent").findAll(it).count())
         }
     }

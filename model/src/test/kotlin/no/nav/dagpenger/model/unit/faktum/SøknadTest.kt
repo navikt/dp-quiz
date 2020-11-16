@@ -5,14 +5,14 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -37,7 +37,7 @@ class SøknadTest {
             ja nei "f12" id 12 avhengerAv 11
         )
 
-        Faktagrupper(Seksjon("seksjon", Rolle.søker, søknad id 11, søknad id 12))
+        Søknadprosess(Seksjon("seksjon", Rolle.søker, søknad id 11, søknad id 12))
         assertEquals(2, søknad.size)
         søknad.dokument(11).besvar(Dokument(1.januar))
         søknad.ja(12).besvar(true)
@@ -56,7 +56,7 @@ class SøknadTest {
             maks dato "maksdato" av 3 og 4 og 5 id 345
         )
 
-        Faktagrupper(Seksjon("seksjon", Rolle.søker, søknad id 345, søknad id 3, søknad id 4, søknad id 5))
+        Søknadprosess(Seksjon("seksjon", Rolle.søker, søknad id 345, søknad id 3, søknad id 4, søknad id 5))
         assertEquals(4, søknad.size)
         søknad.dato(3).besvar(3.januar)
         søknad.dato(4).besvar(4.januar)
@@ -77,7 +77,7 @@ class SøknadTest {
             ja nei "annen forelder får støtte" id 18
         )
         val barneSeksjon = Seksjon("barneseksjon", Rolle.søker, søknad id 15, søknad id 16, søknad id 17, søknad id 18)
-        Faktagrupper(søknad, barneSeksjon)
+        Søknadprosess(søknad, barneSeksjon)
         assertEquals(TemplateFaktum::class, søknad.id(16)::class)
         assertEquals(GeneratorFaktum::class, søknad.id(15)::class)
         assertEquals(4, søknad.size)

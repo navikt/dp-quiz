@@ -1,10 +1,6 @@
 package no.nav.dagpenger.model.unit.seksjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Seksjon
-import no.nav.dagpenger.model.faktagrupper.Versjon
-import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Web
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -12,6 +8,10 @@ import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.gyldigGodkjentAv
 import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.eller
 import no.nav.dagpenger.model.subsumsjon.så
 import org.junit.jupiter.api.BeforeEach
@@ -38,7 +38,7 @@ internal class SaksbehandlerSeksjonerTest {
         (prototypeSøknad.ja(3) er true ugyldigGodkjentAv prototypeSøknad.ja(4)) eller
         (prototypeSøknad.ja(5) er true godkjentAv prototypeSøknad.ja(6))
 
-    private val prototypeFaktagrupper = Faktagrupper(
+    private val prototypeFaktagrupper = Søknadprosess(
         prototypeSøknad,
         Seksjon("søker", Rolle.søker, prototypeSøknad.ja(1), prototypeSøknad.ja(3), prototypeSøknad.ja(5)),
         Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeSøknad.ja(2)),
@@ -51,7 +51,7 @@ internal class SaksbehandlerSeksjonerTest {
         mapOf(Web to prototypeFaktagrupper)
     )
 
-    private lateinit var seksjoner: Faktagrupper
+    private lateinit var seksjoner: Søknadprosess
     private lateinit var f1: Faktum<Boolean>
     private lateinit var f3: Faktum<Boolean>
     private lateinit var f5: Faktum<Boolean>
@@ -61,7 +61,7 @@ internal class SaksbehandlerSeksjonerTest {
 
     @BeforeEach
     internal fun setup() {
-        seksjoner = Versjon.siste.faktagrupper(UNG_PERSON_FNR_2018, Web, uuid)
+        seksjoner = Versjon.siste.søknadprosess(UNG_PERSON_FNR_2018, Web, uuid)
         f1 = seksjoner.ja(1)
         f3 = seksjoner.ja(3)
         f5 = seksjoner.ja(5)

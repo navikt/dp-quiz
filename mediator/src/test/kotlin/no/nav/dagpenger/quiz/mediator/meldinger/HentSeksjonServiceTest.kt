@@ -1,7 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
-import no.nav.dagpenger.model.faktagrupper.Versjon
-import no.nav.dagpenger.model.faktagrupper.Versjon.FaktagrupperType.Mobile
+import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Mobile
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecordTest
@@ -22,7 +22,7 @@ internal class HentSeksjonServiceTest {
         Postgres.withMigratedDb {
             FaktumTable(SøknadEksempel1.prototypeFakta1, 1000)
             val søknadRecord = SøknadRecord()
-            søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Versjon.FaktagrupperType.Web)
+            søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Versjon.UserInterfaceType.Web)
             val uuid = SøknadRecord().opprettede(SøknadRecordTest.UNG_PERSON_FNR_2018).toSortedMap().values.first()
 
             HentSeksjonService(rapid)

@@ -1,10 +1,9 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
-
-import no.nav.dagpenger.model.faktagrupper.Faktagrupper
-import no.nav.dagpenger.model.faktagrupper.Versjon
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import no.nav.dagpenger.quiz.mediator.helpers.desember
@@ -23,7 +22,7 @@ class MeldingMediatorTest {
     @BeforeEach
     internal fun reset() {
         testRapid.reset()
-        grupperer.faktagrupper = null
+        grupperer.søknadprosess = null
     }
 
     private companion object {
@@ -43,7 +42,7 @@ class MeldingMediatorTest {
     internal fun `Start ny søknad, og send første seksjon`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
         assertEquals(1, testRapid.inspektør.size)
-        assertNotNull(grupperer.faktagrupper)
+        assertNotNull(grupperer.søknadprosess)
     }
 
     @Test
@@ -70,16 +69,16 @@ class MeldingMediatorTest {
     }
 
     private class TestLagring : SøknadPersistence {
-        var faktagrupper: Faktagrupper? = null
+        var søknadprosess: Søknadprosess? = null
         private val versjon = 3
 
-        override fun ny(fnr: String, type: Versjon.FaktagrupperType) =
-            Versjon.id(versjon).faktagrupper(fnr, type).also { faktagrupper = it }
+        override fun ny(fnr: String, type: Versjon.UserInterfaceType) =
+            Versjon.id(versjon).søknadprosess(fnr, type).also { søknadprosess = it }
 
-        override fun hent(uuid: UUID, type: Versjon.FaktagrupperType?) = faktagrupper!!
+        override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?) = søknadprosess!!
 
         override fun lagre(søknad: Søknad): Boolean {
-            faktagrupper = Versjon.id(versjon).faktagrupper(søknad, Versjon.FaktagrupperType.Web)
+            søknadprosess = Versjon.id(versjon).søknadprosess(søknad, Versjon.UserInterfaceType.Web)
             return true
         }
 
@@ -97,7 +96,7 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
         mapOf(
             "fnr" to fnr,
             "opprettet" to LocalDateTime.now(),
-            "faktagrupperType" to Versjon.FaktagrupperType.Web.toString()
+            "faktagrupperType" to Versjon.UserInterfaceType.Web.toString()
         )
     )
 
