@@ -94,4 +94,6 @@ class Seksjon private constructor(
             .map { søknad.id(it.faktumId) }
             .toMutableSet()
     )
+
+    fun somSpørsmål() = rolle.spørsmål(this)
 }
