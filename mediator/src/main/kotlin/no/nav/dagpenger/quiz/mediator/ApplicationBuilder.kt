@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
+import no.nav.dagpenger.quiz.mediator.meldinger.BehovMediator
+import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
+import no.nav.dagpenger.quiz.mediator.meldinger.ØnskerRettighetsavklaringerService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
@@ -24,6 +28,11 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
         runMigration()
+
+        val søknadRecord = SøknadRecord()
+        val behovMediator = BehovMediator(rapidsConnection)
+        ØnskerRettighetsavklaringerService(søknadRecord, behovMediator, rapidsConnection)
+        FaktumSvarService(søknadRecord, behovMediator, rapidsConnection)
     }
 
     private fun sendToRapid(behov: Map<*, *>) {
