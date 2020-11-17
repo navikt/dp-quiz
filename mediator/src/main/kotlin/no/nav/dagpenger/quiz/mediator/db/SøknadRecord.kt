@@ -258,7 +258,7 @@ class SøknadRecord : SøknadPersistence {
     }
 
     private class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) : SøknadVisitor {
-        private var faktaId = 0
+        private var søknadId = 0
         private var versjonId = 0
         private var rootId = 0
         private var indeks = 0
@@ -270,7 +270,7 @@ class SøknadRecord : SøknadPersistence {
 
         override fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
             this.versjonId = versjonId
-            faktaId = using(sessionOf(dataSource)) { session ->
+            søknadId = using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
                         "INSERT INTO soknad(uuid, versjon_id, fnr, sesjon_type_id) VALUES (?, ?, ?, ?) returning id",
@@ -279,7 +279,7 @@ class SøknadRecord : SøknadPersistence {
                         fnr,
                         type.id
                     ).map { it.int(1) }.asSingle
-                )!!
+                ) ?: throw IllegalArgumentException("failed to find søknadId")
             }
         }
 
@@ -350,13 +350,14 @@ class SøknadRecord : SøknadPersistence {
         private fun skrivFaktumVerdi(faktum: Faktum<*>) {
             if (faktum in faktumList) return else faktumList.add(faktum)
             using(sessionOf(dataSource)) { session ->
+                // println("faktum: $faktaId,\nindeks: $indeks,\nversion: $versjonId,\nroot: $rootId")
                 session.run(
                     queryOf( //language=PostgreSQL
                         """INSERT INTO faktum_verdi
                             (soknad_id, indeks, faktum_id)
                         VALUES (?, ?,
                                 (SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?))""".trimMargin(),
-                        faktaId,
+                        søknadId,
                         indeks,
                         versjonId,
                         rootId
