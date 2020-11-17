@@ -17,6 +17,7 @@ class GeneratorSubsumsjon internal constructor(
             when (resultat) {
                 false -> {
                     (ugyldig as AlleSubsumsjon).also { alleSubsumsjon ->
+                        if (alleSubsumsjon.size != faktum.svar()) alleSubsumsjon.clear()
                         if (alleSubsumsjon.isEmpty())
                             alleSubsumsjon.addAll((1..faktum.svar()).map { makro.deepCopy(it, faktum.søknad) })
                     }
