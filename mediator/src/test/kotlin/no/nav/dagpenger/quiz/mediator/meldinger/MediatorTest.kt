@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
 
-class MeldingMediatorTest {
+internal class MeldingMediatorTest {
 
     @BeforeEach
     internal fun reset() {
@@ -39,16 +39,17 @@ class MeldingMediatorTest {
     }
 
     @Test
-    internal fun `Start ny søknad, og send første seksjon`() {
+    fun `Start ny søknad, og send første seksjon`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
         assertEquals(1, testRapid.inspektør.size)
         assertNotNull(grupperer.søknadprosess)
     }
 
     @Test
-    internal fun `ta imot svar`() {
+    fun `ta imot svar`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
         val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknadUuid"].asText())
+        assertEquals("behov", testRapid.inspektør.message(0)["@event_name"].asText())
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(1, "boolean", "true"), FaktumSvar(2, "boolean", "true")))
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(3, "heltall", "2")))
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(4, "dato", 24.desember.toString())))

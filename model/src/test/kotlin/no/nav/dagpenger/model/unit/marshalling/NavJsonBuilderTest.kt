@@ -23,21 +23,6 @@ import org.junit.jupiter.api.Test
 
 class NavJsonBuilderTest {
 
-    init {
-        FaktumNavBehov(
-            mapOf(
-                1 to "f1Behov",
-                2 to "f2Behov",
-                3 to "f3Behov",
-                4 to "f4Behov",
-                5 to "f5Behov",
-                6 to "f6Behov",
-                7 to "f7Behov",
-                8 to "f8Behov"
-            )
-        )
-    }
-
     @Test
     fun `bygger behov event`() {
         val prototypeSøknad = Søknad(
@@ -84,12 +69,25 @@ class NavJsonBuilderTest {
         )
 
         val fakta = Versjon.siste.søknadprosess(fnr = "12345678910", Versjon.UserInterfaceType.Web)
+        FaktumNavBehov(
+            Versjon.versjoner.keys.maxOf { it },
+            mapOf(
+                1 to "f1Behov",
+                2 to "f2Behov",
+                3 to "f3Behov",
+                4 to "f4Behov",
+                5 to "f5Behov",
+                6 to "f6Behov",
+                7 to "f7Behov",
+                8 to "f8Behov"
+            )
+        )
 
         fakta.ja(1).besvar(true)
         fakta.dato(5).besvar(1.januar)
 
         assertBehovJson(
-            json = NavJsonBuilder(fakta, FaktumNavBehov.siste).resultatOrNull()!!,
+            json = NavJsonBuilder(fakta, "seksjon nav").resultat(),
             faktumOgBehov = listOf(2 to "f2Behov", 3 to "f3Behov", 6 to "f6Behov"),
             avhengigeBehov = listOf("f1Behov")
         )
@@ -98,7 +96,7 @@ class NavJsonBuilderTest {
         fakta.ja(9).besvar(true)
 
         assertBehovJson(
-            json = NavJsonBuilder(fakta, FaktumNavBehov.siste).resultatOrNull()!!,
+            json = NavJsonBuilder(fakta, "seksjon nav").resultat(),
             faktumOgBehov = listOf(2 to "f2Behov", 3 to "f3Behov", 4 to "f4Behov"),
             avhengigeBehov = listOf("f7Behov", "f8Behov")
         )
@@ -107,14 +105,12 @@ class NavJsonBuilderTest {
         fakta.dato(4).besvar(1.januar)
 
         assertBehovJson(
-            json = NavJsonBuilder(fakta, FaktumNavBehov.siste).resultatOrNull()!!,
+            json = NavJsonBuilder(fakta, "seksjon nav").resultat(),
             faktumOgBehov = listOf(3 to "f3Behov"),
             avhengigeBehov = emptyList()
         )
 
         fakta.dato(3).besvar(1.januar)
-
-        assertEquals(null, NavJsonBuilder(fakta, FaktumNavBehov.siste).resultatOrNull())
     }
 
     private fun assertBehovJson(

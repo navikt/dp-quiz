@@ -48,7 +48,7 @@ internal class FaktumSvarService(
             søknadPersistence.lagre(søknadprosess.søknad)
             søknadprosess.nesteSeksjoner()
                 .onEach { seksjon ->
-                    behovMediator.håndter(seksjon, fnr, søknadprosess.søknad.uuid)
+                    context.send(seksjon.somSpørsmål())
                 }
             // .also { if (it.isEmpty()) behandleFerdigResultat() }
         }

@@ -105,5 +105,5 @@ class Seksjon private constructor(
         søknadprosess.removeIf { it.isEmpty() }
     }
 
-    fun somSpørsmål() = rolle.spørsmål(this)
+    fun somSpørsmål() = rolle.spørsmål(søknadprosess, navn)
 }

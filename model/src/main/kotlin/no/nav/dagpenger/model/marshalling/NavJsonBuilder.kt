@@ -16,21 +16,22 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class NavJsonBuilder(søknadprosess: Søknadprosess, private val faktaNavBehov: FaktumNavBehov) : SøknadprosessVisitor {
+class NavJsonBuilder(søknadprosess: Søknadprosess, seksjonNavn: String, indeks: Int = 0) : SøknadprosessVisitor {
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
-    private var ignore = true
     private val faktumIder = mutableSetOf<String>()
     private val behovNode = mapper.createArrayNode()
-
+    private lateinit var faktumNavBehov: FaktumNavBehov
+    private var ignore = true
     private var rootId = 0
 
     init {
-        søknadprosess.accept(this)
+        søknadprosess.søknad.accept(this)
+        søknadprosess.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(søknadprosess.rootSubsumsjon).accept(this)
     }
 
-    fun resultatOrNull() = if (behovNode.size() != 0) root else null
+    fun resultat() = root
 
     override fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
         root.put("@event_name", "behov")
@@ -40,10 +41,16 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val faktaNavBehov: 
         root.put("soknad_uuid", "$uuid")
         root.set("fakta", faktaNode)
         root.set("@behov", behovNode)
+
+        faktumNavBehov = FaktumNavBehov.id(versjonId)
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
-        ignore = rolle != Rolle.nav
+        ignore = false
+    }
+
+    override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
+        ignore = true
     }
 
     override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
@@ -62,10 +69,10 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val faktaNavBehov: 
         if (ignore) return
         if (id in faktumIder) return
         if (avhengerAvFakta.all { it.erBesvart() }) {
-            behovNode.add(faktaNavBehov[rootId])
+            behovNode.add(faktumNavBehov[rootId])
             lagFaktumNode(id)
             avhengerAvFakta.forEach {
-                root.putR(faktaNavBehov[it.reflection { rootId, _ -> rootId }], it.svar())
+                root.putR(faktumNavBehov[it.reflection { rootId, _ -> rootId }], it.svar())
             }
         }
     }
@@ -75,7 +82,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val faktaNavBehov: 
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("id", id)
-            faktumNode.put("behov", faktaNavBehov[rootId])
+            faktumNode.put("behov", faktumNavBehov[rootId])
         }
         faktumIder.add(id)
     }

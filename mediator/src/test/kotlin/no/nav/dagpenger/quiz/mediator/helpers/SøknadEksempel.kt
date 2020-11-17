@@ -32,12 +32,8 @@ internal object SøknadEksempel {
     private val webPrototypeSøknad = Søknadprosess(
         Seksjon(
             "seksjon1",
-            Rolle.søker,
-            prototypeSøknad1.ja(1)
-        ),
-        Seksjon(
-            "seksjon2",
-            Rolle.søker,
+            Rolle.nav,
+            prototypeSøknad1.ja(1),
             prototypeSøknad1.ja(2)
         ),
         Seksjon(

@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.faktum
 
-import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.marshalling.NavJsonBuilder
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 
 // Forstår hvordan den skal stille spørsmål
 abstract class Rolle(val name: String) {
@@ -16,18 +17,18 @@ abstract class Rolle(val name: String) {
             else -> throw IllegalArgumentException()
         }
     }
-    abstract fun spørsmål(seksjon: Seksjon): String
+    abstract fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String): String
 }
 
 // Forstår hvordan den skal stille spørsmål til nav
 class NavRolle : Rolle("nav") {
-    override fun spørsmål(seksjon: Seksjon) = ""
+    override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) = NavJsonBuilder(søknadprosess, seksjonNavn).resultat().toString()
 }
 
 class SøkerRolle : Rolle("søker") {
-    override fun spørsmål(seksjon: Seksjon) = ""
+    override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) = ""
 }
 
 class SaksbehandlerRolle : Rolle("saksbehandler") {
-    override fun spørsmål(seksjon: Seksjon) = ""
+    override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) = ""
 }
