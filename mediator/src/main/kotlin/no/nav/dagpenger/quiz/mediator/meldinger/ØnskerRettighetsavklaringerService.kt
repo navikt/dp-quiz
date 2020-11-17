@@ -7,7 +7,6 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 
 internal class ØnskerRettighetsavklaringerService(
     private val søknadPersistence: SøknadPersistence,
-    private val behovMediator: BehovMediator,
     rapidsConnection: RapidsConnection
 ) :
     HendelseService(rapidsConnection) {
@@ -26,7 +25,7 @@ internal class ØnskerRettighetsavklaringerService(
             .also { søknadprosess ->
                 søknadprosess.nesteSeksjoner()
                     .forEach { seksjon ->
-                        behovMediator.håndter(seksjon, fnr, søknadprosess.søknad.uuid)
+                        context.send(seksjon.somSpørsmål())
                     }
             }
     }

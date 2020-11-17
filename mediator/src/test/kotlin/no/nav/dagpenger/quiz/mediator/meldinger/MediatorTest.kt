@@ -31,9 +31,8 @@ internal class MeldingMediatorTest {
         private val grupperer = TestLagring()
 
         init {
-            val behovMediator = BehovMediator(testRapid)
-            ØnskerRettighetsavklaringerService(grupperer, behovMediator, testRapid)
-            FaktumSvarService(grupperer, behovMediator, testRapid)
+            ØnskerRettighetsavklaringerService(grupperer, testRapid)
+            FaktumSvarService(grupperer, testRapid)
             SøknadEksempel
         }
     }
@@ -48,9 +47,12 @@ internal class MeldingMediatorTest {
     @Test
     fun `ta imot svar`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
-        val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknadUuid"].asText())
+        val uuid = UUID.fromString(testRapid.inspektør.message(0)["soknad_uuid"].asText())
         assertEquals("behov", testRapid.inspektør.message(0)["@event_name"].asText())
+
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(1, "boolean", "true"), FaktumSvar(2, "boolean", "true")))
+        assertEquals("behov", testRapid.inspektør.message(1)["@event_name"].asText())
+
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(3, "heltall", "2")))
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(4, "dato", 24.desember.toString())))
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(5, "inntekt", 1000.årlig.toString())))
@@ -71,15 +73,14 @@ internal class MeldingMediatorTest {
 
     private class TestLagring : SøknadPersistence {
         var søknadprosess: Søknadprosess? = null
-        private val versjon = 3
 
         override fun ny(fnr: String, type: Versjon.UserInterfaceType) =
-            Versjon.id(versjon).søknadprosess(fnr, type).also { søknadprosess = it }
+            Versjon.siste.søknadprosess(fnr, type).also { søknadprosess = it }
 
         override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?) = søknadprosess!!
 
         override fun lagre(søknad: Søknad): Boolean {
-            søknadprosess = Versjon.id(versjon).søknadprosess(søknad, Versjon.UserInterfaceType.Web)
+            søknadprosess = Versjon.siste.søknadprosess(søknad, Versjon.UserInterfaceType.Web)
             return true
         }
 

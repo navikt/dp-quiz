@@ -14,7 +14,6 @@ import java.util.UUID
 
 internal class FaktumSvarService(
     private val søknadPersistence: SøknadPersistence,
-    private val behovMediator: BehovMediator,
     rapidsConnection: RapidsConnection
 ) :
     HendelseService(rapidsConnection) {

@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.minst
@@ -38,7 +39,7 @@ internal object SøknadEksempel {
         ),
         Seksjon(
             "seksjon3",
-            Rolle.søker,
+            Rolle.nav,
             prototypeSøknad1.heltall(3)
         ),
         Seksjon(
@@ -74,9 +75,22 @@ internal object SøknadEksempel {
     )
 
     val v = Versjon(
-        3,
         prototypeSøknad1,
         subsumsjon,
         mapOf(Versjon.UserInterfaceType.Web to webPrototypeSøknad)
+    )
+
+    val faktumNavBehov = FaktumNavBehov(
+        Versjon.versjoner.keys.maxOf { it },
+        mapOf(
+            1 to "f1Behov",
+            2 to "f2Behov",
+            3 to "f3Behov",
+            4 to "f4Behov",
+            5 to "f5Behov",
+            6 to "f6Behov",
+            7 to "f7Behov",
+            8 to "f8Behov"
+        )
     )
 }
