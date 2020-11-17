@@ -27,7 +27,7 @@ import java.util.UUID
 
 // Understands a relational representation of a Søknad
 class SøknadRecord : SøknadPersistence {
-    private lateinit var originalSvar: Map<String, Any?>
+    private lateinit var originalSvar: MutableMap<String, Any?>
 
     override fun ny(fnr: String, type: Versjon.UserInterfaceType): Søknadprosess {
         return Versjon.siste.søknadprosess(fnr, type).also { søknadprosess ->
@@ -36,9 +36,9 @@ class SøknadRecord : SøknadPersistence {
         }
     }
 
-    private fun svarMap(søknad: Søknad): Map<String, Any?> = søknad.map { faktum ->
+    private fun svarMap(søknad: Søknad): MutableMap<String, Any?> = søknad.map { faktum ->
         faktum.id to (if (faktum.erBesvart()) faktum.svar() else null)
-    }.toMap()
+    }.toMap().toMutableMap()
 
     override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?): Søknadprosess {
         data class SoknadRad(val fnr: String, val versjonId: Int, var typeId: Int)
@@ -150,7 +150,7 @@ class SøknadRecord : SøknadPersistence {
 
     override fun lagre(søknad: Søknad): Boolean {
         val nyeSvar = svarMap(søknad)
-
+        tilbakestillFakta(søknad, nyeSvar)
         originalSvar.filterNot { (id, svar) -> nyeSvar[id] == svar }.forEach { (id, svar) ->
             val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
 
@@ -170,6 +170,30 @@ class SøknadRecord : SøknadPersistence {
 
         return true
     }
+
+    private fun tilbakestillFakta(søknad: Søknad, nyeSvar: Map<String, Any?>) {
+        originalSvar.keys.toSet().subtract(nyeSvar.keys.toSet()).forEach { id ->
+            val (rootId, indeks) = FaktumId(id).reflection { rootId, indeks -> Pair(rootId, indeks) }
+            using(sessionOf(dataSource)) { session ->
+                session.run(arkiverFaktum(søknad = søknad, rootId = rootId, indeks = indeks))
+                session.run(slettDødeFaktum(søknad = søknad, rootId, indeks))
+                originalSvar.remove(id)
+            }
+        }
+    }
+
+    private fun slettDødeFaktum(søknad: Søknad, rootId: Int, indeks: Int) = queryOf(
+        //language=PostgreSQL
+        """
+              DELETE FROM faktum_verdi
+              WHERE id IN (SELECT faktum_verdi.id as faktum_id FROM soknad, faktum_verdi, faktum
+              WHERE faktum_verdi.soknad_id = soknad.id AND faktum_verdi.faktum_id = faktum.id AND soknad.uuid = ? AND faktum.root_id = ? 
+                    AND faktum_verdi.indeks = ?)
+        """.trimIndent(),
+        søknad.uuid,
+        rootId,
+        indeks
+    ).asExecute
 
     private fun oppdaterFaktum(svar: Any?, søknad: Søknad, indeks: Int, rootId: Int): ExecuteQueryAction =
         queryOf(sqlToInsert(svar), søknad.uuid, indeks, rootId).asExecute

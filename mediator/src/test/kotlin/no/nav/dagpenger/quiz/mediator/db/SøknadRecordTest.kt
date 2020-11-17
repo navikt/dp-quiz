@@ -13,7 +13,6 @@ import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1.prototypeFakta1
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.helse.serde.assertDeepEquals
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertEquals
@@ -116,11 +115,10 @@ internal class SøknadRecordTest {
     }
 
     @Test
-    @Disabled
     fun `redusert template faktum`() {
         Postgres.withMigratedDb {
             byggOriginalFaktagrupper()
-            assertEquals(21, originalFaktagrupper.søknad.map { it }.size)
+            assertEquals(26, originalFaktagrupper.søknad.map { it }.size)
             hentFørstFakta()
             originalFaktagrupper = rehydrertFaktagrupper
 
