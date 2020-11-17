@@ -6,10 +6,12 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.subsumsjon.AvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GeneratorSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.JaAction
+import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.NeiAction
+import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.UansettAction
 import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
@@ -195,23 +197,21 @@ fun har(faktum: Faktum<Boolean>): Subsumsjon {
     )
 }
 
-private class Av(private val godkjenning: Faktum<Boolean>, private val dokument: Faktum<Dokument>) : Regel {
+private class DokumentOpplastet(private val faktum: Faktum<Dokument>) : Regel {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
-    override fun resultat() = dokument.erBesvart() && (!godkjenning.erBesvart() || godkjenning.svar())
-    override fun toString() = "Sjekk at `$dokument` er ${if (resultat()) "godkjent" else "ikke godkjent"}"
+    override fun resultat() = true
+    override fun toString() = "Sjekk at dokument `$faktum` er opplastet"
     override fun deepCopy(søknadprosess: Søknadprosess) =
-        Av(søknadprosess.faktum(godkjenning.faktumId) as Faktum<Boolean>, søknadprosess.faktum(dokument.faktumId) as Faktum<Dokument>)
+        DokumentOpplastet(søknadprosess.faktum(faktum.faktumId) as Faktum<Dokument>)
 
-    override fun bygg(søknad: Søknad) =
-        Av(søknad.ja(godkjenning.faktumId), søknad.dokument(dokument.faktumId))
+    override fun bygg(søknad: Søknad) = DokumentOpplastet(søknad.dokument(faktum.faktumId))
 
     override fun deepCopy(indeks: Int, søknad: Søknad) =
-        Av(godkjenning.deepCopy(indeks, søknad) as Faktum<Boolean>, dokument.deepCopy(indeks, søknad) as Faktum<Dokument>)
+        DokumentOpplastet(faktum.deepCopy(indeks, søknad) as Faktum<Dokument>)
 }
 
-infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon {
-    return AvSubsumsjon(Av(this, dokument), dokument, this)
-}
+infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon =
+    GodkjenningsSubsumsjon(JaAction, EnkelSubsumsjon(DokumentOpplastet(dokument), dokument), this)
 
 private class Under(private val alder: Faktum<Int>, private val maksAlder: Int) : Regel {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
@@ -233,16 +233,16 @@ infix fun Faktum<Int>.under(maksAlder: Int): Subsumsjon {
 }
 
 infix fun Subsumsjon.godkjentAv(faktum: Faktum<Boolean>) =
-    GodkjenningsSubsumsjon(GodkjenningsSubsumsjon.Action.UansettAction, this, faktum).also {
+    GodkjenningsSubsumsjon(UansettAction, this, faktum).also {
         faktum.sjekkAvhengigheter()
     }
 
 infix fun Subsumsjon.gyldigGodkjentAv(faktum: Faktum<Boolean>) =
-    GodkjenningsSubsumsjon(GodkjenningsSubsumsjon.Action.JaAction, this, faktum).also {
+    GodkjenningsSubsumsjon(JaAction, this, faktum).also {
         faktum.sjekkAvhengigheter()
     }
 
 infix fun Subsumsjon.ugyldigGodkjentAv(faktum: Faktum<Boolean>) =
-    GodkjenningsSubsumsjon(GodkjenningsSubsumsjon.Action.NeiAction, this, faktum).also {
+    GodkjenningsSubsumsjon(NeiAction, this, faktum).also {
         faktum.sjekkAvhengigheter()
     }

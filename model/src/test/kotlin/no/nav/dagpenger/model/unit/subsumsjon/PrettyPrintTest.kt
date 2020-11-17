@@ -17,7 +17,7 @@ internal class PrettyPrintTest {
     @Test
     fun `printer ett subsumsjonstre uten verdier`() {
         søknadprosess.rootSubsumsjon.toString().also {
-            assertEquals(17, Regex("ukjent").findAll(it).count())
+            assertEquals(18, Regex("ukjent").findAll(it).count())
         }
     }
 
@@ -29,7 +29,7 @@ internal class PrettyPrintTest {
     fun `printer ett subsumsjonstre med genererte fakta`() {
         søknadprosess.heltall(15).besvar(3)
         søknadprosess.rootSubsumsjon.toString().also {
-            assertEquals(17 + 1 + (3 * 3), Regex("ukjent").findAll(it).count())
+            assertEquals(18 + 1 + (3 * 3), Regex("ukjent").findAll(it).count())
         }
     }
 }
