@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.marshalling.NavJsonBuilder
+import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 
 // Forstår hvordan den skal stille spørsmål
@@ -26,9 +27,9 @@ class NavRolle : Rolle("nav") {
 }
 
 class SøkerRolle : Rolle("søker") {
-    override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) = ""
+    override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) = "søker"
 }
 
 class SaksbehandlerRolle : Rolle("saksbehandler") {
-    override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) = ""
+    override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) = SaksbehandlerJsonBuilder(søknadprosess, seksjonNavn).resultat().toString()
 }

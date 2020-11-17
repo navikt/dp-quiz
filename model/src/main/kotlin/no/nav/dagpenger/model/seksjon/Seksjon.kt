@@ -44,7 +44,7 @@ class Seksjon private constructor(
             rolle,
             seksjonFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet(),
             avhengerAvFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet()
-        )
+        ).also { it.søknadprosess = søknadprosess }
 
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>) =
         nesteFakta.any { it in seksjonFakta }
