@@ -13,7 +13,7 @@ class FaktumId private constructor(private val rootId: Int, private val indeks: 
         require(indeks >= 0) { "Indeks må være en positiv integer større enn null" }
     }
 
-    internal fun <R> reflection(block: (Int, Int) -> R) = block(
+    fun <R> reflection(block: (Int, Int) -> R) = block(
         rootId,
         indeks
     )
