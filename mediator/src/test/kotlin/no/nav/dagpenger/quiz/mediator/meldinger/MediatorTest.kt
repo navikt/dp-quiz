@@ -114,7 +114,6 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
     fun besvarFaktum(søknadUuid: UUID, vararg faktumSvarListe: FaktumSvar) = nyHendelse(
         "faktum_svar",
         mapOf(
-            "fnr" to fnr,
             "opprettet" to LocalDateTime.now(),
             "søknadUuid" to søknadUuid,
             "fakta" to faktumSvarListe.asList().map { faktumSvar ->

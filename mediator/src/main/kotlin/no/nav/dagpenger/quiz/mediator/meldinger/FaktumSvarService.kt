@@ -23,7 +23,6 @@ internal class FaktumSvarService(
 
     override fun validate(packet: JsonMessage) {
         packet.requireKey(
-            "fnr",
             "opprettet",
             "søknadUuid",
             "fakta"
@@ -31,7 +30,6 @@ internal class FaktumSvarService(
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
-        val fnr = packet["fnr"].asText()
         val søknadUuid = UUID.fromString(packet["søknadUuid"].asText())
         val fakta = packet["fakta"]
 
@@ -49,7 +47,6 @@ internal class FaktumSvarService(
                 .onEach { seksjon ->
                     context.send(seksjon.somSpørsmål())
                 }
-            // .also { if (it.isEmpty()) behandleFerdigResultat() }
         }
     }
 
