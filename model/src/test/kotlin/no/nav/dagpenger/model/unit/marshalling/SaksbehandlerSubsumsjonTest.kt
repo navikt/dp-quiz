@@ -31,7 +31,7 @@ internal class SaksbehandlerSubsumsjonTest {
     }
 
     @Test
-    fun `byggger oppgave event`() {
+    fun `bygger oppgave event`() {
 
         val søknadprosess = søknadprosess(
             prototypeSøknad.ja(1) er true gyldigGodkjentAv prototypeSøknad.ja(2) så
@@ -47,12 +47,12 @@ internal class SaksbehandlerSubsumsjonTest {
         assertEquals("2", json["fakta"][0]["id"].asText())
         assertEquals("1", json["fakta"][1]["id"].asText())
         assertEquals(
-            setOf(Rolle.saksbehandler),
-            json["fakta"][0]["roller"].map { Rolle.valueOf(it.asText()) }.toSet()
+            setOf(Rolle.saksbehandler.typeNavn),
+            json["fakta"][0]["roller"].map { it.asText() }.toSet()
         )
         assertEquals(
-            setOf(Rolle.søker),
-            json["fakta"][1]["roller"].map { Rolle.valueOf(it.asText()) }.toSet()
+            setOf(Rolle.søker.typeNavn),
+            json["fakta"][1]["roller"].map { it.asText() }.toSet()
         )
     }
 

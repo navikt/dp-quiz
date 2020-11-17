@@ -38,7 +38,7 @@ class FaktaGrupperJsonBuilderTest {
         val json = jsonBuilder.resultat()
 
         assertEquals(2, json["root"]["seksjoner"].size())
-        assertEquals(Rolle.søker.name, json["root"]["seksjoner"][0]["rolle"].asText())
+        assertEquals(Rolle.søker.typeNavn, json["root"]["seksjoner"][0]["rolle"].asText())
         assertEquals(2, json["fakta"].size())
         assertEquals(listOf(1, 2), json["root"]["seksjoner"][1]["fakta"].map { it.asInt() })
     }

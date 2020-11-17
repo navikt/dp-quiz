@@ -124,7 +124,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     ) {
         if (id in faktumIder) return
         faktumNode(faktum, id, avhengigeFakta, avhengerAvFakta, clazz).also { faktumNode ->
-            faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
+            faktumNode.set("roller", mapper.valueToTree(roller.map { it.typeNavn }))
         }
         faktumIder.add(id)
     }
@@ -139,7 +139,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     ) {
         if (id in faktumIder) return
         faktumNode(faktum, id, avhengigeFakta, avhengerAvFakta, clazz).also { faktumNode ->
-            faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
+            faktumNode.set("roller", mapper.valueToTree(roller.map { it.typeNavn }))
         }
         faktumIder.add(id)
     }
@@ -156,7 +156,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     ) {
         if (id in faktumIder) return
         faktumNode(faktum, id, avhengigeFakta, avhengerAvFakta, clazz).also { faktumNode ->
-            faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
+            faktumNode.set("roller", mapper.valueToTree(roller.map { it.typeNavn }))
             faktumNode.putR(svar)
         }
         faktumIder.add(id)
@@ -174,7 +174,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     ) {
         if (id in faktumIder) return
         faktumNode(faktum, id, avhengigeFakta, avhengerAvFakta, clazz).also { faktumNode ->
-            faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
+            faktumNode.set("roller", mapper.valueToTree(roller.map { it.typeNavn }))
             faktumNode.set("templates", mapper.valueToTree(templates.map { it.id }))
             faktumNode.putR(svar)
         }
@@ -192,7 +192,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
     ) {
         if (id in faktumIder) return
         faktumNode(faktum, id, avhengigeFakta, avhengerAvFakta, clazz).also { faktumNode ->
-            faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
+            faktumNode.set("roller", mapper.valueToTree(roller.map { it.typeNavn }))
             faktumNode.set("templates", mapper.valueToTree(templates.map { it.id }))
         }
         faktumIder.add(id)

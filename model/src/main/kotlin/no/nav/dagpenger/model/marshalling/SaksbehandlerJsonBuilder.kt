@@ -178,7 +178,7 @@ class SaksbehandlerJsonBuilder(
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("id", id)
-            faktumNode.set("roller", mapper.valueToTree(roller.map { it.name }))
+            faktumNode.set("roller", mapper.valueToTree(roller.map { it.typeNavn }))
             svar?.also { faktumNode.putR(it) }
         }
         faktumIder.add(id)

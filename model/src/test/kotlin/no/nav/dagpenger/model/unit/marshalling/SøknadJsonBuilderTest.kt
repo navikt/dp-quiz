@@ -22,7 +22,7 @@ internal class SøknadJsonBuilderTest {
         val json = SøknadJsonBuilder(søknad).resultat()
 
         assertEquals(25, json["fakta"]["faktum"].size())
-        assertEquals(Rolle.nav.name, json["fakta"]["faktum"][0]["roller"][0].asText())
+        assertEquals(Rolle.nav.typeNavn, json["fakta"]["faktum"][0]["roller"][0].asText())
         assertNotNull(json["fakta"]["versjonId"].asText())
         assertEquals("12345678901", json["fakta"]["fnr"].asText())
         assertNotNull(json["fakta"]["uuid"])

@@ -31,7 +31,7 @@ class SøknadprosessJsonBuilder(private val søknadprosess: Søknadprosess) : Fa
         mapper.createObjectNode().also { seksjonNode ->
             arrayNodes.first().add(seksjonNode)
             seksjonNode.put("navn", seksjon.navn)
-            seksjonNode.put("rolle", rolle.name)
+            seksjonNode.put("rolle", rolle.typeNavn)
             seksjonNode.set("fakta", mapper.valueToTree(fakta.map { it.id }))
         }
     }

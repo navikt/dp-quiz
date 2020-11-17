@@ -15,7 +15,7 @@ class SeksjonJsonBuilder(private val seksjon: Seksjon) : FaktumJsonBuilder(), SÃ
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
         mapper.createObjectNode().also { seksjonNode ->
             root = seksjonNode
-            seksjonNode.put("rolle", rolle.name)
+            seksjonNode.put("rolle", rolle.typeNavn)
             seksjonNode.put("navn", seksjon.navn)
             seksjonNode.set("fakta", mapper.valueToTree(fakta.map { it.id }))
         }
