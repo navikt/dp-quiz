@@ -29,7 +29,7 @@ internal class AvSubsumsjon private constructor(
     )
 
     override fun lokaltResultat(): Boolean? {
-        return if (dokument.erBesvart()) regel.resultat() else null
+        return if (dokument.erBesvart()) regel.resultat(listOf(dokument, godkjenning)) else null
     }
 
     override fun ukjenteFakta(): Set<GrunnleggendeFaktum<*>> =

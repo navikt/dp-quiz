@@ -71,7 +71,7 @@ open class EnkelSubsumsjon protected constructor(
 
     private fun nesteSubsumsjon() = if (lokaltResultat() == true) gyldigSubsumsjon else ugyldigSubsumsjon
 
-    override fun lokaltResultat() = if (subsumsjonFakta.erBesvart()) regel.resultat() else null
+    override fun lokaltResultat() = if (subsumsjonFakta.erBesvart()) regel.resultat(subsumsjonFakta) else null
 
     override fun toString() = regel.toString()
 
