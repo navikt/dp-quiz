@@ -25,12 +25,12 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     fun result() = result
 
-    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
         melding("${status(resultat)} $subsumsjon")
         indentTeller++
     }
 
-    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
         indentTeller--
     }
 

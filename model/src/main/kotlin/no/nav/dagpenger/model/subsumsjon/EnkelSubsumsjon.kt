@@ -12,13 +12,13 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 open class EnkelSubsumsjon protected constructor(
     protected val regel: Regel,
-    protected val subsumsjonFakta: Set<Faktum<*>>,
+    protected val subsumsjonFakta: List<Faktum<*>>,
     gyldigSubsumsjon: Subsumsjon,
     ugyldigSubsumsjon: Subsumsjon
 ) : Subsumsjon(regel.toString(), gyldigSubsumsjon, ugyldigSubsumsjon) {
 
     internal constructor(regel: Regel, vararg fakta: Faktum<*>) :
-        this(regel, fakta.toSet(), TomSubsumsjon, TomSubsumsjon)
+        this(regel, fakta.toList(), TomSubsumsjon, TomSubsumsjon)
 
     override fun accept(visitor: SubsumsjonVisitor) {
         resultat().also {
@@ -37,7 +37,7 @@ open class EnkelSubsumsjon protected constructor(
     )
     override fun bygg(søknad: Søknad) = deepCopy(
         regel.bygg(søknad),
-        this.subsumsjonFakta.map { søknad.id(it.faktumId) }.toSet(),
+        this.subsumsjonFakta.map { søknad.id(it.faktumId) },
         gyldigSubsumsjon.bygg(søknad),
         ugyldigSubsumsjon.bygg(søknad)
     )
@@ -58,7 +58,7 @@ open class EnkelSubsumsjon protected constructor(
 
     private fun deepCopy(
         regel: Regel,
-        fakta: Set<Faktum<*>>,
+        fakta: List<Faktum<*>>,
         gyldigSubsumsjon: Subsumsjon,
         ugyldigSubsumsjon: Subsumsjon
     ) = EnkelSubsumsjon(regel, fakta, gyldigSubsumsjon, ugyldigSubsumsjon)

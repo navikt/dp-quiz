@@ -15,7 +15,7 @@ internal class AvSubsumsjon private constructor(
     ugyldigSubsumsjon: Subsumsjon
 ) : EnkelSubsumsjon(
     regel,
-    setOf(dokument, godkjenning),
+    listOf(dokument, godkjenning),
     gyldigSubsumsjon,
     ugyldigSubsumsjon
 ) {

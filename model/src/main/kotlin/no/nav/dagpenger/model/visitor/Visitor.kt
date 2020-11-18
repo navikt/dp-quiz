@@ -169,8 +169,8 @@ interface SøknadprosessVisitor : SubsumsjonVisitor, SøknadVisitor {
 }
 
 interface SubsumsjonVisitor : FaktumVisitor {
-    fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: Set<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun preVisit(subsumsjon: AlleSubsumsjon, resultat: Boolean?) {}
     fun postVisit(subsumsjon: AlleSubsumsjon, resultat: Boolean?) {}
     fun preVisit(subsumsjon: MinstEnAvSubsumsjon, resultat: Boolean?) {}

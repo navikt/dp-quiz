@@ -45,8 +45,8 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
                 faktumId medIndeks indeks,
                 navn,
                 clazz,
-                avhengigeFakta.deepCopy(indeks, søknad).toMutableSet(),
-                avhengerAvFakta.deepCopy(indeks, søknad).toMutableSet(),
+                avhengigeFakta.toList().deepCopy(indeks, søknad).toMutableSet(),
+                avhengerAvFakta.toList().deepCopy(indeks, søknad).toMutableSet(),
                 roller
             ).also { søknad.add(it) }
     }
@@ -64,8 +64,8 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
                         faktumId.medIndeks(indeks),
                         navn,
                         clazz,
-                        avhengigeFakta.deepCopy(indeks, søknad).toMutableSet(),
-                        avhengerAvFakta.deepCopy(indeks, søknad).toMutableSet(),
+                        avhengigeFakta.toList().deepCopy(indeks, søknad).toMutableSet(),
+                        avhengerAvFakta.toList().deepCopy(indeks, søknad).toMutableSet(),
                         roller
                     )
                 )

@@ -10,7 +10,7 @@ class GeneratorSubsumsjon internal constructor(
     regel: Regel,
     private val faktum: GeneratorFaktum,
     private val makro: MakroSubsumsjon
-) : EnkelSubsumsjon(regel, setOf(faktum), TomSubsumsjon, AlleSubsumsjon(faktum.navn, mutableListOf())) {
+) : EnkelSubsumsjon(regel, listOf(faktum), TomSubsumsjon, AlleSubsumsjon(faktum.navn, mutableListOf())) {
 
     override fun lokaltResultat(): Boolean? {
         return super.lokaltResultat().also { resultat ->
@@ -31,14 +31,14 @@ class GeneratorSubsumsjon internal constructor(
 
     override fun deepCopy(søknadprosess: Søknadprosess) = GeneratorSubsumsjon(
         regel.deepCopy(søknadprosess),
-        setOf(faktum).deepCopy(søknadprosess).first() as GeneratorFaktum,
+        listOf(faktum).deepCopy(søknadprosess).first() as GeneratorFaktum,
         makro.deepCopy(søknadprosess)
     )
 
     override fun bygg(søknad: Søknad) = GeneratorSubsumsjon(
         regel.bygg(søknad),
         søknad.id(faktum.faktumId) as GeneratorFaktum,
-        makro.bygg(søknad) as MakroSubsumsjon
+        makro.bygg(søknad)
     )
 
     override fun deepCopy() = GeneratorSubsumsjon(
@@ -49,7 +49,7 @@ class GeneratorSubsumsjon internal constructor(
 
     override fun deepCopy(indeks: Int, søknad: Søknad) = GeneratorSubsumsjon(
         regel.deepCopy(indeks, søknad),
-        setOf(faktum).deepCopy(indeks, søknad).first() as GeneratorFaktum,
+        listOf(faktum).deepCopy(indeks, søknad).first() as GeneratorFaktum,
         makro.deepCopy(indeks, søknad) as MakroSubsumsjon
     )
 }

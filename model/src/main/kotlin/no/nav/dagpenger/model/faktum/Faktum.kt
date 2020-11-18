@@ -19,22 +19,20 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
             faktum.avhengerAvFakta.addAll(this.avhengerAvFakta.map { søknadprosess.faktum(it.faktumId) })
         }
 
-        internal fun Set<Faktum<*>>.deepCopy(søknadprosess: Søknadprosess): Set<Faktum<*>> = this
+        internal fun List<Faktum<*>>.deepCopy(søknadprosess: Søknadprosess): List<Faktum<*>> = this
             .mapNotNull { prototype ->
                 søknadprosess.faktum(prototype.faktumId).also {
                     prototype.deepCopyAvhengigheter(it, søknadprosess)
                 }
             }
-            .toSet()
             .also {
                 require(it.size == this.size) { "Mangler fakta" }
             }
 
-        internal fun Set<Faktum<*>>.deepCopy(indeks: Int, søknad: Søknad): Set<Faktum<*>> = this
+        internal fun List<Faktum<*>>.deepCopy(indeks: Int, søknad: Søknad): List<Faktum<*>> = this
             .map { faktum ->
                 faktum.deepCopy(indeks, søknad)
             }
-            .toSet()
     }
 
     fun <R> reflection(block: (Int, Int) -> R) = faktumId.reflection(block)
@@ -108,4 +106,4 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     fun harRolle(rolle: Rolle) = rolle in roller
 }
 
-fun Set<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
+fun List<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
