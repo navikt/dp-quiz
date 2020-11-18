@@ -47,7 +47,7 @@ internal class MeldingMediatorTest {
     @Test
     fun `ta imot svar`() {
         testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
-        val uuid = UUID.fromString(testRapid.inspektør.message(0)["soknad_uuid"].asText())
+        val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknad_uuid"].asText())
         assertEquals("behov", testRapid.inspektør.message(0)["@event_name"].asText())
 
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(1, "boolean", "true"), FaktumSvar(2, "boolean", "true")))
@@ -68,7 +68,7 @@ internal class MeldingMediatorTest {
             )
         )
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(8, "boolean", "true")))
-        assertEquals(6, testRapid.inspektør.size)
+        assertEquals(8, testRapid.inspektør.size) // 8 fordi vi får saksbehandlerseksjonene to ganger
     }
 
     private class TestLagring : SøknadPersistence {
@@ -115,7 +115,7 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
         "faktum_svar",
         mapOf(
             "opprettet" to LocalDateTime.now(),
-            "søknadUuid" to søknadUuid,
+            "søknad_uuid" to søknadUuid,
             "fakta" to faktumSvarListe.asList().map { faktumSvar ->
                 mapOf(
                     "faktumId" to faktumSvar.faktumId,

@@ -41,7 +41,7 @@ internal class SaksbehandlerSubsumsjonTest {
         val json = SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat()
 
         assertEquals("oppgave", json["@event_name"].asText())
-        assertDoesNotThrow { UUID.fromString(json["soknad_uuid"].asText()) }
+        assertDoesNotThrow { UUID.fromString(json["søknad_uuid"].asText()) }
         assertEquals("saksbehandler2", json["seksjon_navn"].asText())
         assertEquals(2, json["fakta"].size())
         assertEquals("2", json["fakta"][0]["id"].asText())

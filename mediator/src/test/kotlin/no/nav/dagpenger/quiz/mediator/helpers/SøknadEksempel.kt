@@ -38,34 +38,34 @@ internal object SøknadEksempel {
             prototypeSøknad1.ja(2)
         ),
         Seksjon(
-            "seksjon3",
+            "seksjon2",
             Rolle.nav,
             prototypeSøknad1.heltall(3)
         ),
         Seksjon(
-            "seksjon4",
+            "seksjon3",
             Rolle.søker,
             prototypeSøknad1.dato(4)
         ),
         Seksjon(
-            "seksjon5",
+            "seksjon4",
             Rolle.søker,
             prototypeSøknad1.inntekt(5),
             prototypeSøknad1.inntekt(6)
         ),
         Seksjon(
-            "seksjon6",
+            "seksjon5",
             Rolle.søker,
             prototypeSøknad1.dokument(7)
         ),
         Seksjon(
-            "seksjon7",
-            Rolle.søker,
+            "seksjon6",
+            Rolle.saksbehandler,
             prototypeSøknad1.ja(8)
         )
     )
 
-    private val subsumsjon = "reell arbeidssøker".alle(
+    private val subsumsjon = "subsumsjon".alle(
         prototypeSøknad1 ja 1 er true,
         prototypeSøknad1 ja 2 er true,
         prototypeSøknad1 heltall 3 er 2,

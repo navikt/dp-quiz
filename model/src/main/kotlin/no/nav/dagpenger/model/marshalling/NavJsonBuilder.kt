@@ -38,7 +38,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, seksjonNavn: String, indeks
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("fnr", fnr)
-        root.put("soknad_uuid", "$uuid")
+        root.put("søknad_uuid", "$uuid")
         root.set("fakta", faktaNode)
         root.set("@behov", behovNode)
 

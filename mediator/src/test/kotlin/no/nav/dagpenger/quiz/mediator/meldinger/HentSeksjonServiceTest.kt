@@ -56,7 +56,7 @@ private fun hentSeksjonJsonString(uuid: UUID, indeks: Int = 0, seksjon: String =
     "@opprettet": "${LocalDateTime.now()}",
     "@id": "${UUID.randomUUID()}",
     "fnr": "12020052345",
-    "soknad_uuid": "$uuid",
+    "søknad_uuid": "$uuid",
     "seksjon_navn": "$seksjon",
     "indeks": $indeks
 }""".trimMargin()

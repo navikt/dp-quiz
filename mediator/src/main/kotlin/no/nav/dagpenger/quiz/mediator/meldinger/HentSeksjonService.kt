@@ -15,7 +15,7 @@ internal class HentSeksjonService(rapidsConnection: RapidsConnection) :
             validate { packet ->
                 packet.demandValue("@event_name", "hent_seksjon")
                 packet.require("@id") { UUID.fromString(it.asText()) }
-                packet.require("soknad_uuid") { UUID.fromString(it.asText()) }
+                packet.require("søknad_uuid") { UUID.fromString(it.asText()) }
                 packet.require("seksjon_navn", JsonNode::asText)
                 packet.require("indeks", JsonNode::asInt)
                 packet.forbid("fakta")
@@ -24,7 +24,7 @@ internal class HentSeksjonService(rapidsConnection: RapidsConnection) :
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
-        val søknadUuid = UUID.fromString(packet["soknad_uuid"].asText())
+        val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
         val seksjonNavn = packet["seksjon_navn"].asText()
         val indeks = packet["indeks"].asInt()
         val fakta = SøknadRecord().hent(søknadUuid)

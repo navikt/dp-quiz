@@ -48,7 +48,7 @@ class SaksbehandlerJsonBuilder(
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("fnr", fnr)
-        root.put("soknad_uuid", "$uuid")
+        root.put("søknad_uuid", "$uuid")
         root.put("seksjon_navn", seksjonNavn)
         root.put("indeks", indeks)
         root.set("fakta", faktaNode)

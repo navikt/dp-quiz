@@ -24,13 +24,13 @@ internal class FaktumSvarService(
     override fun validate(packet: JsonMessage) {
         packet.requireKey(
             "opprettet",
-            "søknadUuid",
+            "søknad_uuid",
             "fakta"
         )
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
-        val søknadUuid = UUID.fromString(packet["søknadUuid"].asText())
+        val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
         val fakta = packet["fakta"]
 
         søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web).also { søknadprosess ->
