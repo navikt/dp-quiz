@@ -73,7 +73,7 @@ class SaksbehandlerJsonBuilder(
         clazz: Class<R>
     ) {
         if (iValg) return
-        lagFaktumNode<R>(id, roller)
+        lagFaktumNode<R>(id, roller, navn = faktum.navn)
     }
 
     override fun <R : Comparable<R>> visit(
@@ -86,7 +86,7 @@ class SaksbehandlerJsonBuilder(
         clazz: Class<R>,
         svar: R
     ) {
-        lagFaktumNode(id, roller, svar)
+        lagFaktumNode(id, roller, svar, faktum.navn)
     }
 
     override fun <R : Comparable<R>> preVisit(
@@ -98,7 +98,7 @@ class SaksbehandlerJsonBuilder(
         clazz: Class<R>,
         regel: FaktaRegel<R>
     ) {
-        lagFaktumNode<R>(id)
+        lagFaktumNode<R>(id, navn = faktum.navn)
     }
 
     override fun <R : Comparable<R>> preVisit(
@@ -111,7 +111,7 @@ class SaksbehandlerJsonBuilder(
         regel: FaktaRegel<R>,
         svar: R
     ) {
-        lagFaktumNode(id, svar = svar)
+        lagFaktumNode(id, navn = faktum.navn, svar = svar)
     }
 
     override fun preVisit(
@@ -123,7 +123,7 @@ class SaksbehandlerJsonBuilder(
         underordnedeNei: Set<Faktum<Boolean>>,
         clazz: Class<Boolean>
     ) {
-        lagFaktumNode<Boolean>(id)
+        lagFaktumNode<Boolean>(id, navn = faktum.navn)
         iValg = true
     }
 
@@ -137,7 +137,7 @@ class SaksbehandlerJsonBuilder(
         clazz: Class<Boolean>,
         svar: Boolean
     ) {
-        lagFaktumNode(id, svar = svar)
+        lagFaktumNode(id, navn = faktum.navn, svar = svar)
         iValg = true
     }
 
@@ -173,10 +173,16 @@ class SaksbehandlerJsonBuilder(
         subsumsjonNoder.removeAt(0)
     }
 
-    private fun <R : Comparable<R>> lagFaktumNode(id: String, roller: Set<Rolle> = emptySet(), svar: R? = null) {
+    private fun <R : Comparable<R>> lagFaktumNode(
+        id: String,
+        roller: Set<Rolle> = emptySet(),
+        svar: R? = null,
+        navn: String
+    ) {
         if (ignore) return
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
+            faktumNode.put("navn", navn)
             faktumNode.put("id", id)
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.typeNavn }))
             svar?.also { faktumNode.putR(it) }
