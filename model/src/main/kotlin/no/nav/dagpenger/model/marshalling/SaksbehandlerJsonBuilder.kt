@@ -69,11 +69,12 @@ class SaksbehandlerJsonBuilder(
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
         if (iValg) return
-        lagFaktumNode<R>(id, roller, navn = faktum.navn)
+        lagFaktumNode<R>(id, faktum.navn, roller, godkjenner)
     }
 
     override fun <R : Comparable<R>> visit(
@@ -82,11 +83,12 @@ class SaksbehandlerJsonBuilder(
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R
     ) {
-        lagFaktumNode(id, roller, svar, faktum.navn)
+        lagFaktumNode(id, faktum.navn, roller, godkjenner, svar)
     }
 
     override fun <R : Comparable<R>> preVisit(
@@ -98,7 +100,7 @@ class SaksbehandlerJsonBuilder(
         clazz: Class<R>,
         regel: FaktaRegel<R>
     ) {
-        lagFaktumNode<R>(id, navn = faktum.navn)
+        lagFaktumNode<R>(id, faktum.navn)
     }
 
     override fun <R : Comparable<R>> preVisit(
@@ -111,7 +113,7 @@ class SaksbehandlerJsonBuilder(
         regel: FaktaRegel<R>,
         svar: R
     ) {
-        lagFaktumNode(id, navn = faktum.navn, svar = svar)
+        lagFaktumNode(id, faktum.navn, svar = svar)
     }
 
     override fun preVisit(
@@ -123,7 +125,7 @@ class SaksbehandlerJsonBuilder(
         underordnedeNei: Set<Faktum<Boolean>>,
         clazz: Class<Boolean>
     ) {
-        lagFaktumNode<Boolean>(id, navn = faktum.navn)
+        lagFaktumNode<Boolean>(id, faktum.navn)
         iValg = true
     }
 
@@ -137,7 +139,7 @@ class SaksbehandlerJsonBuilder(
         clazz: Class<Boolean>,
         svar: Boolean
     ) {
-        lagFaktumNode(id, navn = faktum.navn, svar = svar)
+        lagFaktumNode(id,faktum.navn, svar = svar)
         iValg = true
     }
 
@@ -175,9 +177,10 @@ class SaksbehandlerJsonBuilder(
 
     private fun <R : Comparable<R>> lagFaktumNode(
         id: String,
+        navn: String,
         roller: Set<Rolle> = emptySet(),
-        svar: R? = null,
-        navn: String
+        godkjenner: Set<Faktum<*>> = emptySet(),
+        svar: R? = null
     ) {
         if (ignore) return
         if (id in faktumIder) return
@@ -185,6 +188,7 @@ class SaksbehandlerJsonBuilder(
             faktumNode.put("navn", navn)
             faktumNode.put("id", id)
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.typeNavn }))
+            faktumNode.set("godkjenner", mapper.valueToTree(godkjenner.map { it.id }))
             svar?.also { faktumNode.putR(it) }
         }
         faktumIder.add(id)

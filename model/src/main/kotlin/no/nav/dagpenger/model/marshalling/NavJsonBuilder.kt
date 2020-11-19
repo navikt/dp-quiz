@@ -63,6 +63,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, seksjonNavn: String, indeks
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {

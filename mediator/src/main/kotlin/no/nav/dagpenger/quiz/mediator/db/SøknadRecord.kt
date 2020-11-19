@@ -294,6 +294,7 @@ class SøknadRecord : SøknadPersistence {
             id: String,
             avhengigeFakta: Set<Faktum<*>>,
             avhengerAvFaktum: Set<Faktum<*>>,
+            godkjenner: Set<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>
         ) {

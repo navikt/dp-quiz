@@ -68,11 +68,11 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     override fun tilTemplate() = TemplateFaktum(faktumId, navn, clazz)
 
     protected open fun acceptUtenSvar(visitor: FaktumVisitor) {
-        visitor.visit(this, Ukjent.kode, id, avhengigeFakta, avhengerAvFakta, roller, clazz)
+        visitor.visit(this, Ukjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz)
     }
 
     protected open fun acceptMedSvar(visitor: FaktumVisitor) {
-        visitor.visit(this, Kjent.kode, id, avhengigeFakta, avhengerAvFakta, roller, clazz, gjeldendeSvar)
+        visitor.visit(this, Kjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz, gjeldendeSvar)
     }
 
     private interface Tilstand {

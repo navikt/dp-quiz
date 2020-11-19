@@ -119,6 +119,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
@@ -150,6 +151,7 @@ abstract class FaktumJsonBuilder : FaktumVisitor {
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R

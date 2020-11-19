@@ -43,20 +43,16 @@ internal class SaksbehandlerJsonBuilderTest {
 
     @Test
     fun `bygger oppgave event`() {
-
         val søknadprosess = søknadprosess(
             prototypeSøknad.ja(1) er true gyldigGodkjentAv prototypeSøknad.ja(2) så
                 (prototypeSøknad.ja(3) er true ugyldigGodkjentAv prototypeSøknad.ja(4))
         )
-
         val json = SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat()
-
         assertEquals("oppgave", json["@event_name"].asText())
         assertDoesNotThrow { UUID.fromString(json["søknad_uuid"].asText()) }
         assertEquals("saksbehandler2", json["seksjon_navn"].asText())
         assertEquals(2, json["fakta"].size())
         assertEquals("2", json["fakta"][0]["id"].asText())
-        assertEquals("1", json["fakta"][1]["id"].asText())
         assertEquals(
             setOf(Rolle.saksbehandler.typeNavn),
             json["fakta"][0]["roller"].map { it.asText() }.toSet()
@@ -65,6 +61,8 @@ internal class SaksbehandlerJsonBuilderTest {
             setOf(Rolle.søker.typeNavn),
             json["fakta"][1]["roller"].map { it.asText() }.toSet()
         )
+        assertEquals(listOf("1"), json["fakta"][0]["godkjenner"].map { it.asText() })
+        assertTrue(json["fakta"][1]["godkjenner"].map { it.asText() }.isEmpty())
     }
 
     @Test

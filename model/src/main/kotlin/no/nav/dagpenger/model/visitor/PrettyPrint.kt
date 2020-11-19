@@ -131,6 +131,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
@@ -143,6 +144,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R

@@ -123,6 +123,7 @@ abstract class Subsumsjon protected constructor(
             id: String,
             avhengigeFakta: Set<Faktum<*>>,
             avhengerAvFakta: Set<Faktum<*>>,
+            godkjenner: Set<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>
         ) {
@@ -137,6 +138,7 @@ abstract class Subsumsjon protected constructor(
             id: String,
             avhengigeFakta: Set<Faktum<*>>,
             avhengerAvFakta: Set<Faktum<*>>,
+            godkjenner: Set<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>,
             svar: R
