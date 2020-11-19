@@ -32,36 +32,36 @@ class SubsumsjonJsonBuilder(private val subsumsjon: Subsumsjon) : FaktumJsonBuil
         root = objectNodes.removeAt(0)
     }
 
-    override fun preVisit(subsumsjon: AlleSubsumsjon, resultat: Boolean?) {
+    override fun preVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
         subsumsjonNode(subsumsjon, "alle", resultat)
         arrayNodes.add(0, mapper.createArrayNode())
     }
 
-    override fun postVisit(subsumsjon: AlleSubsumsjon, resultat: Boolean?) {
+    override fun postVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
         objectNodes.removeAt(0).also {
             it.set("subsumsjoner", arrayNodes.removeAt(0))
             root = it
         }
     }
 
-    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, resultat: Boolean?) {
+    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
         subsumsjonNode(subsumsjon, "minstEnAv", resultat)
         arrayNodes.add(0, mapper.createArrayNode())
     }
 
-    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, resultat: Boolean?) {
+    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
         objectNodes.removeAt(0).also {
             it.set("subsumsjoner", arrayNodes.removeAt(0))
             root = it
         }
     }
 
-    override fun preVisit(subsumsjon: MakroSubsumsjon, resultat: Boolean?) {
+    override fun preVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
         subsumsjonNode(subsumsjon, "makro", resultat)
         arrayNodes.add(0, mapper.createArrayNode())
     }
 
-    override fun postVisit(subsumsjon: MakroSubsumsjon, resultat: Boolean?) {
+    override fun postVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
         objectNodes.removeAt(0).also {
             it.set("child", arrayNodes.removeAt(0).first())
             root = it

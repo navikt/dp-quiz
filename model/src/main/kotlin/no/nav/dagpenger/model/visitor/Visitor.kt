@@ -173,12 +173,12 @@ interface SøknadprosessVisitor : SubsumsjonVisitor, SøknadVisitor {
 interface SubsumsjonVisitor : FaktumVisitor {
     fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun preVisit(subsumsjon: AlleSubsumsjon, resultat: Boolean?) {}
-    fun postVisit(subsumsjon: AlleSubsumsjon, resultat: Boolean?) {}
-    fun preVisit(subsumsjon: MinstEnAvSubsumsjon, resultat: Boolean?) {}
-    fun postVisit(subsumsjon: MinstEnAvSubsumsjon, resultat: Boolean?) {}
-    fun preVisit(subsumsjon: MakroSubsumsjon, resultat: Boolean?) {}
-    fun postVisit(subsumsjon: MakroSubsumsjon, resultat: Boolean?) {}
+    fun preVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun postVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun preVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun postVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun preVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun postVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun preVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {}
     fun postVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {}
     fun preVisit(subsumsjon: GodkjenningsSubsumsjon, action: GodkjenningsSubsumsjon.Action, lokaltResultat: Boolean?) {}

@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktum.Dokument
@@ -14,8 +15,10 @@ import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
-import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -33,11 +36,12 @@ class SaksbehandlerJsonBuilder(
     private var ignore = true
     private var iValg = false
     private val faktumIder = mutableSetOf<String>()
-    private val subsumsjonNoder = mutableListOf<ObjectNode>()
+    private val subsumsjonNoder = mutableListOf<ArrayNode>(subsumsjonRoot)
 
     init {
         søknadprosess.søknad.accept(this)
-        søknadprosess.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(søknadprosess.rootSubsumsjon).accept(this)
+        søknadprosess.first { seksjonNavn == it.navn && indeks == it.indeks }
+            .filtrertSeksjon(søknadprosess.rootSubsumsjon).accept(this)
         søknadprosess.rootSubsumsjon.mulige().accept(this)
     }
 
@@ -139,7 +143,7 @@ class SaksbehandlerJsonBuilder(
         clazz: Class<Boolean>,
         svar: Boolean
     ) {
-        lagFaktumNode(id,faktum.navn, svar = svar)
+        lagFaktumNode(id, faktum.navn, svar = svar)
         iValg = true
     }
 
@@ -153,17 +157,14 @@ class SaksbehandlerJsonBuilder(
         iValg = false
     }
 
-    override fun preVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {
-        subsumsjonNoder.add(0, subsumsjonRoot.addObject())
-    }
-
-    override fun postVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {
-        subsumsjonNoder.removeAt(0)
-    }
-
-    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
-        subsumsjonRoot.addObject().also { subsumsjonNode ->
-            subsumsjonNoder.add(0, subsumsjonNode)
+    override fun preVisit(
+        subsumsjon: EnkelSubsumsjon,
+        regel: Regel,
+        fakta: List<Faktum<*>>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?
+    ) {
+        subsumsjonNoder.first().addObject().also { subsumsjonNode ->
             subsumsjonNode.put("resultat", resultat)
             subsumsjonNode.put("lokalt_resultat", lokaltResultat)
             subsumsjonNode.put("navn", subsumsjon.navn)
@@ -171,7 +172,45 @@ class SaksbehandlerJsonBuilder(
         }
     }
 
-    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+        subsumsjonNoder.first().addObject().also { subsumsjonNode ->
+            subsumsjonNode.put("resultat", resultat)
+            subsumsjonNode.put("lokalt_resultat", lokaltResultat)
+            subsumsjonNode.put("navn", subsumsjon.navn)
+            subsumsjonNode.put("type", "Alle subsumsjon")
+            subsumsjonNode.set("subsumsjoner", mapper.createArrayNode().also { subsumsjonNoder.add(0, it) })
+        }
+    }
+
+    override fun postVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+        subsumsjonNoder.removeAt(0)
+    }
+
+    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+        subsumsjonNoder.first().addObject().also { subsumsjonNode ->
+            subsumsjonNode.put("resultat", resultat)
+            subsumsjonNode.put("lokalt_resultat", lokaltResultat)
+            subsumsjonNode.put("navn", subsumsjon.navn)
+            subsumsjonNode.put("type", "Minst en av subsumsjon")
+            subsumsjonNode.set("subsumsjoner", mapper.createArrayNode().also { subsumsjonNoder.add(0, it) })
+        }
+    }
+
+    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+        subsumsjonNoder.removeAt(0)
+    }
+
+    override fun preVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+        subsumsjonNoder.first().addObject().also { subsumsjonNode ->
+            subsumsjonNode.put("resultat", resultat)
+            subsumsjonNode.put("lokalt_resultat", lokaltResultat)
+            subsumsjonNode.put("navn", subsumsjon.navn)
+            subsumsjonNode.put("type", "Makro subsumsjon")
+            subsumsjonNode.set("subsumsjoner", mapper.createArrayNode().also { subsumsjonNoder.add(0, it) })
+        }
+    }
+
+    override fun postVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
         subsumsjonNoder.removeAt(0)
     }
 

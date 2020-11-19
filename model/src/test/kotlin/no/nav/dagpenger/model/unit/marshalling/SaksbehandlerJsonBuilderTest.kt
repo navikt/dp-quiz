@@ -13,6 +13,10 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.alle
+import no.nav.dagpenger.model.subsumsjon.eller
+import no.nav.dagpenger.model.subsumsjon.makro
+import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -95,6 +99,103 @@ internal class SaksbehandlerJsonBuilderTest {
             assertEquals(1, json["subsumsjoner"].size())
             assertFalse(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
         }
+    }
+
+    @Test
+    fun `subsumsjon med ugyldig sti`() {
+        val søknadprosess = søknadprosess(
+            prototypeSøknad.ja(1) er true eller (
+                prototypeSøknad.ja(3) er true
+                )
+        )
+        søknadprosess.ja(1).besvar(false)
+        søknadprosess.ja(3).besvar(false)
+        SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
+            assertEquals(2, json["subsumsjoner"].size())
+            assertFalse(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+            assertFalse(json["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
+        }
+
+        søknadprosess.ja(1).besvar(true)
+        SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
+            assertEquals(1, json["subsumsjoner"].size())
+            assertTrue(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+        }
+    }
+
+    @Test
+    fun `allesubsumsjon`() {
+        val søknadprosess = søknadprosess(
+            "alle".alle(
+                prototypeSøknad.ja(1) er true,
+                prototypeSøknad.ja(3) er true
+            )
+        )
+        søknadprosess.ja(1).besvar(true)
+        søknadprosess.ja(3).besvar(false)
+        SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
+            assertEquals(1, json["subsumsjoner"].size())
+            assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
+            assertFalse(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+            assertTrue(json["subsumsjoner"][0]["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+            assertFalse(json["subsumsjoner"][0]["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
+        }
+    }
+
+    @Test
+    fun `minstEnAv subsumsjon`() {
+        val søknadprosess = søknadprosess(
+            "minstEnAv".minstEnAv(
+                prototypeSøknad.ja(1) er true,
+                prototypeSøknad.ja(3) er true
+            )
+        )
+        søknadprosess.ja(1).besvar(true)
+        SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
+            assertEquals(1, json["subsumsjoner"].size())
+            assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
+            assertTrue(json["subsumsjoner"][0]["lokalt_resultat"].isNull)
+            assertTrue(json["subsumsjoner"][0]["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+            assertTrue(json["subsumsjoner"][0]["subsumsjoner"][1]["lokalt_resultat"].isNull)
+        }
+
+        søknadprosess.ja(3).besvar(false)
+        SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
+            assertEquals(1, json["subsumsjoner"].size())
+            assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
+            assertTrue(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+            assertTrue(json["subsumsjoner"][0]["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+            assertFalse(json["subsumsjoner"][0]["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
+        }
+    }
+
+    @Test
+    fun `makro subsumsjon`() {
+        val søknadprosess = søknadprosess(
+            "makro" makro(
+                prototypeSøknad.ja(1) er true eller (
+                    prototypeSøknad.ja(3) er true
+                    )
+                )
+        )
+
+        søknadprosess.ja(1).besvar(false)
+        søknadprosess.ja(3).besvar(false)
+        SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
+            assertEquals(1, json["subsumsjoner"].size())
+            assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
+            assertFalse(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+            assertFalse(json["subsumsjoner"][0]["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+            assertFalse(json["subsumsjoner"][0]["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
+        }
+
+        /*søknadprosess.ja(1).besvar(true)
+        SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
+            assertEquals(1, json["subsumsjoner"].size())
+            assertEquals(1, json["subsumsjoner"][0]["subsumsjoner"].size())
+            assertTrue(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+            assertTrue(json["subsumsjoner"][0]["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+        }*/
     }
 
     @Test

@@ -47,9 +47,9 @@ class MinstEnAvSubsumsjon private constructor(
 
     override fun accept(visitor: SubsumsjonVisitor) {
         resultat().also {
-            visitor.preVisit(this, it)
+            visitor.preVisit(this, lokaltResultat(), it)
             super.accept(visitor)
-            visitor.postVisit(this, it)
+            visitor.postVisit(this, lokaltResultat(), it)
         }
     }
 
