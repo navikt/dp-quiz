@@ -19,34 +19,30 @@ interface Regel {
     fun toString(fakta: List<Faktum<*>>): String
 }
 
-infix fun Faktum<LocalDate>.etter(tidligsteDato: Faktum<LocalDate>): Subsumsjon {
-    return EnkelSubsumsjon(
-        object : Regel {
-            override val typeNavn = this.javaClass.simpleName.toLowerCase()
-            override fun resultat(fakta: List<Faktum<*>>) =
-                (fakta[1] as Faktum<LocalDate>).svar() < (fakta[0] as Faktum<LocalDate>).svar()
-            override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' er etter '$fakta[1]'"
-        },
-        this,
-        tidligsteDato
-    )
-}
+infix fun Faktum<LocalDate>.etter(tidligsteDato: Faktum<LocalDate>) = EnkelSubsumsjon(
+    object : Regel {
+        override val typeNavn = "etter"
+        override fun resultat(fakta: List<Faktum<*>>) =
+            (fakta[1] as Faktum<LocalDate>).svar() < (fakta[0] as Faktum<LocalDate>).svar()
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' er etter '$fakta[1]'"
+    },
+    this,
+    tidligsteDato
+)
 
-infix fun Faktum<LocalDate>.før(senesteDato: Faktum<LocalDate>): Subsumsjon {
-    return EnkelSubsumsjon(
-        object : Regel {
-            override val typeNavn = this.javaClass.simpleName.toLowerCase()
-            override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<LocalDate>).svar() < (fakta[1] as Faktum<LocalDate>).svar()
-            override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' er før '$fakta[1]'"
-        },
-        this,
-        senesteDato
-    )
-}
+infix fun Faktum<LocalDate>.før(senesteDato: Faktum<LocalDate>) = EnkelSubsumsjon(
+    object : Regel {
+        override val typeNavn = "før"
+        override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<LocalDate>).svar() < (fakta[1] as Faktum<LocalDate>).svar()
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' er før '$fakta[1]'"
+    },
+    this,
+    senesteDato
+)
 
 infix fun Faktum<LocalDate>.ikkeFør(senesteDato: Faktum<LocalDate>) = EnkelSubsumsjon(
     object : Regel {
-        override val typeNavn = this.javaClass.simpleName.toLowerCase()
+        override val typeNavn = "ikkeFør"
         override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<LocalDate>).svar() >= (fakta[1] as Faktum<LocalDate>).svar()
         override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' ikke er før '$fakta[1]'"
     },
@@ -56,7 +52,7 @@ infix fun Faktum<LocalDate>.ikkeFør(senesteDato: Faktum<LocalDate>) = EnkelSubs
 
 infix fun Faktum<Inntekt>.minst(terskel: Faktum<Inntekt>) = EnkelSubsumsjon(
     object : Regel {
-        override val typeNavn = this.javaClass.simpleName.toLowerCase()
+        override val typeNavn = "minst"
         override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<Inntekt>).svar() >= (fakta[1] as Faktum<Inntekt>).svar()
         override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' er minst '$fakta[1]'"
     },
@@ -101,7 +97,7 @@ fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
 
 fun har(faktum: Faktum<Boolean>) = EnkelSubsumsjon(
     object : Regel {
-        override val typeNavn = this.javaClass.simpleName.toLowerCase()
+        override val typeNavn = "har"
         override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<Boolean>).svar()
         override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `$fakta[0]` er sann"
     },
