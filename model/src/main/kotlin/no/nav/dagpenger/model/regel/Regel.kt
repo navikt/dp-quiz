@@ -18,6 +18,7 @@ import java.time.LocalDate
 
 interface Regel {
     val typeNavn: String
+    fun saksbehandlerForklaring(fakta: List<Faktum<*>>): String = "saksbehandlerforklaring"
     fun resultat(fakta: List<Faktum<*>>): Boolean
     fun toString(fakta: List<Faktum<*>>): String
 }
@@ -69,7 +70,7 @@ infix fun <T : Comparable<T>> Faktum<T>.er(other: T) = EnkelSubsumsjon(
 )
 
 private class Er<T : Comparable<T>>(private val other: T) : Regel {
-    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override val typeNavn = "er"
     override fun resultat(fakta: List<Faktum<*>>) = fakta[0].svar() == other
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `$fakta[0]` er lik $other"
 }
@@ -90,7 +91,7 @@ infix fun GeneratorFaktum.med(makro: MakroSubsumsjon) = MakroSubsumsjon(
 fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
     return EnkelSubsumsjon(
         object : Regel {
-            override val typeNavn = this.javaClass.simpleName.toLowerCase()
+            override val typeNavn = "er ikke"
             override fun resultat(fakta: List<Faktum<*>>) = !(fakta[0] as Faktum<Boolean>).svar()
             override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `$fakta[0]` ikke er sann"
         },
@@ -112,7 +113,7 @@ infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon =
         JaAction,
         EnkelSubsumsjon(
             object : Regel {
-                override val typeNavn = this.javaClass.simpleName.toLowerCase()
+                override val typeNavn = "dokumentgodkjenning"
                 override fun resultat(fakta: List<Faktum<*>>) = true
                 override fun toString(fakta: List<Faktum<*>>) = "Sjekk at dokument `$fakta[0]` er opplastet"
             },
@@ -129,7 +130,7 @@ infix fun Faktum<Int>.under(maksAlder: Int): Subsumsjon {
 }
 
 private class Under(private val maksAlder: Int) : Regel {
-    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override val typeNavn = "under"
     override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<Int>).svar() < maksAlder
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' er under $maksAlder"
 }

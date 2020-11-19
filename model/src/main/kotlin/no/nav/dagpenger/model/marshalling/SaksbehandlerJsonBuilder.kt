@@ -19,6 +19,7 @@ import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -168,18 +169,13 @@ class SaksbehandlerJsonBuilder(
             subsumsjonNode.put("resultat", resultat)
             subsumsjonNode.put("lokalt_resultat", lokaltResultat)
             subsumsjonNode.put("navn", subsumsjon.navn)
+            subsumsjonNode.put("forklaring", subsumsjon.saksbehandlerForklaring())
             subsumsjonNode.put("type", "Enkel subsumsjon")
         }
     }
 
     override fun preVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
-        subsumsjonNoder.first().addObject().also { subsumsjonNode ->
-            subsumsjonNode.put("resultat", resultat)
-            subsumsjonNode.put("lokalt_resultat", lokaltResultat)
-            subsumsjonNode.put("navn", subsumsjon.navn)
-            subsumsjonNode.put("type", "Alle subsumsjon")
-            subsumsjonNode.set("subsumsjoner", mapper.createArrayNode().also { subsumsjonNoder.add(0, it) })
-        }
+        putSubsumsjon(resultat, lokaltResultat, subsumsjon, "Alle subsumsjon")
     }
 
     override fun postVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
@@ -187,13 +183,7 @@ class SaksbehandlerJsonBuilder(
     }
 
     override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
-        subsumsjonNoder.first().addObject().also { subsumsjonNode ->
-            subsumsjonNode.put("resultat", resultat)
-            subsumsjonNode.put("lokalt_resultat", lokaltResultat)
-            subsumsjonNode.put("navn", subsumsjon.navn)
-            subsumsjonNode.put("type", "Minst en av subsumsjon")
-            subsumsjonNode.set("subsumsjoner", mapper.createArrayNode().also { subsumsjonNoder.add(0, it) })
-        }
+        putSubsumsjon(resultat, lokaltResultat, subsumsjon, "Minst en av subsumsjon")
     }
 
     override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
@@ -201,11 +191,21 @@ class SaksbehandlerJsonBuilder(
     }
 
     override fun preVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+        putSubsumsjon(resultat, lokaltResultat, subsumsjon, "Makro subsumsjon")
+    }
+
+    private fun putSubsumsjon(
+        resultat: Boolean?,
+        lokaltResultat: Boolean?,
+        subsumsjon: Subsumsjon,
+        type: String
+    ) {
         subsumsjonNoder.first().addObject().also { subsumsjonNode ->
             subsumsjonNode.put("resultat", resultat)
             subsumsjonNode.put("lokalt_resultat", lokaltResultat)
             subsumsjonNode.put("navn", subsumsjon.navn)
-            subsumsjonNode.put("type", "Makro subsumsjon")
+            subsumsjonNode.put("type", type)
+            subsumsjonNode.put("forklaring", subsumsjon.saksbehandlerForklaring())
             subsumsjonNode.set("subsumsjoner", mapper.createArrayNode().also { subsumsjonNoder.add(0, it) })
         }
     }

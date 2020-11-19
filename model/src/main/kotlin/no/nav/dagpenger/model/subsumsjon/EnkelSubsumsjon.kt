@@ -28,6 +28,8 @@ open class EnkelSubsumsjon protected constructor(
         }
     }
 
+    override fun saksbehandlerForklaring() = regel.saksbehandlerForklaring(subsumsjonFakta)
+
     override fun deepCopy(søknadprosess: Søknadprosess) = deepCopy(
         regel,
         subsumsjonFakta.deepCopy(søknadprosess),

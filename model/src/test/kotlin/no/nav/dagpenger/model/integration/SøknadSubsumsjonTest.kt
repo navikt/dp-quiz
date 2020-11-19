@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.NyttEksempel
 import no.nav.dagpenger.model.helpers.desember
+import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -137,20 +138,20 @@ internal class SøknadSubsumsjonTest {
             assertEquals(setOf(søknadprosess.ja(10)), fakta)
         }
 
-        // søknadprosess.ja(10).besvar(false)
-        // søknadprosess.dokument(11).besvar(Dokument(1.januar))
-        // søknadprosess.ja(12).besvar(false)
-        //
-        // søknadprosess.nesteFakta().also { fakta ->
-        //     assertEquals(1, fakta.size)
-        //     assertEquals(setOf(søknadprosess.dato(13)), fakta)
-        // }
-        //
-        // søknadprosess.dato(13).besvar(1.februar)
-        // assertEquals(true, søknadprosess.resultat())
-        //
-        // søknadprosess.ja(19).besvar(false)
-        // assertEquals(false, søknadprosess.resultat())
+        søknadprosess.ja(10).besvar(false)
+        søknadprosess.dokument(11).besvar(Dokument(1.januar))
+        søknadprosess.ja(12).besvar(false)
+
+        søknadprosess.nesteFakta().also { fakta ->
+            assertEquals(1, fakta.size)
+            assertEquals(setOf(søknadprosess.dato(13)), fakta)
+        }
+
+        søknadprosess.dato(13).besvar(1.februar)
+        assertEquals(true, søknadprosess.resultat())
+
+        søknadprosess.ja(19).besvar(false)
+        assertEquals(false, søknadprosess.resultat())
     }
 
     private fun assertIder(fakta: Set<Faktum<*>>, vararg ider: Int) {

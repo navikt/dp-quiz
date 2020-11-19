@@ -31,6 +31,8 @@ abstract class Subsumsjon protected constructor(
         null -> null
     }
 
+    open fun saksbehandlerForklaring(): String = "saksbehandlerforklaring"
+
     abstract fun deepCopy(søknadprosess: Søknadprosess): Subsumsjon
 
     internal abstract fun bygg(søknad: Søknad): Subsumsjon
