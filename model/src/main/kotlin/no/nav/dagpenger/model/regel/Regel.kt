@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.regel
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
+import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GeneratorSubsumsjon
@@ -117,7 +118,7 @@ infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon =
             },
             dokument
         ),
-        this
+        this as GrunnleggendeFaktum<Boolean>
     )
 
 infix fun Faktum<Int>.under(maksAlder: Int): Subsumsjon {
@@ -134,16 +135,16 @@ private class Under(private val maksAlder: Int) : Regel {
 }
 
 infix fun Subsumsjon.godkjentAv(faktum: Faktum<Boolean>) =
-    GodkjenningsSubsumsjon(UansettAction, this, faktum).also {
+    GodkjenningsSubsumsjon(UansettAction, this, faktum as GrunnleggendeFaktum<Boolean>).also {
         faktum.sjekkAvhengigheter()
     }
 
 infix fun Subsumsjon.gyldigGodkjentAv(faktum: Faktum<Boolean>) =
-    GodkjenningsSubsumsjon(JaAction, this, faktum).also {
+    GodkjenningsSubsumsjon(JaAction, this, faktum as GrunnleggendeFaktum<Boolean>).also {
         faktum.sjekkAvhengigheter()
     }
 
 infix fun Subsumsjon.ugyldigGodkjentAv(faktum: Faktum<Boolean>) =
-    GodkjenningsSubsumsjon(NeiAction, this, faktum).also {
+    GodkjenningsSubsumsjon(NeiAction, this, faktum as GrunnleggendeFaktum<Boolean>).also {
         faktum.sjekkAvhengigheter()
     }

@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.visitor.PrettyPrint
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
@@ -13,6 +14,8 @@ abstract class SammensattSubsumsjon protected constructor(
 
     internal constructor(navn: String, subsumsjoner: List<Subsumsjon>) :
         this(navn, subsumsjoner.toMutableList(), TomSubsumsjon, TomSubsumsjon)
+
+    override fun alleFakta(): List<Faktum<*>> = subsumsjoner.flatMap { it.alleFakta() }
 
     override fun nesteFakta(): Set<GrunnleggendeFaktum<*>> =
         subsumsjoner.flatMap { it.nesteFakta() }.toSet().let {

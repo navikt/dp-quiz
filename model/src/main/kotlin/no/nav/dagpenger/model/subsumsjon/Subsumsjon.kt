@@ -86,6 +86,7 @@ abstract class Subsumsjon protected constructor(
     }
 
     internal fun relevanteFakta() = RelevanteFakta(this).resultater
+    internal abstract fun alleFakta(): List<Faktum<*>>
 
     private class RelevanteFakta(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         val resultater = mutableSetOf<Faktum<*>>()

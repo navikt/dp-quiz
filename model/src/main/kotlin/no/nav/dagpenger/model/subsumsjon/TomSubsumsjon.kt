@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -31,4 +32,6 @@ internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
     }
 
     override fun _mulige() = this
+
+    override fun alleFakta(): List<Faktum<*>> = emptyList()
 }

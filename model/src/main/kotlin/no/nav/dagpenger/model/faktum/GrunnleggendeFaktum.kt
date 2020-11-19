@@ -8,6 +8,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     private val clazz: Class<R>,
     avhengigeFakta: MutableSet<Faktum<*>>,
     avhengerAvFakta: MutableSet<Faktum<*>>,
+    private val godkjenner: MutableSet<Faktum<*>>,
     roller: MutableSet<Rolle>
 ) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private var tilstand: Tilstand = Ukjent
@@ -19,8 +20,11 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         clazz,
         mutableSetOf(),
         mutableSetOf(),
+        mutableSetOf(),
         mutableSetOf()
     )
+
+    internal fun godkjenner(fakta: List<Faktum<*>>) = godkjenner.addAll(fakta)
 
     override fun clazz() = clazz
 
@@ -33,11 +37,12 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
 
-        return GrunnleggendeFaktum(faktumId, navn, clazz, mutableSetOf(), mutableSetOf(), roller)
+        return GrunnleggendeFaktum(faktumId, navn, clazz, mutableSetOf(), mutableSetOf(), mutableSetOf(), roller)
             .also { nyttFaktum ->
                 byggetFakta[faktumId] = nyttFaktum
                 this.avhengigeFakta.forEach { nyttFaktum.avhengigeFakta.add(it.bygg(byggetFakta)) }
                 this.avhengerAvFakta.forEach { nyttFaktum.avhengerAvFakta.add(it.bygg(byggetFakta)) }
+                this.godkjenner.forEach { nyttFaktum.godkjenner.add(it.bygg(byggetFakta)) }
             }
     }
 

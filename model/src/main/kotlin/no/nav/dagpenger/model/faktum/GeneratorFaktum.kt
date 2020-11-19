@@ -15,6 +15,7 @@ class GeneratorFaktum internal constructor(
     Int::class.java,
     avhengigeFakta,
     avhengerAvFakta,
+    mutableSetOf(),
     roller
 ) {
     internal lateinit var søknad: Søknad

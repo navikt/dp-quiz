@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
@@ -9,12 +10,16 @@ class GodkjenningsSubsumsjon private constructor(
     navn: String,
     private val action: Action,
     private val child: Subsumsjon,
-    private val godkjenning: Faktum<Boolean>,
+    private val godkjenning: GrunnleggendeFaktum<Boolean>,
     gyldigSubsumsjon: Subsumsjon,
     ugyldigSubsumsjon: Subsumsjon
 ) : SammensattSubsumsjon(navn, mutableListOf(child), gyldigSubsumsjon, ugyldigSubsumsjon) {
 
-    internal constructor(action: Action, child: Subsumsjon, godkjenning: Faktum<Boolean>) :
+    init {
+        godkjenning.godkjenner(child.alleFakta())
+    }
+
+    internal constructor(action: Action, child: Subsumsjon, godkjenning: GrunnleggendeFaktum<Boolean>) :
         this("${child.navn} godkjenning", action, child, godkjenning, TomSubsumsjon, TomSubsumsjon)
 
     enum class Action(internal val strategy: (Boolean, Boolean?) -> Boolean?) {
@@ -37,7 +42,7 @@ class GodkjenningsSubsumsjon private constructor(
         navn,
         action,
         child.deepCopy(søknadprosess),
-        søknadprosess.ja(godkjenning.id),
+        søknadprosess.ja(godkjenning.id) as GrunnleggendeFaktum<Boolean>,
         gyldigSubsumsjon.deepCopy(søknadprosess),
         ugyldigSubsumsjon.deepCopy(søknadprosess)
     )
@@ -46,10 +51,12 @@ class GodkjenningsSubsumsjon private constructor(
         navn,
         action,
         child.bygg(søknad),
-        søknad.ja(godkjenning.faktumId),
+        søknad.ja(godkjenning.faktumId) as GrunnleggendeFaktum<Boolean>,
         gyldigSubsumsjon.bygg(søknad),
         ugyldigSubsumsjon.bygg(søknad)
     )
+
+    override fun alleFakta(): List<Faktum<*>> = child.alleFakta()
 
     override fun deepCopy(): Subsumsjon {
         return GodkjenningsSubsumsjon(

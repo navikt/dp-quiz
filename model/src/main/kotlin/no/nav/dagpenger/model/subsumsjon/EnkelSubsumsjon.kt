@@ -16,7 +16,6 @@ open class EnkelSubsumsjon protected constructor(
     gyldigSubsumsjon: Subsumsjon,
     ugyldigSubsumsjon: Subsumsjon
 ) : Subsumsjon(regel.toString(), gyldigSubsumsjon, ugyldigSubsumsjon) {
-
     internal constructor(regel: Regel, vararg fakta: Faktum<*>) :
         this(regel, fakta.toList(), TomSubsumsjon, TomSubsumsjon)
 
@@ -35,6 +34,7 @@ open class EnkelSubsumsjon protected constructor(
         gyldigSubsumsjon.deepCopy(søknadprosess),
         ugyldigSubsumsjon.deepCopy(søknadprosess)
     )
+
     override fun bygg(søknad: Søknad) = deepCopy(
         regel,
         this.subsumsjonFakta.map { søknad.id(it.faktumId) },
@@ -76,6 +76,8 @@ open class EnkelSubsumsjon protected constructor(
     override fun toString() = regel.toString(subsumsjonFakta)
 
     override operator fun get(indeks: Int) = throw IllegalArgumentException()
+
+    override fun alleFakta(): List<Faktum<*>> = subsumsjonFakta
 
     override fun iterator(): Iterator<Subsumsjon> {
         return object : Iterator<Subsumsjon> {
