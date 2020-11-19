@@ -26,7 +26,7 @@ import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 internal class AvslagPåMinsteinntekt {
 
     init {
-        val faktumRecord: FaktumTable = FaktumTable(søknad, VERSJON_ID)
+        FaktumTable(søknad, VERSJON_ID)
 
         FaktumNavBehov(
             VERSJON_ID,

@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.unit.marshalling
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.NyttEksempel
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.gyldigGodkjentAv
@@ -21,7 +22,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.util.UUID
 
-internal class SaksbehandlerSubsumsjonTest {
+internal class SaksbehandlerJsonBuilderTest {
     private lateinit var prototypeSøknad: Søknad
 
     companion object {
@@ -96,6 +97,28 @@ internal class SaksbehandlerSubsumsjonTest {
             assertEquals(1, json["subsumsjoner"].size())
             assertFalse(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
         }
+    }
+
+    @Test
+    fun `Komplekse seksjoner`() {
+        assertSeksjonSize(8, "seksjon8")
+        assertSeksjonSize(5, "seksjon4")
+        assertSeksjonSize(5, "seksjon2")
+    }
+
+    @Test
+    fun `Genererte seksjoner kan bli sendt`() {
+        val fakta = NyttEksempel().søknadprosess
+        fakta.heltall(15).besvar(3)
+        var json = SaksbehandlerJsonBuilder(fakta, "seksjon8").resultat()
+        assertEquals(11, json["fakta"].size())
+        json = SaksbehandlerJsonBuilder(fakta, "seksjon7", 1).resultat()
+        assertEquals(1, json["fakta"].size())
+    }
+
+    private fun assertSeksjonSize(expected: Int, seksjonNavn: String) {
+        val json = SaksbehandlerJsonBuilder(NyttEksempel().søknadprosess, seksjonNavn).resultat()
+        assertEquals(expected, json["fakta"].size())
     }
 
     private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Søknadprosess {
