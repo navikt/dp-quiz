@@ -189,13 +189,13 @@ internal class SaksbehandlerJsonBuilderTest {
             assertFalse(json["subsumsjoner"][0]["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
         }
 
-        /*søknadprosess.ja(1).besvar(true)
+        søknadprosess.ja(1).besvar(true)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
             assertEquals(1, json["subsumsjoner"][0]["subsumsjoner"].size())
             assertTrue(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
             assertTrue(json["subsumsjoner"][0]["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
-        }*/
+        }
     }
 
     @Test

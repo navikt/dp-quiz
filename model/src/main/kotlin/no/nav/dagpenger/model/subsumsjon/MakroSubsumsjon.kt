@@ -54,4 +54,8 @@ class MakroSubsumsjon private constructor(
     }
 
     override fun lokaltResultat() = child.resultat()
+
+    override fun _mulige() = this.also {
+        child._mulige()
+    }
 }
