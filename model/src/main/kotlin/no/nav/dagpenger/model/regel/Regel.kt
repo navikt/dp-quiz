@@ -4,8 +4,6 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GeneratorSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
@@ -19,217 +17,120 @@ import java.time.LocalDate
 
 interface Regel {
     val typeNavn: String
-    fun resultat(): Boolean
-    fun deepCopy(søknadprosess: Søknadprosess): Regel
-    fun bygg(søknad: Søknad): Regel
-    fun deepCopy(indeks: Int, søknad: Søknad): Regel
+    fun resultat(fakta: List<Faktum<*>>): Boolean
+    fun toString(fakta: List<Faktum<*>>): String
 }
 
-private class Etter(private val senesteDato: Faktum<LocalDate>, private val tidligsteDato: Faktum<LocalDate>) : Regel {
+infix fun Faktum<LocalDate>.etter(tidligsteDato: Faktum<LocalDate>) = EnkelSubsumsjon(
+    object : Regel {
+        override val typeNavn = "etter"
+        override fun resultat(fakta: List<Faktum<*>>) =
+            (fakta[1] as Faktum<LocalDate>).svar() < (fakta[0] as Faktum<LocalDate>).svar()
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' er etter '$fakta[1]'"
+    },
+    this,
+    tidligsteDato
+)
+
+infix fun Faktum<LocalDate>.før(senesteDato: Faktum<LocalDate>) = EnkelSubsumsjon(
+    object : Regel {
+        override val typeNavn = "før"
+        override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<LocalDate>).svar() < (fakta[1] as Faktum<LocalDate>).svar()
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' er før '$fakta[1]'"
+    },
+    this,
+    senesteDato
+)
+
+infix fun Faktum<LocalDate>.ikkeFør(senesteDato: Faktum<LocalDate>) = EnkelSubsumsjon(
+    object : Regel {
+        override val typeNavn = "ikkeFør"
+        override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<LocalDate>).svar() >= (fakta[1] as Faktum<LocalDate>).svar()
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' ikke er før '$fakta[1]'"
+    },
+    this,
+    senesteDato
+)
+
+infix fun Faktum<Inntekt>.minst(terskel: Faktum<Inntekt>) = EnkelSubsumsjon(
+    object : Regel {
+        override val typeNavn = "minst"
+        override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<Inntekt>).svar() >= (fakta[1] as Faktum<Inntekt>).svar()
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' er minst '$fakta[1]'"
+    },
+    this,
+    terskel
+)
+
+infix fun <T : Comparable<T>> Faktum<T>.er(other: T) = EnkelSubsumsjon(
+    Er(other),
+    this
+)
+
+private class Er<T : Comparable<T>>(private val other: T) : Regel {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
-    override fun resultat() = tidligsteDato.svar() < senesteDato.svar()
-    override fun toString() = "Sjekk at '$senesteDato' er etter '$tidligsteDato'"
-
-    override fun deepCopy(søknadprosess: Søknadprosess): Regel {
-        return Etter(søknadprosess.faktum(senesteDato.faktumId) as Faktum<LocalDate>, søknadprosess.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>)
-    }
-    override fun bygg(søknad: Søknad) = Etter(søknad.dato(senesteDato.faktumId), søknad.dato(tidligsteDato.faktumId))
-
-    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
-        return Etter(
-            senesteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>,
-            tidligsteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>
-        )
-    }
+    override fun resultat(fakta: List<Faktum<*>>) = fakta[0].svar() == other
+    override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `$fakta[0]` er lik $other"
 }
 
-infix fun Faktum<LocalDate>.etter(tidligsteDato: Faktum<LocalDate>): Subsumsjon {
-    return EnkelSubsumsjon(
-        Etter(this, tidligsteDato),
+infix fun GeneratorFaktum.med(makro: MakroSubsumsjon) = MakroSubsumsjon(
+    this.navn,
+    GeneratorSubsumsjon(
+        Er(0),
         this,
-        tidligsteDato
+        makro.apply {
+            require(gyldig == TomSubsumsjon && ugyldig == TomSubsumsjon) {
+                "Generator makroer kan ikke ha gyldig eller ugyldig stier"
+            }
+        }
     )
-}
-
-private class Før(private val tidligsteDato: Faktum<LocalDate>, private val senesteDato: Faktum<LocalDate>) : Regel {
-    override val typeNavn = this.javaClass.simpleName.toLowerCase()
-    override fun resultat() = tidligsteDato.svar() < senesteDato.svar()
-    override fun toString() = "Sjekk at '$tidligsteDato' er før '$senesteDato'"
-    override fun deepCopy(søknadprosess: Søknadprosess): Regel {
-        return Før(søknadprosess.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>, søknadprosess.faktum(senesteDato.faktumId) as Faktum<LocalDate>)
-    }
-
-    override fun bygg(søknad: Søknad) = Før(søknad.dato(tidligsteDato.faktumId), søknad.dato(senesteDato.faktumId))
-
-    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
-        return Før(
-            tidligsteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>,
-            senesteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>
-        )
-    }
-}
-
-infix fun Faktum<LocalDate>.før(senesteDato: Faktum<LocalDate>): Subsumsjon {
-    return EnkelSubsumsjon(
-        Før(this, senesteDato),
-        this,
-        senesteDato
-    )
-}
-
-private class IkkeFør(private val tidligsteDato: Faktum<LocalDate>, private val senesteDato: Faktum<LocalDate>) : Regel {
-    override val typeNavn = this.javaClass.simpleName.toLowerCase()
-    override fun resultat() = tidligsteDato.svar() >= senesteDato.svar()
-    override fun toString() = "Sjekk at '$tidligsteDato' ikke er før '$senesteDato'"
-    override fun deepCopy(søknadprosess: Søknadprosess): Regel {
-        return IkkeFør(søknadprosess.faktum(tidligsteDato.faktumId) as Faktum<LocalDate>, søknadprosess.faktum(senesteDato.faktumId) as Faktum<LocalDate>)
-    }
-
-    override fun bygg(søknad: Søknad) = IkkeFør(søknad.dato(tidligsteDato.faktumId), søknad.dato(senesteDato.faktumId))
-
-    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
-        return IkkeFør(
-            tidligsteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>,
-            senesteDato.deepCopy(indeks, søknad) as Faktum<LocalDate>
-        )
-    }
-}
-
-infix fun Faktum<LocalDate>.ikkeFør(senesteDato: Faktum<LocalDate>): Subsumsjon {
-    return EnkelSubsumsjon(
-        IkkeFør(this, senesteDato),
-        this,
-        senesteDato
-    )
-}
-
-private class Minst(private val faktisk: Faktum<Inntekt>, private val terskel: Faktum<Inntekt>) : Regel {
-    override val typeNavn = this.javaClass.simpleName.toLowerCase()
-    override fun resultat() = faktisk.svar() >= terskel.svar()
-    override fun toString() = "Sjekk at '$faktisk' er minst '$terskel'"
-    override fun deepCopy(søknadprosess: Søknadprosess) =
-        Minst(søknadprosess.faktum(faktisk.faktumId) as Faktum<Inntekt>, søknadprosess.faktum(terskel.faktumId) as Faktum<Inntekt>)
-
-    override fun bygg(søknad: Søknad) = Minst(søknad.inntekt(faktisk.faktumId), søknad.inntekt(terskel.faktumId))
-
-    override fun deepCopy(indeks: Int, søknad: Søknad): Regel {
-        return Minst(
-            faktisk.deepCopy(indeks, søknad) as Faktum<Inntekt>,
-            terskel.deepCopy(indeks, søknad) as Faktum<Inntekt>
-        )
-    }
-}
-
-infix fun Faktum<Inntekt>.minst(terskel: Faktum<Inntekt>): Subsumsjon {
-    return EnkelSubsumsjon(
-        Minst(this, terskel),
-        this,
-        terskel
-    )
-}
-
-private class Er<T : Comparable<T>>(private val faktum: Faktum<*>, private val other: T) : Regel {
-    override val typeNavn = this.javaClass.simpleName.toLowerCase()
-    override fun resultat() = faktum.svar() == other
-    override fun toString() = "Sjekk at `$faktum` er lik $other"
-    override fun deepCopy(søknadprosess: Søknadprosess) = Er(søknadprosess.faktum(faktum.faktumId) as Faktum<T>, other)
-
-    override fun bygg(søknad: Søknad) = Er(søknad.id(faktum.faktumId) as Faktum<T>, other)
-
-    override fun deepCopy(indeks: Int, søknad: Søknad) = Er(faktum.deepCopy(indeks, søknad) as Faktum<T>, other)
-}
-
-infix fun <T : Comparable<T>> Faktum<T>.er(other: T): Subsumsjon {
-    return EnkelSubsumsjon(
-        Er(this, other),
-        this
-    )
-}
-
-infix fun GeneratorFaktum.med(makro: MakroSubsumsjon): Subsumsjon {
-    require(makro.gyldig == TomSubsumsjon && makro.ugyldig == TomSubsumsjon) {
-        "Generator makroer kan ikke ha gyldig eller ugyldig stier"
-    }
-
-    return MakroSubsumsjon(
-        this.navn,
-        GeneratorSubsumsjon(
-            Er(this, 0),
-            this,
-            makro
-        )
-    )
-}
-
-private class ErIkke(private val faktum: Faktum<Boolean>) : Regel {
-    override val typeNavn = this.javaClass.simpleName.toLowerCase()
-    override fun resultat() = !faktum.svar()
-    override fun toString() = "Sjekk at `$faktum` ikke er sann"
-    override fun deepCopy(søknadprosess: Søknadprosess) = ErIkke(søknadprosess.faktum(faktum.faktumId) as Faktum<Boolean>)
-
-    override fun bygg(søknad: Søknad) = ErIkke(søknad.ja(faktum.faktumId))
-
-    override fun deepCopy(indeks: Int, søknad: Søknad) = ErIkke(faktum.deepCopy(indeks, søknad) as Faktum<Boolean>)
-}
+)
 
 fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
     return EnkelSubsumsjon(
-        ErIkke(faktum),
+        object : Regel {
+            override val typeNavn = this.javaClass.simpleName.toLowerCase()
+            override fun resultat(fakta: List<Faktum<*>>) = !(fakta[0] as Faktum<Boolean>).svar()
+            override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `$fakta[0]` ikke er sann"
+        },
         faktum
     )
 }
 
-private class Har(private val faktum: Faktum<Boolean>) : Regel {
-    override val typeNavn = this.javaClass.simpleName.toLowerCase()
-    override fun resultat() = faktum.svar()
-    override fun toString() = "Sjekk at `$faktum` er sann"
-    override fun deepCopy(søknadprosess: Søknadprosess) = Har(søknadprosess.faktum(faktum.faktumId) as Faktum<Boolean>)
-
-    override fun bygg(søknad: Søknad) = Har(søknad.ja(faktum.faktumId))
-
-    override fun deepCopy(indeks: Int, søknad: Søknad) = Har(faktum.deepCopy(indeks, søknad) as Faktum<Boolean>)
-}
-
-fun har(faktum: Faktum<Boolean>): Subsumsjon {
-    return EnkelSubsumsjon(
-        Har(faktum),
-        faktum
-    )
-}
-
-private class DokumentOpplastet(private val faktum: Faktum<Dokument>) : Regel {
-    override val typeNavn = this.javaClass.simpleName.toLowerCase()
-    override fun resultat() = true
-    override fun toString() = "Sjekk at dokument `$faktum` er opplastet"
-    override fun deepCopy(søknadprosess: Søknadprosess) =
-        DokumentOpplastet(søknadprosess.faktum(faktum.faktumId) as Faktum<Dokument>)
-
-    override fun bygg(søknad: Søknad) = DokumentOpplastet(søknad.dokument(faktum.faktumId))
-
-    override fun deepCopy(indeks: Int, søknad: Søknad) =
-        DokumentOpplastet(faktum.deepCopy(indeks, søknad) as Faktum<Dokument>)
-}
+fun har(faktum: Faktum<Boolean>) = EnkelSubsumsjon(
+    object : Regel {
+        override val typeNavn = "har"
+        override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<Boolean>).svar()
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `$fakta[0]` er sann"
+    },
+    faktum
+)
 
 infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon =
-    GodkjenningsSubsumsjon(JaAction, EnkelSubsumsjon(DokumentOpplastet(dokument), dokument), this)
-
-private class Under(private val alder: Faktum<Int>, private val maksAlder: Int) : Regel {
-    override val typeNavn = this.javaClass.simpleName.toLowerCase()
-    override fun resultat() = alder.svar() < maksAlder
-    override fun toString() = "Sjekk at '$alder' er under $maksAlder"
-    override fun deepCopy(søknadprosess: Søknadprosess) = Under(søknadprosess.faktum(alder.faktumId) as Faktum<Int>, maksAlder)
-
-    override fun bygg(søknad: Søknad) = Under(søknad.heltall(alder.faktumId), maksAlder)
-
-    override fun deepCopy(indeks: Int, søknad: Søknad) =
-        Under(alder.deepCopy(indeks, søknad) as Faktum<Int>, maksAlder)
-}
+    GodkjenningsSubsumsjon(
+        JaAction,
+        EnkelSubsumsjon(
+            object : Regel {
+                override val typeNavn = this.javaClass.simpleName.toLowerCase()
+                override fun resultat(fakta: List<Faktum<*>>) = true
+                override fun toString(fakta: List<Faktum<*>>) = "Sjekk at dokument `$fakta[0]` er opplastet"
+            },
+            dokument
+        ),
+        this
+    )
 
 infix fun Faktum<Int>.under(maksAlder: Int): Subsumsjon {
     return EnkelSubsumsjon(
-        Under(this, maksAlder),
+        Under(maksAlder),
         this
     )
+}
+
+private class Under(private val maksAlder: Int) : Regel {
+    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<Int>).svar() < maksAlder
+    override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' er under $maksAlder"
 }
 
 infix fun Subsumsjon.godkjentAv(faktum: Faktum<Boolean>) =

@@ -30,13 +30,13 @@ open class EnkelSubsumsjon protected constructor(
     }
 
     override fun deepCopy(søknadprosess: Søknadprosess) = deepCopy(
-        regel.deepCopy(søknadprosess),
+        regel,
         subsumsjonFakta.deepCopy(søknadprosess),
         gyldigSubsumsjon.deepCopy(søknadprosess),
         ugyldigSubsumsjon.deepCopy(søknadprosess)
     )
     override fun bygg(søknad: Søknad) = deepCopy(
-        regel.bygg(søknad),
+        regel,
         this.subsumsjonFakta.map { søknad.id(it.faktumId) },
         gyldigSubsumsjon.bygg(søknad),
         ugyldigSubsumsjon.bygg(søknad)
@@ -50,7 +50,7 @@ open class EnkelSubsumsjon protected constructor(
     )
 
     override fun deepCopy(indeks: Int, søknad: Søknad) = deepCopy(
-        regel.deepCopy(indeks, søknad),
+        regel,
         subsumsjonFakta.deepCopy(indeks, søknad),
         gyldigSubsumsjon.deepCopy(indeks, søknad),
         ugyldigSubsumsjon.deepCopy(indeks, søknad)
@@ -71,9 +71,9 @@ open class EnkelSubsumsjon protected constructor(
 
     private fun nesteSubsumsjon() = if (lokaltResultat() == true) gyldigSubsumsjon else ugyldigSubsumsjon
 
-    override fun lokaltResultat() = if (subsumsjonFakta.erBesvart()) regel.resultat() else null
+    override fun lokaltResultat() = if (subsumsjonFakta.erBesvart()) regel.resultat(subsumsjonFakta) else null
 
-    override fun toString() = regel.toString()
+    override fun toString() = regel.toString(subsumsjonFakta)
 
     override operator fun get(indeks: Int) = throw IllegalArgumentException()
 
