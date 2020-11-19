@@ -12,8 +12,10 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
+@Disabled
 internal class DokumentSubsumsjonTest {
     private lateinit var dokumentFaktum: Faktum<Dokument>
     private lateinit var dokumentGodkjenning: Faktum<Boolean>

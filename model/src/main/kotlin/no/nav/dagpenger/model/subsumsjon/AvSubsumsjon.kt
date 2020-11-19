@@ -29,14 +29,14 @@ internal class AvSubsumsjon private constructor(
     )
 
     override fun lokaltResultat(): Boolean? {
-        return if (dokument.erBesvart()) regel.resultat() else null
+        return if (dokument.erBesvart()) regel.resultat(listOf(dokument, godkjenning)) else null
     }
 
     override fun ukjenteFakta(): Set<GrunnleggendeFaktum<*>> =
         if (dokument.erBesvart()) emptySet() else dokument.grunnleggendeFakta()
 
     override fun deepCopy(søknadprosess: Søknadprosess) = AvSubsumsjon(
-        regel.deepCopy(søknadprosess),
+        regel,
         søknadprosess.faktum(dokument.faktumId) as Faktum<Dokument>,
         søknadprosess.faktum(godkjenning.faktumId) as Faktum<Boolean>,
         gyldigSubsumsjon.deepCopy(søknadprosess),
@@ -44,7 +44,7 @@ internal class AvSubsumsjon private constructor(
     )
 
     override fun bygg(søknad: Søknad) = AvSubsumsjon(
-        regel.bygg(søknad),
+        regel,
         søknad.dokument(dokument.faktumId),
         søknad.ja(godkjenning.faktumId),
         gyldigSubsumsjon.bygg(søknad),
@@ -60,7 +60,7 @@ internal class AvSubsumsjon private constructor(
     )
 
     override fun deepCopy(indeks: Int, søknad: Søknad) = AvSubsumsjon(
-        regel.deepCopy(indeks, søknad),
+        regel,
         dokument.deepCopy(indeks, søknad) as Faktum<Dokument>,
         godkjenning.deepCopy(indeks, søknad) as Faktum<Boolean>,
         gyldigSubsumsjon.deepCopy(indeks, søknad),

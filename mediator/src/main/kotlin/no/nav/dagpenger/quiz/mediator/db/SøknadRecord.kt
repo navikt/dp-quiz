@@ -350,7 +350,7 @@ class SøknadRecord : SøknadPersistence {
         private fun skrivFaktumVerdi(faktum: Faktum<*>) {
             if (faktum in faktumList) return else faktumList.add(faktum)
             using(sessionOf(dataSource)) { session ->
-                // println("faktum: $faktaId,\nindeks: $indeks,\nversion: $versjonId,\nroot: $rootId")
+                println("faktum: $søknadId,\nindeks: $indeks,\nversion: $versjonId,\nroot: $rootId")
                 session.run(
                     queryOf( //language=PostgreSQL
                         """INSERT INTO faktum_verdi
