@@ -26,6 +26,7 @@ class FaktaGrupperJsonBuilderTest {
     @Test
     fun `Lage søknadprosess med seksjoner`() {
         val søknad = Søknad(
+            199,
             ja nei "navn1" id 1,
             ja nei "navn2" id 2
         )

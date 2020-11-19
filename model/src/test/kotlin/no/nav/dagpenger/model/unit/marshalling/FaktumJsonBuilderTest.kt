@@ -12,6 +12,7 @@ internal class FaktumJsonBuilderTest {
     @Test
     fun ` `() {
         val søknad = Søknad(
+            189,
             ja nei "f1" id 1 avhengerAv 2 og 3,
             ja nei "f2" id 2 avhengerAv 1 og 3,
             ja nei "f3" id 3 avhengerAv 1 og 2

@@ -20,6 +20,7 @@ class GenerertEndreTest {
     @BeforeEach
     fun setup() {
         val prototypeSøknad = Søknad(
+            59,
             heltall faktum "generator" id 4 genererer 1 og 2 og 3,
             ja nei "template1" id 1,
             ja nei "template2" id 2,
@@ -31,7 +32,7 @@ class GenerertEndreTest {
             Seksjon("template23", Rolle.søker, prototypeSøknad.ja(2), prototypeSøknad.ja(3))
         )
         Versjon(prototypeSøknad, TomSubsumsjon, mapOf(Web to prototypeSøknadprosess))
-        søknadprosess = Versjon.siste.søknadprosess("12345678901", Web)
+        søknadprosess = Versjon.id(59).søknadprosess("12345678901", Web)
     }
 
     @Test

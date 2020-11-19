@@ -26,6 +26,7 @@ class NavJsonBuilderTest {
     @Test
     fun `bygger behov event`() {
         val prototypeSøknad = Søknad(
+            500,
             ja nei "f1" id 1,
             ja nei "f1" id 2 avhengerAv 1,
             ja nei "f3" id 3,
@@ -68,7 +69,7 @@ class NavJsonBuilderTest {
             mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
         )
 
-        val fakta = Versjon.siste.søknadprosess(fnr = "12345678910", Versjon.UserInterfaceType.Web)
+        val fakta = Versjon.id(Versjon.siste).søknadprosess(fnr = "12345678910", Versjon.UserInterfaceType.Web)
         FaktumNavBehov(
             Versjon.versjoner.keys.maxOf { it },
             mapOf(

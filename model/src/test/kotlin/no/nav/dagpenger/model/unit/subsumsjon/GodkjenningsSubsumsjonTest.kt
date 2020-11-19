@@ -82,6 +82,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     private fun søknadprosess(block: (Søknad) -> Subsumsjon): Søknadprosess {
         val søknad = Søknad(
+            136,
             ja nei "faktum" id 1,
             ja nei "godkjenning" id 2 avhengerAv 1
         )

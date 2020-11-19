@@ -27,6 +27,7 @@ internal class SaksbehandlerSeksjonerTest {
         internal val uuid = UUID.randomUUID()
     }
     private val prototypeSøknad = Søknad(
+        149,
         ja nei "f1" id 1,
         ja nei "approve1" id 2 avhengerAv 1,
         ja nei "f3" id 3,
@@ -61,7 +62,7 @@ internal class SaksbehandlerSeksjonerTest {
 
     @BeforeEach
     internal fun setup() {
-        seksjoner = Versjon.siste.søknadprosess(UNG_PERSON_FNR_2018, Web, uuid)
+        seksjoner = Versjon.id(149).søknadprosess(UNG_PERSON_FNR_2018, Web, uuid)
         f1 = seksjoner.ja(1)
         f3 = seksjoner.ja(3)
         f5 = seksjoner.ja(5)

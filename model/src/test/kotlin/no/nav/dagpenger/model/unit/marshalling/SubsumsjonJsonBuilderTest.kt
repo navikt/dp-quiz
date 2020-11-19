@@ -24,6 +24,7 @@ internal class SubsumsjonJsonBuilderTest {
     @Test
     fun `Lage en subsumsjon med fakta`() {
         val søknad = Søknad(
+            169,
             ja nei "faktum" id 1
         )
 
@@ -51,6 +52,7 @@ internal class SubsumsjonJsonBuilderTest {
     @Test
     fun `Finner avhengige fakta i json`() {
         val søknad = Søknad(
+            168,
             ja nei "faktum" id 1,
             ja nei "faktum" id 2 avhengerAv 1
         )

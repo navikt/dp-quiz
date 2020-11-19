@@ -10,7 +10,7 @@ import java.util.UUID
 
 class Søknad private constructor(
     private val fnr: String,
-    private val versjonId: Int,
+    internal val versjonId: Int,
     val uuid: UUID,
     private val faktaMap: MutableMap<FaktumId, Faktum<*>>
 ) : TypedFaktum, Iterable<Faktum<*>> {
@@ -24,7 +24,7 @@ class Søknad private constructor(
         faktumMap
     )
 
-    constructor(vararg factories: FaktumFactory<*>) : this("", 0, UUID.randomUUID(), factories.toList())
+    constructor(versjonId: Int, vararg factories: FaktumFactory<*>) : this("", versjonId, UUID.randomUUID(), factories.toList())
 
     constructor(fnr: String, versjonId: Int, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
         fnr,

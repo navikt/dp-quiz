@@ -20,10 +20,13 @@ internal class UtledetFaktumTest {
     private lateinit var dato2: Faktum<LocalDate>
     private lateinit var dato5: Faktum<LocalDate>
     private lateinit var dato6: Faktum<LocalDate>
-
+    companion object {
+        private var versjonId = 110
+    }
     @BeforeEach
     fun setup() {
         søknadprosess = Søknad(
+            versjonId--,
             maks dato "maks dato" av 1 og 3 og 6 id 4,
             maks dato "maks dato" av 1 og 2 og 5 id 3,
             dato faktum "dato1" id 1,

@@ -37,7 +37,7 @@ internal class SøknadRecordTest {
 
             assertRecordCount(1, "soknad")
             assertRecordCount(26, "faktum_verdi")
-            SøknadRecord().ny(UNG_PERSON_FNR_2018, Web)
+            SøknadRecord().ny(UNG_PERSON_FNR_2018, Web, 15)
             assertRecordCount(2, "soknad")
             assertRecordCount(52, "faktum_verdi")
             hentFørstFakta()
@@ -159,9 +159,9 @@ internal class SøknadRecordTest {
     }
 
     private fun byggOriginalSøknadprosess() {
-        FaktumTable(prototypeFakta1, 1000)
+        FaktumTable(prototypeFakta1, 15)
         søknadRecord = SøknadRecord()
-        originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web)
+        originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, 15)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

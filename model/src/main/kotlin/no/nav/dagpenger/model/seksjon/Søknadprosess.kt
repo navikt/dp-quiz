@@ -18,7 +18,7 @@ class Søknadprosess private constructor(
 ) : TypedFaktum by søknad, MutableList<Seksjon> by seksjoner {
 
     constructor(vararg seksjoner: Seksjon) : this(
-        Søknad(),
+        Søknad(1),
         TomSubsumsjon,
         UUID.randomUUID(),
         seksjoner.toMutableList()

@@ -16,6 +16,7 @@ internal class AvhengigFaktumTest {
         internal val uuid = UUID.randomUUID()
     }
     private val prototypeSøknad = Søknad(
+        79,
         ja nei "f1" id 1,
         ja nei "approve1" id 2
     )

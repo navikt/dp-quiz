@@ -16,7 +16,8 @@ import no.nav.dagpenger.model.seksjon.Versjon
 
 internal object SøknadEksempel1 {
 
-    val prototypeFakta1 = Søknad(
+    internal val prototypeFakta1 = Søknad(
+        15,
         ja nei "f1" id 1,
         dato faktum "f2" id 2,
         dato faktum "f3" id 3,
@@ -64,7 +65,6 @@ internal object SøknadEksempel1 {
     )
 
     val v = Versjon(
-        1000, // må være siste versjon pga databasetester
         prototypeFakta1,
         prototypeFakta1 ja 1 er true,
         mapOf(

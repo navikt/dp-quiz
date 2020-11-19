@@ -54,6 +54,7 @@ internal class AvslagPåMinsteinntekt {
 
     private val søknad: Søknad
         get() = Søknad(
+            VERSJON_ID,
             dato faktum "Ønsker dagpenger fra dato" id 1,
             dato faktum "Siste dag med arbeidsplikt" id 2,
             dato faktum "Registreringsdato" id 3,
@@ -164,7 +165,6 @@ internal class AvslagPåMinsteinntekt {
             godkjennDato
         )
     private val versjon = Versjon(
-        versjonId = VERSJON_ID,
         prototypeSøknad = søknad,
         prototypeSubsumsjon = inngangsvilkår,
         prototypeUserInterfaces = mapOf(

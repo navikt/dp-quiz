@@ -21,9 +21,15 @@ internal class DokumentSubsumsjonTest {
     private lateinit var dokumentGodkjenning: Faktum<Boolean>
     private lateinit var subsumsjon: Subsumsjon
 
+    companion object {
+        private var versjonId = 300
+    }
+
     @BeforeEach
     fun setUp() {
+        versjonId --
         val søknadprosess = Søknad(
+            versjonId,
             dokument faktum "dokument" id 1,
             ja nei "saksbehandler godkjenner" id 2 avhengerAv 1
         ).testSøknadprosess()

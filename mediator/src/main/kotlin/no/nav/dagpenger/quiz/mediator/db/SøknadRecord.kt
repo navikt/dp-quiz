@@ -29,8 +29,8 @@ import java.util.UUID
 class SøknadRecord : SøknadPersistence {
     private lateinit var originalSvar: MutableMap<String, Any?>
 
-    override fun ny(fnr: String, type: Versjon.UserInterfaceType): Søknadprosess {
-        return Versjon.siste.søknadprosess(fnr, type).also { søknadprosess ->
+    override fun ny(fnr: String, type: Versjon.UserInterfaceType, versjonId: Int): Søknadprosess {
+        return Versjon.id(versjonId).søknadprosess(fnr, type).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
             originalSvar = svarMap(søknadprosess.søknad)
         }

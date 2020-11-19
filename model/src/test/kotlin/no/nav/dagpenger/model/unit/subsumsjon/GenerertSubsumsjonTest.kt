@@ -23,6 +23,7 @@ internal class GenerertSubsumsjonTest {
     @BeforeEach
     fun setup() {
         søknad = Søknad(
+            137,
             ja nei "template" id 1,
             heltall faktum "generator" id 2 genererer 1
 

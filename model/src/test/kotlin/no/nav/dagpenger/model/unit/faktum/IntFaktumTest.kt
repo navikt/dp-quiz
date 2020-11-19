@@ -12,7 +12,7 @@ internal class IntFaktumTest {
 
     @Test
     fun `Støtte fakta med type int`() {
-        val intFaktum = Søknad(heltall faktum "int" id 1).testSøknadprosess().let { it heltall 1 }
+        val intFaktum = Søknad(29, heltall faktum "int" id 1).testSøknadprosess().let { it heltall 1 }
 
         assertThrows<IllegalStateException> { intFaktum.svar() }
         intFaktum.besvar(5)
@@ -21,7 +21,7 @@ internal class IntFaktumTest {
 
     @Test
     fun `Subsumsjon med fakta av typen int`() {
-        val intFaktum = Søknad(heltall faktum "int" id 1).testSøknadprosess().let { it heltall 1 }
+        val intFaktum = Søknad(28, heltall faktum "int" id 1).testSøknadprosess().let { it heltall 1 }
         val subsumsjon = intFaktum er 0
 
         assertEquals(null, subsumsjon.resultat())

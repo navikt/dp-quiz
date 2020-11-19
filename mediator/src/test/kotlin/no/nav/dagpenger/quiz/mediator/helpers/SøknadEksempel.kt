@@ -19,6 +19,7 @@ import no.nav.dagpenger.model.subsumsjon.alle
 internal object SøknadEksempel {
 
     val prototypeSøknad1 = Søknad(
+        666,
         ja nei "f1_bool" id 1,
         ja nei "f2_bool" id 2,
         heltall faktum "f3_heltall" id 3,

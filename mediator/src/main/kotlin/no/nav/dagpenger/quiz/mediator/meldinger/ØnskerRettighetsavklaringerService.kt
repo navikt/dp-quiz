@@ -21,7 +21,7 @@ internal class ØnskerRettighetsavklaringerService(
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         val fnr = packet["fnr"].asText()
         val faktagrupperType = Versjon.UserInterfaceType.valueOf(packet["faktagrupperType"].asText())
-        søknadPersistence.ny(fnr, faktagrupperType)
+        søknadPersistence.ny(fnr, faktagrupperType, Versjon.siste)
             .also { søknadprosess ->
                 søknadprosess.nesteSeksjoner()
                     .forEach { seksjon ->

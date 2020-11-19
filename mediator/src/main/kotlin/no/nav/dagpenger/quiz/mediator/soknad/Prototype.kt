@@ -31,6 +31,7 @@ class Prototype {
 
     private val søknad: Søknad
         get() = Søknad(
+            VERSJON_ID,
             dato faktum "Fødselsdato" id 1,
             dato faktum "Ønsker dagpenger fra dato" id 2,
             dato faktum "Dato for bortfall på grunn av alder" id 3,
@@ -164,7 +165,6 @@ class Prototype {
         )
 
     private val versjon = Versjon(
-        versjonId = VERSJON_ID,
         prototypeSøknad = søknad,
         prototypeSubsumsjon = inngangsvilkår,
         prototypeUserInterfaces = mapOf(

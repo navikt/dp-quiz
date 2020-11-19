@@ -74,13 +74,13 @@ internal class MeldingMediatorTest {
     private class TestLagring : SøknadPersistence {
         var søknadprosess: Søknadprosess? = null
 
-        override fun ny(fnr: String, type: Versjon.UserInterfaceType) =
-            Versjon.siste.søknadprosess(fnr, type).also { søknadprosess = it }
+        override fun ny(fnr: String, type: Versjon.UserInterfaceType, versjonId: Int) =
+            Versjon.id(versjonId).søknadprosess(fnr, type).also { søknadprosess = it }
 
         override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?) = søknadprosess!!
 
         override fun lagre(søknad: Søknad): Boolean {
-            søknadprosess = Versjon.siste.søknadprosess(søknad, Versjon.UserInterfaceType.Web)
+            søknadprosess = Versjon.id(Versjon.siste).søknadprosess(søknad, Versjon.UserInterfaceType.Web)
             return true
         }
 

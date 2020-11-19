@@ -5,7 +5,6 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
 
 class Versjon(
-    private val versjonId: Int,
     private val prototypeSøknad: Søknad,
     private val prototypeSubsumsjon: Subsumsjon,
     private val prototypeUserInterfaces: Map<UserInterfaceType, Søknadprosess>
@@ -13,29 +12,21 @@ class Versjon(
 
     companion object {
         val versjoner = mutableMapOf<Int, Versjon>()
-        val siste: Versjon
-            get() = versjoner.maxByOrNull { it.key }?.value
+        val siste: Int
+            get() = versjoner.keys.maxOrNull()
                 ?: throw IllegalArgumentException("Det finnes ingen versjoner!")
 
         fun id(versjonId: Int) =
             versjoner[versjonId] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $versjonId")
-
-        private fun nesteId(): Int = (versjoner.keys.maxOrNull() ?: 0) + 1
     }
 
     init {
-        require(versjonId !in versjoner.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider" }
-        versjoner[versjonId] = this
+        require(prototypeSøknad.versjonId !in versjoner.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider" }
+        versjoner[prototypeSøknad.versjonId] = this
     }
 
-    constructor(
-        prototypeSøknad: Søknad,
-        prototypeSubsumsjon: Subsumsjon,
-        prototypeUserInterfaces: Map<UserInterfaceType, Søknadprosess>
-    ) : this(nesteId(), prototypeSøknad, prototypeSubsumsjon, prototypeUserInterfaces)
-
     fun søknadprosess(fnr: String, type: UserInterfaceType, uuid: UUID = UUID.randomUUID()): Søknadprosess =
-        søknadprosess(prototypeSøknad.bygg(fnr, versjonId, uuid), type)
+        søknadprosess(prototypeSøknad.bygg(fnr, prototypeSøknad.versjonId, uuid), type)
 
     fun søknadprosess(søknad: Søknad, type: UserInterfaceType): Søknadprosess {
         val subsumsjon = prototypeSubsumsjon.bygg(søknad)

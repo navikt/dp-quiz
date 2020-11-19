@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal interface SøknadPersistence {
-    fun ny(fnr: String, type: Versjon.UserInterfaceType): Søknadprosess
+    fun ny(fnr: String, type: Versjon.UserInterfaceType, versjonId: Int): Søknadprosess
     fun hent(uuid: UUID, type: Versjon.UserInterfaceType? = null): Søknadprosess
     fun lagre(søknad: Søknad): Boolean
     fun opprettede(fnr: String): Map<LocalDateTime, UUID>

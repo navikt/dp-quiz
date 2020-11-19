@@ -17,6 +17,7 @@ class NesteSeksjonTest {
     @Test
     fun ` neste seksjon bug - rolle ble kopiert fra avehengig faktum til seksjon `() {
         val prototypesøknad = Søknad(
+            159,
             ja nei "f1" id 1,
             ja nei "f2" id 2 avhengerAv 1
 
@@ -32,9 +33,8 @@ class NesteSeksjonTest {
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        val versjon = Versjon(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagruppe))
-
-        val fakta = Versjon.siste.søknadprosess("12345678912", Web)
+        Versjon(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagruppe))
+        val fakta = Versjon.id(prototypesøknad.versjonId).søknadprosess("12345678912", Web)
 
         assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
     }
@@ -42,6 +42,7 @@ class NesteSeksjonTest {
     @Test
     fun ` bug-fiks read-only fakta i seksjonen`() {
         val prototypesøknad = Søknad(
+            158,
             ja nei "f1" id 1,
             ja nei "f2" id 2 avhengerAv 1
 
@@ -59,7 +60,7 @@ class NesteSeksjonTest {
 
         val versjon = Versjon(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagruppe))
 
-        val fakta = Versjon.siste.søknadprosess("12345678912", Web)
+        val fakta = Versjon.id(prototypesøknad.versjonId).søknadprosess("12345678912", Web)
 
         assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
     }

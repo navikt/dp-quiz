@@ -16,13 +16,23 @@ import no.nav.dagpenger.model.subsumsjon.så
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.util.UUID
 
 internal class SaksbehandlerSubsumsjonTest {
+    private lateinit var prototypeSøknad: Søknad
+
     companion object {
-        private val prototypeSøknad = Søknad(
+        private var versjonId = 170
+    }
+
+    @BeforeEach
+    fun setup() {
+        versjonId--
+        prototypeSøknad = Søknad(
+            versjonId,
             ja nei "f1" id 1,
             ja nei "f2" id 2 avhengerAv 1,
             ja nei "f3" id 3,
@@ -103,6 +113,6 @@ internal class SaksbehandlerSubsumsjonTest {
             mapOf(Web to prototypeFaktagrupper)
         )
 
-        return Versjon.siste.søknadprosess("12345678910", Web)
+        return Versjon.id(versjonId).søknadprosess("12345678910", Web)
     }
 }

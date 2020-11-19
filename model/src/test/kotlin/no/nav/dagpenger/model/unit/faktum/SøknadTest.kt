@@ -23,7 +23,7 @@ class SøknadTest {
 
     @Test
     fun `søknad med ett faktum`() {
-        val søknad = Søknad(ja nei "janei" id 3)
+        val søknad = Søknad(10, ja nei "janei" id 3)
         assertFalse((søknad id 3).erBesvart())
         assertFalse((søknad id "3").erBesvart())
         assertEquals(1, søknad.size)
@@ -33,6 +33,7 @@ class SøknadTest {
     @Test
     fun `fakta med avhengigheter`() {
         val søknad = Søknad(
+            9,
             dokument faktum "f11" id 11,
             ja nei "f12" id 12 avhengerAv 11
         )
@@ -50,6 +51,7 @@ class SøknadTest {
     @Test
     fun `sammensatte fakta`() {
         val søknad = Søknad(
+            8,
             dato faktum "f3" id 3,
             dato faktum "f4" id 4,
             dato faktum "f5" id 5,
@@ -71,6 +73,7 @@ class SøknadTest {
     @Test
     fun `fakta templater `() {
         val søknad = Søknad(
+            7,
             heltall faktum "antall barn" id 15 genererer 16 og 17 og 18,
             heltall faktum "alder barn" id 16,
             ja nei "skal du ha penger for barn" id 17,
@@ -89,6 +92,7 @@ class SøknadTest {
     @Test
     fun `sortere utledede faktum`() {
         val søknad = Søknad(
+            6,
             dato faktum "f3" id 3,
             dato faktum "f4" id 4,
             dato faktum "f5" id 5,
@@ -104,6 +108,7 @@ class SøknadTest {
     fun `Søknad med duplikate ider `() {
         assertThrows<IllegalArgumentException> {
             Søknad(
+                5,
                 heltall faktum "f11" id 11,
                 dokument faktum "whoops" id 11,
             )

@@ -15,6 +15,7 @@ internal class GenerertFaktumTest {
     fun `Enkel template`() {
 
         val søknad = Søknad(
+            49,
             ja nei "template" id 1,
             heltall faktum "generator" id 2 genererer 1
         )
@@ -33,6 +34,7 @@ internal class GenerertFaktumTest {
     fun `Flere templates`() {
 
         val søknad = Søknad(
+            48,
             ja nei "template" id 1,
             ja nei "template" id 2,
             ja nei "template" id 3,
@@ -58,6 +60,7 @@ internal class GenerertFaktumTest {
     @Test
     fun `Generere seksjoner`() {
         val søknad = Søknad(
+            47,
             ja nei "template" id 1,
             heltall faktum "generator" id 2 genererer 1
         )
@@ -75,6 +78,7 @@ internal class GenerertFaktumTest {
     @Test
     fun `Seksjon med kun og flere templates`() {
         val søknad = Søknad(
+            46,
             ja nei "template" id 1,
             ja nei "template" id 2,
             ja nei "template" id 3,

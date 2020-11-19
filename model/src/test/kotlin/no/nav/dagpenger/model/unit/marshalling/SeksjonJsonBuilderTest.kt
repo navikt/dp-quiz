@@ -14,6 +14,7 @@ class SeksjonJsonBuilderTest {
     @Test
     fun `Hente ut enkelt seksjon`() {
         val seksjon = Søknad(
+            179,
             ja nei "navn" id 1
         ).testSøknadprosess().let {
             it[0]
@@ -30,6 +31,7 @@ class SeksjonJsonBuilderTest {
     @Test
     fun `bygger faktaavhengigheter for seksjon`() {
         val søknad = Søknad(
+            178,
             ja nei "verneplikt" id 1,
             inntekt faktum "inntekt" id 2 avhengerAv 1
         )

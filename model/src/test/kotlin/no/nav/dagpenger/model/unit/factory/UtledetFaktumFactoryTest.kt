@@ -24,6 +24,7 @@ internal class UtledetFaktumFactoryTest {
     @Test
     fun `maks dato`() {
         val søknad = Søknad(
+            89,
             dato faktum "dato1" id 1,
             dato faktum "dato2" id 2,
             dato faktum "dato3" id 3,
@@ -59,6 +60,7 @@ internal class UtledetFaktumFactoryTest {
     @Test
     fun `maks inntekt`() {
         val søknad = Søknad(
+            88,
             inntekt faktum "inntekt1" id 1,
             inntekt faktum "inntekt2" id 2,
             inntekt faktum "inntekt3" id 3,
@@ -94,6 +96,7 @@ internal class UtledetFaktumFactoryTest {
     @Test
     fun `boolean and`() {
         val søknad = Søknad(
+            87,
             ja nei "jaNei1" id 1,
             ja nei "jaNei2" id 2,
             ja nei "jaNei3" id 3,
@@ -128,6 +131,7 @@ internal class UtledetFaktumFactoryTest {
     @Test
     fun `En eller ingen`() {
         val søknad = Søknad(
+            86,
             valg faktum "valg" ja "valg1" ja "valg2" nei "valg3" id 1
         ).testSøknadprosess()
         assertFalse(søknad.ja(2).erBesvart())
@@ -147,6 +151,7 @@ internal class UtledetFaktumFactoryTest {
     fun `avhengigheter til utledetfaktum`() {
 
         val søknad = Søknad(
+            85,
             dato faktum "dato1" id 1,
             dato faktum "dato2" id 2,
             dato faktum "dato3" id 3,

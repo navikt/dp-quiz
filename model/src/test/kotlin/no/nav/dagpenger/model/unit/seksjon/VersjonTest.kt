@@ -17,10 +17,11 @@ import kotlin.test.assertEquals
 
 internal class VersjonTest {
     private lateinit var søknadprosess: Søknadprosess
-    @BeforeEach
-    fun setup() {
+
+    companion object {
         val fnr = "12345678910"
         val prototypeSøknad = Søknad(
+            139,
             heltall faktum "f15" id 15 genererer 16 og 17 og 18,
             heltall faktum "f16" id 16,
             ja nei "f17" id 17,
@@ -30,6 +31,10 @@ internal class VersjonTest {
         val prototypeFaktagrupper = Søknadprosess(prototypeSeksjon)
         val prototypeSubsumsjon = prototypeSøknad heltall 15 er 6
         val versjon = Versjon(prototypeSøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
+    }
+
+    @BeforeEach
+    fun setup() {
         søknadprosess = versjon.søknadprosess(fnr, Web)
     }
 

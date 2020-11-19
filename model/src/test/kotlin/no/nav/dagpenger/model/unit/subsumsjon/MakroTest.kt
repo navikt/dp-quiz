@@ -21,6 +21,7 @@ internal class MakroTest {
     @BeforeEach
     fun setup() {
         val søknadprosess = Søknad(
+            135,
             ja nei "f1" id 1,
             ja nei "f2" id 2
         ).testSøknadprosess()
