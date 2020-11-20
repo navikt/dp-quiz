@@ -28,7 +28,7 @@ infix fun Faktum<LocalDate>.etter(tidligsteDato: Faktum<LocalDate>) = EnkelSubsu
         override val typeNavn = "etter"
         override fun resultat(fakta: List<Faktum<*>>) =
             (fakta[1] as Faktum<LocalDate>).svar() < (fakta[0] as Faktum<LocalDate>).svar()
-        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' er etter '$fakta[1]'"
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er etter '${fakta[1]}'"
     },
     this,
     tidligsteDato
@@ -38,7 +38,7 @@ infix fun Faktum<LocalDate>.før(senesteDato: Faktum<LocalDate>) = EnkelSubsumsj
     object : Regel {
         override val typeNavn = "før"
         override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<LocalDate>).svar() < (fakta[1] as Faktum<LocalDate>).svar()
-        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' er før '$fakta[1]'"
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er før '${fakta[1]}'"
     },
     this,
     senesteDato
@@ -48,7 +48,7 @@ infix fun Faktum<LocalDate>.ikkeFør(senesteDato: Faktum<LocalDate>) = EnkelSubs
     object : Regel {
         override val typeNavn = "ikkeFør"
         override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<LocalDate>).svar() >= (fakta[1] as Faktum<LocalDate>).svar()
-        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' ikke er før '$fakta[1]'"
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' ikke er før '${fakta[1]}'"
     },
     this,
     senesteDato
@@ -58,7 +58,7 @@ infix fun Faktum<Inntekt>.minst(terskel: Faktum<Inntekt>) = EnkelSubsumsjon(
     object : Regel {
         override val typeNavn = "minst"
         override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<Inntekt>).svar() >= (fakta[1] as Faktum<Inntekt>).svar()
-        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' er minst '$fakta[1]'"
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er minst '${fakta[1]}'"
     },
     this,
     terskel
@@ -72,7 +72,7 @@ infix fun <T : Comparable<T>> Faktum<T>.er(other: T) = EnkelSubsumsjon(
 private class Er<T : Comparable<T>>(private val other: T) : Regel {
     override val typeNavn = "er"
     override fun resultat(fakta: List<Faktum<*>>) = fakta[0].svar() == other
-    override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `$fakta[0]` er lik $other"
+    override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `${fakta[0]}` er lik $other"
 }
 
 infix fun GeneratorFaktum.med(makro: MakroSubsumsjon) = MakroSubsumsjon(
@@ -93,7 +93,7 @@ fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
         object : Regel {
             override val typeNavn = "er ikke"
             override fun resultat(fakta: List<Faktum<*>>) = !(fakta[0] as Faktum<Boolean>).svar()
-            override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `$fakta[0]` ikke er sann"
+            override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `${fakta[0]}` ikke er sann"
         },
         faktum
     )
@@ -103,7 +103,7 @@ fun har(faktum: Faktum<Boolean>) = EnkelSubsumsjon(
     object : Regel {
         override val typeNavn = "har"
         override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<Boolean>).svar()
-        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `$fakta[0]` er sann"
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `${fakta[0]}` er sann"
     },
     faktum
 )
@@ -115,7 +115,7 @@ infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon =
             object : Regel {
                 override val typeNavn = "dokumentgodkjenning"
                 override fun resultat(fakta: List<Faktum<*>>) = true
-                override fun toString(fakta: List<Faktum<*>>) = "Sjekk at dokument `$fakta[0]` er opplastet"
+                override fun toString(fakta: List<Faktum<*>>) = "Sjekk at dokument `${fakta[0]}` er opplastet"
             },
             dokument
         ),
@@ -132,7 +132,7 @@ infix fun Faktum<Int>.under(maksAlder: Int): Subsumsjon {
 private class Under(private val maksAlder: Int) : Regel {
     override val typeNavn = "under"
     override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<Int>).svar() < maksAlder
-    override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '$fakta[0]' er under $maksAlder"
+    override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er under $maksAlder"
 }
 
 infix fun Subsumsjon.godkjentAv(faktum: Faktum<Boolean>) =
