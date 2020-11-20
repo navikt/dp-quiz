@@ -45,7 +45,9 @@ internal class SaksbehandlerJsonBuilderTest {
             ja nei "f3" id 3,
             ja nei "f4" id 4 avhengerAv 3,
             ja nei "f5" id 5,
-            heltall faktum "f35" id 35 genererer 3 og 5
+            ja nei "f6" id 6,
+            ja nei "f7" id 7,
+            heltall faktum "f67" id 67 genererer 6 og 7
         )
     }
 
@@ -271,22 +273,22 @@ internal class SaksbehandlerJsonBuilderTest {
     fun ` template subsumsjoner`() {
         val template = "template" makro (
             "alle".alle(
-                prototypeSøknad.ja(3) er true,
-                prototypeSøknad.ja(5) er true
+                prototypeSøknad.ja(6) er true,
+                prototypeSøknad.ja(7) er true
             )
-        )
+            )
 
         val søknadprosess = søknadprosess(
-            prototypeSøknad.generator(35) med template
+            prototypeSøknad.generator(67) med template
         )
-        søknadprosess.generator(35).besvar(3)
-        søknadprosess.ja("3.1").besvar(true)
-        søknadprosess.ja("3.2").besvar(true)
-        søknadprosess.ja("3.3").besvar(false)
+        søknadprosess.generator(67).besvar(3)
+        søknadprosess.ja("6.1").besvar(true)
+        søknadprosess.ja("6.2").besvar(true)
+        søknadprosess.ja("6.3").besvar(false)
 
-        søknadprosess.ja("5.1").besvar(true)
-        søknadprosess.ja("5.2").besvar(false)
-        søknadprosess.ja("5.3").besvar(false)
+        søknadprosess.ja("7.1").besvar(true)
+        søknadprosess.ja("7.2").besvar(false)
+        søknadprosess.ja("7.3").besvar(false)
 
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
@@ -302,7 +304,6 @@ internal class SaksbehandlerJsonBuilderTest {
             assertTrue(json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"][0]["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
             assertFalse(json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][2]["subsumsjoner"][0]["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
         }
-
     }
 
     @Test
@@ -335,7 +336,9 @@ internal class SaksbehandlerJsonBuilderTest {
                 Rolle.søker,
                 prototypeSøknad.ja(1),
                 prototypeSøknad.ja(3),
-                prototypeSøknad.ja(5)
+                prototypeSøknad.ja(5),
+                prototypeSøknad.ja(6),
+                prototypeSøknad.ja(7)
             ),
             Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.ja(2)),
             Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeSøknad.ja(4)),
