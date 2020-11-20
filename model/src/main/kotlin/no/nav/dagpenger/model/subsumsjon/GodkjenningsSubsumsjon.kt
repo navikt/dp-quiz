@@ -82,12 +82,12 @@ class GodkjenningsSubsumsjon private constructor(
 
     override fun accept(visitor: SubsumsjonVisitor) {
         lokaltResultat().also {
-            visitor.preVisit(this, it)
+            visitor.preVisit(this, action, godkjenning, it, child.lokaltResultat())
             super.accept(visitor)
             visitor.preVisit(this, action, it)
             godkjenning.accept(visitor)
             visitor.postVisit(this, action, it)
-            visitor.postVisit(this, it)
+            visitor.postVisit(this, action, godkjenning, it, child.lokaltResultat())
         }
     }
 }

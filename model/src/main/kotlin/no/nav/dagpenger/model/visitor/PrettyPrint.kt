@@ -57,11 +57,23 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         indentTeller--
     }
 
-    override fun preVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {
+    override fun preVisit(
+        subsumsjon: GodkjenningsSubsumsjon,
+        action: GodkjenningsSubsumsjon.Action,
+        godkjenning: GrunnleggendeFaktum<Boolean>,
+        resultat: Boolean?,
+        childResultat: Boolean?
+    ) {
         melding("${status(resultat)} Resultat av subsumsjon ${subsumsjon.navn}")
         indentTeller++
     }
-    override fun postVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {
+    override fun postVisit(
+        subsumsjon: GodkjenningsSubsumsjon,
+        action: GodkjenningsSubsumsjon.Action,
+        godkjenning: GrunnleggendeFaktum<Boolean>,
+        resultat: Boolean?,
+        childResultat: Boolean?
+    ) {
         indentTeller--
     }
 

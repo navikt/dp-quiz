@@ -17,7 +17,7 @@ class NesteSeksjonTest {
     @Test
     fun ` neste seksjon bug - rolle ble kopiert fra avehengig faktum til seksjon `() {
         val prototypesøknad = Søknad(
-            159,
+            400,
             ja nei "f1" id 1,
             ja nei "f2" id 2 avhengerAv 1
 
@@ -42,7 +42,7 @@ class NesteSeksjonTest {
     @Test
     fun ` bug-fiks read-only fakta i seksjonen`() {
         val prototypesøknad = Søknad(
-            158,
+            401,
             ja nei "f1" id 1,
             ja nei "f2" id 2 avhengerAv 1
 

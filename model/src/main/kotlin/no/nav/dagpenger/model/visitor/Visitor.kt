@@ -179,8 +179,20 @@ interface SubsumsjonVisitor : FaktumVisitor {
     fun postVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun preVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun postVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun preVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {}
-    fun postVisit(subsumsjon: GodkjenningsSubsumsjon, resultat: Boolean?) {}
+    fun preVisit(
+        subsumsjon: GodkjenningsSubsumsjon,
+        action: GodkjenningsSubsumsjon.Action,
+        godkjenning: GrunnleggendeFaktum<Boolean>,
+        resultat: Boolean?,
+        childResultat: Boolean?
+    ) {}
+    fun postVisit(
+        subsumsjon: GodkjenningsSubsumsjon,
+        action: GodkjenningsSubsumsjon.Action,
+        godkjenning: GrunnleggendeFaktum<Boolean>,
+        resultat: Boolean?,
+        childResultat: Boolean?
+    ) {}
     fun preVisit(subsumsjon: GodkjenningsSubsumsjon, action: GodkjenningsSubsumsjon.Action, lokaltResultat: Boolean?) {}
     fun postVisit(subsumsjon: GodkjenningsSubsumsjon, action: GodkjenningsSubsumsjon.Action, lokaltResultat: Boolean?) {}
     fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {}

@@ -42,6 +42,7 @@ internal class SaksbehandlerJsonBuilderTest {
             ja nei "f2" id 2 avhengerAv 1,
             ja nei "f3" id 3,
             ja nei "f4" id 4 avhengerAv 3,
+            ja nei "f5" id 5
         )
     }
 
@@ -199,6 +200,71 @@ internal class SaksbehandlerJsonBuilderTest {
     }
 
     @Test
+    fun `kombinasjoner av samensatte subsumsjoner`() {
+        val søknadprosess = søknadprosess(
+            "alle".alle(
+                "makro nivå 2" makro (prototypeSøknad.ja(1) er true),
+                "alle nivå 2".alle(
+                    prototypeSøknad.ja(3) er true,
+                    prototypeSøknad.ja(5) er true
+                )
+            )
+        )
+
+        søknadprosess.ja(1).besvar(false)
+        søknadprosess.ja(3).besvar(false)
+        søknadprosess.ja(5).besvar(true)
+        SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
+            assertEquals(1, json["subsumsjoner"].size())
+            assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
+            assertEquals(1, json["subsumsjoner"][0]["subsumsjoner"][0]["subsumsjoner"].size())
+            assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"].size())
+
+            assertFalse(json["subsumsjoner"][0]["subsumsjoner"][0]["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+            assertFalse(json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+            assertTrue(json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
+            assertFalse(json["subsumsjoner"][0]["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+            assertFalse(json["subsumsjoner"][0]["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
+            assertFalse(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+        }
+
+        søknadprosess.ja(1).besvar(true)
+        søknadprosess.ja(3).besvar(true)
+
+        SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
+            assertTrue(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+        }
+    }
+
+    @Test
+    fun `godkjenningsubsumsjoner`() {
+        val søknadprosess = søknadprosess(
+            (
+                prototypeSøknad.ja(1) er true
+                ) gyldigGodkjentAv prototypeSøknad.ja(2)
+        )
+
+        søknadprosess.ja(1).besvar(true)
+        søknadprosess.ja(2).besvar(false)
+        SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
+            assertEquals(1, json["subsumsjoner"].size())
+            assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
+        }
+
+        søknadprosess.ja(2).besvar(true)
+        SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
+            assertEquals(1, json["subsumsjoner"].size())
+            assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
+        }
+
+        søknadprosess.ja(1).besvar(false)
+        SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
+            assertEquals(1, json["subsumsjoner"].size())
+            assertEquals(1, json["subsumsjoner"][0]["subsumsjoner"].size())
+        }
+    }
+
+    @Test
     fun `Komplekse seksjoner`() {
         assertSeksjonSize(8, "seksjon8")
         assertSeksjonSize(5, "seksjon4")
@@ -223,7 +289,13 @@ internal class SaksbehandlerJsonBuilderTest {
     private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Søknadprosess {
         val prototypeFaktagrupper = Søknadprosess(
             prototypeSøknad,
-            Seksjon("søker", Rolle.søker, prototypeSøknad.ja(1), prototypeSøknad.ja(3)),
+            Seksjon(
+                "søker",
+                Rolle.søker,
+                prototypeSøknad.ja(1),
+                prototypeSøknad.ja(3),
+                prototypeSøknad.ja(5)
+            ),
             Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.ja(2)),
             Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeSøknad.ja(4)),
             rootSubsumsjon = prototypeSubsumsjon

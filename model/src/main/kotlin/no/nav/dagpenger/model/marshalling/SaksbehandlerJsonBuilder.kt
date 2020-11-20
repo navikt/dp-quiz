@@ -17,6 +17,8 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action
 import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -166,7 +168,6 @@ class SaksbehandlerJsonBuilder(
         resultat: Boolean?
     ) {
         subsumsjonNoder.first().addObject().also { subsumsjonNode ->
-            subsumsjonNode.put("resultat", resultat)
             subsumsjonNode.put("lokalt_resultat", lokaltResultat)
             subsumsjonNode.put("navn", subsumsjon.navn)
             subsumsjonNode.put("forklaring", subsumsjon.saksbehandlerForklaring())
@@ -175,7 +176,7 @@ class SaksbehandlerJsonBuilder(
     }
 
     override fun preVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
-        putSubsumsjon(resultat, lokaltResultat, subsumsjon, "Alle subsumsjon")
+        putSubsumsjon(lokaltResultat, subsumsjon, "Alle subsumsjon")
     }
 
     override fun postVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
@@ -183,7 +184,7 @@ class SaksbehandlerJsonBuilder(
     }
 
     override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
-        putSubsumsjon(resultat, lokaltResultat, subsumsjon, "Minst en av subsumsjon")
+        putSubsumsjon(lokaltResultat, subsumsjon, "Minst en av subsumsjon")
     }
 
     override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
@@ -191,27 +192,56 @@ class SaksbehandlerJsonBuilder(
     }
 
     override fun preVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
-        putSubsumsjon(resultat, lokaltResultat, subsumsjon, "Makro subsumsjon")
-    }
-
-    private fun putSubsumsjon(
-        resultat: Boolean?,
-        lokaltResultat: Boolean?,
-        subsumsjon: Subsumsjon,
-        type: String
-    ) {
-        subsumsjonNoder.first().addObject().also { subsumsjonNode ->
-            subsumsjonNode.put("resultat", resultat)
-            subsumsjonNode.put("lokalt_resultat", lokaltResultat)
-            subsumsjonNode.put("navn", subsumsjon.navn)
-            subsumsjonNode.put("type", type)
-            subsumsjonNode.put("forklaring", subsumsjon.saksbehandlerForklaring())
-            subsumsjonNode.set("subsumsjoner", mapper.createArrayNode().also { subsumsjonNoder.add(0, it) })
-        }
+        putSubsumsjon(lokaltResultat, subsumsjon, "Makro subsumsjon")
     }
 
     override fun postVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
         subsumsjonNoder.removeAt(0)
+    }
+
+    override fun preVisit(
+        subsumsjon: GodkjenningsSubsumsjon,
+        action: Action,
+        godkjenning: GrunnleggendeFaktum<Boolean>,
+        lokaltResultat: Boolean?,
+        childResultat: Boolean?
+    ) {
+        putSubsumsjon(lokaltResultat, subsumsjon, "Godkjenning subsumsjon")
+    }
+
+    override fun postVisit(
+        subsumsjon: GodkjenningsSubsumsjon,
+        action: Action,
+        godkjenning: GrunnleggendeFaktum<Boolean>,
+        lokaltResultat: Boolean?,
+        childResultat: Boolean?
+    ) {
+        subsumsjonNoder.removeAt(0).also {
+            if (godkjenning.erBesvart() && when (action) {
+                Action.JaAction -> childResultat == true
+                Action.NeiAction -> childResultat == false
+                Action.UansettAction -> true
+            }
+            )
+                it.addObject().also { subsumsjonNode ->
+                    subsumsjonNode.put("lokalt_resultat", godkjenning.svar())
+                    subsumsjonNode.put("navn", "Godkjent med")
+                    subsumsjonNode.put("forklaring", if (godkjenning.svar()) "godkjent" else "ikke godkjent")
+                    subsumsjonNode.put("type", "Godkjenningsubsumsjon")
+                }
+        }
+    }
+
+    private fun putSubsumsjon(
+        lokaltResultat: Boolean?,
+        subsumsjon: Subsumsjon,
+        type: String
+    ) = subsumsjonNoder.first().addObject().also { subsumsjonNode ->
+        subsumsjonNode.put("lokalt_resultat", lokaltResultat)
+        subsumsjonNode.put("navn", subsumsjon.navn)
+        subsumsjonNode.put("type", type)
+        subsumsjonNode.put("forklaring", subsumsjon.saksbehandlerForklaring())
+        subsumsjonNode.set("subsumsjoner", mapper.createArrayNode().also { subsumsjonNoder.add(0, it) })
     }
 
     private fun <R : Comparable<R>> lagFaktumNode(
