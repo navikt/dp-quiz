@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.unit.marshalling
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -7,6 +8,7 @@ import no.nav.dagpenger.model.helpers.NyttEksempel
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.gyldigGodkjentAv
+import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -42,7 +44,8 @@ internal class SaksbehandlerJsonBuilderTest {
             ja nei "f2" id 2 avhengerAv 1,
             ja nei "f3" id 3,
             ja nei "f4" id 4 avhengerAv 3,
-            ja nei "f5" id 5
+            ja nei "f5" id 5,
+            heltall faktum "f35" id 35 genererer 3 og 5
         )
     }
 
@@ -262,6 +265,44 @@ internal class SaksbehandlerJsonBuilderTest {
             assertEquals(1, json["subsumsjoner"].size())
             assertEquals(1, json["subsumsjoner"][0]["subsumsjoner"].size())
         }
+    }
+
+    @Test
+    fun ` template subsumsjoner`() {
+        val template = "template" makro (
+            "alle".alle(
+                prototypeSøknad.ja(3) er true,
+                prototypeSøknad.ja(5) er true
+            )
+        )
+
+        val søknadprosess = søknadprosess(
+            prototypeSøknad.generator(35) med template
+        )
+        søknadprosess.generator(35).besvar(3)
+        søknadprosess.ja("3.1").besvar(true)
+        søknadprosess.ja("3.2").besvar(true)
+        søknadprosess.ja("3.3").besvar(false)
+
+        søknadprosess.ja("5.1").besvar(true)
+        søknadprosess.ja("5.2").besvar(false)
+        søknadprosess.ja("5.3").besvar(false)
+
+        SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
+            assertEquals(1, json["subsumsjoner"].size())
+            assertEquals("Makro subsumsjon", json["subsumsjoner"][0]["type"].asText())
+            assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
+            assertEquals("Enkel subsumsjon", json["subsumsjoner"][0]["subsumsjoner"][0]["type"].asText())
+            assertEquals("Alle subsumsjon", json["subsumsjoner"][0]["subsumsjoner"][1]["type"].asText())
+            assertEquals(3, json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"].size())
+            assertEquals("Makro subsumsjon", json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["type"].asText())
+            assertEquals(1, json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"].size())
+            assertEquals("Alle subsumsjon", json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"][0]["type"].asText())
+            assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"][0]["subsumsjoner"].size())
+            assertTrue(json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"][0]["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+            assertFalse(json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][2]["subsumsjoner"][0]["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
+        }
+
     }
 
     @Test

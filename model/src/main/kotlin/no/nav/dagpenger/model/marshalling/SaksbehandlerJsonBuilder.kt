@@ -232,6 +232,8 @@ class SaksbehandlerJsonBuilder(
         }
     }
 
+
+
     private fun putSubsumsjon(
         lokaltResultat: Boolean?,
         subsumsjon: Subsumsjon,

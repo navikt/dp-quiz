@@ -15,7 +15,7 @@ open class EnkelSubsumsjon protected constructor(
     protected val subsumsjonFakta: List<Faktum<*>>,
     gyldigSubsumsjon: Subsumsjon,
     ugyldigSubsumsjon: Subsumsjon
-) : Subsumsjon(regel.toString(), gyldigSubsumsjon, ugyldigSubsumsjon) {
+) : Subsumsjon(regel.toString(subsumsjonFakta), gyldigSubsumsjon, ugyldigSubsumsjon) {
     internal constructor(regel: Regel, vararg fakta: Faktum<*>) :
         this(regel, fakta.toList(), TomSubsumsjon, TomSubsumsjon)
 
