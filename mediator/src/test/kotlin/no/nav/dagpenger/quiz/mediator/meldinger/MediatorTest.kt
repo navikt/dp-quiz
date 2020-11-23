@@ -96,7 +96,7 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
     fun nySøknadMelding(): String = nyHendelse(
         "Søknad",
         mapOf(
-            "fødselsnummer" to fnr,
+            "fnr" to fnr,
             "aktørId" to aktørId,
             "søknadsId" to "mf68etellerannet"
         )

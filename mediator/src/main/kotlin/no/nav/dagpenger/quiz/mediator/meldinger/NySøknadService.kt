@@ -23,7 +23,7 @@ internal class NySøknadService(
             validate {
                 it.demandValue("@event_name", "Søknad")
                 it.require("@opprettet", JsonNode::asLocalDateTime)
-                it.requireKey("fødselsnummer", "aktørId", "søknadsId")
+                it.requireKey("fnr", "aktørId", "søknadsId")
             }
         }.register(this)
     }
@@ -32,7 +32,7 @@ internal class NySøknadService(
         if (Configuration.prodEnvironment) return
         log.info { "Mottok ny søknadsmelding for ${packet["søknadsId"].asText()}" }
 
-        val fnr = packet["fødselsnummer"].asText()
+        val fnr = packet["fnr"].asText()
         val faktagrupperType = Versjon.UserInterfaceType.Web
         søknadPersistence.ny(fnr, faktagrupperType, Versjon.siste)
             .also { søknadprosess ->
