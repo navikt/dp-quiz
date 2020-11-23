@@ -39,8 +39,8 @@ internal class AvslagPåMinsteinntekt {
                 6 to "FangstOgFisk",
                 7 to "InntektSiste3År",
                 8 to "InntektSiste12Mnd",
-                9 to "G3",
-                10 to "G15",
+                9 to "3G",
+                10 to "1_5G",
                 11 to "Søknadstidspunkt",
                 12 to "Verneplikt",
                 14 to "GodkjenningDokumentasjonFangstOgFisk"
@@ -63,8 +63,8 @@ internal class AvslagPåMinsteinntekt {
             ja nei "Driver med fangst og fisk" id 6,
             inntekt faktum "Inntekt siste 3 år" id 7 avhengerAv 5 og 6,
             inntekt faktum "Inntekt siste 12 mnd" id 8 avhengerAv 5 og 6,
-            inntekt faktum "3G" id 9,
-            inntekt faktum "1,5G" id 10,
+            inntekt faktum "3G" id 9 avhengerAv 5,
+            inntekt faktum "1,5G" id 10 avhengerAv 5,
             dato faktum "Søknadstidspunkt" id 11,
             ja nei "Verneplikt" id 12,
             ja nei "Godjenning av virkingstidspunkt" id 13 avhengerAv 5,
@@ -79,8 +79,8 @@ internal class AvslagPåMinsteinntekt {
     private val fangstOgFisk = søknad ja 6
     private val inntektSiste3År = søknad inntekt 7
     private val inntektSisteÅr = søknad inntekt 8
-    private val inntekt3G = søknad inntekt 9
-    private val inntekt15G = søknad inntekt 10
+    private val G3 = søknad inntekt 9
+    private val G1_5 = søknad inntekt 10
     private val søknadstidspunkt = søknad dato 11
     private val verneplikt = søknad ja 12
     private val godkjenningVirkningstidspunkt = søknad ja 13
@@ -88,8 +88,8 @@ internal class AvslagPåMinsteinntekt {
     private val godkjenningFangstOgFisk = søknad ja 15
 
     private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
-        inntektSiste3År minst inntekt3G,
-        inntektSisteÅr minst inntekt15G,
+        inntektSiste3År minst G3,
+        inntektSisteÅr minst G1_5,
         verneplikt er true
     )
 
@@ -110,8 +110,8 @@ internal class AvslagPåMinsteinntekt {
         Seksjon(
             "statiske",
             Rolle.nav,
-            inntekt3G,
-            inntekt15G,
+            G3,
+            G1_5,
         )
     private val datoer =
         Seksjon(
