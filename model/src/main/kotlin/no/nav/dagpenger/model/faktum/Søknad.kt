@@ -9,7 +9,7 @@ import java.time.LocalDate
 import java.util.UUID
 
 class Søknad private constructor(
-    private val fnr: String,
+    private val person: Person,
     internal val versjonId: Int,
     val uuid: UUID,
     private val faktaMap: MutableMap<FaktumId, Faktum<*>>
@@ -17,21 +17,19 @@ class Søknad private constructor(
 
     internal val size get() = faktaMap.size
 
-    internal constructor(fnr: String, versjonId: Int, faktumMap: MutableMap<FaktumId, Faktum<*>>) : this(
-        fnr,
-        versjonId,
-        UUID.randomUUID(),
-        faktumMap
-    )
-
-    constructor(versjonId: Int, vararg factories: FaktumFactory<*>) : this("", versjonId, UUID.randomUUID(), factories.toList())
+    constructor(versjonId: Int, vararg factories: FaktumFactory<*>) : this(Person.prototype, versjonId, UUID.randomUUID(), factories.toList())
 
     constructor(fnr: String, versjonId: Int, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
-        fnr,
+        Person(fnr, ""),
         versjonId,
         uuid,
         factories.ekspanderValg().toFaktaMap()
     )
+
+    constructor(person: Person, versjonId: Int, uuid: UUID, factories: List<FaktumFactory<*>>) :
+        this(person.fnr, versjonId, uuid, factories) {
+            person.add(this)
+        }
 
     init {
         this.forEach { if (it is GeneratorFaktum) it.søknad = this }
@@ -137,10 +135,16 @@ class Søknad private constructor(
     override infix fun valg(id: String) = valg(FaktumId(id))
     internal infix fun valg(faktumId: FaktumId) = id(faktumId) as ValgFaktum
 
+    fun bygg(person: Person, versjonId: Int, uuid: UUID = UUID.randomUUID()): Søknad {
+        val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
+        val mapOfFakta = faktaMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
+        return Søknad(person, versjonId, uuid, mapOfFakta)
+    }
+
     fun bygg(fnr: String, versjonId: Int, uuid: UUID = UUID.randomUUID()): Søknad {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktaMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
-        return Søknad(fnr, versjonId, uuid, mapOfFakta)
+        return Søknad(Person(fnr, ""), versjonId, uuid, mapOfFakta)
     }
 
     override fun iterator(): MutableIterator<Faktum<*>> {
@@ -172,8 +176,8 @@ class Søknad private constructor(
     internal fun søknadprosess(type: Versjon.UserInterfaceType) = Versjon.id(versjonId).søknadprosess(this, type)
 
     fun accept(visitor: SøknadVisitor) {
-        visitor.preVisit(this, fnr, versjonId, uuid)
+        visitor.preVisit(this, person.fnr, versjonId, uuid)
         this.forEach { it.accept(visitor) }
-        visitor.postVisit(this, fnr, versjonId, uuid)
+        visitor.postVisit(this, person.fnr, versjonId, uuid)
     }
 }

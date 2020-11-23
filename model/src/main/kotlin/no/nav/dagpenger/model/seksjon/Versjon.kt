@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.seksjon
 
+import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
@@ -24,6 +25,9 @@ class Versjon(
         require(prototypeSøknad.versjonId !in versjoner.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider" }
         versjoner[prototypeSøknad.versjonId] = this
     }
+
+    fun søknadprosess(person: Person, type: UserInterfaceType, uuid: UUID = UUID.randomUUID()): Søknadprosess =
+        søknadprosess(prototypeSøknad.bygg(person.fnr, prototypeSøknad.versjonId, uuid), type)
 
     fun søknadprosess(fnr: String, type: UserInterfaceType, uuid: UUID = UUID.randomUUID()): Søknadprosess =
         søknadprosess(prototypeSøknad.bygg(fnr, prototypeSøknad.versjonId, uuid), type)
