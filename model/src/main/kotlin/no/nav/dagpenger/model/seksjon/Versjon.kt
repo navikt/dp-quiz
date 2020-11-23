@@ -27,10 +27,7 @@ class Versjon(
     }
 
     fun søknadprosess(person: Person, type: UserInterfaceType, uuid: UUID = UUID.randomUUID()): Søknadprosess =
-        søknadprosess(prototypeSøknad.bygg(person.fnr, prototypeSøknad.versjonId, uuid), type)
-
-    fun søknadprosess(fnr: String, type: UserInterfaceType, uuid: UUID = UUID.randomUUID()): Søknadprosess =
-        søknadprosess(prototypeSøknad.bygg(fnr, prototypeSøknad.versjonId, uuid), type)
+        søknadprosess(prototypeSøknad.bygg(person, prototypeSøknad.versjonId, uuid), type)
 
     fun søknadprosess(søknad: Søknad, type: UserInterfaceType): Søknadprosess {
         val subsumsjon = prototypeSubsumsjon.bygg(søknad)

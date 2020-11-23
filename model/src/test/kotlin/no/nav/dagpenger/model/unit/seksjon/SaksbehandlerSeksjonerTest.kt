@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.gyldigGodkjentAv
@@ -23,7 +24,6 @@ import kotlin.test.assertTrue
 
 internal class SaksbehandlerSeksjonerTest {
     companion object {
-        internal const val UNG_PERSON_FNR_2018 = "12020052345"
         internal val uuid = UUID.randomUUID()
     }
     private val prototypeSøknad = Søknad(
@@ -62,7 +62,7 @@ internal class SaksbehandlerSeksjonerTest {
 
     @BeforeEach
     internal fun setup() {
-        seksjoner = Versjon.id(149).søknadprosess(UNG_PERSON_FNR_2018, Web, uuid)
+        seksjoner = Versjon.id(149).søknadprosess(testPerson, Web, uuid)
         f1 = seksjoner.ja(1)
         f3 = seksjoner.ja(3)
         f5 = seksjoner.ja(5)

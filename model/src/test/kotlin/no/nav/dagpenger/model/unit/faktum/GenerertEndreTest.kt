@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -32,7 +33,7 @@ class GenerertEndreTest {
             Seksjon("template23", Rolle.søker, prototypeSøknad.ja(2), prototypeSøknad.ja(3))
         )
         Versjon(prototypeSøknad, TomSubsumsjon, mapOf(Web to prototypeSøknadprosess))
-        søknadprosess = Versjon.id(59).søknadprosess("12345678901", Web)
+        søknadprosess = Versjon.id(59).søknadprosess(testPerson, Web)
     }
 
     @Test

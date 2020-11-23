@@ -8,6 +8,7 @@ import no.nav.dagpenger.model.factory.ValgFaktumFactory.Companion.valg
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.marshalling.NavJsonBuilder
 import no.nav.dagpenger.model.regel.er
@@ -69,7 +70,7 @@ class NavJsonBuilderTest {
             mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
         )
 
-        val fakta = Versjon.id(Versjon.siste).søknadprosess(fnr = "12345678910", Versjon.UserInterfaceType.Web)
+        val fakta = Versjon.id(Versjon.siste).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
         FaktumNavBehov(
             Versjon.versjoner.keys.maxOf { it },
             mapOf(
@@ -121,7 +122,7 @@ class NavJsonBuilderTest {
     ) {
         val faktumOgBehovMap = faktumOgBehov.toMap()
         assertEquals("behov", json["@event_name"].asText())
-        assertEquals("12345678910", json["fnr"].asText())
+        assertEquals("12020052345", json["fnr"].asText())
         assertTrue(json.has("@id"))
         assertTrue(json.has("@opprettet"))
         assertEquals(faktumOgBehovMap.values.toList(), json["@behov"].map { it.asText() })

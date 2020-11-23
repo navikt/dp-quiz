@@ -108,7 +108,7 @@ private val versjon = Versjon(
 )
 
 /* ktlint-disable parameter-list-wrapping */
-internal fun eksempelSøknad() = Versjon.id(13).søknadprosess("", Web).also { søknadprosess ->
+internal fun eksempelSøknad() = Versjon.id(13).søknadprosess(testPerson, Web).also { søknadprosess ->
     bursdag67 = søknadprosess.dato(1) as GrunnleggendeFaktum<LocalDate>
     søknadsdato = søknadprosess.dato(2) as GrunnleggendeFaktum<LocalDate>
     ønsketdato = søknadprosess.dato(3) as GrunnleggendeFaktum<LocalDate>

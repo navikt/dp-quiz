@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -19,7 +20,6 @@ internal class VersjonTest {
     private lateinit var søknadprosess: Søknadprosess
 
     companion object {
-        val fnr = "12345678910"
         val prototypeSøknad = Søknad(
             139,
             heltall faktum "f15" id 15 genererer 16 og 17 og 18,
@@ -35,7 +35,7 @@ internal class VersjonTest {
 
     @BeforeEach
     fun setup() {
-        søknadprosess = versjon.søknadprosess(fnr, Web)
+        søknadprosess = versjon.søknadprosess(testPerson, Web)
     }
 
     @Test

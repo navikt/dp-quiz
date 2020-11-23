@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.NyttEksempel
+import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.gyldigGodkjentAv
@@ -351,6 +352,6 @@ internal class SaksbehandlerJsonBuilderTest {
             mapOf(Web to prototypeFaktagrupper)
         )
 
-        return Versjon.id(versjonId).søknadprosess("12345678910", Web)
+        return Versjon.id(versjonId).søknadprosess(testPerson, Web)
     }
 }

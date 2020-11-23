@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.unit.seksjon
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -34,7 +35,7 @@ class NesteSeksjonTest {
         )
 
         Versjon(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagruppe))
-        val fakta = Versjon.id(prototypesøknad.versjonId).søknadprosess("12345678912", Web)
+        val fakta = Versjon.id(prototypesøknad.versjonId).søknadprosess(testPerson, Web)
 
         assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
     }
@@ -60,7 +61,7 @@ class NesteSeksjonTest {
 
         val versjon = Versjon(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagruppe))
 
-        val fakta = Versjon.id(prototypesøknad.versjonId).søknadprosess("12345678912", Web)
+        val fakta = Versjon.id(prototypesøknad.versjonId).søknadprosess(testPerson, Web)
 
         assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
     }

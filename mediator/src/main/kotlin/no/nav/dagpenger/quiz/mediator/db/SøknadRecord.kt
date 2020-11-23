@@ -13,6 +13,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -30,7 +31,7 @@ class SøknadRecord : SøknadPersistence {
     private lateinit var originalSvar: MutableMap<String, Any?>
 
     override fun ny(fnr: String, type: Versjon.UserInterfaceType, versjonId: Int): Søknadprosess {
-        return Versjon.id(versjonId).søknadprosess(fnr, type).also { søknadprosess ->
+        return Versjon.id(versjonId).søknadprosess(Person(fnr, ""), type).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
             originalSvar = svarMap(søknadprosess.søknad)
         }
@@ -61,7 +62,7 @@ class SøknadRecord : SøknadPersistence {
         } ?: throw IllegalArgumentException("Ugyldig uuid: $uuid")
 
         return Versjon.id(rad.versjonId)
-            .søknadprosess(rad.fnr, Versjon.UserInterfaceType.fromId(rad.typeId), uuid)
+            .søknadprosess(Person(rad.fnr, ""), Versjon.UserInterfaceType.fromId(rad.typeId), uuid)
             .also { søknadprosess ->
                 svarList(uuid).forEach { row ->
                     søknadprosess.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->

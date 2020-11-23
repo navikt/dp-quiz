@@ -19,17 +19,12 @@ class Søknad private constructor(
 
     constructor(versjonId: Int, vararg factories: FaktumFactory<*>) : this(Person.prototype, versjonId, UUID.randomUUID(), factories.toList())
 
-    constructor(fnr: String, versjonId: Int, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
-        Person(fnr, ""),
+    constructor(person: Person, versjonId: Int, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
+        person,
         versjonId,
         uuid,
         factories.ekspanderValg().toFaktaMap()
     )
-
-    constructor(person: Person, versjonId: Int, uuid: UUID, factories: List<FaktumFactory<*>>) :
-        this(person.fnr, versjonId, uuid, factories) {
-            person.add(this)
-        }
 
     init {
         this.forEach { if (it is GeneratorFaktum) it.søknad = this }
@@ -139,12 +134,6 @@ class Søknad private constructor(
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktaMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
         return Søknad(person, versjonId, uuid, mapOfFakta)
-    }
-
-    fun bygg(fnr: String, versjonId: Int, uuid: UUID = UUID.randomUUID()): Søknad {
-        val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
-        val mapOfFakta = faktaMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
-        return Søknad(Person(fnr, ""), versjonId, uuid, mapOfFakta)
     }
 
     override fun iterator(): MutableIterator<Faktum<*>> {

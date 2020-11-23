@@ -1,6 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -75,7 +76,7 @@ internal class MediatorTest {
         var søknadprosess: Søknadprosess? = null
 
         override fun ny(fnr: String, type: Versjon.UserInterfaceType, versjonId: Int) =
-            Versjon.id(versjonId).søknadprosess(fnr, type).also { søknadprosess = it }
+            Versjon.id(versjonId).søknadprosess(Person(fnr, ""), type).also { søknadprosess = it }
 
         override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?) = søknadprosess!!
 

@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.integration
 
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -21,7 +22,7 @@ internal class AvslagPåMinsteinntektTest {
     @BeforeEach
     fun setup() {
         Postgres.withMigratedDb {
-            søknadprosess = AvslagPåMinsteinntekt().søknadprosess("123123123")
+            søknadprosess = AvslagPåMinsteinntekt().søknadprosess(Person("123123123", ""))
         }
     }
 
