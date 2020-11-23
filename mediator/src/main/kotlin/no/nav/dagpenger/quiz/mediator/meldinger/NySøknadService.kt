@@ -12,7 +12,7 @@ import no.nav.helse.rapids_rivers.asLocalDateTime
 internal class NySøknadService(
     private val søknadPersistence: SøknadPersistence,
     rapidsConnection: RapidsConnection
-) : River.PacketListener{
+) : River.PacketListener {
     init {
         River(rapidsConnection).apply {
             validate {

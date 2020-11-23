@@ -99,7 +99,7 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
             "fødselsnummer" to fnr,
             "aktørId" to aktørId,
             "søknadsId" to "mf68etellerannet"
-            )
+        )
     )
 
     private fun nyHendelse(navn: String, hendelse: Map<String, Any>) =

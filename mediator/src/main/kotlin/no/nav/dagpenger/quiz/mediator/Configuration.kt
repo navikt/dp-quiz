@@ -10,7 +10,7 @@ internal object Configuration {
     private val config = systemProperties() overriding EnvironmentVariables()
 
     val prodEnvironment =
-        (System.getenv().getOrElse("NAIS_CLUSTER_NAME", {"tom"}).contains("prod"))
+        (System.getenv().getOrElse("NAIS_CLUSTER_NAME", { "tom" }).contains("prod"))
 
     val rapidApplication: Map<String, String> = mutableMapOf(
         "RAPID_APP_NAME" to "dp-quiz-mediator",
