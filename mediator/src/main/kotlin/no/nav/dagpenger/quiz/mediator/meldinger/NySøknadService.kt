@@ -6,11 +6,13 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.Configuration
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDateTime
 
 private val log = KotlinLogging.logger {}
+private val sikkerLogg = KotlinLogging.logger("tjenestekall")
 
 internal class NySøknadService(
     private val søknadPersistence: SøknadPersistence,
@@ -39,5 +41,14 @@ internal class NySøknadService(
                         context.send(seksjon.somSpørsmål())
                     }
             }
+    }
+
+    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+        log.error { problems.toString() }
+        sikkerLogg.error { problems.toExtendedReport() }
+    }
+
+    override fun onSevere(error: MessageProblems.MessageException, context: RapidsConnection.MessageContext) {
+        log.error(error) { "Skikkelig smell" }
     }
 }
