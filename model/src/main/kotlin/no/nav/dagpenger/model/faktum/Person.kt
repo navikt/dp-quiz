@@ -20,7 +20,4 @@ class Person private constructor(
         other is Person && this.fnr == other.fnr && this.aktørId == other.aktørId
 
     override fun hashCode() = Objects.hash(fnr, aktørId)
-    fun add(søknad: Søknad) {
-        søknader.add(søknad)
-    }
 }
