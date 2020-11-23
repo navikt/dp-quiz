@@ -8,6 +8,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
@@ -31,6 +32,7 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
         val søknadRecord = SøknadRecord()
         NySøknadService(søknadRecord, rapidsConnection)
         FaktumSvarService(søknadRecord, rapidsConnection)
+        AvslagPåMinsteinntekt()
     }
 
     private fun sendToRapid(behov: Map<*, *>) {
