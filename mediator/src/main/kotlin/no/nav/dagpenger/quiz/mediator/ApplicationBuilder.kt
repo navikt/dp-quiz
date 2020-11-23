@@ -7,7 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
-import no.nav.dagpenger.quiz.mediator.meldinger.ØnskerRettighetsavklaringerService
+import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
@@ -29,7 +29,7 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
         runMigration()
 
         val søknadRecord = SøknadRecord()
-        ØnskerRettighetsavklaringerService(søknadRecord, rapidsConnection)
+        NySøknadService(søknadRecord, rapidsConnection)
         FaktumSvarService(søknadRecord, rapidsConnection)
     }
 

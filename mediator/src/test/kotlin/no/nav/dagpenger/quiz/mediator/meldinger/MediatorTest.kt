@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class MeldingMediatorTest {
+internal class MediatorTest {
 
     @BeforeEach
     internal fun reset() {
@@ -31,7 +31,7 @@ internal class MeldingMediatorTest {
         private val grupperer = TestLagring()
 
         init {
-            ØnskerRettighetsavklaringerService(grupperer, testRapid)
+            NySøknadService(grupperer, testRapid)
             FaktumSvarService(grupperer, testRapid)
             SøknadEksempel
         }
@@ -39,14 +39,14 @@ internal class MeldingMediatorTest {
 
     @Test
     fun `Start ny søknad, og send første seksjon`() {
-        testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
+        testRapid.sendTestMessage(meldingsfabrikk.nySøknadMelding())
         assertEquals(1, testRapid.inspektør.size)
         assertNotNull(grupperer.søknadprosess)
     }
 
     @Test
     fun `ta imot svar`() {
-        testRapid.sendTestMessage(meldingsfabrikk.ønskerRettighetsavklaring())
+        testRapid.sendTestMessage(meldingsfabrikk.nySøknadMelding())
         val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknad_uuid"].asText())
         assertEquals("behov", testRapid.inspektør.message(0)["@event_name"].asText())
 
@@ -93,13 +93,13 @@ internal class MeldingMediatorTest {
 private data class FaktumSvar(val faktumId: Int, val clazz: String, val svar: Any)
 
 private class TestMeldingFactory(private val fnr: String, private val aktørId: String) {
-    fun ønskerRettighetsavklaring(): String = nyHendelse(
-        "ønsker_rettighetsavklaring",
+    fun nySøknadMelding(): String = nyHendelse(
+        "Søknad",
         mapOf(
-            "fnr" to fnr,
-            "opprettet" to LocalDateTime.now(),
-            "faktagrupperType" to Versjon.UserInterfaceType.Web.toString()
-        )
+            "fødselsnummer" to fnr,
+            "aktørId" to aktørId,
+            "søknadsId" to "mf68etellerannet"
+            )
     )
 
     private fun nyHendelse(navn: String, hendelse: Map<String, Any>) =
