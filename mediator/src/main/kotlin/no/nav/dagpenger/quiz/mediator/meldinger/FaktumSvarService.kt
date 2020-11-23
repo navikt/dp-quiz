@@ -1,6 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
 import com.fasterxml.jackson.databind.JsonNode
+import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -11,6 +12,8 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.util.UUID
+
+private val log = KotlinLogging.logger {}
 
 internal class FaktumSvarService(
     private val søknadPersistence: SøknadPersistence,
@@ -31,6 +34,7 @@ internal class FaktumSvarService(
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
+        log.info { "Mottok ny svar for $søknadUuid" }
         val fakta = packet["fakta"]
 
         søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web).also { søknadprosess ->

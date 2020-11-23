@@ -47,8 +47,4 @@ internal class NySøknadService(
         log.error { problems.toString() }
         sikkerLogg.error { problems.toExtendedReport() }
     }
-
-    override fun onSevere(error: MessageProblems.MessageException, context: RapidsConnection.MessageContext) {
-        log.error(error) { "Skikkelig smell" }
-    }
 }
