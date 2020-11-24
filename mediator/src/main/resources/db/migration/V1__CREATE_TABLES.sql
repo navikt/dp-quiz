@@ -41,24 +41,44 @@ VALUES (1, 'web');
 INSERT INTO sesjon_type
 VALUES (2, 'mobile');
 
+
+CREATE TABLE IF NOT EXISTS person
+(
+    id              BIGSERIAL               NOT NULL,
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS soknad
 (
     id             BIGSERIAL                NOT NULL,
     uuid           UUID                     NOT NULL,
     versjon_id     INT                      NOT NULL,
-    ident          BIGSERIAL                NOT NULL,
+    person_id      BIGSERIAL                NOT NULL REFERENCES person (id),
     sesjon_type_id BIGINT                   NOT NULL REFERENCES sesjon_type (id),
     opprettet      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS ident_type
+(
+    id   BIGINT       NOT NULL,
+    navn VARCHAR(256) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+INSERT INTO ident_type
+VALUES (1, 'folkeregisterident');
+INSERT INTO ident_type
+VALUES (2, 'aktørId');
+
+
 CREATE TABLE IF NOT EXISTS ident
 (
-    id              BIGSERIAL               NOT NULL REFERENCES soknad (ident),
-    identType       VARCHAR(32)             NOT NULL,
+    id              BIGSERIAL               NOT NULL REFERENCES person (id),
+    ident_type_id   INT                     NOT NULL REFERENCES ident_type (id),
     ident           VARCHAR(16)             NOT NULL,
     historisk       BOOLEAN                 NOT NULL,
-    PRIMARY KEY (id, ident)
+    PRIMARY KEY (ident_type_id, ident)
 );
 
 CREATE TABLE IF NOT EXISTS utledet_faktum

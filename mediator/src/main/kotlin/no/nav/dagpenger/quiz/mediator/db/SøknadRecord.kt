@@ -12,6 +12,8 @@ import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Identer
+import no.nav.dagpenger.model.faktum.Identer.Ident
+import no.nav.dagpenger.model.faktum.Identer.Ident.Type
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Person
@@ -265,9 +267,14 @@ class SøknadRecord : SøknadPersistence {
         private var rootId = 0
         private var indeks = 0
         private val faktumList = mutableListOf<Faktum<*>>()
+        private val identer = mutableListOf<Ident>()
 
         init {
             søknad.accept(this)
+        }
+
+        override fun visit(type: Type, id: String, historisk: Boolean) {
+            identer.add(Ident(type, id, historisk))
         }
 
         override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
@@ -275,10 +282,9 @@ class SøknadRecord : SøknadPersistence {
             søknadId = using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        "INSERT INTO soknad(uuid, versjon_id, fnr, sesjon_type_id) VALUES (?, ?, ?, ?) returning id",
+                        "INSERT INTO soknad(uuid, versjon_id, sesjon_type_id) VALUES (?, ?, ?, ?) returning id",
                         uuid,
                         versjonId,
-                        fnr,
                         type.id
                     ).map { it.int(1) }.asSingle
                 ) ?: throw IllegalArgumentException("failed to find søknadId")
