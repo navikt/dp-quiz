@@ -5,6 +5,8 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.Identer
+import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -156,7 +158,16 @@ interface FaktumVisitor {
     fun <R : Comparable<R>> postVisitAvhengigeFakta(faktum: Faktum<R>, avhengigeFakta: MutableSet<Faktum<*>>) {}
 }
 
-interface SøknadVisitor : FaktumVisitor {
+interface IdentVisitor {
+    fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {}
+}
+
+interface PersonVisitor : IdentVisitor {
+    fun preVisit(person: Person) {}
+    fun postVisit(person: Person) {}
+}
+
+interface SøknadVisitor : PersonVisitor, FaktumVisitor {
     fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {}
     fun postVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {}
 }
