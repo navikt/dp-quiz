@@ -1,11 +1,8 @@
 package no.nav.dagpenger.model.faktum
 
-import java.util.Objects
-
 class Person private constructor(
     internal val fnr: String,
-    private val aktørId: String,
-    private val søknader: MutableList<Søknad>
+    private val identer: Identer
 ) {
 
     companion object {
@@ -14,10 +11,10 @@ class Person private constructor(
     constructor(
         fnr: String,
         aktørId: String
-    ) : this(fnr, aktørId, mutableListOf())
+    ) : this(fnr, Identer().folkeregisterIdent(fnr).aktørId(aktørId))
 
     override fun equals(other: Any?) =
-        other is Person && this.fnr == other.fnr && this.aktørId == other.aktørId
+        other is Person && this.identer == other.identer
 
-    override fun hashCode() = Objects.hash(fnr, aktørId)
+    override fun hashCode() = identer.hashCode()
 }
