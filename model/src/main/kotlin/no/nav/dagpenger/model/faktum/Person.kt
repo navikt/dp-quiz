@@ -1,17 +1,16 @@
 package no.nav.dagpenger.model.faktum
 
-class Person private constructor(
-    internal val fnr: String,
-    private val identer: Identer
-) {
+class Person(private val identer: Identer) {
+
+    internal val fnr = identer.folkeregisterIdent()
 
     companion object {
         internal val prototype = Person("", "")
     }
-    constructor(
+    private constructor(
         fnr: String,
         aktørId: String
-    ) : this(fnr, Identer().folkeregisterIdent(fnr).aktørId(aktørId))
+    ) : this(Identer().folkeregisterIdent(fnr).aktørId(aktørId))
 
     override fun equals(other: Any?) =
         other is Person && this.identer == other.identer

@@ -9,6 +9,8 @@ class Identer() {
 
     fun aktørId(id: String) = this.also { identer.add(Ident(Ident.IdentType.AKTØRID, id, false)) }
 
+    fun folkeregisterIdent() = identer.first { it.type == Ident.IdentType.FOLKEREGISTERIDENT }.id
+
     override fun equals(other: Any?): Boolean {
         return (this === other) || other is Identer && equals(other)
     }

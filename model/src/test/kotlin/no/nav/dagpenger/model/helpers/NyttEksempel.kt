@@ -7,7 +7,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.factory.ValgFaktumFactory.Companion.valg
-import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.av
@@ -148,7 +147,7 @@ internal class NyttEksempel() {
 
     internal val søknadprosess: Søknadprosess by lazy {
 
-        versjon.søknadprosess(Person("12345678901", "aktørId1234"), Web).also {
+        versjon.søknadprosess(testPerson, Web).also {
             seksjon1 = it[0]
             seksjon2 = it[1]
             seksjon3 = it[2]
