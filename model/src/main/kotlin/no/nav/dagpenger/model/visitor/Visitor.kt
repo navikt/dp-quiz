@@ -168,8 +168,8 @@ interface PersonVisitor : IdentVisitor {
 }
 
 interface SøknadVisitor : PersonVisitor, FaktumVisitor {
-    fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {}
-    fun postVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {}
+    fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {}
+    fun postVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {}
 }
 
 interface SøknadprosessVisitor : SubsumsjonVisitor, SøknadVisitor {

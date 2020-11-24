@@ -122,7 +122,8 @@ class NavJsonBuilderTest {
     ) {
         val faktumOgBehovMap = faktumOgBehov.toMap()
         assertEquals("behov", json["@event_name"].asText())
-        assertEquals("12020052345", json["fnr"].asText())
+        assertEquals("folkeregisterident", json["identer"][0]["type"].asText())
+        assertEquals("12020052345", json["identer"][0]["id"].asText())
         assertTrue(json.has("@id"))
         assertTrue(json.has("@opprettet"))
         assertEquals(faktumOgBehovMap.values.toList(), json["@behov"].map { it.asText() })

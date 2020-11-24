@@ -165,8 +165,9 @@ class Søknad private constructor(
     internal fun søknadprosess(type: Versjon.UserInterfaceType) = Versjon.id(versjonId).søknadprosess(this, type)
 
     fun accept(visitor: SøknadVisitor) {
-        visitor.preVisit(this, person.fnr, versjonId, uuid)
+        visitor.preVisit(this, versjonId, uuid)
+        person.accept(visitor)
         this.forEach { it.accept(visitor) }
-        visitor.postVisit(this, person.fnr, versjonId, uuid)
+        visitor.postVisit(this, versjonId, uuid)
     }
 }

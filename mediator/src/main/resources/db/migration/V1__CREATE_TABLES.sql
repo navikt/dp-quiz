@@ -46,10 +46,19 @@ CREATE TABLE IF NOT EXISTS soknad
     id             BIGSERIAL                NOT NULL,
     uuid           UUID                     NOT NULL,
     versjon_id     INT                      NOT NULL,
-    fnr            CHAR(11)                 NOT NULL,
+    ident          BIGSERIAL                NOT NULL,
     sesjon_type_id BIGINT                   NOT NULL REFERENCES sesjon_type (id),
     opprettet      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS ident
+(
+    id              BIGSERIAL               NOT NULL REFERENCES soknad (ident),
+    identType       VARCHAR(32)             NOT NULL,
+    ident           VARCHAR(16)             NOT NULL,
+    historisk       BOOLEAN                 NOT NULL,
+    PRIMARY KEY (id, ident)
 );
 
 CREATE TABLE IF NOT EXISTS utledet_faktum

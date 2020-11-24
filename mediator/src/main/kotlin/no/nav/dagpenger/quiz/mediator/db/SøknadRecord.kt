@@ -270,7 +270,7 @@ class SøknadRecord : SøknadPersistence {
             søknad.accept(this)
         }
 
-        override fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
+        override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
             this.versjonId = versjonId
             søknadId = using(sessionOf(dataSource)) { session ->
                 session.run(
