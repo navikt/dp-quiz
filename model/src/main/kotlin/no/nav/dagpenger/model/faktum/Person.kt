@@ -13,7 +13,7 @@ class Person(private val uuid: UUID, private val identer: Identer) {
     private constructor(
         fnr: String,
         aktørId: String
-    ) : this(Identer().folkeregisterIdent(fnr).aktørId(aktørId))
+    ) : this(Identer.Builder().folkeregisterIdent(fnr).aktørId(aktørId).build())
 
     override fun equals(other: Any?) =
         other is Person && this.identer == other.identer

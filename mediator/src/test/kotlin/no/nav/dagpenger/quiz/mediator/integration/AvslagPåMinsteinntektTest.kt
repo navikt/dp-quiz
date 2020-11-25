@@ -23,7 +23,7 @@ internal class AvslagPåMinsteinntektTest {
     @BeforeEach
     fun setup() {
         Postgres.withMigratedDb {
-            søknadprosess = AvslagPåMinsteinntekt().søknadprosess(Person(Identer().folkeregisterIdent("123123123")))
+            søknadprosess = AvslagPåMinsteinntekt().søknadprosess(Person(Identer.Builder().folkeregisterIdent("123123123").build()))
         }
     }
 

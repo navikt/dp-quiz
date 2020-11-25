@@ -35,7 +35,7 @@ class SøknadRecord : SøknadPersistence {
     private lateinit var originalSvar: MutableMap<String, Any?>
 
     override fun ny(fnr: String, type: Versjon.UserInterfaceType, versjonId: Int): Søknadprosess {
-        val person = hentEllerOpprettPerson(Identer().folkeregisterIdent(fnr))
+        val person = hentEllerOpprettPerson(Identer.Builder().folkeregisterIdent(fnr).build())
         return Versjon.id(versjonId).søknadprosess(person, type).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
             originalSvar = svarMap(søknadprosess.søknad)
@@ -144,7 +144,7 @@ class SøknadRecord : SøknadPersistence {
 
         return Versjon.id(rad.versjonId)
             .søknadprosess(
-                Person(rad.personId, Identer()),
+                hentPerson(rad.personId),
                 Versjon.UserInterfaceType.fromId(rad.typeId),
                 uuid
             )
@@ -166,6 +166,25 @@ class SøknadRecord : SøknadPersistence {
             }.also { søknadprosess ->
                 originalSvar = svarMap(søknadprosess.søknad)
             }
+    }
+
+    private fun hentPerson(personId: UUID): Person {
+        val identBuilder = Identer.Builder()
+        using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf( //language=PostgreSQL
+                    "SELECT verdi, historisk FROM folkeregisterident WHERE person_id = ?",
+                    personId
+                ).map { row -> identBuilder.folkeregisterIdent(row.string("verdi"), row.boolean("historisk")) }.asSingle
+            )
+            session.run(
+                queryOf( //language=PostgreSQL
+                    "SELECT verdi, historisk FROM aktoerid WHERE person_id = ?",
+                    personId
+                ).map { row -> identBuilder.aktørId(row.string("verdi"), row.boolean("historisk")) }.asSingle
+            )
+        }
+        return Person(personId, identBuilder.build())
     }
 
     private infix fun Int.indeks(indeks: Int) = if (indeks == 0) this.toString() else "$this.$indeks"
