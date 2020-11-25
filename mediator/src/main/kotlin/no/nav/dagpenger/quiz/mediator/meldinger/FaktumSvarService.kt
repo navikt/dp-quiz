@@ -29,6 +29,10 @@ internal class FaktumSvarService(
             "søknad_uuid",
             "fakta"
         )
+        packet.requireArray("fakta") {
+            requireKey("faktumId")
+            requireKey("clazz")
+        }
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {

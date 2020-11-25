@@ -25,7 +25,7 @@ internal class MediatorTest {
     @BeforeEach
     internal fun reset() {
         testRapid.reset()
-        grupperer.søknadprosess = null
+        grupperer.reset()
     }
 
     private companion object {
@@ -84,13 +84,50 @@ internal class MediatorTest {
         assertEquals(8, testRapid.inspektør.size) // 8 fordi vi får saksbehandlerseksjonene to ganger
     }
 
+    @Test
+    fun `at søknaden ikke lastes unødvendig av meldinger uten svar`() {
+        testRapid.sendTestMessage(meldingsfabrikk.nySøknadMelding())
+        val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknad_uuid"].asText())
+        assertEquals(1, testRapid.inspektør.size)
+
+        testRapid.sendTestMessage(
+            meldingsfabrikk.besvarFaktum(
+                uuid,
+                FaktumSvar(1, "boolean", null),
+            )
+        )
+        assertEquals(1, testRapid.inspektør.size)
+        assertEquals(0, grupperer.hentet, "Faktum uten svar laster ikke søknaden")
+
+        testRapid.sendTestMessage(
+            meldingsfabrikk.besvarFaktum(
+                uuid,
+                FaktumSvar(2, "boolean", "true")
+            )
+        )
+        assertEquals(2, testRapid.inspektør.size)
+        assertEquals(1, grupperer.hentet, "Faktum med et svar laster søknaden")
+
+        testRapid.sendTestMessage(
+            meldingsfabrikk.besvarFaktum(
+                uuid,
+                FaktumSvar(1, "boolean", null),
+                FaktumSvar(2, "boolean", "true")
+            )
+        )
+        assertEquals(3, testRapid.inspektør.size)
+        assertEquals(2, grupperer.hentet, "Fakta hvor minst ett faktum har svar laster søknaden")
+    }
+
     private class TestLagring : SøknadPersistence {
         var søknadprosess: Søknadprosess? = null
+        var hentet: Int = 0
 
         override fun ny(fnr: String, type: Versjon.UserInterfaceType, versjonId: Int) =
-            Versjon.id(versjonId).søknadprosess(Person(Identer.Builder().folkeregisterIdent(fnr).build()), type).also { søknadprosess = it }
+            Versjon.id(versjonId).søknadprosess(Person(Identer.Builder().folkeregisterIdent(fnr).build()), type)
+                .also { søknadprosess = it }
 
-        override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?) = søknadprosess!!
+        override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?) = søknadprosess!!.also { hentet++ }
 
         override fun lagre(søknad: Søknad): Boolean {
             søknadprosess = Versjon.id(Versjon.siste).søknadprosess(søknad, Versjon.UserInterfaceType.Web)
@@ -100,10 +137,15 @@ internal class MediatorTest {
         override fun opprettede(fnr: String): Map<LocalDateTime, UUID> {
             TODO("Not yet implemented")
         }
+
+        fun reset() {
+            søknadprosess = null
+            hentet = 0
+        }
     }
 }
 
-private data class FaktumSvar(val faktumId: Int, val clazz: String, val svar: Any)
+private data class FaktumSvar(val faktumId: Int, val clazz: String, val svar: Any?)
 
 private class TestMeldingFactory(private val fnr: String, private val aktørId: String) {
     fun nySøknadMelding(): String = nyHendelse(
@@ -132,18 +174,23 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
             "fakta" to faktumSvarListe.asList().map { faktumSvar ->
                 mapOf(
                     "faktumId" to faktumSvar.faktumId,
-                    "svar" to when (faktumSvar.svar) {
-                        is String -> faktumSvar.svar
-                        is Dokument -> faktumSvar.svar.reflection { lastOppTidsstempel, url ->
-                            mapOf(
-                                "lastOppTidsstempel" to lastOppTidsstempel,
-                                "url" to url
-                            )
-                        }
-                        else -> throw IllegalArgumentException("Ustøtta svar-type")
-                    },
                     "clazz" to faktumSvar.clazz
-                )
+                ).let { fakta ->
+                    fakta + faktumSvar.svar?.let {
+                        mapOf(
+                            "svar" to when (faktumSvar.svar) {
+                                is String -> faktumSvar.svar
+                                is Dokument -> faktumSvar.svar.reflection { lastOppTidsstempel, url ->
+                                    mapOf(
+                                        "lastOppTidsstempel" to lastOppTidsstempel,
+                                        "url" to url
+                                    )
+                                }
+                                else -> throw IllegalArgumentException("Ustøtta svar-type")
+                            },
+                        )
+                    }.orEmpty()
+                }
             }
         )
     )
