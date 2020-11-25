@@ -1,4 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
+
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
@@ -16,11 +17,11 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 import java.util.UUID
 
 internal class MediatorTest {
-
     @BeforeEach
     internal fun reset() {
         testRapid.reset()
@@ -52,8 +53,15 @@ internal class MediatorTest {
         val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknad_uuid"].asText())
         assertEquals("behov", testRapid.inspektør.message(0)["@event_name"].asText())
 
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(1, "boolean", "true"), FaktumSvar(2, "boolean", "true")))
-        assertEquals("behov", testRapid.inspektør.message(1)["@event_name"].asText())
+        testRapid.sendTestMessage(
+            meldingsfabrikk.besvarFaktum(
+                uuid,
+                FaktumSvar(1, "boolean", "true"),
+                FaktumSvar(2, "boolean", "true")
+            )
+        )
+        assertEquals("behov", testRapid.inspektør.field(1, "@event_name").asText())
+        assertEquals(true, grupperer.søknadprosess!!.id(1).svar())
 
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(3, "heltall", "2")))
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(4, "dato", 24.desember.toString())))
@@ -70,6 +78,9 @@ internal class MediatorTest {
             )
         )
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(8, "boolean", "true")))
+        assertThrows<IllegalArgumentException> {
+            testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(8, "ukjent fakta", "true")))
+        }
         assertEquals(8, testRapid.inspektør.size) // 8 fordi vi får saksbehandlerseksjonene to ganger
     }
 

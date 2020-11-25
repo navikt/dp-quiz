@@ -20,7 +20,6 @@ internal class FaktumSvarService(
     rapidsConnection: RapidsConnection
 ) :
     HendelseService(rapidsConnection) {
-
     override val eventName = "faktum_svar"
     override val riverName = "Faktum svar"
 
@@ -35,17 +34,18 @@ internal class FaktumSvarService(
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
         log.info { "Mottok ny svar for $søknadUuid" }
-        val fakta = packet["fakta"]
+        val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
+
+        if (fakta.isEmpty()) return
 
         søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web).also { søknadprosess ->
-            fakta.filter { faktumNode -> faktumNode.has("svar") }
-                .forEach { faktumNode ->
-                    val faktumId = faktumNode["faktumId"].asInt()
-                    val svar = faktumNode["svar"]
-                    val clazz = faktumNode["clazz"].asText()
+            fakta.forEach { faktumNode ->
+                val faktumId = faktumNode["faktumId"].asInt()
+                val svar = faktumNode["svar"]
+                val clazz = faktumNode["clazz"].asText()
 
-                    besvar(søknadprosess, faktumId, svar, clazz)
-                }
+                besvar(søknadprosess, faktumId, svar, clazz)
+            }
             søknadPersistence.lagre(søknadprosess.søknad)
             søknadprosess.nesteSeksjoner()
                 .onEach { seksjon ->
@@ -63,7 +63,7 @@ internal class FaktumSvarService(
             "dokument" ->
                 søknadprosess.dokument(faktumId)
                     .besvar(Dokument(svar["lastOppTidsstempel"].asLocalDateTime(), svar["url"].asText()))
-            else -> throw IllegalArgumentException("Ukjent svar-type: ${svar::class.java}")
+            else -> throw IllegalArgumentException("Ukjent svar-type: $clazz")
         }
     }
 }

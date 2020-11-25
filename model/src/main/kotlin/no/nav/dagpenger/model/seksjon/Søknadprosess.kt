@@ -16,7 +16,6 @@ class Søknadprosess private constructor(
     private val uuid: UUID,
     private val seksjoner: MutableList<Seksjon>
 ) : TypedFaktum by søknad, MutableList<Seksjon> by seksjoner {
-
     constructor(vararg seksjoner: Seksjon) : this(
         Søknad(1),
         TomSubsumsjon,
