@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -35,6 +36,7 @@ class SaksbehandlerJsonBuilder(
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
+    private val identerNode = mapper.createArrayNode()
     private val subsumsjonRoot = mapper.createArrayNode()
     private var ignore = true
     private var iValg = false
@@ -50,16 +52,24 @@ class SaksbehandlerJsonBuilder(
 
     fun resultat() = root
 
-    override fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
+    override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
         root.put("@event_name", "oppgave")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
-        root.put("fnr", fnr)
         root.put("søknad_uuid", "$uuid")
         root.put("seksjon_navn", seksjonNavn)
         root.put("indeks", indeks)
+        root.set("identer", identerNode)
         root.set("fakta", faktaNode)
         root.set("subsumsjoner", subsumsjonRoot)
+    }
+
+    override fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {
+        identerNode.addObject().also { identNode ->
+            identNode.put("id", id)
+            identNode.put("type", type.name.toLowerCase())
+            identNode.put("historisk", historisk)
+        }
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {

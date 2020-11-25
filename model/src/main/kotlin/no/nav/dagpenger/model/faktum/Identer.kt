@@ -2,15 +2,7 @@ package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.visitor.IdentVisitor
 
-class Identer(private val identer: MutableSet<Ident> = mutableSetOf()) : Iterable<Identer.Ident> by identer {
-
-    fun folkeregisterIdent(id: String) = this.also {
-        identer.add(Ident(Ident.Type.FOLKEREGISTERIDENT, id, false))
-    }
-
-    fun aktørId(id: String) = this.also { identer.add(Ident(Ident.Type.AKTØRID, id, false)) }
-
-    fun folkeregisterIdent() = identer.first { it.type == Ident.Type.FOLKEREGISTERIDENT }.id
+class Identer(private val identer: Set<Ident>) : Iterable<Identer.Ident> by identer {
 
     override fun equals(other: Any?): Boolean {
         return (this === other) || other is Identer && equals(other)
@@ -33,5 +25,18 @@ class Identer(private val identer: MutableSet<Ident> = mutableSetOf()) : Iterabl
         fun accept(visitor: IdentVisitor) {
             visitor.visit(type, id, historisk)
         }
+    }
+
+    class Builder {
+        val identer = mutableSetOf<Ident>()
+
+        fun folkeregisterIdent(id: String, historisk: Boolean = false) = this.also {
+            identer.add(Ident(Ident.Type.FOLKEREGISTERIDENT, id, historisk))
+        }
+
+        fun aktørId(id: String, historisk: Boolean = false) =
+            this.also { identer.add(Ident(Ident.Type.AKTØRID, id, historisk)) }
+
+        fun build() = Identer(identer)
     }
 }

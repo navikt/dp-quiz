@@ -163,13 +163,13 @@ interface IdentVisitor {
 }
 
 interface PersonVisitor : IdentVisitor {
-    fun preVisit(person: Person) {}
-    fun postVisit(person: Person) {}
+    fun preVisit(person: Person, uuid: UUID) {}
+    fun postVisit(person: Person, uuid: UUID) {}
 }
 
 interface SøknadVisitor : PersonVisitor, FaktumVisitor {
-    fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {}
-    fun postVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {}
+    fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {}
+    fun postVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {}
 }
 
 interface SøknadprosessVisitor : SubsumsjonVisitor, SøknadVisitor {

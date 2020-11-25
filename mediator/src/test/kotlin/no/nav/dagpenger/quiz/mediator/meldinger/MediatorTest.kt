@@ -77,7 +77,7 @@ internal class MediatorTest {
         var søknadprosess: Søknadprosess? = null
 
         override fun ny(fnr: String, type: Versjon.UserInterfaceType, versjonId: Int) =
-            Versjon.id(versjonId).søknadprosess(Person(Identer().folkeregisterIdent(fnr)), type).also { søknadprosess = it }
+            Versjon.id(versjonId).søknadprosess(Person(Identer.Builder().folkeregisterIdent(fnr).build()), type).also { søknadprosess = it }
 
         override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?) = søknadprosess!!
 

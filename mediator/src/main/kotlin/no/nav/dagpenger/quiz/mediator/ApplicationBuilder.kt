@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator
 
+import PostgresDataSourceBuilder.clean
 import PostgresDataSourceBuilder.runMigration
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -27,12 +28,14 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
-        runMigration()
-
-        val søknadRecord = SøknadRecord()
-        NySøknadService(søknadRecord, rapidsConnection)
-        FaktumSvarService(søknadRecord, rapidsConnection)
-        AvslagPåMinsteinntekt()
+        clean()
+            .also { runMigration() }
+            .also {
+                val søknadRecord = SøknadRecord()
+                NySøknadService(søknadRecord, rapidsConnection)
+                FaktumSvarService(søknadRecord, rapidsConnection)
+                AvslagPåMinsteinntekt()
+            }
     }
 
     private fun sendToRapid(behov: Map<*, *>) {

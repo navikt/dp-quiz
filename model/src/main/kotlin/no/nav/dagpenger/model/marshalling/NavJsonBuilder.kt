@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.Identer.Ident.Type
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -22,6 +23,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, seksjonNavn: String, indeks
     private val faktaNode = mapper.createArrayNode()
     private val faktumIder = mutableSetOf<String>()
     private val behovNode = mapper.createArrayNode()
+    private val identerNode = mapper.createArrayNode()
     private lateinit var faktumNavBehov: FaktumNavBehov
     private var ignore = true
     private var rootId = 0
@@ -33,16 +35,24 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, seksjonNavn: String, indeks
 
     fun resultat() = root
 
-    override fun preVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
+    override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
         root.put("@event_name", "behov")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
-        root.put("fnr", fnr)
         root.put("søknad_uuid", "$uuid")
         root.set("fakta", faktaNode)
         root.set("@behov", behovNode)
+        root.set("identer", identerNode)
 
         faktumNavBehov = FaktumNavBehov.id(versjonId)
+    }
+
+    override fun visit(type: Type, id: String, historisk: Boolean) {
+        identerNode.addObject().also { identNode ->
+            identNode.put("id", id)
+            identNode.put("type", type.name.toLowerCase())
+            identNode.put("historisk", historisk)
+        }
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {

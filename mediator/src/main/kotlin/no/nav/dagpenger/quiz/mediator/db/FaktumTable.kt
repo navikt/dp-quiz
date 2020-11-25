@@ -126,7 +126,7 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor
         avhengigheter[faktum] = avhengigeFakta
     }
 
-    override fun postVisit(søknad: Søknad, fnr: String, versjonId: Int, uuid: UUID) {
+    override fun postVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
         avhengigheter.forEach { (parent, children) -> faktumFaktum(dbIder[parent]!!, children, "avhengig_faktum") }
     }
 
