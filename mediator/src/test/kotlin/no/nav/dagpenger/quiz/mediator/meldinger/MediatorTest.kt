@@ -51,7 +51,7 @@ internal class MediatorTest {
     fun `ta imot svar`() {
         testRapid.sendTestMessage(meldingsfabrikk.nySøknadMelding())
         val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknad_uuid"].asText())
-        assertEquals("behov", testRapid.inspektør.message(0)["@event_name"].asText())
+        assertEquals("faktum_svar", testRapid.inspektør.message(0)["@event_name"].asText())
 
         testRapid.sendTestMessage(
             meldingsfabrikk.besvarFaktum(
@@ -60,7 +60,7 @@ internal class MediatorTest {
                 FaktumSvar(2, "boolean", "true")
             )
         )
-        assertEquals("behov", testRapid.inspektør.field(1, "@event_name").asText())
+        assertEquals("faktum_svar", testRapid.inspektør.field(1, "@event_name").asText())
         assertEquals(true, grupperer.søknadprosess!!.id(1).svar())
 
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(3, "heltall", "2")))
