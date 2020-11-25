@@ -163,8 +163,8 @@ interface IdentVisitor {
 }
 
 interface PersonVisitor : IdentVisitor {
-    fun preVisit(person: Person) {}
-    fun postVisit(person: Person) {}
+    fun preVisit(person: Person, uuid: UUID) {}
+    fun postVisit(person: Person, uuid: UUID) {}
 }
 
 interface SøknadVisitor : PersonVisitor, FaktumVisitor {

@@ -44,8 +44,9 @@ VALUES (2, 'mobile');
 
 CREATE TABLE IF NOT EXISTS person
 (
-    id              BIGSERIAL               NOT NULL,
-    PRIMARY KEY (id)
+    uuid      UUID                     NOT NULL,
+    opprettet TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
+    PRIMARY KEY (uuid)
 );
 
 CREATE TABLE IF NOT EXISTS soknad
@@ -53,32 +54,28 @@ CREATE TABLE IF NOT EXISTS soknad
     id             BIGSERIAL                NOT NULL,
     uuid           UUID                     NOT NULL,
     versjon_id     INT                      NOT NULL,
-    person_id      BIGSERIAL                NOT NULL REFERENCES person (id),
+    person_id      UUID                     NOT NULL REFERENCES person (uuid),
     sesjon_type_id BIGINT                   NOT NULL REFERENCES sesjon_type (id),
     opprettet      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS ident_type
+CREATE TABLE IF NOT EXISTS folkeregisterident
 (
-    id   BIGINT       NOT NULL,
-    navn VARCHAR(256) NOT NULL,
-    PRIMARY KEY (id)
+    person_id UUID                     NOT NULL REFERENCES person (uuid),
+    verdi     CHAR(11)                 NOT NULL,
+    historisk BOOLEAN                  NOT NULL,
+    opprettet TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
+    PRIMARY KEY (verdi)
 );
 
-INSERT INTO ident_type
-VALUES (1, 'folkeregisterident');
-INSERT INTO ident_type
-VALUES (2, 'aktørId');
-
-
-CREATE TABLE IF NOT EXISTS ident
+CREATE TABLE IF NOT EXISTS aktoerid
 (
-    id              BIGSERIAL               NOT NULL REFERENCES person (id),
-    ident_type_id   INT                     NOT NULL REFERENCES ident_type (id),
-    ident           VARCHAR(16)             NOT NULL,
-    historisk       BOOLEAN                 NOT NULL,
-    PRIMARY KEY (ident_type_id, ident)
+    person_id UUID                     NOT NULL REFERENCES person (uuid),
+    verdi     CHAR(11)                 NOT NULL,
+    historisk BOOLEAN                  NOT NULL,
+    opprettet TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
+    PRIMARY KEY (verdi)
 );
 
 CREATE TABLE IF NOT EXISTS utledet_faktum

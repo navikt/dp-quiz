@@ -1,10 +1,11 @@
 package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.visitor.PersonVisitor
+import java.util.UUID
 
-class Person(private val identer: Identer) {
+class Person(private val uuid: UUID, private val identer: Identer) {
 
-    internal val fnr = identer.folkeregisterIdent()
+    constructor(identer: Identer) : this(UUID.randomUUID(), identer)
 
     companion object {
         internal val prototype = Person("", "")
@@ -20,8 +21,8 @@ class Person(private val identer: Identer) {
     override fun hashCode() = identer.hashCode()
 
     fun accept(visitor: PersonVisitor) {
-        visitor.preVisit(this)
+        visitor.preVisit(this, uuid)
         this.identer.forEach { it.accept(visitor) }
-        visitor.postVisit(this)
+        visitor.postVisit(this, uuid)
     }
 }

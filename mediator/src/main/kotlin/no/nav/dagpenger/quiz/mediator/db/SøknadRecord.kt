@@ -24,6 +24,7 @@ import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.visitor.PersonVisitor
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -34,9 +35,86 @@ class SøknadRecord : SøknadPersistence {
     private lateinit var originalSvar: MutableMap<String, Any?>
 
     override fun ny(fnr: String, type: Versjon.UserInterfaceType, versjonId: Int): Søknadprosess {
-        return Versjon.id(versjonId).søknadprosess(Person(Identer().folkeregisterIdent(fnr)), type).also { søknadprosess ->
+        val person = hentEllerOpprettPerson(Identer().folkeregisterIdent(fnr))
+        return Versjon.id(versjonId).søknadprosess(person, type).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
             originalSvar = svarMap(søknadprosess.søknad)
+        }
+    }
+
+    private fun hentEllerOpprettPerson(identer: Identer): Person {
+        return FinnPersonVisitor(identer).person
+    }
+
+    class FinnPersonVisitor(private val identer: Identer) : PersonVisitor {
+
+        lateinit var person: Person
+
+        val folkeregisterIdenter = mutableListOf<Ident>()
+        val aktoerIder = mutableListOf<Ident>()
+
+        init {
+            Person(identer).also { it.accept(this) }
+        }
+
+        override fun postVisit(person: Person, uuid: UUID) {
+
+            val sql =
+                """
+                (SELECT person_id FROM folkeregisterident
+                WHERE verdi in (${if (folkeregisterIdenter.isEmpty()) null else folkeregisterIdenter.joinToString { "?" }}))
+                UNION 
+                (SELECT person_id FROM aktoerid
+                WHERE verdi in (${if (aktoerIder.isEmpty()) null else aktoerIder.joinToString { "?" }}))
+                """
+
+            val personId = using(sessionOf(dataSource)) { session ->
+                session.run(
+                    queryOf(
+                        sql,
+                        *folkeregisterIdenter.map { it.id }.toTypedArray(),
+                        *aktoerIder.map { it.id }.toTypedArray(),
+                    ).map { row ->
+                        UUID.fromString(row.string(1))
+                    }.asSingle
+                ) ?: session.transaction { transaction ->
+                    val personUuid = UUID.randomUUID()
+                    transaction.run( //language=PostgreSQL
+                        queryOf("""INSERT INTO person (uuid) VALUES (?)""", personUuid).asUpdate
+                    )
+
+                    folkeregisterIdenter.forEach { ident ->
+                        transaction.run( //language=PostgreSQL
+                            queryOf(
+                                """INSERT INTO folkeregisterident VALUES (?, ?, ?)""",
+                                personUuid,
+                                ident.id,
+                                ident.historisk
+                            ).asUpdate
+                        )
+                    }
+
+                    aktoerIder.forEach { ident ->
+                        transaction.run( //language=PostgreSQL
+                            queryOf(
+                                """INSERT INTO aktoerid VALUES (?, ?, ?)""",
+                                personUuid,
+                                ident.id,
+                                ident.historisk
+                            ).asUpdate
+                        )
+                    }
+                    personUuid
+                }
+            }
+            this.person = Person(personId, identer)
+        }
+
+        override fun visit(type: Type, id: String, historisk: Boolean) {
+            when (type) {
+                Type.FOLKEREGISTERIDENT -> folkeregisterIdenter.add(Ident(type, id, historisk))
+                Type.AKTØRID -> aktoerIder.add(Ident(type, id, historisk))
+            }
         }
     }
 
@@ -45,7 +123,7 @@ class SøknadRecord : SøknadPersistence {
     }.toMap().toMutableMap()
 
     override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?): Søknadprosess {
-        data class SoknadRad(val fnr: String, val versjonId: Int, var typeId: Int)
+        data class SoknadRad(val personId: UUID, val versjonId: Int, var typeId: Int)
 
         val rad = using(sessionOf(dataSource)) { session ->
             if (type != null) {
@@ -56,16 +134,20 @@ class SøknadRecord : SøknadPersistence {
 
             session.run(
                 queryOf( //language=PostgreSQL
-                    "SELECT fnr, versjon_id, sesjon_type_id FROM soknad WHERE uuid = ?",
+                    "SELECT person_id, versjon_id, sesjon_type_id FROM soknad WHERE uuid = ?",
                     uuid
                 ).map { row ->
-                    SoknadRad(row.string(1), row.int(2), row.int(3))
+                    SoknadRad(UUID.fromString(row.string(1)), row.int(2), row.int(3))
                 }.asSingle
             )
         } ?: throw IllegalArgumentException("Ugyldig uuid: $uuid")
 
         return Versjon.id(rad.versjonId)
-            .søknadprosess(Person(Identer().folkeregisterIdent(rad.fnr)), Versjon.UserInterfaceType.fromId(rad.typeId), uuid)
+            .søknadprosess(
+                Person(rad.personId, Identer()),
+                Versjon.UserInterfaceType.fromId(rad.typeId),
+                uuid
+            )
             .also { søknadprosess ->
                 svarList(uuid).forEach { row ->
                     søknadprosess.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
@@ -254,7 +336,7 @@ class SøknadRecord : SøknadPersistence {
         return using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL
-                    "SELECT opprettet, uuid FROM soknad WHERE fnr = ?",
+                    "SELECT opprettet, uuid FROM soknad WHERE person_id = (SELECT person_id FROM folkeregisterident WHERE verdi = ?)",
                     fnr
                 ).map { it.localDateTime(1) to UUID.fromString(it.string(2)) }.asList
             )
@@ -268,13 +350,14 @@ class SøknadRecord : SøknadPersistence {
         private var indeks = 0
         private val faktumList = mutableListOf<Faktum<*>>()
         private val identer = mutableListOf<Ident>()
+        private var personId: UUID? = null
 
         init {
             søknad.accept(this)
         }
 
-        override fun visit(type: Type, id: String, historisk: Boolean) {
-            identer.add(Ident(type, id, historisk))
+        override fun preVisit(person: Person, uuid: UUID) {
+            personId = uuid
         }
 
         override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
@@ -282,9 +365,10 @@ class SøknadRecord : SøknadPersistence {
             søknadId = using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        "INSERT INTO soknad(uuid, versjon_id, sesjon_type_id) VALUES (?, ?, ?, ?) returning id",
+                        "INSERT INTO soknad(uuid, versjon_id, person_id, sesjon_type_id) VALUES (?, ?, ?, ?) returning id",
                         uuid,
                         versjonId,
+                        personId,
                         type.id
                     ).map { it.int(1) }.asSingle
                 ) ?: throw IllegalArgumentException("failed to find søknadId")
