@@ -19,7 +19,8 @@ class Identer(private val identer: Set<Ident>) : Iterable<Identer.Ident> by iden
     data class Ident(val type: Type, val id: String, val historisk: Boolean) {
         enum class Type {
             FOLKEREGISTERIDENT,
-            AKTØRID
+            AKTØRID,
+            NPID
         }
 
         fun accept(visitor: IdentVisitor) {
@@ -36,6 +37,9 @@ class Identer(private val identer: Set<Ident>) : Iterable<Identer.Ident> by iden
 
         fun aktørId(id: String, historisk: Boolean = false) =
             this.also { identer.add(Ident(Ident.Type.AKTØRID, id, historisk)) }
+
+        fun npId(id: String, historisk: Boolean = false) =
+            this.also { identer.add(Ident(Ident.Type.NPID, id, historisk)) }
 
         fun build() = Identer(identer)
     }

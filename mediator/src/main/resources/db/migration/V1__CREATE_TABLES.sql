@@ -69,10 +69,19 @@ CREATE TABLE IF NOT EXISTS folkeregisterident
     PRIMARY KEY (verdi)
 );
 
-CREATE TABLE IF NOT EXISTS aktoerid
+CREATE TABLE IF NOT EXISTS aktoer_id
 (
     person_id UUID                     NOT NULL REFERENCES person (uuid),
-    verdi     CHAR(11)                 NOT NULL,
+    verdi     VARCHAR(16)              NOT NULL,
+    historisk BOOLEAN                  NOT NULL,
+    opprettet TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
+    PRIMARY KEY (verdi)
+);
+
+CREATE TABLE IF NOT EXISTS np_id
+(
+    person_id UUID                     NOT NULL REFERENCES person (uuid),
+    verdi     VARCHAR(16)              NOT NULL,
     historisk BOOLEAN                  NOT NULL,
     opprettet TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (verdi)

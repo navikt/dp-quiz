@@ -50,8 +50,9 @@ class SøknadRecord : SøknadPersistence {
 
         lateinit var person: Person
 
-        val folkeregisterIdenter = mutableListOf<Ident>()
+        val folkeregisteridenter = mutableListOf<Ident>()
         val aktoerIder = mutableListOf<Ident>()
+        val npIder = mutableListOf<Ident>()
 
         init {
             Person(identer).also { it.accept(this) }
@@ -62,17 +63,20 @@ class SøknadRecord : SøknadPersistence {
             val sql =
                 """
                 (SELECT person_id FROM folkeregisterident
-                WHERE verdi in (${if (folkeregisterIdenter.isEmpty()) null else folkeregisterIdenter.joinToString { "?" }}))
+                WHERE verdi in (${if (folkeregisteridenter.isEmpty()) null else folkeregisteridenter.joinToString { "?" }}))
                 UNION 
-                (SELECT person_id FROM aktoerid
+                (SELECT person_id FROM aktoer_id
                 WHERE verdi in (${if (aktoerIder.isEmpty()) null else aktoerIder.joinToString { "?" }}))
+                UNION 
+                (SELECT person_id FROM np_id
+                WHERE verdi in (${if (npIder.isEmpty()) null else npIder.joinToString { "?" }}))
                 """
 
             val personId = using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
                         sql,
-                        *folkeregisterIdenter.map { it.id }.toTypedArray(),
+                        *folkeregisteridenter.map { it.id }.toTypedArray(),
                         *aktoerIder.map { it.id }.toTypedArray(),
                     ).map { row ->
                         UUID.fromString(row.string(1))
@@ -83,7 +87,7 @@ class SøknadRecord : SøknadPersistence {
                         queryOf("""INSERT INTO person (uuid) VALUES (?)""", personUuid).asUpdate
                     )
 
-                    folkeregisterIdenter.forEach { ident ->
+                    folkeregisteridenter.forEach { ident ->
                         transaction.run( //language=PostgreSQL
                             queryOf(
                                 """INSERT INTO folkeregisterident VALUES (?, ?, ?)""",
@@ -97,7 +101,18 @@ class SøknadRecord : SøknadPersistence {
                     aktoerIder.forEach { ident ->
                         transaction.run( //language=PostgreSQL
                             queryOf(
-                                """INSERT INTO aktoerid VALUES (?, ?, ?)""",
+                                """INSERT INTO aktoer_id VALUES (?, ?, ?)""",
+                                personUuid,
+                                ident.id,
+                                ident.historisk
+                            ).asUpdate
+                        )
+                    }
+
+                    npIder.forEach { ident ->
+                        transaction.run( //language=PostgreSQL
+                            queryOf(
+                                """INSERT INTO np_id VALUES (?, ?, ?)""",
                                 personUuid,
                                 ident.id,
                                 ident.historisk
@@ -112,8 +127,10 @@ class SøknadRecord : SøknadPersistence {
 
         override fun visit(type: Type, id: String, historisk: Boolean) {
             when (type) {
-                Type.FOLKEREGISTERIDENT -> folkeregisterIdenter.add(Ident(type, id, historisk))
+                Type.FOLKEREGISTERIDENT -> folkeregisteridenter.add(Ident(type, id, historisk))
                 Type.AKTØRID -> aktoerIder.add(Ident(type, id, historisk))
+                Type.NPID -> npIder.add(Ident(type, id, historisk))
+                else -> throw IllegalArgumentException("Ukjent identtype: $type")
             }
         }
     }
@@ -179,9 +196,15 @@ class SøknadRecord : SøknadPersistence {
             )
             session.run(
                 queryOf( //language=PostgreSQL
-                    "SELECT verdi, historisk FROM aktoerid WHERE person_id = ?",
+                    "SELECT verdi, historisk FROM aktoer_id WHERE person_id = ?",
                     personId
                 ).map { row -> identBuilder.aktørId(row.string("verdi"), row.boolean("historisk")) }.asSingle
+            )
+            session.run(
+                queryOf( //language=PostgreSQL
+                    "SELECT verdi, historisk FROM np_id WHERE person_id = ?",
+                    personId
+                ).map { row -> identBuilder.npId(row.string("verdi"), row.boolean("historisk")) }.asSingle
             )
         }
         return Person(personId, identBuilder.build())
