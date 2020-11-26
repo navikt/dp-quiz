@@ -44,7 +44,8 @@ internal class AvslagPåMinsteinntekt {
                 10 to "1_5G",
                 11 to "Søknadstidspunkt",
                 12 to "Verneplikt",
-                14 to "GodkjenningDokumentasjonFangstOgFisk"
+                14 to "GodkjenningDokumentasjonFangstOgFisk",
+                15 to "InnsendtSøknadId",
             )
         )
     }
@@ -56,21 +57,22 @@ internal class AvslagPåMinsteinntekt {
     private val søknad: Søknad
         get() = Søknad(
             VERSJON_ID,
-            dato faktum "Ønsker dagpenger fra dato" id 1,
-            dato faktum "Siste dag med arbeidsplikt" id 2,
+            dato faktum "Ønsker dagpenger fra dato" id 1 avhengerAv 15,
+            dato faktum "Siste dag med arbeidsplikt" id 2 avhengerAv 15,
             dato faktum "Registreringsdato" id 3,
-            dato faktum "Siste dag med lønn" id 4,
+            dato faktum "Siste dag med lønn" id 4 avhengerAv 15,
             maks dato "Virkningstidspunkt" av 1 og 2 og 3 og 4 og 11 id 5,
-            ja nei "Driver med fangst og fisk" id 6,
+            ja nei "Driver med fangst og fisk" id 6 avhengerAv 15,
             inntekt faktum "Inntekt siste 3 år" id 7 avhengerAv 5 og 6,
             inntekt faktum "Inntekt siste 12 mnd" id 8 avhengerAv 5 og 6,
             inntekt faktum "3G" id 9 avhengerAv 5,
             inntekt faktum "1,5G" id 10 avhengerAv 5,
-            dato faktum "Søknadstidspunkt" id 11,
-            ja nei "Verneplikt" id 12,
+            dato faktum "Søknadstidspunkt" id 11 avhengerAv 15,
+            ja nei "Verneplikt" id 12 avhengerAv 15,
             ja nei "Godjenning av virkingstidspunkt" id 13 avhengerAv 5,
             dokument faktum "dokumentasjon for fangst og fisk" id 14 avhengerAv 6,
-            ja nei "Godkjenning av dokumentasjon for fangst og fisk" id 15 avhengerAv 14,
+            dokument faktum "Innsendt søknadId" id 15,
+            ja nei "Godkjenning av dokumentasjon for fangst og fisk" id 16 avhengerAv 14,
         )
     private val ønsketDato = søknad dato 1
     private val registreringsdato = søknad dato 2
@@ -86,7 +88,7 @@ internal class AvslagPåMinsteinntekt {
     private val verneplikt = søknad ja 12
     private val godkjenningVirkningstidspunkt = søknad ja 13
     private val dokumentasjonFangstOgFisk = søknad dokument 14
-    private val godkjenningFangstOgFisk = søknad ja 15
+    private val godkjenningFangstOgFisk = søknad ja 16
 
     private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
         inntektSiste3År minst G3,
