@@ -43,6 +43,7 @@ internal class NySøknadService(
                 søknadprosess.nesteSeksjoner()
                     .forEach { seksjon ->
                         context.send(seksjon.somSpørsmål())
+                        log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}, $søknadsId" }
                     }
             }
     }

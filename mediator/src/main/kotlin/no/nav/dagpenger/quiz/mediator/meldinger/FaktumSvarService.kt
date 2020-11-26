@@ -53,6 +53,7 @@ internal class FaktumSvarService(
             søknadprosess.nesteSeksjoner()
                 .onEach { seksjon ->
                     context.send(seksjon.somSpørsmål())
+                    log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
                 }
         }
     }

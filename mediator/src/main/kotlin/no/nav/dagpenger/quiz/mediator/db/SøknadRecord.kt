@@ -157,7 +157,7 @@ class SøknadRecord : SøknadPersistence {
                     SoknadRad(UUID.fromString(row.string(1)), row.int(2), row.int(3))
                 }.asSingle
             )
-        } ?: throw IllegalArgumentException("Ugyldig uuid: $uuid")
+        } ?: throw IllegalArgumentException("Søknad finnes ikke, uuid: $uuid")
 
         return Versjon.id(rad.versjonId)
             .søknadprosess(
