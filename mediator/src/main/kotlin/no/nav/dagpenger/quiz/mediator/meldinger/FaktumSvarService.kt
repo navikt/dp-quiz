@@ -41,20 +41,27 @@ internal class FaktumSvarService(
 
         if (fakta.isEmpty()) return
 
-        søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web).also { søknadprosess ->
-            fakta.forEach { faktumNode ->
-                val faktumId = faktumNode["id"].asInt()
-                val svar = faktumNode["svar"]
-                val clazz = faktumNode["clazz"].asText()
+        try {
 
-                besvar(søknadprosess, faktumId, svar, clazz)
-            }
-            søknadPersistence.lagre(søknadprosess.søknad)
-            søknadprosess.nesteSeksjoner()
-                .onEach { seksjon ->
-                    context.send(seksjon.somSpørsmål())
-                    log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
+            søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web).also { søknadprosess ->
+                fakta.forEach { faktumNode ->
+                    val faktumId = faktumNode["id"].asInt()
+                    val svar = faktumNode["svar"]
+                    val clazz = faktumNode["clazz"].asText()
+
+                    besvar(søknadprosess, faktumId, svar, clazz)
                 }
+                søknadPersistence.lagre(søknadprosess.søknad)
+                søknadprosess.nesteSeksjoner()
+                    .onEach { seksjon ->
+                        context.send(seksjon.somSpørsmål())
+                        log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
+                    }
+            }
+        } catch (e: Exception) {
+            log.error(e) {
+                "feil ved faktum svar: ${e.message}"
+            }
         }
     }
 

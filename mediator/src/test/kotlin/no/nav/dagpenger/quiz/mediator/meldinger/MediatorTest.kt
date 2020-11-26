@@ -83,9 +83,6 @@ internal class MediatorTest {
             )
         )
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(8, "boolean", "true")))
-        assertThrows<IllegalArgumentException> {
-            testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(8, "ukjent fakta", "true")))
-        }
         assertEquals(8, testRapid.inspektør.size) // 8 fordi vi får saksbehandlerseksjonene to ganger
     }
 
