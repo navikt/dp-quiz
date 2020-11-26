@@ -25,12 +25,11 @@ internal class FaktumSvarService(
 
     override fun validate(packet: JsonMessage) {
         packet.requireKey(
-            "opprettet",
             "søknad_uuid",
             "fakta"
         )
         packet.requireArray("fakta") {
-            requireKey("faktumId")
+            requireKey("id")
             requireKey("clazz")
         }
     }
@@ -44,7 +43,7 @@ internal class FaktumSvarService(
 
         søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web).also { søknadprosess ->
             fakta.forEach { faktumNode ->
-                val faktumId = faktumNode["faktumId"].asInt()
+                val faktumId = faktumNode["id"].asInt()
                 val svar = faktumNode["svar"]
                 val clazz = faktumNode["clazz"].asText()
 
@@ -61,8 +60,8 @@ internal class FaktumSvarService(
     private fun besvar(søknadprosess: Søknadprosess, faktumId: Int, svar: JsonNode, clazz: String) {
         when (clazz) {
             "boolean" -> søknadprosess.ja(faktumId).besvar(svar.asBoolean())
-            "heltall" -> søknadprosess.heltall(faktumId).besvar(svar.asInt())
-            "dato" -> søknadprosess.dato(faktumId).besvar(svar.asLocalDate())
+            "int" -> søknadprosess.heltall(faktumId).besvar(svar.asInt())
+            "localdate" -> søknadprosess.dato(faktumId).besvar(svar.asLocalDate())
             "inntekt" -> søknadprosess.inntekt(faktumId).besvar(svar.asDouble().årlig)
             "dokument" ->
                 søknadprosess.dokument(faktumId)

@@ -81,19 +81,20 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, seksjonNavn: String, indeks
         if (id in faktumIder) return
         if (avhengerAvFakta.all { it.erBesvart() }) {
             behovNode.add(faktumNavBehov[rootId])
-            lagFaktumNode(id)
+            lagFaktumNode(id, clazz)
             avhengerAvFakta.forEach {
                 root.putR(faktumNavBehov[it.reflection { rootId, _ -> rootId }], it.svar())
             }
         }
     }
 
-    private fun lagFaktumNode(id: String) {
+    private fun <R : Comparable<R>> lagFaktumNode(id: String, clazz: Class<R>) {
         if (ignore) return
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("id", id)
             faktumNode.put("behov", faktumNavBehov[rootId])
+            faktumNode.put("clazz", clazz.simpleName.toLowerCase())
         }
         faktumIder.add(id)
     }

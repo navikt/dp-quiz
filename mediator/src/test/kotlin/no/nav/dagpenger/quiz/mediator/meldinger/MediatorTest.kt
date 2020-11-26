@@ -63,8 +63,13 @@ internal class MediatorTest {
         assertEquals("behov", testRapid.inspektør.field(1, "@event_name").asText())
         assertEquals(true, grupperer.søknadprosess!!.id(1).svar())
 
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(3, "heltall", "2")))
-        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(4, "dato", 24.desember.toString())))
+        testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(3, "int", "2")))
+        testRapid.sendTestMessage(
+            meldingsfabrikk.besvarFaktum(
+                uuid,
+                FaktumSvar(4, "localdate", 24.desember.toString())
+            )
+        )
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(5, "inntekt", 1000.årlig.toString())))
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(6, "inntekt", 1050.årlig.toString())))
         testRapid.sendTestMessage(
@@ -173,7 +178,7 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
             "søknad_uuid" to søknadUuid,
             "fakta" to faktumSvarListe.asList().map { faktumSvar ->
                 mapOf(
-                    "faktumId" to faktumSvar.faktumId,
+                    "id" to faktumSvar.faktumId,
                     "clazz" to faktumSvar.clazz
                 ).let { fakta ->
                     fakta + faktumSvar.svar?.let {

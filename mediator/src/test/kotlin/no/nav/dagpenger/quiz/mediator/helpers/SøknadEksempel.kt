@@ -20,7 +20,7 @@ internal object SøknadEksempel {
 
     val prototypeSøknad1 = Søknad(
         666,
-        ja nei "f1_bool" id 1,
+        ja nei "f1_bool" id 1 avhengerAv 15,
         ja nei "f2_bool" id 2,
         heltall faktum "f3_heltall" id 3,
         dato faktum "f4_dato" id 4,
@@ -91,7 +91,8 @@ internal object SøknadEksempel {
             5 to "f5Behov",
             6 to "f6Behov",
             7 to "f7Behov",
-            8 to "f8Behov"
+            8 to "f8Behov",
+            15 to "InnsendtSøknadsId"
         )
     )
 }
