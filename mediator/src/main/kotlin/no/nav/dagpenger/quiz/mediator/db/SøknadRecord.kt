@@ -13,7 +13,6 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Identer.Ident
-import no.nav.dagpenger.model.faktum.Identer.Ident.Type
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Person
@@ -24,7 +23,6 @@ import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.visitor.PersonVisitor
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -33,105 +31,13 @@ import java.util.UUID
 // Understands a relational representation of a Søknad
 class SøknadRecord : SøknadPersistence {
     private lateinit var originalSvar: MutableMap<String, Any?>
+    private val personRecord = PersonRecord()
 
     override fun ny(fnr: String, type: Versjon.UserInterfaceType, versjonId: Int): Søknadprosess {
-        val person = hentEllerOpprettPerson(Identer.Builder().folkeregisterIdent(fnr).build())
+        val person = personRecord.hentEllerOpprettPerson(Identer.Builder().folkeregisterIdent(fnr).build())
         return Versjon.id(versjonId).søknadprosess(person, type).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
             originalSvar = svarMap(søknadprosess.søknad)
-        }
-    }
-
-    private fun hentEllerOpprettPerson(identer: Identer): Person {
-        return FinnPersonVisitor(identer).person
-    }
-
-    class FinnPersonVisitor(private val identer: Identer) : PersonVisitor {
-
-        lateinit var person: Person
-
-        val folkeregisteridenter = mutableListOf<Ident>()
-        val aktoerIder = mutableListOf<Ident>()
-        val npIder = mutableListOf<Ident>()
-
-        init {
-            Person(identer).also { it.accept(this) }
-        }
-
-        override fun postVisit(person: Person, uuid: UUID) {
-
-            val sql =
-                """
-                (SELECT person_id FROM folkeregisterident
-                WHERE verdi in (${if (folkeregisteridenter.isEmpty()) null else folkeregisteridenter.joinToString { "?" }}))
-                UNION 
-                (SELECT person_id FROM aktoer_id
-                WHERE verdi in (${if (aktoerIder.isEmpty()) null else aktoerIder.joinToString { "?" }}))
-                UNION 
-                (SELECT person_id FROM np_id
-                WHERE verdi in (${if (npIder.isEmpty()) null else npIder.joinToString { "?" }}))
-                """
-
-            val personId = using(sessionOf(dataSource)) { session ->
-                session.run(
-                    queryOf(
-                        sql,
-                        *folkeregisteridenter.map { it.id }.toTypedArray(),
-                        *aktoerIder.map { it.id }.toTypedArray(),
-                    ).map { row ->
-                        UUID.fromString(row.string(1))
-                    }.asSingle
-                ) ?: session.transaction { transaction ->
-                    val personUuid = UUID.randomUUID()
-                    transaction.run( //language=PostgreSQL
-                        queryOf("""INSERT INTO person (uuid) VALUES (?)""", personUuid).asUpdate
-                    )
-
-                    folkeregisteridenter.forEach { ident ->
-                        transaction.run( //language=PostgreSQL
-                            queryOf(
-                                """INSERT INTO folkeregisterident VALUES (?, ?, ?)""",
-                                personUuid,
-                                ident.id,
-                                ident.historisk
-                            ).asUpdate
-                        )
-                    }
-
-                    aktoerIder.forEach { ident ->
-                        transaction.run( //language=PostgreSQL
-                            queryOf(
-                                """INSERT INTO aktoer_id VALUES (?, ?, ?)""",
-                                personUuid,
-                                ident.id,
-                                ident.historisk
-                            ).asUpdate
-                        )
-                    }
-
-                    npIder.forEach { ident ->
-                        transaction.run( //language=PostgreSQL
-                            queryOf(
-                                """INSERT INTO np_id VALUES (?, ?, ?)""",
-                                personUuid,
-                                ident.id,
-                                ident.historisk
-                            ).asUpdate
-                        )
-                    }
-                    personUuid
-                }
-            }
-            this.person = Person(personId, identer)
-        }
-
-        override fun visit(type: Type, id: String, historisk: Boolean) {
-            when (type) {
-                Type.FOLKEREGISTERIDENT -> folkeregisteridenter.add(Ident(type, id, historisk))
-                Type.AKTØRID -> aktoerIder.add(Ident(type, id, historisk))
-                Type.NPID -> npIder.add(Ident(type, id, historisk))
-                else -> throw IllegalArgumentException("Ukjent identtype: $type")
-            }
         }
     }
 
@@ -161,7 +67,7 @@ class SøknadRecord : SøknadPersistence {
 
         return Versjon.id(rad.versjonId)
             .søknadprosess(
-                hentPerson(rad.personId),
+                personRecord.hentPerson(rad.personId),
                 Versjon.UserInterfaceType.fromId(rad.typeId),
                 uuid
             )
@@ -183,31 +89,6 @@ class SøknadRecord : SøknadPersistence {
             }.also { søknadprosess ->
                 originalSvar = svarMap(søknadprosess.søknad)
             }
-    }
-
-    private fun hentPerson(personId: UUID): Person {
-        val identBuilder = Identer.Builder()
-        using(sessionOf(dataSource)) { session ->
-            session.run(
-                queryOf( //language=PostgreSQL
-                    "SELECT verdi, historisk FROM folkeregisterident WHERE person_id = ?",
-                    personId
-                ).map { row -> identBuilder.folkeregisterIdent(row.string("verdi"), row.boolean("historisk")) }.asSingle
-            )
-            session.run(
-                queryOf( //language=PostgreSQL
-                    "SELECT verdi, historisk FROM aktoer_id WHERE person_id = ?",
-                    personId
-                ).map { row -> identBuilder.aktørId(row.string("verdi"), row.boolean("historisk")) }.asSingle
-            )
-            session.run(
-                queryOf( //language=PostgreSQL
-                    "SELECT verdi, historisk FROM np_id WHERE person_id = ?",
-                    personId
-                ).map { row -> identBuilder.npId(row.string("verdi"), row.boolean("historisk")) }.asSingle
-            )
-        }
-        return Person(personId, identBuilder.build())
     }
 
     private infix fun Int.indeks(indeks: Int) = if (indeks == 0) this.toString() else "$this.$indeks"
