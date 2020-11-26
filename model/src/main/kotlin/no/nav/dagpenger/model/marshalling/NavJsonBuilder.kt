@@ -36,7 +36,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, seksjonNavn: String, indeks
     fun resultat() = root
 
     override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
-        root.put("@event_name", "behov")
+        root.put("@event_name", "faktum_svar")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("søknad_uuid", "$uuid")
