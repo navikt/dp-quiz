@@ -45,7 +45,7 @@ internal class AvslagPåMinsteinntekt {
                 11 to "Søknadstidspunkt",
                 12 to "Verneplikt",
                 14 to "GodkjenningDokumentasjonFangstOgFisk",
-                15 to "InnsendtSøknadId",
+                15 to "InnsendtSøknadsId",
             )
         )
     }
@@ -71,7 +71,7 @@ internal class AvslagPåMinsteinntekt {
             ja nei "Verneplikt" id 12 avhengerAv 15,
             ja nei "Godjenning av virkingstidspunkt" id 13 avhengerAv 5,
             dokument faktum "dokumentasjon for fangst og fisk" id 14 avhengerAv 6,
-            dokument faktum "Innsendt søknadId" id 15,
+            dokument faktum "Innsendt søknadsId" id 15,
             ja nei "Godkjenning av dokumentasjon for fangst og fisk" id 16 avhengerAv 14,
         )
     private val ønsketDato = søknad dato 1
