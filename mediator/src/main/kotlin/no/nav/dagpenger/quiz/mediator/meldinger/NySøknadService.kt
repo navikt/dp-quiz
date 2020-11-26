@@ -39,7 +39,10 @@ internal class NySøknadService(
         val faktagrupperType = Versjon.UserInterfaceType.Web
         søknadPersistence.ny(fnr, faktagrupperType, Versjon.siste)
             .also { søknadprosess ->
+                // TODO: Fikse dette
                 søknadprosess.dokument(15).besvar(Dokument(LocalDateTime.now(), url = søknadsId))
+                søknadPersistence.lagre(søknadprosess.søknad)
+
                 søknadprosess.nesteSeksjoner()
                     .forEach { seksjon ->
                         context.send(seksjon.somSpørsmål())
