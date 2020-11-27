@@ -44,7 +44,6 @@ internal class FaktumSvarService(
         if (fakta.isEmpty()) return
 
         try {
-
             søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web).also { søknadprosess ->
                 fakta.forEach { faktumNode ->
                     val faktumId = faktumNode["id"].asInt()
