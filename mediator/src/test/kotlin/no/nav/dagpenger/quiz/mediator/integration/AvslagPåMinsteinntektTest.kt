@@ -29,10 +29,10 @@ internal class AvslagPåMinsteinntektTest {
 
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
-        assertNesteSeksjon("datoer", 5) {
+        assertNesteSeksjon("datoer", 4) {
             it.besvar(søknadprosess.dato(1), 5.januar)
             it.besvar(søknadprosess.dato(2), 5.januar)
-            it.besvar(søknadprosess.dato(3), 5.januar)
+            // it.besvar(søknadprosess.dato(3), 5.januar)
             it.besvar(søknadprosess.dato(4), 5.januar)
             it.besvar(søknadprosess.dato(11), 5.januar)
             it.validerSvar()

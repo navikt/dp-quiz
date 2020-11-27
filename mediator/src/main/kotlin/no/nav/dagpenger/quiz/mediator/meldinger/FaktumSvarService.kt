@@ -44,7 +44,6 @@ internal class FaktumSvarService(
         log.info { "Mottok ny svar for $søknadUuid" }
         sikkerlogg.info { packet.toJson() }
 
-
         try {
             søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web).also { søknadprosess ->
                 fakta.forEach { faktumNode ->
