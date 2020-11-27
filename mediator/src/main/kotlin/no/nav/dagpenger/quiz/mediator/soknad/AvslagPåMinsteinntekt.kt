@@ -61,7 +61,7 @@ internal class AvslagPåMinsteinntekt {
             dato faktum "Siste dag med arbeidsplikt" id 2 avhengerAv 15,
             dato faktum "Registreringsdato" id 3,
             dato faktum "Siste dag med lønn" id 4 avhengerAv 15,
-            maks dato "Virkningstidspunkt" av 1 og 2 og 3 og 4 og 11 id 5,
+            maks dato "Virkningstidspunkt" av 1 og 2 og 4 og 11 id 5, //og 3
             ja nei "Driver med fangst og fisk" id 6 avhengerAv 15,
             inntekt faktum "Inntekt siste 3 år" id 7 avhengerAv 5 og 6,
             inntekt faktum "Inntekt siste 12 mnd" id 8 avhengerAv 5 og 6,
@@ -122,7 +122,7 @@ internal class AvslagPåMinsteinntekt {
             Rolle.nav,
             ønsketDato,
             søknadstidspunkt,
-            registreringsdato,
+            //registreringsdato,
             sisteDagMedArbeidsplikt,
             sisteDagMedLønn
         )

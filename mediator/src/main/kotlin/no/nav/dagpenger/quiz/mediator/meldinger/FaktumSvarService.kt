@@ -37,12 +37,13 @@ internal class FaktumSvarService(
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+        val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
+        if (fakta.isEmpty()) return
+
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
         log.info { "Mottok ny svar for $søknadUuid" }
         sikkerlogg.info { packet.toJson() }
-        val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
 
-        if (fakta.isEmpty()) return
 
         try {
             søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web).also { søknadprosess ->
