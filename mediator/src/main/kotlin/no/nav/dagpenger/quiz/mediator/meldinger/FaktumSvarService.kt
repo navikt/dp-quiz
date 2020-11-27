@@ -14,6 +14,7 @@ import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.util.UUID
 
 private val log = KotlinLogging.logger {}
+private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
 internal class FaktumSvarService(
     private val søknadPersistence: SøknadPersistence,
@@ -61,6 +62,9 @@ internal class FaktumSvarService(
         } catch (e: Exception) {
             log.error(e) {
                 "feil ved faktum svar: ${e.message}"
+            }
+            sikkerlogg.error(e) {
+                "feil ved faktum svar: ${e.message}, packet: ${packet.toJson()}"
             }
         }
     }
