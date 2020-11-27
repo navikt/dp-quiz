@@ -28,7 +28,8 @@ internal class FaktumSvarService(
     override fun validate(packet: JsonMessage) {
         packet.requireKey(
             "søknad_uuid",
-            "fakta"
+            "fakta",
+            "skipMeldinger"
         )
         packet.requireArray("fakta") {
             requireKey("id")
