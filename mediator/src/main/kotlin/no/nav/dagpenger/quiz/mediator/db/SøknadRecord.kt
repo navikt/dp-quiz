@@ -30,14 +30,12 @@ import java.util.UUID
 
 // Understands a relational representation of a Søknad
 class SøknadRecord : SøknadPersistence {
-    private lateinit var originalSvar: MutableMap<String, Any?>
     private val personRecord = PersonRecord()
 
     override fun ny(fnr: String, type: Versjon.UserInterfaceType, versjonId: Int): Søknadprosess {
         val person = personRecord.hentEllerOpprettPerson(Identer.Builder().folkeregisterIdent(fnr).build())
         return Versjon.id(versjonId).søknadprosess(person, type).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
-            originalSvar = svarMap(søknadprosess.søknad)
         }
     }
 
@@ -86,8 +84,6 @@ class SøknadRecord : SøknadPersistence {
                         )
                     }
                 }
-            }.also { søknadprosess ->
-                originalSvar = svarMap(søknadprosess.søknad)
             }
     }
 
@@ -159,7 +155,8 @@ class SøknadRecord : SøknadPersistence {
 
     override fun lagre(søknad: Søknad): Boolean {
         val nyeSvar = svarMap(søknad)
-        slettDødeFakta(søknad, nyeSvar)
+        val originalSvar = svarMap(hent(søknad.uuid).søknad)
+        slettDødeFakta(søknad, nyeSvar, originalSvar)
         originalSvar.filterNot { (id, svar) -> nyeSvar[id] == svar }.forEach { (id, svar) ->
             val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
 
@@ -180,7 +177,7 @@ class SøknadRecord : SøknadPersistence {
         return true
     }
 
-    private fun slettDødeFakta(søknad: Søknad, nyeSvar: Map<String, Any?>) {
+    private fun slettDødeFakta(søknad: Søknad, nyeSvar: Map<String, Any?>, originalSvar: MutableMap<String, Any?>) {
         originalSvar.keys.toSet()
             .subtract(nyeSvar.keys.toSet())
             .map { FaktumId(it).reflection { rootId, indeks -> Triple(rootId, indeks, it) } }
