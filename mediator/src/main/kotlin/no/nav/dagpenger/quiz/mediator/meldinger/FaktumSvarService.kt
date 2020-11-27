@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
@@ -57,6 +58,10 @@ internal class FaktumSvarService(
                     .onEach { seksjon ->
                         context.send(seksjon.somSpørsmål())
                         log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
+                    }.also {
+                        if (Søknadprosess.erFerdig(it)) {
+                            context.send(ResultatJsonBuilder(søknadprosess).resultat().toString())
+                        }
                     }
             }
         } catch (e: Exception) {

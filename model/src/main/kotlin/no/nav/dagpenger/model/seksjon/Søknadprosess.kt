@@ -23,6 +23,11 @@ class Søknadprosess private constructor(
         seksjoner.toMutableList()
     )
 
+    companion object {
+        fun erFerdig(seksjoner: List<Seksjon>) =
+            seksjoner.all { fakta -> fakta.all { faktum -> faktum.erBesvart() } }
+    }
+
     internal constructor(søknad: Søknad, vararg seksjoner: Seksjon, rootSubsumsjon: Subsumsjon = TomSubsumsjon) : this(
         søknad,
         rootSubsumsjon,
