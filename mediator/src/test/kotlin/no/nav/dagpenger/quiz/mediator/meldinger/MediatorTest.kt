@@ -82,7 +82,7 @@ internal class MediatorTest {
             )
         )
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(8, "boolean", "true")))
-        assertEquals(9, testRapid.inspektør.size) // 8 fordi vi får saksbehandlerseksjonene to ganger
+        assertEquals(9, testRapid.inspektør.size)
         assertEquals("prosess_resultat", testRapid.inspektør.field(8, "@event_name").asText())
     }
 
