@@ -38,6 +38,7 @@ internal class FaktumSvarService(
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
         log.info { "Mottok ny svar for $søknadUuid" }
+        sikkerlogg.info { packet.toJson() }
         val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
 
         if (fakta.isEmpty()) return
@@ -62,9 +63,6 @@ internal class FaktumSvarService(
         } catch (e: Exception) {
             log.error(e) {
                 "feil ved faktum svar: ${e.message}"
-            }
-            sikkerlogg.error(e) {
-                "feil ved faktum svar: ${e.message}, packet: ${packet.toJson()}"
             }
         }
     }
