@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.db
 
 import PostgresDataSourceBuilder.dataSource
 import kotliquery.action.ExecuteQueryAction
+import kotliquery.action.UpdateQueryAction
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
@@ -165,7 +166,11 @@ class SøknadRecord : SøknadPersistence {
 
             using(sessionOf(dataSource)) { session ->
                 session.run(arkiverFaktum(søknad, rootId, indeks))
-                session.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId))
+                session.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId)).also {
+                    if (it != 0) {
+                        log.info { "Oppdatert faktum $id, søknad ${søknad.uuid}. oppdaterte rader: $it" }
+                    }
+                }
             }
         }
 
@@ -211,8 +216,8 @@ class SøknadRecord : SøknadPersistence {
         indeks
     ).asExecute
 
-    private fun oppdaterFaktum(svar: Any?, søknad: Søknad, indeks: Int, rootId: Int): ExecuteQueryAction =
-        queryOf(sqlToInsert(svar), søknad.uuid, indeks, rootId).asExecute
+    private fun oppdaterFaktum(svar: Any?, søknad: Søknad, indeks: Int, rootId: Int): UpdateQueryAction =
+        queryOf(sqlToInsert(svar), søknad.uuid, indeks, rootId).asUpdate
 
     private fun arkiverFaktum(søknad: Søknad, rootId: Int, indeks: Int): ExecuteQueryAction =
         queryOf( //language=PostgreSQL
