@@ -32,8 +32,8 @@ import java.util.UUID
 class SøknadRecord : SøknadPersistence {
     private val personRecord = PersonRecord()
 
-    override fun ny(fnr: String, type: Versjon.UserInterfaceType, versjonId: Int): Søknadprosess {
-        val person = personRecord.hentEllerOpprettPerson(Identer.Builder().folkeregisterIdent(fnr).build())
+    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int): Søknadprosess {
+        val person = personRecord.hentEllerOpprettPerson(identer)
         return Versjon.id(versjonId).søknadprosess(person, type).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
         }
@@ -252,12 +252,12 @@ class SøknadRecord : SøknadPersistence {
             rootId
         ).asExecute
 
-    override fun opprettede(fnr: String): Map<LocalDateTime, UUID> {
+    override fun opprettede(identer: Identer): Map<LocalDateTime, UUID> {
         return using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL
                     "SELECT opprettet, uuid FROM soknad WHERE person_id = (SELECT person_id FROM folkeregisterident WHERE verdi = ?)",
-                    fnr
+                    identer.first { it.type == Ident.Type.FOLKEREGISTERIDENT && !it.historisk }.id
                 ).map { it.localDateTime(1) to UUID.fromString(it.string(2)) }.asList
             )
         }.toMap()

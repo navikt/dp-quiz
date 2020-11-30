@@ -125,8 +125,8 @@ internal class MediatorTest {
         var søknadprosess: Søknadprosess? = null
         var hentet: Int = 0
 
-        override fun ny(fnr: String, type: Versjon.UserInterfaceType, versjonId: Int) =
-            Versjon.id(versjonId).søknadprosess(Person(Identer.Builder().folkeregisterIdent(fnr).build()), type)
+        override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int) =
+            Versjon.id(versjonId).søknadprosess(Person(identer), type)
                 .also { søknadprosess = it }
 
         override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?) = søknadprosess!!.also { hentet++ }
@@ -136,7 +136,7 @@ internal class MediatorTest {
             return true
         }
 
-        override fun opprettede(fnr: String): Map<LocalDateTime, UUID> {
+        override fun opprettede(identer: Identer): Map<LocalDateTime, UUID> {
             TODO("Not yet implemented")
         }
 

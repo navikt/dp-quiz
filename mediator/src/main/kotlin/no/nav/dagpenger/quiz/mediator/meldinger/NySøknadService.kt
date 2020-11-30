@@ -3,6 +3,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
+import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.Configuration
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
@@ -34,10 +35,14 @@ internal class NySøknadService(
         if (Configuration.prodEnvironment) return
         log.info { "Mottok ny søknadsmelding for ${packet["søknadsId"].asText()}" }
 
-        val fnr = packet["fnr"].asText()
+        val identer = Identer.Builder()
+            .folkeregisterIdent(packet["fnr"].asText())
+            .aktørId(packet["aktørId"].asText())
+            .build()
+
         val søknadsId = packet["søknadsId"].asText()
         val faktagrupperType = Versjon.UserInterfaceType.Web
-        søknadPersistence.ny(fnr, faktagrupperType, Versjon.siste)
+        søknadPersistence.ny(identer, faktagrupperType, Versjon.siste)
             .also { søknadprosess ->
                 // TODO: Fikse dette
                 søknadprosess.dokument(15).besvar(Dokument(LocalDateTime.now(), url = søknadsId))

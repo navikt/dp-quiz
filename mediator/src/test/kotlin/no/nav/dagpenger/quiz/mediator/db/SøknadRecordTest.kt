@@ -5,6 +5,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.faktum.Dokument
+import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -15,7 +16,6 @@ import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.lang.IllegalArgumentException
 import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -23,7 +23,7 @@ import kotlin.test.assertTrue
 
 internal class SøknadRecordTest {
     companion object {
-        internal const val UNG_PERSON_FNR_2018 = "12020052345"
+        internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
     }
 
     private lateinit var originalSøknadprosess: Søknadprosess
