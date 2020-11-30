@@ -1,13 +1,11 @@
 package no.nav.dagpenger.model.unit.factory
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.daglig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
