@@ -46,6 +46,11 @@ internal class FaktumSvarService(
 
         try {
             søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web).also { søknadprosess ->
+                log.info {
+                    """Hentet lagrede fakta ${
+                        søknadprosess.søknad.filter { it.erBesvart() }.map { "${it.id}: ${it.svar()}" }
+                    } """
+                }
                 fakta.forEach { faktumNode ->
                     val faktumId = faktumNode["id"].asInt()
                     val svar = faktumNode["svar"]
