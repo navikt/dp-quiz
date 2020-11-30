@@ -16,7 +16,6 @@ import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
@@ -48,7 +47,6 @@ internal class MediatorTest {
     }
 
     @Test
-    @Disabled
     fun `ta imot svar`() {
         testRapid.sendTestMessage(meldingsfabrikk.nySøknadMelding())
         val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknad_uuid"].asText())
@@ -89,7 +87,6 @@ internal class MediatorTest {
     }
 
     @Test
-    @Disabled
     fun `at søknaden ikke lastes unødvendig av meldinger uten svar`() {
         testRapid.sendTestMessage(meldingsfabrikk.nySøknadMelding())
         val uuid = UUID.fromString(testRapid.inspektør.message(0)["søknad_uuid"].asText())
