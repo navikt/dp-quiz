@@ -46,7 +46,7 @@ internal class FaktumSvarService(
 
         try {
             søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web).also { søknadprosess ->
-                log.info {
+                sikkerlogg.info {
                     """Hentet lagrede fakta ${
                         søknadprosess.søknad.filter { it.erBesvart() }.map { "${it.id}: ${it.svar()}" }
                     } """
