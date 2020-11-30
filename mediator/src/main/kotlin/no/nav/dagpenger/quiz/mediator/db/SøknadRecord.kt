@@ -5,6 +5,7 @@ import kotliquery.action.ExecuteQueryAction
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import mu.KotlinLogging
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
@@ -27,6 +28,8 @@ import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
+
+private val log = KotlinLogging.logger {}
 
 // Understands a relational representation of a Søknad
 class SøknadRecord : SøknadPersistence {
@@ -162,7 +165,9 @@ class SøknadRecord : SøknadPersistence {
 
             using(sessionOf(dataSource)) { session ->
                 session.run(arkiverFaktum(søknad, rootId, indeks))
-                session.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId))
+                session.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId)).also {
+                    log.info { "Oppdatert fakta for ${søknad.uuid}, $it" }
+                }
             }
         }
 
