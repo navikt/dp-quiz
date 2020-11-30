@@ -14,13 +14,13 @@ internal class FaktumTableTest {
     fun `Bygg faktum tabell`() {
         Postgres.withMigratedDb {
             FaktumTable(prototypeFakta1, 1)
-            assertRecordCount(26, "faktum")
+            assertRecordCount(27, "faktum")
             assertRecordCount(6, "utledet_faktum")
             assertRecordCount(4, "valg_faktum")
             assertRecordCount(3, "template_faktum")
             assertRecordCount(15, "avhengig_faktum")
             FaktumTable(prototypeFakta1, 1)
-            assertRecordCount(26, "faktum")
+            assertRecordCount(27, "faktum")
         }
     }
 

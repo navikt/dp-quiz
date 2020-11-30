@@ -7,11 +7,14 @@ import kotliquery.using
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.Periode
+import no.nav.dagpenger.model.faktum.til
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1.prototypeFakta1
+import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Test
@@ -24,6 +27,7 @@ import kotlin.test.assertTrue
 internal class SøknadRecordTest {
     companion object {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
+        private const val expectedFaktaCount = 27
     }
 
     private lateinit var originalSøknadprosess: Søknadprosess
@@ -36,10 +40,10 @@ internal class SøknadRecordTest {
             byggOriginalSøknadprosess()
 
             assertRecordCount(1, "soknad")
-            assertRecordCount(26, "faktum_verdi")
+            assertRecordCount(expectedFaktaCount, "faktum_verdi")
             SøknadRecord().ny(UNG_PERSON_FNR_2018, Web, 15)
             assertRecordCount(2, "soknad")
-            assertRecordCount(52, "faktum_verdi")
+            assertRecordCount(expectedFaktaCount * 2, "faktum_verdi")
             hentFørstFakta()
         }
     }
@@ -81,16 +85,16 @@ internal class SøknadRecordTest {
     fun `Genererte template faktum`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
-            assertEquals(26, originalSøknadprosess.søknad.map { it }.size)
+            assertEquals(expectedFaktaCount, originalSøknadprosess.søknad.map { it }.size)
             hentFørstFakta()
             originalSøknadprosess = rehydrertSøknadprosess
 
             originalSøknadprosess.heltall(15).besvar(3)
             originalSøknadprosess.heltall("16.1").besvar(5)
-            assertEquals(26 + 9, originalSøknadprosess.søknad.map { it }.size)
+            assertEquals(expectedFaktaCount + 9, originalSøknadprosess.søknad.map { it }.size)
 
             hentFørstFakta()
-            assertEquals(26 + 9, rehydrertSøknadprosess.søknad.map { it }.size)
+            assertEquals(expectedFaktaCount + 9, rehydrertSøknadprosess.søknad.map { it }.size)
         }
     }
 
@@ -120,7 +124,7 @@ internal class SøknadRecordTest {
     fun `redusert template faktum`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
-            assertEquals(26, originalSøknadprosess.søknad.map { it }.size)
+            assertEquals(expectedFaktaCount, originalSøknadprosess.søknad.map { it }.size)
             hentFørstFakta()
             originalSøknadprosess = rehydrertSøknadprosess
 
@@ -147,6 +151,18 @@ internal class SøknadRecordTest {
             originalSøknadprosess.dato(5).besvar(5.januar)
             hentFørstFakta()
             assertEquals(5.januar, rehydrertSøknadprosess.dato(345).svar())
+        }
+    }
+
+    @Test
+    fun `periode faktum med verdi`() {
+        Postgres.withMigratedDb {
+            byggOriginalSøknadprosess()
+            (3.januar til 3.februar).also { periode: Periode ->
+                originalSøknadprosess.periode(21).besvar(periode)
+                hentFørstFakta()
+                assertEquals(periode, rehydrertSøknadprosess.periode(21).svar())
+            }
         }
     }
 

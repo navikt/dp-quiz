@@ -17,6 +17,15 @@ CREATE TABLE IF NOT EXISTS dokument
     PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS periode
+(
+    id        BIGSERIAL                NOT NULL,
+    fom       DATE                     NOT NULL,
+    tom       DATE                     NOT NULL,
+    opprettet TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS faktum
 (
     id          BIGSERIAL,
@@ -127,6 +136,7 @@ CREATE TABLE IF NOT EXISTS faktum_verdi
     dokument_id    BIGINT                   NULL REFERENCES dokument (id),
     dato           DATE                     NULL,
     heltall        INT                      NULL,
+    periode_id    BIGINT                    NULL REFERENCES periode (id),
     opprettet      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
@@ -142,6 +152,7 @@ CREATE TABLE IF NOT EXISTS gammel_faktum_verdi
     dokument_id    BIGINT                   NULL REFERENCES dokument (id),
     dato           DATE                     NULL,
     heltall        INT                      NULL,
+    periode_id    BIGINT                    NULL REFERENCES periode (id),
     opprettet      TIMESTAMP WITH TIME ZONE NOT NULL,
     PRIMARY KEY (id)
 );

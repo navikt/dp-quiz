@@ -23,4 +23,4 @@ class Periode(private val fom: LocalDate, private val tom: LocalDate) : ClosedRa
 }
 
 internal infix fun LocalDate.i(periode: Periode) = periode.inneholder(this)
-internal infix fun LocalDate.til(tom: LocalDate) = Periode(this, tom)
+infix fun LocalDate.til(tom: LocalDate) = Periode(this, tom)
