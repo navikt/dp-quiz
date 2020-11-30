@@ -37,7 +37,7 @@ internal class AvslagPåMinsteinntekt {
                 3 to "Registreringsdato",
                 4 to "SisteDagMedLønn",
                 5 to "Virkningstidspunkt",
-                6 to "FangstOgFisk",
+                6 to "FangstOgFiske",
                 7 to "InntektSiste3År",
                 8 to "InntektSiste12Mnd",
                 9 to "3G",
