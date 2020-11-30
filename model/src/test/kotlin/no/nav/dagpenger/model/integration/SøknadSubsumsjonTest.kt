@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.faktum.til
 import no.nav.dagpenger.model.helpers.NyttEksempel
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
@@ -27,16 +28,17 @@ internal class SøknadSubsumsjonTest {
     @Test
     fun `Faktagrupper subsumsjon integrasjonstest`() {
         søknadprosess.nesteFakta().also { fakta ->
-            assertEquals(5, fakta.size)
-            assertIder(fakta, 1, 2, 3, 4, 5)
+            assertEquals(6, fakta.size)
+            assertIder(fakta, 1, 2, 3, 4, 5, 21)
         }
 
         assertEquals(søknadprosess[0], søknadprosess.nesteSeksjoner().first())
-        assertEquals(2, søknadprosess[0].fakta().size)
-        assertIder(søknadprosess[0].fakta(), 1, 2)
+        assertEquals(3, søknadprosess[0].fakta().size)
+        assertIder(søknadprosess[0].fakta(), 1, 2, 21)
 
         søknadprosess.ja(1).besvar(true)
         søknadprosess.dato(2).besvar(31.desember)
+        søknadprosess.periode(21).besvar(30.desember(2017) til 7.januar(2018))
         søknadprosess.nesteFakta().also { fakta ->
             assertEquals(3, fakta.size)
             assertIder(fakta, 3, 4, 5)
@@ -132,6 +134,7 @@ internal class SøknadSubsumsjonTest {
         søknadprosess.dato(3).besvar(1.januar)
         søknadprosess.dato(4).besvar(2.januar)
         søknadprosess.dato(5).besvar(3.januar)
+        søknadprosess.periode(21).besvar(29.desember(2017) til 7.januar(2018))
 
         søknadprosess.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)

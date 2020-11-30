@@ -18,6 +18,8 @@ class Periode(private val fom: LocalDate, private val tom: LocalDate) : ClosedRa
         get() = tom
     override val start: LocalDate
         get() = fom
+
+    override fun toString() = "$fom  til og med $tom"
 }
 
 internal infix fun LocalDate.i(periode: Periode) = periode.inneholder(this)

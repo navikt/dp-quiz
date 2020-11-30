@@ -5,6 +5,8 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
+import no.nav.dagpenger.model.faktum.Periode
+import no.nav.dagpenger.model.faktum.i
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GeneratorSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
@@ -52,6 +54,16 @@ infix fun Faktum<LocalDate>.ikkeFør(senesteDato: Faktum<LocalDate>) = EnkelSubs
     },
     this,
     senesteDato
+)
+
+infix fun Faktum<LocalDate>.innenfor(periode: Faktum<Periode>) = EnkelSubsumsjon(
+    object : Regel {
+        override val typeNavn = "innenfor"
+        override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<LocalDate>).svar() i (fakta[1] as Faktum<Periode>).svar()
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er innenfor perioden '${fakta[1]}'"
+    },
+    this,
+    periode
 )
 
 infix fun Faktum<Inntekt>.minst(terskel: Faktum<Inntekt>) = EnkelSubsumsjon(
