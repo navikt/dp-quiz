@@ -21,16 +21,16 @@ import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
 import java.time.LocalDate
 
-internal lateinit var bursdag67: GrunnleggendeFaktum<LocalDate>
-internal lateinit var søknadsdato: GrunnleggendeFaktum<LocalDate>
-internal lateinit var ønsketdato: GrunnleggendeFaktum<LocalDate>
-internal lateinit var sisteDagMedLønn: GrunnleggendeFaktum<LocalDate>
-internal lateinit var inntektSiste3år: GrunnleggendeFaktum<Inntekt>
-internal lateinit var inntektSisteÅr: GrunnleggendeFaktum<Inntekt>
-internal lateinit var dimisjonsdato: GrunnleggendeFaktum<LocalDate>
-internal lateinit var virkningstidspunkt: Faktum<LocalDate>
-internal lateinit var inntekt3G: GrunnleggendeFaktum<Inntekt>
-internal lateinit var inntekt15G: GrunnleggendeFaktum<Inntekt>
+internal var bursdag67: GrunnleggendeFaktum<LocalDate>
+internal var søknadsdato: GrunnleggendeFaktum<LocalDate>
+internal var ønsketdato: GrunnleggendeFaktum<LocalDate>
+internal var sisteDagMedLønn: GrunnleggendeFaktum<LocalDate>
+internal var inntektSiste3år: GrunnleggendeFaktum<Inntekt>
+internal var inntektSisteÅr: GrunnleggendeFaktum<Inntekt>
+internal var dimisjonsdato: GrunnleggendeFaktum<LocalDate>
+internal var virkningstidspunkt: Faktum<LocalDate>
+internal var inntekt3G: GrunnleggendeFaktum<Inntekt>
+internal var inntekt15G: GrunnleggendeFaktum<Inntekt>
 
 private val prototypeSøknad = Søknad(
     13,

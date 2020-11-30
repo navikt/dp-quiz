@@ -59,10 +59,9 @@ class NesteSeksjonTest {
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        val versjon = Versjon(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagruppe))
-
-        val fakta = Versjon.id(prototypesøknad.versjonId).søknadprosess(testPerson, Web)
-
-        assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
+        Versjon(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagruppe))
+        Versjon.id(prototypesøknad.versjonId).søknadprosess(testPerson, Web).also { fakta ->
+            assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
+        }
     }
 }
