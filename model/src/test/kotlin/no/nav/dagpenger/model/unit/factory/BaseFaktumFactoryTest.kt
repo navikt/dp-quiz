@@ -5,14 +5,19 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.daglig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.til
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.helpers.november
 import no.nav.dagpenger.model.helpers.testSøknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.math.roundToInt
@@ -21,6 +26,15 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class BaseFaktumFactoryTest {
+
+    companion object {
+        private var versjonId = runCatching { Versjon.siste }.getOrDefault(0)
+    }
+
+    @BeforeEach
+    fun setup() {
+        versjonId++
+    }
 
     @Test
     fun boolean() {
@@ -32,7 +46,7 @@ internal class BaseFaktumFactoryTest {
 
     @Test
     fun `boolean factory faktum`() {
-        val søknadprosess = Søknad(99, ja nei "boolean" id 3).testSøknadprosess()
+        val søknadprosess = Søknad(versjonId, ja nei "boolean" id 3).testSøknadprosess()
         val faktum = søknadprosess ja 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
@@ -46,7 +60,7 @@ internal class BaseFaktumFactoryTest {
 
     @Test
     fun `heltall factory faktum`() {
-        val søknadprosess = Søknad(98, heltall faktum "heltall" id 3).testSøknadprosess()
+        val søknadprosess = Søknad(versjonId, heltall faktum "heltall" id 3).testSøknadprosess()
         val faktum = søknadprosess heltall 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
@@ -60,7 +74,7 @@ internal class BaseFaktumFactoryTest {
 
     @Test
     fun `Inntekt factory faktum`() {
-        val søknadprosess = Søknad(97, inntekt faktum "inntekt" id 3).testSøknadprosess()
+        val søknadprosess = Søknad(versjonId, inntekt faktum "inntekt" id 3).testSøknadprosess()
         val faktum = søknadprosess inntekt 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
@@ -74,7 +88,7 @@ internal class BaseFaktumFactoryTest {
 
     @Test
     fun `Dato factory faktum`() {
-        val søknadprosess = Søknad(96, dato faktum "dato" id 3).testSøknadprosess()
+        val søknadprosess = Søknad(versjonId, dato faktum "dato" id 3).testSøknadprosess()
         val faktum = søknadprosess dato 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
@@ -88,7 +102,7 @@ internal class BaseFaktumFactoryTest {
 
     @Test
     fun `Dokument factory faktum`() {
-        val søknadprosess = Søknad(95, dokument faktum "dokument" id 3).testSøknadprosess()
+        val søknadprosess = Søknad(versjonId, dokument faktum "dokument" id 3).testSøknadprosess()
         val faktum = søknadprosess dokument 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
@@ -96,6 +110,20 @@ internal class BaseFaktumFactoryTest {
             faktum.besvar(it)
             assertTrue(faktum.erBesvart())
             assertEquals(it, faktum.svar())
+        }
+    }
+
+    @Test
+    fun `Periodefaktum factory`() {
+        val søknadprosess = Søknad(versjonId, periode faktum "periode" id 3).testSøknadprosess()
+        (søknadprosess periode 3).also { faktum ->
+            assertFalse(faktum.erBesvart())
+            assertThrows<IllegalStateException> { faktum.svar() }
+            (13.november til 15.november).also { periode ->
+                faktum.besvar(periode)
+                assertTrue(faktum.erBesvart())
+                assertEquals(periode, faktum.svar())
+            }
         }
     }
 }
