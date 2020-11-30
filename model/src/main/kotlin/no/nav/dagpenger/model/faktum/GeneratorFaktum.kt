@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.faktum
 
+import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 class GeneratorFaktum internal constructor(

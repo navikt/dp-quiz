@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.JaAction
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.NeiAction
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.UansettAction
 import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import java.time.LocalDate
@@ -97,6 +98,19 @@ infix fun GeneratorFaktum.med(makro: MakroSubsumsjon) = MakroSubsumsjon(
                 "Generator makroer kan ikke ha gyldig eller ugyldig stier"
             }
         }
+    )
+)
+
+infix fun GeneratorFaktum.med(subsumsjon: MinstEnAvSubsumsjon) = MakroSubsumsjon(
+    this.navn,
+    GeneratorSubsumsjon(
+        Er(0),
+        this,
+        // makro.apply {
+        //     require(gyldig == TomSubsumsjon && ugyldig == TomSubsumsjon) {
+        //         "Generator makroer kan ikke ha gyldig eller ugyldig stier"
+        //     }
+        // }
     )
 )
 
