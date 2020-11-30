@@ -16,7 +16,7 @@ buildscript {
 
 repositories {
     jcenter()
-    maven(url = "http://packages.confluent.io/maven/")
+    maven("https://packages.confluent.io/maven/")
     maven("https://jitpack.io")
 }
 
