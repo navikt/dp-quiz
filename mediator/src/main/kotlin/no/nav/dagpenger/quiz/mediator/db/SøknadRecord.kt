@@ -165,9 +165,7 @@ class SøknadRecord : SøknadPersistence {
 
             using(sessionOf(dataSource)) { session ->
                 session.run(arkiverFaktum(søknad, rootId, indeks))
-                session.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId)).also {
-                    log.info { "Oppdatert fakta for ${søknad.uuid}, $it" }
-                }
+                session.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId))
             }
         }
 
