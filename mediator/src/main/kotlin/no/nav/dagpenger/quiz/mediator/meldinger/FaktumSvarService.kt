@@ -56,11 +56,14 @@ internal class FaktumSvarService(
                 søknadPersistence.lagre(søknadprosess.søknad)
                 søknadprosess.nesteSeksjoner()
                     .onEach { seksjon ->
-                        context.send(seksjon.somSpørsmål())
+                        val json = seksjon.somSpørsmål()
+                        context.send(json)
+                        sikkerlogg.info { "Send ut seksjon: $json" }
                         log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
                     }.also {
                         if (Søknadprosess.erFerdig(it)) {
                             context.send(ResultatJsonBuilder(søknadprosess).resultat().toString())
+                            log.info { "Ferdig med søknad ${søknadprosess.søknad.uuid}" }
                         }
                     }
             }
