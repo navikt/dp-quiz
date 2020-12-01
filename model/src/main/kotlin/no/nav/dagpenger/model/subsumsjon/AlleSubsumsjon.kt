@@ -52,4 +52,9 @@ class AlleSubsumsjon private constructor(
             visitor.postVisit(this, lokaltResultat(), it)
         }
     }
+
+    override fun lokaltResultat(): Boolean? {
+        if (subsumsjoner.any { it.resultat() == null }) return null
+        return subsumsjoner.all { it.resultat()!! }
+    }
 }

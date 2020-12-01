@@ -11,6 +11,7 @@ import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
+import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.ikkeFør
@@ -46,8 +47,8 @@ internal class AvslagPåMinsteinntekt {
                 10 to "1_5G",
                 11 to "Søknadstidspunkt",
                 12 to "Verneplikt",
+                14 to "GodkjenningDokumentasjonFangstOgFisk",
                 15 to "InnsendtSøknadsId",
-                18 to "Lærling"
             )
         )
     }
@@ -72,14 +73,16 @@ internal class AvslagPåMinsteinntekt {
             dato faktum "Søknadstidspunkt" id 11 avhengerAv 15,
             ja nei "Verneplikt" id 12 avhengerAv 15,
             ja nei "Godjenning av virkingstidspunkt" id 13 avhengerAv 5,
+            dokument faktum "dokumentasjon for fangst og fisk" id 14 avhengerAv 6,
             dokument faktum "Innsendt søknadsId" id 15,
-            ja nei "Godkjenning av driver med fangst og fisk" id 16 avhengerAv 6,
+            ja nei "Godkjenning av dokumentasjon for fangst og fisk" id 16 avhengerAv 14,
             heltall faktum "Antall arbeidsøker registeringsperioder" id 17 genererer 3,
             ja nei "Lærling" id 18
+
         )
     private val ønsketDato = søknad dato 1
     private val sisteDagMedArbeidsplikt = søknad dato 2
-    private val registreringsperiode = søknad periode 2
+    private val registreringsperiode = søknad periode 3
     private val sisteDagMedLønn = søknad dato 4
     private val virkningstidspunkt = søknad dato 5
     private val fangstOgFisk = søknad ja 6
@@ -90,6 +93,7 @@ internal class AvslagPåMinsteinntekt {
     private val søknadstidspunkt = søknad dato 11
     private val verneplikt = søknad ja 12
     private val godkjenningVirkningstidspunkt = søknad ja 13
+    private val dokumentasjonFangstOgFisk = søknad dokument 14
     private val godkjenningFangstOgFisk = søknad ja 16
     private val registreringsperioder = søknad generator 17
     private val lærling = søknad ja 18
@@ -101,23 +105,24 @@ internal class AvslagPåMinsteinntekt {
         lærling er true
     )
 
-    private val erRegistrertInnenfor = "registrert ved ønsket dato".minstEnAv(
-        ønsketDato innenfor registreringsperiode
-    )
-
-    private val sjekkFangstOgFisk = "fangst og fisk er dokumentert" makro (
-        fangstOgFisk er false eller (fangstOgFisk er true godkjentAv godkjenningFangstOgFisk)
+    private val meldtSomArbeidssøker = registreringsperioder har (
+        "registrert ved ønsket dato".makro(
+            ønsketDato innenfor registreringsperiode
+        )
         )
 
-    private val inngangsvilkår =
-        (
-            (søknadstidspunkt ikkeFør virkningstidspunkt)
-                godkjentAv godkjenningVirkningstidspunkt
-            ) så (
-            sjekkFangstOgFisk så (
-                minsteArbeidsinntekt
-                )
-            )
+    private val sjekkFangstOgFisk = "fangst og fisk er dokumentert" makro (
+        fangstOgFisk er false eller (godkjenningFangstOgFisk av dokumentasjonFangstOgFisk)
+        )
+
+    private val minsteArbeidsInntektMedVirkningstidspunkt =
+        ((søknadstidspunkt ikkeFør virkningstidspunkt) godkjentAv godkjenningVirkningstidspunkt) så (sjekkFangstOgFisk så (minsteArbeidsinntekt))
+
+    private val inngangsvilkår = "inngangsvilkår".alle(
+        minsteArbeidsInntektMedVirkningstidspunkt,
+        meldtSomArbeidssøker
+    )
+
     private val statiske =
         Seksjon(
             "statiske",
@@ -131,9 +136,10 @@ internal class AvslagPåMinsteinntekt {
             Rolle.nav,
             ønsketDato,
             søknadstidspunkt,
-            // registreringsdato,
             sisteDagMedArbeidsplikt,
-            sisteDagMedLønn
+            sisteDagMedLønn,
+            registreringsperiode,
+            registreringsperioder
         )
     private val inntektsunntak =
         Seksjon(
@@ -142,11 +148,17 @@ internal class AvslagPåMinsteinntekt {
             verneplikt,
             lærling
         )
-    private val egenNæring =
+    private val fangstOgfisk =
         Seksjon(
-            "egenNæring",
+            "fangstOgFisk",
             Rolle.nav,
             fangstOgFisk,
+        )
+    private val fangstOgFiskDokumentasjon =
+        Seksjon(
+            "fangstOgFiskDokumentasjon",
+            Rolle.nav,
+            dokumentasjonFangstOgFisk
         )
     private val inntekter =
         Seksjon(
@@ -166,7 +178,8 @@ internal class AvslagPåMinsteinntekt {
             statiske,
             datoer,
             inntektsunntak,
-            egenNæring,
+            fangstOgfisk,
+            fangstOgFiskDokumentasjon,
             inntekter,
             godkjennDato
         )

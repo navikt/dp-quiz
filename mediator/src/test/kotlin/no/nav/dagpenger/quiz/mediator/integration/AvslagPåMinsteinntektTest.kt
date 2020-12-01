@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.faktum.til
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
@@ -29,16 +30,17 @@ internal class AvslagPåMinsteinntektTest {
 
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
-        assertNesteSeksjon("datoer", 4) {
+        assertNesteSeksjon("datoer", 6) {
             it.besvar(søknadprosess.dato(1), 5.januar)
             it.besvar(søknadprosess.dato(2), 5.januar)
-            // it.besvar(søknadprosess.dato(3), 5.januar)
             it.besvar(søknadprosess.dato(4), 5.januar)
             it.besvar(søknadprosess.dato(11), 5.januar)
+            it.besvar(søknadprosess.generator(17), 1)
             it.validerSvar()
         }
+        søknadprosess.periode("3.1").besvar(1.januar(2018) til 30.januar(2018))
 
-        assertNesteSeksjon("egenNæring", 1) {
+        assertNesteSeksjon("fangstOgFisk", 1) {
             it.besvar(søknadprosess.ja(6), false)
             it.validerSvar()
         }
@@ -90,6 +92,9 @@ internal class AvslagPåMinsteinntektTest {
             it.besvar(søknadprosess.ja(13), true)
         }
         assertTrue(søknadprosess.resultat()!!)
+
+        søknadprosess.periode("3.1").besvar(1.januar(2019) til 30.januar(2019))
+        assertFalse(søknadprosess.resultat()!!)
 
         // om vi så endrer søknadstidspunkt til å være før virkningstidspunkt vil det ikke føre til innvilgelse
         søknadprosess.dato(11).besvar(4.januar)
