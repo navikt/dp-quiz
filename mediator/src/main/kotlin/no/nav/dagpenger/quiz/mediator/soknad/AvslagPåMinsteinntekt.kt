@@ -47,8 +47,9 @@ internal class AvslagPåMinsteinntekt {
                 10 to "1_5G",
                 11 to "Søknadstidspunkt",
                 12 to "Verneplikt",
-                14 to "GodkjenningDokumentasjonFangstOgFisk",
+                14 to "DokumentasjonFangstOgFisk",
                 15 to "InnsendtSøknadsId",
+                18 to "Lærling"
             )
         )
     }
@@ -76,8 +77,8 @@ internal class AvslagPåMinsteinntekt {
             dokument faktum "dokumentasjon for fangst og fisk" id 14 avhengerAv 6,
             dokument faktum "Innsendt søknadsId" id 15,
             ja nei "Godkjenning av dokumentasjon for fangst og fisk" id 16 avhengerAv 14,
-            heltall faktum "Antall arbeidsøker registeringsperioder" id 17 genererer 3
-
+            heltall faktum "Antall arbeidsøker registeringsperioder" id 17 genererer 3,
+            ja nei "Lærling" id 18
         )
     private val ønsketDato = søknad dato 1
     private val sisteDagMedArbeidsplikt = søknad dato 2
@@ -95,11 +96,13 @@ internal class AvslagPåMinsteinntekt {
     private val dokumentasjonFangstOgFisk = søknad dokument 14
     private val godkjenningFangstOgFisk = søknad ja 16
     private val registreringsperioder = søknad generator 17
+    private val lærling = søknad ja 18
 
     private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
         inntektSiste3År minst G3,
         inntektSisteÅr minst G1_5,
-        verneplikt er true
+        verneplikt er true,
+        lærling er true
     )
 
     private val erRegistrertInnenfor = "registrert ved ønsket dato".minstEnAv(
@@ -136,11 +139,12 @@ internal class AvslagPåMinsteinntekt {
             sisteDagMedArbeidsplikt,
             sisteDagMedLønn
         )
-    private val vernepliktSeksjon =
+    private val inntektsunntak =
         Seksjon(
-            "verneplikt",
+            "inntektsunntak",
             Rolle.nav,
             verneplikt,
+            lærling
         )
     private val egenNæring =
         Seksjon(
@@ -171,7 +175,7 @@ internal class AvslagPåMinsteinntekt {
         Søknadprosess(
             statiske,
             datoer,
-            vernepliktSeksjon,
+            inntektsunntak,
             egenNæring,
             fangstOgFiskSeksjon,
             inntekter,
