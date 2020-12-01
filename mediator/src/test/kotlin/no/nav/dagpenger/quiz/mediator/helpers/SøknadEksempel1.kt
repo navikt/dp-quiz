@@ -19,7 +19,7 @@ internal object SøknadEksempel1 {
 
     internal val prototypeFakta1 = Søknad(
         15,
-        ja nei "f1" id 1,
+        ja nei "f1" id 1 avhengerAv 11,
         dato faktum "f2" id 2,
         dato faktum "f3" id 3,
         dato faktum "f4" id 4,

@@ -18,7 +18,7 @@ internal class FaktumTableTest {
             assertRecordCount(6, "utledet_faktum")
             assertRecordCount(4, "valg_faktum")
             assertRecordCount(3, "template_faktum")
-            assertRecordCount(15, "avhengig_faktum")
+            assertRecordCount(16, "avhengig_faktum")
             FaktumTable(prototypeFakta1, 1)
             assertRecordCount(27, "faktum")
         }
