@@ -39,7 +39,6 @@ internal class AvslagPåMinsteinntekt {
             mapOf(
                 1 to "ØnskerDagpengerFraDato",
                 2 to "SisteDagMedArbeidsplikt",
-                3 to "Registreringsperioder",
                 4 to "SisteDagMedLønn",
                 5 to "Virkningstidspunkt",
                 6 to "FangstOgFiske",
@@ -51,6 +50,7 @@ internal class AvslagPåMinsteinntekt {
                 12 to "Verneplikt",
                 14 to "GodkjenningDokumentasjonFangstOgFisk",
                 15 to "InnsendtSøknadsId",
+                17 to "Registreringsperioder"
             )
         )
     }
