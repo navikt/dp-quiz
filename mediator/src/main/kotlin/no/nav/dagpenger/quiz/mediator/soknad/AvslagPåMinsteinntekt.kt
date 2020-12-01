@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
@@ -15,10 +14,8 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
-import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.innenfor
-import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -40,7 +37,7 @@ internal class AvslagPåMinsteinntekt {
             mapOf(
                 1 to "ØnskerDagpengerFraDato",
                 2 to "SisteDagMedArbeidsplikt",
-                3 to "Registreringsdato",
+                3 to "Registreringsperioder",
                 4 to "SisteDagMedLønn",
                 5 to "Virkningstidspunkt",
                 6 to "FangstOgFiske",
@@ -84,7 +81,7 @@ internal class AvslagPåMinsteinntekt {
         )
     private val ønsketDato = søknad dato 1
     private val sisteDagMedArbeidsplikt = søknad dato 2
-    private val registreringsperiode = søknad periode  2
+    private val registreringsperiode = søknad periode 2
     private val sisteDagMedLønn = søknad dato 4
     private val virkningstidspunkt = søknad dato 5
     private val fangstOgFisk = søknad ja 6
@@ -108,8 +105,6 @@ internal class AvslagPåMinsteinntekt {
     private val erRegistrertInnenfor = "registrert ved ønsket dato".minstEnAv(
         ønsketDato innenfor registreringsperiode
     )
-
-    ///private val sub =  registreringsperioder med erRegistrertInnenfor
 
     private val sjekkFangstOgFisk = "fangst og fisk er dokumentert" makro (
         fangstOgFisk er false eller (godkjenningFangstOgFisk av dokumentasjonFangstOgFisk)

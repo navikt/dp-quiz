@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.i
+import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GeneratorSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
@@ -97,20 +98,22 @@ infix fun GeneratorFaktum.med(makro: MakroSubsumsjon) = MakroSubsumsjon(
             require(gyldig == TomSubsumsjon && ugyldig == TomSubsumsjon) {
                 "Generator makroer kan ikke ha gyldig eller ugyldig stier"
             }
-        }
+        },
+        AlleSubsumsjon(this.navn, mutableListOf())
     )
 )
 
-infix fun GeneratorFaktum.med(subsumsjon: MinstEnAvSubsumsjon) = MakroSubsumsjon(
+infix fun GeneratorFaktum.har(makro: MakroSubsumsjon) = MakroSubsumsjon(
     this.navn,
     GeneratorSubsumsjon(
         Er(0),
         this,
-        // makro.apply {
-        //     require(gyldig == TomSubsumsjon && ugyldig == TomSubsumsjon) {
-        //         "Generator makroer kan ikke ha gyldig eller ugyldig stier"
-        //     }
-        // }
+        makro.apply {
+            require(gyldig == TomSubsumsjon && ugyldig == TomSubsumsjon) {
+                "Generator makroer kan ikke ha gyldig eller ugyldig stier"
+            }
+        },
+        MinstEnAvSubsumsjon(this.navn, mutableListOf())
     )
 )
 
