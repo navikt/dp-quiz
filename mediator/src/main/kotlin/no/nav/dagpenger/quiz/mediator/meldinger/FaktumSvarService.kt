@@ -29,7 +29,6 @@ internal class FaktumSvarService(
         packet.requireKey(
             "søknad_uuid",
             "fakta",
-            "skipMeldinger"
         )
         packet.requireArray("fakta") {
             requireKey("id")
