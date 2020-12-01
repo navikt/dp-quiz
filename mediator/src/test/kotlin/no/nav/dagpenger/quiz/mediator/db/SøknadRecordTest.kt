@@ -20,6 +20,7 @@ import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -44,7 +45,7 @@ internal class SøknadRecordTest {
             SøknadRecord().ny(UNG_PERSON_FNR_2018, Web, 15)
             assertRecordCount(2, "soknad")
             assertRecordCount(expectedFaktaCount * 2, "faktum_verdi")
-            hentFørstFakta()
+            hentFørsteSøknad()
         }
     }
 
@@ -59,7 +60,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.heltall(16).besvar(123)
             originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()))
 
-            hentFørstFakta()
+            hentFørsteSøknad()
         }
     }
 
@@ -71,13 +72,26 @@ internal class SøknadRecordTest {
             originalSøknadprosess.dato(2).besvar(2.januar)
             originalSøknadprosess.dato(13).besvar(13.januar)
             originalSøknadprosess.ja(19).besvar(true)
-            hentFørstFakta()
+            hentFørsteSøknad()
             assertRecordCount(3, "gammel_faktum_verdi")
             assertTrue(rehydrertSøknadprosess.ja(19).svar())
             originalSøknadprosess.dato(2).besvar(22.januar)
-            hentFørstFakta()
+            hentFørsteSøknad()
             assertRecordCount(5, "gammel_faktum_verdi")
             assertFalse(rehydrertSøknadprosess.ja(19).erBesvart())
+        }
+    }
+
+    @Test
+    fun `Avhengig faktum rehydreres`() {
+        Postgres.withMigratedDb {
+            byggOriginalSøknadprosess()
+            originalSøknadprosess.dokument(11).besvar(Dokument(LocalDateTime.now(), url = "123456"))
+            originalSøknadprosess.ja(1).besvar(true)
+            søknadRecord.lagre(originalSøknadprosess.søknad)
+
+            rehydrertSøknadprosess = søknadRecord.hent(originalSøknadprosess.søknad.uuid)
+            assertEquals(2, rehydrertSøknadprosess.søknad.count { it.erBesvart() })
         }
     }
 
@@ -86,14 +100,14 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
             assertEquals(expectedFaktaCount, originalSøknadprosess.søknad.map { it }.size)
-            hentFørstFakta()
+            hentFørsteSøknad()
             originalSøknadprosess = rehydrertSøknadprosess
 
             originalSøknadprosess.heltall(15).besvar(3)
             originalSøknadprosess.heltall("16.1").besvar(5)
             assertEquals(expectedFaktaCount + 9, originalSøknadprosess.søknad.map { it }.size)
 
-            hentFørstFakta()
+            hentFørsteSøknad()
             assertEquals(expectedFaktaCount + 9, rehydrertSøknadprosess.søknad.map { it }.size)
         }
     }
@@ -105,7 +119,7 @@ internal class SøknadRecordTest {
             assertSesjonType(Web)
             originalSøknadprosess.ja(345214).besvar(true)
 
-            hentFørstFakta()
+            hentFørsteSøknad()
             assertSesjonType(Web)
             assertTrue(rehydrertSøknadprosess.ja(345214).svar())
             assertTrue(rehydrertSøknadprosess.ja(20).svar())
@@ -113,7 +127,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess = rehydrertSøknadprosess
             originalSøknadprosess.ja(345216).besvar(true)
 
-            hentFørstFakta()
+            hentFørsteSøknad()
             assertSesjonType(Web)
             assertTrue(rehydrertSøknadprosess.ja(345216).svar())
             assertFalse(rehydrertSøknadprosess.ja(20).svar())
@@ -125,18 +139,18 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
             assertEquals(expectedFaktaCount, originalSøknadprosess.søknad.map { it }.size)
-            hentFørstFakta()
+            hentFørsteSøknad()
             originalSøknadprosess = rehydrertSøknadprosess
 
             originalSøknadprosess.heltall(15).besvar(3)
             originalSøknadprosess.heltall("16.2").besvar(162)
             originalSøknadprosess.heltall("16.3").besvar(163)
-            hentFørstFakta()
+            hentFørsteSøknad()
             originalSøknadprosess = rehydrertSøknadprosess
             originalSøknadprosess.heltall(15).besvar(2)
             originalSøknadprosess.heltall("16.1").besvar(161)
             originalSøknadprosess.heltall("16.2").besvar(1622)
-            hentFørstFakta()
+            hentFørsteSøknad()
             assertThrows<IllegalArgumentException> { rehydrertSøknadprosess.heltall("16.3") }
         }
     }
@@ -149,7 +163,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.dato(3).besvar(3.januar)
             originalSøknadprosess.dato(4).besvar(4.januar)
             originalSøknadprosess.dato(5).besvar(5.januar)
-            hentFørstFakta()
+            hentFørsteSøknad()
             assertEquals(5.januar, rehydrertSøknadprosess.dato(345).svar())
         }
     }
@@ -160,13 +174,13 @@ internal class SøknadRecordTest {
             byggOriginalSøknadprosess()
             (3.januar til 3.februar).also { periode: Periode ->
                 originalSøknadprosess.periode(21).besvar(periode)
-                hentFørstFakta()
+                hentFørsteSøknad()
                 assertEquals(periode, rehydrertSøknadprosess.periode(21).svar())
             }
         }
     }
 
-    private fun hentFørstFakta(userInterfaceType: Versjon.UserInterfaceType = Web) {
+    private fun hentFørsteSøknad(userInterfaceType: Versjon.UserInterfaceType = Web) {
         søknadRecord.lagre(originalSøknadprosess.søknad)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         søknadRecord = SøknadRecord()
