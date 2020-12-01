@@ -2,17 +2,19 @@ package no.nav.dagpenger.quiz.mediator.soknad
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.ikkeFør
+import no.nav.dagpenger.model.regel.innenfor
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -34,7 +36,7 @@ internal class AvslagPåMinsteinntekt {
             mapOf(
                 1 to "ØnskerDagpengerFraDato",
                 2 to "SisteDagMedArbeidsplikt",
-                3 to "Registreringsdato",
+                3 to "Registreringsperioder",
                 4 to "SisteDagMedLønn",
                 5 to "Virkningstidspunkt",
                 6 to "FangstOgFiske",
@@ -44,8 +46,8 @@ internal class AvslagPåMinsteinntekt {
                 10 to "1_5G",
                 11 to "Søknadstidspunkt",
                 12 to "Verneplikt",
-                14 to "GodkjenningDokumentasjonFangstOgFisk",
                 15 to "InnsendtSøknadsId",
+                18 to "Lærling"
             )
         )
     }
@@ -59,7 +61,7 @@ internal class AvslagPåMinsteinntekt {
             VERSJON_ID,
             dato faktum "Ønsker dagpenger fra dato" id 1 avhengerAv 15,
             dato faktum "Siste dag med arbeidsplikt" id 2 avhengerAv 15,
-            dato faktum "Registreringsdato" id 3,
+            periode faktum "Registreringsperiode" id 3,
             dato faktum "Siste dag med lønn" id 4 avhengerAv 15,
             maks dato "Virkningstidspunkt" av 1 og 2 og 4 og 11 id 5, // og 3
             ja nei "Driver med fangst og fisk" id 6 avhengerAv 15,
@@ -70,13 +72,14 @@ internal class AvslagPåMinsteinntekt {
             dato faktum "Søknadstidspunkt" id 11 avhengerAv 15,
             ja nei "Verneplikt" id 12 avhengerAv 15,
             ja nei "Godjenning av virkingstidspunkt" id 13 avhengerAv 5,
-            dokument faktum "dokumentasjon for fangst og fisk" id 14 avhengerAv 6,
             dokument faktum "Innsendt søknadsId" id 15,
-            ja nei "Godkjenning av dokumentasjon for fangst og fisk" id 16 avhengerAv 14,
+            ja nei "Godkjenning av driver med fangst og fisk" id 16 avhengerAv 6,
+            heltall faktum "Antall arbeidsøker registeringsperioder" id 17 genererer 3,
+            ja nei "Lærling" id 18
         )
     private val ønsketDato = søknad dato 1
     private val sisteDagMedArbeidsplikt = søknad dato 2
-    private val registreringsdato = søknad dato 2
+    private val registreringsperiode = søknad periode 2
     private val sisteDagMedLønn = søknad dato 4
     private val virkningstidspunkt = søknad dato 5
     private val fangstOgFisk = søknad ja 6
@@ -87,17 +90,23 @@ internal class AvslagPåMinsteinntekt {
     private val søknadstidspunkt = søknad dato 11
     private val verneplikt = søknad ja 12
     private val godkjenningVirkningstidspunkt = søknad ja 13
-    private val dokumentasjonFangstOgFisk = søknad dokument 14
     private val godkjenningFangstOgFisk = søknad ja 16
+    private val registreringsperioder = søknad generator 17
+    private val lærling = søknad ja 18
 
     private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
         inntektSiste3År minst G3,
         inntektSisteÅr minst G1_5,
-        verneplikt er true
+        verneplikt er true,
+        lærling er true
+    )
+
+    private val erRegistrertInnenfor = "registrert ved ønsket dato".minstEnAv(
+        ønsketDato innenfor registreringsperiode
     )
 
     private val sjekkFangstOgFisk = "fangst og fisk er dokumentert" makro (
-        fangstOgFisk er false eller (godkjenningFangstOgFisk av dokumentasjonFangstOgFisk)
+        fangstOgFisk er false eller (fangstOgFisk er true godkjentAv godkjenningFangstOgFisk)
         )
 
     private val inngangsvilkår =
@@ -126,23 +135,18 @@ internal class AvslagPåMinsteinntekt {
             sisteDagMedArbeidsplikt,
             sisteDagMedLønn
         )
-    private val vernepliktSeksjon =
+    private val inntektsunntak =
         Seksjon(
-            "verneplikt",
+            "inntektsunntak",
             Rolle.nav,
             verneplikt,
+            lærling
         )
     private val egenNæring =
         Seksjon(
             "egenNæring",
             Rolle.nav,
             fangstOgFisk,
-        )
-    private val fangstOgFiskSeksjon =
-        Seksjon(
-            "egenNæring",
-            Rolle.nav,
-            dokumentasjonFangstOgFisk
         )
     private val inntekter =
         Seksjon(
@@ -161,9 +165,8 @@ internal class AvslagPåMinsteinntekt {
         Søknadprosess(
             statiske,
             datoer,
-            vernepliktSeksjon,
+            inntektsunntak,
             egenNæring,
-            fangstOgFiskSeksjon,
             inntekter,
             godkjennDato
         )

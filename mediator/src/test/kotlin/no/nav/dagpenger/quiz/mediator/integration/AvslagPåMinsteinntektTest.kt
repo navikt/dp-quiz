@@ -49,8 +49,9 @@ internal class AvslagPåMinsteinntektTest {
             it.validerSvar()
         }
 
-        assertNesteSeksjon("verneplikt", 1) {
+        assertNesteSeksjon("inntektsunntak", 2) {
             it.besvar(søknadprosess.ja(12), false)
+            it.besvar(søknadprosess.ja(18), false)
             it.validerSvar()
         }
 
