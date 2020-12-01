@@ -4,11 +4,16 @@ import PostgresDataSourceBuilder.dataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Periode
+import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.til
+import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
@@ -16,7 +21,9 @@ import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1.prototypeFakta1
 import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt
 import no.nav.helse.serde.assertDeepEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
@@ -83,6 +90,26 @@ internal class SøknadRecordTest {
     }
 
     @Test
+    fun `Avslag på minsteinntekt`() {
+        Postgres.withMigratedDb {
+            AvslagPåMinsteinntekt()
+            søknadRecord = SøknadRecord()
+            val søknad = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, 2)
+
+            søknad.dokument(15).besvar(Dokument(LocalDateTime.now(), "12345"))
+            søknad.dato(1).besvar(LocalDate.now())
+            søknad.dato(2).besvar(LocalDate.now())
+            søknad.dato(4).besvar(LocalDate.now())
+            søknad.dato(11).besvar(LocalDate.now())
+
+            søknadRecord.lagre(søknad.søknad)
+
+            val s2 = søknadRecord.hent(søknad.søknad.uuid)
+            assertEquals(6, s2.søknad.count { it.erBesvart() })
+        }
+    }
+
+    @Test
     fun `Avhengig faktum rehydreres`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
@@ -92,6 +119,49 @@ internal class SøknadRecordTest {
 
             rehydrertSøknadprosess = søknadRecord.hent(originalSøknadprosess.søknad.uuid)
             assertEquals(2, rehydrertSøknadprosess.søknad.count { it.erBesvart() })
+        }
+    }
+
+    @Test
+    @Disabled
+    fun `Avhengig faktum rehydreres 2`() {
+        Postgres.withMigratedDb {
+            val prototypeFakta = Søknad(
+                16,
+                ja nei "f1" id 1 avhengerAv 4,
+                ja nei "f2" id 2,
+                ja nei "f3" id 3 avhengerAv 1,
+                ja nei "f4" id 4 avhengerAv 5,
+                ja nei "f5" id 5,
+            )
+            Versjon(
+                prototypeFakta,
+                prototypeFakta ja 1 er true,
+                mapOf(
+                    Web to Søknadprosess(
+                        Seksjon(
+                            "seksjon",
+                            Rolle.nav,
+                            *(prototypeFakta.map { it }.toTypedArray())
+                        )
+                    )
+                )
+            )
+            FaktumTable(prototypeFakta, 16)
+
+            søknadRecord = SøknadRecord()
+            originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, 16)
+
+            originalSøknadprosess.ja(1).besvar(true)
+            originalSøknadprosess.ja(2).besvar(true)
+            originalSøknadprosess.ja(3).besvar(true)
+            originalSøknadprosess.ja(4).besvar(true)
+            originalSøknadprosess.ja(5).besvar(true)
+
+            assertEquals(5, originalSøknadprosess.søknad.count { it.erBesvart() })
+
+            rehydrertSøknadprosess = søknadRecord.hent(originalSøknadprosess.søknad.uuid)
+            assertEquals(5, rehydrertSøknadprosess.søknad.count { it.erBesvart() })
         }
     }
 

@@ -57,6 +57,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     override fun accept(visitor: FaktumVisitor) {
         faktumId.accept(visitor)
         tilstand.accept(this, visitor)
+        visitor.preVisitAvhengerAvFakta(this, avhengerAvFakta)
     }
 
     override fun grunnleggendeFakta() = setOf(this)

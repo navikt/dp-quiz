@@ -27,6 +27,7 @@ import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.faktum.til
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.visitor.FaktumVisitor
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -76,24 +77,41 @@ class SøknadRecord : SøknadPersistence {
                 uuid
             )
             .also { søknadprosess ->
+                val avhengigeSvar = ArrayDeque<FaktumVerdiRow>()
+
                 svarList(uuid).forEach { row ->
                     søknadprosess.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
-                        if (row.heltall != null) (faktum as Faktum<Int>).besvar(row.heltall)
-                        if (row.janei != null) (faktum as Faktum<Boolean>).besvar(row.janei)
-                        if (row.dato != null) (faktum as Faktum<LocalDate>).besvar(row.dato)
-                        if (row.inntekt != null) (faktum as Faktum<Inntekt>).besvar(row.inntekt)
-                        if (row.opplastet != null && row.url != null) (faktum as Faktum<Dokument>).besvar(
-                            Dokument(
-                                row.opplastet,
-                                row.url
-                            )
-                        )
-                        if (row.fom != null && row.tom != null) (faktum as Faktum<Periode>).besvar(
-                            row.fom til row.tom
-                        )
+                        if (AvhengerAvVisitor(faktum).avhengerAv.isEmpty()) {
+                            besvarFaktum(row, faktum)
+                        } else {
+                            // etter den siste som den avhenger av, eller først.
+                            avhengigeSvar.addFirst(row)
+                        }
+                    }
+                }
+
+                avhengigeSvar.forEach { row ->
+                    søknadprosess.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
+                        besvarFaktum(row, faktum)
                     }
                 }
             }
+    }
+
+    private fun besvarFaktum(row: FaktumVerdiRow, faktum: Faktum<*>) {
+        if (row.heltall != null) (faktum as Faktum<Int>).besvar(row.heltall)
+        if (row.janei != null) (faktum as Faktum<Boolean>).besvar(row.janei)
+        if (row.dato != null) (faktum as Faktum<LocalDate>).besvar(row.dato)
+        if (row.inntekt != null) (faktum as Faktum<Inntekt>).besvar(row.inntekt)
+        if (row.opplastet != null && row.url != null) (faktum as Faktum<Dokument>).besvar(
+            Dokument(
+                row.opplastet,
+                row.url
+            )
+        )
+        if (row.fom != null && row.tom != null) (faktum as Faktum<Periode>).besvar(
+            row.fom til row.tom
+        )
     }
 
     private infix fun Int.indeks(indeks: Int) = if (indeks == 0) this.toString() else "$this.$indeks"
@@ -395,6 +413,21 @@ class SøknadRecord : SøknadPersistence {
                     ).asExecute
                 )
             }
+        }
+    }
+
+    private class AvhengerAvVisitor(faktum: Faktum<*>) : FaktumVisitor {
+        var avhengerAv = emptySet<Faktum<*>>()
+
+        init {
+            faktum.accept(this)
+        }
+
+        override fun <R : Comparable<R>> preVisitAvhengerAvFakta(
+            faktum: Faktum<R>,
+            avhengerAvFakta: MutableSet<Faktum<*>>
+        ) {
+            avhengerAv = avhengerAvFakta
         }
     }
 }
