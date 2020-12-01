@@ -21,7 +21,6 @@ import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1.prototypeFakta1
 import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt
 import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -86,26 +85,6 @@ internal class SøknadRecordTest {
             hentFørsteSøknad()
             assertRecordCount(5, "gammel_faktum_verdi")
             assertFalse(rehydrertSøknadprosess.ja(19).erBesvart())
-        }
-    }
-
-    @Test
-    fun `Avslag på minsteinntekt`() {
-        Postgres.withMigratedDb {
-            AvslagPåMinsteinntekt()
-            søknadRecord = SøknadRecord()
-            val søknad = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, 2)
-
-            søknad.dokument(15).besvar(Dokument(LocalDateTime.now(), "12345"))
-            søknad.dato(1).besvar(LocalDate.now())
-            søknad.dato(2).besvar(LocalDate.now())
-            søknad.dato(4).besvar(LocalDate.now())
-            søknad.dato(11).besvar(LocalDate.now())
-
-            søknadRecord.lagre(søknad.søknad)
-
-            val s2 = søknadRecord.hent(søknad.søknad.uuid)
-            assertEquals(6, s2.søknad.count { it.erBesvart() })
         }
     }
 
