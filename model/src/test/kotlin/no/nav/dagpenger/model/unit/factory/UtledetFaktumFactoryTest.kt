@@ -5,7 +5,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.alle
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.factory.ValgFaktumFactory.Companion.valg
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -126,25 +125,6 @@ internal class UtledetFaktumFactoryTest {
         assertEquals(true, faktum.svar())
         søknadprosess.ja("1").besvar(false)
         assertEquals(false, faktum.svar())
-    }
-
-    @Test
-    fun `En eller ingen`() {
-        val søknad = Søknad(
-            86,
-            valg faktum "valg" ja "valg1" ja "valg2" nei "valg3" id 1
-        ).testSøknadprosess()
-        assertFalse(søknad.ja(2).erBesvart())
-        assertFalse(søknad.ja(3).erBesvart())
-        assertFalse(søknad.ja(4).erBesvart())
-        assertFalse(søknad.ja(1).erBesvart())
-        søknad.ja(2).besvar(true)
-        assertTrue(søknad.ja(2).erBesvart())
-        assertTrue(søknad.ja(1).svar())
-        søknad.ja(4).besvar(true)
-        assertTrue(søknad.ja(4).erBesvart())
-        assertFalse(søknad.ja(2).erBesvart())
-        assertFalse(søknad.ja(1).svar())
     }
 
     @Test

@@ -11,7 +11,6 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -110,38 +109,6 @@ interface FaktumVisitor {
         id: String,
         children: Set<Faktum<*>>,
         clazz: Class<R>
-    ) {
-    }
-
-    fun preVisit(
-        faktum: ValgFaktum,
-        id: String,
-        avhengigeFakta: Set<Faktum<*>>,
-        avhengerAvFakta: Set<Faktum<*>>,
-        underordnedeJa: Set<Faktum<Boolean>>,
-        underordnedeNei: Set<Faktum<Boolean>>,
-        clazz: Class<Boolean>,
-        svar: Boolean
-    ) {
-    }
-
-    fun preVisit(
-        faktum: ValgFaktum,
-        id: String,
-        avhengigeFakta: Set<Faktum<*>>,
-        avhengerAvFakta: Set<Faktum<*>>,
-        underordnedeJa: Set<Faktum<Boolean>>,
-        underordnedeNei: Set<Faktum<Boolean>>,
-        clazz: Class<Boolean>,
-    ) {
-    }
-
-    fun postVisit(
-        faktum: ValgFaktum,
-        id: String,
-        underordnedeJa: Set<Faktum<Boolean>>,
-        underordnedeNei: Set<Faktum<Boolean>>,
-        clazz: Class<Boolean>
     ) {
     }
 

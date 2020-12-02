@@ -38,7 +38,6 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
             GrunnleggendeFaktum::class.java,
             TemplateFaktum::class.java,
             GeneratorFaktum::class.java,
-            ValgFaktum::class.java,
             UtledetFaktum::class.java
         )
     }

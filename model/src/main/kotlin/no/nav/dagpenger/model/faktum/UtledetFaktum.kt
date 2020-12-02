@@ -12,7 +12,6 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
 
     internal fun max(): R = underordnede.maxOf { it.svar() }
     internal fun alle(): Boolean = underordnede.all { it.svar() as Boolean }
-    internal fun valg(): Boolean = underordnede.all { it.svar() as Boolean }
 
     override fun clazz() = underordnede.toList().first().clazz()
 

@@ -6,7 +6,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.factory.ValgFaktumFactory.Companion.valg
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
@@ -38,8 +37,7 @@ internal object SøknadEksempel1 {
         ja nei "f18" id 18,
         ja nei "f19" id 19 avhengerAv 2 og 13,
         maks dato "345" av 3 og 4 og 5 id 345,
-        maks dato "345213" av 345 og 2 og 13 id 345213,
-        valg faktum "f20" ja "ja1" ja "ja2" nei "nei1" nei "nei2" id 20
+        maks dato "345213" av 345 og 2 og 13 id 345213
     )
 
     private val webPrototypeSøknad = Søknadprosess(

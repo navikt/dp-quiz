@@ -1,7 +1,6 @@
 package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.factory.FaktumFactory
-import no.nav.dagpenger.model.factory.ValgFaktumFactory
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
@@ -23,7 +22,7 @@ class Søknad private constructor(
         person,
         versjonId,
         uuid,
-        factories.ekspanderValg().toFaktaMap()
+        factories.toFaktaMap()
     )
 
     init {
@@ -37,19 +36,11 @@ class Søknad private constructor(
             *(this.map { it }.toTypedArray())
         )
 
-        private fun List<FaktumFactory<*>>.ekspanderValg(): MutableList<FaktumFactory<*>> =
-            this.toMutableList().also { resultater ->
-                resultater.toList().forEach {
-                    if (it is ValgFaktumFactory) it.ekspanderValg(resultater)
-                }
-            }
-
-        private fun MutableList<FaktumFactory<*>>.toFaktaMap() =
+        private fun List<FaktumFactory<*>>.toFaktaMap() =
             tilFakta()
                 .sjekkIder()
                 .tilTemplate(this)
                 .angiAvhengigheter(this)
-                .tilValg(this)
                 .tilUtledet(this)
 
         private fun List<FaktumFactory<*>>.tilFakta() = this.map { factory ->
@@ -65,28 +56,21 @@ class Søknad private constructor(
                 }
             }
 
-        private fun List<Pair<FaktumId, Faktum<*>>>.tilTemplate(factories: MutableList<FaktumFactory<*>>): MutableMap<FaktumId, Faktum<*>> =
+        private fun List<Pair<FaktumId, Faktum<*>>>.tilTemplate(factories: List<FaktumFactory<*>>): MutableMap<FaktumId, Faktum<*>> =
             this.toMap().toMutableMap().also { faktumMap ->
                 factories.forEach { factory ->
                     factory.tilTemplate(faktumMap)
                 }
             }
 
-        private fun MutableMap<FaktumId, Faktum<*>>.angiAvhengigheter(factories: MutableList<FaktumFactory<*>>): MutableMap<FaktumId, Faktum<*>> =
+        private fun MutableMap<FaktumId, Faktum<*>>.angiAvhengigheter(factories: List<FaktumFactory<*>>): MutableMap<FaktumId, Faktum<*>> =
             this.also { faktumMap ->
                 factories.forEach { factory ->
                     factory.avhengerAv(faktumMap)
                 }
             }
 
-        private fun MutableMap<FaktumId, Faktum<*>>.tilValg(factories: MutableList<FaktumFactory<*>>): MutableMap<FaktumId, Faktum<*>> =
-            this.also { faktumMap ->
-                factories.forEach { factory ->
-                    factory.valgMellom(faktumMap)
-                }
-            }
-
-        private fun MutableMap<FaktumId, Faktum<*>>.tilUtledet(factories: MutableList<FaktumFactory<*>>): MutableMap<FaktumId, Faktum<*>> =
+        private fun MutableMap<FaktumId, Faktum<*>>.tilUtledet(factories: List<FaktumFactory<*>>): MutableMap<FaktumId, Faktum<*>> =
             this.also { faktumMap ->
                 factories.forEach { factory ->
                     factory.sammensattAv(faktumMap)
@@ -125,10 +109,6 @@ class Søknad private constructor(
     override infix fun generator(rootId: Int) = generator(FaktumId(rootId))
     override infix fun generator(id: String) = generator(FaktumId(id))
     internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
-
-    override infix fun valg(rootId: Int) = valg(FaktumId(rootId))
-    override infix fun valg(id: String) = valg(FaktumId(id))
-    internal infix fun valg(faktumId: FaktumId) = id(faktumId) as ValgFaktum
 
     fun bygg(person: Person, versjonId: Int, uuid: UUID = UUID.randomUUID()): Søknad {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()

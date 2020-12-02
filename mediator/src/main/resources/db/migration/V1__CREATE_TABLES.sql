@@ -94,14 +94,6 @@ CREATE TABLE IF NOT EXISTS utledet_faktum
     PRIMARY KEY (parent_id, child_id)
 );
 
-CREATE TABLE IF NOT EXISTS valg_faktum
-(
-    parent_id BIGSERIAL NOT NULL REFERENCES faktum (id),
-    child_id  BIGSERIAL NOT NULL REFERENCES faktum (id),
-    ja_nei    BOOL      NOT NULL,
-    PRIMARY KEY (parent_id, child_id)
-);
-
 CREATE TABLE IF NOT EXISTS template_faktum
 (
     parent_id BIGSERIAL NOT NULL REFERENCES faktum (id),

@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 
 internal class PrettyPrintTest {
     private lateinit var søknadprosess: Søknadprosess
-    private val antallSubsumsjoner = 18
+    private val antallSubsumsjoner = 17
 
     @BeforeEach
     fun setUp() {

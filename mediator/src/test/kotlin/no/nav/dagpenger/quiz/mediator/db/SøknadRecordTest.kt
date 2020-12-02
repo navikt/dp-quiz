@@ -31,7 +31,7 @@ import kotlin.test.assertTrue
 internal class SøknadRecordTest {
     companion object {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
-        private const val expectedFaktaCount = 26
+        private const val expectedFaktaCount = 21
     }
 
     private lateinit var originalSøknadprosess: Søknadprosess
@@ -155,28 +155,6 @@ internal class SøknadRecordTest {
 
             hentFørsteSøknad()
             assertEquals(expectedFaktaCount + 9, rehydrertSøknadprosess.søknad.map { it }.size)
-        }
-    }
-
-    @Test
-    fun `lagrer og rehydrerer valg`() {
-        Postgres.withMigratedDb {
-            byggOriginalSøknadprosess()
-            assertSesjonType(Web)
-            originalSøknadprosess.ja(345214).besvar(true)
-
-            hentFørsteSøknad()
-            assertSesjonType(Web)
-            assertTrue(rehydrertSøknadprosess.ja(345214).svar())
-            assertTrue(rehydrertSøknadprosess.ja(20).svar())
-
-            originalSøknadprosess = rehydrertSøknadprosess
-            originalSøknadprosess.ja(345216).besvar(true)
-
-            hentFørsteSøknad()
-            assertSesjonType(Web)
-            assertTrue(rehydrertSøknadprosess.ja(345216).svar())
-            assertFalse(rehydrertSøknadprosess.ja(20).svar())
         }
     }
 

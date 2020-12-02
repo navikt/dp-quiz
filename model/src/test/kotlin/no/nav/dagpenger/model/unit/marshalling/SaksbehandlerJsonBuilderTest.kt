@@ -311,7 +311,7 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `Komplekse seksjoner`() {
         assertSeksjonSize(8, "seksjon8")
         assertSeksjonSize(5, "seksjon4")
-        assertSeksjonSize(5, "seksjon2")
+        assertSeksjonSize(4, "seksjon2")
     }
 
     @Test

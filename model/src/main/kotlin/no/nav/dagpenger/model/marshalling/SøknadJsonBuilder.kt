@@ -12,7 +12,6 @@ import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
@@ -33,7 +32,6 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
     protected val identerNode = mapper.createArrayNode()
     protected val subsumsjonRoot = mapper.createArrayNode()
     private var ignore = true
-    private var iValg = false
     private val faktumIder = mutableSetOf<String>()
     private val subsumsjonNoder = mutableListOf<ArrayNode>(subsumsjonRoot)
     open fun resultat() = root
@@ -65,7 +63,6 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
-        if (iValg) return
         lagFaktumNode<R>(id, faktum.navn, roller, godkjenner)
     }
 
@@ -106,43 +103,6 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         svar: R
     ) {
         lagFaktumNode(id, faktum.navn, svar = svar)
-    }
-
-    override fun preVisit(
-        faktum: ValgFaktum,
-        id: String,
-        avhengigeFakta: Set<Faktum<*>>,
-        avhengerAvFakta: Set<Faktum<*>>,
-        underordnedeJa: Set<Faktum<Boolean>>,
-        underordnedeNei: Set<Faktum<Boolean>>,
-        clazz: Class<Boolean>
-    ) {
-        lagFaktumNode<Boolean>(id, faktum.navn)
-        iValg = true
-    }
-
-    override fun preVisit(
-        faktum: ValgFaktum,
-        id: String,
-        avhengigeFakta: Set<Faktum<*>>,
-        avhengerAvFakta: Set<Faktum<*>>,
-        underordnedeJa: Set<Faktum<Boolean>>,
-        underordnedeNei: Set<Faktum<Boolean>>,
-        clazz: Class<Boolean>,
-        svar: Boolean
-    ) {
-        lagFaktumNode(id, faktum.navn, svar = svar)
-        iValg = true
-    }
-
-    override fun postVisit(
-        faktum: ValgFaktum,
-        id: String,
-        underordnedeJa: Set<Faktum<Boolean>>,
-        underordnedeNei: Set<Faktum<Boolean>>,
-        clazz: Class<Boolean>
-    ) {
-        iValg = false
     }
 
     override fun preVisit(

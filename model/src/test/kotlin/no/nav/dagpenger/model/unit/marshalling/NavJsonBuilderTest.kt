@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.factory.ValgFaktumFactory.Companion.valg
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
@@ -31,11 +30,10 @@ class NavJsonBuilderTest {
             ja nei "f1" id 1,
             ja nei "f1" id 2 avhengerAv 1,
             ja nei "f3" id 3,
-            ja nei "f4" id 4 avhengerAv 7 og 8,
+            ja nei "f4" id 4 avhengerAv 7,
             dato faktum "f5" id 5,
             dato faktum "f6" id 6,
-            maks dato "f56" av 5 og 6 id 7,
-            valg faktum "f8" ja "jaValg1" ja "jaValg2" nei "neiValg1" nei "neiValg2" id 8
+            maks dato "f56" av 5 og 6 id 7
         )
 
         val prototypeSubsumsjon =
@@ -43,8 +41,7 @@ class NavJsonBuilderTest {
                 "alle".alle(
                     prototypeSøknad.ja(2) er true,
                     prototypeSøknad.ja(3) er true,
-                    prototypeSøknad.ja(4) er true,
-                    prototypeSøknad.valg(8) er true
+                    prototypeSøknad.ja(4) er true
                 )
 
         val søkerSeksjon = Seksjon("seksjon søker", Rolle.søker, prototypeSøknad.ja(1))
@@ -80,8 +77,7 @@ class NavJsonBuilderTest {
                 4 to "f4Behov",
                 5 to "f5Behov",
                 6 to "f6Behov",
-                7 to "f7Behov",
-                8 to "f8Behov"
+                7 to "f7Behov"
             )
         )
 
@@ -95,12 +91,11 @@ class NavJsonBuilderTest {
         )
 
         fakta.dato(6).besvar(1.januar)
-        fakta.ja(9).besvar(true)
 
         assertBehovJson(
             json = NavJsonBuilder(fakta, "seksjon nav").resultat(),
             faktumOgBehov = listOf(2 to "f2Behov", 3 to "f3Behov", 4 to "f4Behov"),
-            avhengigeBehov = listOf("f7Behov", "f8Behov")
+            avhengigeBehov = listOf("f7Behov")
         )
 
         fakta.dato(2).besvar(1.januar)

@@ -17,6 +17,4 @@ interface TypedFaktum {
     infix fun heltall(id: String): Faktum<Int>
     infix fun generator(rootId: Int): Faktum<Int>
     infix fun generator(id: String): Faktum<Int>
-    infix fun valg(rootId: Int): ValgFaktum
-    infix fun valg(id: String): ValgFaktum
 }

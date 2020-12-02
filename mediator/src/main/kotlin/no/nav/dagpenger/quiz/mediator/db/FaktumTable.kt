@@ -10,7 +10,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.FaktaRegel
-import no.nav.dagpenger.model.factory.FaktaRegel.Companion.VALG
 import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
@@ -22,7 +21,6 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.util.UUID
@@ -109,23 +107,6 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor
         avhengigheter[faktum] = avhengigeFakta
     }
 
-    override fun preVisit(
-        faktum: ValgFaktum,
-        id: String,
-        avhengigeFakta: Set<Faktum<*>>,
-        avhengerAvFakta: Set<Faktum<*>>,
-        underordnedeJa: Set<Faktum<Boolean>>,
-        underordnedeNei: Set<Faktum<Boolean>>,
-        clazz: Class<Boolean>
-    ) {
-        if (dbIder.containsKey(faktum)) return
-        skrivFaktum(faktum, clazz, VALG).also {
-            valgFaktum(it, underordnedeJa, true)
-            valgFaktum(it, underordnedeNei, false)
-        }
-        avhengigheter[faktum] = avhengigeFakta
-    }
-
     override fun postVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
         avhengigheter.forEach { (parent, children) -> faktumFaktum(dbIder[parent]!!, children, "avhengig_faktum") }
     }
@@ -138,21 +119,6 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor
                         "INSERT INTO $table (parent_id, child_id) VALUES (?, ?)".trimMargin(),
                         parentId,
                         dbIder[child]
-                    ).asExecute
-                )
-            }
-        }
-    }
-
-    private fun valgFaktum(parentId: Int, children: Collection<Faktum<*>>, type: Boolean) {
-        children.forEach { child ->
-            using(sessionOf(dataSource)) { session ->
-                session.run(
-                    queryOf(
-                        "INSERT INTO valg_faktum (parent_id, child_id, ja_nei) VALUES (?, ?, ?)".trimMargin(),
-                        parentId,
-                        dbIder[child],
-                        type
                     ).asExecute
                 )
             }

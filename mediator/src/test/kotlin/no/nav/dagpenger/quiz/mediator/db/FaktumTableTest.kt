@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 
 internal class FaktumTableTest {
     companion object {
-        val expectedFaktumRecordCount = 26
+        const val expectedFaktumRecordCount = 21
     }
     @Test
     fun `Bygg faktum tabell`() {
@@ -19,9 +19,8 @@ internal class FaktumTableTest {
             FaktumTable(prototypeFakta1, 1)
             assertRecordCount(expectedFaktumRecordCount, "faktum")
             assertRecordCount(6, "utledet_faktum")
-            assertRecordCount(4, "valg_faktum")
             assertRecordCount(3, "template_faktum")
-            assertRecordCount(16, "avhengig_faktum")
+            assertRecordCount(4, "avhengig_faktum")
             FaktumTable(prototypeFakta1, 1)
             assertRecordCount(expectedFaktumRecordCount, "faktum")
         }

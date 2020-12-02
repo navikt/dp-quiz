@@ -6,7 +6,6 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
@@ -93,7 +92,6 @@ abstract class Subsumsjon protected constructor(
     private class RelevanteFakta(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         val resultater = mutableSetOf<Faktum<*>>()
         private var ignore = false
-        private var iValg = false
 
         init {
             subsumsjon.mulige().accept(this)
@@ -129,7 +127,7 @@ abstract class Subsumsjon protected constructor(
             roller: Set<Rolle>,
             clazz: Class<R>
         ) {
-            if (!ignore && !iValg) {
+            if (!ignore) {
                 resultater.add(faktum)
             }
         }
@@ -177,47 +175,6 @@ abstract class Subsumsjon protected constructor(
             if (!ignore) {
                 resultater.add(faktum)
             }
-        }
-
-        override fun preVisit(
-            faktum: ValgFaktum,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFakta: Set<Faktum<*>>,
-            underordnedeJa: Set<Faktum<Boolean>>,
-            underordnedeNei: Set<Faktum<Boolean>>,
-            clazz: Class<Boolean>
-        ) {
-            if (!ignore) {
-                resultater.add(faktum)
-                iValg = true
-            }
-        }
-
-        override fun preVisit(
-            faktum: ValgFaktum,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFakta: Set<Faktum<*>>,
-            underordnedeJa: Set<Faktum<Boolean>>,
-            underordnedeNei: Set<Faktum<Boolean>>,
-            clazz: Class<Boolean>,
-            svar: Boolean
-        ) {
-            if (!ignore) {
-                resultater.add(faktum)
-                iValg = true
-            }
-        }
-
-        override fun postVisit(
-            faktum: ValgFaktum,
-            id: String,
-            underordnedeJa: Set<Faktum<Boolean>>,
-            underordnedeNei: Set<Faktum<Boolean>>,
-            clazz: Class<Boolean>
-        ) {
-            iValg = false
         }
     }
 }
