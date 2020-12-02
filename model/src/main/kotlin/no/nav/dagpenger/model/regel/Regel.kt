@@ -18,6 +18,7 @@ import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.alle
 import java.time.LocalDate
 
 interface Regel {
@@ -36,6 +37,17 @@ infix fun Faktum<LocalDate>.etter(tidligsteDato: Faktum<LocalDate>) = EnkelSubsu
     },
     this,
     tidligsteDato
+)
+
+infix fun Faktum<LocalDate>.ikkeEtter(tom: Faktum<LocalDate>) = EnkelSubsumsjon(
+    object : Regel {
+        override val typeNavn = "ikke etter"
+        override fun resultat(fakta: List<Faktum<*>>) =
+            (fakta[0] as Faktum<LocalDate>).svar() <= (fakta[1] as Faktum<LocalDate>).svar()
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er ikke etter '${fakta[1]}'"
+    },
+    this,
+    tom
 )
 
 infix fun Faktum<LocalDate>.før(senesteDato: Faktum<LocalDate>) = EnkelSubsumsjon(
@@ -57,6 +69,15 @@ infix fun Faktum<LocalDate>.ikkeFør(senesteDato: Faktum<LocalDate>) = EnkelSubs
     this,
     senesteDato
 )
+
+infix fun Faktum<LocalDate>.mellom(fom: Faktum<LocalDate>) = PeriodeSubsumsjonBuilder(this, fom)
+
+class PeriodeSubsumsjonBuilder internal constructor(private val faktum: Faktum<LocalDate>, private val fom: Faktum<LocalDate>) {
+    infix fun og(tom: Faktum<LocalDate>) = "periode innenfor sjekk".alle(
+        faktum ikkeFør fom,
+        faktum ikkeEtter tom
+    )
+}
 
 infix fun Faktum<LocalDate>.innenfor(periode: Faktum<Periode>) = EnkelSubsumsjon(
     object : Regel {
