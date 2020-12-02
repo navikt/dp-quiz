@@ -8,6 +8,7 @@ import kotlin.test.assertEquals
 
 internal class PrettyPrintTest {
     private lateinit var søknadprosess: Søknadprosess
+    private val antallSubsumsjoner = 18
 
     @BeforeEach
     fun setUp() {
@@ -17,7 +18,7 @@ internal class PrettyPrintTest {
     @Test
     fun `printer ett subsumsjonstre uten verdier`() {
         søknadprosess.rootSubsumsjon.toString().also {
-            assertEquals(19, Regex("ukjent").findAll(it).count())
+            assertEquals(antallSubsumsjoner, Regex("ukjent").findAll(it).count())
         }
     }
 
@@ -29,7 +30,7 @@ internal class PrettyPrintTest {
     fun `printer ett subsumsjonstre med genererte fakta`() {
         søknadprosess.heltall(15).besvar(3)
         søknadprosess.rootSubsumsjon.toString().also {
-            assertEquals(19 + 1 + (3 * 3), Regex("ukjent").findAll(it).count())
+            assertEquals(antallSubsumsjoner + 1 + (3 * 3), Regex("ukjent").findAll(it).count())
         }
     }
 }

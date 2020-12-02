@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
+import no.nav.dagpenger.model.helpers.versjonId
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -23,13 +24,11 @@ import org.junit.jupiter.api.assertThrows
 internal class ResultatJsonBuilderTest {
     private lateinit var prototypeSøknad: Søknad
 
-    companion object {
-        private var versjonId = runCatching { Versjon.siste }.getOrDefault(0)
-    }
+    private var versjonId = 0
 
     @BeforeEach
     fun setup() {
-        versjonId++
+        versjonId = versjonId()
         prototypeSøknad = Søknad(
             versjonId,
             ja nei "f1" id 1,

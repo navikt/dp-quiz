@@ -5,17 +5,14 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.daglig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.til
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.helpers.november
 import no.nav.dagpenger.model.helpers.testSøknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.helpers.versjonId
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,13 +24,11 @@ import kotlin.test.assertTrue
 
 internal class BaseFaktumFactoryTest {
 
-    companion object {
-        private var versjonId = runCatching { Versjon.siste }.getOrDefault(0)
-    }
+    private var versjonId: Int = 0
 
     @BeforeEach
     fun setup() {
-        versjonId++
+        versjonId = versjonId()
     }
 
     @Test
@@ -110,20 +105,6 @@ internal class BaseFaktumFactoryTest {
             faktum.besvar(it)
             assertTrue(faktum.erBesvart())
             assertEquals(it, faktum.svar())
-        }
-    }
-
-    @Test
-    fun `Periodefaktum factory`() {
-        val søknadprosess = Søknad(versjonId, periode faktum "periode" id 3).testSøknadprosess()
-        (søknadprosess periode 3).also { faktum ->
-            assertFalse(faktum.erBesvart())
-            assertThrows<IllegalStateException> { faktum.svar() }
-            (13.november til 15.november).also { periode ->
-                faktum.besvar(periode)
-                assertTrue(faktum.erBesvart())
-                assertEquals(periode, faktum.svar())
-            }
         }
     }
 }

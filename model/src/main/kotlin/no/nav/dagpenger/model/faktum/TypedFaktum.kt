@@ -19,6 +19,4 @@ interface TypedFaktum {
     infix fun generator(id: String): Faktum<Int>
     infix fun valg(rootId: Int): ValgFaktum
     infix fun valg(id: String): ValgFaktum
-    infix fun periode(id: String): Faktum<Periode>
-    infix fun periode(rootId: Int): Faktum<Periode>
 }

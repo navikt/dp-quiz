@@ -8,10 +8,8 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.til
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -19,7 +17,6 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1.prototypeFakta1
-import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Disabled
@@ -214,18 +211,6 @@ internal class SøknadRecordTest {
             originalSøknadprosess.dato(5).besvar(5.januar)
             hentFørsteSøknad()
             assertEquals(5.januar, rehydrertSøknadprosess.dato(345).svar())
-        }
-    }
-
-    @Test
-    fun `periode faktum med verdi`() {
-        Postgres.withMigratedDb {
-            byggOriginalSøknadprosess()
-            (3.januar til 3.februar).also { periode: Periode ->
-                originalSøknadprosess.periode(21).besvar(periode)
-                hentFørsteSøknad()
-                assertEquals(periode, rehydrertSøknadprosess.periode(21).svar())
-            }
         }
     }
 

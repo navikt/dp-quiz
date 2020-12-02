@@ -17,14 +17,12 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Identer.Ident
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.faktum.ValgFaktum
-import no.nav.dagpenger.model.faktum.til
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
@@ -109,9 +107,6 @@ class SøknadRecord : SøknadPersistence {
                 row.url
             )
         )
-        if (row.fom != null && row.tom != null) (faktum as Faktum<Periode>).besvar(
-            row.fom til row.tom
-        )
     }
 
     private infix fun Int.indeks(indeks: Int) = if (indeks == 0) this.toString() else "$this.$indeks"
@@ -131,14 +126,11 @@ class SøknadRecord : SøknadPersistence {
                                 faktum_verdi.dato AS dato, 
                                 faktum_verdi.aarlig_inntekt AS aarlig_inntekt, 
                                 dokument.url AS url, 
-                                dokument.opplastet AS opplastet,
-                                periode.fom AS fom,
-                                periode.tom AS tom
+                                dokument.opplastet AS opplastet
                             FROM faktum_verdi
                             JOIN soknad_faktum ON faktum_verdi.soknad_id = soknad_faktum.soknad_id 
                                 AND faktum_verdi.faktum_id = soknad_faktum.faktum_id
                             LEFT JOIN dokument ON faktum_verdi.dokument_id = dokument.id
-                            LEFT JOIN periode ON faktum_verdi.periode_id = periode.id
                             ORDER BY indeks""",
                     uuid
                 ).map {
@@ -150,9 +142,7 @@ class SøknadRecord : SøknadPersistence {
                         it.localDateOrNull("dato"),
                         it.doubleOrNull("aarlig_inntekt")?.årlig,
                         it.stringOrNull("url"),
-                        it.localDateTimeOrNull("opplastet"),
-                        it.localDateOrNull("fom"),
-                        it.localDateOrNull("tom")
+                        it.localDateTimeOrNull("opplastet")
                     )
                 }.asList
             )
@@ -167,9 +157,7 @@ class SøknadRecord : SøknadPersistence {
         val dato: LocalDate?,
         val inntekt: Inntekt?,
         val url: String?,
-        val opplastet: LocalDateTime?,
-        val fom: LocalDate?,
-        val tom: LocalDate?
+        val opplastet: LocalDateTime?
 
     )
 
@@ -183,8 +171,6 @@ class SøknadRecord : SøknadPersistence {
             is Int -> """UPDATE faktum_verdi  SET heltall = $svar,  opprettet=NOW() AT TIME ZONE 'utc' """
             is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
 |                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id), opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
-            is Periode -> """WITH inserted_id AS (INSERT INTO periode (fom, tom) VALUES ('${svar.start}', '${svar.endInclusive}') returning id) 
-|                               UPDATE faktum_verdi SET periode_id = (SELECT id FROM inserted_id), opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
             else -> throw IllegalArgumentException("Ugyldig type: ${svar.javaClass}")
         } + """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, soknad, faktum
             WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id AND soknad.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
