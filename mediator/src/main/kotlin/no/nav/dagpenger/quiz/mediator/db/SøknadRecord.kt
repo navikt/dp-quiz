@@ -74,22 +74,19 @@ class SøknadRecord : SøknadPersistence {
                 uuid
             )
             .also { søknadprosess ->
-                val avhengigeSvar = ArrayDeque<FaktumVerdiRow>()
+                val besvarteFaktum = mutableListOf<Faktum<*>>()
+                val svarQueue = ArrayDeque(svarList(uuid))
 
-                svarList(uuid).forEach { row ->
+                while (!svarQueue.isEmpty()) {
+                    val row = svarQueue.removeFirst()
                     søknadprosess.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
-                        if (AvhengerAvVisitor(faktum).avhengerAv.isEmpty()) {
+                        val avhengigeFaktum = AvhengerAvVisitor(faktum).avhengerAv
+                        if (avhengigeFaktum.isEmpty() || avhengigeFaktum.all { it in besvarteFaktum }) {
                             besvarFaktum(row, faktum)
+                            besvarteFaktum.add(faktum)
                         } else {
-                            // etter den siste som den avhenger av, eller først.
-                            avhengigeSvar.addFirst(row)
+                            svarQueue.addLast(row)
                         }
-                    }
-                }
-
-                avhengigeSvar.forEach { row ->
-                    søknadprosess.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
-                        besvarFaktum(row, faktum)
                     }
                 }
             }

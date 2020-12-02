@@ -18,12 +18,11 @@ import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1.prototypeFakta1
 import no.nav.dagpenger.quiz.mediator.helpers.januar
+import no.nav.dagpenger.quiz.mediator.helpers.versjonId
 import no.nav.helse.serde.assertDeepEquals
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
-import java.time.LocalDateTime
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -87,23 +86,10 @@ internal class SøknadRecordTest {
 
     @Test
     fun `Avhengig faktum rehydreres`() {
-        Postgres.withMigratedDb {
-            byggOriginalSøknadprosess()
-            originalSøknadprosess.dokument(11).besvar(Dokument(LocalDateTime.now(), url = "123456"))
-            originalSøknadprosess.ja(1).besvar(true)
-            søknadRecord.lagre(originalSøknadprosess.søknad)
-
-            rehydrertSøknadprosess = søknadRecord.hent(originalSøknadprosess.søknad.uuid)
-            assertEquals(2, rehydrertSøknadprosess.søknad.count { it.erBesvart() })
-        }
-    }
-
-    @Test
-    @Disabled
-    fun `Avhengig faktum rehydreres 2`() {
+        val versjonId = versjonId()
         Postgres.withMigratedDb {
             val prototypeFakta = Søknad(
-                16,
+                versjonId,
                 ja nei "f1" id 1 avhengerAv 4,
                 ja nei "f2" id 2,
                 ja nei "f3" id 3 avhengerAv 1,
@@ -123,18 +109,19 @@ internal class SøknadRecordTest {
                     )
                 )
             )
-            FaktumTable(prototypeFakta, 16)
+            FaktumTable(prototypeFakta, versjonId)
 
             søknadRecord = SøknadRecord()
-            originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, 16)
+            originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, versjonId)
 
-            originalSøknadprosess.ja(1).besvar(true)
             originalSøknadprosess.ja(2).besvar(true)
-            originalSøknadprosess.ja(3).besvar(true)
-            originalSøknadprosess.ja(4).besvar(true)
             originalSøknadprosess.ja(5).besvar(true)
+            originalSøknadprosess.ja(4).besvar(true)
+            originalSøknadprosess.ja(1).besvar(true)
+            originalSøknadprosess.ja(3).besvar(true)
 
             assertEquals(5, originalSøknadprosess.søknad.count { it.erBesvart() })
+            søknadRecord.lagre(originalSøknadprosess.søknad)
 
             rehydrertSøknadprosess = søknadRecord.hent(originalSøknadprosess.søknad.uuid)
             assertEquals(5, rehydrertSøknadprosess.søknad.count { it.erBesvart() })
