@@ -108,11 +108,9 @@ internal class AvslagPåMinsteinntekt {
         lærling er true
     )
 
-
     val meldtSomArbeidssøker = registreringsperioder har "periode".makro(
         ønsketDato mellom registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom
     )
-
 
     private val sjekkFangstOgFisk = "fangst og fisk er dokumentert" makro (
         fangstOgFisk er false eller (godkjenningFangstOgFisk av dokumentasjonFangstOgFisk)

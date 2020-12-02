@@ -38,10 +38,6 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
             }
     }
 
-    private fun sendToRapid(behov: Map<*, *>) {
-        rapidsConnection.publish(objectMapper.writeValueAsString(behov))
-    }
-
     private companion object {
         private val objectMapper = jacksonObjectMapper()
             .registerModule(JavaTimeModule())

@@ -29,38 +29,39 @@ internal class AvslagPåMinsteinntektTest {
 
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
-        assertNesteSeksjon("datoer", 6) {
+        assertNesteSeksjon("datoer", 7) {
             it.besvar(søknadprosess.dato(1), 5.januar)
             it.besvar(søknadprosess.dato(2), 5.januar)
-            it.besvar(søknadprosess.dato(4), 5.januar)
-            it.besvar(søknadprosess.dato(11), 5.januar)
-            it.besvar(søknadprosess.generator(17), 1)
+            it.besvar(søknadprosess.dato(3), 5.januar)
+            it.besvar(søknadprosess.dato(10), 5.januar)
+            it.besvar(søknadprosess.generator(16), 1)
+            it.besvarGenerertFaktum(søknadprosess.dato("18.1"), 1.januar(2018))
+            it.besvarGenerertFaktum(søknadprosess.dato("19.1"), 30.januar(2018))
             it.validerSvar()
         }
-        søknadprosess.periode("3.1").besvar(1.januar(2018) til 30.januar(2018))
 
         assertNesteSeksjon("fangstOgFisk", 1) {
-            it.besvar(søknadprosess.ja(6), false)
+            it.besvar(søknadprosess.ja(5), false)
             it.validerSvar()
         }
 
         assertNesteSeksjon("statiske", 2) {
-            it.besvar(søknadprosess.inntekt(9), 300000.årlig)
-            it.besvar(søknadprosess.inntekt(10), 150000.årlig)
+            it.besvar(søknadprosess.inntekt(8), 300000.årlig)
+            it.besvar(søknadprosess.inntekt(9), 150000.årlig)
             it.validerSvar()
         }
 
         assertNesteSeksjon("inntektsunntak", 2) {
-            it.besvar(søknadprosess.ja(12), false)
-            it.besvar(søknadprosess.ja(18), false)
+            it.besvar(søknadprosess.ja(11), false)
+            it.besvar(søknadprosess.ja(17), false)
             it.validerSvar()
         }
 
         assertNull(søknadprosess.resultat())
 
         assertNesteSeksjon("inntekter", 2) {
-            it.besvar(søknadprosess.inntekt(7), 200000.årlig)
-            it.besvar(søknadprosess.inntekt(8), 50000.årlig)
+            it.besvar(søknadprosess.inntekt(6), 200000.årlig)
+            it.besvar(søknadprosess.inntekt(7), 50000.årlig)
             it.validerSvar()
         }
 
@@ -69,44 +70,45 @@ internal class AvslagPåMinsteinntektTest {
         assertEquals(1, søknadprosess.nesteSeksjoner().size)
 
         assertNesteSeksjon("godkjenn virkningstidspunkt", 1) {
-            it.besvar(søknadprosess.ja(13), true)
+            it.besvar(søknadprosess.ja(12), true)
         }
 
         assertFalse(søknadprosess.resultat()!!)
 
         // Om saksbehandler ikke godkjenner virkningstidspunkt kan ikke det føre til innvilgelse
         assertNesteSeksjon("godkjenn virkningstidspunkt", 1) {
-            it.besvar(søknadprosess.ja(13), false)
+            it.besvar(søknadprosess.ja(12), false)
         }
         assertFalse(søknadprosess.resultat()!!)
 
         // om vi endrer inntekt til å tilfredstille minimumsinntekt
         // vil det fortsatt ikke være innvilgelses pga virkningstidspunkt ikke er godkjent
+        søknadprosess.inntekt(6).besvar(2000000.årlig)
         søknadprosess.inntekt(7).besvar(2000000.årlig)
-        søknadprosess.inntekt(8).besvar(2000000.årlig)
         assertFalse(søknadprosess.resultat()!!)
 
         // Når vi godkjenner virkningstidspunkt vil det føre til innvilgelse
         assertNesteSeksjon("godkjenn virkningstidspunkt", 1) {
-            it.besvar(søknadprosess.ja(13), true)
+            it.besvar(søknadprosess.ja(12), true)
         }
         assertTrue(søknadprosess.resultat()!!)
 
-        søknadprosess.periode("3.1").besvar(1.januar(2019) til 30.januar(2019))
+        søknadprosess.dato("18.1").besvar(1.januar(2019))
+        søknadprosess.dato("19.1").besvar(30.januar(2019))
         assertFalse(søknadprosess.resultat()!!)
 
         // om vi så endrer søknadstidspunkt til å være før virkningstidspunkt vil det ikke føre til innvilgelse
-        søknadprosess.dato(11).besvar(4.januar)
+        søknadprosess.dato(10).besvar(4.januar)
         assertFalse(søknadprosess.resultat()!!)
 
         // selv om virkningstidspunkt godkjennes
-        søknadprosess.ja(13).besvar(true)
+        søknadprosess.ja(12).besvar(true)
         assertFalse(søknadprosess.resultat()!!)
 
         // Være sikker på at godkjenning av virkningstidspunkt resettes når de
         // underliggende datoene for virkningstidspunkt endres
-        søknadprosess.dato(11).besvar(6.januar)
-        assertFalse(søknadprosess.ja(13).erBesvart())
+        søknadprosess.dato(10).besvar(6.januar)
+        assertFalse(søknadprosess.ja(12).erBesvart())
     }
 
     private fun assertNesteSeksjon(
@@ -130,10 +132,19 @@ internal class AvslagPåMinsteinntektTest {
 
     // Sjekker at testen svarer på alle nødvendige faktum i hver seksjon
     private class SvarSpion(fakta: Set<Faktum<*>>) {
-        val skalBesvares = fakta.filterNot { faktum -> faktum.erBesvart() }.map { it.id }
+        var skalBesvares = fakta
+            .filterNot { faktum -> faktum.erBesvart() }
+            .map { it.id }
+            .toMutableList()
         var besvarteFaktum = mutableListOf<String>()
 
         fun <R : Comparable<R>> besvar(f: Faktum<R>, svar: R) {
+            besvarteFaktum.add(f.id)
+            f.besvar(svar)
+        }
+
+        fun <R : Comparable<R>> besvarGenerertFaktum(f: Faktum<R>, svar: R) {
+            skalBesvares.add(f.id)
             besvarteFaktum.add(f.id)
             f.besvar(svar)
         }

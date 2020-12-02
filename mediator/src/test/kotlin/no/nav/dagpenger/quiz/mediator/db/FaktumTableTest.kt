@@ -10,17 +10,20 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class FaktumTableTest {
+    companion object {
+        val expectedFaktumRecordCount = 26
+    }
     @Test
     fun `Bygg faktum tabell`() {
         Postgres.withMigratedDb {
             FaktumTable(prototypeFakta1, 1)
-            assertRecordCount(27, "faktum")
+            assertRecordCount(expectedFaktumRecordCount, "faktum")
             assertRecordCount(6, "utledet_faktum")
             assertRecordCount(4, "valg_faktum")
             assertRecordCount(3, "template_faktum")
             assertRecordCount(16, "avhengig_faktum")
             FaktumTable(prototypeFakta1, 1)
-            assertRecordCount(27, "faktum")
+            assertRecordCount(expectedFaktumRecordCount, "faktum")
         }
     }
 

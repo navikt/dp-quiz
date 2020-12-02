@@ -31,7 +31,7 @@ import kotlin.test.assertTrue
 internal class SøknadRecordTest {
     companion object {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
-        private const val expectedFaktaCount = 27
+        private const val expectedFaktaCount = 26
     }
 
     private lateinit var originalSøknadprosess: Søknadprosess
