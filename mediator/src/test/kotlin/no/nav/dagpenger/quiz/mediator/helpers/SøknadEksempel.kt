@@ -20,7 +20,7 @@ internal object SøknadEksempel {
 
     val prototypeSøknad1 = Søknad(
         666,
-        ja nei "f1_bool" id 1 avhengerAv 15,
+        ja nei "f1_bool" id 1 avhengerAv 14,
         ja nei "f2_bool" id 2,
         heltall faktum "f3_heltall" id 3,
         dato faktum "f4_dato" id 4,
@@ -28,7 +28,7 @@ internal object SøknadEksempel {
         inntekt faktum "f6_inntekt" id 6,
         dokument faktum "f7_dokument" id 7,
         ja nei "f8_bool" id 8,
-        dokument faktum "innsendt søknadsid" id 15, // NySøknadService trenger dette faktumet
+        dokument faktum "innsendt søknadsid" id 14, // NySøknadService trenger dette faktumet
     )
 
     private val webPrototypeSøknad = Søknadprosess(
@@ -92,7 +92,7 @@ internal object SøknadEksempel {
             6 to "f6Behov",
             7 to "f7Behov",
             8 to "f8Behov",
-            15 to "InnsendtSøknadsId"
+            14 to "InnsendtSøknadsId"
         )
     )
 }
