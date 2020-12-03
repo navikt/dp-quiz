@@ -6,31 +6,21 @@ import kotliquery.action.UpdateQueryAction
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import mu.KotlinLogging
-import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
-import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Identer.Ident
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.TemplateFaktum
-import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
-import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
-
-private val log = KotlinLogging.logger {}
 
 // Understands a relational representation of a Søknad
 class SøknadRecord : SøknadPersistence {
@@ -42,10 +32,6 @@ class SøknadRecord : SøknadPersistence {
             NySøknad(søknadprosess.søknad, type)
         }
     }
-
-    private fun svarMap(søknad: Søknad): MutableMap<String, Any?> = søknad.map { faktum ->
-        faktum.id to (if (faktum.erBesvart()) faktum.svar() else null)
-    }.toMap().toMutableMap()
 
     override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?): Søknadprosess {
         data class SoknadRad(val personId: UUID, val versjonId: Int, var typeId: Int)
@@ -81,7 +67,9 @@ class SøknadRecord : SøknadPersistence {
                     val row = svarQueue.removeFirst()
                     søknadprosess.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
                         val avhengigeFaktum = AvhengerAvVisitor(faktum).avhengerAv
-                        if (avhengigeFaktum.isEmpty() || avhengigeFaktum.filterIsInstance<GrunnleggendeFaktum<*>>().all { it in besvarteFaktum }) {
+                        if (avhengigeFaktum.isEmpty() || avhengigeFaktum.filterIsInstance<GrunnleggendeFaktum<*>>()
+                                .all { it in besvarteFaktum }
+                        ) {
                             besvarFaktum(row, faktum)
                             besvarteFaktum.add(faktum)
                         } else {
@@ -104,8 +92,6 @@ class SøknadRecord : SøknadPersistence {
             )
         )
     }
-
-    private infix fun Int.indeks(indeks: Int) = if (indeks == 0) this.toString() else "$this.$indeks"
 
     private fun svarList(uuid: UUID): List<FaktumVerdiRow> {
         return using(sessionOf(dataSource)) { session ->
@@ -142,7 +128,7 @@ class SøknadRecord : SøknadPersistence {
                     )
                 }.asList
             )
-        }!!
+        }
     }
 
     private class FaktumVerdiRow(
@@ -154,29 +140,14 @@ class SøknadRecord : SøknadPersistence {
         val inntekt: Inntekt?,
         val url: String?,
         val opplastet: LocalDateTime?
-
     )
-
-    private fun sqlToInsert(svar: Any?): String {
-        //language=PostgreSQL
-        return when (svar) {
-            null -> """UPDATE faktum_verdi  SET ja_nei = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
-            is Boolean -> """UPDATE faktum_verdi  SET ja_nei = $svar , opprettet=NOW() AT TIME ZONE 'utc' """
-            is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , opprettet=NOW() AT TIME ZONE 'utc' """
-            is LocalDate -> """UPDATE faktum_verdi  SET dato = '$svar',  opprettet=NOW() AT TIME ZONE 'utc' """
-            is Int -> """UPDATE faktum_verdi  SET heltall = $svar,  opprettet=NOW() AT TIME ZONE 'utc' """
-            is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
-|                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id), opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
-            else -> throw IllegalArgumentException("Ugyldig type: ${svar.javaClass}")
-        } + """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, soknad, faktum
-            WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id AND soknad.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
-    }
 
     override fun lagre(søknad: Søknad): Boolean {
         val nyeSvar = svarMap(søknad)
         val originalSvar = svarMap(hent(søknad.uuid).søknad)
+
         slettDødeFakta(søknad, nyeSvar, originalSvar)
-        originalSvar.filterNot { (id, svar) -> nyeSvar[id] == svar }.forEach { (id, svar) ->
+        originalSvar.filterNot { (id, svar) -> nyeSvar[id] == svar }.forEach { (id, _) ->
             val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
 
             using(sessionOf(dataSource)) { session ->
@@ -195,6 +166,10 @@ class SøknadRecord : SøknadPersistence {
 
         return true
     }
+
+    private fun svarMap(søknad: Søknad): MutableMap<String, Any?> = søknad.map { faktum ->
+        faktum.id to (if (faktum.erBesvart()) faktum.svar() else null)
+    }.toMap().toMutableMap()
 
     private fun slettDødeFakta(søknad: Søknad, nyeSvar: Map<String, Any?>, originalSvar: MutableMap<String, Any?>) {
         originalSvar.keys.toSet()
@@ -229,6 +204,20 @@ class SøknadRecord : SøknadPersistence {
 
     private fun oppdaterFaktum(svar: Any?, søknad: Søknad, indeks: Int, rootId: Int): UpdateQueryAction =
         queryOf(sqlToInsert(svar), søknad.uuid, indeks, rootId).asUpdate
+
+    private fun sqlToInsert(svar: Any?): String {
+        return when (svar) {
+            null -> """UPDATE faktum_verdi  SET ja_nei = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
+            is Boolean -> """UPDATE faktum_verdi  SET ja_nei = $svar , opprettet=NOW() AT TIME ZONE 'utc' """
+            is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , opprettet=NOW() AT TIME ZONE 'utc' """
+            is LocalDate -> """UPDATE faktum_verdi  SET dato = '$svar',  opprettet=NOW() AT TIME ZONE 'utc' """
+            is Int -> """UPDATE faktum_verdi  SET heltall = $svar,  opprettet=NOW() AT TIME ZONE 'utc' """
+            is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
+|                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id), opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
+            else -> throw IllegalArgumentException("Ugyldig type: ${svar.javaClass}")
+        } + """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, soknad, faktum
+            WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id AND soknad.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
+    }
 
     private fun arkiverFaktum(søknad: Søknad, rootId: Int, indeks: Int): ExecuteQueryAction =
         queryOf( //language=PostgreSQL
@@ -282,110 +271,6 @@ class SøknadRecord : SøknadPersistence {
         }.toMap()
     }
 
-    private class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) : SøknadVisitor {
-        private var søknadId = 0
-        private var versjonId = 0
-        private var rootId = 0
-        private var indeks = 0
-        private val faktumList = mutableListOf<Faktum<*>>()
-        private val identer = mutableListOf<Ident>()
-        private var personId: UUID? = null
-
-        init {
-            søknad.accept(this)
-        }
-
-        override fun preVisit(person: Person, uuid: UUID) {
-            personId = uuid
-        }
-
-        override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
-            this.versjonId = versjonId
-            søknadId = using(sessionOf(dataSource)) { session ->
-                session.run(
-                    queryOf(
-                        "INSERT INTO soknad(uuid, versjon_id, person_id, sesjon_type_id) VALUES (?, ?, ?, ?) returning id",
-                        uuid,
-                        versjonId,
-                        personId,
-                        type.id
-                    ).map { it.int(1) }.asSingle
-                ) ?: throw IllegalArgumentException("failed to find søknadId")
-            }
-        }
-
-        override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
-            this.rootId = rootId
-            this.indeks = indeks
-        }
-
-        override fun <R : Comparable<R>> visit(
-            faktum: GrunnleggendeFaktum<R>,
-            tilstand: Faktum.FaktumTilstand,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFaktum: Set<Faktum<*>>,
-            godkjenner: Set<Faktum<*>>,
-            roller: Set<Rolle>,
-            clazz: Class<R>
-        ) {
-            skrivFaktumVerdi(faktum)
-        }
-
-        override fun <R : Comparable<R>> visit(
-            faktum: GeneratorFaktum,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFaktum: Set<Faktum<*>>,
-            templates: List<Faktum<*>>,
-            roller: Set<Rolle>,
-            clazz: Class<R>
-        ) {
-            skrivFaktumVerdi(faktum)
-        }
-
-        override fun <R : Comparable<R>> visit(
-            faktum: TemplateFaktum<R>,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFaktum: Set<Faktum<*>>,
-            roller: Set<Rolle>,
-            clazz: Class<R>
-        ) {
-            skrivFaktumVerdi(faktum)
-        }
-
-        override fun <R : Comparable<R>> preVisit(
-            faktum: UtledetFaktum<R>,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFaktum: Set<Faktum<*>>,
-            children: Set<Faktum<*>>,
-            clazz: Class<R>,
-            regel: FaktaRegel<R>
-        ) {
-            skrivFaktumVerdi(faktum)
-        }
-
-        private fun skrivFaktumVerdi(faktum: Faktum<*>) {
-            if (faktum in faktumList) return else faktumList.add(faktum)
-            using(sessionOf(dataSource)) { session ->
-                session.run(
-                    queryOf( //language=PostgreSQL
-                        """INSERT INTO faktum_verdi
-                            (soknad_id, indeks, faktum_id)
-                        VALUES (?, ?,
-                                (SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?))""".trimMargin(),
-                        søknadId,
-                        indeks,
-                        versjonId,
-                        rootId
-                    ).asExecute
-                )
-            }
-        }
-    }
-
     private class AvhengerAvVisitor(faktum: Faktum<*>) : FaktumVisitor {
         var avhengerAv = emptySet<Faktum<*>>()
 
@@ -400,4 +285,6 @@ class SøknadRecord : SøknadPersistence {
             avhengerAv = avhengerAvFakta
         }
     }
+
+    private infix fun Int.indeks(indeks: Int) = if (indeks == 0) this.toString() else "$this.$indeks"
 }
