@@ -2,29 +2,32 @@ package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.regel.godkjentAv
-import no.nav.dagpenger.model.regel.gyldigGodkjentAv
-import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
+import no.nav.dagpenger.model.helpers.versjonId
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import java.util.UUID
 
 internal class AvhengigFaktumTest {
-    companion object {
-        internal const val UNG_PERSON_FNR_2018 = "12020052345"
-        internal val uuid = UUID.randomUUID()
-    }
-    private val prototypeSøknad = Søknad(
-        79,
-        ja nei "f1" id 1,
-        ja nei "approve1" id 2
-    )
 
     @Test
-    fun `har avhengigheter`() {
-        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true gyldigGodkjentAv prototypeSøknad.ja(2) }
-        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true ugyldigGodkjentAv prototypeSøknad.ja(2) }
-        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true godkjentAv prototypeSøknad.ja(2) }
+    fun `Resetter avhengige faktum`() {
+        val søknad = Søknad(
+            versjonId(),
+            ja nei "f1" id 1,
+            ja nei "f2" id 2 avhengerAv 1,
+            ja nei "f3" id 3 avhengerAv 2
+        )
+        val ja1 = søknad.ja(1)
+        val ja2 = søknad.ja(2)
+        val ja3 = søknad.ja(3)
+
+        ja1.besvar(true)
+        ja2.besvar(true)
+        ja3.besvar(true)
+        assertTrue { søknad.all { it.erBesvart() } }
+
+        ja1.besvar(false)
+        assertFalse { ja2.erBesvart() }
+        assertFalse { ja3.erBesvart() }
     }
 }

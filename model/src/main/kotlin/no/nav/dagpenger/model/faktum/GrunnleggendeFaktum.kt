@@ -52,6 +52,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     override fun tilUbesvart() {
         tilstand = Ukjent
+        avhengigeFakta.filterIsInstance<GrunnleggendeFaktum<*>>().forEach { it.tilUbesvart() }
     }
 
     override fun accept(visitor: FaktumVisitor) {

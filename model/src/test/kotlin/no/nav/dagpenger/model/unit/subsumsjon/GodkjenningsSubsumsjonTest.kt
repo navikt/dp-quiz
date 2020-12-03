@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.versjonId
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.gyldigGodkjentAv
@@ -13,6 +14,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 internal class GodkjenningsSubsumsjonTest {
@@ -80,9 +82,22 @@ internal class GodkjenningsSubsumsjonTest {
         assertEquals(true, godkjenningsSubsumsjon.resultat())
     }
 
+    @Test
+    fun `Trenger avhengighet for å godkjenne`() {
+        val prototypeSøknad = Søknad(
+            versjonId(),
+            ja nei "f1" id 1,
+            ja nei "approve1" id 2
+        )
+
+        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true gyldigGodkjentAv prototypeSøknad.ja(2) }
+        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true ugyldigGodkjentAv prototypeSøknad.ja(2) }
+        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true godkjentAv prototypeSøknad.ja(2) }
+    }
+
     private fun søknadprosess(block: (Søknad) -> Subsumsjon): Søknadprosess {
         val søknad = Søknad(
-            136,
+            versjonId(),
             ja nei "faktum" id 1,
             ja nei "godkjenning" id 2 avhengerAv 1
         )
