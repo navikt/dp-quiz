@@ -45,7 +45,7 @@ internal class NySøknadService(
         søknadPersistence.ny(identer, faktagrupperType, Versjon.siste)
             .also { søknadprosess ->
                 // TODO: Fikse dette
-                søknadprosess.dokument(15).besvar(Dokument(LocalDateTime.now(), url = søknadsId))
+                søknadprosess.dokument(14).besvar(Dokument(LocalDateTime.now(), url = søknadsId))
                 søknadPersistence.lagre(søknadprosess.søknad)
 
                 søknadprosess.nesteSeksjoner()
