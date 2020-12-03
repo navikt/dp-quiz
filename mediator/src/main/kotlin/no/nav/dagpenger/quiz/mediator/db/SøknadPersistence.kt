@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal interface SøknadPersistence {
+interface SøknadPersistence {
     fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int): Søknadprosess
     fun hent(uuid: UUID, type: Versjon.UserInterfaceType? = null): Søknadprosess
     fun lagre(søknad: Søknad): Boolean

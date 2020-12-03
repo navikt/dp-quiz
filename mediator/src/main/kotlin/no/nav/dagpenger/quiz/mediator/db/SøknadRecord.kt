@@ -68,7 +68,7 @@ class SøknadRecord : SøknadPersistence {
                     søknadprosess.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
                         val avhengigeFaktum = AvhengerAvVisitor(faktum).avhengerAv
                         if (avhengigeFaktum.isEmpty() || avhengigeFaktum.filterIsInstance<GrunnleggendeFaktum<*>>()
-                                .all { it in besvarteFaktum }
+                            .all { it in besvarteFaktum }
                         ) {
                             besvarFaktum(row, faktum)
                             besvarteFaktum.add(faktum)

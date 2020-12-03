@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 internal class AvslagPåMinsteinntektTest {
@@ -28,7 +27,6 @@ internal class AvslagPåMinsteinntektTest {
         }
     }
 
-    @Disabled
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
         assertNesteSeksjon("datoer", 7) {

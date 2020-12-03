@@ -1,6 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ArrayNode
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
@@ -52,7 +53,7 @@ internal class FaktumSvarService(
                     } """
                 }
                 fakta.forEach { faktumNode ->
-                    val faktumId = faktumNode["id"].asInt()
+                    val faktumId = faktumNode["id"].asText()
                     val svar = faktumNode["svar"]
                     val clazz = faktumNode["clazz"].asText()
 
@@ -79,7 +80,7 @@ internal class FaktumSvarService(
         }
     }
 
-    private fun besvar(søknadprosess: Søknadprosess, faktumId: Int, svar: JsonNode, clazz: String) {
+    private fun besvar(søknadprosess: Søknadprosess, faktumId: String, svar: JsonNode, clazz: String) {
         when (clazz) {
             "boolean" -> søknadprosess.ja(faktumId).besvar(svar.asBoolean())
             "int" -> søknadprosess.heltall(faktumId).besvar(svar.asInt())
@@ -88,6 +89,15 @@ internal class FaktumSvarService(
             "dokument" ->
                 søknadprosess.dokument(faktumId)
                     .besvar(Dokument(svar["lastOppTidsstempel"].asLocalDateTime(), svar["url"].asText()))
+            "generator" -> {
+                val svarene = svar as ArrayNode
+                søknadprosess.generator(faktumId).besvar(svarene.size())
+                svarene.forEachIndexed { index, genererteSvar ->
+                    genererteSvar.forEach {
+                        besvar(søknadprosess, "${it["id"].asText()}.${index + 1}}", it["svar"], it["clazz"].asText())
+                    }
+                }
+            }
             else -> throw IllegalArgumentException("Ukjent svar-type: $clazz")
         }
     }
