@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -139,6 +140,35 @@ abstract class Subsumsjon protected constructor(
             avhengigeFakta: Set<Faktum<*>>,
             avhengerAvFakta: Set<Faktum<*>>,
             godkjenner: Set<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>,
+            svar: R
+        ) {
+            if (!ignore) {
+                resultater.add(faktum)
+            }
+        }
+
+        override fun <R : Comparable<R>> visit(
+            faktum: GeneratorFaktum,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            templates: List<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>
+        ) {
+            if (!ignore) {
+                resultater.add(faktum)
+            }
+        }
+
+        override fun <R : Comparable<R>> visit(
+            faktum: GeneratorFaktum,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            templates: List<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>,
             svar: R

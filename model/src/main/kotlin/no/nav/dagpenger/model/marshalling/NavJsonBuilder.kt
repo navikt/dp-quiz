@@ -1,10 +1,12 @@
 package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
+import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Identer.Ident.Type
 import no.nav.dagpenger.model.faktum.Inntekt
@@ -68,6 +70,35 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, seksjonNavn: String, indeks
     }
 
     override fun <R : Comparable<R>> visit(
+        faktum: GeneratorFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        templates: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {
+
+        if (ignore) return
+        if (id in faktumIder) return
+        if (avhengerAvFakta.all { it.erBesvart() }) {
+            behovNode.add(faktumNavBehov[rootId])
+            val jsonTemplates = mapper.createArrayNode()
+            templates.forEach { template ->
+                jsonTemplates.addObject().also {
+                    it.put("id", template.id)
+                    it.put("navn", template.navn)
+                    it.put("clazz", template.clazz().simpleName.toLowerCase())
+                }
+            }
+            lagFaktumNode(id, "generator", jsonTemplates)
+            avhengerAvFakta.forEach {
+                root.putR(faktumNavBehov[it.reflection { rootId, _ -> rootId }], it.svar())
+            }
+        }
+    }
+
+    override fun <R : Comparable<R>> visit(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,
@@ -81,20 +112,21 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, seksjonNavn: String, indeks
         if (id in faktumIder) return
         if (avhengerAvFakta.all { it.erBesvart() }) {
             behovNode.add(faktumNavBehov[rootId])
-            lagFaktumNode(id, clazz)
+            lagFaktumNode(id, clazz.simpleName.toLowerCase())
             avhengerAvFakta.forEach {
                 root.putR(faktumNavBehov[it.reflection { rootId, _ -> rootId }], it.svar())
             }
         }
     }
 
-    private fun <R : Comparable<R>> lagFaktumNode(id: String, clazz: Class<R>) {
+    private fun lagFaktumNode(id: String, clazz: String, templates: ArrayNode? = null) {
         if (ignore) return
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("id", id)
             faktumNode.put("behov", faktumNavBehov[rootId])
-            faktumNode.put("clazz", clazz.simpleName.toLowerCase())
+            faktumNode.put("clazz", clazz)
+            if (templates != null) faktumNode["templates"] = templates
         }
         faktumIder.add(id)
     }
