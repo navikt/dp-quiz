@@ -4,7 +4,9 @@ import PostgresDataSourceBuilder.dataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
@@ -119,6 +121,49 @@ internal class SøknadRecordTest {
             originalSøknadprosess.ja(4).besvar(true)
             originalSøknadprosess.ja(1).besvar(true)
             originalSøknadprosess.ja(3).besvar(true)
+
+            assertEquals(5, originalSøknadprosess.søknad.count { it.erBesvart() })
+            søknadRecord.lagre(originalSøknadprosess.søknad)
+
+            rehydrertSøknadprosess = søknadRecord.hent(originalSøknadprosess.søknad.uuid)
+            assertEquals(5, rehydrertSøknadprosess.søknad.count { it.erBesvart() })
+        }
+    }
+
+    @Test
+    fun `Avhengig av utledet faktum rehydreres`() {
+        val versjonId = 502
+        Postgres.withMigratedDb {
+            val prototypeFakta = Søknad(
+                versjonId,
+                ja nei "f1" id 1 avhengerAv 4,
+                dato faktum "f2" id 2,
+                dato faktum "f3" id 3,
+                maks dato "f4" av 2 og 3 id 4,
+                ja nei "f1" id 5 avhengerAv 4,
+            )
+            Versjon(
+                prototypeFakta,
+                prototypeFakta ja 1 er true,
+                mapOf(
+                    Web to Søknadprosess(
+                        Seksjon(
+                            "seksjon",
+                            Rolle.nav,
+                            *(prototypeFakta.map { it }.toTypedArray())
+                        )
+                    )
+                )
+            )
+            FaktumTable(prototypeFakta, versjonId)
+
+            søknadRecord = SøknadRecord()
+            originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, versjonId)
+
+            originalSøknadprosess.dato(2).besvar(1.januar)
+            originalSøknadprosess.dato(3).besvar(10.januar)
+            originalSøknadprosess.ja(1).besvar(true)
+            originalSøknadprosess.ja(5).besvar(true)
 
             assertEquals(5, originalSøknadprosess.søknad.count { it.erBesvart() })
             søknadRecord.lagre(originalSøknadprosess.søknad)
