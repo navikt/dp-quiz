@@ -50,7 +50,7 @@ internal class NySøknadService(
 
                 søknadprosess.nesteSeksjoner()
                     .forEach { seksjon ->
-                        context.send(seksjon.somSpørsmål())
+                        context.send(seksjon.somSpørsmål().also { sikkerLogg.debug { it } })
                         log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}, $søknadsId" }
                     }
             }

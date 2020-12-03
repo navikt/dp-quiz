@@ -49,7 +49,8 @@ internal class AvslagPåMinsteinntekt {
                 11 to "Verneplikt",
                 13 to "GodkjenningDokumentasjonFangstOgFisk",
                 14 to "InnsendtSøknadsId",
-                16 to "Registreringsperioder"
+                16 to "Registreringsperioder",
+                17 to "Lærling",
             )
         )
     }
