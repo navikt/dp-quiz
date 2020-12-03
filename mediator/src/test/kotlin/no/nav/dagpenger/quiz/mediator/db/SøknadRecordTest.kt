@@ -86,7 +86,7 @@ internal class SøknadRecordTest {
 
     @Test
     fun `Avhengig faktum rehydreres`() {
-        val versjonId = versjonId()
+        val versjonId = 501
         Postgres.withMigratedDb {
             val prototypeFakta = Søknad(
                 versjonId,
