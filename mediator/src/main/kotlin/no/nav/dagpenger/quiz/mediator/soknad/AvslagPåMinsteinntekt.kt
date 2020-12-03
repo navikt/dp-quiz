@@ -47,7 +47,6 @@ internal class AvslagPåMinsteinntekt {
                 9 to "1_5G",
                 10 to "Søknadstidspunkt",
                 11 to "Verneplikt",
-                13 to "GodkjenningDokumentasjonFangstOgFisk",
                 14 to "InnsendtSøknadsId",
                 16 to "Registreringsperioder",
                 17 to "Lærling",
@@ -74,9 +73,8 @@ internal class AvslagPåMinsteinntekt {
             dato faktum "Søknadstidspunkt" id 10 avhengerAv 14,
             ja nei "Verneplikt" id 11 avhengerAv 14,
             ja nei "Godjenning av virkingstidspunkt" id 12 avhengerAv 4,
-            dokument faktum "dokumentasjon for fangst og fisk" id 13 avhengerAv 5,
             dokument faktum "Innsendt søknadsId" id 14,
-            ja nei "Godkjenning av dokumentasjon for fangst og fisk" id 15 avhengerAv 13,
+            ja nei "Godkjenning av dokumentasjon for fangst og fisk" id 15 avhengerAv 5,
             heltall faktum "Antall arbeidsøker registeringsperioder" id 16 genererer 18 og 19,
             ja nei "Lærling" id 17,
             dato faktum "fom" id 18,
@@ -95,7 +93,6 @@ internal class AvslagPåMinsteinntekt {
     private val søknadstidspunkt = søknad dato 10
     private val verneplikt = søknad ja 11
     private val godkjenningVirkningstidspunkt = søknad ja 12
-    private val dokumentasjonFangstOgFisk = søknad dokument 13
     private val godkjenningFangstOgFisk = søknad ja 15
     private val registreringsperioder = søknad generator 16
     private val lærling = søknad ja 17
@@ -114,7 +111,7 @@ internal class AvslagPåMinsteinntekt {
     )
 
     private val sjekkFangstOgFisk = "fangst og fisk er dokumentert" makro (
-        fangstOgFisk er false eller (godkjenningFangstOgFisk av dokumentasjonFangstOgFisk)
+        fangstOgFisk er false eller (fangstOgFisk er true godkjentAv godkjenningFangstOgFisk)
         )
 
     private val minsteArbeidsInntektMedVirkningstidspunkt =
@@ -157,12 +154,6 @@ internal class AvslagPåMinsteinntekt {
             Rolle.nav,
             fangstOgFisk,
         )
-    private val fangstOgFiskDokumentasjon =
-        Seksjon(
-            "fangstOgFiskDokumentasjon",
-            Rolle.nav,
-            dokumentasjonFangstOgFisk
-        )
     private val inntekter =
         Seksjon(
             "inntekter",
@@ -182,7 +173,6 @@ internal class AvslagPåMinsteinntekt {
             datoer,
             inntektsunntak,
             fangstOgfisk,
-            fangstOgFiskDokumentasjon,
             inntekter,
             godkjennDato
         )
