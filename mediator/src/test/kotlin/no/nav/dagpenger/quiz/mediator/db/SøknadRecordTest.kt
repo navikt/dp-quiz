@@ -4,8 +4,6 @@ import PostgresDataSourceBuilder.dataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
@@ -108,6 +106,17 @@ internal class SøknadRecordTest {
             originalSøknadprosess.dato(5).besvar(5.januar)
             hentFørsteSøknad()
             assertEquals(5.januar, rehydrertSøknadprosess.dato(345).svar())
+        }
+    }
+
+    @Test
+    fun `Maks dato`() {
+        Postgres.withMigratedDb {
+            byggOriginalSøknadprosess()
+
+            originalSøknadprosess.dato(3).besvar(LocalDate.MAX)
+            hentFørsteSøknad()
+            assertEquals(LocalDate.MAX, rehydrertSøknadprosess.dato(3).svar())
         }
     }
 

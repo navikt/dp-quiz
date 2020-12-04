@@ -121,7 +121,7 @@ class SøknadRecord : SøknadPersistence {
                         it.int("indeks"),
                         it.intOrNull("heltall"),
                         it.anyOrNull("ja_nei") as Boolean?,
-                        it.localDateOrNull("dato"),
+                        it.stringOrNull("dato")?.let { fraPostgresDato(it) },
                         it.doubleOrNull("aarlig_inntekt")?.årlig,
                         it.stringOrNull("url"),
                         it.localDateTimeOrNull("opplastet")
@@ -210,7 +210,7 @@ class SøknadRecord : SøknadPersistence {
             null -> """UPDATE faktum_verdi  SET ja_nei = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
             is Boolean -> """UPDATE faktum_verdi  SET ja_nei = $svar , opprettet=NOW() AT TIME ZONE 'utc' """
             is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , opprettet=NOW() AT TIME ZONE 'utc' """
-            is LocalDate -> """UPDATE faktum_verdi  SET dato = '$svar',  opprettet=NOW() AT TIME ZONE 'utc' """
+            is LocalDate -> """UPDATE faktum_verdi  SET dato = '${tilPostgresDato(svar)}',  opprettet=NOW() AT TIME ZONE 'utc' """
             is Int -> """UPDATE faktum_verdi  SET heltall = $svar,  opprettet=NOW() AT TIME ZONE 'utc' """
             is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
 |                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id), opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
@@ -285,6 +285,11 @@ class SøknadRecord : SøknadPersistence {
             avhengerAv = avhengerAvFakta
         }
     }
+
+    private fun tilPostgresDato(localDate: LocalDate) =
+        if (localDate == LocalDate.MAX) "infinity" else localDate.toString()
+
+    private fun fraPostgresDato(date: String) = if (date == "infinity") LocalDate.MAX else LocalDate.parse(date)
 
     private infix fun Int.indeks(indeks: Int) = if (indeks == 0) this.toString() else "$this.$indeks"
 }
