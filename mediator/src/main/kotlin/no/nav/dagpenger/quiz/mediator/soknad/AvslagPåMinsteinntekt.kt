@@ -2,7 +2,6 @@ package no.nav.dagpenger.quiz.mediator.soknad
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
@@ -13,9 +12,7 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
-import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.ikkeFør
-import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -48,7 +45,7 @@ internal class AvslagPåMinsteinntekt {
                 10 to "Søknadstidspunkt",
                 11 to "Verneplikt",
                 14 to "InnsendtSøknadsId",
-                16 to "Registreringsperioder",
+                // 16 to "Registreringsperioder",
                 17 to "Lærling",
             )
         )
@@ -75,10 +72,10 @@ internal class AvslagPåMinsteinntekt {
             ja nei "Godjenning av virkingstidspunkt" id 12 avhengerAv 4,
             dokument faktum "Innsendt søknadsId" id 14,
             ja nei "Godkjenning av dokumentasjon for fangst og fisk" id 15 avhengerAv 5,
-            heltall faktum "Antall arbeidsøker registeringsperioder" id 16 genererer 18 og 19,
+            // heltall faktum "Antall arbeidsøker registeringsperioder" id 16 genererer 18 og 19,
             ja nei "Lærling" id 17,
-            dato faktum "fom" id 18,
-            dato faktum "tom" id 19,
+            // dato faktum "fom" id 18,
+            // dato faktum "tom" id 19,
 
         )
     private val ønsketDato = søknad dato 1
@@ -94,10 +91,10 @@ internal class AvslagPåMinsteinntekt {
     private val verneplikt = søknad ja 11
     private val godkjenningVirkningstidspunkt = søknad ja 12
     private val godkjenningFangstOgFisk = søknad ja 15
-    private val registreringsperioder = søknad generator 16
+    // private val registreringsperioder = søknad generator 16
     private val lærling = søknad ja 17
-    private val registrertArbeidsøkerPeriodeFom = søknad dato 18
-    private val registrertArbeidsøkerPeriodeTom = søknad dato 19
+    // private val registrertArbeidsøkerPeriodeFom = søknad dato 18
+    // private val registrertArbeidsøkerPeriodeTom = søknad dato 19
 
     private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
         inntektSiste3År minst G3,
@@ -106,9 +103,9 @@ internal class AvslagPåMinsteinntekt {
         lærling er true
     )
 
-    val meldtSomArbeidssøker = registreringsperioder har "periode".makro(
+    /*val meldtSomArbeidssøker = registreringsperioder har "periode".makro(
         ønsketDato mellom registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom
-    )
+    )*/
 
     private val sjekkFangstOgFisk = "fangst og fisk er dokumentert" makro (
         fangstOgFisk er false eller (fangstOgFisk er true godkjentAv godkjenningFangstOgFisk)
@@ -119,7 +116,7 @@ internal class AvslagPåMinsteinntekt {
 
     private val inngangsvilkår = "inngangsvilkår".alle(
         minsteArbeidsInntektMedVirkningstidspunkt,
-        meldtSomArbeidssøker
+        // meldtSomArbeidssøker
     )
 
     private val statiske =
@@ -137,9 +134,9 @@ internal class AvslagPåMinsteinntekt {
             søknadstidspunkt,
             sisteDagMedArbeidsplikt,
             sisteDagMedLønn,
-            registrertArbeidsøkerPeriodeFom,
-            registrertArbeidsøkerPeriodeTom,
-            registreringsperioder
+            // registrertArbeidsøkerPeriodeFom,
+            // registrertArbeidsøkerPeriodeTom,
+            // registreringsperioder
         )
     private val inntektsunntak =
         Seksjon(
