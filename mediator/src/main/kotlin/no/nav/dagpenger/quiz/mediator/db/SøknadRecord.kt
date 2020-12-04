@@ -121,7 +121,7 @@ class SøknadRecord : SøknadPersistence {
                         it.int("indeks"),
                         it.intOrNull("heltall"),
                         it.anyOrNull("ja_nei") as Boolean?,
-                        it.stringOrNull("dato")?.let { fraPostgresDato(it) },
+                        it.underlying.getObject("dato", LocalDate::class.java),
                         it.doubleOrNull("aarlig_inntekt")?.årlig,
                         it.stringOrNull("url"),
                         it.localDateTimeOrNull("opplastet")
@@ -219,6 +219,9 @@ class SøknadRecord : SøknadPersistence {
             WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id AND soknad.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
     }
 
+    private fun tilPostgresDato(localDate: LocalDate) =
+        if (localDate == LocalDate.MAX) "infinity" else localDate.toString()
+
     private fun arkiverFaktum(søknad: Søknad, rootId: Int, indeks: Int): ExecuteQueryAction =
         queryOf( //language=PostgreSQL
             """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, ja_nei, aarlig_inntekt, dokument_id, dato, heltall, opprettet)
@@ -285,11 +288,6 @@ class SøknadRecord : SøknadPersistence {
             avhengerAv = avhengerAvFakta
         }
     }
-
-    private fun tilPostgresDato(localDate: LocalDate) =
-        if (localDate == LocalDate.MAX) "infinity" else localDate.toString()
-
-    private fun fraPostgresDato(date: String) = if (date == "infinity") LocalDate.MAX else LocalDate.parse(date)
 
     private infix fun Int.indeks(indeks: Int) = if (indeks == 0) this.toString() else "$this.$indeks"
 }
