@@ -40,7 +40,6 @@ internal class FaktumSvarService(
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
         if (fakta.isEmpty()) return
-
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
         log.info { "Mottok ny svar for $søknadUuid" }
         sikkerlogg.info { packet.toJson() }
@@ -68,8 +67,11 @@ internal class FaktumSvarService(
                         log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
                     }.also {
                         if (Søknadprosess.erFerdig(it)) {
-                            context.send(ResultatJsonBuilder(søknadprosess).resultat().toString())
-                            log.info { "Ferdig med søknad ${søknadprosess.søknad.uuid}" }
+                            ResultatJsonBuilder(søknadprosess).resultat().also { json ->
+                                context.send(json.toString())
+                                sikkerlogg.info { "Send ut resultat: $json" }
+                            }
+                            log.info { "Ferdig med søknad ${søknadprosess.søknad.uuid}. Resultatet er: ${søknadprosess.resultat()}" }
                         }
                     }
             }
