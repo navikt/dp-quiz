@@ -19,6 +19,7 @@ class SaksbehandlerJsonBuilder(
     }
 
     override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
+        super.preVisit(søknad, versjonId, uuid)
         root.put("@event_name", "oppgave")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")

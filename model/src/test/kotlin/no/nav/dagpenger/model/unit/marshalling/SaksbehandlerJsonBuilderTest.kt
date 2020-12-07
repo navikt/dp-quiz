@@ -1,5 +1,8 @@
 package no.nav.dagpenger.model.unit.marshalling
 
+import io.mockk.clearStaticMockk
+import io.mockk.every
+import io.mockk.mockkStatic
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
@@ -21,12 +24,16 @@ import no.nav.dagpenger.model.subsumsjon.eller
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import java.util.Enumeration
+import java.util.Locale
+import java.util.ResourceBundle
 import java.util.UUID
 
 internal class SaksbehandlerJsonBuilderTest {
@@ -36,6 +43,19 @@ internal class SaksbehandlerJsonBuilderTest {
         private var versjonId = 170
     }
 
+    private class ResourceBundleMock : ResourceBundle() {
+        val speider: MutableList<String> = mutableListOf()
+        override fun handleGetObject(key: String): Any {
+            speider.add(key)
+            return "Oversatt tekst"
+        }
+
+        override fun getKeys(): Enumeration<String> {
+            TODO("Not yet implemented")
+        }
+    }
+
+    private val mockBundle = ResourceBundleMock()
     @BeforeEach
     fun setup() {
         versjonId--
@@ -50,6 +70,10 @@ internal class SaksbehandlerJsonBuilderTest {
             ja nei "f7" id 7,
             heltall faktum "f67" id 67 genererer 6 og 7
         )
+        mockkStatic(ResourceBundle::class.java.name)
+        every {
+            ResourceBundle.getBundle(any() as String, any() as Locale)
+        } returns mockBundle
     }
 
     @Test
@@ -64,6 +88,9 @@ internal class SaksbehandlerJsonBuilderTest {
         assertEquals("saksbehandler2", json["seksjon_navn"].asText())
         assertEquals(2, json["fakta"].size())
         assertEquals("2", json["fakta"][0]["id"].asText())
+        assertEquals("Oversatt tekst", json["fakta"][0]["navn"].asText())
+        assertTrue(mockBundle.speider.contains("""v_${versjonId}_faktum_2_navn"""), mockBundle.speider.toString())
+        assertTrue(mockBundle.speider.contains("""v_${versjonId}_faktum_1_navn"""), mockBundle.speider.toString())
         assertEquals(
             setOf(Rolle.saksbehandler.typeNavn),
             json["fakta"][0]["roller"].map { it.asText() }.toSet()
@@ -322,6 +349,12 @@ internal class SaksbehandlerJsonBuilderTest {
         assertEquals(11, json["fakta"].size())
         json = SaksbehandlerJsonBuilder(fakta, "seksjon7", 1).resultat()
         assertEquals(1, json["fakta"].size())
+    }
+
+    @AfterEach
+    fun clean() {
+        mockBundle.speider.clear()
+        clearStaticMockk(ResourceBundle::class)
     }
 
     private fun assertSeksjonSize(expected: Int, seksjonNavn: String) {

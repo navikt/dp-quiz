@@ -35,7 +35,11 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
     private val faktumIder = mutableSetOf<String>()
     private val subsumsjonNoder = mutableListOf<ArrayNode>(subsumsjonRoot)
     open fun resultat() = root
-    abstract override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID)
+    private var versjonId = 0
+
+    override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
+        this.versjonId = versjonId
+    }
 
     override fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {
         identerNode.addObject().also { identNode ->
@@ -199,7 +203,7 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         if (ignore) return
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
-            faktumNode.put("navn", navn)
+            faktumNode.put("navn", """v_${versjonId}_faktum_${id}_navn""".oversett())
             faktumNode.put("id", id)
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.typeNavn }))
             faktumNode.set("godkjenner", mapper.valueToTree(godkjenner.map { it.id }))
