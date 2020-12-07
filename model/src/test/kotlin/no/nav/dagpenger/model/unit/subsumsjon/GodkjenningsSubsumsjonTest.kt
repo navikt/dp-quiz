@@ -50,7 +50,7 @@ internal class GodkjenningsSubsumsjonTest {
         faktum.besvar(true)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
         godkjenning.besvar(false)
-        assertEquals(false, godkjenningsSubsumsjon.resultat())
+        assertEquals(null, godkjenningsSubsumsjon.resultat())
         godkjenning.besvar(true)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
         faktum.besvar(false)
@@ -59,13 +59,12 @@ internal class GodkjenningsSubsumsjonTest {
         godkjenning.besvar(true)
         assertEquals(false, godkjenningsSubsumsjon.resultat())
         godkjenning.besvar(false)
-        assertEquals(false, godkjenningsSubsumsjon.resultat())
+        assertEquals(null, godkjenningsSubsumsjon.resultat())
     }
 
     @Test
     fun `Godkjenning av ugyldig sti av child`() {
         søknadprosess { fakta -> fakta ja 1 er true ugyldigGodkjentAv (fakta ja 2) }
-
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
@@ -79,7 +78,7 @@ internal class GodkjenningsSubsumsjonTest {
         godkjenning.besvar(true)
         assertEquals(false, godkjenningsSubsumsjon.resultat())
         godkjenning.besvar(false)
-        assertEquals(true, godkjenningsSubsumsjon.resultat())
+        assertEquals(null, godkjenningsSubsumsjon.resultat())
     }
 
     @Test

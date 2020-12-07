@@ -90,13 +90,13 @@ internal class AvslagPåMinsteinntektTest {
         assertNesteSeksjon("godkjenn virkningstidspunkt", 1) {
             it.besvar(søknadprosess.ja(12), false)
         }
-        assertFalse(søknadprosess.resultat()!!)
+        assertNull(søknadprosess.resultat())
 
         // om vi endrer inntekt til å tilfredstille minimumsinntekt
         // vil det fortsatt ikke være innvilgelses pga virkningstidspunkt ikke er godkjent
         søknadprosess.inntekt(6).besvar(2000000.årlig)
         søknadprosess.inntekt(7).besvar(2000000.årlig)
-        assertFalse(søknadprosess.resultat()!!)
+        assertNull(søknadprosess.resultat())
 
         // Når vi godkjenner virkningstidspunkt vil det føre til innvilgelse
         assertNesteSeksjon("godkjenn virkningstidspunkt", 1) {

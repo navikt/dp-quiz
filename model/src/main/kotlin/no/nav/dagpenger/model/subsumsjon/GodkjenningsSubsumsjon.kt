@@ -23,8 +23,14 @@ class GodkjenningsSubsumsjon private constructor(
         this("${child.navn} godkjenning", action, child, godkjenning, TomSubsumsjon, TomSubsumsjon)
 
     enum class Action(internal val strategy: (Boolean, Boolean?) -> Boolean?) {
-        JaAction({ childResultat: Boolean, godkjenningResultat: Boolean? -> childResultat && godkjenningResultat != false }),
-        NeiAction({ childResultat: Boolean, godkjenningResultat: Boolean? -> childResultat || godkjenningResultat == false }),
+        JaAction(
+            fun(childResultat: Boolean, godkjenningResultat: Boolean?) =
+                if (godkjenningResultat == false) null else childResultat && godkjenningResultat != false
+        ),
+        NeiAction(
+            fun(childResultat: Boolean, godkjenningResultat: Boolean?) =
+                if (!childResultat && godkjenningResultat == false) null else childResultat || godkjenningResultat == false
+        ),
         UansettAction({ childResultat: Boolean, godkjenningResultat: Boolean? ->
             if (godkjenningResultat != null)
                 if (godkjenningResultat) childResultat else !childResultat
