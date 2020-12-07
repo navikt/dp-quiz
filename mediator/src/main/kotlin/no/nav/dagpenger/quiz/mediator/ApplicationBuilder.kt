@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
+import no.nav.dagpenger.quiz.mediator.meldinger.DagensDatoService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt
@@ -33,6 +34,7 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
                 NySøknadService(søknadRecord, rapidsConnection)
                 FaktumSvarService(søknadRecord, rapidsConnection)
                 AvslagPåMinsteinntekt()
+                DagensDatoService(rapidsConnection)
             }
     }
 

@@ -10,9 +10,9 @@ import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
+import no.nav.dagpenger.model.regel.gyldigGodkjentAv
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.mellom
@@ -25,6 +25,7 @@ import no.nav.dagpenger.model.subsumsjon.eller
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
+import no.nav.dagpenger.model.subsumsjon.uansett
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 
 // Forstår dagpengesøknaden
@@ -50,6 +51,7 @@ internal class AvslagPåMinsteinntekt {
                 14 to "InnsendtSøknadsId",
                 16 to "Registreringsperioder",
                 17 to "Lærling",
+                20 to "DagensDato",
             )
         )
     }
@@ -66,7 +68,7 @@ internal class AvslagPåMinsteinntekt {
             dato faktum "Siste dag med lønn" id 3 avhengerAv 14,
             maks dato "Virkningstidspunkt" av 1 og 2 og 3 og 10 id 4,
             ja nei "Driver med fangst og fisk" id 5 avhengerAv 14,
-            inntekt faktum "Inntekt siste 3 år" id 6 avhengerAv 4 og 5,
+            inntekt faktum "Inntekt siste 36 mnd" id 6 avhengerAv 4 og 5,
             inntekt faktum "Inntekt siste 12 mnd" id 7 avhengerAv 4 og 5,
             inntekt faktum "3G" id 8 avhengerAv 4,
             inntekt faktum "1,5G" id 9 avhengerAv 4,
@@ -79,15 +81,15 @@ internal class AvslagPåMinsteinntekt {
             ja nei "Lærling" id 17,
             dato faktum "fom" id 18,
             dato faktum "tom" id 19,
-
+            dato faktum "Dagens dato" id 20,
         )
     private val ønsketDato = søknad dato 1
     private val sisteDagMedArbeidsplikt = søknad dato 2
     private val sisteDagMedLønn = søknad dato 3
     private val virkningstidspunkt = søknad dato 4
     private val fangstOgFisk = søknad ja 5
-    private val inntektSiste3År = søknad inntekt 6
-    private val inntektSisteÅr = søknad inntekt 7
+    private val inntektSiste36mnd = søknad inntekt 6
+    private val inntektSiste12mnd = søknad inntekt 7
     private val G3 = søknad inntekt 8
     private val G1_5 = søknad inntekt 9
     private val søknadstidspunkt = søknad dato 10
@@ -98,15 +100,16 @@ internal class AvslagPåMinsteinntekt {
     private val lærling = søknad ja 17
     private val registrertArbeidsøkerPeriodeFom = søknad dato 18
     private val registrertArbeidsøkerPeriodeTom = søknad dato 19
+    private val dagensDato = søknad dato 20
 
     private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
-        inntektSiste3År minst G3,
-        inntektSisteÅr minst G1_5,
+        inntektSiste36mnd minst G3,
+        inntektSiste12mnd minst G1_5,
         verneplikt er true,
         lærling er true
     )
 
-    val meldtSomArbeidssøker = registreringsperioder har "periode".makro(
+    private val meldtSomArbeidssøker = registreringsperioder har "periode".makro(
         ønsketDato mellom registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom
     )
 
@@ -115,16 +118,23 @@ internal class AvslagPåMinsteinntekt {
         )
 
     private val minsteArbeidsInntektMedVirkningstidspunkt =
-        ((søknadstidspunkt ikkeFør virkningstidspunkt) godkjentAv godkjenningVirkningstidspunkt) så (sjekkFangstOgFisk så (minsteArbeidsinntekt))
+        ((dagensDato ikkeFør virkningstidspunkt) gyldigGodkjentAv godkjenningVirkningstidspunkt) så (sjekkFangstOgFisk uansett (minsteArbeidsinntekt))
 
     private val inngangsvilkår = "inngangsvilkår".alle(
         minsteArbeidsInntektMedVirkningstidspunkt,
         meldtSomArbeidssøker
     )
 
-    private val statiske =
+    private val oppstart =
         Seksjon(
-            "statiske",
+            "oppstart",
+            Rolle.nav,
+            dagensDato,
+        )
+
+    private val grunnbeløp =
+        Seksjon(
+            "grunnbeløp",
             Rolle.nav,
             G3,
             G1_5,
@@ -158,8 +168,8 @@ internal class AvslagPåMinsteinntekt {
         Seksjon(
             "inntekter",
             Rolle.nav,
-            inntektSisteÅr,
-            inntektSiste3År,
+            inntektSiste12mnd,
+            inntektSiste36mnd,
         )
     private val godkjennDato =
         Seksjon(
@@ -169,7 +179,8 @@ internal class AvslagPåMinsteinntekt {
         )
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
-            statiske,
+            oppstart,
+            grunnbeløp,
             datoer,
             inntektsunntak,
             fangstOgfisk,
