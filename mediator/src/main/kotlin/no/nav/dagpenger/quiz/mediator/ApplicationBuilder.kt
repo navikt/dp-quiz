@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator
 
+import PostgresDataSourceBuilder.clean
 import PostgresDataSourceBuilder.runMigration
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -28,6 +29,7 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
+        clean()
         runMigration()
             .also {
                 val søknadRecord = SøknadRecord()
@@ -36,12 +38,5 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
                 AvslagPåMinsteinntekt()
                 DagensDatoService(rapidsConnection)
             }
-    }
-
-    private companion object {
-        private val objectMapper = jacksonObjectMapper()
-            .registerModule(JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
     }
 }
