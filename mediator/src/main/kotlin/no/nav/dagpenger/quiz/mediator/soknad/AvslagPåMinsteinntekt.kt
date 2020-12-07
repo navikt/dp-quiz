@@ -110,7 +110,7 @@ internal class AvslagPåMinsteinntekt {
     )
 
     private val meldtSomArbeidssøker = registreringsperioder har "periode".makro(
-        ønsketDato mellom registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom
+        virkningstidspunkt mellom registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom
     )
 
     private val sjekkFangstOgFisk = "fangst og fisk er dokumentert" makro (
