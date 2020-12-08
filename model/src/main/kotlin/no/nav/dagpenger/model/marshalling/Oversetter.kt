@@ -6,7 +6,7 @@ import java.util.Locale
 import java.util.MissingResourceException
 import java.util.ResourceBundle
 
-internal class Oversetter(private val lokal: Locale = bokmål, private val versjonId: Int, private val basename: String = defaultBaseName) {
+class Oversetter(private val lokal: Locale = bokmål, private val versjonId: Int, private val basename: String = defaultBaseName) {
     companion object {
         private const val NO = "NO"
         private const val defaultBaseName = "oversettelser"
@@ -21,9 +21,12 @@ internal class Oversetter(private val lokal: Locale = bokmål, private val versj
         } catch (exception: MissingResourceException) {
             defaultVerdi
         }
-    fun oversett(faktum: Faktum<*>, felt: String) =
+    fun oversett(faktum: Faktum<*>) =
         // TODO ta ut verdi fra riktig felt
-        """v_${versjonId}_faktum_${faktum.id}_$felt""".oversett(faktum.navn)
+        nøkkel(faktum).oversett(faktum.navn)
+
+    fun nøkkel(faktum: Faktum<*>) =
+        """v_${versjonId}_faktum_${faktum.id}_navn"""
 
     fun oversett(regel: Regel, felt: String) =
         // TODO ta ut verdi fra riktig felt

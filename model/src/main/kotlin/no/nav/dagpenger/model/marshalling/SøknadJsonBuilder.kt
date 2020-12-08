@@ -71,7 +71,7 @@ abstract class SøknadJsonBuilder(private val språk: Locale = bokmål) : Søkna
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
-        lagFaktumNode<R>(id, oversetter.oversett(faktum, "navn"), roller, godkjenner)
+        lagFaktumNode<R>(id, oversetter.oversett(faktum), roller, godkjenner)
     }
 
     override fun <R : Comparable<R>> visit(
