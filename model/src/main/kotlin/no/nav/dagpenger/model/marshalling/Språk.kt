@@ -25,5 +25,5 @@ class Språk(private val lokal: Locale = bokmål, private val versjonId: Int) {
     fun oversett(faktum: Faktum<*>) = nøkkel(faktum).oversett(faktum.navn)
 
     fun nøkkel(faktum: Faktum<*>) =
-        """faktum_${faktum.id}_navn"""
+        """faktum_${faktum.reflection { rootId, _ -> rootId }}_navn"""
 }

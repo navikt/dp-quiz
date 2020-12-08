@@ -3,6 +3,8 @@ package no.nav.dagpenger.model.unit.marshalling
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.marshalling.Språk
 import no.nav.dagpenger.model.marshalling.Språk.Companion.nynorsk
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -11,24 +13,35 @@ import java.util.Locale
 
 internal class SpråkTest {
 
-    private val søknad = Søknad(
-        1,
-        dato faktum "dato navn" id 1,
-        heltall faktum "heltall navn" id 2
-    )
+    private companion object {
+        private val versjonId = 3000
+
+        private val søknad = Søknad(
+            versjonId,
+            dato faktum "dato navn" id 1,
+            heltall faktum "heltall navn" id 2 genererer 3 og 4,
+            dato faktum "dato generert" id 3,
+            heltall faktum "heltall generert" id 4,
+        )
+
+        private val søknadprosess = søknad.testSøknadprosess()
+    }
 
     @Test
     fun `skal oversette fakta fra bokmål til nynorsk `() {
-        with(Språk(lokal = nynorsk, versjonId = 1)) {
-            assertEquals("faktum_1_navn", this.nøkkel(søknad.dato(1)))
-            assertEquals("Ønsker frå dato", this.oversett(søknad.dato(1)))
-            assertEquals("heltall navn", this.oversett(søknad.heltall(2)))
+        with(Språk(lokal = nynorsk, versjonId = versjonId)) {
+            assertEquals("faktum_1_navn", this.nøkkel(søknadprosess.dato(1)))
+            assertEquals("Ønsker frå dato", this.oversett(søknadprosess.dato(1)))
+            assertEquals("heltall navn", this.oversett(søknadprosess.heltall(2)))
+            søknadprosess.generator(2).besvar(2)
+            søknadprosess.dato("3.1").besvar(1.januar)
+            assertEquals("En dato oversettelse", this.oversett(søknadprosess.dato("3.1")))
         }
     }
 
     @Test
     fun `returnerer default språk om verdi definert språk ikke finnes`() {
-        with(Språk(lokal = Locale.JAPANESE, versjonId = 1)) {
+        with(Språk(lokal = Locale.JAPANESE, versjonId = versjonId)) {
             assertEquals("Ønsker fra dato", this.oversett(søknad.dato(1)))
         }
     }

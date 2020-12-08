@@ -10,7 +10,6 @@ import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.marshalling.Språk
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.ikkeFør
@@ -26,7 +25,6 @@ import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
 import no.nav.dagpenger.model.subsumsjon.uansett
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
-import java.nio.file.Path
 
 // Forstår dagpengesøknaden
 internal class AvslagPåMinsteinntekt {
@@ -198,33 +196,4 @@ internal class AvslagPåMinsteinntekt {
     )
 
     fun søknadprosess(person: Person) = versjon.søknadprosess(person, Versjon.UserInterfaceType.Web)
-}
-
-fun main() {
-    val søknad: Søknad = Søknad(
-        2,
-        dato faktum "Ønsker dagpenger fra dato" id 1 avhengerAv 14,
-        dato faktum "Siste dag med arbeidsplikt" id 2 avhengerAv 14,
-        dato faktum "Siste dag med lønn" id 3 avhengerAv 14,
-        maks dato "Virkningstidspunkt" av 1 og 2 og 3 og 10 id 4,
-        ja nei "Driver med fangst og fisk" id 5 avhengerAv 14,
-        inntekt faktum "Inntekt siste 36 mnd" id 6 avhengerAv 4 og 5,
-        inntekt faktum "Inntekt siste 12 mnd" id 7 avhengerAv 4 og 5,
-        inntekt faktum "3G" id 8 avhengerAv 4,
-        inntekt faktum "1,5G" id 9 avhengerAv 4,
-        dato faktum "Søknadstidspunkt" id 10 avhengerAv 14,
-        ja nei "Verneplikt" id 11 avhengerAv 14,
-        ja nei "Godjenning av virkingstidspunkt" id 12 avhengerAv 4,
-        dokument faktum "Innsendt søknadsId" id 14,
-        ja nei "Godkjenning av dokumentasjon for fangst og fisk" id 15 avhengerAv 5,
-        heltall faktum "Antall arbeidsøker registeringsperioder" id 16 genererer 18 og 19,
-        ja nei "Lærling" id 17,
-        dato faktum "fom" id 18,
-        dato faktum "tom" id 19,
-        dato faktum "Dagens dato" id 20,
-    )
-
-    val oversetter = Språk(versjonId = 2)
-    val path = Path.of("resources/oversettelser.properties")
-    val nøkler = søknad.map { oversetter.nøkkel(it) }
 }
