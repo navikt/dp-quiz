@@ -84,6 +84,7 @@ internal class SaksbehandlerJsonBuilderTest {
             prototypeSøknad.ja(1) er true gyldigGodkjentAv prototypeSøknad.ja(2) så
                 (prototypeSøknad.ja(3) er true ugyldigGodkjentAv prototypeSøknad.ja(4))
         )
+        søknadprosess.ja(1).besvar(true)
         val json = SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2", språk = nynorsk).resultat()
         assertEquals("oppgave", json["@event_name"].asText())
         assertDoesNotThrow { UUID.fromString(json["søknad_uuid"].asText()) }
@@ -339,9 +340,8 @@ internal class SaksbehandlerJsonBuilderTest {
 
     @Test
     fun `Komplekse seksjoner`() {
-        assertSeksjonSize(8, "seksjon8")
-        assertSeksjonSize(5, "seksjon4")
-        assertSeksjonSize(4, "seksjon2")
+        assertSeksjonSize(7, "seksjon8")
+        assertSeksjonSize(4, "seksjon9")
     }
 
     @Test
@@ -349,9 +349,7 @@ internal class SaksbehandlerJsonBuilderTest {
         val fakta = NyttEksempel().søknadprosess
         fakta.heltall(15).besvar(3)
         var json = SaksbehandlerJsonBuilder(fakta, "seksjon8").resultat()
-        assertEquals(11, json["fakta"].size())
-        json = SaksbehandlerJsonBuilder(fakta, "seksjon7", 1).resultat()
-        assertEquals(1, json["fakta"].size())
+        assertEquals(10, json["fakta"].size())
     }
 
     @AfterEach

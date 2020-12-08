@@ -16,9 +16,9 @@ class SaksbehandlerJsonBuilder(
 
     init {
         søknadprosess.søknad.accept(this)
+        søknadprosess.rootSubsumsjon.mulige().accept(this)
         søknadprosess.first { seksjonNavn == it.navn && indeks == it.indeks }
             .filtrertSeksjon(søknadprosess.rootSubsumsjon).accept(this)
-        søknadprosess.rootSubsumsjon.mulige().accept(this)
     }
 
     override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {

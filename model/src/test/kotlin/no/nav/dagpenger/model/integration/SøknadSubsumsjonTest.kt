@@ -142,16 +142,13 @@ internal class SøknadSubsumsjonTest {
         søknadprosess.dokument(11).besvar(Dokument(1.januar))
         søknadprosess.ja(12).besvar(false)
 
-        søknadprosess.nesteFakta().also { fakta ->
-            assertEquals(1, fakta.size)
-            assertEquals(setOf(søknadprosess.dato(13)), fakta)
-        }
+        assertEquals(null, søknadprosess.resultat())
 
         søknadprosess.dato(13).besvar(1.februar)
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(null, søknadprosess.resultat())
 
         søknadprosess.ja(19).besvar(false)
-        assertEquals(false, søknadprosess.resultat())
+        assertEquals(null, søknadprosess.resultat())
     }
 
     private fun assertIder(fakta: Set<Faktum<*>>, vararg ider: Int) {

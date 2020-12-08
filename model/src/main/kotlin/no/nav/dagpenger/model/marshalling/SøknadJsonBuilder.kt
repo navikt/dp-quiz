@@ -28,12 +28,14 @@ import java.util.Locale
 import java.util.UUID
 
 abstract class SøknadJsonBuilder(private val språk: Locale = bokmål) : SøknadprosessVisitor {
+    private var relevanteFakta: Set<String> = mutableSetOf()
     private val mapper = ObjectMapper()
     protected val root: ObjectNode = mapper.createObjectNode()
     protected val faktaNode = mapper.createArrayNode()
     protected val identerNode = mapper.createArrayNode()
     protected val subsumsjonRoot = mapper.createArrayNode()
     private var ignore = true
+    protected var ignoreSubsumsjon: Subsumsjon? = null
     private val faktumIder = mutableSetOf<String>()
     private val subsumsjonNoder = mutableListOf<ArrayNode>(subsumsjonRoot)
     open fun resultat() = root
@@ -120,6 +122,7 @@ abstract class SøknadJsonBuilder(private val språk: Locale = bokmål) : Søkna
         lokaltResultat: Boolean?,
         resultat: Boolean?
     ) {
+        if (ignoreSubsumsjon != null) return
         subsumsjonNoder.first().addObject().also { subsumsjonNode ->
             subsumsjonNode.put("lokalt_resultat", lokaltResultat)
             subsumsjonNode.put("navn", subsumsjon.navn)
@@ -133,6 +136,7 @@ abstract class SøknadJsonBuilder(private val språk: Locale = bokmål) : Søkna
     }
 
     override fun postVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+        if (ignoreSubsumsjon != null) return
         subsumsjonNoder.removeAt(0)
     }
 
@@ -141,6 +145,7 @@ abstract class SøknadJsonBuilder(private val språk: Locale = bokmål) : Søkna
     }
 
     override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+        if (ignoreSubsumsjon != null) return
         subsumsjonNoder.removeAt(0)
     }
 
@@ -149,6 +154,7 @@ abstract class SøknadJsonBuilder(private val språk: Locale = bokmål) : Søkna
     }
 
     override fun postVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+        if (ignoreSubsumsjon != null) return
         subsumsjonNoder.removeAt(0)
     }
 
@@ -159,6 +165,7 @@ abstract class SøknadJsonBuilder(private val språk: Locale = bokmål) : Søkna
         lokaltResultat: Boolean?,
         childResultat: Boolean?
     ) {
+        relevanteFakta += godkjenning.id
         putSubsumsjon(lokaltResultat, subsumsjon, "Godkjenning subsumsjon")
     }
 
@@ -169,6 +176,7 @@ abstract class SøknadJsonBuilder(private val språk: Locale = bokmål) : Søkna
         lokaltResultat: Boolean?,
         childResultat: Boolean?
     ) {
+        if (ignoreSubsumsjon != null) return
         subsumsjonNoder.removeAt(0).also {
             if (godkjenning.erBesvart() && when (action) {
                 Action.JaAction -> childResultat == true
@@ -185,16 +193,36 @@ abstract class SøknadJsonBuilder(private val språk: Locale = bokmål) : Søkna
         }
     }
 
+    override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
+        if (parent.lokaltResultat() == false) ignoreSubsumsjon = parent
+    }
+
+    override fun postVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
+        if (parent == ignoreSubsumsjon) ignoreSubsumsjon = null
+    }
+
+    override fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
+        if (parent.lokaltResultat() == true) ignoreSubsumsjon = parent
+    }
+
+    override fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
+        if (parent == ignoreSubsumsjon) ignoreSubsumsjon = null
+    }
+
     private fun putSubsumsjon(
         lokaltResultat: Boolean?,
         subsumsjon: Subsumsjon,
         type: String
-    ) = subsumsjonNoder.first().addObject().also { subsumsjonNode ->
-        subsumsjonNode.put("lokalt_resultat", lokaltResultat)
-        subsumsjonNode.put("navn", subsumsjon.navn)
-        subsumsjonNode.put("type", type)
-        subsumsjonNode.put("forklaring", subsumsjon.saksbehandlerForklaring())
-        subsumsjonNode.set("subsumsjoner", mapper.createArrayNode().also { subsumsjonNoder.add(0, it) })
+    ): ObjectNode? {
+        if (ignoreSubsumsjon != null) return null
+        relevanteFakta += subsumsjon.alleFakta().map { it.id }
+        return subsumsjonNoder.first().addObject().also { subsumsjonNode ->
+            subsumsjonNode.put("lokalt_resultat", lokaltResultat)
+            subsumsjonNode.put("navn", subsumsjon.navn)
+            subsumsjonNode.put("type", type)
+            subsumsjonNode.put("forklaring", subsumsjon.saksbehandlerForklaring())
+            subsumsjonNode.set("subsumsjoner", mapper.createArrayNode().also { subsumsjonNoder.add(0, it) })
+        }
     }
 
     private fun <R : Comparable<R>> lagFaktumNode(
@@ -205,6 +233,7 @@ abstract class SøknadJsonBuilder(private val språk: Locale = bokmål) : Søkna
         svar: R? = null
     ) {
         if (ignore) return
+        if (id !in relevanteFakta) return
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("navn", navn)
