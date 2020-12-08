@@ -12,6 +12,7 @@ import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.UtledetFaktum
+import no.nav.dagpenger.model.marshalling.Oversetter.Companion.bokmål
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
@@ -23,9 +24,10 @@ import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.time.LocalDate
+import java.util.Locale
 import java.util.UUID
 
-abstract class SøknadJsonBuilder : SøknadprosessVisitor {
+abstract class SøknadJsonBuilder(private val språk: Locale = bokmål) : SøknadprosessVisitor {
     private val mapper = ObjectMapper()
     protected val root: ObjectNode = mapper.createObjectNode()
     protected val faktaNode = mapper.createArrayNode()
@@ -36,9 +38,11 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
     private val subsumsjonNoder = mutableListOf<ArrayNode>(subsumsjonRoot)
     open fun resultat() = root
     private var versjonId = 0
+    private var oversetter: Oversetter = Oversetter(språk, versjonId)
 
     override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
         this.versjonId = versjonId
+        this.oversetter = Oversetter(språk, versjonId)
     }
 
     override fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {
@@ -67,7 +71,7 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
-        lagFaktumNode<R>(id, faktum.navn, roller, godkjenner)
+        lagFaktumNode<R>(id, oversetter.oversett(faktum, "navn"), roller, godkjenner)
     }
 
     override fun <R : Comparable<R>> visit(
@@ -203,7 +207,7 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         if (ignore) return
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
-            faktumNode.put("navn", """v_${versjonId}_faktum_${id}_navn""".oversett())
+            faktumNode.put("navn", navn)
             faktumNode.put("id", id)
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.typeNavn }))
             faktumNode.set("godkjenner", mapper.valueToTree(godkjenner.map { it.id }))

@@ -1,15 +1,18 @@
 package no.nav.dagpenger.model.marshalling
 
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.marshalling.Oversetter.Companion.bokmål
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import java.time.LocalDateTime
+import java.util.Locale
 import java.util.UUID
 
 class SaksbehandlerJsonBuilder(
     søknadprosess: Søknadprosess,
     private val seksjonNavn: String,
-    private val indeks: Int = 0
-) : SøknadJsonBuilder() {
+    private val indeks: Int = 0,
+    språk: Locale = bokmål
+) : SøknadJsonBuilder(språk = språk) {
 
     init {
         søknadprosess.søknad.accept(this)

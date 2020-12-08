@@ -5,11 +5,13 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import java.lang.IllegalStateException
 import java.time.LocalDateTime
+import java.util.Locale
 import java.util.UUID
 
 class ResultatJsonBuilder(
-    private val søknadprosess: Søknadprosess
-) : SøknadJsonBuilder() {
+    private val søknadprosess: Søknadprosess,
+    språk: Locale = Oversetter.bokmål
+) : SøknadJsonBuilder(språk) {
 
     init {
         søknadprosess.søknad.accept(this)

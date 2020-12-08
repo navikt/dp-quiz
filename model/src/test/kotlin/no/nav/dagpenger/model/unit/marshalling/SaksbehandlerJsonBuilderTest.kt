@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.NyttEksempel
 import no.nav.dagpenger.model.helpers.testPerson
+import no.nav.dagpenger.model.marshalling.Oversetter.Companion.nynorsk
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.gyldigGodkjentAv
@@ -43,8 +44,9 @@ internal class SaksbehandlerJsonBuilderTest {
         private var versjonId = 170
     }
 
-    private class ResourceBundleMock : ResourceBundle() {
+    private class ResourceBundleMock(val språk: Locale) : ResourceBundle() {
         val speider: MutableList<String> = mutableListOf()
+
         override fun handleGetObject(key: String): Any {
             speider.add(key)
             return "Oversatt tekst"
@@ -55,7 +57,7 @@ internal class SaksbehandlerJsonBuilderTest {
         }
     }
 
-    private val mockBundle = ResourceBundleMock()
+    private val mockBundle = ResourceBundleMock(nynorsk)
     @BeforeEach
     fun setup() {
         versjonId--
@@ -82,7 +84,7 @@ internal class SaksbehandlerJsonBuilderTest {
             prototypeSøknad.ja(1) er true gyldigGodkjentAv prototypeSøknad.ja(2) så
                 (prototypeSøknad.ja(3) er true ugyldigGodkjentAv prototypeSøknad.ja(4))
         )
-        val json = SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat()
+        val json = SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2", språk = nynorsk).resultat()
         assertEquals("oppgave", json["@event_name"].asText())
         assertDoesNotThrow { UUID.fromString(json["søknad_uuid"].asText()) }
         assertEquals("saksbehandler2", json["seksjon_navn"].asText())
@@ -91,6 +93,7 @@ internal class SaksbehandlerJsonBuilderTest {
         assertEquals("Oversatt tekst", json["fakta"][0]["navn"].asText())
         assertTrue(mockBundle.speider.contains("""v_${versjonId}_faktum_2_navn"""), mockBundle.speider.toString())
         assertTrue(mockBundle.speider.contains("""v_${versjonId}_faktum_1_navn"""), mockBundle.speider.toString())
+        assertEquals(Locale("nn", "NO"), mockBundle.språk)
         assertEquals(
             setOf(Rolle.saksbehandler.typeNavn),
             json["fakta"][0]["roller"].map { it.asText() }.toSet()
