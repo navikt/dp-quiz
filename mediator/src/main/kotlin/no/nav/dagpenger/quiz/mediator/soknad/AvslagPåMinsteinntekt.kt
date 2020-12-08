@@ -12,7 +12,6 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.marshalling.Språk
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.mellom
@@ -22,7 +21,6 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
-import no.nav.dagpenger.model.subsumsjon.eller
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
@@ -116,7 +114,7 @@ internal class AvslagPåMinsteinntekt {
     )
 
     private val sjekkFangstOgFisk = "fangst og fisk er dokumentert" makro (
-        fangstOgFisk er false eller (fangstOgFisk er true godkjentAv godkjenningFangstOgFisk)
+        fangstOgFisk er false ugyldigGodkjentAv godkjenningFangstOgFisk
         )
 
     private val minsteArbeidsinntektMedVirkningstidspunkt =
