@@ -115,6 +115,8 @@ private val prototypeSeksjon6 = Seksjon("seksjon6", Rolle.søker, p15Int)
 private val prototypeSeksjon7 = Seksjon("seksjon7", Rolle.søker, p17Boolean, p18Boolean)
 private val prototypeSeksjon8 =
     Seksjon("seksjon8", Rolle.saksbehandler, p6Inntekt, p7Inntekt, p12Boolean, p14Boolean, p16Int, p19Boolean)
+private val prototypeSeksjon9 =
+    Seksjon("seksjon9", Rolle.saksbehandler, p3Dato, p4Dato, p5Dato, p_3_4_5Dato, p13Dato)
 
 private val webPrototypeFaktagrupper: Søknadprosess =
     Søknadprosess(
@@ -125,7 +127,8 @@ private val webPrototypeFaktagrupper: Søknadprosess =
         prototypeSeksjon5,
         prototypeSeksjon6,
         prototypeSeksjon7,
-        prototypeSeksjon8
+        prototypeSeksjon8,
+        prototypeSeksjon9
     )
 
 internal lateinit var seksjon1: Seksjon

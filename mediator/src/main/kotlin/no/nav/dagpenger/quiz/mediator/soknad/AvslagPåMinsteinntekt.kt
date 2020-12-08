@@ -13,11 +13,11 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.marshalling.Oversetter
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
-import no.nav.dagpenger.model.regel.gyldigGodkjentAv
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.minst
+import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -76,7 +76,7 @@ internal class AvslagPåMinsteinntekt {
             inntekt faktum "1,5G" id 9 avhengerAv 4,
             dato faktum "Søknadstidspunkt" id 10 avhengerAv 14,
             ja nei "Verneplikt" id 11 avhengerAv 14,
-            ja nei "Godjenning av virkingstidspunkt" id 12 avhengerAv 4,
+            ja nei "Godjenning av virkingstidspunkt" id 12 avhengerAv 4 og 20,
             dokument faktum "Innsendt søknadsId" id 14,
             ja nei "Godkjenning av dokumentasjon for fangst og fisk" id 15 avhengerAv 5,
             heltall faktum "Antall arbeidsøker registeringsperioder" id 16 genererer 18 og 19,
@@ -109,7 +109,7 @@ internal class AvslagPåMinsteinntekt {
         inntektSiste12mnd minst G1_5,
         verneplikt er true,
         lærling er true
-    )
+    ) ugyldigGodkjentAv godkjenningVirkningstidspunkt
 
     private val meldtSomArbeidssøker = registreringsperioder har "periode".makro(
         virkningstidspunkt mellom registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom
@@ -119,11 +119,13 @@ internal class AvslagPåMinsteinntekt {
         fangstOgFisk er false eller (fangstOgFisk er true godkjentAv godkjenningFangstOgFisk)
         )
 
-    private val minsteArbeidsInntektMedVirkningstidspunkt =
-        ((dagensDato ikkeFør virkningstidspunkt) gyldigGodkjentAv godkjenningVirkningstidspunkt) så (sjekkFangstOgFisk uansett (minsteArbeidsinntekt))
+    private val minsteArbeidsinntektMedVirkningstidspunkt =
+        dagensDato ikkeFør virkningstidspunkt så (
+            sjekkFangstOgFisk uansett (minsteArbeidsinntekt)
+            )
 
     private val inngangsvilkår = "inngangsvilkår".alle(
-        minsteArbeidsInntektMedVirkningstidspunkt,
+        minsteArbeidsinntektMedVirkningstidspunkt,
         meldtSomArbeidssøker
     )
 

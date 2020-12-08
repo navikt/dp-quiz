@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 internal class AvslagPåMinsteinntektTest {
     private lateinit var søknadprosess: Søknadprosess
@@ -46,8 +47,10 @@ internal class AvslagPåMinsteinntektTest {
             it.validerSvar()
         }
 
-        assertNesteSeksjon("godkjenn virkningstidspunkt", 0) {
-            // Ingenting å godkjenne
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 1) {
+            // Virkningstidspunktet er fram i tid.
+            // Vi må vente med å innvilge til vi har nye inntekter.
+
             // Sett søknadtidspunkt fram i tid for å teste resten
             it.besvar(søknadprosess.dato(20), 5.januar)
         }
@@ -83,7 +86,6 @@ internal class AvslagPåMinsteinntektTest {
         assertNesteSeksjon("godkjenn virkningstidspunkt", 1) {
             it.besvar(søknadprosess.ja(12), true)
         }
-
         assertFalse(søknadprosess.resultat()!!)
 
         // Om saksbehandler ikke godkjenner virkningstidspunkt kan ikke det føre til innvilgelse
@@ -92,16 +94,17 @@ internal class AvslagPåMinsteinntektTest {
         }
         assertNull(søknadprosess.resultat())
 
+        // "Reset" av modellen, for nullstille godkjenningen som er satt til false
+        søknadprosess.dato(20).besvar(LocalDate.now())
+
         // om vi endrer inntekt til å tilfredstille minimumsinntekt
         // vil det fortsatt ikke være innvilgelses pga virkningstidspunkt ikke er godkjent
         søknadprosess.inntekt(6).besvar(2000000.årlig)
         søknadprosess.inntekt(7).besvar(2000000.årlig)
-        assertNull(søknadprosess.resultat())
+        assertTrue(søknadprosess.resultat()!!)
 
-        // Når vi godkjenner virkningstidspunkt vil det føre til innvilgelse
-        assertNesteSeksjon("godkjenn virkningstidspunkt", 1) {
-            it.besvar(søknadprosess.ja(12), true)
-        }
+        // Vi ønsker kun opppgave til saksbehandler ved avslag
+        assertNesteSeksjon("godkjenn virkningstidspunkt", 0)
         assertTrue(søknadprosess.resultat()!!)
 
         søknadprosess.dato("18.1").besvar(1.januar(2019))
@@ -116,7 +119,7 @@ internal class AvslagPåMinsteinntektTest {
 
     private fun assertNesteSeksjon(
         navn: String,
-        antallFaktum: Int,
+        forventetAntallFaktum: Int,
         block: (it: SvarSpion) -> Unit = {}
     ) {
         søknadprosess.nesteSeksjoner().also { seksjoner ->
@@ -124,7 +127,7 @@ internal class AvslagPåMinsteinntektTest {
 
             seksjoner.first().also { seksjon ->
                 assertEquals(navn, seksjon.navn)
-                assertEquals(antallFaktum, seksjon.size)
+                assertEquals(forventetAntallFaktum, seksjon.size, "Antall faktum i seksjonen")
             }.also {
                 SvarSpion(it.fakta()).also { spion ->
                     block(spion)

@@ -15,8 +15,8 @@ class ResultatJsonBuilder(
 
     init {
         søknadprosess.søknad.accept(this)
-        søknadprosess.forEach { it.accept(this) }
         søknadprosess.rootSubsumsjon.mulige().accept(this)
+        søknadprosess.forEach { it.accept(this) }
     }
 
     override fun resultat(): ObjectNode {
