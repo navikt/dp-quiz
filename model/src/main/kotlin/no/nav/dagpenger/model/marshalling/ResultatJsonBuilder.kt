@@ -10,7 +10,7 @@ import java.util.UUID
 
 class ResultatJsonBuilder(
     private val søknadprosess: Søknadprosess,
-    språk: Locale = Oversetter.bokmål
+    språk: Locale = Språk.bokmål
 ) : SøknadJsonBuilder(språk) {
 
     init {
@@ -25,6 +25,7 @@ class ResultatJsonBuilder(
     }
 
     override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
+        super.preVisit(søknad, versjonId, uuid)
         root.put("@event_name", "prosess_resultat")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")

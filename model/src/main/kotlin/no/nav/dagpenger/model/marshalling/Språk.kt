@@ -1,15 +1,16 @@
 package no.nav.dagpenger.model.marshalling
 
 import no.nav.dagpenger.model.faktum.Faktum
-import no.nav.dagpenger.model.regel.Regel
 import java.util.Locale
 import java.util.MissingResourceException
 import java.util.ResourceBundle
 
-class Oversetter(private val lokal: Locale = bokmål, private val versjonId: Int, private val basename: String = defaultBaseName) {
+class Språk(private val lokal: Locale = bokmål, private val versjonId: Int) {
+
+    private val basename = "oversettelser_v$versjonId"
+
     companion object {
         private const val NO = "NO"
-        private const val defaultBaseName = "oversettelser"
         val bokmål = Locale("nb", NO)
         val nynorsk = Locale("nn", NO)
     }
@@ -21,14 +22,8 @@ class Oversetter(private val lokal: Locale = bokmål, private val versjonId: Int
         } catch (exception: MissingResourceException) {
             defaultVerdi
         }
-    fun oversett(faktum: Faktum<*>) =
-        // TODO ta ut verdi fra riktig felt
-        nøkkel(faktum).oversett(faktum.navn)
+    fun oversett(faktum: Faktum<*>) = nøkkel(faktum).oversett(faktum.navn)
 
     fun nøkkel(faktum: Faktum<*>) =
-        """v_${versjonId}_faktum_${faktum.id}_navn"""
-
-    fun oversett(regel: Regel, felt: String) =
-        // TODO ta ut verdi fra riktig felt
-        """v_${versjonId}_regel_${regel.typeNavn}_$felt""".oversett(regel.typeNavn)
+        """faktum_${faktum.id}_navn"""
 }

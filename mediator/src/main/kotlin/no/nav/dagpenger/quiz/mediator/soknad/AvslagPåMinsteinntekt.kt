@@ -10,7 +10,7 @@ import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.marshalling.Oversetter
+import no.nav.dagpenger.model.marshalling.Språk
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.har
@@ -226,7 +226,7 @@ fun main() {
         dato faktum "Dagens dato" id 20,
     )
 
-    val oversetter = Oversetter(versjonId = 2)
+    val oversetter = Språk(versjonId = 2)
     val path = Path.of("resources/oversettelser.properties")
     val nøkler = søknad.map { oversetter.nøkkel(it) }
 }
