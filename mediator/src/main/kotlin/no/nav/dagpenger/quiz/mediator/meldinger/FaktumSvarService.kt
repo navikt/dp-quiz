@@ -44,7 +44,7 @@ internal class FaktumSvarService(
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
 
         withLoggingContext(
-            "id" to UUID.fromString(packet["id"].asText()).toString(),
+            "id" to UUID.fromString(packet["@id"].asText()).toString(),
             "søknadUuid" to søknadUuid.toString()
         ) {
             log.info { "Mottok ny svar for $søknadUuid" }
