@@ -11,6 +11,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
@@ -85,6 +86,10 @@ internal class FaktumSvarService(
                 log.error(e) { "feil ved svar for faktum: ${e.message}" }
             }
         }
+    }
+
+    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+        super.onError(problems, context)
     }
 
     private fun besvar(søknadprosess: Søknadprosess, faktumId: String, svar: JsonNode, clazz: String) {

@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
-import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
@@ -11,7 +10,6 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
-import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.time.LocalDateTime
 
 private val log = KotlinLogging.logger {}
@@ -25,7 +23,6 @@ internal class NySøknadService(
         River(rapidsConnection).apply {
             validate {
                 it.demandValue("@event_name", "Søknad")
-                it.require("@opprettet", JsonNode::asLocalDateTime)
                 it.requireKey("fnr", "aktørId", "søknadsId")
             }
         }.register(this)

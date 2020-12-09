@@ -194,6 +194,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
     }
 
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
+        if (ignoreSubsumsjon != null) return
         if (parent.lokaltResultat() == false) ignoreSubsumsjon = parent
     }
 
@@ -202,6 +203,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
     }
 
     override fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
+        if (ignoreSubsumsjon != null) return
         if (parent.lokaltResultat() == true) ignoreSubsumsjon = parent
     }
 

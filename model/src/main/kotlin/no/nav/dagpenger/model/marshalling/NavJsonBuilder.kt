@@ -19,7 +19,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class NavJsonBuilder(søknadprosess: Søknadprosess, seksjonNavn: String, indeks: Int = 0) : SøknadprosessVisitor {
+class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: String, indeks: Int = 0) : SøknadprosessVisitor {
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
@@ -42,6 +42,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, seksjonNavn: String, indeks
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("søknad_uuid", "$uuid")
+        root.put("seksjon_navn", seksjonNavn)
         root.set("fakta", faktaNode)
         root.set("@behov", behovNode)
         root.set("identer", identerNode)
