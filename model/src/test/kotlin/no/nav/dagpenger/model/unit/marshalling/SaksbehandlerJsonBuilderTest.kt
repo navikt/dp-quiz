@@ -8,6 +8,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.NyttEksempel
+import no.nav.dagpenger.model.helpers.SøknadprosessTestBygger
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.marshalling.Språk.Companion.nynorsk
@@ -17,7 +18,6 @@ import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -56,6 +56,7 @@ internal class SaksbehandlerJsonBuilderTest {
     }
 
     private val mockBundle = ResourceBundleMock(nynorsk)
+
     @BeforeEach
     fun setup() {
         versjonId--
@@ -208,7 +209,7 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `makro subsumsjon`() {
         val søknadprosess = søknadprosess(
-            "makro" makro(
+            "makro" makro (
                 prototypeSøknad.ja(1) er true eller (
                     prototypeSøknad.ja(3) er true
                     )
@@ -327,10 +328,19 @@ internal class SaksbehandlerJsonBuilderTest {
             assertEquals("Enkel subsumsjon", json["subsumsjoner"][0]["subsumsjoner"][0]["type"].asText())
             assertEquals("Alle subsumsjon", json["subsumsjoner"][0]["subsumsjoner"][1]["type"].asText())
             assertEquals(3, json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"].size())
-            assertEquals("Makro subsumsjon", json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["type"].asText())
+            assertEquals(
+                "Makro subsumsjon",
+                json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["type"].asText()
+            )
             assertEquals(1, json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"].size())
-            assertEquals("Alle subsumsjon", json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"][0]["type"].asText())
-            assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"][0]["subsumsjoner"].size())
+            assertEquals(
+                "Alle subsumsjon",
+                json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"][0]["type"].asText()
+            )
+            assertEquals(
+                2,
+                json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"][0]["subsumsjoner"].size()
+            )
             assertTrue(json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"][0]["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
             assertFalse(json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][2]["subsumsjoner"][0]["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
         }
@@ -377,12 +387,10 @@ internal class SaksbehandlerJsonBuilderTest {
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        Versjon(
+        return SøknadprosessTestBygger(
             prototypeSøknad,
             prototypeSubsumsjon,
             mapOf(Web to prototypeFaktagrupper)
-        )
-
-        return Versjon.id(versjonId).søknadprosess(testPerson, Web)
+        ).søknadprosess(testPerson, Web)
     }
 }

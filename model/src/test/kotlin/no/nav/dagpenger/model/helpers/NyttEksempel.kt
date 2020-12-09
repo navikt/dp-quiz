@@ -18,7 +18,6 @@ import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.under
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -29,7 +28,7 @@ import no.nav.dagpenger.model.subsumsjon.så
 import no.nav.dagpenger.model.subsumsjon.uansett
 
 private val prototypeSøknad1 = Søknad(
-    12,
+    0,
     ja nei "f1" id 1,
     dato faktum "f2" id 2,
     dato faktum "f3" id 3,
@@ -141,13 +140,13 @@ internal lateinit var seksjon7: Seksjon
 internal lateinit var seksjon8: Seksjon
 internal lateinit var rootSubsumsjon: Subsumsjon
 
-private val versjon = Versjon(prototypeSøknad1, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
+private val søknadprosessTestBygger = SøknadprosessTestBygger(prototypeSøknad1, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
 
 internal class NyttEksempel() {
 
     internal val søknadprosess: Søknadprosess by lazy {
 
-        versjon.søknadprosess(testPerson, Web).also {
+        søknadprosessTestBygger.søknadprosess(testPerson, Web).also {
             seksjon1 = it[0]
             seksjon2 = it[1]
             seksjon3 = it[2]

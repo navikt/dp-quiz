@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.SøknadprosessTestBygger
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
@@ -11,7 +12,6 @@ import no.nav.dagpenger.model.regel.gyldigGodkjentAv
 import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.eller
 import no.nav.dagpenger.model.subsumsjon.så
@@ -27,7 +27,7 @@ internal class SaksbehandlerSeksjonerTest {
         internal val uuid = UUID.randomUUID()
     }
     private val prototypeSøknad = Søknad(
-        149,
+        0,
         ja nei "f1" id 1,
         ja nei "approve1" id 2 avhengerAv 1,
         ja nei "f3" id 3,
@@ -39,17 +39,17 @@ internal class SaksbehandlerSeksjonerTest {
         (prototypeSøknad.ja(3) er true ugyldigGodkjentAv prototypeSøknad.ja(4)) eller
         (prototypeSøknad.ja(5) er true godkjentAv prototypeSøknad.ja(6))
 
-    private val prototypeFaktagrupper = Søknadprosess(
+    private val prototypeSøknadprosess = Søknadprosess(
         prototypeSøknad,
         Seksjon("søker", Rolle.søker, prototypeSøknad.ja(1), prototypeSøknad.ja(3), prototypeSøknad.ja(5)),
         Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeSøknad.ja(2)),
         Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.ja(4), prototypeSøknad.ja(6))
     )
 
-    private val version = Versjon(
+    private val søknadprosessTestBygger = SøknadprosessTestBygger(
         prototypeSøknad,
         prototypeSubsumsjon,
-        mapOf(Web to prototypeFaktagrupper)
+        mapOf(Web to prototypeSøknadprosess)
     )
 
     private lateinit var seksjoner: Søknadprosess
@@ -62,7 +62,7 @@ internal class SaksbehandlerSeksjonerTest {
 
     @BeforeEach
     internal fun setup() {
-        seksjoner = Versjon.id(149).søknadprosess(testPerson, Web, uuid)
+        seksjoner = søknadprosessTestBygger.søknadprosess(testPerson, Web, uuid)
         f1 = seksjoner.ja(1)
         f3 = seksjoner.ja(3)
         f5 = seksjoner.ja(5)

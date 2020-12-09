@@ -4,7 +4,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.helpers.versjonId
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -24,7 +23,7 @@ internal class GenerertSubsumsjonTest {
     @BeforeEach
     fun setup() {
         søknad = Søknad(
-            versjonId(),
+            0,
             ja nei "template" id 1,
             heltall faktum "generator" id 2 genererer 1
         )

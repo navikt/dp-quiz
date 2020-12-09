@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
-internal class IntFaktumTest {
+internal class HeltallFaktumTest {
 
     @Test
-    fun `Støtte fakta med type int`() {
+    fun `Støtte fakta med type heltall`() {
         val intFaktum = Søknad(29, heltall faktum "int" id 1).testSøknadprosess().let { it heltall 1 }
 
         assertThrows<IllegalStateException> { intFaktum.svar() }
@@ -20,7 +20,7 @@ internal class IntFaktumTest {
     }
 
     @Test
-    fun `Subsumsjon med fakta av typen int`() {
+    fun `Subsumsjon med fakta av typen heltall`() {
         val intFaktum = Søknad(28, heltall faktum "int" id 1).testSøknadprosess().let { it heltall 1 }
         val subsumsjon = intFaktum er 0
 

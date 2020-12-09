@@ -4,7 +4,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.helpers.versjonId
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.gyldigGodkjentAv
@@ -84,7 +83,7 @@ internal class GodkjenningsSubsumsjonTest {
     @Test
     fun `Trenger avhengighet for å godkjenne`() {
         val prototypeSøknad = Søknad(
-            versjonId(),
+            0,
             ja nei "f1" id 1,
             ja nei "approve1" id 2
         )
@@ -96,7 +95,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     private fun søknadprosess(block: (Søknad) -> Subsumsjon): Søknadprosess {
         val søknad = Søknad(
-            versjonId(),
+            0,
             ja nei "faktum" id 1,
             ja nei "godkjenning" id 2 avhengerAv 1
         )

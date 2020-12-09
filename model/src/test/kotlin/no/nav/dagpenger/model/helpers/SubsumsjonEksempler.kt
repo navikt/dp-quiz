@@ -13,7 +13,6 @@ import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.eller
@@ -101,14 +100,14 @@ private val prototypeWebSøknad = Søknadprosess(
         inntektSisteÅr
     )
 )
-private val versjon = Versjon(
+private val søknadprosessTestBygger = SøknadprosessTestBygger(
     prototypeSøknad,
     prototypeSubsumsjon,
     mapOf(Web to prototypeWebSøknad)
 )
 
 /* ktlint-disable parameter-list-wrapping */
-internal fun eksempelSøknad() = Versjon.id(13).søknadprosess(testPerson, Web).also { søknadprosess ->
+internal fun eksempelSøknad() = søknadprosessTestBygger.søknadprosess(testPerson, Web).also { søknadprosess ->
     bursdag67 = søknadprosess.dato(1) as GrunnleggendeFaktum<LocalDate>
     søknadsdato = søknadprosess.dato(2) as GrunnleggendeFaktum<LocalDate>
     ønsketdato = søknadprosess.dato(3) as GrunnleggendeFaktum<LocalDate>

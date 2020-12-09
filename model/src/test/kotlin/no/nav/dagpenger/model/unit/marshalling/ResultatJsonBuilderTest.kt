@@ -4,8 +4,8 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.SøknadprosessTestBygger
 import no.nav.dagpenger.model.helpers.testPerson
-import no.nav.dagpenger.model.helpers.versjonId
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -24,13 +24,10 @@ import org.junit.jupiter.api.assertThrows
 internal class ResultatJsonBuilderTest {
     private lateinit var prototypeSøknad: Søknad
 
-    private var versjonId = 0
-
     @BeforeEach
     fun setup() {
-        versjonId = versjonId()
         prototypeSøknad = Søknad(
-            versjonId,
+            0,
             ja nei "f1" id 1,
             ja nei "f2" id 2 avhengerAv 1,
             ja nei "f3" id 3,
@@ -93,12 +90,10 @@ internal class ResultatJsonBuilderTest {
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        Versjon(
+        return SøknadprosessTestBygger(
             prototypeSøknad,
             prototypeSubsumsjon,
             mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
-        )
-
-        return Versjon.id(versjonId).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
+        ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
     }
 }

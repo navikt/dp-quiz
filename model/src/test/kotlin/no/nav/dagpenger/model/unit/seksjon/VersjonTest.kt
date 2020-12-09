@@ -21,7 +21,7 @@ internal class VersjonTest {
 
     companion object {
         val prototypeSøknad = Søknad(
-            139,
+            1,
             heltall faktum "f15" id 15 genererer 16 og 17 og 18,
             heltall faktum "f16" id 16,
             ja nei "f17" id 17,

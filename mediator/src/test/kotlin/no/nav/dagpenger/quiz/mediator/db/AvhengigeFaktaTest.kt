@@ -17,7 +17,6 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.januar
-import no.nav.dagpenger.quiz.mediator.helpers.versjonId
 import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

@@ -4,15 +4,14 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.SøknadprosessTestBygger
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testPerson
-import no.nav.dagpenger.model.helpers.versjonId
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.makro
 import org.junit.jupiter.api.BeforeEach
@@ -23,22 +22,22 @@ import kotlin.test.assertTrue
 
 class PeriodeGeneratorTest {
 
-    private var versjonId: Int = 0
+    private lateinit var søknadprosessTestBygger: SøknadprosessTestBygger
     @BeforeEach
     fun setup() {
-        versjonId = versjonId()
+
         val søknadPrototype = Søknad(
-            versjonId,
+            0,
             heltall faktum "periode antall" id 1 genererer 2 og 3,
             dato faktum "fom" id 2,
             dato faktum "tom" id 3,
             dato faktum "ønsket dato" id 4
         )
-        val subsumsjon = søknadPrototype generator 1 har "periode".makro(
+        val prototypeSubsumsjon = søknadPrototype generator 1 har "periode".makro(
             søknadPrototype.dato(4) mellom søknadPrototype.dato(2) og søknadPrototype.dato(3)
         )
 
-        val søknadprosess = Søknadprosess(
+        val prototypeSøknadprosess = Søknadprosess(
             Seksjon(
                 "periode antall",
                 Rolle.nav,
@@ -58,12 +57,12 @@ class PeriodeGeneratorTest {
 
             ),
         )
-        Versjon(søknadPrototype, subsumsjon, mapOf(Web to søknadprosess))
+        søknadprosessTestBygger = SøknadprosessTestBygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
     }
 
     @Test
     fun ` periode faktum `() {
-        val søknadprosess = Versjon.id(versjonId).søknadprosess(testPerson, Web)
+        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
         søknadprosess.generator(1).besvar(2)
         søknadprosess.dato(4).besvar(5.januar)
         søknadprosess.dato("2.1").besvar(1.januar)

@@ -4,10 +4,10 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.SøknadprosessTestBygger
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import org.junit.jupiter.api.BeforeEach
@@ -32,8 +32,8 @@ class GenerertEndreTest {
             Seksjon("seksjon14", Rolle.søker, prototypeSøknad.ja(1), prototypeSøknad.generator(4)),
             Seksjon("template23", Rolle.søker, prototypeSøknad.ja(2), prototypeSøknad.ja(3))
         )
-        Versjon(prototypeSøknad, TomSubsumsjon, mapOf(Web to prototypeSøknadprosess))
-        søknadprosess = Versjon.id(59).søknadprosess(testPerson, Web)
+
+        søknadprosess = SøknadprosessTestBygger(prototypeSøknad, TomSubsumsjon, mapOf(Web to prototypeSøknadprosess)).søknadprosess(testPerson, Web)
     }
 
     @Test

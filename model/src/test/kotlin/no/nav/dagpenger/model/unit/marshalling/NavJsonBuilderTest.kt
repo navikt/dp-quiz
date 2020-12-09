@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.SøknadprosessTestBygger
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
@@ -31,9 +32,9 @@ class NavJsonBuilderTest {
 
     @Test
     fun `bygger behov event`() {
-        val versjonId = 500
+
         val prototypeSøknad = Søknad(
-            versjonId,
+            0,
             ja nei "f1" id 1,
             ja nei "f1" id 2 avhengerAv 1,
             ja nei "f3" id 3,
@@ -90,15 +91,14 @@ class NavJsonBuilderTest {
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        Versjon(
+        val fakta = SøknadprosessTestBygger(
             prototypeSøknad,
             prototypeSubsumsjon,
             mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
-        )
+        ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
 
-        val fakta = Versjon.id(versjonId).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
         FaktumNavBehov(
-            Versjon.versjoner.keys.maxOf { it },
+            0,
             mapOf(
                 1 to "f1Behov",
                 2 to "f2Behov",
