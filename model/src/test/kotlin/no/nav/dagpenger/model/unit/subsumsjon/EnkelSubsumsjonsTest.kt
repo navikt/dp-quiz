@@ -19,15 +19,10 @@ internal class EnkelSubsumsjonsTest {
     private lateinit var bursdag67: Faktum<LocalDate>
     private lateinit var søknadsdato: Faktum<LocalDate>
 
-    companion object {
-        private var versjonId = 120
-    }
-
     @BeforeEach
     fun setup() {
-        versjonId--
         søknadprosess = Søknad(
-            versjonId,
+            0,
             dato faktum "Datoen du fyller 67" id 1,
             dato faktum "Datoen du søker om dagpenger" id 2
         ).testSøknadprosess()

@@ -23,9 +23,9 @@ import kotlin.test.assertTrue
 class PeriodeGeneratorTest {
 
     private lateinit var søknadprosessTestBygger: SøknadprosessTestBygger
+
     @BeforeEach
     fun setup() {
-
         val søknadPrototype = Søknad(
             0,
             heltall faktum "periode antall" id 1 genererer 2 og 3,
