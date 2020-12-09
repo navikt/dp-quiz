@@ -40,6 +40,7 @@ internal class AvslagPåMinsteinntektTest {
         }
     }
 
+    @Disabled
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
 
