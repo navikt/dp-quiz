@@ -28,7 +28,6 @@ import java.util.Locale
 import java.util.UUID
 
 abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : SøknadprosessVisitor {
-    private var relevanteFakta: Set<String> = mutableSetOf()
     private val mapper = ObjectMapper()
     protected val root: ObjectNode = mapper.createObjectNode()
     protected val faktaNode = mapper.createArrayNode()
@@ -165,7 +164,6 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         lokaltResultat: Boolean?,
         childResultat: Boolean?
     ) {
-        relevanteFakta += godkjenning.id
         putSubsumsjon(lokaltResultat, subsumsjon, "Godkjenning subsumsjon")
     }
 
@@ -211,14 +209,13 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         if (parent == ignoreSubsumsjon) ignoreSubsumsjon = null
     }
 
-    private fun putSubsumsjon(
+    protected open fun putSubsumsjon(
         lokaltResultat: Boolean?,
         subsumsjon: Subsumsjon,
         type: String
-    ): ObjectNode? {
-        if (ignoreSubsumsjon != null) return null
-        relevanteFakta += subsumsjon.alleFakta().map { it.id }
-        return subsumsjonNoder.first().addObject().also { subsumsjonNode ->
+    ) {
+        if (ignoreSubsumsjon != null) return
+        subsumsjonNoder.first().addObject().also { subsumsjonNode ->
             subsumsjonNode.put("lokalt_resultat", lokaltResultat)
             subsumsjonNode.put("navn", subsumsjon.navn)
             subsumsjonNode.put("type", type)
@@ -227,7 +224,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         }
     }
 
-    private fun <R : Comparable<R>> lagFaktumNode(
+    protected open fun <R : Comparable<R>> lagFaktumNode(
         id: String,
         navn: String,
         roller: Set<Rolle> = emptySet(),
@@ -235,7 +232,6 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         svar: R? = null
     ) {
         if (ignore) return
-        if (id !in relevanteFakta) return
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("navn", navn)

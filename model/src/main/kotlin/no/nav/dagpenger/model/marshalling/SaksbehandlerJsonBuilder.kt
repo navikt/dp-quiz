@@ -1,8 +1,13 @@
 package no.nav.dagpenger.model.marshalling
 
+import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.Språk.Companion.bokmål
 import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.time.LocalDateTime
 import java.util.Locale
 import java.util.UUID
@@ -13,6 +18,7 @@ class SaksbehandlerJsonBuilder(
     private val indeks: Int = 0,
     lokal: Locale = bokmål
 ) : SøknadJsonBuilder(lokal = lokal) {
+    private var relevanteFakta: Set<String> = mutableSetOf()
 
     init {
         søknadprosess.søknad.accept(this)
@@ -32,5 +38,36 @@ class SaksbehandlerJsonBuilder(
         root.set("identer", identerNode)
         root.set("fakta", faktaNode)
         root.set("subsumsjoner", subsumsjonRoot)
+    }
+
+    override fun preVisit(
+        subsumsjon: GodkjenningsSubsumsjon,
+        action: GodkjenningsSubsumsjon.Action,
+        godkjenning: GrunnleggendeFaktum<Boolean>,
+        lokaltResultat: Boolean?,
+        childResultat: Boolean?
+    ) {
+        relevanteFakta += godkjenning.id
+        super.preVisit(subsumsjon, action, godkjenning, lokaltResultat, childResultat)
+    }
+
+    override fun putSubsumsjon(
+        lokaltResultat: Boolean?,
+        subsumsjon: Subsumsjon,
+        type: String
+    ) {
+        relevanteFakta += subsumsjon.alleFakta().map { it.id }
+        super.putSubsumsjon(lokaltResultat, subsumsjon, type)
+    }
+
+    override fun <R : Comparable<R>> lagFaktumNode(
+        id: String,
+        navn: String,
+        roller: Set<Rolle>,
+        godkjenner: Set<Faktum<*>>,
+        svar: R?
+    ) {
+        if (id !in relevanteFakta) return
+        super.lagFaktumNode(id, navn, roller, godkjenner, svar)
     }
 }
