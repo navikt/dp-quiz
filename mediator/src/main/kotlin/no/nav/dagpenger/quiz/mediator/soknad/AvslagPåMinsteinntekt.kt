@@ -33,6 +33,7 @@ internal class AvslagPåMinsteinntekt {
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
     }
+
     internal val søknad: Søknad
         get() = Søknad(
             VERSJON_ID,

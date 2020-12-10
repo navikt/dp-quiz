@@ -4,7 +4,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.helpers.SøknadprosessTestBygger
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.regel.er
@@ -90,7 +89,7 @@ internal class ResultatJsonBuilderTest {
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        return SøknadprosessTestBygger(
+        return Versjon.VersjonBygger(
             prototypeSøknad,
             prototypeSubsumsjon,
             mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)

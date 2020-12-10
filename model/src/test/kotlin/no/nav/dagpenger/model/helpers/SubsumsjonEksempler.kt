@@ -13,6 +13,7 @@ import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.eller
@@ -100,7 +101,7 @@ private val prototypeWebSøknad = Søknadprosess(
         inntektSisteÅr
     )
 )
-private val søknadprosessTestBygger = SøknadprosessTestBygger(
+private val søknadprosessTestBygger = Versjon.VersjonBygger(
     prototypeSøknad,
     prototypeSubsumsjon,
     mapOf(Web to prototypeWebSøknad)

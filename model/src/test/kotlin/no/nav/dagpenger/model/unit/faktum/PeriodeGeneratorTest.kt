@@ -4,7 +4,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.helpers.SøknadprosessTestBygger
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testPerson
@@ -12,6 +11,7 @@ import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.makro
 import org.junit.jupiter.api.BeforeEach
@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
 
 class PeriodeGeneratorTest {
 
-    private lateinit var søknadprosessTestBygger: SøknadprosessTestBygger
+    private lateinit var søknadprosessTestBygger: Versjon.VersjonBygger
 
     @BeforeEach
     fun setup() {
@@ -57,7 +57,7 @@ class PeriodeGeneratorTest {
 
             ),
         )
-        søknadprosessTestBygger = SøknadprosessTestBygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
+        søknadprosessTestBygger = Versjon.VersjonBygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
     }
 
     @Test

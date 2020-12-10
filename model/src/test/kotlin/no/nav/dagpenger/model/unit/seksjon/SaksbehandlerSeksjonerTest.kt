@@ -4,7 +4,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.helpers.SøknadprosessTestBygger
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
@@ -12,6 +11,7 @@ import no.nav.dagpenger.model.regel.gyldigGodkjentAv
 import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.eller
 import no.nav.dagpenger.model.subsumsjon.så
@@ -46,7 +46,7 @@ internal class SaksbehandlerSeksjonerTest {
         Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.ja(4), prototypeSøknad.ja(6))
     )
 
-    private val søknadprosessTestBygger = SøknadprosessTestBygger(
+    private val søknadprosessTestBygger = Versjon.VersjonBygger(
         prototypeSøknad,
         prototypeSubsumsjon,
         mapOf(Web to prototypeSøknadprosess)

@@ -18,6 +18,7 @@ import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.under
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -140,7 +141,7 @@ internal lateinit var seksjon7: Seksjon
 internal lateinit var seksjon8: Seksjon
 internal lateinit var rootSubsumsjon: Subsumsjon
 
-private val søknadprosessTestBygger = SøknadprosessTestBygger(prototypeSøknad1, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
+private val søknadprosessTestBygger = Versjon.VersjonBygger(prototypeSøknad1, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
 
 internal class NyttEksempel() {
 

@@ -8,7 +8,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.NyttEksempel
-import no.nav.dagpenger.model.helpers.SøknadprosessTestBygger
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.marshalling.Språk.Companion.nynorsk
@@ -18,6 +17,7 @@ import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -387,7 +387,7 @@ internal class SaksbehandlerJsonBuilderTest {
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        return SøknadprosessTestBygger(
+        return Versjon.VersjonBygger(
             prototypeSøknad,
             prototypeSubsumsjon,
             mapOf(Web to prototypeFaktagrupper)
