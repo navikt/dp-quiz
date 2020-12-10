@@ -89,7 +89,7 @@ internal class ResultatJsonBuilderTest {
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        return Versjon.VersjonBygger(
+        return Versjon.Bygger(
             prototypeSøknad,
             prototypeSubsumsjon,
             mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)

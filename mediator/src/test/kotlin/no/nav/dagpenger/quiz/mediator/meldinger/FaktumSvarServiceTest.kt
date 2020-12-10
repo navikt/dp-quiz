@@ -27,7 +27,7 @@ internal class FaktumSvarServiceTest {
 
     )
 
-    val versjon = Versjon(
+    val versjon = Versjon.Bygger(
         prototypeFakta,
         prototypeFakta dato 11 etter (prototypeFakta dato 12),
         mapOf(
@@ -39,7 +39,7 @@ internal class FaktumSvarServiceTest {
                 )
             )
         )
-    )
+    ).registrer()
 
     val søknadPersistence = mockk<SøknadPersistence>().also {
         every { it.hent(any(), any()) } returns Versjon.id(versjonId).søknadprosess(prototypeFakta, Versjon.UserInterfaceType.Web)

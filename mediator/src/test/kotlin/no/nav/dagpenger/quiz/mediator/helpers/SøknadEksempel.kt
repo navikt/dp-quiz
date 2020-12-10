@@ -88,10 +88,10 @@ internal object SøknadEksempel {
             14 to "InnsendtSøknadsId"
         )
     )
-    val v = Versjon(
+    val v = Versjon.Bygger(
         prototypeSøknad1,
         subsumsjon,
         mapOf(Versjon.UserInterfaceType.Web to webPrototypeSøknad),
         faktumNavBehov
-    )
+    ).registrer()
 }

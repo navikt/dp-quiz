@@ -62,12 +62,12 @@ internal object SøknadEksempel1 {
         )
     )
 
-    val v = Versjon(
+    val v = Versjon.Bygger(
         prototypeFakta1,
         prototypeFakta1 ja 1 er true,
         mapOf(
             Versjon.UserInterfaceType.Web to webPrototypeSøknad,
             Versjon.UserInterfaceType.Mobile to mobilePrototypeSøknad
         )
-    )
+    ).registrer()
 }

@@ -33,7 +33,7 @@ class GenerertEndreTest {
             Seksjon("template23", Rolle.søker, prototypeSøknad.ja(2), prototypeSøknad.ja(3))
         )
 
-        søknadprosess = Versjon.VersjonBygger(prototypeSøknad, TomSubsumsjon, mapOf(Web to prototypeSøknadprosess)).søknadprosess(testPerson, Web)
+        søknadprosess = Versjon.Bygger(prototypeSøknad, TomSubsumsjon, mapOf(Web to prototypeSøknadprosess)).søknadprosess(testPerson, Web)
     }
 
     @Test

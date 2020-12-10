@@ -141,7 +141,7 @@ internal lateinit var seksjon7: Seksjon
 internal lateinit var seksjon8: Seksjon
 internal lateinit var rootSubsumsjon: Subsumsjon
 
-private val søknadprosessTestBygger = Versjon.VersjonBygger(prototypeSøknad1, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
+private val søknadprosessTestBygger = Versjon.Bygger(prototypeSøknad1, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
 
 internal class NyttEksempel() {
 

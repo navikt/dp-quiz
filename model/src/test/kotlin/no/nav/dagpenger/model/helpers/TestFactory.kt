@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 
 internal fun Søknad.testSøknadprosess(): Søknadprosess {
-    return Versjon.VersjonBygger(
+    return Versjon.Bygger(
         this,
         TomSubsumsjon,
         mapOf(

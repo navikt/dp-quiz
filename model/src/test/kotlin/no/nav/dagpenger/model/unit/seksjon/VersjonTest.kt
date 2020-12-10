@@ -30,7 +30,7 @@ internal class VersjonTest {
         val prototypeSeksjon = Seksjon("seksjon", Rolle.søker, prototypeSøknad id 15, prototypeSøknad id 16, prototypeSøknad id 17, prototypeSøknad id 18)
         val prototypeFaktagrupper = Søknadprosess(prototypeSeksjon)
         val prototypeSubsumsjon = prototypeSøknad heltall 15 er 6
-        val versjon = Versjon(prototypeSøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
+        val versjon = Versjon.Bygger(prototypeSøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper)).registrer()
     }
 
     @BeforeEach

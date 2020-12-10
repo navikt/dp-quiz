@@ -34,7 +34,7 @@ class NesteSeksjonTest {
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        val fakta = Versjon.VersjonBygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess)).søknadprosess(testPerson, Web)
+        val fakta = Versjon.Bygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess)).søknadprosess(testPerson, Web)
 
         assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
     }
@@ -58,7 +58,7 @@ class NesteSeksjonTest {
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        Versjon.VersjonBygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess)).søknadprosess(testPerson, Web).also { fakta ->
+        Versjon.Bygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess)).søknadprosess(testPerson, Web).also { fakta ->
             assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
         }
     }

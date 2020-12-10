@@ -101,7 +101,7 @@ private val prototypeWebSøknad = Søknadprosess(
         inntektSisteÅr
     )
 )
-private val søknadprosessTestBygger = Versjon.VersjonBygger(
+private val søknadprosessTestBygger = Versjon.Bygger(
     prototypeSøknad,
     prototypeSubsumsjon,
     mapOf(Web to prototypeWebSøknad)

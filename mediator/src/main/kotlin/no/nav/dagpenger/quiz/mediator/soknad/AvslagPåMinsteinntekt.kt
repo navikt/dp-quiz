@@ -184,14 +184,14 @@ internal class AvslagPåMinsteinntekt {
                 20 to "DagensDato",
             )
         )
-    private val versjon = Versjon(
+    private val versjon = Versjon.Bygger(
         prototypeSøknad = søknad,
         prototypeSubsumsjon = inngangsvilkår,
         prototypeUserInterfaces = mapOf(
             Versjon.UserInterfaceType.Web to søknadprosess
         ),
         faktumNavBehov = faktumNavBehov
-    )
+    ).registrer()
 
     fun søknadprosess(person: Person) = versjon.søknadprosess(person, Versjon.UserInterfaceType.Web)
 }

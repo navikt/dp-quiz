@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
 
 class PeriodeGeneratorTest {
 
-    private lateinit var søknadprosessTestBygger: Versjon.VersjonBygger
+    private lateinit var søknadprosessTestBygger: Versjon.Bygger
 
     @BeforeEach
     fun setup() {
@@ -57,7 +57,7 @@ class PeriodeGeneratorTest {
 
             ),
         )
-        søknadprosessTestBygger = Versjon.VersjonBygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
+        søknadprosessTestBygger = Versjon.Bygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
     }
 
     @Test

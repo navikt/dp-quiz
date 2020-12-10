@@ -14,39 +14,31 @@ import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
 
 internal class AvslagPåMinsteinntektTest {
     private lateinit var søknadprosess: Søknadprosess
-
     private lateinit var testRapid: TestRapid
 
     companion object {
         private val avslagPåMinsteinntekt = AvslagPåMinsteinntekt()
     }
 
-    @BeforeEach
-    fun setup() {
-        Postgres.withMigratedDb {
-            avslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
-            søknadprosess =
-                avslagPåMinsteinntekt.søknadprosess(Person(Identer.Builder().folkeregisterIdent("123123123").build()))
-            val persistence = SøknadRecord()
-            testRapid = TestRapid().also {
-                FaktumSvarService(
-                    søknadPersistence = persistence,
-                    rapidsConnection = it
-                )
-                NySøknadService(persistence, it)
-            }
-        }
-    }
-
     @Test
-    fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
+    fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() = Postgres.withMigratedDb {
+        avslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
+        søknadprosess =
+            avslagPåMinsteinntekt.søknadprosess(Person(Identer.Builder().folkeregisterIdent("123123123").build()))
+        val persistence = SøknadRecord()
+        testRapid = TestRapid().also {
+            FaktumSvarService(
+                søknadPersistence = persistence,
+                rapidsConnection = it
+            )
+            NySøknadService(persistence, it)
+        }
 
         val søknadsId = søknad()
         besvar(søknadsId, "20", 5.januar)
@@ -88,8 +80,19 @@ internal class AvslagPåMinsteinntektTest {
     }
 
     @Test
-    fun `De som oppfyller kravet til minsteinntekt gir ingen seksjoner til saksbehandler`() {
+    fun `De som oppfyller kravet til minsteinntekt gir ingen seksjoner til saksbehandler`() = Postgres.withMigratedDb {
+        avslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
+        søknadprosess =
+            avslagPåMinsteinntekt.søknadprosess(Person(Identer.Builder().folkeregisterIdent("123123123").build()))
+        val persistence = SøknadRecord()
 
+        testRapid = TestRapid().also {
+            FaktumSvarService(
+                søknadPersistence = persistence,
+                rapidsConnection = it
+            )
+            NySøknadService(persistence, it)
+        }
         val søknadsId = søknad()
         besvar(søknadsId, "20", 5.januar)
         besvar(søknadsId, "1", 5.januar)

@@ -46,7 +46,7 @@ internal class SaksbehandlerSeksjonerTest {
         Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.ja(4), prototypeSøknad.ja(6))
     )
 
-    private val søknadprosessTestBygger = Versjon.VersjonBygger(
+    private val søknadprosessTestBygger = Versjon.Bygger(
         prototypeSøknad,
         prototypeSubsumsjon,
         mapOf(Web to prototypeSøknadprosess)

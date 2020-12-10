@@ -43,7 +43,7 @@ internal class AvhengigeFaktaTest {
                 dato faktum "f3" id 13,
 
             )
-            Versjon(
+            Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta ja 19 er true,
                 mapOf(
@@ -55,7 +55,7 @@ internal class AvhengigeFaktaTest {
                         )
                     )
                 )
-            )
+            ).registrer()
             FaktumTable(prototypeFakta, versjonId)
             søknadRecord = SøknadRecord()
             originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, versjonId)
@@ -85,7 +85,7 @@ internal class AvhengigeFaktaTest {
                 ja nei "f4" id 4 avhengerAv 5,
                 ja nei "f5" id 5,
             )
-            Versjon(
+            Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta ja 1 er true,
                 mapOf(
@@ -97,7 +97,7 @@ internal class AvhengigeFaktaTest {
                         )
                     )
                 )
-            )
+            ).registrer()
             FaktumTable(prototypeFakta, versjonId)
 
             søknadRecord = SøknadRecord()
@@ -129,7 +129,7 @@ internal class AvhengigeFaktaTest {
                 maks dato "f4" av 2 og 3 id 4,
                 ja nei "f1" id 5 avhengerAv 4,
             )
-            Versjon(
+            Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta ja 1 er true,
                 mapOf(
@@ -141,7 +141,7 @@ internal class AvhengigeFaktaTest {
                         )
                     )
                 )
-            )
+            ).registrer()
             FaktumTable(prototypeFakta, versjonId)
 
             søknadRecord = SøknadRecord()

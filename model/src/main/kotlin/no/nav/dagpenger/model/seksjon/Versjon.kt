@@ -6,17 +6,10 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
 
-class Versjon(
-    private val bygger: VersjonBygger
+class Versjon private constructor(
+    private val bygger: Bygger
 ) {
     val faktumNavBehov get() = bygger.faktumNavBehov
-
-    constructor(
-        prototypeSøknad: Søknad,
-        prototypeSubsumsjon: Subsumsjon,
-        prototypeUserInterfaces: Map<UserInterfaceType, Søknadprosess>,
-        faktumNavBehov: FaktumNavBehov? = null
-    ) : this(VersjonBygger(prototypeSøknad, prototypeSubsumsjon, prototypeUserInterfaces, faktumNavBehov))
 
     companion object {
         val versjoner = mutableMapOf<Int, Versjon>()
@@ -48,7 +41,7 @@ class Versjon(
         }
     }
 
-    class VersjonBygger(
+    class Bygger(
         private val prototypeSøknad: Søknad,
         private val prototypeSubsumsjon: Subsumsjon,
         private val prototypeUserInterfaces: Map<Versjon.UserInterfaceType, Søknadprosess>,
@@ -68,5 +61,6 @@ class Versjon(
         }
 
         internal fun versjonId() = prototypeSøknad.versjonId
+        fun registrer() = Versjon(this)
     }
 }

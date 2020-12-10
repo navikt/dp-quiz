@@ -104,12 +104,12 @@ class NavJsonBuilderTest {
             )
         )
 
-        val fakta = Versjon(
+        val fakta = Versjon.Bygger(
             prototypeSøknad,
             prototypeSubsumsjon,
             mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper),
             faktumNavBehov
-        ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
+        ).registrer().søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
 
         fakta.ja(1).besvar(true)
         fakta.dato(5).besvar(1.januar)

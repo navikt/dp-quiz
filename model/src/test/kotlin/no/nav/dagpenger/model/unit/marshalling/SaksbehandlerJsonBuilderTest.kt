@@ -387,7 +387,7 @@ internal class SaksbehandlerJsonBuilderTest {
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        return Versjon.VersjonBygger(
+        return Versjon.Bygger(
             prototypeSøknad,
             prototypeSubsumsjon,
             mapOf(Web to prototypeFaktagrupper)

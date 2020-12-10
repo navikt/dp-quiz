@@ -165,13 +165,13 @@ class Prototype {
             inntekter
         )
 
-    private val versjon = Versjon(
+    private val versjon = Versjon.Bygger(
         prototypeSøknad = søknad,
         prototypeSubsumsjon = inngangsvilkår,
         prototypeUserInterfaces = mapOf(
             Versjon.UserInterfaceType.Web to søknadprosess
         )
-    )
+    ).registrer()
 
     fun søknadprosess(person: Person) = versjon.søknadprosess(person, Versjon.UserInterfaceType.Web)
 }
