@@ -16,13 +16,12 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 
-internal class SøknadEksempel private constructor() {
-    companion object {
-        val søknadEksempel = SøknadEksempel()
-    }
+internal object SøknadEksempel {
+
+    val versjonId = 666
 
     val prototypeSøknad1 = Søknad(
-        666,
+        versjonId,
         ja nei "f1_bool" id 1 avhengerAv 14,
         ja nei "f2_bool" id 2,
         heltall faktum "f3_heltall" id 3,
@@ -91,7 +90,7 @@ internal class SøknadEksempel private constructor() {
             14 to "InnsendtSøknadsId"
         )
     )
-    val v = Versjon.Bygger(
+    val versjon = Versjon.Bygger(
         prototypeSøknad1,
         subsumsjon,
         mapOf(Versjon.UserInterfaceType.Web to webPrototypeSøknad),

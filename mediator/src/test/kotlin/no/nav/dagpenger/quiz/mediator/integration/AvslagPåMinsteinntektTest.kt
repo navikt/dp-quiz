@@ -1,8 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
-import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
@@ -14,24 +11,17 @@ import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
 
 internal class AvslagPåMinsteinntektTest {
-    private lateinit var søknadprosess: Søknadprosess
-    private lateinit var testRapid: TestRapid
 
-    companion object {
-        private val avslagPåMinsteinntekt = AvslagPåMinsteinntekt()
-    }
+    private lateinit var testRapid: TestRapid
 
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() = Postgres.withMigratedDb {
-        avslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
-        søknadprosess =
-            avslagPåMinsteinntekt.søknadprosess(Person(Identer.Builder().folkeregisterIdent("123123123").build()))
+        AvslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
         val persistence = SøknadRecord()
         testRapid = TestRapid().also {
             FaktumSvarService(
@@ -81,11 +71,8 @@ internal class AvslagPåMinsteinntektTest {
     }
 
     @Test
-    @Disabled
     fun `De som oppfyller kravet til minsteinntekt gir ingen seksjoner til saksbehandler`() = Postgres.withMigratedDb {
-        avslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
-        søknadprosess =
-            avslagPåMinsteinntekt.søknadprosess(Person(Identer.Builder().folkeregisterIdent("123123123").build()))
+        AvslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
         val persistence = SøknadRecord()
 
         testRapid = TestRapid().also {

@@ -6,7 +6,7 @@ import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecordTest
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
-import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1.Companion.søknadEksempel1
+import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -20,7 +20,7 @@ internal class HentSeksjonServiceTest {
         val rapid = TestRapid()
 
         Postgres.withMigratedDb {
-            FaktumTable(søknadEksempel1.prototypeFakta1, 15)
+            FaktumTable(SøknadEksempel1.prototypeFakta1, 15)
             val søknadRecord = SøknadRecord()
             søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Versjon.UserInterfaceType.Web, 15)
             val uuid = SøknadRecord().opprettede(SøknadRecordTest.UNG_PERSON_FNR_2018).toSortedMap().values.first()
@@ -36,7 +36,7 @@ internal class HentSeksjonServiceTest {
         val rapid = TestRapid()
 
         Postgres.withMigratedDb {
-            FaktumTable(søknadEksempel1.prototypeFakta1, 15)
+            FaktumTable(SøknadEksempel1.prototypeFakta1, 15)
             val søknadRecord = SøknadRecord()
             val fakta = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Mobile, 15)
             fakta.heltall(15).besvar(3)

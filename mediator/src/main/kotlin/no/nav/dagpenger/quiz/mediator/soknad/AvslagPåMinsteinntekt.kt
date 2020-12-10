@@ -26,10 +26,10 @@ import no.nav.dagpenger.model.subsumsjon.så
 import no.nav.dagpenger.model.subsumsjon.uansett
 
 // Forstår dagpengesøknaden
-internal class AvslagPåMinsteinntekt {
-    companion object {
-        const val VERSJON_ID = 2
-    }
+internal object AvslagPåMinsteinntekt {
+
+    const val VERSJON_ID = 2
+
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
     }

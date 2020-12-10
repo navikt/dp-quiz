@@ -30,9 +30,9 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
         runMigration()
             .also {
                 val søknadRecord = SøknadRecord()
+                AvslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
                 NySøknadService(søknadRecord, rapidsConnection)
                 FaktumSvarService(søknadRecord, rapidsConnection)
-                AvslagPåMinsteinntekt().registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
                 DagensDatoService(rapidsConnection)
             }
     }

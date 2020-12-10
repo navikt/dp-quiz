@@ -5,7 +5,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
-import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1.Companion.søknadEksempel1
+import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -16,12 +16,12 @@ internal class FaktumTableTest {
     @Test
     fun `Bygg faktum tabell`() {
         Postgres.withMigratedDb {
-            FaktumTable(søknadEksempel1.prototypeFakta1, 1)
+            FaktumTable(SøknadEksempel1.prototypeFakta1, 1)
             assertRecordCount(expectedFaktumRecordCount, "faktum")
             assertRecordCount(6, "utledet_faktum")
             assertRecordCount(3, "template_faktum")
             assertRecordCount(4, "avhengig_faktum")
-            FaktumTable(søknadEksempel1.prototypeFakta1, 1)
+            FaktumTable(SøknadEksempel1.prototypeFakta1, 1)
             assertRecordCount(expectedFaktumRecordCount, "faktum")
         }
     }
