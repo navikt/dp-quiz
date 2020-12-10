@@ -14,6 +14,7 @@ import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
@@ -80,6 +81,7 @@ internal class AvslagPåMinsteinntektTest {
     }
 
     @Test
+    @Disabled
     fun `De som oppfyller kravet til minsteinntekt gir ingen seksjoner til saksbehandler`() = Postgres.withMigratedDb {
         avslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
         søknadprosess =
