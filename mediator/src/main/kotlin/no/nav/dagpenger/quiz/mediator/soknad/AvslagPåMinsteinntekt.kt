@@ -29,8 +29,7 @@ import no.nav.dagpenger.model.subsumsjon.uansett
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntekt {
 
-
-    private val logger = KotlinLogging.logger {  }
+    private val logger = KotlinLogging.logger { }
     const val VERSJON_ID = 2
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
