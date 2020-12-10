@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
+import mu.KotlinLogging
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
@@ -28,6 +29,8 @@ import no.nav.dagpenger.model.subsumsjon.uansett
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntekt {
 
+
+    private val logger = KotlinLogging.logger {  }
     const val VERSJON_ID = 2
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
@@ -191,7 +194,9 @@ internal object AvslagPåMinsteinntekt {
             Versjon.UserInterfaceType.Web to søknadprosess
         ),
         faktumNavBehov = faktumNavBehov
-    ).registrer()
+    ).registrer().also {
+        logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
+    }
 
     fun søknadprosess(person: Person) = versjon.søknadprosess(person, Versjon.UserInterfaceType.Web)
 }
