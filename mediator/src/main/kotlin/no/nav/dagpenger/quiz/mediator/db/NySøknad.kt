@@ -27,9 +27,8 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
     private val faktumList = mutableListOf<Faktum<*>>()
     private var personId: UUID? = null
 
-
     companion object {
-        private val logger = KotlinLogging.logger {  }
+        private val logger = KotlinLogging.logger { }
     }
 
     init {
@@ -138,8 +137,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
                     }.asSingle
                 )
             }
-            if(id == null)  logger.error { " Faktumtable er ikke kjørt for $versjonId, root id er $rootId" }
-
+            if (id == null) logger.error { " Faktumtable er ikke kjørt for $versjonId, root id er $rootId" }
         }
     }
 }
