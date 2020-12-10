@@ -38,7 +38,7 @@ internal class AvslagPåMinsteinntektTest {
                 søknadPersistence = persistence,
                 rapidsConnection = it
             )
-            NySøknadService(persistence, it)
+            NySøknadService(persistence, it, AvslagPåMinsteinntekt.VERSJON_ID)
         }
 
         val søknadsId = søknad()
@@ -93,7 +93,7 @@ internal class AvslagPåMinsteinntektTest {
                 søknadPersistence = persistence,
                 rapidsConnection = it
             )
-            NySøknadService(persistence, it)
+            NySøknadService(persistence, it, AvslagPåMinsteinntekt.VERSJON_ID)
         }
         val søknadsId = søknad()
         besvar(søknadsId, "20", 5.januar)

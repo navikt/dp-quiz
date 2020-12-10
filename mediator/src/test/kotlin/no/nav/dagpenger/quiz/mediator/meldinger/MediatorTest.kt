@@ -8,7 +8,6 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
-import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import no.nav.dagpenger.quiz.mediator.helpers.desember
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -16,10 +15,12 @@ import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
 
+@Disabled
 internal class MediatorTest {
     @BeforeEach
     internal fun reset() {
@@ -35,7 +36,6 @@ internal class MediatorTest {
         init {
             NySøknadService(grupperer, testRapid)
             FaktumSvarService(grupperer, testRapid)
-            SøknadEksempel
         }
     }
 

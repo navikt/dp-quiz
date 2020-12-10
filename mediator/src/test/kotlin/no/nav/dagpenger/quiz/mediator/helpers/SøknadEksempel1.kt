@@ -13,8 +13,10 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 
-internal object SøknadEksempel1 {
-
+internal class SøknadEksempel1 private constructor() {
+    companion object {
+        val søknadEksempel1 = SøknadEksempel1()
+    }
     internal val prototypeFakta1 = Søknad(
         15,
         ja nei "f1" id 1 avhengerAv 11,

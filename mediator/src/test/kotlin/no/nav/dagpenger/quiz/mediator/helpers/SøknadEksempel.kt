@@ -16,7 +16,10 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 
-internal object SøknadEksempel {
+internal class SøknadEksempel private constructor() {
+    companion object {
+        val søknadEksempel = SøknadEksempel()
+    }
 
     val prototypeSøknad1 = Søknad(
         666,

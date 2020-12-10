@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
-import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1.prototypeFakta1
+import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1.Companion.søknadEksempel1
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Test
@@ -129,7 +129,7 @@ internal class SøknadRecordTest {
     }
 
     private fun byggOriginalSøknadprosess() {
-        FaktumTable(prototypeFakta1, 15)
+        FaktumTable(søknadEksempel1.prototypeFakta1, 15)
         søknadRecord = SøknadRecord()
         originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, 15)
     }

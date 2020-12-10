@@ -17,7 +17,8 @@ private val sikkerLogg = KotlinLogging.logger("tjenestekall")
 
 internal class NySøknadService(
     private val søknadPersistence: SøknadPersistence,
-    rapidsConnection: RapidsConnection
+    rapidsConnection: RapidsConnection,
+    private val versjonId: Int = Versjon.siste
 ) : River.PacketListener {
     init {
         River(rapidsConnection).apply {
@@ -39,7 +40,7 @@ internal class NySøknadService(
 
         val søknadsId = packet["søknadsId"].asText()
         val faktagrupperType = Versjon.UserInterfaceType.Web
-        søknadPersistence.ny(identer, faktagrupperType, Versjon.siste)
+        søknadPersistence.ny(identer, faktagrupperType, versjonId)
             .also { søknadprosess ->
                 // TODO: Fikse dette
                 søknadprosess.dokument(14).besvar(Dokument(LocalDateTime.now(), url = søknadsId))

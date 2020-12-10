@@ -3,8 +3,8 @@ package no.nav.dagpenger.quiz.mediator.db
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
-import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
-import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
+import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel.Companion.søknadEksempel
+import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1.Companion.søknadEksempel1
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -12,8 +12,8 @@ internal class FlereSøknaderTest {
     @Test
     fun `takler flere søknader samtidig`() {
         Postgres.withMigratedDb {
-            FaktumTable(SøknadEksempel1.prototypeFakta1, 15)
-            FaktumTable(SøknadEksempel.prototypeSøknad1, 666)
+            FaktumTable(søknadEksempel1.prototypeFakta1, 15)
+            FaktumTable(søknadEksempel.prototypeSøknad1, 666)
 
             val søknadRecord = SøknadRecord()
 
