@@ -4,6 +4,7 @@ import PostgresDataSourceBuilder.dataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import mu.KotlinLogging
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
@@ -25,6 +26,11 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
     private var indeks = 0
     private val faktumList = mutableListOf<Faktum<*>>()
     private var personId: UUID? = null
+
+
+    companion object {
+        private val logger = KotlinLogging.logger {  }
+    }
 
     init {
         søknad.accept(this)
@@ -104,19 +110,36 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
 
     private fun skrivFaktumVerdi(faktum: Faktum<*>) {
         if (faktum in faktumList) return else faktumList.add(faktum)
-        using(sessionOf(dataSource)) { session ->
-            session.run(
-                queryOf( //language=PostgreSQL
-                    """INSERT INTO faktum_verdi
-                            (soknad_id, indeks, faktum_id)
-                        VALUES (?, ?,
-                                (SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?))""".trimMargin(),
-                    søknadId,
-                    indeks,
-                    versjonId,
-                    rootId
-                ).asExecute
-            )
+        try {
+            using(sessionOf(dataSource)) { session ->
+                session.run(
+                    queryOf( //language=PostgreSQL
+                        """INSERT INTO faktum_verdi
+                                (soknad_id, indeks, faktum_id)
+                            VALUES (?, ?,
+                                    (SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?))""".trimMargin(),
+                        søknadId,
+                        indeks,
+                        versjonId,
+                        rootId
+                    ).asExecute
+                )
+            }
+        } catch (e: Exception) {
+            logger.error { " Versjon id er $versjonId, root id er $rootId" }
+            val id: String? = using(sessionOf(dataSource)) { session ->
+                session.run(
+                    queryOf( //language=PostgreSQL
+                        """SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?""".trimMargin(),
+                        versjonId,
+                        rootId
+                    ).map {
+                        it.string("id")
+                    }.asSingle
+                )
+            }
+            if(id == null)  logger.error { " Faktumtable er ikke kjørt for $versjonId, root id er $rootId" }
+
         }
     }
 }
