@@ -3,6 +3,7 @@ package no.nav.dagpenger.quiz.mediator.integration
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.januar
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
@@ -24,11 +24,16 @@ internal class AvslagPåMinsteinntektTest {
 
     private lateinit var testRapid: TestRapid
 
+    companion object {
+        private val avslagPåMinsteinntekt = AvslagPåMinsteinntekt()
+    }
+
     @BeforeEach
     fun setup() {
         Postgres.withMigratedDb {
+            avslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
             søknadprosess =
-                AvslagPåMinsteinntekt().søknadprosess(Person(Identer.Builder().folkeregisterIdent("123123123").build()))
+                avslagPåMinsteinntekt.søknadprosess(Person(Identer.Builder().folkeregisterIdent("123123123").build()))
             val persistence = SøknadRecord()
             testRapid = TestRapid().also {
                 FaktumSvarService(
@@ -40,7 +45,6 @@ internal class AvslagPåMinsteinntektTest {
         }
     }
 
-    @Disabled
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
 
@@ -73,14 +77,16 @@ internal class AvslagPåMinsteinntektTest {
         besvarInntekt(søknadsId, "7", 5000.0)
         assertEquals(14, testRapid.inspektør.size)
 
-        assertEquals("godkjenn virkningstidspunkt", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
+        assertEquals(
+            "godkjenn virkningstidspunkt",
+            testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
+        )
         assertEquals(14, testRapid.inspektør.size)
         besvar(søknadsId, "12", true)
         assertEquals(16, testRapid.inspektør.size)
         assertFalse(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
     }
 
-    @Disabled
     @Test
     fun `De som oppfyller kravet til minsteinntekt gir ingen seksjoner til saksbehandler`() {
 

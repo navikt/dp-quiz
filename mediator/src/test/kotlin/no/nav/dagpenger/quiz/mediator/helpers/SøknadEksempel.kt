@@ -75,14 +75,7 @@ internal object SøknadEksempel {
         prototypeSøknad1 ja 8 av (prototypeSøknad1 dokument 7)
     )
 
-    val v = Versjon(
-        prototypeSøknad1,
-        subsumsjon,
-        mapOf(Versjon.UserInterfaceType.Web to webPrototypeSøknad)
-    )
-
     val faktumNavBehov = FaktumNavBehov(
-        Versjon.versjoner.keys.maxOf { it },
         mapOf(
             1 to "f1Behov",
             2 to "f2Behov",
@@ -94,5 +87,11 @@ internal object SøknadEksempel {
             8 to "f8Behov",
             14 to "InnsendtSøknadsId"
         )
+    )
+    val v = Versjon(
+        prototypeSøknad1,
+        subsumsjon,
+        mapOf(Versjon.UserInterfaceType.Web to webPrototypeSøknad),
+        faktumNavBehov
     )
 }

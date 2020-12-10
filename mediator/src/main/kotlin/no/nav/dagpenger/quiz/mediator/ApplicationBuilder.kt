@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator
 
 import PostgresDataSourceBuilder.clean
 import PostgresDataSourceBuilder.runMigration
+import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.meldinger.DagensDatoService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
@@ -31,7 +32,7 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
                 val søknadRecord = SøknadRecord()
                 NySøknadService(søknadRecord, rapidsConnection)
                 FaktumSvarService(søknadRecord, rapidsConnection)
-                AvslagPåMinsteinntekt()
+                AvslagPåMinsteinntekt().registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
                 DagensDatoService(rapidsConnection)
             }
     }

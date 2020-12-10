@@ -10,11 +10,8 @@ class FaktumNavBehovTest {
     @Test
     fun `skal kunne registere faktum til nav-behov mapper`() {
         val map = mapOf(1 to "1")
-        val faktumNavBehov = FaktumNavBehov(1, map)
+        val faktumNavBehov = FaktumNavBehov(map)
         assertEquals("1", faktumNavBehov[1])
         assertThrows<IllegalArgumentException> { faktumNavBehov[2] }
-        assertThrows<IllegalArgumentException> { FaktumNavBehov(1, map) }
-        assertEquals(faktumNavBehov, FaktumNavBehov.id(1))
-        assertThrows<IllegalArgumentException> { FaktumNavBehov.id(2) }
     }
 }

@@ -2,13 +2,15 @@ package no.nav.dagpenger.model.seksjon
 
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
 
 class Versjon(
     private val prototypeSøknad: Søknad,
     private val prototypeSubsumsjon: Subsumsjon,
-    private val prototypeUserInterfaces: Map<UserInterfaceType, Søknadprosess>
+    private val prototypeUserInterfaces: Map<UserInterfaceType, Søknadprosess>,
+    internal val faktumNavBehov: FaktumNavBehov? = null
 ) {
 
     companion object {

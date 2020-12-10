@@ -7,7 +7,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.helpers.SøknadprosessTestBygger
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
@@ -91,14 +90,7 @@ class NavJsonBuilderTest {
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        val fakta = SøknadprosessTestBygger(
-            prototypeSøknad,
-            prototypeSubsumsjon,
-            mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
-        ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
-
-        FaktumNavBehov(
-            0,
+        val faktumNavBehov = FaktumNavBehov(
             mapOf(
                 1 to "f1Behov",
                 2 to "f2Behov",
@@ -111,6 +103,13 @@ class NavJsonBuilderTest {
                 9 to "f9Behov"
             )
         )
+
+        val fakta = Versjon(
+            prototypeSøknad,
+            prototypeSubsumsjon,
+            mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper),
+            faktumNavBehov
+        ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
 
         fakta.ja(1).besvar(true)
         fakta.dato(5).besvar(1.januar)

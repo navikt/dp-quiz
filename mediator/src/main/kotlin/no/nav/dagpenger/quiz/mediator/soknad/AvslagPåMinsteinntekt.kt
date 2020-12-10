@@ -24,40 +24,15 @@ import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
 import no.nav.dagpenger.model.subsumsjon.uansett
-import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 
 // Forstår dagpengesøknaden
 internal class AvslagPåMinsteinntekt {
-
-    init {
-        FaktumTable(søknad, VERSJON_ID)
-
-        FaktumNavBehov(
-            VERSJON_ID,
-            mapOf(
-                1 to "ØnskerDagpengerFraDato",
-                2 to "SisteDagMedArbeidsplikt",
-                3 to "SisteDagMedLønn",
-                4 to "Virkningstidspunkt",
-                5 to "FangstOgFiske",
-                6 to "InntektSiste3År",
-                7 to "InntektSiste12Mnd",
-                8 to "3G",
-                9 to "1_5G",
-                10 to "Søknadstidspunkt",
-                11 to "Verneplikt",
-                14 to "InnsendtSøknadsId",
-                16 to "Registreringsperioder",
-                17 to "Lærling",
-                20 to "DagensDato",
-            )
-        )
-    }
-
     private companion object {
         const val VERSJON_ID = 2
     }
-
+    fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
+        registrer(søknad, VERSJON_ID)
+    }
     internal val søknad: Søknad
         get() = Søknad(
             VERSJON_ID,
@@ -187,12 +162,34 @@ internal class AvslagPåMinsteinntekt {
             inntekter,
             godkjennDato
         )
+
+    private val faktumNavBehov =
+        FaktumNavBehov(
+            mapOf(
+                1 to "ØnskerDagpengerFraDato",
+                2 to "SisteDagMedArbeidsplikt",
+                3 to "SisteDagMedLønn",
+                4 to "Virkningstidspunkt",
+                5 to "FangstOgFiske",
+                6 to "InntektSiste3År",
+                7 to "InntektSiste12Mnd",
+                8 to "3G",
+                9 to "1_5G",
+                10 to "Søknadstidspunkt",
+                11 to "Verneplikt",
+                14 to "InnsendtSøknadsId",
+                16 to "Registreringsperioder",
+                17 to "Lærling",
+                20 to "DagensDato",
+            )
+        )
     private val versjon = Versjon(
         prototypeSøknad = søknad,
         prototypeSubsumsjon = inngangsvilkår,
         prototypeUserInterfaces = mapOf(
             Versjon.UserInterfaceType.Web to søknadprosess
-        )
+        ),
+        faktumNavBehov = faktumNavBehov
     )
 
     fun søknadprosess(person: Person) = versjon.søknadprosess(person, Versjon.UserInterfaceType.Web)
