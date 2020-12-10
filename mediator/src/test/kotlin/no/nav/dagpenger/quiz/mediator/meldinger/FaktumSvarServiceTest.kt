@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Rolle
@@ -43,6 +44,7 @@ internal class FaktumSvarServiceTest {
 
     val søknadPersistence = mockk<SøknadPersistence>().also {
         every { it.hent(any(), any()) } returns Versjon.id(versjonId).søknadprosess(prototypeFakta, Versjon.UserInterfaceType.Web)
+        every { it.lagre(any() as Søknad) } returns true
     }
 
     val testRapid = TestRapid().also {
@@ -53,7 +55,7 @@ internal class FaktumSvarServiceTest {
     }
 
     @Test
-    fun `skal ta imot liste svar (generator faktum)`() {
+    fun `skal ta imot liste svar generator faktum`() {
         testRapid.sendTestMessage(faktumSvarMedGeneratorFaktum)
 
         assertTrue(prototypeFakta.generator(10).erBesvart())
@@ -65,6 +67,9 @@ internal class FaktumSvarServiceTest {
         assertEquals("2020-01-09", prototypeFakta.dato("11.2").svar().toString())
         assertTrue(prototypeFakta.dato("12.2").erBesvart())
         assertEquals("2020-01-16", prototypeFakta.dato("12.2").svar().toString())
+
+        verify(exactly = 1) { søknadPersistence.hent(any(), any()) }
+        verify(exactly = 1) { søknadPersistence.lagre(any() as Søknad) }
     }
 
     //language=json
