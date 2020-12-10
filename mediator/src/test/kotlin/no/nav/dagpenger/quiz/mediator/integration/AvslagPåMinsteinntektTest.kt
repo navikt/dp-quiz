@@ -58,15 +58,15 @@ internal class AvslagPåMinsteinntektTest {
         assertEquals("inntekter", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
         besvarInntekt(søknadsId, "6", 20000.0)
         besvarInntekt(søknadsId, "7", 5000.0)
-        assertEquals(14, testRapid.inspektør.size)
+        assertEquals(15, testRapid.inspektør.size)
 
         assertEquals(
             "godkjenn virkningstidspunkt",
             testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
         )
-        assertEquals(14, testRapid.inspektør.size)
+
         besvar(søknadsId, "12", true)
-        assertEquals(16, testRapid.inspektør.size)
+        assertEquals(18, testRapid.inspektør.size)
         assertFalse(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
     }
 
@@ -109,9 +109,61 @@ internal class AvslagPåMinsteinntektTest {
         assertEquals("inntekter", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
         besvarInntekt(søknadsId, "6", 2000000.0)
         besvarInntekt(søknadsId, "7", 5000000.0)
-        assertEquals(15, testRapid.inspektør.size)
+        assertEquals(16, testRapid.inspektør.size)
 
         assertTrue(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
+    }
+
+    @Test
+    fun `De som har fangstOgFisk men ikke oppfyller kravet til minsteinntekt gir to oppgaver til saksbehandler`() = Postgres.withMigratedDb {
+        AvslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
+        val persistence = SøknadRecord()
+
+        testRapid = TestRapid().also {
+            FaktumSvarService(
+                søknadPersistence = persistence,
+                rapidsConnection = it
+            )
+            NySøknadService(persistence, it, AvslagPåMinsteinntekt.VERSJON_ID)
+        }
+
+        val søknadsId = søknad()
+        besvar(søknadsId, "20", 5.januar)
+        besvar(søknadsId, "1", 5.januar)
+        besvar(søknadsId, "2", 5.januar)
+        besvar(søknadsId, "3", 5.januar)
+        besvar(søknadsId, "10", 2.januar)
+        besvarGenerator(søknadsId, "16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
+
+        assertEquals("fangstOgFisk", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
+        assertEquals(7, testRapid.inspektør.size)
+
+        besvar(søknadsId, "5", true)
+        assertEquals(8, testRapid.inspektør.size)
+
+        assertEquals("grunnbeløp", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
+        besvarInntekt(søknadsId, "8", 300000.0)
+        besvarInntekt(søknadsId, "9", 150000.0)
+        assertEquals(10, testRapid.inspektør.size)
+
+        assertEquals("inntektsunntak", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
+        besvar(søknadsId, "11", false)
+        besvar(søknadsId, "17", false)
+        assertEquals(12, testRapid.inspektør.size)
+
+        assertEquals("inntekter", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
+        besvarInntekt(søknadsId, "6", 20000.0)
+        besvarInntekt(søknadsId, "7", 5000.0)
+        assertEquals(15, testRapid.inspektør.size)
+
+        assertEquals("godkjenn fangst og fisk", testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText())
+        assertEquals("godkjenn virkningstidspunkt", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
+        besvar(søknadsId, "15", true)
+        besvar(søknadsId, "12", true)
+
+        assertEquals("godkjenn virkningstidspunkt", testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText())
+
+        assertFalse(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
     }
 
     private fun besvar(søknadsId: String, faktumId: String, svar: Any) {

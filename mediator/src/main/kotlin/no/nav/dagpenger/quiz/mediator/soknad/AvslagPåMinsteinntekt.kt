@@ -155,6 +155,12 @@ internal object AvslagPåMinsteinntekt {
             Rolle.saksbehandler,
             godkjenningVirkningstidspunkt
         )
+    private val godkjennFangstOgFisk =
+        Seksjon(
+            "godkjenn fangst og fisk",
+            Rolle.saksbehandler,
+            godkjenningFangstOgFisk
+        )
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             oppstart,
@@ -162,6 +168,7 @@ internal object AvslagPåMinsteinntekt {
             datoer,
             inntektsunntak,
             fangstOgfisk,
+            godkjennFangstOgFisk,
             inntekter,
             godkjennDato
         )
