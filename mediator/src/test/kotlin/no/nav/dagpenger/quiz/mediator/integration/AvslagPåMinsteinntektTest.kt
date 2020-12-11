@@ -166,6 +166,29 @@ internal class AvslagPåMinsteinntektTest {
         assertFalse(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
     }
 
+    @Test
+    fun `Skal ikke gi oppgaver til saksbehandler når dagens dato er før virkningstidspunkt`() = Postgres.withMigratedDb {
+        AvslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
+        val persistence = SøknadRecord()
+        testRapid = TestRapid().also {
+            FaktumSvarService(
+                søknadPersistence = persistence,
+                rapidsConnection = it
+            )
+            NySøknadService(persistence, it, AvslagPåMinsteinntekt.VERSJON_ID)
+        }
+
+        val søknadsId = søknad()
+        besvar(søknadsId, "20", 1.januar)
+        besvar(søknadsId, "1", 5.januar)
+        besvar(søknadsId, "2", 5.januar)
+        besvar(søknadsId, "3", 5.januar)
+        besvar(søknadsId, "10", 2.januar)
+        besvarGenerator(søknadsId, "16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
+
+        assertFalse(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
+    }
+
     private fun besvar(søknadsId: String, faktumId: String, svar: Any) {
         //language=JSON
         testRapid.sendTestMessage(

@@ -108,6 +108,7 @@ abstract class Subsumsjon protected constructor(
                 GodkjenningsSubsumsjon.Action.NeiAction -> lokaltResultat == true
                 GodkjenningsSubsumsjon.Action.UansettAction -> false
             }
+            if (lokaltResultat == null) ignore = true
         }
 
         override fun postVisit(

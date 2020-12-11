@@ -348,8 +348,8 @@ internal class SaksbehandlerJsonBuilderTest {
 
     @Test
     fun `Komplekse seksjoner`() {
-        assertSeksjonSize(7, "seksjon8")
-        assertSeksjonSize(4, "seksjon9")
+        assertFaktaStørrelseISeksjon(5, "seksjon8")
+        assertFaktaStørrelseISeksjon(4, "seksjon9")
     }
 
     @Test
@@ -357,7 +357,7 @@ internal class SaksbehandlerJsonBuilderTest {
         val fakta = NyttEksempel().søknadprosess
         fakta.heltall(15).besvar(3)
         var json = SaksbehandlerJsonBuilder(fakta, "seksjon8").resultat()
-        assertEquals(10, json["fakta"].size())
+        assertEquals(8, json["fakta"].size())
     }
 
     @AfterEach
@@ -365,7 +365,7 @@ internal class SaksbehandlerJsonBuilderTest {
         clearStaticMockk(ResourceBundle::class)
     }
 
-    private fun assertSeksjonSize(expected: Int, seksjonNavn: String) {
+    private fun assertFaktaStørrelseISeksjon(expected: Int, seksjonNavn: String) {
         val json = SaksbehandlerJsonBuilder(NyttEksempel().søknadprosess, seksjonNavn).resultat()
         assertEquals(expected, json["fakta"].size())
     }
