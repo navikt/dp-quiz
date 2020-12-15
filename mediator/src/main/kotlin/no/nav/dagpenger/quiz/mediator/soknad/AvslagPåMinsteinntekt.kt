@@ -37,6 +37,15 @@ internal object AvslagPåMinsteinntekt {
         registrer(søknad, VERSJON_ID)
     }
 
+    internal val arbeidsforhold = arrayOf(
+        heltall faktum "antall arbedigsforhold" id 21 genererer 22 og 23 og 24 og 25 og 26,
+        ja nei "Permitert ordinær" id 22,
+        ja nei "Dagpenger ordinær" id 23,
+        ja nei "Lærling sluttårsak" id 24,
+        ja nei "Lønnsgaranti" id 25,
+        ja nei "Permitert fra fiskeindustrien" id 26,
+        ja nei "Godkjenning rettighet" id 27 avhengerAv 21)
+
     internal val søknad: Søknad
         get() = Søknad(
             VERSJON_ID,
@@ -61,6 +70,7 @@ internal object AvslagPåMinsteinntekt {
             dato faktum "Dagens dato" id 20,
             dato faktum "Inntektsrapporteringsperiode fra og med" id 21,
             dato faktum "Inntektsrapporteringsperiode til og med" id 22,
+            *arbeidsforhold
         )
     private val ønsketDato = søknad dato 1
     private val sisteDagMedArbeidsplikt = søknad dato 2
@@ -82,6 +92,13 @@ internal object AvslagPåMinsteinntekt {
     private val dagensDato = søknad dato 20
     private val inntektsrapporteringsperiodeFom = søknad dato 21
     private val inntektsrapporteringsperiodeTom = søknad dato 22
+    private val antallArbeidsforhold = søknad generator 21
+    private val dagpengerOrdinær = søknad ja 23
+    private val permitertOrdinær = søknad ja 22
+    private val sluttårsakLærling = søknad ja 24
+    private val lønnsgaranti = søknad ja 25
+    private val permitertFiskeindustri = søknad ja 26
+    private val godkjenningSluttårsak = søknad ja 27
 
     private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
         inntektSiste36mnd minst G3,
@@ -173,6 +190,28 @@ internal object AvslagPåMinsteinntekt {
             Rolle.saksbehandler,
             godkjenningFangstOgFisk
         )
+
+    internal val arbeidsforholdNav = Seksjon(
+        "Arbeidsforhold",
+        Rolle.nav,
+        antallArbeidsforhold
+    )
+
+    internal val arbeidsforholdBruker = Seksjon(
+        "Arbeidsforhold",
+        Rolle.søker,
+        dagpengerOrdinær,
+        permitertFiskeindustri,
+        permitertOrdinær,
+        sluttårsakLærling
+    )
+
+    internal val arbeidsforholdSaksbehandler = Seksjon (
+        "Arbeidsforhold",
+        Rolle.saksbehandler,
+        godkjenningSluttårsak
+        )
+
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             oppstart,
