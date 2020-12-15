@@ -46,40 +46,27 @@ internal class AvslagPåMinsteinntektTest {
             besvar("10", 2.januar)
             besvar("16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
 
-            assertEquals(
-                "fangstOgFisk",
-                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
-            )
-            assertEquals(7, testRapid.inspektør.size)
+            assertGjeldendeSeksjon("fangstOgFisk")
 
             besvar("5", false)
-            assertEquals(8, testRapid.inspektør.size)
 
-            assertEquals("grunnbeløp", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
+            assertGjeldendeSeksjon("grunnbeløp")
             besvar("8", 300000.årlig)
             besvar("9", 150000.årlig)
-            assertEquals(10, testRapid.inspektør.size)
 
-            assertEquals(
-                "inntektsunntak",
-                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
-            )
+            assertGjeldendeSeksjon("inntektsunntak")
             besvar("11", false)
             besvar("17", false)
-            assertEquals(12, testRapid.inspektør.size)
 
-            assertEquals("inntekter", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
+            assertGjeldendeSeksjon("inntekter")
             besvar("6", 20000.årlig)
             besvar("7", 5000.årlig)
-            assertEquals(15, testRapid.inspektør.size)
-            assertEquals(
-                "godkjenn virkningstidspunkt",
-                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
-            )
+
+            assertGjeldendeSeksjon("godkjenn virkningstidspunkt")
 
             besvar("12", true)
             assertEquals(18, testRapid.inspektør.size)
-            assertFalse(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
+            assertFalse(gjeldendeResultat())
         }
     }
 
@@ -93,34 +80,24 @@ internal class AvslagPåMinsteinntektTest {
             besvar("10", 2.januar)
             besvar("16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
 
-            assertEquals(
-                "fangstOgFisk",
-                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
-            )
-            assertEquals(7, testRapid.inspektør.size)
+            assertGjeldendeSeksjon("fangstOgFisk")
 
             besvar("5", false)
-            assertEquals(8, testRapid.inspektør.size)
 
-            assertEquals("grunnbeløp", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
+            assertGjeldendeSeksjon("grunnbeløp")
             besvar("8", 300000.årlig)
             besvar("9", 150000.årlig)
-            assertEquals(10, testRapid.inspektør.size)
 
-            assertEquals(
-                "inntektsunntak",
-                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
-            )
+            assertGjeldendeSeksjon("inntektsunntak")
             besvar("11", false)
             besvar("17", false)
-            assertEquals(12, testRapid.inspektør.size)
 
-            assertEquals("inntekter", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
+            assertGjeldendeSeksjon("inntekter")
             besvar("6", 2000000.årlig)
             besvar("7", 5000000.årlig)
-            assertEquals(16, testRapid.inspektør.size)
 
-            assertTrue(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
+            assertEquals(16, testRapid.inspektør.size)
+            assertTrue(gjeldendeResultat())
         }
     }
 
@@ -134,47 +111,26 @@ internal class AvslagPåMinsteinntektTest {
             besvar("10", 2.januar)
             besvar("16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
 
-            assertEquals(
-                "fangstOgFisk",
-                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
-            )
-            assertEquals(7, testRapid.inspektør.size)
-
+            assertGjeldendeSeksjon("fangstOgFisk")
             besvar("5", true)
-            assertEquals(8, testRapid.inspektør.size)
 
-            assertEquals(
-                "grunnbeløp",
-                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
-            )
+            assertGjeldendeSeksjon("grunnbeløp")
             besvar("8", 300000.årlig)
             besvar("9", 150000.årlig)
-            assertEquals(10, testRapid.inspektør.size)
 
-            assertEquals(
-                "inntektsunntak",
-                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
-            )
+            assertGjeldendeSeksjon("inntektsunntak")
             besvar("11", false)
             besvar("17", false)
-            assertEquals(12, testRapid.inspektør.size)
 
-            assertEquals(
-                "inntekter",
-                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
-            )
+            assertGjeldendeSeksjon("inntekter")
             besvar("6", 20000.årlig)
             besvar("7", 5000.årlig)
-            assertEquals(15, testRapid.inspektør.size)
 
             assertEquals(
                 "godkjenn fangst og fisk",
                 testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText()
             )
-            assertEquals(
-                "godkjenn virkningstidspunkt",
-                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
-            )
+            assertGjeldendeSeksjon("godkjenn virkningstidspunkt")
             besvar("15", true)
             besvar("12", true)
 
@@ -183,9 +139,12 @@ internal class AvslagPåMinsteinntektTest {
                 testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText()
             )
 
-            assertFalse(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
+            assertFalse(gjeldendeResultat())
         }
     }
+
+    private fun assertGjeldendeSeksjon(expected: String) =
+        assertEquals(expected, testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
 
     @Test
     fun `Skal ikke gi oppgaver til saksbehandler når dagens dato er før virkningstidspunkt`() {
@@ -197,9 +156,11 @@ internal class AvslagPåMinsteinntektTest {
             besvar("10", 2.januar)
             besvar("16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
 
-            assertFalse(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
+            assertFalse(gjeldendeResultat())
         }
     }
+
+    private fun gjeldendeResultat() = testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean()
 
     private fun withSøknad(
         block: (
