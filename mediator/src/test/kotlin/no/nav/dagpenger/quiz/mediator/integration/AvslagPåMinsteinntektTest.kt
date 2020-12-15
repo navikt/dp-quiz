@@ -1,5 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
+import no.nav.dagpenger.model.faktum.Inntekt
+import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
@@ -11,237 +13,261 @@ import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
 
 internal class AvslagPåMinsteinntektTest {
-
     private lateinit var testRapid: TestRapid
 
-    @Test
-    fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() = Postgres.withMigratedDb {
-        AvslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
-        val persistence = SøknadRecord()
-        testRapid = TestRapid().also {
-            FaktumSvarService(
-                søknadPersistence = persistence,
-                rapidsConnection = it
-            )
-            NySøknadService(persistence, it, AvslagPåMinsteinntekt.VERSJON_ID)
+    @BeforeEach
+    fun setup() {
+        Postgres.withMigratedDb {
+            AvslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
+            val persistence = SøknadRecord()
+            testRapid = TestRapid().also {
+                FaktumSvarService(
+                    søknadPersistence = persistence,
+                    rapidsConnection = it
+                )
+                NySøknadService(persistence, it, AvslagPåMinsteinntekt.VERSJON_ID)
+            }
         }
-
-        val søknadsId = søknad()
-        besvar(søknadsId, "20", 5.januar)
-        besvar(søknadsId, "1", 5.januar)
-        besvar(søknadsId, "2", 5.januar)
-        besvar(søknadsId, "3", 5.januar)
-        besvar(søknadsId, "10", 2.januar)
-        besvarGenerator(søknadsId, "16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
-
-        assertEquals("fangstOgFisk", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-        assertEquals(7, testRapid.inspektør.size)
-
-        besvar(søknadsId, "5", false)
-        assertEquals(8, testRapid.inspektør.size)
-
-        assertEquals("grunnbeløp", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-        besvarInntekt(søknadsId, "8", 300000.0)
-        besvarInntekt(søknadsId, "9", 150000.0)
-        assertEquals(10, testRapid.inspektør.size)
-
-        assertEquals("inntektsunntak", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-        besvar(søknadsId, "11", false)
-        besvar(søknadsId, "17", false)
-        assertEquals(12, testRapid.inspektør.size)
-
-        assertEquals("inntekter", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-        besvarInntekt(søknadsId, "6", 20000.0)
-        besvarInntekt(søknadsId, "7", 5000.0)
-        assertEquals(15, testRapid.inspektør.size)
-
-        assertEquals(
-            "godkjenn virkningstidspunkt",
-            testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
-        )
-
-        besvar(søknadsId, "12", true)
-        assertEquals(18, testRapid.inspektør.size)
-        assertFalse(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
     }
 
     @Test
-    fun `De som oppfyller kravet til minsteinntekt gir ingen seksjoner til saksbehandler`() = Postgres.withMigratedDb {
-        AvslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
-        val persistence = SøknadRecord()
+    fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
+        withSøknad { besvar ->
+            besvar("20", 5.januar)
+            besvar("1", 5.januar)
+            besvar("2", 5.januar)
+            besvar("3", 5.januar)
+            besvar("10", 2.januar)
+            besvar("16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
 
-        testRapid = TestRapid().also {
-            FaktumSvarService(
-                søknadPersistence = persistence,
-                rapidsConnection = it
+            assertEquals(
+                "fangstOgFisk",
+                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
             )
-            NySøknadService(persistence, it, AvslagPåMinsteinntekt.VERSJON_ID)
+            assertEquals(7, testRapid.inspektør.size)
+
+            besvar("5", false)
+            assertEquals(8, testRapid.inspektør.size)
+
+            assertEquals("grunnbeløp", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
+            besvar("8", 300000.årlig)
+            besvar("9", 150000.årlig)
+            assertEquals(10, testRapid.inspektør.size)
+
+            assertEquals(
+                "inntektsunntak",
+                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
+            )
+            besvar("11", false)
+            besvar("17", false)
+            assertEquals(12, testRapid.inspektør.size)
+
+            assertEquals("inntekter", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
+            besvar("6", 20000.årlig)
+            besvar("7", 5000.årlig)
+            assertEquals(15, testRapid.inspektør.size)
+            assertEquals(
+                "godkjenn virkningstidspunkt",
+                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
+            )
+
+            besvar("12", true)
+            assertEquals(18, testRapid.inspektør.size)
+            assertFalse(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
         }
-        val søknadsId = søknad()
-        besvar(søknadsId, "20", 5.januar)
-        besvar(søknadsId, "1", 5.januar)
-        besvar(søknadsId, "2", 5.januar)
-        besvar(søknadsId, "3", 5.januar)
-        besvar(søknadsId, "10", 2.januar)
-        besvarGenerator(søknadsId, "16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
-
-        assertEquals("fangstOgFisk", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-        assertEquals(7, testRapid.inspektør.size)
-
-        besvar(søknadsId, "5", false)
-        assertEquals(8, testRapid.inspektør.size)
-
-        assertEquals("grunnbeløp", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-        besvarInntekt(søknadsId, "8", 300000.0)
-        besvarInntekt(søknadsId, "9", 150000.0)
-        assertEquals(10, testRapid.inspektør.size)
-
-        assertEquals("inntektsunntak", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-        besvar(søknadsId, "11", false)
-        besvar(søknadsId, "17", false)
-        assertEquals(12, testRapid.inspektør.size)
-
-        assertEquals("inntekter", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-        besvarInntekt(søknadsId, "6", 2000000.0)
-        besvarInntekt(søknadsId, "7", 5000000.0)
-        assertEquals(16, testRapid.inspektør.size)
-
-        assertTrue(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
     }
 
     @Test
-    fun `De som har fangstOgFisk men ikke oppfyller kravet til minsteinntekt gir to oppgaver til saksbehandler`() = Postgres.withMigratedDb {
-        AvslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
-        val persistence = SøknadRecord()
+    fun `De som oppfyller kravet til minsteinntekt gir ingen seksjoner til saksbehandler`() {
+        withSøknad { besvar ->
+            besvar("20", 5.januar)
+            besvar("1", 5.januar)
+            besvar("2", 5.januar)
+            besvar("3", 5.januar)
+            besvar("10", 2.januar)
+            besvar("16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
 
-        testRapid = TestRapid().also {
-            FaktumSvarService(
-                søknadPersistence = persistence,
-                rapidsConnection = it
+            assertEquals(
+                "fangstOgFisk",
+                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
             )
-            NySøknadService(persistence, it, AvslagPåMinsteinntekt.VERSJON_ID)
+            assertEquals(7, testRapid.inspektør.size)
+
+            besvar("5", false)
+            assertEquals(8, testRapid.inspektør.size)
+
+            assertEquals("grunnbeløp", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
+            besvar("8", 300000.årlig)
+            besvar("9", 150000.årlig)
+            assertEquals(10, testRapid.inspektør.size)
+
+            assertEquals(
+                "inntektsunntak",
+                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
+            )
+            besvar("11", false)
+            besvar("17", false)
+            assertEquals(12, testRapid.inspektør.size)
+
+            assertEquals("inntekter", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
+            besvar("6", 2000000.årlig)
+            besvar("7", 5000000.årlig)
+            assertEquals(16, testRapid.inspektør.size)
+
+            assertTrue(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
         }
-
-        val søknadsId = søknad()
-        besvar(søknadsId, "20", 5.januar)
-        besvar(søknadsId, "1", 5.januar)
-        besvar(søknadsId, "2", 5.januar)
-        besvar(søknadsId, "3", 5.januar)
-        besvar(søknadsId, "10", 2.januar)
-        besvarGenerator(søknadsId, "16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
-
-        assertEquals("fangstOgFisk", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-        assertEquals(7, testRapid.inspektør.size)
-
-        besvar(søknadsId, "5", true)
-        assertEquals(8, testRapid.inspektør.size)
-
-        assertEquals("grunnbeløp", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-        besvarInntekt(søknadsId, "8", 300000.0)
-        besvarInntekt(søknadsId, "9", 150000.0)
-        assertEquals(10, testRapid.inspektør.size)
-
-        assertEquals("inntektsunntak", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-        besvar(søknadsId, "11", false)
-        besvar(søknadsId, "17", false)
-        assertEquals(12, testRapid.inspektør.size)
-
-        assertEquals("inntekter", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-        besvarInntekt(søknadsId, "6", 20000.0)
-        besvarInntekt(søknadsId, "7", 5000.0)
-        assertEquals(15, testRapid.inspektør.size)
-
-        assertEquals("godkjenn fangst og fisk", testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText())
-        assertEquals("godkjenn virkningstidspunkt", testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-        besvar(søknadsId, "15", true)
-        besvar(søknadsId, "12", true)
-
-        assertEquals("godkjenn virkningstidspunkt", testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText())
-
-        assertFalse(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
     }
 
     @Test
-    fun `Skal ikke gi oppgaver til saksbehandler når dagens dato er før virkningstidspunkt`() = Postgres.withMigratedDb {
-        AvslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
-        val persistence = SøknadRecord()
-        testRapid = TestRapid().also {
-            FaktumSvarService(
-                søknadPersistence = persistence,
-                rapidsConnection = it
+    fun `De som har fangstOgFisk men ikke oppfyller kravet til minsteinntekt gir to oppgaver til saksbehandler`() {
+        withSøknad { besvar ->
+            besvar("20", 5.januar)
+            besvar("1", 5.januar)
+            besvar("2", 5.januar)
+            besvar("3", 5.januar)
+            besvar("10", 2.januar)
+            besvar("16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
+
+            assertEquals(
+                "fangstOgFisk",
+                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
             )
-            NySøknadService(persistence, it, AvslagPåMinsteinntekt.VERSJON_ID)
+            assertEquals(7, testRapid.inspektør.size)
+
+            besvar("5", true)
+            assertEquals(8, testRapid.inspektør.size)
+
+            assertEquals(
+                "grunnbeløp",
+                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
+            )
+            besvar("8", 300000.årlig)
+            besvar("9", 150000.årlig)
+            assertEquals(10, testRapid.inspektør.size)
+
+            assertEquals(
+                "inntektsunntak",
+                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
+            )
+            besvar("11", false)
+            besvar("17", false)
+            assertEquals(12, testRapid.inspektør.size)
+
+            assertEquals(
+                "inntekter",
+                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
+            )
+            besvar("6", 20000.årlig)
+            besvar("7", 5000.årlig)
+            assertEquals(15, testRapid.inspektør.size)
+
+            assertEquals(
+                "godkjenn fangst og fisk",
+                testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText()
+            )
+            assertEquals(
+                "godkjenn virkningstidspunkt",
+                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
+            )
+            besvar("15", true)
+            besvar("12", true)
+
+            assertEquals(
+                "godkjenn virkningstidspunkt",
+                testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText()
+            )
+
+            assertFalse(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
         }
+    }
 
+    @Test
+    fun `Skal ikke gi oppgaver til saksbehandler når dagens dato er før virkningstidspunkt`() {
+        withSøknad { besvar ->
+            besvar("20", 1.januar)
+            besvar("1", 5.januar)
+            besvar("2", 5.januar)
+            besvar("3", 5.januar)
+            besvar("10", 2.januar)
+            besvar("16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
+
+            assertFalse(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
+        }
+    }
+
+    private fun withSøknad(
+        block: (
+            besvar: (faktumId: String, svar: Any) -> Unit,
+        ) -> Unit
+    ) {
         val søknadsId = søknad()
-        besvar(søknadsId, "20", 1.januar)
-        besvar(søknadsId, "1", 5.januar)
-        besvar(søknadsId, "2", 5.januar)
-        besvar(søknadsId, "3", 5.januar)
-        besvar(søknadsId, "10", 2.januar)
-        besvarGenerator(søknadsId, "16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
-
-        assertFalse(testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean())
+        block { b: String, c: Any ->
+            when (c) {
+                is Inntekt -> besvarInntekt(søknadsId, b, c)
+                is List<*> -> besvarGenerator(søknadsId, b, c as List<List<Pair<String, Any>>>)
+                else -> besvar(søknadsId, b, c)
+            }
+        }
     }
 
     private fun besvar(søknadsId: String, faktumId: String, svar: Any) {
         //language=JSON
         testRapid.sendTestMessage(
             """{
-  "søknad_uuid": "$søknadsId",
-  "@event_name": "faktum_svar",
-  "fakta": [{
-    "id": "$faktumId",
-    "svar": "$svar",
-    "clazz": "${svar::class.java.simpleName.toLowerCase()}"
-}
-  ],
-  "@opprettet": "${LocalDateTime.now()}",
-  "@id": "${UUID.randomUUID()}"
-}"""
+              "søknad_uuid": "$søknadsId",
+              "@event_name": "faktum_svar",
+              "fakta": [{
+                "id": "$faktumId",
+                "svar": "$svar",
+                "clazz": "${svar::class.java.simpleName.toLowerCase()}"
+            }
+              ],
+              "@opprettet": "${LocalDateTime.now()}",
+              "@id": "${UUID.randomUUID()}"
+            }
+            """.trimIndent()
         )
     }
 
-    private fun besvarInntekt(søknadsId: String, faktumId: String, svar: Double) {
+    private fun besvarInntekt(søknadsId: String, faktumId: String, svar: Inntekt) {
+        val årligInntekt: Double = svar.reflection { d, _, _, _ -> return@reflection d }
         //language=JSON
         testRapid.sendTestMessage(
             """{
-  "søknad_uuid": "$søknadsId",
-  "@event_name": "faktum_svar",
-  "fakta": [{
-    "id": "$faktumId",
-    "svar": "$svar",
-    "clazz": "inntekt"
-}
-  ],
-  "@opprettet": "${LocalDateTime.now()}",
-  "@id": "${UUID.randomUUID()}"
-}"""
+              "søknad_uuid": "$søknadsId",
+              "@event_name": "faktum_svar",
+              "fakta": [{
+                "id": "$faktumId",
+                "svar": "$årligInntekt",
+                "clazz": "inntekt"
+            }
+              ],
+              "@opprettet": "${LocalDateTime.now()}",
+              "@id": "${UUID.randomUUID()}"
+            }
+            """.trimIndent()
         )
     }
 
     private fun besvarGenerator(søknadsId: String, faktumId: String, svar: List<List<Pair<String, Any>>>) {
-
         val noe = svar.map { it.map { lagSvar(it.first, it.second) } }
-
         val fakta = mutableListOf("""{"id": "$faktumId", "svar": $noe, "clazz": "generator"}""")
-
         //language=JSON
         testRapid.sendTestMessage(
             """{
-  "søknad_uuid": "$søknadsId",
-  "@event_name": "faktum_svar",
-  "fakta": $fakta,
-  "@opprettet": "${LocalDateTime.now()}",
-  "@id": "${UUID.randomUUID()}"
-}""".also {
-                println(it)
+              "søknad_uuid": "$søknadsId",
+              "@event_name": "faktum_svar",
+              "fakta": $fakta,
+              "@opprettet": "${LocalDateTime.now()}",
+              "@id": "${UUID.randomUUID()}"
             }
+            """.trimIndent()
         )
     }
 
@@ -251,11 +277,12 @@ internal class AvslagPåMinsteinntektTest {
     private fun søknad(): String {
         testRapid.sendTestMessage(
             """{
-  "@event_name": "Søknad",
-  "fnr": "123456789",
-  "aktørId": "",
-  "søknadsId": "9876"
-}"""
+              "@event_name": "Søknad",
+              "fnr": "123456789",
+              "aktørId": "",
+              "søknadsId": "9876"
+            }
+            """.trimIndent()
         )
         return testRapid.inspektør.field(0, "søknad_uuid").asText()
     }
