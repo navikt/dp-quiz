@@ -5,7 +5,9 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
+import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
+import no.nav.dagpenger.quiz.mediator.helpers.mars
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt
@@ -143,9 +145,6 @@ internal class AvslagPåMinsteinntektTest {
         }
     }
 
-    private fun assertGjeldendeSeksjon(expected: String) =
-        assertEquals(expected, testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-
     @Test
     fun `Skal ikke gi oppgaver til saksbehandler når dagens dato er før virkningstidspunkt`() {
         withSøknad { besvar ->
@@ -155,10 +154,47 @@ internal class AvslagPåMinsteinntektTest {
             besvar("3", 5.januar)
             besvar("10", 2.januar)
             besvar("16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
+            besvar("21", 5.januar)
+            besvar("22", 5.februar)
 
             assertFalse(gjeldendeResultat())
         }
     }
+
+    @Test
+    fun `Skal gå videre om virkningstidspunkt er fram i tid i samme rapporteringsperiode`() {
+        withSøknad { besvar ->
+            besvar("20", 12.januar)
+            besvar("1", 14.januar)
+            besvar("2", 5.januar)
+            besvar("3", 5.januar)
+            besvar("10", 12.januar)
+            besvar("16", listOf(listOf("18.1" to 1.januar, "19.1" to 30.januar)))
+            besvar("21", 5.januar)
+            besvar("22", 5.februar)
+
+            assertGjeldendeSeksjon("fangstOgFisk")
+        }
+    }
+
+    @Test
+    fun `Skal ikke gå videre om virkningstidspunkt er fram i tid, men i annen rapporteringsperiode`() {
+        withSøknad { besvar ->
+            besvar("20", 12.januar) // Dagens dato
+            besvar("1", 14.februar) // Ønsket dato
+            besvar("2", 5.januar)
+            besvar("3", 5.januar)
+            besvar("10", 12.januar) // Søknadstidspunkt
+            besvar("16", listOf(listOf("18.1" to 1.januar, "19.1" to 30.januar)))
+            besvar("21", 5.februar)
+            besvar("22", 5.mars)
+
+            assertFalse(gjeldendeResultat())
+        }
+    }
+
+    private fun assertGjeldendeSeksjon(expected: String) =
+        assertEquals(expected, testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
 
     private fun gjeldendeResultat() = testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean()
 

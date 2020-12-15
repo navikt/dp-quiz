@@ -21,6 +21,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
+import no.nav.dagpenger.model.subsumsjon.eller
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
@@ -58,6 +59,8 @@ internal object AvslagPåMinsteinntekt {
             dato faktum "fom" id 18,
             dato faktum "tom" id 19,
             dato faktum "Dagens dato" id 20,
+            dato faktum "Inntektsrapporteringsperiode fra og med" id 21,
+            dato faktum "Inntektsrapporteringsperiode til og med" id 22,
         )
     private val ønsketDato = søknad dato 1
     private val sisteDagMedArbeidsplikt = søknad dato 2
@@ -77,6 +80,8 @@ internal object AvslagPåMinsteinntekt {
     private val registrertArbeidsøkerPeriodeFom = søknad dato 18
     private val registrertArbeidsøkerPeriodeTom = søknad dato 19
     private val dagensDato = søknad dato 20
+    private val inntektsrapporteringsperiodeFom = søknad dato 21
+    private val inntektsrapporteringsperiodeTom = søknad dato 22
 
     private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
         inntektSiste36mnd minst G3,
@@ -93,8 +98,13 @@ internal object AvslagPåMinsteinntekt {
         fangstOgFisk er false ugyldigGodkjentAv godkjenningFangstOgFisk
         )
 
+    private val sjekkVirkningstidspunkt = "søker på riktig tidspunkt" makro (
+        dagensDato ikkeFør virkningstidspunkt eller
+            (dagensDato mellom inntektsrapporteringsperiodeFom og inntektsrapporteringsperiodeTom)
+        )
+
     private val minsteArbeidsinntektMedVirkningstidspunkt =
-        dagensDato ikkeFør virkningstidspunkt så (
+        sjekkVirkningstidspunkt så (
             sjekkFangstOgFisk uansett (minsteArbeidsinntekt)
             )
 
@@ -108,6 +118,8 @@ internal object AvslagPåMinsteinntekt {
             "oppstart",
             Rolle.nav,
             dagensDato,
+            inntektsrapporteringsperiodeFom,
+            inntektsrapporteringsperiodeTom
         )
 
     private val grunnbeløp =
@@ -191,6 +203,8 @@ internal object AvslagPåMinsteinntekt {
                 16 to "Registreringsperioder",
                 17 to "Lærling",
                 20 to "DagensDato",
+                21 to "InntektsrapporteringsperiodeFom",
+                22 to "InntektsrapporteringsperiodeTom",
             )
         )
     private val versjon = Versjon.Bygger(
