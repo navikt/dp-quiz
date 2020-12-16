@@ -59,8 +59,8 @@ internal object AvslagPåMinsteinntekt {
             dato faktum "fom" id 18,
             dato faktum "tom" id 19,
             dato faktum "Dagens dato" id 20,
-            dato faktum "Inntektsrapporteringsperiode fra og med" id 21,
-            dato faktum "Inntektsrapporteringsperiode til og med" id 22,
+            dato faktum "Inntektsrapporteringsperiode fra og med" id 21 avhengerAv 4,
+            dato faktum "Inntektsrapporteringsperiode til og med" id 22 avhengerAv 4,
         )
     private val ønsketDato = søknad dato 1
     private val sisteDagMedArbeidsplikt = søknad dato 2
