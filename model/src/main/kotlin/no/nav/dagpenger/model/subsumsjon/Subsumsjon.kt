@@ -218,6 +218,8 @@ fun String.minstEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon {
     return MinstEnAvSubsumsjon(this, subsumsjoner.toList())
 }
 
+fun String.bareEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon = BareEnAvSubsumsjon(this,subsumsjoner.toList())
+
 infix fun Subsumsjon.så(child: Subsumsjon): Subsumsjon {
     return this.also { this.gyldig(child) }
 }

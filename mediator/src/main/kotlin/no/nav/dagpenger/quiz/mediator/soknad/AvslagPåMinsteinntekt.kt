@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.ikkeFør
+import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
@@ -21,6 +22,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
+import no.nav.dagpenger.model.subsumsjon.bareEnAv
 import no.nav.dagpenger.model.subsumsjon.eller
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
@@ -38,13 +40,13 @@ internal object AvslagPåMinsteinntekt {
     }
 
     internal val arbeidsforhold = arrayOf(
-        heltall faktum "antall arbedigsforhold" id 21 genererer 22 og 23 og 24 og 25 og 26,
-        ja nei "Permitert ordinær" id 22,
-        ja nei "Dagpenger ordinær" id 23,
-        ja nei "Lærling sluttårsak" id 24,
-        ja nei "Lønnsgaranti" id 25,
-        ja nei "Permitert fra fiskeindustrien" id 26,
-        ja nei "Godkjenning rettighet" id 27 avhengerAv 21)
+        heltall faktum "antall arbedigsforhold" id 23 genererer 24 og 25 og 26 og 27 og 28,
+        ja nei "Permitert ordinær" id 24,
+        ja nei "Dagpenger ordinær" id 25,
+        ja nei "Lærling sluttårsak" id 26,
+        ja nei "Lønnsgaranti" id 27,
+        ja nei "Permitert fra fiskeindustrien" id 28,
+        ja nei "Godkjenning rettighet" id 29 avhengerAv 23)
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -92,14 +94,23 @@ internal object AvslagPåMinsteinntekt {
     private val dagensDato = søknad dato 20
     private val inntektsrapporteringsperiodeFom = søknad dato 21
     private val inntektsrapporteringsperiodeTom = søknad dato 22
-    private val antallArbeidsforhold = søknad generator 21
-    private val dagpengerOrdinær = søknad ja 23
-    private val permitertOrdinær = søknad ja 22
-    private val sluttårsakLærling = søknad ja 24
-    private val lønnsgaranti = søknad ja 25
-    private val permitertFiskeindustri = søknad ja 26
-    private val godkjenningSluttårsak = søknad ja 27
+    private val antallArbeidsforhold = søknad generator 23
+    private val dagpengerOrdinær = søknad ja 24
+    private val permitertOrdinær = søknad ja 25
+    private val sluttårsakLærling = søknad ja 26
+    private val lønnsgaranti = søknad ja 27
+    private val permitertFiskeindustri = søknad ja 28
+    private val godkjenningSluttårsak = søknad ja 29
 
+
+    internal val rettighetstype = antallArbeidsforhold med "rettighetstyper".makro(
+        "bare en av".bareEnAv(
+            dagpengerOrdinær er true,
+            permitertFiskeindustri er true,
+            lønnsgaranti er true,
+            sluttårsakLærling er true
+        ) eller (verneplikt er true)
+    )
     private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
         inntektSiste36mnd minst G3,
         inntektSiste12mnd minst G1_5,
@@ -194,12 +205,7 @@ internal object AvslagPåMinsteinntekt {
     internal val arbeidsforholdNav = Seksjon(
         "Arbeidsforhold",
         Rolle.nav,
-        antallArbeidsforhold
-    )
-
-    internal val arbeidsforholdBruker = Seksjon(
-        "Arbeidsforhold",
-        Rolle.søker,
+        antallArbeidsforhold,
         dagpengerOrdinær,
         permitertFiskeindustri,
         permitertOrdinær,
@@ -209,7 +215,7 @@ internal object AvslagPåMinsteinntekt {
     internal val arbeidsforholdSaksbehandler = Seksjon (
         "Arbeidsforhold",
         Rolle.saksbehandler,
-        godkjenningSluttårsak
+        godkjenningSluttårsak,
         )
 
     internal val søknadprosess: Søknadprosess =
@@ -221,7 +227,9 @@ internal object AvslagPåMinsteinntekt {
             fangstOgfisk,
             godkjennFangstOgFisk,
             inntekter,
-            godkjennDato
+            godkjennDato,
+            arbeidsforholdNav,
+            arbeidsforholdSaksbehandler
         )
 
     private val faktumNavBehov =
