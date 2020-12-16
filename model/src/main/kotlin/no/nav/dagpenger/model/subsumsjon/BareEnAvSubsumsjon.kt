@@ -11,7 +11,12 @@ class BareEnAvSubsumsjon private constructor(
     ugyldigSubsumsjon: Subsumsjon
 ) : SammensattSubsumsjon(navn, subsumsjoner.toMutableList(), gyldigSubsumsjon, ugyldigSubsumsjon) {
 
-    internal constructor(navn: String, subsumsjoner: List<Subsumsjon>) : this(navn, subsumsjoner, TomSubsumsjon, TomSubsumsjon)
+    internal constructor(navn: String, subsumsjoner: List<Subsumsjon>) : this(
+        navn,
+        subsumsjoner,
+        TomSubsumsjon,
+        TomSubsumsjon
+    )
 
     override fun deepCopy(søknadprosess: Søknadprosess) = BareEnAvSubsumsjon(
         navn,
@@ -47,9 +52,9 @@ class BareEnAvSubsumsjon private constructor(
 
     override fun accept(visitor: SubsumsjonVisitor) {
         resultat().also {
-            //   visitor.preVisit(this, lokaltResultat(), it)
+            visitor.preVisit(this, lokaltResultat(), it)
             super.accept(visitor)
-            //    visitor.postVisit(this, lokaltResultat(), it)
+            visitor.postVisit(this, lokaltResultat(), it)
         }
     }
 

@@ -63,13 +63,12 @@ internal object AvslagPåMinsteinntekt {
             dato faktum "Dagens dato" id 20,
             dato faktum "Inntektsrapporteringsperiode fra og med" id 21,
             dato faktum "Inntektsrapporteringsperiode til og med" id 22,
-            heltall faktum "antall arbedigsforhold" id 23 genererer 24 og 25 og 26 og 27 og 28,
-            ja nei "Permitert ordinær" id 24,
-            ja nei "Dagpenger ordinær" id 25,
-            ja nei "Lærling sluttårsak" id 26,
-            ja nei "Lønnsgaranti" id 27,
-            ja nei "Permitert fra fiskeindustrien" id 28,
-            ja nei "Godkjenning rettighet" id 29 avhengerAv 23
+            heltall faktum "Sluttårsak" id 23 genererer 24 og 25 og 26 og 27,
+            ja nei "SluttårsakPermittert" id 24,
+            ja nei "SluttårsakOrdinær" id 25,
+            ja nei "SluttårsakLønnsgaranti" id 26,
+            ja nei "SluttårsakPermittertFisk" id 27,
+            ja nei "Godkjenning sluttårsak" id 28 avhengerAv 23
         )
     private val ønsketDato = søknad dato 1
     private val sisteDagMedArbeidsplikt = søknad dato 2
@@ -91,20 +90,19 @@ internal object AvslagPåMinsteinntekt {
     private val dagensDato = søknad dato 20
     private val inntektsrapporteringsperiodeFom = søknad dato 21
     private val inntektsrapporteringsperiodeTom = søknad dato 22
-    private val antallArbeidsforhold = søknad generator 23
-    private val dagpengerOrdinær = søknad ja 24
-    private val permitertOrdinær = søknad ja 25
-    private val sluttårsakLærling = søknad ja 26
-    private val lønnsgaranti = søknad ja 27
-    private val permitertFiskeindustri = søknad ja 28
-    private val godkjenningSluttårsak = søknad ja 29
+    private val sluttårsaker = søknad generator 23
+    private val sluttårsakOrdinær = søknad ja 24
+    private val sluttårsakPermittert = søknad ja 25
+    private val sluttårsakLønnsgaranti = søknad ja 26
+    private val sluttårsakPermittertFisk = søknad ja 27
+    private val godkjenningSluttårsak = søknad ja 28
 
-    internal val rettighetstype = antallArbeidsforhold med "rettighetstyper".makro(
+    internal val rettighetstype = sluttårsaker med "sluttårsaker".makro(
         "bare en av".bareEnAv(
-            dagpengerOrdinær er true,
-            permitertFiskeindustri er true,
-            lønnsgaranti er true,
-            sluttårsakLærling er true
+            sluttårsakOrdinær er true,
+            sluttårsakPermittertFisk er true,
+            sluttårsakLønnsgaranti er true,
+            sluttårsakPermittert er true
         )
     ) ugyldigGodkjentAv godkjenningSluttårsak
 
@@ -201,18 +199,17 @@ internal object AvslagPåMinsteinntekt {
         )
 
     internal val arbeidsforholdNav = Seksjon(
-        "Arbeidsforhold",
+        "sluttårsaker",
         Rolle.nav,
-        antallArbeidsforhold,
-        dagpengerOrdinær,
-        lønnsgaranti,
-        permitertFiskeindustri,
-        permitertOrdinær,
-        sluttårsakLærling
+        sluttårsaker,
+        sluttårsakOrdinær,
+        sluttårsakLønnsgaranti,
+        sluttårsakPermittertFisk,
+        sluttårsakPermittert,
     )
 
     internal val arbeidsforholdSaksbehandler = Seksjon(
-        "Godkjenn Arbeidsforhold",
+        "godkjenn sluttårsaker",
         Rolle.saksbehandler,
         godkjenningSluttårsak,
     )
@@ -251,13 +248,11 @@ internal object AvslagPåMinsteinntekt {
                 20 to "DagensDato",
                 21 to "InntektsrapporteringsperiodeFom",
                 22 to "InntektsrapporteringsperiodeTom",
-                23 to "AnntallArbeidsForhold",
-                // todo fix navn
-                24 to "X",
-                25 to "Y",
-                26 to "Z",
-                27 to "1",
-                28 to "2",
+                23 to "Sluttårsak",
+                24 to "SluttårsakPermittert",
+                25 to "SluttårsakOrdinær",
+                26 to "SluttårsakLønnsgaranti",
+                27 to "SluttårsakPermittertFisk",
             )
         )
     private val versjon = Versjon.Bygger(

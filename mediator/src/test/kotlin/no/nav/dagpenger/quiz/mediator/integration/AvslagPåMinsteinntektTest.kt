@@ -65,19 +65,18 @@ internal class AvslagPåMinsteinntektTest {
             besvar("7", 5000.årlig)
 
             assertEquals(14, testRapid.inspektør.size)
-            assertGjeldendeSeksjon("Arbeidsforhold")
-            besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false, "28.1" to false)))
+            assertGjeldendeSeksjon("sluttårsaker")
+            besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
             assertEquals(17, testRapid.inspektør.size)
-//            assertFalse(gjeldendeResultat())
 
-            assertGjeldendeSeksjon("Godkjenn Arbeidsforhold")
+            assertGjeldendeSeksjon("godkjenn sluttårsaker")
             assertEquals(17, testRapid.inspektør.size)
             besvar("29", true)
 
             assertEquals("godkjenn virkningstidspunkt", testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText())
 
             besvar("12", true)
-            assertEquals(24, testRapid.inspektør.size)
+            assertEquals(21, testRapid.inspektør.size)
             assertFalse(gjeldendeResultat())
         }
     }
@@ -108,7 +107,9 @@ internal class AvslagPåMinsteinntektTest {
             besvar("6", 2000000.årlig)
             besvar("7", 5000000.årlig)
 
-            assertEquals(16, testRapid.inspektør.size)
+            assertGjeldendeSeksjon("sluttårsaker")
+            besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
+
             assertTrue(gjeldendeResultat())
         }
     }
@@ -138,18 +139,16 @@ internal class AvslagPåMinsteinntektTest {
             besvar("6", 20000.årlig)
             besvar("7", 5000.årlig)
 
-            assertEquals(
-                "godkjenn fangst og fisk",
-                testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText()
-            )
-            assertGjeldendeSeksjon("godkjenn virkningstidspunkt")
-            besvar("15", true)
-            besvar("12", true)
+            assertGjeldendeSeksjon("sluttårsaker")
+            besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
 
             assertEquals(
-                "godkjenn virkningstidspunkt",
-                testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText()
+                "godkjenn sluttårsaker",
+                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
             )
+            besvar("28", true)
+            besvar("15", true)
+            besvar("12", true)
 
             assertFalse(gjeldendeResultat())
         }
@@ -166,6 +165,7 @@ internal class AvslagPåMinsteinntektTest {
             besvar("16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
             besvar("21", 5.januar)
             besvar("22", 5.februar)
+            besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
 
             assertFalse(gjeldendeResultat())
         }
@@ -198,6 +198,7 @@ internal class AvslagPåMinsteinntektTest {
             besvar("16", listOf(listOf("18.1" to 1.januar, "19.1" to 30.januar)))
             besvar("21", 5.februar)
             besvar("22", 5.mars)
+            besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
 
             assertFalse(gjeldendeResultat())
         }
