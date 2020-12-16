@@ -8,7 +8,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     private val clazz: Class<R>,
     avhengigeFakta: MutableSet<Faktum<*>>,
     avhengerAvFakta: MutableSet<Faktum<*>>,
-    private val godkjenner: MutableSet<Faktum<*>>,
+    protected val godkjenner: MutableSet<Faktum<*>>,
     roller: MutableSet<Rolle>
 ) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private var tilstand: Tilstand = Ukjent

@@ -5,12 +5,13 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 
-internal fun Søknad.testSøknadprosess(): Søknadprosess {
+internal fun Søknad.testSøknadprosess(subsumsjon: Subsumsjon = TomSubsumsjon): Søknadprosess {
     return Versjon.Bygger(
         this,
-        TomSubsumsjon,
+        subsumsjon,
         mapOf(
             Versjon.UserInterfaceType.Web to Søknadprosess(
                 Seksjon(

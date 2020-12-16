@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.ikkeFør
+import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
@@ -21,6 +22,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
+import no.nav.dagpenger.model.subsumsjon.bareEnAv
 import no.nav.dagpenger.model.subsumsjon.eller
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
@@ -61,6 +63,12 @@ internal object AvslagPåMinsteinntekt {
             dato faktum "Dagens dato" id 20,
             dato faktum "Inntektsrapporteringsperiode fra og med" id 21 avhengerAv 4,
             dato faktum "Inntektsrapporteringsperiode til og med" id 22 avhengerAv 4,
+            heltall faktum "Sluttårsak" id 23 genererer 24 og 25 og 26 og 27,
+            ja nei "SluttårsakPermittert" id 24,
+            ja nei "SluttårsakOrdinær" id 25,
+            ja nei "SluttårsakLønnsgaranti" id 26,
+            ja nei "SluttårsakPermittertFisk" id 27,
+            ja nei "Godkjenning sluttårsak" id 28 avhengerAv 23
         )
     private val ønsketDato = søknad dato 1
     private val sisteDagMedArbeidsplikt = søknad dato 2
@@ -82,6 +90,21 @@ internal object AvslagPåMinsteinntekt {
     private val dagensDato = søknad dato 20
     private val inntektsrapporteringsperiodeFom = søknad dato 21
     private val inntektsrapporteringsperiodeTom = søknad dato 22
+    private val sluttårsaker = søknad generator 23
+    private val sluttårsakOrdinær = søknad ja 24
+    private val sluttårsakPermittert = søknad ja 25
+    private val sluttårsakLønnsgaranti = søknad ja 26
+    private val sluttårsakPermittertFisk = søknad ja 27
+    private val godkjenningSluttårsak = søknad ja 28
+
+    internal val rettighetstype = sluttårsaker med "sluttårsaker".makro(
+        "bare en av".bareEnAv(
+            sluttårsakOrdinær er true,
+            sluttårsakPermittertFisk er true,
+            sluttårsakLønnsgaranti er true,
+            sluttårsakPermittert er true
+        )
+    ) ugyldigGodkjentAv godkjenningSluttårsak
 
     private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
         inntektSiste36mnd minst G3,
@@ -110,7 +133,8 @@ internal object AvslagPåMinsteinntekt {
 
     private val inngangsvilkår = "inngangsvilkår".alle(
         minsteArbeidsinntektMedVirkningstidspunkt,
-        meldtSomArbeidssøker
+        meldtSomArbeidssøker,
+        rettighetstype
     )
 
     private val oppstart =
@@ -173,6 +197,23 @@ internal object AvslagPåMinsteinntekt {
             Rolle.saksbehandler,
             godkjenningFangstOgFisk
         )
+
+    internal val arbeidsforholdNav = Seksjon(
+        "sluttårsaker",
+        Rolle.nav,
+        sluttårsaker,
+        sluttårsakOrdinær,
+        sluttårsakLønnsgaranti,
+        sluttårsakPermittertFisk,
+        sluttårsakPermittert,
+    )
+
+    internal val arbeidsforholdSaksbehandler = Seksjon(
+        "godkjenn sluttårsaker",
+        Rolle.saksbehandler,
+        godkjenningSluttårsak,
+    )
+
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             oppstart,
@@ -182,7 +223,9 @@ internal object AvslagPåMinsteinntekt {
             fangstOgfisk,
             godkjennFangstOgFisk,
             inntekter,
-            godkjennDato
+            godkjennDato,
+            arbeidsforholdNav,
+            arbeidsforholdSaksbehandler
         )
 
     private val faktumNavBehov =
@@ -205,6 +248,11 @@ internal object AvslagPåMinsteinntekt {
                 20 to "DagensDato",
                 21 to "InntektsrapporteringsperiodeFom",
                 22 to "InntektsrapporteringsperiodeTom",
+                23 to "Sluttårsak",
+                24 to "SluttårsakPermittert",
+                25 to "SluttårsakOrdinær",
+                26 to "SluttårsakLønnsgaranti",
+                27 to "SluttårsakPermittertFisk",
             )
         )
     private val versjon = Versjon.Bygger(
