@@ -39,14 +39,15 @@ internal object AvslagPåMinsteinntekt {
         registrer(søknad, VERSJON_ID)
     }
 
-    internal val arbeidsforhold = arrayOf(
+    internal val arbeidsforhold = listOf(
         heltall faktum "antall arbedigsforhold" id 23 genererer 24 og 25 og 26 og 27 og 28,
         ja nei "Permitert ordinær" id 24,
         ja nei "Dagpenger ordinær" id 25,
         ja nei "Lærling sluttårsak" id 26,
         ja nei "Lønnsgaranti" id 27,
         ja nei "Permitert fra fiskeindustrien" id 28,
-        ja nei "Godkjenning rettighet" id 29 avhengerAv 23)
+        ja nei "Godkjenning rettighet" id 29 avhengerAv 23
+    )
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -72,7 +73,13 @@ internal object AvslagPåMinsteinntekt {
             dato faktum "Dagens dato" id 20,
             dato faktum "Inntektsrapporteringsperiode fra og med" id 21,
             dato faktum "Inntektsrapporteringsperiode til og med" id 22,
-            *arbeidsforhold
+            heltall faktum "antall arbedigsforhold" id 23 genererer 24 og 25 og 26 og 27 og 28,
+            ja nei "Permitert ordinær" id 24,
+            ja nei "Dagpenger ordinær" id 25,
+            ja nei "Lærling sluttårsak" id 26,
+            ja nei "Lønnsgaranti" id 27,
+            ja nei "Permitert fra fiskeindustrien" id 28,
+            ja nei "Godkjenning rettighet" id 29
         )
     private val ønsketDato = søknad dato 1
     private val sisteDagMedArbeidsplikt = søknad dato 2
@@ -102,14 +109,13 @@ internal object AvslagPåMinsteinntekt {
     private val permitertFiskeindustri = søknad ja 28
     private val godkjenningSluttårsak = søknad ja 29
 
-
     internal val rettighetstype = antallArbeidsforhold med "rettighetstyper".makro(
         "bare en av".bareEnAv(
             dagpengerOrdinær er true,
             permitertFiskeindustri er true,
             lønnsgaranti er true,
             sluttårsakLærling er true
-        ) eller (verneplikt er true)
+        )
     )
     private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
         inntektSiste36mnd minst G3,
@@ -138,7 +144,8 @@ internal object AvslagPåMinsteinntekt {
 
     private val inngangsvilkår = "inngangsvilkår".alle(
         minsteArbeidsinntektMedVirkningstidspunkt,
-        meldtSomArbeidssøker
+        meldtSomArbeidssøker,
+        rettighetstype
     )
 
     private val oppstart =
@@ -212,11 +219,11 @@ internal object AvslagPåMinsteinntekt {
         sluttårsakLærling
     )
 
-    internal val arbeidsforholdSaksbehandler = Seksjon (
+    internal val arbeidsforholdSaksbehandler = Seksjon(
         "Arbeidsforhold",
         Rolle.saksbehandler,
         godkjenningSluttårsak,
-        )
+    )
 
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(

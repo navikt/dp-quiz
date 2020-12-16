@@ -24,7 +24,8 @@ class BareEnAvSubsumsjonTest {
     private val bareEnAv = "Enten joda eller neida".bareEnAv(
         neida er true,
         joda er true,
-        ja1 er true)
+        ja1 er true
+    )
     @Test
     fun `skal være true bare hvis en av faktumene er true`() {
 
@@ -35,6 +36,5 @@ class BareEnAvSubsumsjonTest {
         assertTrue(søknadsprosess.resultat()!!)
         søknadsprosess.ja(2).besvar(true)
         assertFalse(søknadsprosess.resultat()!!)
-
     }
 }

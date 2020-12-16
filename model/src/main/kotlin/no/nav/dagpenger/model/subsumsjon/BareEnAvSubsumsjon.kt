@@ -47,9 +47,9 @@ class BareEnAvSubsumsjon private constructor(
 
     override fun accept(visitor: SubsumsjonVisitor) {
         resultat().also {
-         //   visitor.preVisit(this, lokaltResultat(), it)
+            //   visitor.preVisit(this, lokaltResultat(), it)
             super.accept(visitor)
-        //    visitor.postVisit(this, lokaltResultat(), it)
+            //    visitor.postVisit(this, lokaltResultat(), it)
         }
     }
 

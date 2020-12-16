@@ -9,6 +9,7 @@ import kotliquery.using
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
+import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Identer.Ident
@@ -67,8 +68,7 @@ class SøknadRecord : SøknadPersistence {
                     val row = svarQueue.removeFirst()
                     søknadprosess.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
                         val avhengigeFaktum = AvhengerAvVisitor(faktum).avhengerAv
-                        if (avhengigeFaktum.isEmpty() || avhengigeFaktum.filterIsInstance<GrunnleggendeFaktum<*>>()
-                            .all { it in besvarteFaktum }
+                        if (avhengigeFaktum.isEmpty() || avhengigeFaktum.filterIsInstance<GrunnleggendeFaktum<*>>().all { it in besvarteFaktum }
                         ) {
                             besvarFaktum(row, faktum)
                             besvarteFaktum.add(faktum)

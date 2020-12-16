@@ -64,8 +64,12 @@ internal class AvslagPåMinsteinntektTest {
             besvar("6", 20000.årlig)
             besvar("7", 5000.årlig)
 
-            assertGjeldendeSeksjon("godkjenn virkningstidspunkt")
+            assertGjeldendeSeksjon("Arbeidsforhold")
+            besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false, "28.1" to false)))
+            assertEquals(16, testRapid.inspektør.size)
+            assertFalse(gjeldendeResultat())
 
+            assertGjeldendeSeksjon("godkjenn virkningstidspunkt")
             besvar("12", true)
             assertEquals(18, testRapid.inspektør.size)
             assertFalse(gjeldendeResultat())
