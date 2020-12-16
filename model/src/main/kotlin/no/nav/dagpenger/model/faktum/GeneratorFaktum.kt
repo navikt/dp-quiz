@@ -8,7 +8,7 @@ class GeneratorFaktum internal constructor(
     private val templates: List<TemplateFaktum<*>>,
     avhengigeFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     avhengerAvFakta: MutableSet<Faktum<*>> = mutableSetOf(),
-    roller: MutableSet<Rolle> = mutableSetOf()
+    roller: MutableSet<Rolle> = mutableSetOf(),
 ) : GrunnleggendeFaktum<Int>(
     faktumId,
     navn,
@@ -41,15 +41,19 @@ class GeneratorFaktum internal constructor(
 
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): GeneratorFaktum {
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId] as GeneratorFaktum
-        val avhengigheter = avhengigeFakta.map { it.bygg(byggetFakta) }.toMutableSet()
         val templates = templates.map { it.bygg(byggetFakta) as TemplateFaktum<*> }
         return GeneratorFaktum(
             faktumId,
             navn,
             templates,
-            avhengigheter,
-            avhengerAvFakta,
+            mutableSetOf(),
+            mutableSetOf(),
             roller
-        ).also { byggetFakta[faktumId] = it }
+        ).also { nyttFaktum ->
+            byggetFakta[faktumId] = nyttFaktum
+            this.avhengigeFakta.forEach { nyttFaktum.avhengigeFakta.add(it.bygg(byggetFakta)) }
+            this.avhengerAvFakta.forEach { nyttFaktum.avhengerAvFakta.add(it.bygg(byggetFakta)) }
+            this.godkjenner.forEach { nyttFaktum.godkjenner.add(it.bygg(byggetFakta)) }
+        }
     }
 }

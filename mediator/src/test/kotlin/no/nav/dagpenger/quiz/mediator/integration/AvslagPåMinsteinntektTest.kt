@@ -64,14 +64,20 @@ internal class AvslagPåMinsteinntektTest {
             besvar("6", 20000.årlig)
             besvar("7", 5000.årlig)
 
+            assertEquals(14, testRapid.inspektør.size)
             assertGjeldendeSeksjon("Arbeidsforhold")
             besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false, "28.1" to false)))
-            assertEquals(16, testRapid.inspektør.size)
-            assertFalse(gjeldendeResultat())
+            assertEquals(17, testRapid.inspektør.size)
+//            assertFalse(gjeldendeResultat())
 
-            assertGjeldendeSeksjon("godkjenn virkningstidspunkt")
+            assertGjeldendeSeksjon("Godkjenn Arbeidsforhold")
+            assertEquals(17, testRapid.inspektør.size)
+            besvar("29", true)
+
+            assertEquals("godkjenn virkningstidspunkt", testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText())
+
             besvar("12", true)
-            assertEquals(18, testRapid.inspektør.size)
+            assertEquals(24, testRapid.inspektør.size)
             assertFalse(gjeldendeResultat())
         }
     }

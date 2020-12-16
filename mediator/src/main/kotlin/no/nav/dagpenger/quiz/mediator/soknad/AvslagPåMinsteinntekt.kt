@@ -39,16 +39,6 @@ internal object AvslagPåMinsteinntekt {
         registrer(søknad, VERSJON_ID)
     }
 
-    internal val arbeidsforhold = listOf(
-        heltall faktum "antall arbedigsforhold" id 23 genererer 24 og 25 og 26 og 27 og 28,
-        ja nei "Permitert ordinær" id 24,
-        ja nei "Dagpenger ordinær" id 25,
-        ja nei "Lærling sluttårsak" id 26,
-        ja nei "Lønnsgaranti" id 27,
-        ja nei "Permitert fra fiskeindustrien" id 28,
-        ja nei "Godkjenning rettighet" id 29 avhengerAv 23
-    )
-
     internal val søknad: Søknad
         get() = Søknad(
             VERSJON_ID,
@@ -79,7 +69,7 @@ internal object AvslagPåMinsteinntekt {
             ja nei "Lærling sluttårsak" id 26,
             ja nei "Lønnsgaranti" id 27,
             ja nei "Permitert fra fiskeindustrien" id 28,
-            ja nei "Godkjenning rettighet" id 29
+            ja nei "Godkjenning rettighet" id 29 avhengerAv 23
         )
     private val ønsketDato = søknad dato 1
     private val sisteDagMedArbeidsplikt = søknad dato 2
@@ -116,7 +106,8 @@ internal object AvslagPåMinsteinntekt {
             lønnsgaranti er true,
             sluttårsakLærling er true
         )
-    )
+    ) ugyldigGodkjentAv godkjenningSluttårsak
+
     private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
         inntektSiste36mnd minst G3,
         inntektSiste12mnd minst G1_5,
@@ -214,13 +205,14 @@ internal object AvslagPåMinsteinntekt {
         Rolle.nav,
         antallArbeidsforhold,
         dagpengerOrdinær,
+        lønnsgaranti,
         permitertFiskeindustri,
         permitertOrdinær,
         sluttårsakLærling
     )
 
     internal val arbeidsforholdSaksbehandler = Seksjon(
-        "Arbeidsforhold",
+        "Godkjenn Arbeidsforhold",
         Rolle.saksbehandler,
         godkjenningSluttårsak,
     )
@@ -259,6 +251,13 @@ internal object AvslagPåMinsteinntekt {
                 20 to "DagensDato",
                 21 to "InntektsrapporteringsperiodeFom",
                 22 to "InntektsrapporteringsperiodeTom",
+                23 to "AnntallArbeidsForhold",
+                // todo fix navn
+                24 to "X",
+                25 to "Y",
+                26 to "Z",
+                27 to "1",
+                28 to "2",
             )
         )
     private val versjon = Versjon.Bygger(
