@@ -63,12 +63,12 @@ internal object AvslagPåMinsteinntekt {
             dato faktum "Dagens dato" id 20,
             dato faktum "Inntektsrapporteringsperiode fra og med" id 21 avhengerAv 4,
             dato faktum "Inntektsrapporteringsperiode til og med" id 22 avhengerAv 4,
-            heltall faktum "Sluttårsak" id 23 genererer 24 og 25 og 26 og 27,
-            ja nei "SluttårsakPermittert" id 24,
-            ja nei "SluttårsakOrdinær" id 25,
-            ja nei "SluttårsakLønnsgaranti" id 26,
-            ja nei "SluttårsakPermittertFisk" id 27,
-            ja nei "Godkjenning sluttårsak" id 28 avhengerAv 23
+            heltall faktum "Rettighetstype" id 23 genererer 24 og 25 og 26 og 27,
+            ja nei "Permittert" id 24,
+            ja nei "Ordinær" id 25,
+            ja nei "Lønnsgaranti" id 26,
+            ja nei "PermittertFiskeforedling" id 27,
+            ja nei "Godkjenning rettighetstype" id 28 avhengerAv 23
         )
     private val ønsketDato = søknad dato 1
     private val sisteDagMedArbeidsplikt = søknad dato 2
@@ -90,21 +90,21 @@ internal object AvslagPåMinsteinntekt {
     private val dagensDato = søknad dato 20
     private val inntektsrapporteringsperiodeFom = søknad dato 21
     private val inntektsrapporteringsperiodeTom = søknad dato 22
-    private val sluttårsaker = søknad generator 23
-    private val sluttårsakOrdinær = søknad ja 24
-    private val sluttårsakPermittert = søknad ja 25
-    private val sluttårsakLønnsgaranti = søknad ja 26
-    private val sluttårsakPermittertFisk = søknad ja 27
-    private val godkjenningSluttårsak = søknad ja 28
+    private val Rettighetstype = søknad generator 23
+    private val Ordinær = søknad ja 24
+    private val Permittert = søknad ja 25
+    private val Lønnsgaranti = søknad ja 26
+    private val PermittertFiskeforedling = søknad ja 27
+    private val godkjenningRettighetstype = søknad ja 28
 
-    internal val rettighetstype = sluttårsaker med "sluttårsaker".makro(
+    internal val rettighetstype = Rettighetstype med "sluttårsaker".makro(
         "bare en av".bareEnAv(
-            sluttårsakOrdinær er true,
-            sluttårsakPermittertFisk er true,
-            sluttårsakLønnsgaranti er true,
-            sluttårsakPermittert er true
+            Ordinær er true,
+            PermittertFiskeforedling er true,
+            Lønnsgaranti er true,
+            Permittert er true
         )
-    ) ugyldigGodkjentAv godkjenningSluttårsak
+    ) ugyldigGodkjentAv godkjenningRettighetstype
 
     private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
         inntektSiste36mnd minst G3,
@@ -199,19 +199,19 @@ internal object AvslagPåMinsteinntekt {
         )
 
     internal val arbeidsforholdNav = Seksjon(
-        "sluttårsaker",
+        "rettighetstype",
         Rolle.nav,
-        sluttårsaker,
-        sluttårsakOrdinær,
-        sluttårsakLønnsgaranti,
-        sluttårsakPermittertFisk,
-        sluttårsakPermittert,
+        Rettighetstype,
+        Ordinær,
+        Lønnsgaranti,
+        PermittertFiskeforedling,
+        Permittert,
     )
 
     internal val arbeidsforholdSaksbehandler = Seksjon(
-        "godkjenn sluttårsaker",
+        "godkjenn rettighetstype",
         Rolle.saksbehandler,
-        godkjenningSluttårsak,
+        godkjenningRettighetstype,
     )
 
     internal val søknadprosess: Søknadprosess =
@@ -248,11 +248,11 @@ internal object AvslagPåMinsteinntekt {
                 20 to "DagensDato",
                 21 to "InntektsrapporteringsperiodeFom",
                 22 to "InntektsrapporteringsperiodeTom",
-                23 to "Sluttårsak",
-                24 to "SluttårsakPermittert",
-                25 to "SluttårsakOrdinær",
-                26 to "SluttårsakLønnsgaranti",
-                27 to "SluttårsakPermittertFisk",
+                23 to "Rettighetstype",
+                24 to "Permittert",
+                25 to "Ordinær",
+                26 to "Lønnsgaranti",
+                27 to "PermittertFiskeforedling",
             )
         )
     private val versjon = Versjon.Bygger(

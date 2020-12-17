@@ -65,11 +65,11 @@ internal class AvslagPåMinsteinntektTest {
             besvar("7", 5000.årlig)
 
             assertEquals(14, testRapid.inspektør.size)
-            assertGjeldendeSeksjon("sluttårsaker")
+            assertGjeldendeSeksjon("rettighetstype")
             besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
             assertEquals(17, testRapid.inspektør.size)
 
-            assertGjeldendeSeksjon("godkjenn sluttårsaker")
+            assertGjeldendeSeksjon("godkjenn rettighetstype")
             assertEquals(17, testRapid.inspektør.size)
             besvar("29", true)
 
@@ -107,7 +107,7 @@ internal class AvslagPåMinsteinntektTest {
             besvar("6", 2000000.årlig)
             besvar("7", 5000000.årlig)
 
-            assertGjeldendeSeksjon("sluttårsaker")
+            assertGjeldendeSeksjon("rettighetstype")
             besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
 
             assertTrue(gjeldendeResultat())
@@ -139,11 +139,11 @@ internal class AvslagPåMinsteinntektTest {
             besvar("6", 20000.årlig)
             besvar("7", 5000.årlig)
 
-            assertGjeldendeSeksjon("sluttårsaker")
+            assertGjeldendeSeksjon("rettighetstype")
             besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
 
             assertEquals(
-                "godkjenn sluttårsaker",
+                "godkjenn rettighetstype",
                 testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
             )
             besvar("28", true)
