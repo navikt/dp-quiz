@@ -22,6 +22,9 @@ class GodkjenningsSubsumsjon private constructor(
     internal constructor(action: Action, child: Subsumsjon, godkjenning: GrunnleggendeFaktum<Boolean>) :
         this("${child.navn} godkjenning", action, child, listOf(godkjenning), TomSubsumsjon, TomSubsumsjon)
 
+    internal constructor(action: Action, child: Subsumsjon, godkjenning: List<GrunnleggendeFaktum<Boolean>>) :
+        this("${child.navn} godkjenning", action, child, godkjenning, TomSubsumsjon, TomSubsumsjon)
+
     enum class Action(internal val strategy: (Boolean, Boolean?) -> Boolean?) {
         JaAction(
             fun(childResultat: Boolean, godkjenningResultat: Boolean?) =
@@ -42,7 +45,8 @@ class GodkjenningsSubsumsjon private constructor(
         return child.resultat()?.let { childResultat ->
             action.strategy(
                 childResultat,
-                if (godkjenningsfakta.all { it.erBesvart() }) godkjenningsfakta.all { it.svar() } else null)
+                if (godkjenningsfakta.all { it.erBesvart() }) godkjenningsfakta.all { it.svar() } else null
+            )
         }
     }
 
@@ -50,7 +54,7 @@ class GodkjenningsSubsumsjon private constructor(
         navn,
         action,
         child.deepCopy(søknadprosess),
-        godkjenningsfakta.map {søknadprosess.ja(it.id) as GrunnleggendeFaktum<Boolean>},
+        godkjenningsfakta.map { søknadprosess.ja(it.id) as GrunnleggendeFaktum<Boolean> },
         gyldigSubsumsjon.deepCopy(søknadprosess),
         ugyldigSubsumsjon.deepCopy(søknadprosess)
     )
@@ -59,7 +63,7 @@ class GodkjenningsSubsumsjon private constructor(
         navn,
         action,
         child.bygg(søknad),
-        godkjenningsfakta.map {søknad.ja(it.id) as GrunnleggendeFaktum<Boolean>},
+        godkjenningsfakta.map { søknad.ja(it.id) as GrunnleggendeFaktum<Boolean> },
         gyldigSubsumsjon.bygg(søknad),
         ugyldigSubsumsjon.bygg(søknad)
     )
@@ -93,7 +97,7 @@ class GodkjenningsSubsumsjon private constructor(
             visitor.preVisit(this, action, godkjenningsfakta, subsumsjon, child.lokaltResultat())
             super.accept(visitor)
             visitor.preVisit(this, action, subsumsjon)
-            godkjenningsfakta.forEach { it.accept(visitor)}
+            godkjenningsfakta.forEach { it.accept(visitor) }
             visitor.postVisit(this, action, subsumsjon)
             visitor.postVisit(this, action, godkjenningsfakta, subsumsjon, child.lokaltResultat())
         }

@@ -111,7 +111,7 @@ internal object AvslagPåMinsteinntekt {
         inntektSiste12mnd minst G1_5,
         verneplikt er true,
         lærling er true
-    ) ugyldigGodkjentAv(godkjenningVirkningstidspunkt)
+    ).ugyldigGodkjentAv(godkjenningVirkningstidspunkt, godkjenningRettighetstype)
 
     private val meldtSomArbeidssøker = registreringsperioder har "periode".makro(
         virkningstidspunkt mellom registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom
