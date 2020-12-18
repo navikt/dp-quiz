@@ -43,11 +43,11 @@ class SaksbehandlerJsonBuilder(
     override fun preVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,
-        godkjenning: GrunnleggendeFaktum<Boolean>,
+        godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         lokaltResultat: Boolean?,
         childResultat: Boolean?
     ) {
-        relevanteFakta += godkjenning.id
+        relevanteFakta += godkjenning.map { it.id }
         super.preVisit(subsumsjon, action, godkjenning, lokaltResultat, childResultat)
     }
 

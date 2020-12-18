@@ -60,7 +60,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     override fun preVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,
-        godkjenning: GrunnleggendeFaktum<Boolean>,
+        godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         resultat: Boolean?,
         childResultat: Boolean?
     ) {
@@ -70,7 +70,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
     override fun postVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,
-        godkjenning: GrunnleggendeFaktum<Boolean>,
+        godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         resultat: Boolean?,
         childResultat: Boolean?
     ) {

@@ -163,14 +163,14 @@ interface SubsumsjonVisitor : FaktumVisitor {
     fun preVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,
-        godkjenning: GrunnleggendeFaktum<Boolean>,
+        godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         resultat: Boolean?,
         childResultat: Boolean?
     ) {}
     fun postVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,
-        godkjenning: GrunnleggendeFaktum<Boolean>,
+        godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         resultat: Boolean?,
         childResultat: Boolean?
     ) {}

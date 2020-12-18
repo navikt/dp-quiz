@@ -187,3 +187,8 @@ infix fun Subsumsjon.ugyldigGodkjentAv(faktum: Faktum<Boolean>) =
     GodkjenningsSubsumsjon(NeiAction, this, faktum as GrunnleggendeFaktum<Boolean>).also {
         faktum.sjekkAvhengigheter()
     }
+
+fun Subsumsjon.ugyldigGodkjentAv(faktum: Faktum<Boolean>, faktum2: Faktum<Boolean>) =
+    GodkjenningsSubsumsjon(NeiAction, this, faktum as GrunnleggendeFaktum<Boolean>).also {
+        faktum.sjekkAvhengigheter()
+    }

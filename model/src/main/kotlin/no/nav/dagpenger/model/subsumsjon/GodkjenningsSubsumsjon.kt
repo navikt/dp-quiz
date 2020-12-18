@@ -10,17 +10,17 @@ class GodkjenningsSubsumsjon private constructor(
     navn: String,
     private val action: Action,
     private val child: Subsumsjon,
-    private val godkjenning: GrunnleggendeFaktum<Boolean>,
+    private val godkjenningsfakta: List<GrunnleggendeFaktum<Boolean>>,
     gyldigSubsumsjon: Subsumsjon,
     ugyldigSubsumsjon: Subsumsjon
 ) : SammensattSubsumsjon(navn, mutableListOf(child), gyldigSubsumsjon, ugyldigSubsumsjon) {
 
     init {
-        godkjenning.godkjenner(child.alleFakta())
+        godkjenningsfakta.forEach { it.godkjenner(child.alleFakta()) }
     }
 
     internal constructor(action: Action, child: Subsumsjon, godkjenning: GrunnleggendeFaktum<Boolean>) :
-        this("${child.navn} godkjenning", action, child, godkjenning, TomSubsumsjon, TomSubsumsjon)
+        this("${child.navn} godkjenning", action, child, listOf(godkjenning), TomSubsumsjon, TomSubsumsjon)
 
     enum class Action(internal val strategy: (Boolean, Boolean?) -> Boolean?) {
         JaAction(
@@ -40,7 +40,9 @@ class GodkjenningsSubsumsjon private constructor(
 
     override fun lokaltResultat(): Boolean? {
         return child.resultat()?.let { childResultat ->
-            action.strategy(childResultat, if (godkjenning.erBesvart()) godkjenning.svar() else null)
+            action.strategy(
+                childResultat,
+                if (godkjenningsfakta.all { it.erBesvart() }) godkjenningsfakta.all { it.svar() } else null)
         }
     }
 
@@ -48,7 +50,7 @@ class GodkjenningsSubsumsjon private constructor(
         navn,
         action,
         child.deepCopy(søknadprosess),
-        søknadprosess.ja(godkjenning.id) as GrunnleggendeFaktum<Boolean>,
+        godkjenningsfakta.map {søknadprosess.ja(it.id) as GrunnleggendeFaktum<Boolean>},
         gyldigSubsumsjon.deepCopy(søknadprosess),
         ugyldigSubsumsjon.deepCopy(søknadprosess)
     )
@@ -57,7 +59,7 @@ class GodkjenningsSubsumsjon private constructor(
         navn,
         action,
         child.bygg(søknad),
-        søknad.ja(godkjenning.faktumId) as GrunnleggendeFaktum<Boolean>,
+        godkjenningsfakta.map {søknad.ja(it.id) as GrunnleggendeFaktum<Boolean>},
         gyldigSubsumsjon.bygg(søknad),
         ugyldigSubsumsjon.bygg(søknad)
     )
@@ -69,7 +71,7 @@ class GodkjenningsSubsumsjon private constructor(
             navn,
             action,
             child.deepCopy(),
-            godkjenning,
+            godkjenningsfakta,
             gyldigSubsumsjon.deepCopy(),
             ugyldigSubsumsjon.deepCopy()
         )
@@ -80,20 +82,20 @@ class GodkjenningsSubsumsjon private constructor(
             "$navn [$indeks]",
             action,
             child.deepCopy(indeks, søknad),
-            godkjenning,
+            godkjenningsfakta,
             gyldigSubsumsjon.deepCopy(indeks, søknad),
             ugyldigSubsumsjon.deepCopy(indeks, søknad)
         )
     }
 
     override fun accept(visitor: SubsumsjonVisitor) {
-        lokaltResultat().also {
-            visitor.preVisit(this, action, godkjenning, it, child.lokaltResultat())
+        lokaltResultat().also { subsumsjon ->
+            visitor.preVisit(this, action, godkjenningsfakta, subsumsjon, child.lokaltResultat())
             super.accept(visitor)
-            visitor.preVisit(this, action, it)
-            godkjenning.accept(visitor)
-            visitor.postVisit(this, action, it)
-            visitor.postVisit(this, action, godkjenning, it, child.lokaltResultat())
+            visitor.preVisit(this, action, subsumsjon)
+            godkjenningsfakta.forEach { it.accept(visitor)}
+            visitor.postVisit(this, action, subsumsjon)
+            visitor.postVisit(this, action, godkjenningsfakta, subsumsjon, child.lokaltResultat())
         }
     }
 }

@@ -170,7 +170,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
     override fun preVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: Action,
-        godkjenning: GrunnleggendeFaktum<Boolean>,
+        godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         lokaltResultat: Boolean?,
         childResultat: Boolean?
     ) {
@@ -180,22 +180,22 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
     override fun postVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: Action,
-        godkjenning: GrunnleggendeFaktum<Boolean>,
+        godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         lokaltResultat: Boolean?,
         childResultat: Boolean?
     ) {
         if (ignoreSubsumsjon != null) return
         subsumsjonNoder.removeAt(0).also {
-            if (godkjenning.erBesvart() && when (action) {
+            if (godkjenning.all { it.erBesvart() } && when (action) {
                 Action.JaAction -> childResultat == true
                 Action.NeiAction -> childResultat == false
                 Action.UansettAction -> true
             }
             )
                 it.addObject().also { subsumsjonNode ->
-                    subsumsjonNode.put("lokalt_resultat", godkjenning.svar())
+                    subsumsjonNode.put("lokalt_resultat", godkjenning.all { it.svar() }) // TODO: Bytt ut med subsumsjon
                     subsumsjonNode.put("navn", "Godkjent med")
-                    subsumsjonNode.put("forklaring", if (godkjenning.svar()) "godkjent" else "ikke godkjent")
+                    subsumsjonNode.put("forklaring", if (godkjenning.all { it.svar() }) "godkjent" else "ikke godkjent")
                     subsumsjonNode.put("type", "Godkjenningsubsumsjon")
                 }
         }

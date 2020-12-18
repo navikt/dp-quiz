@@ -104,14 +104,14 @@ internal object AvslagPåMinsteinntekt {
             Lønnsgaranti er true,
             Permittert er true
         )
-    ) ugyldigGodkjentAv godkjenningRettighetstype
+    )
 
     private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
         inntektSiste36mnd minst G3,
         inntektSiste12mnd minst G1_5,
         verneplikt er true,
         lærling er true
-    ) ugyldigGodkjentAv godkjenningVirkningstidspunkt
+    ) ugyldigGodkjentAv(godkjenningVirkningstidspunkt)
 
     private val meldtSomArbeidssøker = registreringsperioder har "periode".makro(
         virkningstidspunkt mellom registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom
