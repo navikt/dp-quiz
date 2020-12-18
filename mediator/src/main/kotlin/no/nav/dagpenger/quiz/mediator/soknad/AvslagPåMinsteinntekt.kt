@@ -63,7 +63,7 @@ internal object AvslagPåMinsteinntekt {
             dato faktum "Dagens dato" id 20,
             dato faktum "Inntektsrapporteringsperiode fra og med" id 21 avhengerAv 4,
             dato faktum "Inntektsrapporteringsperiode til og med" id 22 avhengerAv 4,
-            heltall faktum "Rettighetstype" id 23 genererer 24 og 25 og 26 og 27,
+            heltall faktum "Rettighetstype" id 23 genererer 24 og 25 og 26 og 27 avhengerAv 14,
             ja nei "Permittert" id 24,
             ja nei "Ordinær" id 25,
             ja nei "Lønnsgaranti" id 26,

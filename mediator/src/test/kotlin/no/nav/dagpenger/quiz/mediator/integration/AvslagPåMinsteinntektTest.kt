@@ -71,12 +71,12 @@ internal class AvslagPåMinsteinntektTest {
 
             assertGjeldendeSeksjon("godkjenn rettighetstype")
             assertEquals(17, testRapid.inspektør.size)
-            besvar("29", true)
+            besvar("28", true)
 
             assertEquals("godkjenn virkningstidspunkt", testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText())
 
             besvar("12", true)
-            assertEquals(21, testRapid.inspektør.size)
+            assertEquals(24, testRapid.inspektør.size)
             assertFalse(gjeldendeResultat())
         }
     }

@@ -83,7 +83,7 @@ class Søknad private constructor(
     internal infix fun id(faktumId: FaktumId) = faktaMap[faktumId]
         ?: throw IllegalArgumentException("Ukjent faktum $faktumId")
 
-    internal infix fun idOrNull(faktumId: FaktumId) = faktaMap[faktumId]
+    infix fun idOrNull(faktumId: FaktumId) = faktaMap[faktumId]
     infix fun idOrNull(id: String) = idOrNull(FaktumId(id))
 
     override infix fun dokument(rootId: Int) = dokument(FaktumId(rootId))

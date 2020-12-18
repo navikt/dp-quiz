@@ -34,6 +34,12 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         tilstand = Kjent
     }
 
+    override fun rehydrer(r: R): Faktum<R> = this.apply {
+        super.rehydrer(r)
+        gjeldendeSvar = r
+        tilstand = Kjent
+    }
+
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
 

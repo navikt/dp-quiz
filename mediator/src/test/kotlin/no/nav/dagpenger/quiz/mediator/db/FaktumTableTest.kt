@@ -20,7 +20,7 @@ internal class FaktumTableTest {
             assertRecordCount(expectedFaktumRecordCount, "faktum")
             assertRecordCount(6, "utledet_faktum")
             assertRecordCount(3, "template_faktum")
-            assertRecordCount(4, "avhengig_faktum")
+            assertRecordCount(5, "avhengig_faktum")
             FaktumTable(SøknadEksempel1.prototypeFakta1, 1)
             assertRecordCount(expectedFaktumRecordCount, "faktum")
         }
@@ -35,7 +35,8 @@ internal class FaktumTableTest {
                         "SELECT COUNT (*) FROM $table"
                     ).map { it.int(1) }.asSingle
                 )
-            }
+            },
+            "forventet $recordCount poster i $table"
         )
     }
 }

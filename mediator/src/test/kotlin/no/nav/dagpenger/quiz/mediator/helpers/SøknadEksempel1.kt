@@ -32,7 +32,7 @@ internal object SøknadEksempel1 {
         ja nei "f12" id 12 avhengerAv 11,
         dato faktum "f13" id 13,
         ja nei "f14" id 14,
-        heltall faktum "f15" id 15 genererer 16 og 17 og 18,
+        heltall faktum "f15" id 15 genererer 16 og 17 og 18 avhengerAv 14,
         heltall faktum "f16" id 16,
         ja nei "f17" id 17,
         ja nei "f18" id 18,

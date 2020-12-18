@@ -9,7 +9,6 @@ import kotliquery.using
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
-import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Identer.Ident
 import no.nav.dagpenger.model.faktum.Inntekt
@@ -17,7 +16,6 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.visitor.FaktumVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -60,31 +58,18 @@ class SøknadRecord : SøknadPersistence {
                 uuid
             )
             .also { søknadprosess ->
-                val besvarteFaktum = mutableListOf<Faktum<*>>()
-                val svarQueue = ArrayDeque(svarList(uuid))
-
-                while (!svarQueue.isEmpty()) {
-                    val row = svarQueue.removeFirst()
-                    søknadprosess.søknad.idOrNull(row.root_id indeks row.indeks)?.also { faktum ->
-                        val avhengigeFaktum = AvhengerAvVisitor(faktum).avhengerAv
-                        if (avhengigeFaktum.isEmpty() || avhengigeFaktum.filterIsInstance<GrunnleggendeFaktum<*>>().all { it in besvarteFaktum }
-                        ) {
-                            besvarFaktum(row, faktum)
-                            besvarteFaktum.add(faktum)
-                        } else {
-                            svarQueue.addLast(row)
-                        }
-                    }
+                svarList(uuid).onEach { row ->
+                    søknadprosess.søknad.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
                 }
             }
     }
 
-    private fun besvarFaktum(row: FaktumVerdiRow, faktum: Faktum<*>) {
-        if (row.heltall != null) (faktum as Faktum<Int>).besvar(row.heltall)
-        if (row.janei != null) (faktum as Faktum<Boolean>).besvar(row.janei)
-        if (row.dato != null) (faktum as Faktum<LocalDate>).besvar(row.dato)
-        if (row.inntekt != null) (faktum as Faktum<Inntekt>).besvar(row.inntekt)
-        if (row.opplastet != null && row.url != null) (faktum as Faktum<Dokument>).besvar(
+    private fun rehydrerFaktum(row: FaktumVerdiRow, faktum: Faktum<*>) {
+        if (row.heltall != null) (faktum as Faktum<Int>).rehydrer(row.heltall)
+        if (row.janei != null) (faktum as Faktum<Boolean>).rehydrer(row.janei)
+        if (row.dato != null) (faktum as Faktum<LocalDate>).rehydrer(row.dato)
+        if (row.inntekt != null) (faktum as Faktum<Inntekt>).rehydrer(row.inntekt)
+        if (row.opplastet != null && row.url != null) (faktum as Faktum<Dokument>).rehydrer(
             Dokument(
                 row.opplastet,
                 row.url
@@ -138,7 +123,8 @@ class SøknadRecord : SøknadPersistence {
         val dato: LocalDate?,
         val inntekt: Inntekt?,
         val url: String?,
-        val opplastet: LocalDateTime?
+        val opplastet: LocalDateTime?,
+        val id: FaktumId = if (indeks == 0) FaktumId(root_id) else FaktumId(root_id).medIndeks(indeks)
     )
 
     override fun lagre(søknad: Søknad): Boolean {
@@ -272,21 +258,4 @@ class SøknadRecord : SøknadPersistence {
             )
         }.toMap()
     }
-
-    private class AvhengerAvVisitor(faktum: Faktum<*>) : FaktumVisitor {
-        var avhengerAv = emptySet<Faktum<*>>()
-
-        init {
-            faktum.accept(this)
-        }
-
-        override fun <R : Comparable<R>> preVisitAvhengerAvFakta(
-            faktum: Faktum<R>,
-            avhengerAvFakta: MutableSet<Faktum<*>>
-        ) {
-            avhengerAv = avhengerAvFakta
-        }
-    }
-
-    private infix fun Int.indeks(indeks: Int) = if (indeks == 0) this.toString() else "$this.$indeks"
 }

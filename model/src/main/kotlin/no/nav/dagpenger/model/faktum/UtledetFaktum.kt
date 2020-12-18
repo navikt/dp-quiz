@@ -19,6 +19,10 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
         throw IllegalArgumentException("Kan ikke besvare sammensatte faktum")
     }
 
+    override fun rehydrer(r: R): Faktum<R> {
+        throw IllegalArgumentException("Kan ikke rehydrere sammensatte faktum")
+    }
+
     override fun svar(): R {
         underordnede.forEach { it.svar() }
         return regel.strategy(this)

@@ -50,6 +50,8 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     open infix fun besvar(r: R): Faktum<R> = this.also { avhengigeFakta.forEach { it.tilUbesvart() } }
 
+    open infix fun rehydrer(r: R): Faktum<R> = this
+
     protected open fun tilUbesvart() {
         throw IllegalStateException("Kan ikke sette utleda faktum til ubesvart")
     }
