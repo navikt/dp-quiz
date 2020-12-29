@@ -3,11 +3,6 @@ plugins {
     id(Shadow.shadow) version Shadow.version
 }
 
-repositories {
-    jcenter()
-    maven("https://jitpack.io")
-}
-
 application {
     mainClassName = "no.nav.dagpenger.quiz.mediator.AppKt"
 }
