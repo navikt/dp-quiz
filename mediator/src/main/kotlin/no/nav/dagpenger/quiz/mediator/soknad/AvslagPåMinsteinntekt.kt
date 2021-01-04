@@ -90,19 +90,19 @@ internal object AvslagPåMinsteinntekt {
     private val dagensDato = søknad dato 20
     private val inntektsrapporteringsperiodeFom = søknad dato 21
     private val inntektsrapporteringsperiodeTom = søknad dato 22
-    private val Rettighetstype = søknad generator 23
-    private val Ordinær = søknad ja 24
-    private val Permittert = søknad ja 25
-    private val Lønnsgaranti = søknad ja 26
-    private val PermittertFiskeforedling = søknad ja 27
+    private val sluttårsaker = søknad generator 23
+    private val ordinær = søknad ja 24
+    private val permittert = søknad ja 25
+    private val lønnsgaranti = søknad ja 26
+    private val permittertFiskeforedling = søknad ja 27
     private val godkjenningRettighetstype = søknad ja 28
 
-    internal val rettighetstype = Rettighetstype med "sluttårsaker".makro(
+    internal val rettighetstype = sluttårsaker med "sluttårsak".makro(
         "bare en av".bareEnAv(
-            Ordinær er true,
-            PermittertFiskeforedling er true,
-            Lønnsgaranti er true,
-            Permittert er true
+            ordinær er true,
+            permittertFiskeforedling er true,
+            lønnsgaranti er true,
+            permittert er true
         )
     )
 
@@ -201,11 +201,11 @@ internal object AvslagPåMinsteinntekt {
     internal val arbeidsforholdNav = Seksjon(
         "rettighetstype",
         Rolle.nav,
-        Rettighetstype,
-        Ordinær,
-        Lønnsgaranti,
-        PermittertFiskeforedling,
-        Permittert,
+        sluttårsaker,
+        ordinær,
+        lønnsgaranti,
+        permittertFiskeforedling,
+        permittert,
     )
 
     internal val arbeidsforholdSaksbehandler = Seksjon(
