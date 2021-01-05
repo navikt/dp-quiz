@@ -61,7 +61,7 @@ class NesteSeksjonTest {
 
         Versjon.Bygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
             .søknadprosess(testPerson, Web).also { fakta ->
-            assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
-        }
+                assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
+            }
     }
 }
