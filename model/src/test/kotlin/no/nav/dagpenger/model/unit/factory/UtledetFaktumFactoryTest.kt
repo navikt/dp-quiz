@@ -1,8 +1,8 @@
 package no.nav.dagpenger.model.unit.factory
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.alle
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
@@ -96,9 +96,9 @@ internal class UtledetFaktumFactoryTest {
     fun `boolean and`() {
         val søknad = Søknad(
             87,
-            boolsk faktum "jaNei1" id 1,
-            boolsk faktum "jaNei2" id 2,
-            boolsk faktum "jaNei3" id 3,
+            ja nei "jaNei1" id 1,
+            ja nei "jaNei2" id 2,
+            ja nei "jaNei3" id 3,
             alle ja "alle ja" av 1 og 2 og 3 id 123
         )
 
@@ -107,23 +107,23 @@ internal class UtledetFaktumFactoryTest {
             Seksjon(
                 "seksjon",
                 Rolle.søker,
-                søknad boolsk 1,
-                søknad boolsk 2,
-                søknad boolsk 3,
-                søknad boolsk 123
+                søknad ja 1,
+                søknad ja 2,
+                søknad ja 3,
+                søknad ja 123
             )
         )
         val faktum = søknadprosess.dato("123")
 
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
-        søknadprosess.boolsk("1").besvar(true)
-        søknadprosess.boolsk("2").besvar(true)
+        søknadprosess.ja("1").besvar(true)
+        søknadprosess.ja("2").besvar(true)
         assertFalse(faktum.erBesvart())
-        søknadprosess.boolsk("3").besvar(true)
+        søknadprosess.ja("3").besvar(true)
         assertTrue(faktum.erBesvart())
         assertEquals(true, faktum.svar())
-        søknadprosess.boolsk("1").besvar(false)
+        søknadprosess.ja("1").besvar(false)
         assertEquals(false, faktum.svar())
     }
 
@@ -136,16 +136,16 @@ internal class UtledetFaktumFactoryTest {
             dato faktum "dato2" id 2,
             dato faktum "dato3" id 3,
             maks dato "maks dato" av 1 og 2 og 3 id 123,
-            boolsk faktum "ja nei" id 4 avhengerAv 1123,
+            ja nei "ja nei" id 4 avhengerAv 1123,
             maks dato "maks dato 3" av 1 og 123 id 1123
         ).testSøknadprosess()
         søknad.dato(1).besvar(1.januar)
         søknad.dato(2).besvar(2.januar)
         søknad.dato(3).besvar(3.januar)
         assertTrue(søknad.dato(123).erBesvart())
-        søknad.boolsk(4).besvar(true)
-        assertTrue(søknad.boolsk(4).erBesvart())
+        søknad.ja(4).besvar(true)
+        assertTrue(søknad.ja(4).erBesvart())
         søknad.dato(3).besvar(4.januar)
-        assertFalse(søknad.boolsk(4).erBesvart())
+        assertFalse(søknad.ja(4).erBesvart())
     }
 }

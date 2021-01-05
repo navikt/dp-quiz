@@ -6,9 +6,9 @@ import java.time.LocalDate
 interface TypedFaktum {
     infix fun id(rootId: Int): Faktum<*>
     infix fun id(id: String): Faktum<*>
-    infix fun boolsk(rootId: Int): Faktum<Boolean>
-    infix fun boolsk(id: String): Faktum<Boolean>
-    infix fun boolsk(faktumFactory: FaktumFactory<*>): Faktum<Boolean>
+    infix fun ja(rootId: Int): Faktum<Boolean>
+    infix fun ja(id: String): Faktum<Boolean>
+    infix fun ja(faktumFactory: FaktumFactory<*>): Faktum<Boolean>
     infix fun dato(rootId: Int): Faktum<LocalDate>
     infix fun dato(id: String): Faktum<LocalDate>
     infix fun dato(faktumFactory: FaktumFactory<*>): Faktum<LocalDate>

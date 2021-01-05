@@ -54,7 +54,7 @@ class GodkjenningsSubsumsjon private constructor(
         navn,
         action,
         child.deepCopy(søknadprosess),
-        godkjenningsfakta.map { søknadprosess.boolsk(it.id) as GrunnleggendeFaktum<Boolean> },
+        godkjenningsfakta.map { søknadprosess.ja(it.id) as GrunnleggendeFaktum<Boolean> },
         gyldigSubsumsjon.deepCopy(søknadprosess),
         ugyldigSubsumsjon.deepCopy(søknadprosess)
     )
@@ -63,7 +63,7 @@ class GodkjenningsSubsumsjon private constructor(
         navn,
         action,
         child.bygg(søknad),
-        godkjenningsfakta.map { søknad.boolsk(it.id) as GrunnleggendeFaktum<Boolean> },
+        godkjenningsfakta.map { søknad.ja(it.id) as GrunnleggendeFaktum<Boolean> },
         gyldigSubsumsjon.bygg(søknad),
         ugyldigSubsumsjon.bygg(søknad)
     )

@@ -1,10 +1,10 @@
 package no.nav.dagpenger.model.unit.factory
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.daglig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
@@ -24,7 +24,7 @@ internal class BaseFaktumFactoryTest {
 
     @Test
     fun boolean() {
-        (boolsk faktum "boolean" id 3).also { factory ->
+        (ja nei "boolean" id 3).also { factory ->
             assertNotNull(factory)
             assertNotNull(factory.faktum())
         }
@@ -32,8 +32,8 @@ internal class BaseFaktumFactoryTest {
 
     @Test
     fun `boolean factory faktum`() {
-        val søknadprosess = Søknad(0, boolsk faktum "boolean" id 3).testSøknadprosess()
-        val faktum = søknadprosess boolsk 3
+        val søknadprosess = Søknad(0, ja nei "boolean" id 3).testSøknadprosess()
+        val faktum = søknadprosess ja 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
         faktum.besvar(true)

@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.unit.seksjon
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -26,25 +26,24 @@ internal class SaksbehandlerSeksjonerTest {
     companion object {
         internal val uuid = UUID.randomUUID()
     }
-
     private val prototypeSøknad = Søknad(
         0,
-        boolsk faktum "f1" id 1,
-        boolsk faktum "approve1" id 2 avhengerAv 1,
-        boolsk faktum "f3" id 3,
-        boolsk faktum "approve3" id 4 avhengerAv 3,
-        boolsk faktum "f5" id 5,
-        boolsk faktum "approve5" id 6 avhengerAv 5
+        ja nei "f1" id 1,
+        ja nei "approve1" id 2 avhengerAv 1,
+        ja nei "f3" id 3,
+        ja nei "approve3" id 4 avhengerAv 3,
+        ja nei "f5" id 5,
+        ja nei "approve5" id 6 avhengerAv 5
     )
-    private val prototypeSubsumsjon = (prototypeSøknad.boolsk(1) er true gyldigGodkjentAv prototypeSøknad.boolsk(2)) så
-        (prototypeSøknad.boolsk(3) er true ugyldigGodkjentAv prototypeSøknad.boolsk(4)) eller
-        (prototypeSøknad.boolsk(5) er true godkjentAv prototypeSøknad.boolsk(6))
+    private val prototypeSubsumsjon = (prototypeSøknad.ja(1) er true gyldigGodkjentAv prototypeSøknad.ja(2)) så
+        (prototypeSøknad.ja(3) er true ugyldigGodkjentAv prototypeSøknad.ja(4)) eller
+        (prototypeSøknad.ja(5) er true godkjentAv prototypeSøknad.ja(6))
 
     private val prototypeSøknadprosess = Søknadprosess(
         prototypeSøknad,
-        Seksjon("søker", Rolle.søker, prototypeSøknad.boolsk(1), prototypeSøknad.boolsk(3), prototypeSøknad.boolsk(5)),
-        Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeSøknad.boolsk(2)),
-        Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.boolsk(4), prototypeSøknad.boolsk(6))
+        Seksjon("søker", Rolle.søker, prototypeSøknad.ja(1), prototypeSøknad.ja(3), prototypeSøknad.ja(5)),
+        Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeSøknad.ja(2)),
+        Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.ja(4), prototypeSøknad.ja(6))
     )
 
     private val søknadprosessTestBygger = Versjon.Bygger(
@@ -64,12 +63,12 @@ internal class SaksbehandlerSeksjonerTest {
     @BeforeEach
     internal fun setup() {
         seksjoner = søknadprosessTestBygger.søknadprosess(testPerson, Web, uuid)
-        f1 = seksjoner.boolsk(1)
-        f3 = seksjoner.boolsk(3)
-        f5 = seksjoner.boolsk(5)
-        approve1 = seksjoner.boolsk(2)
-        approve3 = seksjoner.boolsk(4)
-        approve5 = seksjoner.boolsk(6)
+        f1 = seksjoner.ja(1)
+        f3 = seksjoner.ja(3)
+        f5 = seksjoner.ja(5)
+        approve1 = seksjoner.ja(2)
+        approve3 = seksjoner.ja(4)
+        approve5 = seksjoner.ja(6)
     }
 
     @Test
@@ -81,7 +80,7 @@ internal class SaksbehandlerSeksjonerTest {
         seksjoner.nesteSeksjoner().also {
             assertEquals(2, it.size)
             assertTrue(approve1 in it[0] && !approve1.erBesvart())
-            assertTrue(approve3 in it[1] && !seksjoner.boolsk(4).erBesvart())
+            assertTrue(approve3 in it[1] && !seksjoner.ja(4).erBesvart())
         }
         beTrue(approve1)
         seksjoner.nesteSeksjoner().also {

@@ -1,9 +1,9 @@
 package no.nav.dagpenger.model.unit.faktum
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
@@ -23,7 +23,7 @@ class SøknadTest {
 
     @Test
     fun `søknad med ett faktum`() {
-        val søknad = Søknad(10, boolsk faktum "janei" id 3)
+        val søknad = Søknad(10, ja nei "janei" id 3)
         assertFalse((søknad id 3).erBesvart())
         assertFalse((søknad id "3").erBesvart())
         assertEquals(1, søknad.size)
@@ -35,17 +35,17 @@ class SøknadTest {
         val søknad = Søknad(
             9,
             dokument faktum "f11" id 11,
-            boolsk faktum "f12" id 12 avhengerAv 11
+            ja nei "f12" id 12 avhengerAv 11
         )
 
         Søknadprosess(Seksjon("seksjon", Rolle.søker, søknad id 11, søknad id 12))
         assertEquals(2, søknad.size)
         søknad.dokument(11).besvar(Dokument(1.januar))
-        søknad.boolsk(12).besvar(true)
+        søknad.ja(12).besvar(true)
 
-        assertTrue(søknad.boolsk(12).erBesvart())
+        assertTrue(søknad.ja(12).erBesvart())
         søknad.dokument(11).besvar(Dokument(2.januar))
-        assertFalse(søknad.boolsk(12).erBesvart())
+        assertFalse(søknad.ja(12).erBesvart())
     }
 
     @Test
@@ -76,8 +76,8 @@ class SøknadTest {
             7,
             heltall faktum "antall barn" id 15 genererer 16 og 17 og 18,
             heltall faktum "alder barn" id 16,
-            boolsk faktum "skal du ha penger for barn" id 17,
-            boolsk faktum "annen forelder får støtte" id 18
+            ja nei "skal du ha penger for barn" id 17,
+            ja nei "annen forelder får støtte" id 18
         )
         val barneSeksjon = Seksjon("barneseksjon", Rolle.søker, søknad id 15, søknad id 16, søknad id 17, søknad id 18)
         Søknadprosess(søknad, barneSeksjon)

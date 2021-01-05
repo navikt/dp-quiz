@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.unit.marshalling
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
@@ -27,13 +27,13 @@ internal class ResultatJsonBuilderTest {
     fun setup() {
         prototypeSøknad = Søknad(
             0,
-            boolsk faktum "f1" id 1,
-            boolsk faktum "f2" id 2 avhengerAv 1,
-            boolsk faktum "f3" id 3,
-            boolsk faktum "f4" id 4 avhengerAv 3,
-            boolsk faktum "f5" id 5,
-            boolsk faktum "f6" id 6,
-            boolsk faktum "f7" id 7,
+            ja nei "f1" id 1,
+            ja nei "f2" id 2 avhengerAv 1,
+            ja nei "f3" id 3,
+            ja nei "f4" id 4 avhengerAv 3,
+            ja nei "f5" id 5,
+            ja nei "f6" id 6,
+            ja nei "f7" id 7,
             heltall faktum "f67" id 67 genererer 6 og 7
         )
     }
@@ -41,18 +41,18 @@ internal class ResultatJsonBuilderTest {
     @Test
     fun `bygger prossess_resultat event`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true
+            prototypeSøknad.ja(1) er true
         )
         assertThrows<IllegalStateException> {
             ResultatJsonBuilder(søknadprosess).resultat()
         }
 
-        søknadprosess.boolsk(1).besvar(true)
+        søknadprosess.ja(1).besvar(true)
         ResultatJsonBuilder(søknadprosess).resultat().also {
             assertTrue(it["resultat"].asBoolean())
         }
 
-        søknadprosess.boolsk(1).besvar(false)
+        søknadprosess.ja(1).besvar(false)
         ResultatJsonBuilder(søknadprosess).resultat().also {
             assertFalse(it["resultat"].asBoolean())
         }
@@ -61,10 +61,10 @@ internal class ResultatJsonBuilderTest {
     @Test
     fun `inkluderer kun mulige paths`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true så (prototypeSøknad.boolsk(2) er true) eller (prototypeSøknad.boolsk(3) er true)
+            prototypeSøknad.ja(1) er true så (prototypeSøknad.ja(2) er true) eller (prototypeSøknad.ja(3) er true)
         )
-        søknadprosess.boolsk(1).besvar(true)
-        søknadprosess.boolsk(2).besvar(true)
+        søknadprosess.ja(1).besvar(true)
+        søknadprosess.ja(2).besvar(true)
         ResultatJsonBuilder(søknadprosess).resultat().also {
             assertTrue(it["resultat"].asBoolean())
 
@@ -78,14 +78,14 @@ internal class ResultatJsonBuilderTest {
             Seksjon(
                 "søker",
                 Rolle.søker,
-                prototypeSøknad.boolsk(1),
-                prototypeSøknad.boolsk(3),
-                prototypeSøknad.boolsk(5),
-                prototypeSøknad.boolsk(6),
-                prototypeSøknad.boolsk(7)
+                prototypeSøknad.ja(1),
+                prototypeSøknad.ja(3),
+                prototypeSøknad.ja(5),
+                prototypeSøknad.ja(6),
+                prototypeSøknad.ja(7)
             ),
-            Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.boolsk(2)),
-            Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeSøknad.boolsk(4)),
+            Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.ja(2)),
+            Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeSøknad.ja(4)),
             rootSubsumsjon = prototypeSubsumsjon
         )
 

@@ -3,8 +3,8 @@ package no.nav.dagpenger.model.unit.marshalling
 import io.mockk.clearStaticMockk
 import io.mockk.every
 import io.mockk.mockkStatic
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.NyttEksempel
@@ -62,13 +62,13 @@ internal class SaksbehandlerJsonBuilderTest {
         versjonId--
         prototypeSøknad = Søknad(
             versjonId,
-            boolsk faktum "f1" id 1,
-            boolsk faktum "f2" id 2 avhengerAv 1,
-            boolsk faktum "f3" id 3,
-            boolsk faktum "f4" id 4 avhengerAv 3,
-            boolsk faktum "f5" id 5,
-            boolsk faktum "f6" id 6,
-            boolsk faktum "f7" id 7,
+            ja nei "f1" id 1,
+            ja nei "f2" id 2 avhengerAv 1,
+            ja nei "f3" id 3,
+            ja nei "f4" id 4 avhengerAv 3,
+            ja nei "f5" id 5,
+            ja nei "f6" id 6,
+            ja nei "f7" id 7,
             heltall faktum "f67" id 67 genererer 6 og 7
         )
         mockkStatic(ResourceBundle::class.java.name)
@@ -80,11 +80,11 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `bygger oppgave event`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true gyldigGodkjentAv prototypeSøknad.boolsk(2) så
-                (prototypeSøknad.boolsk(3) er true ugyldigGodkjentAv prototypeSøknad.boolsk(4))
+            prototypeSøknad.ja(1) er true gyldigGodkjentAv prototypeSøknad.ja(2) så
+                (prototypeSøknad.ja(3) er true ugyldigGodkjentAv prototypeSøknad.ja(4))
         )
 
-        søknadprosess.boolsk(1).besvar(true)
+        søknadprosess.ja(1).besvar(true)
         val json = SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2", lokal = nynorsk).resultat()
 
         assertEquals("oppgave", json["@event_name"].asText())
@@ -108,8 +108,8 @@ internal class SaksbehandlerJsonBuilderTest {
 
     @Test
     fun `enkel subsumsjon`() {
-        val søknadprosess = søknadprosess(prototypeSøknad.boolsk(1) er true)
-        søknadprosess.boolsk(1).besvar(true)
+        val søknadprosess = søknadprosess(prototypeSøknad.ja(1) er true)
+        søknadprosess.ja(1).besvar(true)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
             assertTrue(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
@@ -119,19 +119,19 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `subsumsjon med gyldig sti`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true så (
-                prototypeSøknad.boolsk(3) er true
+            prototypeSøknad.ja(1) er true så (
+                prototypeSøknad.ja(3) er true
                 )
         )
-        søknadprosess.boolsk(1).besvar(true)
-        søknadprosess.boolsk(3).besvar(false)
+        søknadprosess.ja(1).besvar(true)
+        søknadprosess.ja(3).besvar(false)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(2, json["subsumsjoner"].size())
             assertTrue(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
             assertFalse(json["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
         }
 
-        søknadprosess.boolsk(1).besvar(false)
+        søknadprosess.ja(1).besvar(false)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
             assertFalse(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
@@ -141,19 +141,19 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `subsumsjon med ugyldig sti`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true eller (
-                prototypeSøknad.boolsk(3) er true
+            prototypeSøknad.ja(1) er true eller (
+                prototypeSøknad.ja(3) er true
                 )
         )
-        søknadprosess.boolsk(1).besvar(false)
-        søknadprosess.boolsk(3).besvar(false)
+        søknadprosess.ja(1).besvar(false)
+        søknadprosess.ja(3).besvar(false)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(2, json["subsumsjoner"].size())
             assertFalse(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
             assertFalse(json["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
         }
 
-        søknadprosess.boolsk(1).besvar(true)
+        søknadprosess.ja(1).besvar(true)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
             assertTrue(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
@@ -164,12 +164,12 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `allesubsumsjon`() {
         val søknadprosess = søknadprosess(
             "alle".alle(
-                prototypeSøknad.boolsk(1) er true,
-                prototypeSøknad.boolsk(3) er true
+                prototypeSøknad.ja(1) er true,
+                prototypeSøknad.ja(3) er true
             )
         )
-        søknadprosess.boolsk(1).besvar(true)
-        søknadprosess.boolsk(3).besvar(false)
+        søknadprosess.ja(1).besvar(true)
+        søknadprosess.ja(3).besvar(false)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
             assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
@@ -183,11 +183,11 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `minstEnAv subsumsjon`() {
         val søknadprosess = søknadprosess(
             "minstEnAv".minstEnAv(
-                prototypeSøknad.boolsk(1) er true,
-                prototypeSøknad.boolsk(3) er true
+                prototypeSøknad.ja(1) er true,
+                prototypeSøknad.ja(3) er true
             )
         )
-        søknadprosess.boolsk(1).besvar(true)
+        søknadprosess.ja(1).besvar(true)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
             assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
@@ -196,7 +196,7 @@ internal class SaksbehandlerJsonBuilderTest {
             assertTrue(json["subsumsjoner"][0]["subsumsjoner"][1]["lokalt_resultat"].isNull)
         }
 
-        søknadprosess.boolsk(3).besvar(false)
+        søknadprosess.ja(3).besvar(false)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
             assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
@@ -210,14 +210,14 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `makro subsumsjon`() {
         val søknadprosess = søknadprosess(
             "makro" makro (
-                prototypeSøknad.boolsk(1) er true eller (
-                    prototypeSøknad.boolsk(3) er true
+                prototypeSøknad.ja(1) er true eller (
+                    prototypeSøknad.ja(3) er true
                     )
                 )
         )
 
-        søknadprosess.boolsk(1).besvar(false)
-        søknadprosess.boolsk(3).besvar(false)
+        søknadprosess.ja(1).besvar(false)
+        søknadprosess.ja(3).besvar(false)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
             assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
@@ -226,7 +226,7 @@ internal class SaksbehandlerJsonBuilderTest {
             assertFalse(json["subsumsjoner"][0]["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
         }
 
-        søknadprosess.boolsk(1).besvar(true)
+        søknadprosess.ja(1).besvar(true)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
             assertEquals(1, json["subsumsjoner"][0]["subsumsjoner"].size())
@@ -239,17 +239,17 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `kombinasjoner av samensatte subsumsjoner`() {
         val søknadprosess = søknadprosess(
             "alle".alle(
-                "makro nivå 2" makro (prototypeSøknad.boolsk(1) er true),
+                "makro nivå 2" makro (prototypeSøknad.ja(1) er true),
                 "alle nivå 2".alle(
-                    prototypeSøknad.boolsk(3) er true,
-                    prototypeSøknad.boolsk(5) er true
+                    prototypeSøknad.ja(3) er true,
+                    prototypeSøknad.ja(5) er true
                 )
             )
         )
 
-        søknadprosess.boolsk(1).besvar(false)
-        søknadprosess.boolsk(3).besvar(false)
-        søknadprosess.boolsk(5).besvar(true)
+        søknadprosess.ja(1).besvar(false)
+        søknadprosess.ja(3).besvar(false)
+        søknadprosess.ja(5).besvar(true)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
             assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
@@ -264,8 +264,8 @@ internal class SaksbehandlerJsonBuilderTest {
             assertFalse(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
         }
 
-        søknadprosess.boolsk(1).besvar(true)
-        søknadprosess.boolsk(3).besvar(true)
+        søknadprosess.ja(1).besvar(true)
+        søknadprosess.ja(3).besvar(true)
 
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertTrue(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
@@ -276,24 +276,24 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `godkjenningsubsumsjoner`() {
         val søknadprosess = søknadprosess(
             (
-                prototypeSøknad.boolsk(1) er true
-                ) gyldigGodkjentAv prototypeSøknad.boolsk(2)
+                prototypeSøknad.ja(1) er true
+                ) gyldigGodkjentAv prototypeSøknad.ja(2)
         )
 
-        søknadprosess.boolsk(1).besvar(true)
-        søknadprosess.boolsk(2).besvar(false)
+        søknadprosess.ja(1).besvar(true)
+        søknadprosess.ja(2).besvar(false)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
             assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
         }
 
-        søknadprosess.boolsk(2).besvar(true)
+        søknadprosess.ja(2).besvar(true)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
             assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
         }
 
-        søknadprosess.boolsk(1).besvar(false)
+        søknadprosess.ja(1).besvar(false)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
             assertEquals(1, json["subsumsjoner"][0]["subsumsjoner"].size())
@@ -304,8 +304,8 @@ internal class SaksbehandlerJsonBuilderTest {
     fun ` template subsumsjoner`() {
         val template = "template" makro (
             "alle".alle(
-                prototypeSøknad.boolsk(6) er true,
-                prototypeSøknad.boolsk(7) er true
+                prototypeSøknad.ja(6) er true,
+                prototypeSøknad.ja(7) er true
             )
             )
 
@@ -313,13 +313,13 @@ internal class SaksbehandlerJsonBuilderTest {
             prototypeSøknad.generator(67) med template
         )
         søknadprosess.generator(67).besvar(3)
-        søknadprosess.boolsk("6.1").besvar(true)
-        søknadprosess.boolsk("6.2").besvar(true)
-        søknadprosess.boolsk("6.3").besvar(false)
+        søknadprosess.ja("6.1").besvar(true)
+        søknadprosess.ja("6.2").besvar(true)
+        søknadprosess.ja("6.3").besvar(false)
 
-        søknadprosess.boolsk("7.1").besvar(true)
-        søknadprosess.boolsk("7.2").besvar(false)
-        søknadprosess.boolsk("7.3").besvar(false)
+        søknadprosess.ja("7.1").besvar(true)
+        søknadprosess.ja("7.2").besvar(false)
+        søknadprosess.ja("7.3").besvar(false)
 
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
@@ -376,14 +376,14 @@ internal class SaksbehandlerJsonBuilderTest {
             Seksjon(
                 "søker",
                 Rolle.søker,
-                prototypeSøknad.boolsk(1),
-                prototypeSøknad.boolsk(3),
-                prototypeSøknad.boolsk(5),
-                prototypeSøknad.boolsk(6),
-                prototypeSøknad.boolsk(7)
+                prototypeSøknad.ja(1),
+                prototypeSøknad.ja(3),
+                prototypeSøknad.ja(5),
+                prototypeSøknad.ja(6),
+                prototypeSøknad.ja(7)
             ),
-            Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.boolsk(2)),
-            Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeSøknad.boolsk(4)),
+            Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.ja(2)),
+            Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeSøknad.ja(4)),
             rootSubsumsjon = prototypeSubsumsjon
         )
 

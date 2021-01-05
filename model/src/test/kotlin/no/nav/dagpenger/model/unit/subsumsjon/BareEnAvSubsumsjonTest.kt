@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.regel.er
@@ -13,29 +13,28 @@ class BareEnAvSubsumsjonTest {
 
     private val søknad = Søknad(
         0,
-        boolsk faktum "neida" id 1,
-        boolsk faktum "joda" id 2,
-        boolsk faktum "ja" id 3
+        ja nei "neida" id 1,
+        ja nei "joda" id 2,
+        ja nei "ja" id 3
     )
 
-    private val neida = søknad boolsk 1
-    private val joda = søknad boolsk 2
-    private val ja1 = søknad boolsk 3
+    private val neida = søknad ja 1
+    private val joda = søknad ja 2
+    private val ja1 = søknad ja 3
     private val bareEnAv = "Enten joda eller neida".bareEnAv(
         neida er true,
         joda er true,
         ja1 er true
     )
-
     @Test
     fun `skal være true bare hvis en av faktumene er true`() {
 
         val søknadsprosess = søknad.testSøknadprosess(bareEnAv)
-        søknadsprosess.boolsk(1).besvar(true)
-        søknadsprosess.boolsk(2).besvar(false)
-        søknadsprosess.boolsk(3).besvar(false)
+        søknadsprosess.ja(1).besvar(true)
+        søknadsprosess.ja(2).besvar(false)
+        søknadsprosess.ja(3).besvar(false)
         assertTrue(søknadsprosess.resultat()!!)
-        søknadsprosess.boolsk(2).besvar(true)
+        søknadsprosess.ja(2).besvar(true)
         assertFalse(søknadsprosess.resultat()!!)
     }
 }

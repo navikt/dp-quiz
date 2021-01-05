@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.unit.seksjon
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -24,8 +24,8 @@ internal class VersjonTest {
             1,
             heltall faktum "f15" id 15 genererer 16 og 17 og 18,
             heltall faktum "f16" id 16,
-            boolsk faktum "f17" id 17,
-            boolsk faktum "f18" id 18
+            ja nei "f17" id 17,
+            ja nei "f18" id 18
         )
         val prototypeSeksjon = Seksjon("seksjon", Rolle.søker, prototypeSøknad id 15, prototypeSøknad id 16, prototypeSøknad id 17, prototypeSøknad id 18)
         val prototypeFaktagrupper = Søknadprosess(prototypeSeksjon)

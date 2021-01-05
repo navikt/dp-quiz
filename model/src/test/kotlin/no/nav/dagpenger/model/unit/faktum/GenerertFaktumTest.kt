@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.unit.faktum
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -16,11 +16,11 @@ internal class GenerertFaktumTest {
 
         val søknad = Søknad(
             49,
-            boolsk faktum "template" id 1,
+            ja nei "template" id 1,
             heltall faktum "generator" id 2 genererer 1
         )
 
-        val seksjon = Seksjon("seksjon", Rolle.søker, søknad boolsk 1, søknad generator 2)
+        val seksjon = Seksjon("seksjon", Rolle.søker, søknad ja 1, søknad generator 2)
         val søknadprosess = Søknadprosess(søknad, seksjon)
         val originalSize = seksjon.size
         søknadprosess.generator(2).besvar(5)
@@ -35,16 +35,16 @@ internal class GenerertFaktumTest {
 
         val søknad = Søknad(
             48,
-            boolsk faktum "template" id 1,
-            boolsk faktum "template" id 2,
-            boolsk faktum "template" id 3,
+            ja nei "template" id 1,
+            ja nei "template" id 2,
+            ja nei "template" id 3,
             heltall faktum "generer" id 4 genererer 1 og 2 og 3,
-            boolsk faktum "boolean" id 5
+            ja nei "boolean" id 5
 
         )
 
-        val seksjon1 = Seksjon("seksjon", Rolle.søker, søknad boolsk 1, søknad generator 4)
-        val seksjon2 = Seksjon("seksjon", Rolle.søker, søknad boolsk 2, søknad boolsk 3, søknad boolsk 5)
+        val seksjon1 = Seksjon("seksjon", Rolle.søker, søknad ja 1, søknad generator 4)
+        val seksjon2 = Seksjon("seksjon", Rolle.søker, søknad ja 2, søknad ja 3, søknad ja 5)
         val søknadprosess = Søknadprosess(søknad, seksjon1, seksjon2)
         val originalSize1 = seksjon1.size
         val originalSize2 = seksjon2.size
@@ -61,11 +61,11 @@ internal class GenerertFaktumTest {
     fun `Generere seksjoner`() {
         val søknad = Søknad(
             47,
-            boolsk faktum "template" id 1,
+            ja nei "template" id 1,
             heltall faktum "generator" id 2 genererer 1
         )
         val generatorSeksjon = Seksjon("seksjon", Rolle.søker, søknad generator 2)
-        val templateSeksjon = Seksjon("seksjon", Rolle.søker, søknad boolsk 1)
+        val templateSeksjon = Seksjon("seksjon", Rolle.søker, søknad ja 1)
         val søknadprosess = Søknadprosess(søknad, generatorSeksjon, templateSeksjon)
         søknadprosess.generator(2).besvar(3)
         assertEquals(5, søknadprosess.size)
@@ -79,15 +79,15 @@ internal class GenerertFaktumTest {
     fun `Seksjon med kun og flere templates`() {
         val søknad = Søknad(
             46,
-            boolsk faktum "template" id 1,
-            boolsk faktum "template" id 2,
-            boolsk faktum "template" id 3,
+            ja nei "template" id 1,
+            ja nei "template" id 2,
+            ja nei "template" id 3,
             heltall faktum "generator" id 4 genererer 1 og 2 og 3
         )
 
         val generatorSeksjon = Seksjon("seksjon", Rolle.søker, søknad generator 4)
-        val templateSeksjon1 = Seksjon("seksjon", Rolle.søker, søknad boolsk 1, søknad boolsk 2)
-        val templateSeksjon2 = Seksjon("seksjon", Rolle.søker, søknad boolsk 3)
+        val templateSeksjon1 = Seksjon("seksjon", Rolle.søker, søknad ja 1, søknad ja 2)
+        val templateSeksjon2 = Seksjon("seksjon", Rolle.søker, søknad ja 3)
         val søknadprosess = Søknadprosess(søknad, generatorSeksjon, templateSeksjon1, templateSeksjon2)
         søknadprosess.generator(4).besvar(3)
 
