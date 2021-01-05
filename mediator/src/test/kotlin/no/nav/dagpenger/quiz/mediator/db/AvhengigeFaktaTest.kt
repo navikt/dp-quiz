@@ -42,7 +42,7 @@ internal class AvhengigeFaktaTest {
                 dato faktum "f2" id 2,
                 dato faktum "f3" id 13,
 
-            )
+                )
             Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta boolsk 19 er true,
