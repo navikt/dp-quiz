@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.unit.faktum
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
@@ -23,14 +23,14 @@ class GenerertEndreTest {
         val prototypeSøknad = Søknad(
             59,
             heltall faktum "generator" id 4 genererer 1 og 2 og 3,
-            ja nei "template1" id 1,
-            ja nei "template2" id 2,
-            ja nei "template3" id 3
+            boolsk faktum "template1" id 1,
+            boolsk faktum "template2" id 2,
+            boolsk faktum "template3" id 3
         )
         val prototypeSøknadprosess = Søknadprosess(
             prototypeSøknad,
-            Seksjon("seksjon14", Rolle.søker, prototypeSøknad.ja(1), prototypeSøknad.generator(4)),
-            Seksjon("template23", Rolle.søker, prototypeSøknad.ja(2), prototypeSøknad.ja(3))
+            Seksjon("seksjon14", Rolle.søker, prototypeSøknad.boolsk(1), prototypeSøknad.generator(4)),
+            Seksjon("template23", Rolle.søker, prototypeSøknad.boolsk(2), prototypeSøknad.boolsk(3))
         )
 
         søknadprosess = Versjon.Bygger(prototypeSøknad, TomSubsumsjon, mapOf(Web to prototypeSøknadprosess)).søknadprosess(testPerson, Web)

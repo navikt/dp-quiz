@@ -4,8 +4,8 @@ import PostgresDataSourceBuilder.dataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Rolle
@@ -38,14 +38,14 @@ internal class AvhengigeFaktaTest {
         Postgres.withMigratedDb {
             val prototypeFakta = Søknad(
                 versjonId,
-                ja nei "f1" id 19 avhengerAv 2 og 13,
+                boolsk faktum "f1" id 19 avhengerAv 2 og 13,
                 dato faktum "f2" id 2,
                 dato faktum "f3" id 13,
 
-            )
+                )
             Versjon.Bygger(
                 prototypeFakta,
-                prototypeFakta ja 19 er true,
+                prototypeFakta boolsk 19 er true,
                 mapOf(
                     Web to Søknadprosess(
                         Seksjon(
@@ -62,14 +62,14 @@ internal class AvhengigeFaktaTest {
 
             originalSøknadprosess.dato(2).besvar(2.januar)
             originalSøknadprosess.dato(13).besvar(13.januar)
-            originalSøknadprosess.ja(19).besvar(true)
+            originalSøknadprosess.boolsk(19).besvar(true)
             hentFørsteSøknad()
             assertRecordCount(3, "gammel_faktum_verdi")
-            assertTrue(rehydrertSøknadprosess.ja(19).svar())
+            assertTrue(rehydrertSøknadprosess.boolsk(19).svar())
             originalSøknadprosess.dato(2).besvar(22.januar)
             hentFørsteSøknad()
             assertRecordCount(5, "gammel_faktum_verdi")
-            assertFalse(rehydrertSøknadprosess.ja(19).erBesvart())
+            assertFalse(rehydrertSøknadprosess.boolsk(19).erBesvart())
         }
     }
 
@@ -79,15 +79,15 @@ internal class AvhengigeFaktaTest {
         Postgres.withMigratedDb {
             val prototypeFakta = Søknad(
                 versjonId,
-                ja nei "f1" id 1 avhengerAv 4,
-                ja nei "f2" id 2,
-                ja nei "f3" id 3 avhengerAv 1,
-                ja nei "f4" id 4 avhengerAv 5,
-                ja nei "f5" id 5,
+                boolsk faktum "f1" id 1 avhengerAv 4,
+                boolsk faktum "f2" id 2,
+                boolsk faktum "f3" id 3 avhengerAv 1,
+                boolsk faktum "f4" id 4 avhengerAv 5,
+                boolsk faktum "f5" id 5,
             )
             Versjon.Bygger(
                 prototypeFakta,
-                prototypeFakta ja 1 er true,
+                prototypeFakta boolsk 1 er true,
                 mapOf(
                     Web to Søknadprosess(
                         Seksjon(
@@ -103,11 +103,11 @@ internal class AvhengigeFaktaTest {
             søknadRecord = SøknadRecord()
             originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, versjonId)
 
-            originalSøknadprosess.ja(2).besvar(true)
-            originalSøknadprosess.ja(5).besvar(true)
-            originalSøknadprosess.ja(4).besvar(true)
-            originalSøknadprosess.ja(1).besvar(true)
-            originalSøknadprosess.ja(3).besvar(true)
+            originalSøknadprosess.boolsk(2).besvar(true)
+            originalSøknadprosess.boolsk(5).besvar(true)
+            originalSøknadprosess.boolsk(4).besvar(true)
+            originalSøknadprosess.boolsk(1).besvar(true)
+            originalSøknadprosess.boolsk(3).besvar(true)
 
             assertEquals(5, originalSøknadprosess.søknad.count { it.erBesvart() })
             søknadRecord.lagre(originalSøknadprosess.søknad)
@@ -123,15 +123,15 @@ internal class AvhengigeFaktaTest {
         Postgres.withMigratedDb {
             val prototypeFakta = Søknad(
                 versjonId,
-                ja nei "f1" id 1 avhengerAv 4,
+                boolsk faktum "f1" id 1 avhengerAv 4,
                 dato faktum "f2" id 2,
                 dato faktum "f3" id 3,
                 maks dato "f4" av 2 og 3 id 4,
-                ja nei "f1" id 5 avhengerAv 4,
+                boolsk faktum "f1" id 5 avhengerAv 4,
             )
             Versjon.Bygger(
                 prototypeFakta,
-                prototypeFakta ja 1 er true,
+                prototypeFakta boolsk 1 er true,
                 mapOf(
                     Web to Søknadprosess(
                         Seksjon(
@@ -149,8 +149,8 @@ internal class AvhengigeFaktaTest {
 
             originalSøknadprosess.dato(2).besvar(1.januar)
             originalSøknadprosess.dato(3).besvar(10.januar)
-            originalSøknadprosess.ja(1).besvar(true)
-            originalSøknadprosess.ja(5).besvar(true)
+            originalSøknadprosess.boolsk(1).besvar(true)
+            originalSøknadprosess.boolsk(5).besvar(true)
 
             assertEquals(5, originalSøknadprosess.søknad.count { it.erBesvart() })
             søknadRecord.lagre(originalSøknadprosess.søknad)

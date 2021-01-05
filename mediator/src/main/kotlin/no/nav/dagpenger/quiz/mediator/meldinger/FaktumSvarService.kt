@@ -94,7 +94,7 @@ internal class FaktumSvarService(
 
     private fun besvar(søknadprosess: Søknadprosess, faktumId: String, svar: JsonNode, clazz: String) {
         when (clazz) {
-            "boolean" -> søknadprosess.ja(faktumId).besvar(svar.asBoolean())
+            "boolean" -> søknadprosess.boolsk(faktumId).besvar(svar.asBoolean())
             "int" -> søknadprosess.heltall(faktumId).besvar(svar.asInt())
             "localdate" -> søknadprosess.dato(faktumId).besvar(svar.asLocalDate())
             "inntekt" -> søknadprosess.inntekt(faktumId).besvar(svar.asDouble().årlig)

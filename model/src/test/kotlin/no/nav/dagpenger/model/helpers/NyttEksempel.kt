@@ -1,10 +1,10 @@
 package no.nav.dagpenger.model.helpers
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -28,7 +28,7 @@ import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.så
 import no.nav.dagpenger.model.subsumsjon.uansett
 
-private val f1Factory = ja nei "f1" id 1
+private val f1Factory = boolsk faktum "f1" id 1
 private val f2Factory = dato faktum "f2" id 2
 private val f3Factory = dato faktum "f3" id 3
 private val f4Factory = dato faktum "f4" id 4
@@ -37,16 +37,16 @@ private val f6Factory = inntekt faktum "f6" id 6
 private val f7Factory = inntekt faktum "f7" id 7
 private val f8Factory = inntekt faktum "f8" id 8
 private val f9Factory = inntekt faktum "f9" id 9
-private val f10Factory = ja nei "f10" id 10
+private val f10Factory = boolsk faktum "f10" id 10
 private val f11Factory = dokument faktum "f11" id 11
-private val f12Factory = ja nei "f12" id 12 avhengerAv 11
+private val f12Factory = boolsk faktum "f12" id 12 avhengerAv 11
 private val f13Factory = dato faktum "f13" id 13
-private val f14Factory = ja nei "f14" id 14
+private val f14Factory = boolsk faktum "f14" id 14
 private val f15Factory = heltall faktum "f15" id 15
 private val f16Factory = heltall faktum "f16" id 16
-private val f17Factory = ja nei "f17" id 17
-private val f18Factory = ja nei "f18" id 18
-private val f19Factory = ja nei "f19" id 19 avhengerAv 2 og 13
+private val f17Factory = boolsk faktum "f17" id 17
+private val f18Factory = boolsk faktum "f18" id 18
+private val f19Factory = boolsk faktum "f19" id 19 avhengerAv 2 og 13
 private val f345Factory = maks dato "345" av 3 og 4 og 5 id 345
 
 private val prototypeSøknad1 = Søknad(
@@ -73,7 +73,7 @@ private val prototypeSøknad1 = Søknad(
     f345Factory
 )
 
-private val p1Boolean = prototypeSøknad1 ja f1Factory
+private val p1Boolean = prototypeSøknad1 boolsk f1Factory
 private val p2Dato = prototypeSøknad1 dato f2Factory
 private val p3Dato = prototypeSøknad1 dato f3Factory
 private val p4Dato = prototypeSøknad1 dato f4Factory
@@ -83,16 +83,16 @@ private val p6Inntekt = prototypeSøknad1 inntekt f6Factory
 private val p7Inntekt = prototypeSøknad1 inntekt f7Factory
 private val p8Inntekt = prototypeSøknad1 inntekt f8Factory
 private val p9Inntekt = prototypeSøknad1 inntekt f9Factory
-private val p10Boolean = prototypeSøknad1 ja f10Factory
+private val p10Boolean = prototypeSøknad1 boolsk f10Factory
 private val p11Dokument = prototypeSøknad1 dokument f11Factory
-private val p12Boolean = prototypeSøknad1 ja f12Factory
+private val p12Boolean = prototypeSøknad1 boolsk f12Factory
 private val p13Dato = prototypeSøknad1 dato f13Factory
-private val p14Boolean = prototypeSøknad1 ja f14Factory
+private val p14Boolean = prototypeSøknad1 boolsk f14Factory
 private val p15Int = prototypeSøknad1 generator f15Factory
 private val p16Int = prototypeSøknad1 heltall f16Factory
-private val p17Boolean = prototypeSøknad1 ja f17Factory
-private val p18Boolean = prototypeSøknad1 ja f18Factory
-private val p19Boolean = prototypeSøknad1 ja f19Factory
+private val p17Boolean = prototypeSøknad1 boolsk f17Factory
+private val p18Boolean = prototypeSøknad1 boolsk f18Factory
+private val p19Boolean = prototypeSøknad1 boolsk f19Factory
 
 private val datosjekk = "datosjekk".alle(
     p1Boolean er true,

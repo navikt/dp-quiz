@@ -4,11 +4,11 @@ import PostgresDataSourceBuilder.dataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.faktum.Dokument
@@ -156,7 +156,7 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor
 
             init {
                 byggMap(Int::class.java, 1) { navn, rootId -> heltall faktum navn id rootId }
-                byggMap(Boolean::class.java, 2) { navn, rootId -> ja nei navn id rootId }
+                byggMap(Boolean::class.java, 2) { navn, rootId -> boolsk faktum navn id rootId }
                 byggMap(LocalDate::class.java, 3) { navn, rootId -> dato faktum navn id rootId }
                 byggMap(Dokument::class.java, 4) { navn, rootId -> dokument faktum navn id rootId }
                 byggMap(Inntekt::class.java, 5) { navn, rootId -> inntekt faktum navn id rootId }

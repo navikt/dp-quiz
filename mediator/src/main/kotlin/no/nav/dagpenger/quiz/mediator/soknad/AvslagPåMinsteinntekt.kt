@@ -1,11 +1,11 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
 import mu.KotlinLogging
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
@@ -44,30 +44,30 @@ internal object AvslagPåMinsteinntekt {
     private val sisteDagMedArbeidspliktFactory = dato faktum "Siste dag med arbeidsplikt" id 2
     private val sisteDagMedLønnFactory = dato faktum "Siste dag med lønn" id 3
     private val virkningstidspunktFactory = maks dato "Virkningstidspunkt" av 1 og 2 og 3 og 10 id 4
-    private val fangstOgFiskFactory = ja nei "Driver med fangst og fisk" id 5
+    private val fangstOgFiskFactory = boolsk faktum "Driver med fangst og fisk" id 5
     private val inntektSiste36mndFactory = inntekt faktum "Inntekt siste 36 mnd" id 6
     private val inntektSiste12mndFactory = inntekt faktum "Inntekt siste 12 mnd" id 7
     private val G3Factory = inntekt faktum "3G" id 8
     private val G1_5Factory = inntekt faktum "1,5G" id 9
     private val søknadstidspunktFactory = dato faktum "Søknadstidspunkt" id 10
-    private val vernepliktFactory = ja nei "Verneplikt" id 11
-    private val godkjenningVirkningstidspunktFactory = ja nei "Godjenning av virkingstidspunkt" id 12
+    private val vernepliktFactory = boolsk faktum "Verneplikt" id 11
+    private val godkjenningVirkningstidspunktFactory = boolsk faktum "Godjenning av virkingstidspunkt" id 12
     private val innsendtSøknadsIdFactory = dokument faktum "Innsendt søknadsId" id 14
-    private val godkjenningFangstOgFiskFactory = ja nei "Godkjenning av dokumentasjon for fangst og fisk" id 15
+    private val godkjenningFangstOgFiskFactory = boolsk faktum "Godkjenning av dokumentasjon for fangst og fisk" id 15
     private val registreringsperioderFactory =
         heltall faktum "Antall arbeidsøker registeringsperioder" id 16 genererer 18 og 19
-    private val lærlingFactory = ja nei "Lærling" id 17
+    private val lærlingFactory = boolsk faktum "Lærling" id 17
     private val registrertArbeidsøkerPeriodeFomFactory = dato faktum "fom" id 18
     private val registrertArbeidsøkerPeriodeTomFactory = dato faktum "tom" id 19
     private val dagensDatoFactory = dato faktum "Dagens dato" id 20
     private val inntektsrapporteringsperiodeFomFactory = dato faktum "Inntektsrapporteringsperiode fra og med" id 21
     private val inntektsrapporteringsperiodeTomFactory = dato faktum "Inntektsrapporteringsperiode til og med" id 22
     private val sluttårsakerFactory = heltall faktum "Rettighetstype" id 23 genererer 27 og 24 og 25 og 26 avhengerAv 14
-    private val årsåkPermittertFactory = ja nei "Permittert" id 24
-    private val årsakOrdinærFactory = ja nei "Ordinær" id 25
-    private val lønnsgarantiFactory = ja nei "Lønnsgaranti" id 26
-    private val permittertFiskeforedlingFactory = ja nei "PermittertFiskeforedling" id 27
-    private val godkjenningRettighetstypeFactory = ja nei "Godkjenning rettighetstype" id 28
+    private val årsåkPermittertFactory = boolsk faktum "Permittert" id 24
+    private val årsakOrdinærFactory = boolsk faktum "Ordinær" id 25
+    private val lønnsgarantiFactory = boolsk faktum "Lønnsgaranti" id 26
+    private val permittertFiskeforedlingFactory = boolsk faktum "PermittertFiskeforedling" id 27
+    private val godkjenningRettighetstypeFactory = boolsk faktum "Godkjenning rettighetstype" id 28
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -104,28 +104,28 @@ internal object AvslagPåMinsteinntekt {
     private val sisteDagMedArbeidsplikt = søknad dato sisteDagMedArbeidspliktFactory
     private val sisteDagMedLønn = søknad dato sisteDagMedLønnFactory
     private val virkningstidspunkt = søknad dato 4
-    private val fangstOgFisk = søknad ja fangstOgFiskFactory
+    private val fangstOgFisk = søknad boolsk fangstOgFiskFactory
     private val inntektSiste36mnd = søknad inntekt inntektSiste36mndFactory
     private val inntektSiste12mnd = søknad inntekt inntektSiste12mndFactory
     private val G3 = søknad inntekt G3Factory
     private val G1_5 = søknad inntekt G1_5Factory
     private val søknadstidspunkt = søknad dato søknadstidspunktFactory
-    private val verneplikt = søknad ja vernepliktFactory
-    private val godkjenningVirkningstidspunkt = søknad ja godkjenningVirkningstidspunktFactory
-    private val godkjenningFangstOgFisk = søknad ja godkjenningFangstOgFiskFactory
+    private val verneplikt = søknad boolsk vernepliktFactory
+    private val godkjenningVirkningstidspunkt = søknad boolsk godkjenningVirkningstidspunktFactory
+    private val godkjenningFangstOgFisk = søknad boolsk godkjenningFangstOgFiskFactory
     private val registreringsperioder = søknad generator registreringsperioderFactory
-    private val lærling = søknad ja lærlingFactory
+    private val lærling = søknad boolsk lærlingFactory
     private val registrertArbeidsøkerPeriodeFom = søknad dato registrertArbeidsøkerPeriodeFomFactory
     private val registrertArbeidsøkerPeriodeTom = søknad dato registrertArbeidsøkerPeriodeTomFactory
     private val dagensDato = søknad dato dagensDatoFactory
     private val inntektsrapporteringsperiodeFom = søknad dato inntektsrapporteringsperiodeFomFactory
     private val inntektsrapporteringsperiodeTom = søknad dato inntektsrapporteringsperiodeTomFactory
     private val sluttårsaker = søknad generator sluttårsakerFactory
-    private val ordinær = søknad ja årsakOrdinærFactory
-    private val permittert = søknad ja årsåkPermittertFactory
-    private val lønnsgaranti = søknad ja lønnsgarantiFactory
-    private val permittertFiskeforedling = søknad ja permittertFiskeforedlingFactory
-    private val godkjenningRettighetstype = søknad ja godkjenningRettighetstypeFactory
+    private val ordinær = søknad boolsk årsakOrdinærFactory
+    private val permittert = søknad boolsk årsåkPermittertFactory
+    private val lønnsgaranti = søknad boolsk lønnsgarantiFactory
+    private val permittertFiskeforedling = søknad boolsk permittertFiskeforedlingFactory
+    private val godkjenningRettighetstype = søknad boolsk godkjenningRettighetstypeFactory
 
     internal val rettighetstype = sluttårsaker med "sluttårsak".makro(
         "bare en av".bareEnAv(

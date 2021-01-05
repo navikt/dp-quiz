@@ -35,7 +35,7 @@ internal class SøknadSubsumsjonTest {
         assertEquals(2, søknadprosess[0].fakta().size)
         assertIder(søknadprosess[0].fakta(), 1, 2)
 
-        søknadprosess.ja(1).besvar(true)
+        søknadprosess.boolsk(1).besvar(true)
         søknadprosess.dato(2).besvar(31.desember)
         søknadprosess.nesteFakta().also { fakta ->
             assertEquals(3, fakta.size)
@@ -57,7 +57,7 @@ internal class SøknadSubsumsjonTest {
         assertEquals(søknadprosess[4], søknadprosess.nesteSeksjoner().first())
         assertEquals(2, søknadprosess[4].fakta().size)
         assertIder(søknadprosess[4].fakta(), 10, 11)
-        søknadprosess.ja(10).besvar(false)
+        søknadprosess.boolsk(10).besvar(false)
         søknadprosess.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
             assertIder(fakta, 11)
@@ -118,7 +118,7 @@ internal class SøknadSubsumsjonTest {
         assertEquals(søknadprosess[9], søknadprosess.nesteSeksjoner().first())
         assertEquals(7, søknadprosess[9].fakta().size)
         assertEquals(listOf("6", "7", "12", "14", "16.1", "16.2", "19").sorted(), søknadprosess[9].fakta().map { it.id }.sorted())
-        søknadprosess.ja(14).besvar(true)
+        søknadprosess.boolsk(14).besvar(true)
         søknadprosess.nesteFakta().also { fakta ->
             assertEquals(0, fakta.size)
             assertEquals(emptySet<GrunnleggendeFaktum<*>>(), fakta)
@@ -127,7 +127,7 @@ internal class SøknadSubsumsjonTest {
 
     @Test
     fun `Avvisning av søker faktum`() {
-        søknadprosess.ja(1).besvar(true)
+        søknadprosess.boolsk(1).besvar(true)
         søknadprosess.dato(2).besvar(31.desember)
         søknadprosess.dato(3).besvar(1.januar)
         søknadprosess.dato(4).besvar(2.januar)
@@ -135,19 +135,19 @@ internal class SøknadSubsumsjonTest {
 
         søknadprosess.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
-            assertEquals(setOf(søknadprosess.ja(10)), fakta)
+            assertEquals(setOf(søknadprosess.boolsk(10)), fakta)
         }
 
-        søknadprosess.ja(10).besvar(false)
+        søknadprosess.boolsk(10).besvar(false)
         søknadprosess.dokument(11).besvar(Dokument(1.januar))
-        søknadprosess.ja(12).besvar(false)
+        søknadprosess.boolsk(12).besvar(false)
 
         assertEquals(null, søknadprosess.resultat())
 
         søknadprosess.dato(13).besvar(1.februar)
         assertEquals(null, søknadprosess.resultat())
 
-        søknadprosess.ja(19).besvar(false)
+        søknadprosess.boolsk(19).besvar(false)
         assertEquals(null, søknadprosess.resultat())
     }
 

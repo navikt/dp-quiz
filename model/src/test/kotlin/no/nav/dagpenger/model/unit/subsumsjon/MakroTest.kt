@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
@@ -22,12 +22,12 @@ internal class MakroTest {
     fun setup() {
         val søknadprosess = Søknad(
             0,
-            ja nei "f1" id 1,
-            ja nei "f2" id 2
+            boolsk faktum "f1" id 1,
+            boolsk faktum "f2" id 2
         ).testSøknadprosess()
 
-        f1 = søknadprosess ja 1
-        f2 = søknadprosess ja 2
+        f1 = søknadprosess boolsk 1
+        f2 = søknadprosess boolsk 2
 
         val s1 = f1 er true
         val s2 = f2 er true

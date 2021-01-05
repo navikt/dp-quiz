@@ -1,8 +1,8 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
@@ -48,21 +48,21 @@ class Prototype {
             inntekt faktum "3G" id 11,
             inntekt faktum "1,5G" id 12,
 
-            ja nei "Eier egen bondegård" id 13,
-            ja nei "Eier egen bedrift" id 14,
-            ja nei "Driver med fangst og fisk" id 15,
+            boolsk faktum "Eier egen bondegård" id 13,
+            boolsk faktum "Eier egen bedrift" id 14,
+            boolsk faktum "Driver med fangst og fisk" id 15,
 
-            ja nei "Villig til deltidsarbeid" id 16,
-            ja nei "Villig til pendling" id 17,
-            ja nei "Villig til helse" id 18,
-            ja nei "Villig til å ta ethvert arbeid" id 19,
+            boolsk faktum "Villig til deltidsarbeid" id 16,
+            boolsk faktum "Villig til pendling" id 17,
+            boolsk faktum "Villig til helse" id 18,
+            boolsk faktum "Villig til å ta ethvert arbeid" id 19,
         )
 
     val fødselsdato = søknad dato 1
-    val villigDeltid = søknad ja 16
-    val villigPendle = søknad ja 17
-    val villigHelse = søknad ja 18
-    val villigJobb = søknad ja 19
+    val villigDeltid = søknad boolsk 16
+    val villigPendle = søknad boolsk 17
+    val villigHelse = søknad boolsk 18
+    val villigJobb = søknad boolsk 19
 
     val ønsketDato = søknad dato 2
     val registreringsdato = søknad dato 6
@@ -78,9 +78,9 @@ class Prototype {
     val inntekt3G = søknad inntekt 11
     val inntekt15G = søknad inntekt 12
 
-    val egenBondegård = søknad ja 13
-    val egenBedrift = søknad ja 14
-    val fangstOgFisk = søknad ja 15
+    val egenBondegård = søknad boolsk 13
+    val egenBedrift = søknad boolsk 14
+    val fangstOgFisk = søknad boolsk 15
 
     private val personalia = Seksjon("personalia", Rolle.søker, fødselsdato)
 

@@ -28,17 +28,17 @@ internal class FlereSøknaderTest {
                 666
             )
 
-            søknad1.ja(10).besvar(true)
+            søknad1.boolsk(10).besvar(true)
             søknadRecord.lagre(søknad1.søknad)
 
-            søknad2.ja(8).besvar(false)
+            søknad2.boolsk(8).besvar(false)
             søknadRecord.lagre(søknad2.søknad)
 
             val rehydrertSøknadprosess1 = søknadRecord.hent(søknad1.søknad.uuid)
             val rehydrertSøknadprosess2 = søknadRecord.hent(søknad2.søknad.uuid)
 
-            assertEquals(true, rehydrertSøknadprosess1.søknad.ja(10).svar())
-            assertEquals(false, rehydrertSøknadprosess2.søknad.ja(8).svar())
+            assertEquals(true, rehydrertSøknadprosess1.søknad.boolsk(10).svar())
+            assertEquals(false, rehydrertSøknadprosess2.søknad.boolsk(8).svar())
         }
     }
 }
