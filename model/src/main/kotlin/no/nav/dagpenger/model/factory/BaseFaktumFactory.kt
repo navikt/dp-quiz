@@ -47,15 +47,8 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
         if (templateIder.isEmpty()) super.og(otherId)
         else genererer(otherId) as FaktumFactory<T>
 
-    override fun og(otherFactory: FaktumFactory<*>): FaktumFactory<T> =
-        if (templateIder.isEmpty()) super.og(otherFactory.rootId)
-        else genererer(otherFactory.rootId) as FaktumFactory<T>
-
     override infix fun genererer(otherId: Int): BaseFaktumFactory<Int> = (this as BaseFaktumFactory<Int>)
         .also { templateIder.add(otherId) }
-
-    override infix fun genererer(otherFactory: FaktumFactory<*>) = (this as BaseFaktumFactory<Int>)
-        .also { templateIder.add(otherFactory.rootId) }
 
     override fun tilTemplate(faktumMap: MutableMap<FaktumId, Faktum<*>>) {
         if (templateIder.isEmpty()) return
@@ -65,10 +58,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
                 ?.also { template -> faktumMap[FaktumId(otherId)] = template }
                 ?: throw IllegalArgumentException("Faktum $otherId finnes ikke")
         }
-        GeneratorFaktum(
-            faktumId,
-            navn,
-            templateIder.map { otherId -> faktumMap[FaktumId(otherId)] as TemplateFaktum<*> })
+        GeneratorFaktum(faktumId, navn, templateIder.map { otherId -> faktumMap[FaktumId(otherId)] as TemplateFaktum<*> })
             .also { generatorfaktum -> faktumMap[faktumId] = generatorfaktum }
     }
 

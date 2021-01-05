@@ -28,7 +28,6 @@ class UtledetFaktumFactory<T : Comparable<T>>(
     }
 
     override fun og(otherId: Int) = this.also { childIder.add(otherId) }
-    override fun og(otherFactory: FaktumFactory<*>) = this.also { childIder.add(otherFactory.rootId) }
 
     infix fun av(otherId: Int) = this.also { childIder.add(otherId) }
 

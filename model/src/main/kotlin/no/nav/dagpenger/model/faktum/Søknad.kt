@@ -89,32 +89,26 @@ class Søknad private constructor(
     override infix fun dokument(rootId: Int) = dokument(FaktumId(rootId))
     override infix fun dokument(id: String) = dokument(FaktumId(id))
     internal infix fun dokument(faktumId: FaktumId) = id(faktumId) as Faktum<Dokument>
-    override infix fun dokument(faktumFactory: FaktumFactory<*>) = id(faktumFactory.rootId) as Faktum<Dokument>
 
     override fun inntekt(rootId: Int) = inntekt(FaktumId(rootId))
     override fun inntekt(id: String) = inntekt(FaktumId(id))
     internal infix fun inntekt(faktumId: FaktumId) = id(faktumId) as Faktum<Inntekt>
-    override infix fun inntekt(faktumFactory: FaktumFactory<*>) = id(faktumFactory.rootId) as Faktum<Inntekt>
 
     override infix fun ja(rootId: Int) = ja(FaktumId(rootId))
     override infix fun ja(id: String) = ja(FaktumId(id))
     internal infix fun ja(faktumId: FaktumId) = id(faktumId) as Faktum<Boolean>
-    override infix fun ja(faktumFactory: FaktumFactory<*>) = id(faktumFactory.rootId) as Faktum<Boolean>
 
     override infix fun dato(rootId: Int) = dato(FaktumId(rootId))
     override infix fun dato(id: String) = dato(FaktumId(id))
     internal infix fun dato(faktumId: FaktumId) = id(faktumId) as Faktum<LocalDate>
-    override infix fun dato(faktumFactory: FaktumFactory<*>) = id(faktumFactory.rootId) as Faktum<LocalDate>
 
     override infix fun heltall(rootId: Int) = heltall(FaktumId(rootId))
     override infix fun heltall(id: String) = heltall(FaktumId(id))
     internal infix fun heltall(faktumId: FaktumId) = id(faktumId) as Faktum<Int>
-    override infix fun heltall(faktumFactory: FaktumFactory<*>) = id(faktumFactory.rootId) as Faktum<Int>
 
     override infix fun generator(rootId: Int) = generator(FaktumId(rootId))
     override infix fun generator(id: String) = generator(FaktumId(id))
     internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
-    override infix fun generator(faktumFactory: FaktumFactory<*>) = id(faktumFactory.rootId) as GeneratorFaktum
 
     fun bygg(person: Person, versjonId: Int, uuid: UUID = UUID.randomUUID()): Søknad {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
