@@ -39,7 +39,7 @@ internal object AvslagPåMinsteinntekt {
         registrer(søknad, VERSJON_ID)
     }
 
-    private val ønsketDatoId = 1
+    const val ønsketDatoId = 1
     private val sisteDagMedArbeidspliktId = 2
     private val sisteDagMedLønnId = 3
     private val virkningstidspunktId = 4
@@ -66,6 +66,8 @@ internal object AvslagPåMinsteinntekt {
     private val lønnsgarantiId = 26
     private val permittertFiskeforedlingId = 27
     private val godkjenningRettighetstypeId = 28
+    private val harHattDagpengerSiste36mndId = 29
+    private val periodeOppbruktId = 30
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -96,7 +98,9 @@ internal object AvslagPåMinsteinntekt {
             boolsk faktum "Ordinær" id ordinærId,
             boolsk faktum "Lønnsgaranti" id lønnsgarantiId,
             boolsk faktum "PermittertFiskeforedling" id permittertFiskeforedlingId,
-            boolsk faktum "Godkjenning rettighetstype" id godkjenningRettighetstypeId avhengerAv sluttårsakerId
+            boolsk faktum "Godkjenning rettighetstype" id godkjenningRettighetstypeId avhengerAv sluttårsakerId,
+            boolsk faktum "Har hatt dagpenger siste 36mnd" id harHattDagpengerSiste36mndId avhengerAv virkningstidspunktId,
+            boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbruktId avhengerAv harHattDagpengerSiste36mndId
         )
     private val ønsketDato = søknad dato ønsketDatoId
     private val sisteDagMedArbeidsplikt = søknad dato sisteDagMedArbeidspliktId
@@ -124,6 +128,8 @@ internal object AvslagPåMinsteinntekt {
     private val lønnsgaranti = søknad boolsk lønnsgarantiId
     private val permittertFiskeforedling = søknad boolsk permittertFiskeforedlingId
     private val godkjenningRettighetstype = søknad boolsk godkjenningRettighetstypeId
+    private val harHattDagpengerSiste36mnd = søknad boolsk harHattDagpengerSiste36mndId
+    private val periodeOppbrukt = søknad boolsk periodeOppbruktId
 
     internal val rettighetstype = sluttårsaker med "sluttårsak".makro(
         "bare en av".bareEnAv(
@@ -149,6 +155,10 @@ internal object AvslagPåMinsteinntekt {
         fangstOgFisk er false ugyldigGodkjentAv godkjenningFangstOgFisk
         )
 
+    private val gjenopptak = "skal ha gjenopptak" makro (
+        harHattDagpengerSiste36mnd er true så (periodeOppbrukt er true)
+        )
+
     private val sjekkVirkningstidspunkt = "søker på riktig tidspunkt" makro (
         dagensDato ikkeFør virkningstidspunkt eller
             (dagensDato mellom inntektsrapporteringsperiodeFom og inntektsrapporteringsperiodeTom)
@@ -159,7 +169,7 @@ internal object AvslagPåMinsteinntekt {
             sjekkFangstOgFisk uansett (minsteArbeidsinntekt)
             )
 
-    private val inngangsvilkår = "inngangsvilkår".alle(
+    private val inngangsvilkår = gjenopptak eller "inngangsvilkår".alle(
         minsteArbeidsinntektMedVirkningstidspunkt,
         meldtSomArbeidssøker,
         rettighetstype
@@ -192,6 +202,12 @@ internal object AvslagPåMinsteinntekt {
             registrertArbeidsøkerPeriodeFom,
             registrertArbeidsøkerPeriodeTom,
             registreringsperioder
+        )
+    private val ytelseshistorikk =
+        Seksjon(
+            "ytelsehistorikk",
+            Rolle.nav,
+            harHattDagpengerSiste36mnd
         )
     private val inntektsunntak =
         Seksjon(
@@ -242,18 +258,27 @@ internal object AvslagPåMinsteinntekt {
         godkjenningRettighetstype,
     )
 
+    private val manuell =
+        Seksjon(
+            "manuell",
+            Rolle.manuell,
+            periodeOppbrukt,
+        )
+
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             oppstart,
             grunnbeløp,
             datoer,
+            ytelseshistorikk,
             inntektsunntak,
             fangstOgfisk,
             godkjennFangstOgFisk,
             inntekter,
             godkjennDato,
             arbeidsforholdNav,
-            arbeidsforholdSaksbehandler
+            arbeidsforholdSaksbehandler,
+            manuell
         )
 
     private val faktumNavBehov =
@@ -281,6 +306,7 @@ internal object AvslagPåMinsteinntekt {
                 permittertId to "Permittert",
                 lønnsgarantiId to "Lønnsgaranti",
                 permittertFiskeforedlingId to "PermittertFiskeforedling",
+                harHattDagpengerSiste36mndId to "HarHattDagpengerSiste36Mnd"
             )
         )
     private val versjon = Versjon.Bygger(
