@@ -66,7 +66,7 @@ class SøknadRecord : SøknadPersistence {
 
     private fun rehydrerFaktum(row: FaktumVerdiRow, faktum: Faktum<*>) {
         if (row.heltall != null) (faktum as Faktum<Int>).rehydrer(row.heltall)
-        if (row.janei != null) (faktum as Faktum<Boolean>).rehydrer(row.janei)
+        if (row.boolsk != null) (faktum as Faktum<Boolean>).rehydrer(row.boolsk)
         if (row.dato != null) (faktum as Faktum<LocalDate>).rehydrer(row.dato)
         if (row.inntekt != null) (faktum as Faktum<Inntekt>).rehydrer(row.inntekt)
         if (row.opplastet != null && row.url != null) (faktum as Faktum<Dokument>).rehydrer(
@@ -88,7 +88,7 @@ class SøknadRecord : SøknadPersistence {
                                 soknad_faktum.root_id as root_id,
                                 faktum_verdi.indeks as indeks,
                                 faktum_verdi.heltall AS heltall, 
-                                faktum_verdi.ja_nei AS ja_nei, 
+                                faktum_verdi.boolsk AS boolsk, 
                                 faktum_verdi.dato AS dato, 
                                 faktum_verdi.aarlig_inntekt AS aarlig_inntekt, 
                                 dokument.url AS url, 
@@ -104,7 +104,7 @@ class SøknadRecord : SøknadPersistence {
                         it.int("root_id"),
                         it.int("indeks"),
                         it.intOrNull("heltall"),
-                        it.anyOrNull("ja_nei") as Boolean?,
+                        it.anyOrNull("boolsk") as Boolean?,
                         it.underlying.getObject("dato", LocalDate::class.java),
                         it.doubleOrNull("aarlig_inntekt")?.årlig,
                         it.stringOrNull("url"),
@@ -119,7 +119,7 @@ class SøknadRecord : SøknadPersistence {
         val root_id: Int,
         val indeks: Int,
         val heltall: Int?,
-        val janei: Boolean?,
+        val boolsk: Boolean?,
         val dato: LocalDate?,
         val inntekt: Inntekt?,
         val url: String?,
@@ -192,8 +192,8 @@ class SøknadRecord : SøknadPersistence {
 
     private fun sqlToInsert(svar: Any?): String {
         return when (svar) {
-            null -> """UPDATE faktum_verdi  SET ja_nei = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
-            is Boolean -> """UPDATE faktum_verdi  SET ja_nei = $svar , opprettet=NOW() AT TIME ZONE 'utc' """
+            null -> """UPDATE faktum_verdi  SET boolsk = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
+            is Boolean -> """UPDATE faktum_verdi  SET boolsk = $svar , opprettet=NOW() AT TIME ZONE 'utc' """
             is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , opprettet=NOW() AT TIME ZONE 'utc' """
             is LocalDate -> """UPDATE faktum_verdi  SET dato = '${tilPostgresDato(svar)}',  opprettet=NOW() AT TIME ZONE 'utc' """
             is Int -> """UPDATE faktum_verdi  SET heltall = $svar,  opprettet=NOW() AT TIME ZONE 'utc' """
@@ -209,11 +209,11 @@ class SøknadRecord : SøknadPersistence {
 
     private fun arkiverFaktum(søknad: Søknad, rootId: Int, indeks: Int): ExecuteQueryAction =
         queryOf( //language=PostgreSQL
-            """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, ja_nei, aarlig_inntekt, dokument_id, dato, heltall, opprettet)
+            """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, boolsk, aarlig_inntekt, dokument_id, dato, heltall, opprettet)
             SELECT soknad_id,
                    faktum_verdi.faktum_id,
                    faktum_verdi.indeks,
-                   faktum_verdi.ja_nei,
+                   faktum_verdi.boolsk,
                    faktum_verdi.aarlig_inntekt,
                    faktum_verdi.dokument_id,
                    faktum_verdi.dato,

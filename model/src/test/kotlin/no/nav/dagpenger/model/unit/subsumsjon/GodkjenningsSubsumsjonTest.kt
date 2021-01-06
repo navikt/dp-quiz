@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -23,7 +23,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning uansett resultat av child`() {
-        søknadprosess { fakta -> fakta ja 1 er true godkjentAv (fakta ja 2) }
+        søknadprosess { fakta -> fakta boolsk 1 er true godkjentAv (fakta boolsk 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true)
@@ -43,7 +43,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning av gyldig sti av child`() {
-        søknadprosess { fakta -> fakta ja 1 er true gyldigGodkjentAv (fakta ja 2) }
+        søknadprosess { fakta -> fakta boolsk 1 er true gyldigGodkjentAv (fakta boolsk 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true)
@@ -63,7 +63,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning av ugyldig sti av child`() {
-        søknadprosess { fakta -> fakta ja 1 er true ugyldigGodkjentAv (fakta ja 2) }
+        søknadprosess { fakta -> fakta boolsk 1 er true ugyldigGodkjentAv (fakta boolsk 2) }
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
@@ -84,24 +84,24 @@ internal class GodkjenningsSubsumsjonTest {
     fun `Trenger avhengighet for å godkjenne`() {
         val prototypeSøknad = Søknad(
             0,
-            ja nei "f1" id 1,
-            ja nei "approve1" id 2
+            boolsk faktum "f1" id 1,
+            boolsk faktum "approve1" id 2
         )
 
-        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true gyldigGodkjentAv prototypeSøknad.ja(2) }
-        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true ugyldigGodkjentAv prototypeSøknad.ja(2) }
-        assertThrows<IllegalArgumentException> { prototypeSøknad.ja(1) er true godkjentAv prototypeSøknad.ja(2) }
+        assertThrows<IllegalArgumentException> { prototypeSøknad.boolsk(1) er true gyldigGodkjentAv prototypeSøknad.boolsk(2) }
+        assertThrows<IllegalArgumentException> { prototypeSøknad.boolsk(1) er true ugyldigGodkjentAv prototypeSøknad.boolsk(2) }
+        assertThrows<IllegalArgumentException> { prototypeSøknad.boolsk(1) er true godkjentAv prototypeSøknad.boolsk(2) }
     }
 
     private fun søknadprosess(block: (Søknad) -> Subsumsjon): Søknadprosess {
         val søknad = Søknad(
             0,
-            ja nei "faktum" id 1,
-            ja nei "godkjenning" id 2 avhengerAv 1
+            boolsk faktum "faktum" id 1,
+            boolsk faktum "godkjenning" id 2 avhengerAv 1
         )
 
-        faktum = søknad ja 1
-        godkjenning = søknad ja 2
+        faktum = søknad boolsk 1
+        godkjenning = søknad boolsk 2
 
         godkjenningsSubsumsjon = block(søknad)
         return Søknadprosess(

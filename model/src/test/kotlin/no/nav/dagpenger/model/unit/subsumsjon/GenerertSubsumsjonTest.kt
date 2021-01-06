@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
@@ -24,14 +24,14 @@ internal class GenerertSubsumsjonTest {
     fun setup() {
         søknad = Søknad(
             0,
-            ja nei "template" id 1,
+            boolsk faktum "template" id 1,
             heltall faktum "generator" id 2 genererer 1
         )
     }
 
     @Test
     fun `Makro template kan ikke ha gyldig ugyldig stier`() {
-        val template = søknad ja 1
+        val template = søknad boolsk 1
         val makro = "makro template".makro(template er true) så (template er true)
 
         assertThrows<IllegalArgumentException> { søknad generator 2 med (makro as MakroSubsumsjon) }
@@ -40,9 +40,9 @@ internal class GenerertSubsumsjonTest {
     @Test
     fun `Makro template subsumsjon works`() {
 
-        val makro = "makro template".makro(søknad ja 1 er true)
+        val makro = "makro template".makro(søknad boolsk 1 er true)
         val subsumsjon = søknad generator 2 med makro
-        val søknadprosess = Søknadprosess(søknad, Seksjon("seksjon", Rolle.søker, søknad generator 2, søknad ja 1), rootSubsumsjon = subsumsjon)
+        val søknadprosess = Søknadprosess(søknad, Seksjon("seksjon", Rolle.søker, søknad generator 2, søknad boolsk 1), rootSubsumsjon = subsumsjon)
 
         søknadprosess.generator(2).besvar(3)
         subsumsjon.resultat()

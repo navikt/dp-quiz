@@ -16,8 +16,8 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     private val templateIder = mutableListOf<Int>()
 
     companion object {
-        object ja {
-            infix fun nei(navn: String) = BaseFaktumFactory(Boolean::class.java, navn)
+        object boolsk {
+            infix fun faktum(navn: String) = BaseFaktumFactory(Boolean::class.java, navn)
         }
 
         object heltall {

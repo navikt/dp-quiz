@@ -48,7 +48,7 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
-            originalSøknadprosess.ja(1).besvar(true)
+            originalSøknadprosess.boolsk(1).besvar(true)
             originalSøknadprosess.dato(2).besvar(LocalDate.now())
             originalSøknadprosess.inntekt(6).besvar(10000.årlig)
             originalSøknadprosess.heltall(16).besvar(123)

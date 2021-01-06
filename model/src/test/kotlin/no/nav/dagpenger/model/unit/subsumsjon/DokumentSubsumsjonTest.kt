@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Søknad
@@ -29,11 +29,11 @@ internal class DokumentSubsumsjonTest {
         val søknadprosess = Søknad(
             versjonId,
             dokument faktum "dokument" id 1,
-            ja nei "saksbehandler godkjenner" id 2 avhengerAv 1
+            boolsk faktum "saksbehandler godkjenner" id 2 avhengerAv 1
         ).testSøknadprosess()
 
         dokumentFaktum = søknadprosess dokument 1
-        dokumentGodkjenning = søknadprosess ja 2
+        dokumentGodkjenning = søknadprosess boolsk 2
         subsumsjon = dokumentGodkjenning av dokumentFaktum
         assertEquals(null, subsumsjon.resultat())
         dokumentFaktum.besvar(Dokument(1.januar))

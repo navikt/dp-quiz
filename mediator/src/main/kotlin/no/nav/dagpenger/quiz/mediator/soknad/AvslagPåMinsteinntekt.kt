@@ -1,11 +1,11 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
 import mu.KotlinLogging
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
@@ -74,56 +74,56 @@ internal object AvslagPåMinsteinntekt {
             dato faktum "Siste dag med arbeidsplikt" id sisteDagMedArbeidspliktId avhengerAv innsendtSøknadsIdId,
             dato faktum "Siste dag med lønn" id sisteDagMedLønnId avhengerAv innsendtSøknadsIdId,
             maks dato "Virkningstidspunkt" av ønsketDatoId og sisteDagMedArbeidspliktId og sisteDagMedLønnId og søknadstidspunktId id virkningstidspunktId,
-            ja nei "Driver med fangst og fisk" id fangstOgFiskId avhengerAv innsendtSøknadsIdId,
+            boolsk faktum "Driver med fangst og fisk" id fangstOgFiskId avhengerAv innsendtSøknadsIdId,
             inntekt faktum "Inntekt siste 36 mnd" id inntektSiste36mndId avhengerAv virkningstidspunktId og fangstOgFiskId,
             inntekt faktum "Inntekt siste 12 mnd" id inntektSiste12mndId avhengerAv virkningstidspunktId og fangstOgFiskId,
             inntekt faktum "3G" id G3Id avhengerAv virkningstidspunktId,
             inntekt faktum "1,5G" id G1_5Id avhengerAv virkningstidspunktId,
             dato faktum "Søknadstidspunkt" id søknadstidspunktId avhengerAv innsendtSøknadsIdId,
-            ja nei "Verneplikt" id vernepliktId avhengerAv innsendtSøknadsIdId,
-            ja nei "Godjenning av virkingstidspunkt" id godkjenningVirkningstidspunktId avhengerAv virkningstidspunktId og dagensDatoId,
+            boolsk faktum "Verneplikt" id vernepliktId avhengerAv innsendtSøknadsIdId,
+            boolsk faktum "Godjenning av virkingstidspunkt" id godkjenningVirkningstidspunktId avhengerAv virkningstidspunktId og dagensDatoId,
             dokument faktum "Innsendt søknadsId" id innsendtSøknadsIdId,
-            ja nei "Godkjenning av dokumentasjon for fangst og fisk" id godkjenningFangstOgFiskId avhengerAv fangstOgFiskId,
+            boolsk faktum "Godkjenning av dokumentasjon for fangst og fisk" id godkjenningFangstOgFiskId avhengerAv fangstOgFiskId,
             heltall faktum "Antall arbeidsøker registeringsperioder" id registreringsperioderId genererer registrertArbeidsøkerPeriodeFomId og registrertArbeidsøkerPeriodeTomId,
-            ja nei "Lærling" id lærlingId,
+            boolsk faktum "Lærling" id lærlingId,
             dato faktum "fom" id registrertArbeidsøkerPeriodeFomId,
             dato faktum "tom" id registrertArbeidsøkerPeriodeTomId,
             dato faktum "Dagens dato" id dagensDatoId,
             dato faktum "Inntektsrapporteringsperiode fra og med" id inntektsrapporteringsperiodeFomId avhengerAv virkningstidspunktId,
             dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTomId avhengerAv virkningstidspunktId,
             heltall faktum "Rettighetstype" id sluttårsakerId genererer ordinærId og permittertId og lønnsgarantiId og permittertFiskeforedlingId avhengerAv innsendtSøknadsIdId,
-            ja nei "Permittert" id permittertId,
-            ja nei "Ordinær" id ordinærId,
-            ja nei "Lønnsgaranti" id lønnsgarantiId,
-            ja nei "PermittertFiskeforedling" id permittertFiskeforedlingId,
-            ja nei "Godkjenning rettighetstype" id godkjenningRettighetstypeId avhengerAv sluttårsakerId
+            boolsk faktum "Permittert" id permittertId,
+            boolsk faktum "Ordinær" id ordinærId,
+            boolsk faktum "Lønnsgaranti" id lønnsgarantiId,
+            boolsk faktum "PermittertFiskeforedling" id permittertFiskeforedlingId,
+            boolsk faktum "Godkjenning rettighetstype" id godkjenningRettighetstypeId avhengerAv sluttårsakerId
         )
     private val ønsketDato = søknad dato ønsketDatoId
     private val sisteDagMedArbeidsplikt = søknad dato sisteDagMedArbeidspliktId
     private val sisteDagMedLønn = søknad dato sisteDagMedLønnId
     private val virkningstidspunkt = søknad dato virkningstidspunktId
-    private val fangstOgFisk = søknad ja fangstOgFiskId
+    private val fangstOgFisk = søknad boolsk fangstOgFiskId
     private val inntektSiste36mnd = søknad inntekt inntektSiste36mndId
     private val inntektSiste12mnd = søknad inntekt inntektSiste12mndId
     private val G3 = søknad inntekt G3Id
     private val G1_5 = søknad inntekt G1_5Id
     private val søknadstidspunkt = søknad dato søknadstidspunktId
-    private val verneplikt = søknad ja vernepliktId
-    private val godkjenningVirkningstidspunkt = søknad ja godkjenningVirkningstidspunktId
-    private val godkjenningFangstOgFisk = søknad ja godkjenningFangstOgFiskId
+    private val verneplikt = søknad boolsk vernepliktId
+    private val godkjenningVirkningstidspunkt = søknad boolsk godkjenningVirkningstidspunktId
+    private val godkjenningFangstOgFisk = søknad boolsk godkjenningFangstOgFiskId
     private val registreringsperioder = søknad generator registreringsperioderId
-    private val lærling = søknad ja lærlingId
+    private val lærling = søknad boolsk lærlingId
     private val registrertArbeidsøkerPeriodeFom = søknad dato registrertArbeidsøkerPeriodeFomId
     private val registrertArbeidsøkerPeriodeTom = søknad dato registrertArbeidsøkerPeriodeTomId
     private val dagensDato = søknad dato dagensDatoId
     private val inntektsrapporteringsperiodeFom = søknad dato inntektsrapporteringsperiodeFomId
     private val inntektsrapporteringsperiodeTom = søknad dato inntektsrapporteringsperiodeTomId
     private val sluttårsaker = søknad generator sluttårsakerId
-    private val ordinær = søknad ja ordinærId
-    private val permittert = søknad ja permittertId
-    private val lønnsgaranti = søknad ja lønnsgarantiId
-    private val permittertFiskeforedling = søknad ja permittertFiskeforedlingId
-    private val godkjenningRettighetstype = søknad ja godkjenningRettighetstypeId
+    private val ordinær = søknad boolsk ordinærId
+    private val permittert = søknad boolsk permittertId
+    private val lønnsgaranti = søknad boolsk lønnsgarantiId
+    private val permittertFiskeforedling = søknad boolsk permittertFiskeforedlingId
+    private val godkjenningRettighetstype = søknad boolsk godkjenningRettighetstypeId
 
     internal val rettighetstype = sluttårsaker med "sluttårsak".makro(
         "bare en av".bareEnAv(

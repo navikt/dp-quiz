@@ -94,9 +94,9 @@ class Søknad private constructor(
     override fun inntekt(id: String) = inntekt(FaktumId(id))
     internal infix fun inntekt(faktumId: FaktumId) = id(faktumId) as Faktum<Inntekt>
 
-    override infix fun ja(rootId: Int) = ja(FaktumId(rootId))
-    override infix fun ja(id: String) = ja(FaktumId(id))
-    internal infix fun ja(faktumId: FaktumId) = id(faktumId) as Faktum<Boolean>
+    override infix fun boolsk(rootId: Int) = boolsk(FaktumId(rootId))
+    override infix fun boolsk(id: String) = boolsk(FaktumId(id))
+    internal infix fun boolsk(faktumId: FaktumId) = id(faktumId) as Faktum<Boolean>
 
     override infix fun dato(rootId: Int) = dato(FaktumId(rootId))
     override infix fun dato(id: String) = dato(FaktumId(id))

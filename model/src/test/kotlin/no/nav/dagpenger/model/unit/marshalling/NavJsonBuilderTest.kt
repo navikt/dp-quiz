@@ -1,9 +1,9 @@
 package no.nav.dagpenger.model.unit.marshalling
 
 import com.fasterxml.jackson.databind.JsonNode
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.ja
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -34,10 +34,10 @@ class NavJsonBuilderTest {
 
         val prototypeSøknad = Søknad(
             0,
-            ja nei "f1" id 1,
-            ja nei "f1" id 2 avhengerAv 1,
-            ja nei "f3" id 3,
-            ja nei "f4" id 4 avhengerAv 7,
+            boolsk faktum "f1" id 1,
+            boolsk faktum "f1" id 2 avhengerAv 1,
+            boolsk faktum "f3" id 3,
+            boolsk faktum "f4" id 4 avhengerAv 7,
             dato faktum "f5" id 5,
             dato faktum "f6" id 6,
             maks dato "f56" av 5 og 6 id 7,
@@ -47,10 +47,10 @@ class NavJsonBuilderTest {
 
         )
 
-        val f1Faktum = prototypeSøknad.ja(1)
-        val f2Faktum = prototypeSøknad.ja(2)
-        val f3Faktum = prototypeSøknad.ja(3)
-        val f4Faktum = prototypeSøknad.ja(4)
+        val f1Faktum = prototypeSøknad.boolsk(1)
+        val f2Faktum = prototypeSøknad.boolsk(2)
+        val f3Faktum = prototypeSøknad.boolsk(3)
+        val f4Faktum = prototypeSøknad.boolsk(4)
         val f7Faktum = prototypeSøknad.dato(5)
         val f8Faktum = prototypeSøknad.generator(8)
         val f9Faktum = prototypeSøknad.dato(9)
@@ -111,7 +111,7 @@ class NavJsonBuilderTest {
             faktumNavBehov
         ).registrer().søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
 
-        fakta.ja(1).besvar(true)
+        fakta.boolsk(1).besvar(true)
         fakta.dato(5).besvar(1.januar)
 
         assertBehovJson(
