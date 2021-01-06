@@ -31,7 +31,6 @@ import no.nav.dagpenger.model.subsumsjon.uansett
 
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntekt {
-
     private val logger = KotlinLogging.logger { }
     const val VERSJON_ID = 2
 
@@ -39,232 +38,218 @@ internal object AvslagPåMinsteinntekt {
         registrer(søknad, VERSJON_ID)
     }
 
-    const val ønsketDatoId = 1
-    private val sisteDagMedArbeidspliktId = 2
-    private val sisteDagMedLønnId = 3
-    private val virkningstidspunktId = 4
-    private val fangstOgFiskId = 5
-    private val inntektSiste36mndId = 6
-    private val inntektSiste12mndId = 7
-    private val G3Id = 8
-    private val G1_5Id = 9
-    private val søknadstidspunktId = 10
-    private val vernepliktId = 11
-    private val godkjenningVirkningstidspunktId = 12
-    private val innsendtSøknadsIdId = 14
-    private val godkjenningFangstOgFiskId = 15
-    private val registreringsperioderId = 16
-    private val lærlingId = 17
-    private val registrertArbeidsøkerPeriodeFomId = 18
-    private val registrertArbeidsøkerPeriodeTomId = 19
-    private val dagensDatoId = 20
-    private val inntektsrapporteringsperiodeFomId = 21
-    private val inntektsrapporteringsperiodeTomId = 22
-    private val sluttårsakerId = 23
-    private val ordinærId = 24
-    private val permittertId = 25
-    private val lønnsgarantiId = 26
-    private val permittertFiskeforedlingId = 27
-    private val godkjenningRettighetstypeId = 28
-    private val harHattDagpengerSiste36mndId = 29
-    private val periodeOppbruktId = 30
+    const val ønsketDato = 1
+    const val sisteDagMedArbeidsplikt = 2
+    const val sisteDagMedLønn = 3
+    const val virkningstidspunkt = 4
+    const val fangstOgFisk = 5
+    const val inntektSiste36mnd = 6
+    const val inntektSiste12mnd = 7
+    const val G3 = 8
+    const val G1_5 = 9
+    const val søknadstidspunkt = 10
+    const val verneplikt = 11
+    const val godkjenningVirkningstidspunkt = 12
+    const val innsendtSøknadsId = 14
+    const val godkjenningFangstOgFisk = 15
+    const val registreringsperioder = 16
+    const val lærling = 17
+    const val registrertArbeidsøkerPeriodeFom = 18
+    const val registrertArbeidsøkerPeriodeTom = 19
+    const val dagensDato = 20
+    const val inntektsrapporteringsperiodeFom = 21
+    const val inntektsrapporteringsperiodeTom = 22
+    const val sluttårsaker = 23
+    const val ordinær = 24
+    const val permittert = 25
+    const val lønnsgaranti = 26
+    const val permittertFiskeforedling = 27
+    const val godkjenningRettighetstype = 28
+    const val harHattDagpengerSiste36mnd = 29
+    const val periodeOppbrukt = 30
 
     internal val søknad: Søknad
         get() = Søknad(
             VERSJON_ID,
-            dato faktum "Ønsker dagpenger fra dato" id ønsketDatoId avhengerAv innsendtSøknadsIdId,
-            dato faktum "Siste dag med arbeidsplikt" id sisteDagMedArbeidspliktId avhengerAv innsendtSøknadsIdId,
-            dato faktum "Siste dag med lønn" id sisteDagMedLønnId avhengerAv innsendtSøknadsIdId,
-            maks dato "Virkningstidspunkt" av ønsketDatoId og sisteDagMedArbeidspliktId og sisteDagMedLønnId og søknadstidspunktId id virkningstidspunktId,
-            boolsk faktum "Driver med fangst og fisk" id fangstOgFiskId avhengerAv innsendtSøknadsIdId,
-            inntekt faktum "Inntekt siste 36 mnd" id inntektSiste36mndId avhengerAv virkningstidspunktId og fangstOgFiskId,
-            inntekt faktum "Inntekt siste 12 mnd" id inntektSiste12mndId avhengerAv virkningstidspunktId og fangstOgFiskId,
-            inntekt faktum "3G" id G3Id avhengerAv virkningstidspunktId,
-            inntekt faktum "1,5G" id G1_5Id avhengerAv virkningstidspunktId,
-            dato faktum "Søknadstidspunkt" id søknadstidspunktId avhengerAv innsendtSøknadsIdId,
-            boolsk faktum "Verneplikt" id vernepliktId avhengerAv innsendtSøknadsIdId,
-            boolsk faktum "Godjenning av virkingstidspunkt" id godkjenningVirkningstidspunktId avhengerAv virkningstidspunktId og dagensDatoId,
-            dokument faktum "Innsendt søknadsId" id innsendtSøknadsIdId,
-            boolsk faktum "Godkjenning av dokumentasjon for fangst og fisk" id godkjenningFangstOgFiskId avhengerAv fangstOgFiskId,
-            heltall faktum "Antall arbeidsøker registeringsperioder" id registreringsperioderId genererer registrertArbeidsøkerPeriodeFomId og registrertArbeidsøkerPeriodeTomId,
-            boolsk faktum "Lærling" id lærlingId,
-            dato faktum "fom" id registrertArbeidsøkerPeriodeFomId,
-            dato faktum "tom" id registrertArbeidsøkerPeriodeTomId,
-            dato faktum "Dagens dato" id dagensDatoId,
-            dato faktum "Inntektsrapporteringsperiode fra og med" id inntektsrapporteringsperiodeFomId avhengerAv virkningstidspunktId,
-            dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTomId avhengerAv virkningstidspunktId,
-            heltall faktum "Rettighetstype" id sluttårsakerId genererer ordinærId og permittertId og lønnsgarantiId og permittertFiskeforedlingId avhengerAv innsendtSøknadsIdId,
-            boolsk faktum "Permittert" id permittertId,
-            boolsk faktum "Ordinær" id ordinærId,
-            boolsk faktum "Lønnsgaranti" id lønnsgarantiId,
-            boolsk faktum "PermittertFiskeforedling" id permittertFiskeforedlingId,
-            boolsk faktum "Godkjenning rettighetstype" id godkjenningRettighetstypeId avhengerAv sluttårsakerId,
-            boolsk faktum "Har hatt dagpenger siste 36mnd" id harHattDagpengerSiste36mndId avhengerAv virkningstidspunktId,
-            boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbruktId avhengerAv harHattDagpengerSiste36mndId
+            dato faktum "Ønsker dagpenger fra dato" id ønsketDato avhengerAv innsendtSøknadsId,
+            dato faktum "Siste dag med arbeidsplikt" id sisteDagMedArbeidsplikt avhengerAv innsendtSøknadsId,
+            dato faktum "Siste dag med lønn" id sisteDagMedLønn avhengerAv innsendtSøknadsId,
+            maks dato "Virkningstidspunkt" av ønsketDato og sisteDagMedArbeidsplikt og sisteDagMedLønn og søknadstidspunkt id virkningstidspunkt,
+            boolsk faktum "Driver med fangst og fisk" id fangstOgFisk avhengerAv innsendtSøknadsId,
+            inntekt faktum "Inntekt siste 36 mnd" id inntektSiste36mnd avhengerAv virkningstidspunkt og fangstOgFisk,
+            inntekt faktum "Inntekt siste 12 mnd" id inntektSiste12mnd avhengerAv virkningstidspunkt og fangstOgFisk,
+            inntekt faktum "3G" id G3 avhengerAv virkningstidspunkt,
+            inntekt faktum "1,5G" id G1_5 avhengerAv virkningstidspunkt,
+            dato faktum "Søknadstidspunkt" id søknadstidspunkt avhengerAv innsendtSøknadsId,
+            boolsk faktum "Verneplikt" id verneplikt avhengerAv innsendtSøknadsId,
+            boolsk faktum "Godjenning av virkingstidspunkt" id godkjenningVirkningstidspunkt avhengerAv virkningstidspunkt og dagensDato,
+            dokument faktum "Innsendt søknadsId" id innsendtSøknadsId,
+            boolsk faktum "Godkjenning av dokumentasjon for fangst og fisk" id godkjenningFangstOgFisk avhengerAv fangstOgFisk,
+            heltall faktum "Antall arbeidsøker registeringsperioder" id registreringsperioder genererer registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom,
+            boolsk faktum "Lærling" id lærling,
+            dato faktum "fom" id registrertArbeidsøkerPeriodeFom,
+            dato faktum "tom" id registrertArbeidsøkerPeriodeTom,
+            dato faktum "Dagens dato" id dagensDato,
+            dato faktum "Inntektsrapporteringsperiode fra og med" id inntektsrapporteringsperiodeFom avhengerAv virkningstidspunkt,
+            dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTom avhengerAv virkningstidspunkt,
+            heltall faktum "Rettighetstype" id sluttårsaker genererer ordinær og permittert og lønnsgaranti og permittertFiskeforedling avhengerAv innsendtSøknadsId,
+            boolsk faktum "Permittert" id permittert,
+            boolsk faktum "Ordinær" id ordinær,
+            boolsk faktum "Lønnsgaranti" id lønnsgaranti,
+            boolsk faktum "PermittertFiskeforedling" id permittertFiskeforedling,
+            boolsk faktum "Godkjenning rettighetstype" id godkjenningRettighetstype avhengerAv sluttårsaker,
+            boolsk faktum "Har hatt dagpenger siste 36mnd" id harHattDagpengerSiste36mnd avhengerAv virkningstidspunkt,
+            boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbrukt avhengerAv harHattDagpengerSiste36mnd
         )
-    private val ønsketDato = søknad dato ønsketDatoId
-    private val sisteDagMedArbeidsplikt = søknad dato sisteDagMedArbeidspliktId
-    private val sisteDagMedLønn = søknad dato sisteDagMedLønnId
-    private val virkningstidspunkt = søknad dato virkningstidspunktId
-    private val fangstOgFisk = søknad boolsk fangstOgFiskId
-    private val inntektSiste36mnd = søknad inntekt inntektSiste36mndId
-    private val inntektSiste12mnd = søknad inntekt inntektSiste12mndId
-    private val G3 = søknad inntekt G3Id
-    private val G1_5 = søknad inntekt G1_5Id
-    private val søknadstidspunkt = søknad dato søknadstidspunktId
-    private val verneplikt = søknad boolsk vernepliktId
-    private val godkjenningVirkningstidspunkt = søknad boolsk godkjenningVirkningstidspunktId
-    private val godkjenningFangstOgFisk = søknad boolsk godkjenningFangstOgFiskId
-    private val registreringsperioder = søknad generator registreringsperioderId
-    private val lærling = søknad boolsk lærlingId
-    private val registrertArbeidsøkerPeriodeFom = søknad dato registrertArbeidsøkerPeriodeFomId
-    private val registrertArbeidsøkerPeriodeTom = søknad dato registrertArbeidsøkerPeriodeTomId
-    private val dagensDato = søknad dato dagensDatoId
-    private val inntektsrapporteringsperiodeFom = søknad dato inntektsrapporteringsperiodeFomId
-    private val inntektsrapporteringsperiodeTom = søknad dato inntektsrapporteringsperiodeTomId
-    private val sluttårsaker = søknad generator sluttårsakerId
-    private val ordinær = søknad boolsk ordinærId
-    private val permittert = søknad boolsk permittertId
-    private val lønnsgaranti = søknad boolsk lønnsgarantiId
-    private val permittertFiskeforedling = søknad boolsk permittertFiskeforedlingId
-    private val godkjenningRettighetstype = søknad boolsk godkjenningRettighetstypeId
-    private val harHattDagpengerSiste36mnd = søknad boolsk harHattDagpengerSiste36mndId
-    private val periodeOppbrukt = søknad boolsk periodeOppbruktId
-
-    internal val rettighetstype = sluttårsaker med "sluttårsak".makro(
-        "bare en av".bareEnAv(
-            ordinær er true,
-            permittertFiskeforedling er true,
-            lønnsgaranti er true,
-            permittert er true
+    internal val rettighetstype = with(søknad) {
+        generator(sluttårsaker) med "sluttårsak".makro(
+            "bare en av".bareEnAv(
+                boolsk(ordinær) er true,
+                boolsk(permittertFiskeforedling) er true,
+                boolsk(lønnsgaranti) er true,
+                boolsk(permittert) er true
+            )
         )
-    )
-
-    private val minsteArbeidsinntekt = "minste arbeidsinntekt".minstEnAv(
-        inntektSiste36mnd minst G3,
-        inntektSiste12mnd minst G1_5,
-        verneplikt er true,
-        lærling er true
-    ).ugyldigGodkjentAv(godkjenningVirkningstidspunkt, godkjenningRettighetstype)
-
-    private val meldtSomArbeidssøker = registreringsperioder har "periode".makro(
-        virkningstidspunkt mellom registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom
-    )
-
-    private val sjekkFangstOgFisk = "fangst og fisk er dokumentert" makro (
-        fangstOgFisk er false ugyldigGodkjentAv godkjenningFangstOgFisk
+    }
+    private val minsteArbeidsinntekt = with(søknad) {
+        "minste arbeidsinntekt".minstEnAv(
+            inntekt(inntektSiste36mnd) minst inntekt(G3),
+            inntekt(inntektSiste12mnd) minst inntekt(G1_5),
+            boolsk(verneplikt) er true,
+            boolsk(lærling) er true
+        ).ugyldigGodkjentAv(boolsk(godkjenningVirkningstidspunkt), boolsk(godkjenningRettighetstype))
+    }
+    private val meldtSomArbeidssøker = with(søknad) {
+        generator(registreringsperioder) har "periode".makro(
+            dato(virkningstidspunkt) mellom dato(registrertArbeidsøkerPeriodeFom) og
+                dato(registrertArbeidsøkerPeriodeTom)
         )
-
-    private val gjenopptak = "skal ha gjenopptak" makro (
-        harHattDagpengerSiste36mnd er true så (periodeOppbrukt er true)
-        )
-
-    private val sjekkVirkningstidspunkt = "søker på riktig tidspunkt" makro (
-        dagensDato ikkeFør virkningstidspunkt eller
-            (dagensDato mellom inntektsrapporteringsperiodeFom og inntektsrapporteringsperiodeTom)
-        )
-
+    }
+    private val sjekkFangstOgFisk = with(søknad) {
+        "fangst og fisk er dokumentert" makro (
+            boolsk(fangstOgFisk) er false ugyldigGodkjentAv boolsk(godkjenningFangstOgFisk)
+            )
+    }
+    private val gjenopptak = with(søknad) {
+        "skal ha gjenopptak" makro (
+            boolsk(harHattDagpengerSiste36mnd) er true så (boolsk(periodeOppbrukt) er true)
+            )
+    }
+    private val sjekkVirkningstidspunkt = with(søknad) {
+        "søker på riktig tidspunkt" makro (
+            dato(dagensDato) ikkeFør dato(virkningstidspunkt) eller (
+                dato(dagensDato) mellom dato(inntektsrapporteringsperiodeFom) og dato(inntektsrapporteringsperiodeTom)
+                )
+            )
+    }
     private val minsteArbeidsinntektMedVirkningstidspunkt =
         sjekkVirkningstidspunkt så (
             sjekkFangstOgFisk uansett (minsteArbeidsinntekt)
             )
-
     private val inngangsvilkår = gjenopptak eller "inngangsvilkår".alle(
         minsteArbeidsinntektMedVirkningstidspunkt,
         meldtSomArbeidssøker,
         rettighetstype
     )
-
-    private val oppstart =
+    private val oppstart = with(søknad) {
         Seksjon(
             "oppstart",
             Rolle.nav,
-            dagensDato,
-            inntektsrapporteringsperiodeFom,
-            inntektsrapporteringsperiodeTom
+            dato(dagensDato),
+            dato(inntektsrapporteringsperiodeFom),
+            dato(inntektsrapporteringsperiodeTom)
         )
-
-    private val grunnbeløp =
+    }
+    private val grunnbeløp = with(søknad) {
         Seksjon(
             "grunnbeløp",
             Rolle.nav,
-            G3,
-            G1_5,
+            inntekt(G3),
+            inntekt(G1_5),
         )
-    private val datoer =
+    }
+    private val datoer = with(søknad) {
         Seksjon(
             "datoer",
             Rolle.nav,
-            ønsketDato,
-            søknadstidspunkt,
-            sisteDagMedArbeidsplikt,
-            sisteDagMedLønn,
-            registrertArbeidsøkerPeriodeFom,
-            registrertArbeidsøkerPeriodeTom,
-            registreringsperioder
+            dato(ønsketDato),
+            dato(søknadstidspunkt),
+            dato(sisteDagMedArbeidsplikt),
+            dato(sisteDagMedLønn),
+            dato(registrertArbeidsøkerPeriodeFom),
+            dato(registrertArbeidsøkerPeriodeTom),
+            generator(registreringsperioder)
         )
-    private val ytelseshistorikk =
+    }
+    private val ytelseshistorikk = with(søknad) {
         Seksjon(
             "ytelsehistorikk",
             Rolle.nav,
-            harHattDagpengerSiste36mnd
+            boolsk(harHattDagpengerSiste36mnd)
         )
-    private val inntektsunntak =
+    }
+    private val inntektsunntak = with(søknad) {
         Seksjon(
             "inntektsunntak",
             Rolle.nav,
-            verneplikt,
-            lærling
+            boolsk(verneplikt),
+            boolsk(lærling)
         )
-    private val fangstOgfisk =
+    }
+    private val fangstOgfisk = with(søknad) {
         Seksjon(
             "fangstOgFisk",
             Rolle.nav,
-            fangstOgFisk,
+            boolsk(fangstOgFisk),
         )
-    private val inntekter =
+    }
+    private val inntekter = with(søknad) {
         Seksjon(
             "inntekter",
             Rolle.nav,
-            inntektSiste12mnd,
-            inntektSiste36mnd,
+            inntekt(inntektSiste12mnd),
+            inntekt(inntektSiste36mnd),
         )
-    private val godkjennDato =
+    }
+    private val godkjennDato = with(søknad) {
         Seksjon(
             "godkjenn virkningstidspunkt",
             Rolle.saksbehandler,
-            godkjenningVirkningstidspunkt
+            boolsk(godkjenningVirkningstidspunkt)
         )
-    private val godkjennFangstOgFisk =
+    }
+    private val godkjennFangstOgFisk = with(søknad) {
         Seksjon(
             "godkjenn fangst og fisk",
             Rolle.saksbehandler,
-            godkjenningFangstOgFisk
+            boolsk(godkjenningFangstOgFisk)
         )
-
-    internal val arbeidsforholdNav = Seksjon(
-        "rettighetstype",
-        Rolle.nav,
-        sluttårsaker,
-        ordinær,
-        lønnsgaranti,
-        permittertFiskeforedling,
-        permittert,
-    )
-
-    internal val arbeidsforholdSaksbehandler = Seksjon(
-        "godkjenn rettighetstype",
-        Rolle.saksbehandler,
-        godkjenningRettighetstype,
-    )
-
-    private val manuell =
+    }
+    internal val arbeidsforholdNav = with(søknad) {
+        Seksjon(
+            "rettighetstype",
+            Rolle.nav,
+            generator(sluttårsaker),
+            boolsk(ordinær),
+            boolsk(lønnsgaranti),
+            boolsk(permittertFiskeforedling),
+            boolsk(permittert),
+        )
+    }
+    internal val arbeidsforholdSaksbehandler = with(søknad) {
+        Seksjon(
+            "godkjenn rettighetstype",
+            Rolle.saksbehandler,
+            boolsk(godkjenningRettighetstype),
+        )
+    }
+    private val manuell = with(søknad) {
         Seksjon(
             "manuell",
             Rolle.manuell,
-            periodeOppbrukt,
+            boolsk(periodeOppbrukt),
         )
-
+    }
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             oppstart,
@@ -280,33 +265,32 @@ internal object AvslagPåMinsteinntekt {
             arbeidsforholdSaksbehandler,
             manuell
         )
-
     private val faktumNavBehov =
         FaktumNavBehov(
             mapOf(
-                ønsketDatoId to "ØnskerDagpengerFraDato",
-                sisteDagMedArbeidspliktId to "SisteDagMedArbeidsplikt",
-                sisteDagMedLønnId to "SisteDagMedLønn",
-                virkningstidspunktId to "Virkningstidspunkt",
-                fangstOgFiskId to "FangstOgFiske",
-                inntektSiste36mndId to "InntektSiste3År",
-                inntektSiste12mndId to "InntektSiste12Mnd",
-                G3Id to "3G",
-                G1_5Id to "1_5G",
-                søknadstidspunktId to "Søknadstidspunkt",
-                vernepliktId to "Verneplikt",
-                innsendtSøknadsIdId to "InnsendtSøknadsId",
-                registreringsperioderId to "Registreringsperioder",
-                lærlingId to "Lærling",
-                dagensDatoId to "DagensDato",
-                inntektsrapporteringsperiodeFomId to "InntektsrapporteringsperiodeFom",
-                inntektsrapporteringsperiodeTomId to "InntektsrapporteringsperiodeTom",
-                sluttårsakerId to "Rettighetstype",
-                ordinærId to "Ordinær",
-                permittertId to "Permittert",
-                lønnsgarantiId to "Lønnsgaranti",
-                permittertFiskeforedlingId to "PermittertFiskeforedling",
-                harHattDagpengerSiste36mndId to "HarHattDagpengerSiste36Mnd"
+                ønsketDato to "ØnskerDagpengerFraDato",
+                sisteDagMedArbeidsplikt to "SisteDagMedArbeidsplikt",
+                sisteDagMedLønn to "SisteDagMedLønn",
+                virkningstidspunkt to "Virkningstidspunkt",
+                fangstOgFisk to "FangstOgFiske",
+                inntektSiste36mnd to "InntektSiste3År",
+                inntektSiste12mnd to "InntektSiste12Mnd",
+                G3 to "3G",
+                G1_5 to "1_5G",
+                søknadstidspunkt to "Søknadstidspunkt",
+                verneplikt to "Verneplikt",
+                innsendtSøknadsId to "InnsendtSøknadsId",
+                registreringsperioder to "Registreringsperioder",
+                lærling to "Lærling",
+                dagensDato to "DagensDato",
+                inntektsrapporteringsperiodeFom to "InntektsrapporteringsperiodeFom",
+                inntektsrapporteringsperiodeTom to "InntektsrapporteringsperiodeTom",
+                sluttårsaker to "Rettighetstype",
+                ordinær to "Ordinær",
+                permittert to "Permittert",
+                lønnsgaranti to "Lønnsgaranti",
+                permittertFiskeforedling to "PermittertFiskeforedling",
+                harHattDagpengerSiste36mnd to "HarHattDagpengerSiste36Mnd"
             )
         )
     private val versjon = Versjon.Bygger(
