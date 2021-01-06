@@ -12,6 +12,7 @@ abstract class Rolle {
         val nav = Nav()
         val søker = Søker()
         val saksbehandler = Saksbehandler()
+        val manuell = Manuell()
     }
 
     abstract fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String): String
@@ -34,4 +35,10 @@ class Saksbehandler internal constructor() : Rolle() {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
     override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) =
         SaksbehandlerJsonBuilder(søknadprosess, seksjonNavn).resultat().toString()
+}
+
+class Manuell internal constructor() : Rolle() {
+    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) =
+        NavJsonBuilder(søknadprosess, seksjonNavn).resultat().toString()
 }

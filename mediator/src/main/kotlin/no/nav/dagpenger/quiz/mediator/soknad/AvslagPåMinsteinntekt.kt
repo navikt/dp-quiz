@@ -68,7 +68,9 @@ internal object AvslagPåMinsteinntekt {
             ja nei "Ordinær" id 25,
             ja nei "Lønnsgaranti" id 26,
             ja nei "PermittertFiskeforedling" id 27,
-            ja nei "Godkjenning rettighetstype" id 28 avhengerAv 23
+            ja nei "Godkjenning rettighetstype" id 28 avhengerAv 23,
+            ja nei "Har hatt dagpenger siste 36mnd" id 29,
+            ja nei "Har brukt opp forrige dagpengeperiode" id 30 avhengerAv 29
         )
     private val ønsketDato = søknad dato 1
     private val sisteDagMedArbeidsplikt = søknad dato 2
@@ -96,6 +98,8 @@ internal object AvslagPåMinsteinntekt {
     private val lønnsgaranti = søknad ja 26
     private val permittertFiskeforedling = søknad ja 27
     private val godkjenningRettighetstype = søknad ja 28
+    private val harHattDagpengerSiste36mnd = søknad ja 29
+    private val periodeOppbrukt = søknad ja 30
 
     internal val rettighetstype = sluttårsaker med "sluttårsak".makro(
         "bare en av".bareEnAv(
@@ -121,6 +125,10 @@ internal object AvslagPåMinsteinntekt {
         fangstOgFisk er false ugyldigGodkjentAv godkjenningFangstOgFisk
         )
 
+    private val gjenopptak = "skal ha gjenopptak" makro (
+        harHattDagpengerSiste36mnd er true så (periodeOppbrukt er true)
+        )
+
     private val sjekkVirkningstidspunkt = "søker på riktig tidspunkt" makro (
         dagensDato ikkeFør virkningstidspunkt eller
             (dagensDato mellom inntektsrapporteringsperiodeFom og inntektsrapporteringsperiodeTom)
@@ -134,7 +142,8 @@ internal object AvslagPåMinsteinntekt {
     private val inngangsvilkår = "inngangsvilkår".alle(
         minsteArbeidsinntektMedVirkningstidspunkt,
         meldtSomArbeidssøker,
-        rettighetstype
+        rettighetstype,
+        gjenopptak
     )
 
     private val oppstart =
@@ -214,6 +223,13 @@ internal object AvslagPåMinsteinntekt {
         godkjenningRettighetstype,
     )
 
+    private val manuell =
+        Seksjon(
+            "manuell",
+            Rolle.manuell,
+            periodeOppbrukt,
+        )
+
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             oppstart,
@@ -225,7 +241,8 @@ internal object AvslagPåMinsteinntekt {
             inntekter,
             godkjennDato,
             arbeidsforholdNav,
-            arbeidsforholdSaksbehandler
+            arbeidsforholdSaksbehandler,
+            manuell
         )
 
     private val faktumNavBehov =
