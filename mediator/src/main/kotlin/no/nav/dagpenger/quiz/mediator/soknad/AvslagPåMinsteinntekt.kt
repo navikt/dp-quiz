@@ -69,7 +69,7 @@ internal object AvslagPåMinsteinntekt {
             ja nei "Lønnsgaranti" id 26,
             ja nei "PermittertFiskeforedling" id 27,
             ja nei "Godkjenning rettighetstype" id 28 avhengerAv 23,
-            ja nei "Har hatt dagpenger siste 36mnd" id 29,
+            ja nei "Har hatt dagpenger siste 36mnd" id 29 avhengerAv 4,
             ja nei "Har brukt opp forrige dagpengeperiode" id 30 avhengerAv 29
         )
     private val ønsketDato = søknad dato 1
@@ -139,11 +139,10 @@ internal object AvslagPåMinsteinntekt {
             sjekkFangstOgFisk uansett (minsteArbeidsinntekt)
             )
 
-    private val inngangsvilkår = "inngangsvilkår".alle(
+    private val inngangsvilkår = gjenopptak eller "inngangsvilkår".alle(
         minsteArbeidsinntektMedVirkningstidspunkt,
         meldtSomArbeidssøker,
-        rettighetstype,
-        gjenopptak
+        rettighetstype
     )
 
     private val oppstart =
@@ -173,6 +172,12 @@ internal object AvslagPåMinsteinntekt {
             registrertArbeidsøkerPeriodeFom,
             registrertArbeidsøkerPeriodeTom,
             registreringsperioder
+        )
+    private val ytelseshistorikk =
+        Seksjon(
+            "ytelsehistorikk",
+            Rolle.nav,
+            harHattDagpengerSiste36mnd
         )
     private val inntektsunntak =
         Seksjon(
@@ -235,6 +240,7 @@ internal object AvslagPåMinsteinntekt {
             oppstart,
             grunnbeløp,
             datoer,
+            ytelseshistorikk,
             inntektsunntak,
             fangstOgfisk,
             godkjennFangstOgFisk,
@@ -270,6 +276,7 @@ internal object AvslagPåMinsteinntekt {
                 25 to "Ordinær",
                 26 to "Lønnsgaranti",
                 27 to "PermittertFiskeforedling",
+                29 to "HarHattDagpengerSiste36Mnd"
             )
         )
     private val versjon = Versjon.Bygger(

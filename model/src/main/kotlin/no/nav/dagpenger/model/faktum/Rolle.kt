@@ -39,6 +39,5 @@ class Saksbehandler internal constructor() : Rolle() {
 
 class Manuell internal constructor() : Rolle() {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
-    override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) =
-        NavJsonBuilder(søknadprosess, seksjonNavn).resultat().toString()
+    override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) = "manuell"
 }
