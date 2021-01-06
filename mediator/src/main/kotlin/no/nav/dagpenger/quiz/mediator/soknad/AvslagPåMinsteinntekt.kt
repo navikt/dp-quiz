@@ -39,63 +39,91 @@ internal object AvslagPåMinsteinntekt {
         registrer(søknad, VERSJON_ID)
     }
 
+    private val ønsketDatoId = 1
+    private val sisteDagMedArbeidspliktId = 2
+    private val sisteDagMedLønnId = 3
+    private val virkningstidspunktId = 4
+    private val fangstOgFiskId = 5
+    private val inntektSiste36mndId = 6
+    private val inntektSiste12mndId = 7
+    private val G3Id = 8
+    private val G1_5Id = 9
+    private val søknadstidspunktId = 10
+    private val vernepliktId = 11
+    private val godkjenningVirkningstidspunktId = 12
+    private val innsendtSøknadsIdId = 14
+    private val godkjenningFangstOgFiskId = 15
+    private val registreringsperioderId = 16
+    private val lærlingId = 17
+    private val registrertArbeidsøkerPeriodeFomId = 18
+    private val registrertArbeidsøkerPeriodeTomId = 19
+    private val dagensDatoId = 20
+    private val inntektsrapporteringsperiodeFomId = 21
+    private val inntektsrapporteringsperiodeTomId = 22
+    private val sluttårsakerId = 23
+    private val ordinærId = 24
+    private val permittertId = 25
+    private val lønnsgarantiId = 26
+    private val permittertFiskeforedlingId = 27
+    private val godkjenningRettighetstypeId = 28
+
     internal val søknad: Søknad
         get() = Søknad(
             VERSJON_ID,
-            dato faktum "Ønsker dagpenger fra dato" id 1 avhengerAv 14,
-            dato faktum "Siste dag med arbeidsplikt" id 2 avhengerAv 14,
-            dato faktum "Siste dag med lønn" id 3 avhengerAv 14,
-            maks dato "Virkningstidspunkt" av 1 og 2 og 3 og 10 id 4,
-            ja nei "Driver med fangst og fisk" id 5 avhengerAv 14,
-            inntekt faktum "Inntekt siste 36 mnd" id 6 avhengerAv 4 og 5,
-            inntekt faktum "Inntekt siste 12 mnd" id 7 avhengerAv 4 og 5,
-            inntekt faktum "3G" id 8 avhengerAv 4,
-            inntekt faktum "1,5G" id 9 avhengerAv 4,
-            dato faktum "Søknadstidspunkt" id 10 avhengerAv 14,
-            ja nei "Verneplikt" id 11 avhengerAv 14,
-            ja nei "Godjenning av virkingstidspunkt" id 12 avhengerAv 4 og 20,
-            dokument faktum "Innsendt søknadsId" id 14,
-            ja nei "Godkjenning av dokumentasjon for fangst og fisk" id 15 avhengerAv 5,
-            heltall faktum "Antall arbeidsøker registeringsperioder" id 16 genererer 18 og 19,
-            ja nei "Lærling" id 17,
-            dato faktum "fom" id 18,
-            dato faktum "tom" id 19,
-            dato faktum "Dagens dato" id 20,
-            dato faktum "Inntektsrapporteringsperiode fra og med" id 21 avhengerAv 4,
-            dato faktum "Inntektsrapporteringsperiode til og med" id 22 avhengerAv 4,
-            heltall faktum "Rettighetstype" id 23 genererer 24 og 25 og 26 og 27 avhengerAv 14,
-            ja nei "Permittert" id 24,
-            ja nei "Ordinær" id 25,
-            ja nei "Lønnsgaranti" id 26,
-            ja nei "PermittertFiskeforedling" id 27,
-            ja nei "Godkjenning rettighetstype" id 28 avhengerAv 23
+            dato faktum "Ønsker dagpenger fra dato" id ønsketDatoId avhengerAv innsendtSøknadsIdId,
+            dato faktum "Siste dag med arbeidsplikt" id sisteDagMedArbeidspliktId avhengerAv innsendtSøknadsIdId,
+            dato faktum "Siste dag med lønn" id sisteDagMedLønnId avhengerAv innsendtSøknadsIdId,
+            maks dato "Virkningstidspunkt" av ønsketDatoId og sisteDagMedArbeidspliktId og sisteDagMedLønnId og søknadstidspunktId id virkningstidspunktId,
+            ja nei "Driver med fangst og fisk" id fangstOgFiskId avhengerAv innsendtSøknadsIdId,
+            inntekt faktum "Inntekt siste 36 mnd" id inntektSiste36mndId avhengerAv virkningstidspunktId og fangstOgFiskId,
+            inntekt faktum "Inntekt siste 12 mnd" id inntektSiste12mndId avhengerAv virkningstidspunktId og fangstOgFiskId,
+            inntekt faktum "3G" id G3Id avhengerAv virkningstidspunktId,
+            inntekt faktum "1,5G" id G1_5Id avhengerAv virkningstidspunktId,
+            dato faktum "Søknadstidspunkt" id søknadstidspunktId avhengerAv innsendtSøknadsIdId,
+            ja nei "Verneplikt" id vernepliktId avhengerAv innsendtSøknadsIdId,
+            ja nei "Godjenning av virkingstidspunkt" id godkjenningVirkningstidspunktId avhengerAv virkningstidspunktId og dagensDatoId,
+            dokument faktum "Innsendt søknadsId" id innsendtSøknadsIdId,
+            ja nei "Godkjenning av dokumentasjon for fangst og fisk" id godkjenningFangstOgFiskId avhengerAv fangstOgFiskId,
+            heltall faktum "Antall arbeidsøker registeringsperioder" id registreringsperioderId genererer registrertArbeidsøkerPeriodeFomId og registrertArbeidsøkerPeriodeTomId,
+            ja nei "Lærling" id lærlingId,
+            dato faktum "fom" id registrertArbeidsøkerPeriodeFomId,
+            dato faktum "tom" id registrertArbeidsøkerPeriodeTomId,
+            dato faktum "Dagens dato" id dagensDatoId,
+            dato faktum "Inntektsrapporteringsperiode fra og med" id inntektsrapporteringsperiodeFomId avhengerAv virkningstidspunktId,
+            dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTomId avhengerAv virkningstidspunktId,
+            heltall faktum "Rettighetstype" id sluttårsakerId genererer ordinærId og permittertId og lønnsgarantiId og permittertFiskeforedlingId avhengerAv innsendtSøknadsIdId,
+            ja nei "Permittert" id permittertId,
+            ja nei "Ordinær" id ordinærId,
+            ja nei "Lønnsgaranti" id lønnsgarantiId,
+            ja nei "PermittertFiskeforedling" id permittertFiskeforedlingId,
+            ja nei "Godkjenning rettighetstype" id godkjenningRettighetstypeId avhengerAv sluttårsakerId
         )
-    private val ønsketDato = søknad dato 1
-    private val sisteDagMedArbeidsplikt = søknad dato 2
-    private val sisteDagMedLønn = søknad dato 3
-    private val virkningstidspunkt = søknad dato 4
-    private val fangstOgFisk = søknad ja 5
-    private val inntektSiste36mnd = søknad inntekt 6
-    private val inntektSiste12mnd = søknad inntekt 7
-    private val G3 = søknad inntekt 8
-    private val G1_5 = søknad inntekt 9
-    private val søknadstidspunkt = søknad dato 10
-    private val verneplikt = søknad ja 11
-    private val godkjenningVirkningstidspunkt = søknad ja 12
-    private val godkjenningFangstOgFisk = søknad ja 15
-    private val registreringsperioder = søknad generator 16
-    private val lærling = søknad ja 17
-    private val registrertArbeidsøkerPeriodeFom = søknad dato 18
-    private val registrertArbeidsøkerPeriodeTom = søknad dato 19
-    private val dagensDato = søknad dato 20
-    private val inntektsrapporteringsperiodeFom = søknad dato 21
-    private val inntektsrapporteringsperiodeTom = søknad dato 22
-    private val sluttårsaker = søknad generator 23
-    private val ordinær = søknad ja 24
-    private val permittert = søknad ja 25
-    private val lønnsgaranti = søknad ja 26
-    private val permittertFiskeforedling = søknad ja 27
-    private val godkjenningRettighetstype = søknad ja 28
+    private val ønsketDato = søknad dato ønsketDatoId
+    private val sisteDagMedArbeidsplikt = søknad dato sisteDagMedArbeidspliktId
+    private val sisteDagMedLønn = søknad dato sisteDagMedLønnId
+    private val virkningstidspunkt = søknad dato virkningstidspunktId
+    private val fangstOgFisk = søknad ja fangstOgFiskId
+    private val inntektSiste36mnd = søknad inntekt inntektSiste36mndId
+    private val inntektSiste12mnd = søknad inntekt inntektSiste12mndId
+    private val G3 = søknad inntekt G3Id
+    private val G1_5 = søknad inntekt G1_5Id
+    private val søknadstidspunkt = søknad dato søknadstidspunktId
+    private val verneplikt = søknad ja vernepliktId
+    private val godkjenningVirkningstidspunkt = søknad ja godkjenningVirkningstidspunktId
+    private val godkjenningFangstOgFisk = søknad ja godkjenningFangstOgFiskId
+    private val registreringsperioder = søknad generator registreringsperioderId
+    private val lærling = søknad ja lærlingId
+    private val registrertArbeidsøkerPeriodeFom = søknad dato registrertArbeidsøkerPeriodeFomId
+    private val registrertArbeidsøkerPeriodeTom = søknad dato registrertArbeidsøkerPeriodeTomId
+    private val dagensDato = søknad dato dagensDatoId
+    private val inntektsrapporteringsperiodeFom = søknad dato inntektsrapporteringsperiodeFomId
+    private val inntektsrapporteringsperiodeTom = søknad dato inntektsrapporteringsperiodeTomId
+    private val sluttårsaker = søknad generator sluttårsakerId
+    private val ordinær = søknad ja ordinærId
+    private val permittert = søknad ja permittertId
+    private val lønnsgaranti = søknad ja lønnsgarantiId
+    private val permittertFiskeforedling = søknad ja permittertFiskeforedlingId
+    private val godkjenningRettighetstype = søknad ja godkjenningRettighetstypeId
 
     internal val rettighetstype = sluttårsaker med "sluttårsak".makro(
         "bare en av".bareEnAv(
@@ -231,28 +259,28 @@ internal object AvslagPåMinsteinntekt {
     private val faktumNavBehov =
         FaktumNavBehov(
             mapOf(
-                1 to "ØnskerDagpengerFraDato",
-                2 to "SisteDagMedArbeidsplikt",
-                3 to "SisteDagMedLønn",
-                4 to "Virkningstidspunkt",
-                5 to "FangstOgFiske",
-                6 to "InntektSiste3År",
-                7 to "InntektSiste12Mnd",
-                8 to "3G",
-                9 to "1_5G",
-                10 to "Søknadstidspunkt",
-                11 to "Verneplikt",
-                14 to "InnsendtSøknadsId",
-                16 to "Registreringsperioder",
-                17 to "Lærling",
-                20 to "DagensDato",
-                21 to "InntektsrapporteringsperiodeFom",
-                22 to "InntektsrapporteringsperiodeTom",
-                23 to "Rettighetstype",
-                24 to "Permittert",
-                25 to "Ordinær",
-                26 to "Lønnsgaranti",
-                27 to "PermittertFiskeforedling",
+                ønsketDatoId to "ØnskerDagpengerFraDato",
+                sisteDagMedArbeidspliktId to "SisteDagMedArbeidsplikt",
+                sisteDagMedLønnId to "SisteDagMedLønn",
+                virkningstidspunktId to "Virkningstidspunkt",
+                fangstOgFiskId to "FangstOgFiske",
+                inntektSiste36mndId to "InntektSiste3År",
+                inntektSiste12mndId to "InntektSiste12Mnd",
+                G3Id to "3G",
+                G1_5Id to "1_5G",
+                søknadstidspunktId to "Søknadstidspunkt",
+                vernepliktId to "Verneplikt",
+                innsendtSøknadsIdId to "InnsendtSøknadsId",
+                registreringsperioderId to "Registreringsperioder",
+                lærlingId to "Lærling",
+                dagensDatoId to "DagensDato",
+                inntektsrapporteringsperiodeFomId to "InntektsrapporteringsperiodeFom",
+                inntektsrapporteringsperiodeTomId to "InntektsrapporteringsperiodeTom",
+                sluttårsakerId to "Rettighetstype",
+                ordinærId to "Ordinær",
+                permittertId to "Permittert",
+                lønnsgarantiId to "Lønnsgaranti",
+                permittertFiskeforedlingId to "PermittertFiskeforedling",
             )
         )
     private val versjon = Versjon.Bygger(
