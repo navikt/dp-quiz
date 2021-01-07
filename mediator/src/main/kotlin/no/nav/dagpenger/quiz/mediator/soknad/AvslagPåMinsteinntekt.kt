@@ -151,14 +151,16 @@ internal object AvslagPåMinsteinntekt {
             )
     }
     private val minsteArbeidsinntektMedVirkningstidspunkt =
-        sjekkVirkningstidspunkt så (
-            sjekkFangstOgFisk uansett (sjekkSykepenger så minsteArbeidsinntekt)
-            )
-    private val inngangsvilkår = gjenopptak eller "inngangsvilkår".alle(
-        minsteArbeidsinntektMedVirkningstidspunkt,
-        meldtSomArbeidssøker,
-        rettighetstype
-    )
+        sjekkFangstOgFisk uansett (sjekkSykepenger så minsteArbeidsinntekt)
+
+    private val inngangsvilkår = sjekkVirkningstidspunkt så (
+        gjenopptak eller "inngangsvilkår".alle(
+            minsteArbeidsinntektMedVirkningstidspunkt,
+            meldtSomArbeidssøker,
+            rettighetstype
+        )
+        )
+
     private val oppstart = with(søknad) {
         Seksjon(
             "oppstart",
