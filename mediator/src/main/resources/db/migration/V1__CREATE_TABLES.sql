@@ -137,3 +137,12 @@ CREATE TABLE IF NOT EXISTS gammel_faktum_verdi
     opprettet      TIMESTAMP WITH TIME ZONE NOT NULL,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS resultat
+(
+    id        BIGSERIAL,
+    soknad_id BIGSERIAL                NOT NULL REFERENCES soknad (id),
+    resultat  BOOL                     NOT NULL,
+    opprettet TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
+    PRIMARY KEY (id)
+)

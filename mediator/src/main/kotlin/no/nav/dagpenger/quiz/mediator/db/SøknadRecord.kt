@@ -148,7 +148,7 @@ class SøknadRecord : SøknadPersistence {
                 if (svar != null) session.run(oppdaterFaktum(svar, søknad, indeks, rootId))
             }
         }
-
+        // TODO: burde ikke alltid returnere true?? hva hvis noe går galt som ikke kræsjer? hvorfor boolean?
         return true
     }
 
@@ -257,5 +257,33 @@ class SøknadRecord : SøknadPersistence {
                 ).map { it.localDateTime(1) to UUID.fromString(it.string(2)) }.asList
             )
         }.toMap()
+    }
+
+    override fun lagreResultat(resultat: Boolean, søknad: Søknad): Boolean {
+        return using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf( //language=PostgreSQL
+                    """
+                    INSERT INTO resultat (resultat, soknad_id) 
+                        SELECT ?, soknad.id 
+                        FROM soknad 
+                        WHERE soknad.uuid = ? 
+                    """.trimMargin(),
+                    resultat,
+                    søknad.uuid
+                ).asExecute
+            )
+        }
+    }
+
+    override fun hentResultat(uuid: UUID): Boolean {
+        return using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf( //language=PostgreSQL
+                    "SELECT resultat FROM resultat WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
+                    uuid
+                ).map { it.boolean("resultat") }.asSingle
+            )
+        } ?: throw IllegalArgumentException("Resultat finnes ikke for søknad, uuid: $uuid")
     }
 }

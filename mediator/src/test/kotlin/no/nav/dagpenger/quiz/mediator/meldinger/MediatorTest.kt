@@ -139,6 +139,14 @@ internal class MediatorTest {
             TODO("Not yet implemented")
         }
 
+        override fun lagreResultat(resultat: Boolean, søknad: Søknad): Boolean {
+            TODO("Not yet implemented")
+        }
+
+        override fun hentResultat(uuid: UUID): Boolean {
+            TODO("Not yet implemented")
+        }
+
         fun reset() {
             søknadprosess = null
             hentet = 0
