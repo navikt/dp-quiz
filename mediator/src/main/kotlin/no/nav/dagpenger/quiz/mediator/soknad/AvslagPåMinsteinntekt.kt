@@ -69,7 +69,6 @@ internal object AvslagPåMinsteinntekt {
     const val periodeOppbrukt = 30
     const val sykepengerSiste36mnd = 31
     const val svangerskapsrelaterteSykepenger = 32
-
     internal val søknad: Søknad
         get() = Søknad(
             VERSJON_ID,
@@ -139,13 +138,11 @@ internal object AvslagPåMinsteinntekt {
             boolsk(harHattDagpengerSiste36mnd) er true så (boolsk(periodeOppbrukt) er true)
             )
     }
-
     private val sjekkSykepenger = with(søknad) {
         "svangerskapsrelaterte sykepenger" makro (
             boolsk(sykepengerSiste36mnd) er false eller (boolsk(svangerskapsrelaterteSykepenger) er true)
             )
     }
-
     private val sjekkVirkningstidspunkt = with(søknad) {
         "søker på riktig tidspunkt" makro (
             dato(dagensDato) ikkeFør dato(virkningstidspunkt) eller (
@@ -157,7 +154,6 @@ internal object AvslagPåMinsteinntekt {
         sjekkVirkningstidspunkt så (
             sjekkFangstOgFisk uansett (sjekkSykepenger så minsteArbeidsinntekt)
             )
-
     private val inngangsvilkår = gjenopptak eller "inngangsvilkår".alle(
         minsteArbeidsinntektMedVirkningstidspunkt,
         meldtSomArbeidssøker,
@@ -256,11 +252,17 @@ internal object AvslagPåMinsteinntekt {
             boolsk(godkjenningRettighetstype),
         )
     }
-    private val manuell = with(søknad) {
+    private val manuellGjenopptak = with(søknad) {
         Seksjon(
-            "manuell",
+            "mulig gjenopptak",
             Rolle.manuell,
             boolsk(periodeOppbrukt),
+        )
+    }
+    private val manuellSykepenger = with(søknad) {
+        Seksjon(
+            "svangerskapsrelaterte sykepenger",
+            Rolle.manuell,
             boolsk(svangerskapsrelaterteSykepenger)
         )
     }
@@ -277,7 +279,8 @@ internal object AvslagPåMinsteinntekt {
             godkjennDato,
             arbeidsforholdNav,
             arbeidsforholdSaksbehandler,
-            manuell
+            manuellGjenopptak,
+            manuellSykepenger
         )
     private val faktumNavBehov =
         FaktumNavBehov(

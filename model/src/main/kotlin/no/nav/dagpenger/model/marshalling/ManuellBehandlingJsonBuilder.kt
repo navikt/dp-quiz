@@ -1,7 +1,6 @@
 package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
@@ -88,7 +87,7 @@ class ManuellBehandlingJsonBuilder(private val søknadprosess: Søknadprosess, p
                     it.put("clazz", template.clazz().simpleName.toLowerCase())
                 }
             }
-            lagFaktumNode(id, "generator", jsonTemplates)
+            lagFaktumNode(id, faktum.navn)
             avhengerAvFakta.forEach {
                 root.putR(it.reflection { rootId, _ -> rootId }, it.svar())
             }
@@ -108,20 +107,19 @@ class ManuellBehandlingJsonBuilder(private val søknadprosess: Søknadprosess, p
         if (ignore) return
         if (id in faktumIder) return
         if (avhengerAvFakta.all { it.erBesvart() }) {
-            lagFaktumNode(id, clazz.simpleName.toLowerCase())
+            lagFaktumNode(id, faktum.navn)
             avhengerAvFakta.forEach {
                 root.putR(it.reflection { rootId, _ -> rootId }, it.svar())
             }
         }
     }
 
-    private fun lagFaktumNode(id: String, clazz: String, templates: ArrayNode? = null) {
+    private fun lagFaktumNode(id: String, navn: String) {
         if (ignore) return
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("id", id)
-            faktumNode.put("clazz", clazz)
-            if (templates != null) faktumNode["templates"] = templates
+            faktumNode.put("navn", navn)
         }
         faktumIder.add(id)
     }

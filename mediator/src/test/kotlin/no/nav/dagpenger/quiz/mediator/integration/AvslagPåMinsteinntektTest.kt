@@ -37,7 +37,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
@@ -95,7 +94,10 @@ internal class AvslagPåMinsteinntektTest {
             assertGjeldendeSeksjon("godkjenn rettighetstype")
             besvar(godkjenningRettighetstype, true)
 
-            assertEquals("godkjenn virkningstidspunkt", testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText())
+            assertEquals(
+                "godkjenn virkningstidspunkt",
+                testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText()
+            )
 
             besvar(godkjenningVirkningstidspunkt, true)
             assertEquals(26, testRapid.inspektør.size)
@@ -118,7 +120,7 @@ internal class AvslagPåMinsteinntektTest {
             testRapid.inspektør.size.also {
                 besvar(harHattDagpengerSiste36mnd, true)
                 assertEquals((it + 1), testRapid.inspektør.size)
-                assertGjeldendeSeksjon("manuell")
+                assertGjeldendeSeksjon("mulig gjenopptak")
             }
         }
     }
@@ -257,7 +259,6 @@ internal class AvslagPåMinsteinntektTest {
         }
     }
 
-    @Disabled
     @Test
     fun `Skal ikke gi oppgaver til saksbehandler hvis har sykepenger`() {
         withSøknad { besvar ->
@@ -273,7 +274,7 @@ internal class AvslagPåMinsteinntektTest {
             besvar(sykepengerSiste36mnd, true)
             besvar(fangstOgFisk, false)
 
-            assertGjeldendeSeksjon("manuell")
+            assertGjeldendeSeksjon("svangerskapsrelaterte sykepenger")
         }
     }
 
