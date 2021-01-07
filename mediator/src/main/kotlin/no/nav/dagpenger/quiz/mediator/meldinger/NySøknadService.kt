@@ -1,6 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
 import mu.KotlinLogging
+import mu.withLoggingContext
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -46,10 +47,12 @@ internal class NySøknadService(
                 søknadprosess.dokument(14).besvar(Dokument(LocalDateTime.now(), url = søknadsId))
                 søknadPersistence.lagre(søknadprosess.søknad)
 
+                log.info { "Opprettet ny søknadprosess ${søknadprosess.søknad.uuid} på grunn av søknad $søknadsId" }
+
                 søknadprosess.nesteSeksjoner()
                     .forEach { seksjon ->
                         context.send(seksjon.somSpørsmål().also { sikkerLogg.debug { it } })
-                        log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}, $søknadsId" }
+                        log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
                     }
             }
     }
