@@ -48,7 +48,7 @@ internal class FaktumSvarService(
             "id" to UUID.fromString(packet["@id"].asText()).toString(),
             "søknadUuid" to søknadUuid.toString()
         ) {
-            log.info { "Mottok ny svar for $søknadUuid" }
+            log.info { "Mottok ny(e) fakta (${fakta.joinToString(",") { it["id"].asText() }}) for $søknadUuid" }
             sikkerlogg.info { packet.toJson() }
 
             try {
