@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.faktum
 
+import no.nav.dagpenger.model.marshalling.ManuellBehandlingJsonBuilder
 import no.nav.dagpenger.model.marshalling.NavJsonBuilder
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -39,5 +40,6 @@ class Saksbehandler internal constructor() : Rolle() {
 
 class Manuell internal constructor() : Rolle() {
     override val typeNavn = this.javaClass.simpleName.toLowerCase()
-    override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) = "manuell"
+    override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) =
+        ManuellBehandlingJsonBuilder(søknadprosess, seksjonNavn).resultat().toString()
 }
