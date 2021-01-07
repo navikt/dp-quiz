@@ -11,6 +11,26 @@ import no.nav.dagpenger.quiz.mediator.helpers.mars
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.G1_5
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.G3
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.dagensDato
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.fangstOgFisk
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.godkjenningFangstOgFisk
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.godkjenningRettighetstype
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.godkjenningVirkningstidspunkt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.harHattDagpengerSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.inntektSiste12mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.inntektSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.inntektsrapporteringsperiodeFom
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.inntektsrapporteringsperiodeTom
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.lærling
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.registreringsperioder
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.sisteDagMedArbeidsplikt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.sisteDagMedLønn
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.sluttårsaker
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.søknadstidspunkt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.verneplikt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.ønsketDato
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -41,40 +61,40 @@ internal class AvslagPåMinsteinntektTest {
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
         withSøknad { besvar ->
-            besvar("20", 5.januar)
-            besvar("1", 5.januar)
-            besvar("2", 5.januar)
-            besvar("3", 5.januar)
-            besvar("10", 2.januar)
-            besvar("16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
+            besvar(dagensDato, 5.januar)
+            besvar(ønsketDato, 5.januar)
+            besvar(sisteDagMedArbeidsplikt, 5.januar)
+            besvar(sisteDagMedLønn, 5.januar)
+            besvar(søknadstidspunkt, 2.januar)
+            besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
 
             assertGjeldendeSeksjon("ytelsehistorikk")
-            besvar("29", false)
+            besvar(harHattDagpengerSiste36mnd, false)
 
             assertGjeldendeSeksjon("fangstOgFisk")
-            besvar("5", false)
+            besvar(fangstOgFisk, false)
 
             assertGjeldendeSeksjon("grunnbeløp")
-            besvar("8", 300000.årlig)
-            besvar("9", 150000.årlig)
+            besvar(G3, 300000.årlig)
+            besvar(G1_5, 150000.årlig)
 
             assertGjeldendeSeksjon("inntektsunntak")
-            besvar("11", false)
-            besvar("17", false)
+            besvar(verneplikt, false)
+            besvar(lærling, false)
 
             assertGjeldendeSeksjon("inntekter")
-            besvar("6", 20000.årlig)
-            besvar("7", 5000.årlig)
+            besvar(inntektSiste36mnd, 20000.årlig)
+            besvar(inntektSiste12mnd, 5000.årlig)
 
             assertGjeldendeSeksjon("rettighetstype")
-            besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
+            besvar(sluttårsaker, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
 
             assertGjeldendeSeksjon("godkjenn rettighetstype")
-            besvar("28", true)
+            besvar(godkjenningRettighetstype, true)
 
             assertEquals("godkjenn virkningstidspunkt", testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText())
 
-            besvar("12", true)
+            besvar(godkjenningVirkningstidspunkt, true)
             assertEquals(25, testRapid.inspektør.size)
             assertFalse(gjeldendeResultat())
         }
@@ -83,33 +103,33 @@ internal class AvslagPåMinsteinntektTest {
     @Test
     fun `De som oppfyller kravet til minsteinntekt gir ingen seksjoner til saksbehandler`() {
         withSøknad { besvar ->
-            besvar("20", 5.januar)
-            besvar("1", 5.januar)
-            besvar("2", 5.januar)
-            besvar("3", 5.januar)
-            besvar("10", 2.januar)
-            besvar("16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
+            besvar(dagensDato, 5.januar)
+            besvar(ønsketDato, 5.januar)
+            besvar(sisteDagMedArbeidsplikt, 5.januar)
+            besvar(sisteDagMedLønn, 5.januar)
+            besvar(søknadstidspunkt, 2.januar)
+            besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
 
             assertGjeldendeSeksjon("ytelsehistorikk")
-            besvar("29", false)
+            besvar(harHattDagpengerSiste36mnd, false)
 
             assertGjeldendeSeksjon("fangstOgFisk")
-            besvar("5", false)
+            besvar(fangstOgFisk, false)
 
             assertGjeldendeSeksjon("grunnbeløp")
-            besvar("8", 300000.årlig)
-            besvar("9", 150000.årlig)
+            besvar(G3, 300000.årlig)
+            besvar(G1_5, 150000.årlig)
 
             assertGjeldendeSeksjon("inntektsunntak")
-            besvar("11", false)
-            besvar("17", false)
+            besvar(verneplikt, false)
+            besvar(lærling, false)
 
             assertGjeldendeSeksjon("inntekter")
-            besvar("6", 2000000.årlig)
-            besvar("7", 5000000.årlig)
+            besvar(inntektSiste36mnd, 2000000.årlig)
+            besvar(inntektSiste12mnd, 5000000.årlig)
 
             assertGjeldendeSeksjon("rettighetstype")
-            besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
+            besvar(sluttårsaker, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
 
             assertTrue(gjeldendeResultat(), "gjeldende resultat er false")
         }
@@ -118,39 +138,39 @@ internal class AvslagPåMinsteinntektTest {
     @Test
     fun `De som har fangstOgFisk men ikke oppfyller kravet til minsteinntekt gir to oppgaver til saksbehandler`() {
         withSøknad { besvar ->
-            besvar("20", 5.januar)
-            besvar("1", 5.januar)
-            besvar("2", 5.januar)
-            besvar("3", 5.januar)
-            besvar("10", 2.januar)
-            besvar("16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
-            besvar("29", false)
+            besvar(dagensDato, 5.januar)
+            besvar(ønsketDato, 5.januar)
+            besvar(sisteDagMedArbeidsplikt, 5.januar)
+            besvar(sisteDagMedLønn, 5.januar)
+            besvar(søknadstidspunkt, 2.januar)
+            besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
+            besvar(harHattDagpengerSiste36mnd, false)
 
             assertGjeldendeSeksjon("fangstOgFisk")
-            besvar("5", true)
+            besvar(fangstOgFisk, true)
 
             assertGjeldendeSeksjon("grunnbeløp")
-            besvar("8", 300000.årlig)
-            besvar("9", 150000.årlig)
+            besvar(G3, 300000.årlig)
+            besvar(G1_5, 150000.årlig)
 
             assertGjeldendeSeksjon("inntektsunntak")
-            besvar("11", false)
-            besvar("17", false)
+            besvar(verneplikt, false)
+            besvar(lærling, false)
 
             assertGjeldendeSeksjon("inntekter")
-            besvar("6", 20000.årlig)
-            besvar("7", 5000.årlig)
+            besvar(inntektSiste36mnd, 20000.årlig)
+            besvar(inntektSiste12mnd, 5000.årlig)
 
             assertGjeldendeSeksjon("rettighetstype")
-            besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
+            besvar(sluttårsaker, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
 
             assertEquals(
                 "godkjenn rettighetstype",
                 testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
             )
-            besvar("28", true)
-            besvar("15", true)
-            besvar("12", true)
+            besvar(godkjenningRettighetstype, true)
+            besvar(godkjenningFangstOgFisk, true)
+            besvar(godkjenningVirkningstidspunkt, true)
 
             assertFalse(gjeldendeResultat())
         }
@@ -159,16 +179,16 @@ internal class AvslagPåMinsteinntektTest {
     @Test
     fun `Skal ikke gi oppgaver til saksbehandler når dagens dato er før virkningstidspunkt`() {
         withSøknad { besvar ->
-            besvar("20", 1.januar)
-            besvar("1", 5.januar)
-            besvar("2", 5.januar)
-            besvar("3", 5.januar)
-            besvar("10", 2.januar)
-            besvar("16", listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
-            besvar("21", 5.januar)
-            besvar("22", 5.februar)
-            besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
-            besvar("29", false)
+            besvar(dagensDato, 1.januar)
+            besvar(ønsketDato, 5.januar)
+            besvar(sisteDagMedArbeidsplikt, 5.januar)
+            besvar(sisteDagMedLønn, 5.januar)
+            besvar(søknadstidspunkt, 2.januar)
+            besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
+            besvar(inntektsrapporteringsperiodeFom, 5.januar)
+            besvar(inntektsrapporteringsperiodeTom, 5.februar)
+            besvar(sluttårsaker, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
+            besvar(harHattDagpengerSiste36mnd, false)
 
             assertFalse(gjeldendeResultat())
         }
@@ -177,15 +197,15 @@ internal class AvslagPåMinsteinntektTest {
     @Test
     fun `Skal gå videre om virkningstidspunkt er fram i tid i samme rapporteringsperiode`() {
         withSøknad { besvar ->
-            besvar("20", 12.januar)
-            besvar("1", 14.januar)
-            besvar("2", 5.januar)
-            besvar("3", 5.januar)
-            besvar("10", 12.januar)
-            besvar("16", listOf(listOf("18.1" to 1.januar, "19.1" to 30.januar)))
-            besvar("21", 5.januar)
-            besvar("22", 5.februar)
-            besvar("29", false)
+            besvar(dagensDato, 12.januar)
+            besvar(ønsketDato, 14.januar)
+            besvar(sisteDagMedArbeidsplikt, 5.januar)
+            besvar(sisteDagMedLønn, 5.januar)
+            besvar(søknadstidspunkt, 12.januar)
+            besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar, "19.1" to 30.januar)))
+            besvar(inntektsrapporteringsperiodeFom, 5.januar)
+            besvar(inntektsrapporteringsperiodeTom, 5.februar)
+            besvar(harHattDagpengerSiste36mnd, false)
 
             assertGjeldendeSeksjon("fangstOgFisk")
         }
@@ -194,16 +214,16 @@ internal class AvslagPåMinsteinntektTest {
     @Test
     fun `Skal ikke gå videre om virkningstidspunkt er fram i tid, men i annen rapporteringsperiode`() {
         withSøknad { besvar ->
-            besvar("20", 12.januar) // Dagens dato
-            besvar("1", 14.februar) // Ønsket dato
-            besvar("2", 5.januar)
-            besvar("3", 5.januar)
-            besvar("10", 12.januar) // Søknadstidspunkt
-            besvar("16", listOf(listOf("18.1" to 1.januar, "19.1" to 30.januar)))
-            besvar("21", 5.februar)
-            besvar("22", 5.mars)
-            besvar("23", listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
-            besvar("29", false)
+            besvar(dagensDato, 12.januar)
+            besvar(ønsketDato, 14.februar)
+            besvar(sisteDagMedArbeidsplikt, 5.januar)
+            besvar(sisteDagMedLønn, 5.januar)
+            besvar(søknadstidspunkt, 12.januar)
+            besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar, "19.1" to 30.januar)))
+            besvar(inntektsrapporteringsperiodeFom, 5.februar)
+            besvar(inntektsrapporteringsperiodeTom, 5.mars)
+            besvar(sluttårsaker, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
+            besvar(harHattDagpengerSiste36mnd, false)
 
             assertFalse(gjeldendeResultat())
         }
@@ -216,15 +236,16 @@ internal class AvslagPåMinsteinntektTest {
 
     private fun withSøknad(
         block: (
-            besvar: (faktumId: String, svar: Any) -> Unit,
+            besvar: (faktumId: Int, svar: Any) -> Unit,
         ) -> Unit
     ) {
         val søknadsId = søknad()
-        block { b: String, c: Any ->
+        block { b: Int, c: Any ->
+            val faktumId = b.toString()
             when (c) {
-                is Inntekt -> besvarInntekt(søknadsId, b, c)
-                is List<*> -> besvarGenerator(søknadsId, b, c as List<List<Pair<String, Any>>>)
-                else -> besvar(søknadsId, b, c)
+                is Inntekt -> besvarInntekt(søknadsId, faktumId, c)
+                is List<*> -> besvarGenerator(søknadsId, faktumId, c as List<List<Pair<String, Any>>>)
+                else -> besvar(søknadsId, faktumId, c)
             }
         }
     }
