@@ -23,10 +23,10 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.bareEnAv
-import no.nav.dagpenger.model.subsumsjon.eller
+import no.nav.dagpenger.model.subsumsjon.hvisGyldig
+import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
-import no.nav.dagpenger.model.subsumsjon.så
 import no.nav.dagpenger.model.subsumsjon.uansett
 
 // Forstår dagpengesøknaden
@@ -105,14 +105,14 @@ internal object AvslagPåMinsteinntekt {
             boolsk faktum "Svangerskapsrelaterte sykepenger" id svangerskapsrelaterteSykepenger avhengerAv svangerskapsrelaterteSykepenger
         )
     internal val rettighetstype = with(søknad) {
-        generator(sluttårsaker) med "sluttårsak".makro(
+        generator(sluttårsaker) med "sluttårsak".makro {
             "bare en av".bareEnAv(
                 boolsk(ordinær) er true,
                 boolsk(permittertFiskeforedling) er true,
                 boolsk(lønnsgaranti) er true,
                 boolsk(permittert) er true
             )
-        )
+        }
     }
     private val minsteArbeidsinntekt = with(søknad) {
         "minste arbeidsinntekt".minstEnAv(
@@ -123,42 +123,44 @@ internal object AvslagPåMinsteinntekt {
         ).ugyldigGodkjentAv(boolsk(godkjenningVirkningstidspunkt), boolsk(godkjenningRettighetstype))
     }
     private val meldtSomArbeidssøker = with(søknad) {
-        generator(registreringsperioder) har "periode".makro(
+        generator(registreringsperioder) har "periode".makro {
             dato(virkningstidspunkt) mellom dato(registrertArbeidsøkerPeriodeFom) og
                 dato(registrertArbeidsøkerPeriodeTom)
-        )
+        }
     }
     private val sjekkFangstOgFisk = with(søknad) {
-        "fangst og fisk er dokumentert" makro (
+        "fangst og fisk er dokumentert" makro {
             boolsk(fangstOgFisk) er false ugyldigGodkjentAv boolsk(godkjenningFangstOgFisk)
-            )
+        }
     }
     private val gjenopptak = with(søknad) {
-        "skal ha gjenopptak" makro (
-            boolsk(harHattDagpengerSiste36mnd) er true så (boolsk(periodeOppbrukt) er true)
-            )
+        "skal ha gjenopptak" makro {
+            boolsk(harHattDagpengerSiste36mnd) er true hvisGyldig { boolsk(periodeOppbrukt) er true }
+        }
     }
     private val sjekkSykepenger = with(søknad) {
-        "svangerskapsrelaterte sykepenger" makro (
-            boolsk(sykepengerSiste36mnd) er false eller (boolsk(svangerskapsrelaterteSykepenger) er true)
-            )
+        "svangerskapsrelaterte sykepenger" makro {
+            boolsk(sykepengerSiste36mnd) er false hvisUgyldig { boolsk(svangerskapsrelaterteSykepenger) er true }
+        }
     }
     private val sjekkVirkningstidspunkt = with(søknad) {
-        "søker på riktig tidspunkt" makro (
-            dato(dagensDato) ikkeFør dato(virkningstidspunkt) eller (
+        "søker på riktig tidspunkt" makro {
+            dato(dagensDato) ikkeFør dato(virkningstidspunkt) hvisUgyldig {
                 dato(dagensDato) mellom dato(inntektsrapporteringsperiodeFom) og dato(inntektsrapporteringsperiodeTom)
-                )
-            )
+            }
+        }
     }
     private val minsteArbeidsinntektMedVirkningstidspunkt =
-        sjekkVirkningstidspunkt så (
-            sjekkFangstOgFisk uansett (sjekkSykepenger så minsteArbeidsinntekt)
-            )
-    private val inngangsvilkår = gjenopptak eller "inngangsvilkår".alle(
-        minsteArbeidsinntektMedVirkningstidspunkt,
-        meldtSomArbeidssøker,
-        rettighetstype
-    )
+        sjekkVirkningstidspunkt hvisGyldig {
+            sjekkFangstOgFisk uansett { sjekkSykepenger hvisGyldig { minsteArbeidsinntekt } }
+        }
+    private val inngangsvilkår = gjenopptak hvisUgyldig {
+        "inngangsvilkår".alle(
+            minsteArbeidsinntektMedVirkningstidspunkt,
+            meldtSomArbeidssøker,
+            rettighetstype
+        )
+    }
     private val oppstart = with(søknad) {
         Seksjon(
             "oppstart",

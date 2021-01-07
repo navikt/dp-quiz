@@ -22,10 +22,10 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
-import no.nav.dagpenger.model.subsumsjon.eller
+import no.nav.dagpenger.model.subsumsjon.hvisGyldig
+import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
-import no.nav.dagpenger.model.subsumsjon.så
 import no.nav.dagpenger.model.subsumsjon.uansett
 
 private val prototypeSøknad1 = Søknad(
@@ -51,7 +51,6 @@ private val prototypeSøknad1 = Søknad(
     boolsk faktum "f19" id 19 avhengerAv 2 og 13,
     maks dato "345" av 3 og 4 og 5 id 345
 )
-
 private val p1Boolean = prototypeSøknad1 boolsk 1
 private val p2Dato = prototypeSøknad1 dato 2
 private val p3Dato = prototypeSøknad1 dato 3
@@ -72,40 +71,34 @@ private val p16Int = prototypeSøknad1 heltall 16
 private val p17Boolean = prototypeSøknad1 boolsk 17
 private val p18Boolean = prototypeSøknad1 boolsk 18
 private val p19Boolean = prototypeSøknad1 boolsk 19
-
 private val datosjekk = "datosjekk".alle(
     p1Boolean er true,
     p2Dato etter p_3_4_5Dato,
     p3Dato før p4Dato
 )
-
-private val dokumentOpplastning = "dokumentopplastning" makro (
-    p10Boolean er true eller (p12Boolean av p11Dokument)
-    )
-
+private val dokumentOpplastning = "dokumentopplastning" makro {
+    p10Boolean er true hvisUgyldig { p12Boolean av p11Dokument }
+}
 private val inntektValidering = "inntektvalidering".minstEnAv(
     p6Inntekt minst p8Inntekt,
     p7Inntekt minst p9Inntekt
 )
-
-private val alderSjekk = "aldersjekk" makro (
-    p16Int under 18 så (p17Boolean er true)
-    )
-
-private val personerGodkjenning = p15Int med alderSjekk uansett (p14Boolean er true)
+private val alderSjekk = "aldersjekk" makro {
+    p16Int under 18 hvisGyldig { p17Boolean er true }
+}
+private val personerGodkjenning = p15Int med alderSjekk uansett { p14Boolean er true }
 
 /* ktlint-disable parameter-list-wrapping */
 private val prototypeSubsumsjon =
-    datosjekk så (
-        dokumentOpplastning så (
-            inntektValidering så (
+    datosjekk hvisGyldig {
+        dokumentOpplastning hvisGyldig {
+            inntektValidering hvisGyldig {
                 personerGodkjenning
-                )
-            ) eller (
+            }
+        } hvisUgyldig {
             (p2Dato etter p13Dato) gyldigGodkjentAv p19Boolean
-            )
-        )
-
+        }
+    }
 private val prototypeSeksjon1 = Seksjon("seksjon1", Rolle.nav, p1Boolean, p2Dato)
 private val prototypeSeksjon2 = Seksjon("seksjon2", Rolle.nav, p6Inntekt, p7Inntekt, p8Inntekt, p9Inntekt)
 private val prototypeSeksjon3 = Seksjon("seksjon3", Rolle.nav, p15Int, p16Int)
@@ -117,7 +110,6 @@ private val prototypeSeksjon8 =
     Seksjon("seksjon8", Rolle.saksbehandler, p6Inntekt, p7Inntekt, p12Boolean, p14Boolean, p16Int, p19Boolean)
 private val prototypeSeksjon9 =
     Seksjon("seksjon9", Rolle.saksbehandler, p3Dato, p4Dato, p5Dato, p_3_4_5Dato, p13Dato)
-
 private val webPrototypeFaktagrupper: Søknadprosess =
     Søknadprosess(
         prototypeSeksjon1,
@@ -130,7 +122,6 @@ private val webPrototypeFaktagrupper: Søknadprosess =
         prototypeSeksjon8,
         prototypeSeksjon9
     )
-
 internal lateinit var seksjon1: Seksjon
 internal lateinit var seksjon2: Seksjon
 internal lateinit var seksjon3: Seksjon
@@ -140,13 +131,11 @@ internal lateinit var seksjon6: Seksjon
 internal lateinit var seksjon7: Seksjon
 internal lateinit var seksjon8: Seksjon
 internal lateinit var rootSubsumsjon: Subsumsjon
-
-private val søknadprosessTestBygger = Versjon.Bygger(prototypeSøknad1, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
+private val søknadprosessTestBygger =
+    Versjon.Bygger(prototypeSøknad1, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
 
 internal class NyttEksempel() {
-
     internal val søknadprosess: Søknadprosess by lazy {
-
         søknadprosessTestBygger.søknadprosess(testPerson, Web).also {
             seksjon1 = it[0]
             seksjon2 = it[1]

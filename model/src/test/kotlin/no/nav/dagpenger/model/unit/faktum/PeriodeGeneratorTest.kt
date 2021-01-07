@@ -33,9 +33,9 @@ class PeriodeGeneratorTest {
             dato faktum "tom" id 3,
             dato faktum "ønsket dato" id 4
         )
-        val prototypeSubsumsjon = søknadPrototype generator 1 har "periode".makro(
+        val prototypeSubsumsjon = søknadPrototype generator 1 har "periode".makro {
             søknadPrototype.dato(4) mellom søknadPrototype.dato(2) og søknadPrototype.dato(3)
-        )
+        }
 
         val prototypeSøknadprosess = Søknadprosess(
             Seksjon(

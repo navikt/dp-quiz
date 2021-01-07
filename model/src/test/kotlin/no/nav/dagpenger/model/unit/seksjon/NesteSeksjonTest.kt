@@ -9,32 +9,29 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
-import no.nav.dagpenger.model.subsumsjon.så
+import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class NesteSeksjonTest {
-
     @Test
     fun ` neste seksjon bug - rolle ble kopiert fra avehengig faktum til seksjon `() {
         val prototypesøknad = Søknad(
             0,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1
-
         )
-
-        val prototypeSubsumsjon = prototypesøknad.boolsk(1) er true så
-            (prototypesøknad.boolsk(2) er true)
-
+        val prototypeSubsumsjon = prototypesøknad.boolsk(1) er true hvisGyldig {
+            prototypesøknad.boolsk(2) er true
+        }
         val prototypeSøknadprosess = Søknadprosess(
             prototypesøknad,
             Seksjon("nav", Rolle.nav, prototypesøknad.boolsk(2)),
             Seksjon("søker", Rolle.søker, prototypesøknad.boolsk(1)),
             rootSubsumsjon = prototypeSubsumsjon
         )
-
-        val fakta = Versjon.Bygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess)).søknadprosess(testPerson, Web)
+        val fakta = Versjon.Bygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
+            .søknadprosess(testPerson, Web)
 
         assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
     }
@@ -45,12 +42,10 @@ class NesteSeksjonTest {
             401,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1
-
         )
-
-        val prototypeSubsumsjon = prototypesøknad.boolsk(1) er true så
-            (prototypesøknad.boolsk(2) er true)
-
+        val prototypeSubsumsjon = prototypesøknad.boolsk(1) er true hvisGyldig {
+            prototypesøknad.boolsk(2) er true
+        }
         val prototypeSøknadprosess = Søknadprosess(
             prototypesøknad,
             Seksjon("søker1", Rolle.søker, prototypesøknad.boolsk(2)),
@@ -58,8 +53,9 @@ class NesteSeksjonTest {
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        Versjon.Bygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess)).søknadprosess(testPerson, Web).also { fakta ->
-            assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
-        }
+        Versjon.Bygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
+            .søknadprosess(testPerson, Web).also { fakta ->
+                assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
+            }
     }
 }

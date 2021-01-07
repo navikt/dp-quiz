@@ -68,6 +68,7 @@ abstract class Subsumsjon protected constructor(
     internal fun ugyldig(child: Subsumsjon) {
         this.ugyldigSubsumsjon = child
     }
+
     internal fun mulige(): Subsumsjon = this.deepCopy()._mulige()
 
     internal open fun _mulige(): Subsumsjon = this.also { copy ->
@@ -220,19 +221,16 @@ fun String.minstEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon {
 
 fun String.bareEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon = BareEnAvSubsumsjon(this, subsumsjoner.toList())
 
-infix fun Subsumsjon.så(child: Subsumsjon): Subsumsjon {
-    return this.also { this.gyldig(child) }
-}
+infix fun Subsumsjon.hvisGyldig(block: SubsumsjonGenerator) = this.also { this.gyldig(block()) }
+infix fun Subsumsjon.hvisUgyldig(block: SubsumsjonGenerator) = this.also { this.ugyldig(block()) }
+infix fun String.makro(block: SubsumsjonGenerator) = MakroSubsumsjon(this, block())
 
-infix fun Subsumsjon.eller(child: Subsumsjon): Subsumsjon {
-    return this.also { this.ugyldig(child) }
-}
-
-infix fun Subsumsjon.uansett(child: Subsumsjon): Subsumsjon {
+infix fun Subsumsjon.uansett(block: SubsumsjonGenerator): Subsumsjon {
+    val child = block()
     return this.also {
         this.gyldig(child)
         this.ugyldig(child)
     }
 }
 
-infix fun String.makro(child: Subsumsjon) = MakroSubsumsjon(this, child)
+typealias SubsumsjonGenerator = () -> Subsumsjon
