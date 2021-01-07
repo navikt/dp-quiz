@@ -67,6 +67,8 @@ internal object AvslagPåMinsteinntekt {
     const val godkjenningRettighetstype = 28
     const val harHattDagpengerSiste36mnd = 29
     const val periodeOppbrukt = 30
+    const val sykepengerSiste36mnd = 31
+    const val svangerskapsrelaterteSykepenger = 32
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -99,7 +101,9 @@ internal object AvslagPåMinsteinntekt {
             boolsk faktum "PermittertFiskeforedling" id permittertFiskeforedling,
             boolsk faktum "Godkjenning rettighetstype" id godkjenningRettighetstype avhengerAv sluttårsaker,
             boolsk faktum "Har hatt dagpenger siste 36mnd" id harHattDagpengerSiste36mnd avhengerAv virkningstidspunkt,
-            boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbrukt avhengerAv harHattDagpengerSiste36mnd
+            boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbrukt avhengerAv harHattDagpengerSiste36mnd,
+            boolsk faktum "Sykepenger siste 36 mnd" id sykepengerSiste36mnd avhengerAv virkningstidspunkt,
+            boolsk faktum "Svangerskapsrelaterte sykepenger" id svangerskapsrelaterteSykepenger avhengerAv svangerskapsrelaterteSykepenger
         )
     internal val rettighetstype = with(søknad) {
         generator(sluttårsaker) med "sluttårsak".makro(
@@ -135,6 +139,13 @@ internal object AvslagPåMinsteinntekt {
             boolsk(harHattDagpengerSiste36mnd) er true så (boolsk(periodeOppbrukt) er true)
             )
     }
+
+    private val sjekkSykepenger = with(søknad) {
+        "svangerskapsrelaterte sykepenger" makro (
+            boolsk(sykepengerSiste36mnd) er false eller (boolsk(svangerskapsrelaterteSykepenger) er true)
+            )
+    }
+
     private val sjekkVirkningstidspunkt = with(søknad) {
         "søker på riktig tidspunkt" makro (
             dato(dagensDato) ikkeFør dato(virkningstidspunkt) eller (
@@ -144,8 +155,9 @@ internal object AvslagPåMinsteinntekt {
     }
     private val minsteArbeidsinntektMedVirkningstidspunkt =
         sjekkVirkningstidspunkt så (
-            sjekkFangstOgFisk uansett (minsteArbeidsinntekt)
+            sjekkFangstOgFisk uansett (sjekkSykepenger så minsteArbeidsinntekt)
             )
+
     private val inngangsvilkår = gjenopptak eller "inngangsvilkår".alle(
         minsteArbeidsinntektMedVirkningstidspunkt,
         meldtSomArbeidssøker,
@@ -185,7 +197,8 @@ internal object AvslagPåMinsteinntekt {
         Seksjon(
             "ytelsehistorikk",
             Rolle.nav,
-            boolsk(harHattDagpengerSiste36mnd)
+            boolsk(harHattDagpengerSiste36mnd),
+            boolsk(sykepengerSiste36mnd)
         )
     }
     private val inntektsunntak = with(søknad) {
@@ -248,6 +261,7 @@ internal object AvslagPåMinsteinntekt {
             "manuell",
             Rolle.manuell,
             boolsk(periodeOppbrukt),
+            boolsk(svangerskapsrelaterteSykepenger)
         )
     }
     internal val søknadprosess: Søknadprosess =
@@ -290,7 +304,8 @@ internal object AvslagPåMinsteinntekt {
                 permittert to "Permittert",
                 lønnsgaranti to "Lønnsgaranti",
                 permittertFiskeforedling to "PermittertFiskeforedling",
-                harHattDagpengerSiste36mnd to "HarHattDagpengerSiste36Mnd"
+                harHattDagpengerSiste36mnd to "HarHattDagpengerSiste36Mnd",
+                sykepengerSiste36mnd to "SykepengerSiste36Måneder"
             )
         )
     private val versjon = Versjon.Bygger(

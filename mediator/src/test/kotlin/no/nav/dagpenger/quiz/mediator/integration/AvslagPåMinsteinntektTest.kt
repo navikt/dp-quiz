@@ -28,6 +28,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.registrering
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.sisteDagMedArbeidsplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.sisteDagMedLønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.sluttårsaker
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.søknadstidspunkt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.ønsketDato
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
@@ -70,6 +72,7 @@ internal class AvslagPåMinsteinntektTest {
 
             assertGjeldendeSeksjon("ytelsehistorikk")
             besvar(harHattDagpengerSiste36mnd, false)
+            besvar(sykepengerSiste36mnd, false)
 
             assertGjeldendeSeksjon("fangstOgFisk")
             besvar(fangstOgFisk, false)
@@ -95,7 +98,7 @@ internal class AvslagPåMinsteinntektTest {
             assertEquals("godkjenn virkningstidspunkt", testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText())
 
             besvar(godkjenningVirkningstidspunkt, true)
-            assertEquals(25, testRapid.inspektør.size)
+            assertEquals(26, testRapid.inspektør.size)
             assertFalse(gjeldendeResultat())
         }
     }
@@ -112,6 +115,7 @@ internal class AvslagPåMinsteinntektTest {
 
             assertGjeldendeSeksjon("ytelsehistorikk")
             besvar(harHattDagpengerSiste36mnd, false)
+            besvar(sykepengerSiste36mnd, false)
 
             assertGjeldendeSeksjon("fangstOgFisk")
             besvar(fangstOgFisk, false)
@@ -145,6 +149,7 @@ internal class AvslagPåMinsteinntektTest {
             besvar(søknadstidspunkt, 2.januar)
             besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
             besvar(harHattDagpengerSiste36mnd, false)
+            besvar(sykepengerSiste36mnd, false)
 
             assertGjeldendeSeksjon("fangstOgFisk")
             besvar(fangstOgFisk, true)
@@ -189,6 +194,7 @@ internal class AvslagPåMinsteinntektTest {
             besvar(inntektsrapporteringsperiodeTom, 5.februar)
             besvar(sluttårsaker, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
             besvar(harHattDagpengerSiste36mnd, false)
+            besvar(sykepengerSiste36mnd, false)
 
             assertFalse(gjeldendeResultat())
         }
@@ -206,6 +212,7 @@ internal class AvslagPåMinsteinntektTest {
             besvar(inntektsrapporteringsperiodeFom, 5.januar)
             besvar(inntektsrapporteringsperiodeTom, 5.februar)
             besvar(harHattDagpengerSiste36mnd, false)
+            besvar(sykepengerSiste36mnd, false)
 
             assertGjeldendeSeksjon("fangstOgFisk")
         }
@@ -224,8 +231,29 @@ internal class AvslagPåMinsteinntektTest {
             besvar(inntektsrapporteringsperiodeTom, 5.mars)
             besvar(sluttårsaker, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
             besvar(harHattDagpengerSiste36mnd, false)
+            besvar(sykepengerSiste36mnd, false)
 
             assertFalse(gjeldendeResultat())
+        }
+    }
+
+    @Disabled
+    @Test
+    fun `Skal ikke gi oppgaver til saksbehandler hvis har sykepenger`() {
+        withSøknad { besvar ->
+            besvar(dagensDato, 5.januar)
+            besvar(ønsketDato, 5.januar)
+            besvar(sisteDagMedArbeidsplikt, 5.januar)
+            besvar(sisteDagMedLønn, 5.januar)
+            besvar(søknadstidspunkt, 2.januar)
+            besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
+
+            besvar(sluttårsaker, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
+            besvar(harHattDagpengerSiste36mnd, false)
+            besvar(sykepengerSiste36mnd, true)
+            besvar(fangstOgFisk, false)
+
+            assertGjeldendeSeksjon("manuell")
         }
     }
 
