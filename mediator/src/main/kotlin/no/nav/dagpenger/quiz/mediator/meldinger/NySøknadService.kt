@@ -1,7 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
 import mu.KotlinLogging
-import mu.withLoggingContext
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
