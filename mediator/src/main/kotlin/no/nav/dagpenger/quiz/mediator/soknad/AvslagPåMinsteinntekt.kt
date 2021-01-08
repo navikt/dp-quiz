@@ -39,7 +39,6 @@ internal object AvslagPåMinsteinntekt {
     }
 
     const val ønsketDato = 1
-    const val sisteDagMedArbeidsplikt = 2
     const val sisteDagMedLønn = 3
     const val virkningstidspunkt = 4
     const val fangstOgFisk = 5
@@ -49,7 +48,7 @@ internal object AvslagPåMinsteinntekt {
     const val G1_5 = 9
     const val søknadstidspunkt = 10
     const val verneplikt = 11
-    const val godkjenningVirkningstidspunkt = 12
+    const val godkjenningSisteDagMedLønn = 12
     const val innsendtSøknadsId = 14
     const val godkjenningFangstOgFisk = 15
     const val registreringsperioder = 16
@@ -73,9 +72,8 @@ internal object AvslagPåMinsteinntekt {
         get() = Søknad(
             VERSJON_ID,
             dato faktum "Ønsker dagpenger fra dato" id ønsketDato avhengerAv innsendtSøknadsId,
-            dato faktum "Siste dag med arbeidsplikt" id sisteDagMedArbeidsplikt avhengerAv innsendtSøknadsId,
             dato faktum "Siste dag med lønn" id sisteDagMedLønn avhengerAv innsendtSøknadsId,
-            maks dato "Virkningstidspunkt" av ønsketDato og sisteDagMedArbeidsplikt og sisteDagMedLønn og søknadstidspunkt id virkningstidspunkt,
+            maks dato "Virkningstidspunkt" av ønsketDato og sisteDagMedLønn og søknadstidspunkt id virkningstidspunkt,
             boolsk faktum "Driver med fangst og fisk" id fangstOgFisk avhengerAv innsendtSøknadsId,
             inntekt faktum "Inntekt siste 36 mnd" id inntektSiste36mnd avhengerAv virkningstidspunkt og fangstOgFisk,
             inntekt faktum "Inntekt siste 12 mnd" id inntektSiste12mnd avhengerAv virkningstidspunkt og fangstOgFisk,
@@ -83,7 +81,7 @@ internal object AvslagPåMinsteinntekt {
             inntekt faktum "1,5G" id G1_5 avhengerAv virkningstidspunkt,
             dato faktum "Søknadstidspunkt" id søknadstidspunkt avhengerAv innsendtSøknadsId,
             boolsk faktum "Verneplikt" id verneplikt avhengerAv innsendtSøknadsId,
-            boolsk faktum "Godjenning av virkingstidspunkt" id godkjenningVirkningstidspunkt avhengerAv virkningstidspunkt og dagensDato,
+            boolsk faktum "Godjenning av siste dag med lønn" id godkjenningSisteDagMedLønn avhengerAv sisteDagMedLønn og dagensDato,
             dokument faktum "Innsendt søknadsId" id innsendtSøknadsId,
             boolsk faktum "Godkjenning av dokumentasjon for fangst og fisk" id godkjenningFangstOgFisk avhengerAv fangstOgFisk,
             heltall faktum "Antall arbeidsøker registeringsperioder" id registreringsperioder genererer registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom,
@@ -120,7 +118,7 @@ internal object AvslagPåMinsteinntekt {
             inntekt(inntektSiste12mnd) minst inntekt(G1_5),
             boolsk(verneplikt) er true,
             boolsk(lærling) er true
-        ).ugyldigGodkjentAv(boolsk(godkjenningVirkningstidspunkt), boolsk(godkjenningRettighetstype))
+        ).ugyldigGodkjentAv(boolsk(godkjenningSisteDagMedLønn), boolsk(godkjenningRettighetstype))
     }
     private val meldtSomArbeidssøker = with(søknad) {
         generator(registreringsperioder) har "periode".makro(
@@ -184,7 +182,6 @@ internal object AvslagPåMinsteinntekt {
             Rolle.nav,
             dato(ønsketDato),
             dato(søknadstidspunkt),
-            dato(sisteDagMedArbeidsplikt),
             dato(sisteDagMedLønn),
             dato(registrertArbeidsøkerPeriodeFom),
             dato(registrertArbeidsøkerPeriodeTom),
@@ -226,7 +223,7 @@ internal object AvslagPåMinsteinntekt {
         Seksjon(
             "godkjenn virkningstidspunkt",
             Rolle.saksbehandler,
-            boolsk(godkjenningVirkningstidspunkt)
+            boolsk(godkjenningSisteDagMedLønn)
         )
     }
     private val godkjennFangstOgFisk = with(søknad) {
@@ -288,7 +285,6 @@ internal object AvslagPåMinsteinntekt {
         FaktumNavBehov(
             mapOf(
                 ønsketDato to "ØnskerDagpengerFraDato",
-                sisteDagMedArbeidsplikt to "SisteDagMedArbeidsplikt",
                 sisteDagMedLønn to "SisteDagMedLønn",
                 virkningstidspunkt to "Virkningstidspunkt",
                 fangstOgFisk to "FangstOgFiske",

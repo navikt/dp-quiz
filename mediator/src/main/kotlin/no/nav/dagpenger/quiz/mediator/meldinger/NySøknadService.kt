@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.Configuration
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.innsendtSøknadsId
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -43,7 +44,7 @@ internal class NySøknadService(
         søknadPersistence.ny(identer, faktagrupperType, versjonId)
             .also { søknadprosess ->
                 // TODO: Fikse dette
-                søknadprosess.dokument(14).besvar(Dokument(LocalDateTime.now(), url = søknadsId))
+                søknadprosess.dokument(innsendtSøknadsId).besvar(Dokument(LocalDateTime.now(), url = søknadsId))
                 søknadPersistence.lagre(søknadprosess.søknad)
 
                 log.info { "Opprettet ny søknadprosess ${søknadprosess.søknad.uuid} på grunn av søknad $søknadsId" }
