@@ -100,7 +100,7 @@ internal object AvslagPåMinsteinntekt {
             boolsk faktum "Har hatt dagpenger siste 36mnd" id harHattDagpengerSiste36mnd avhengerAv virkningstidspunkt,
             boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbrukt avhengerAv harHattDagpengerSiste36mnd,
             boolsk faktum "Sykepenger siste 36 mnd" id sykepengerSiste36mnd avhengerAv virkningstidspunkt,
-            boolsk faktum "Svangerskapsrelaterte sykepenger" id svangerskapsrelaterteSykepenger avhengerAv svangerskapsrelaterteSykepenger,
+            boolsk faktum "Svangerskapsrelaterte sykepenger" id svangerskapsrelaterteSykepenger avhengerAv sykepengerSiste36mnd,
             boolsk faktum "Fangst og fisk manuell" id fangstFiskManuell avhengerAv fangstOgFisk
         )
     internal val rettighetstype = with(søknad) {
