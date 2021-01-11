@@ -158,6 +158,41 @@ internal class AvslagPåMinsteinntektTest {
     }
 
     @Test
+    fun `De som har vært lærling gir ingen seksjoner til saksbehandler`() {
+        withSøknad { besvar ->
+            besvar(dagensDato, 5.januar)
+            besvar(ønsketDato, 5.januar)
+            besvar(sisteDagMedLønn, 5.januar)
+            besvar(søknadstidspunkt, 2.januar)
+            besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
+
+            assertGjeldendeSeksjon("ytelsehistorikk")
+            besvar(harHattDagpengerSiste36mnd, false)
+            besvar(sykepengerSiste36mnd, false)
+
+            assertGjeldendeSeksjon("fangstOgFisk")
+            besvar(fangstOgFisk, false)
+
+            assertGjeldendeSeksjon("grunnbeløp")
+            besvar(G3, 300000.årlig)
+            besvar(G1_5, 150000.årlig)
+
+            assertGjeldendeSeksjon("inntektsunntak")
+            besvar(verneplikt, false)
+            besvar(lærling, true)
+
+            assertGjeldendeSeksjon("inntekter")
+            besvar(inntektSiste36mnd, 20000.årlig)
+            besvar(inntektSiste12mnd, 5000.årlig)
+
+            assertGjeldendeSeksjon("rettighetstype")
+            besvar(sluttårsaker, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
+
+            assertTrue(gjeldendeResultat(), "gjeldende resultat er false")
+        }
+    }
+
+    @Test
     fun `De som har fangstOgFisk men ikke oppfyller kravet til minsteinntekt gir to oppgaver til saksbehandler`() {
         withSøknad { besvar ->
             besvar(dagensDato, 5.januar)
