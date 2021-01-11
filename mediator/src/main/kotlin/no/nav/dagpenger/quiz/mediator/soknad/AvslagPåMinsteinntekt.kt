@@ -50,7 +50,6 @@ internal object AvslagPåMinsteinntekt {
     const val verneplikt = 11
     const val godkjenningSisteDagMedLønn = 12
     const val innsendtSøknadsId = 14
-    const val godkjenningFangstOgFisk = 15
     const val registreringsperioder = 16
     const val lærling = 17
     const val registrertArbeidsøkerPeriodeFom = 18
@@ -68,6 +67,8 @@ internal object AvslagPåMinsteinntekt {
     const val periodeOppbrukt = 30
     const val sykepengerSiste36mnd = 31
     const val svangerskapsrelaterteSykepenger = 32
+    const val fangstFiskManuell = 33
+
     internal val søknad: Søknad
         get() = Søknad(
             VERSJON_ID,
@@ -83,7 +84,6 @@ internal object AvslagPåMinsteinntekt {
             boolsk faktum "Verneplikt" id verneplikt avhengerAv innsendtSøknadsId,
             boolsk faktum "Godjenning av siste dag med lønn" id godkjenningSisteDagMedLønn avhengerAv sisteDagMedLønn og dagensDato,
             dokument faktum "Innsendt søknadsId" id innsendtSøknadsId,
-            boolsk faktum "Godkjenning av dokumentasjon for fangst og fisk" id godkjenningFangstOgFisk avhengerAv fangstOgFisk,
             heltall faktum "Antall arbeidsøker registeringsperioder" id registreringsperioder genererer registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom,
             boolsk faktum "Lærling" id lærling,
             dato faktum "fom" id registrertArbeidsøkerPeriodeFom,
@@ -100,7 +100,8 @@ internal object AvslagPåMinsteinntekt {
             boolsk faktum "Har hatt dagpenger siste 36mnd" id harHattDagpengerSiste36mnd avhengerAv virkningstidspunkt,
             boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbrukt avhengerAv harHattDagpengerSiste36mnd,
             boolsk faktum "Sykepenger siste 36 mnd" id sykepengerSiste36mnd avhengerAv virkningstidspunkt,
-            boolsk faktum "Svangerskapsrelaterte sykepenger" id svangerskapsrelaterteSykepenger avhengerAv svangerskapsrelaterteSykepenger
+            boolsk faktum "Svangerskapsrelaterte sykepenger" id svangerskapsrelaterteSykepenger avhengerAv svangerskapsrelaterteSykepenger,
+            boolsk faktum "Fangst og fisk manuell" id fangstFiskManuell avhengerAv fangstOgFisk
         )
     internal val rettighetstype = with(søknad) {
         generator(sluttårsaker) med "sluttårsak".makro(
@@ -128,7 +129,7 @@ internal object AvslagPåMinsteinntekt {
     }
     private val sjekkFangstOgFisk = with(søknad) {
         "fangst og fisk er dokumentert" makro (
-            boolsk(fangstOgFisk) er false ugyldigGodkjentAv boolsk(godkjenningFangstOgFisk)
+            boolsk(fangstOgFisk) er true så (boolsk(fangstFiskManuell) er true)
             )
     }
     private val gjenopptak = with(søknad) {
@@ -226,13 +227,6 @@ internal object AvslagPåMinsteinntekt {
             boolsk(godkjenningSisteDagMedLønn)
         )
     }
-    private val godkjennFangstOgFisk = with(søknad) {
-        Seksjon(
-            "godkjenn fangst og fisk",
-            Rolle.saksbehandler,
-            boolsk(godkjenningFangstOgFisk)
-        )
-    }
     internal val arbeidsforholdNav = with(søknad) {
         Seksjon(
             "rettighetstype",
@@ -265,6 +259,13 @@ internal object AvslagPåMinsteinntekt {
             boolsk(svangerskapsrelaterteSykepenger)
         )
     }
+    private val manuellFangstOgFisk = with(søknad) {
+        Seksjon(
+            "fangst og fisk manuell",
+            Rolle.manuell,
+            boolsk(fangstFiskManuell)
+        )
+    }
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             oppstart,
@@ -273,13 +274,13 @@ internal object AvslagPåMinsteinntekt {
             ytelseshistorikk,
             inntektsunntak,
             fangstOgfisk,
-            godkjennFangstOgFisk,
             inntekter,
             godkjennDato,
             arbeidsforholdNav,
             arbeidsforholdSaksbehandler,
             manuellGjenopptak,
-            manuellSykepenger
+            manuellSykepenger,
+            manuellFangstOgFisk
         )
     private val faktumNavBehov =
         FaktumNavBehov(
