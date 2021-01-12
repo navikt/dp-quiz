@@ -102,6 +102,7 @@ internal class SaksbehandlerJsonBuilderTest {
         assertEquals(2, json["fakta"].size())
         assertEquals("2", json["fakta"][0]["id"].asText())
         assertEquals("Oversatt tekst", json["fakta"][0]["navn"].asText())
+        assertEquals("boolean", json["fakta"][0]["type"].asText())
         assertEquals(Locale("nn", "NO"), mockBundle.lokal)
         assertEquals(
             setOf(Rolle.saksbehandler.typeNavn),
