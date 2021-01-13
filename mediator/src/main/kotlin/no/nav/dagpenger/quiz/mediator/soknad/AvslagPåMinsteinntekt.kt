@@ -128,9 +128,9 @@ internal object AvslagPåMinsteinntekt {
         }
     }
     private val sjekkFangstOgFisk = with(søknad) {
-        "fangst og fisk er dokumentert" makro (
-            boolsk(fangstOgFisk) er true så (boolsk(fangstFiskManuell) er true)
-            )
+        "fangst og fisk" makro {
+            boolsk(fangstOgFisk) er true hvisGyldig { boolsk(fangstFiskManuell) er true }
+        }
     }
     private val gjenopptak = with(søknad) {
         "skal ha gjenopptak" makro {
@@ -150,15 +150,17 @@ internal object AvslagPåMinsteinntekt {
         }
     }
     private val minsteArbeidsinntektMedVirkningstidspunkt =
-        sjekkFangstOgFisk uansett (sjekkSykepenger så minsteArbeidsinntekt)
+        sjekkFangstOgFisk uansett { sjekkSykepenger hvisGyldig { minsteArbeidsinntekt } }
 
-    private val inngangsvilkår = sjekkVirkningstidspunkt så (
-        gjenopptak eller "inngangsvilkår".alle(
-            minsteArbeidsinntektMedVirkningstidspunkt,
-            meldtSomArbeidssøker,
-            rettighetstype
-        )
-        )
+    private val inngangsvilkår = sjekkVirkningstidspunkt hvisGyldig {
+        gjenopptak hvisUgyldig {
+            "inngangsvilkår".alle(
+                minsteArbeidsinntektMedVirkningstidspunkt,
+                meldtSomArbeidssøker,
+                rettighetstype
+            )
+        }
+    }
 
     private val oppstart = with(søknad) {
         Seksjon(
