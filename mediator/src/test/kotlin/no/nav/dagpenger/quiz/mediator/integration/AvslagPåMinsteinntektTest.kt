@@ -15,9 +15,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.G1_5
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.G3
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.dagensDato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.fangstOgFisk
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.godkjenningFangstOgFisk
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.godkjenningRettighetstype
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.godkjenningVirkningstidspunkt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.godkjenningSisteDagMedLønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.inntektSiste36mnd
@@ -25,7 +24,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.inntektsrapp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.registreringsperioder
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.sisteDagMedArbeidsplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.sisteDagMedLønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.sluttårsaker
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.sykepengerSiste36mnd
@@ -64,7 +62,6 @@ internal class AvslagPåMinsteinntektTest {
         withSøknad { besvar ->
             besvar(dagensDato, 5.januar)
             besvar(ønsketDato, 5.januar)
-            besvar(sisteDagMedArbeidsplikt, 5.januar)
             besvar(sisteDagMedLønn, 5.januar)
             besvar(søknadstidspunkt, 2.januar)
             besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
@@ -99,8 +96,8 @@ internal class AvslagPåMinsteinntektTest {
                 testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText()
             )
 
-            besvar(godkjenningVirkningstidspunkt, true)
-            assertEquals(26, testRapid.inspektør.size)
+            besvar(godkjenningSisteDagMedLønn, true)
+            assertEquals(22, testRapid.inspektør.size)
             assertFalse(gjeldendeResultat())
         }
     }
@@ -110,7 +107,6 @@ internal class AvslagPåMinsteinntektTest {
         withSøknad { besvar ->
             besvar(dagensDato, 5.januar)
             besvar(ønsketDato, 5.januar)
-            besvar(sisteDagMedArbeidsplikt, 5.januar)
             besvar(sisteDagMedLønn, 5.januar)
             besvar(søknadstidspunkt, 2.januar)
             besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
@@ -130,7 +126,6 @@ internal class AvslagPåMinsteinntektTest {
         withSøknad { besvar ->
             besvar(dagensDato, 5.januar)
             besvar(ønsketDato, 5.januar)
-            besvar(sisteDagMedArbeidsplikt, 5.januar)
             besvar(sisteDagMedLønn, 5.januar)
             besvar(søknadstidspunkt, 2.januar)
             besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
@@ -162,19 +157,20 @@ internal class AvslagPåMinsteinntektTest {
     }
 
     @Test
-    fun `De som har fangstOgFisk men ikke oppfyller kravet til minsteinntekt gir to oppgaver til saksbehandler`() {
+    fun `De som har vært lærling gir ingen seksjoner til saksbehandler`() {
         withSøknad { besvar ->
             besvar(dagensDato, 5.januar)
             besvar(ønsketDato, 5.januar)
-            besvar(sisteDagMedArbeidsplikt, 5.januar)
             besvar(sisteDagMedLønn, 5.januar)
             besvar(søknadstidspunkt, 2.januar)
             besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
+
+            assertGjeldendeSeksjon("ytelsehistorikk")
             besvar(harHattDagpengerSiste36mnd, false)
             besvar(sykepengerSiste36mnd, false)
 
             assertGjeldendeSeksjon("fangstOgFisk")
-            besvar(fangstOgFisk, true)
+            besvar(fangstOgFisk, false)
 
             assertGjeldendeSeksjon("grunnbeløp")
             besvar(G3, 300000.årlig)
@@ -182,7 +178,7 @@ internal class AvslagPåMinsteinntektTest {
 
             assertGjeldendeSeksjon("inntektsunntak")
             besvar(verneplikt, false)
-            besvar(lærling, false)
+            besvar(lærling, true)
 
             assertGjeldendeSeksjon("inntekter")
             besvar(inntektSiste36mnd, 20000.årlig)
@@ -191,15 +187,7 @@ internal class AvslagPåMinsteinntektTest {
             assertGjeldendeSeksjon("rettighetstype")
             besvar(sluttårsaker, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
 
-            assertEquals(
-                "godkjenn rettighetstype",
-                testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText()
-            )
-            besvar(godkjenningRettighetstype, true)
-            besvar(godkjenningFangstOgFisk, true)
-            besvar(godkjenningVirkningstidspunkt, true)
-
-            assertFalse(gjeldendeResultat())
+            assertTrue(gjeldendeResultat(), "gjeldende resultat er false")
         }
     }
 
@@ -208,7 +196,6 @@ internal class AvslagPåMinsteinntektTest {
         withSøknad { besvar ->
             besvar(dagensDato, 1.januar)
             besvar(ønsketDato, 5.januar)
-            besvar(sisteDagMedArbeidsplikt, 5.januar)
             besvar(sisteDagMedLønn, 5.januar)
             besvar(søknadstidspunkt, 2.januar)
             besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
@@ -227,7 +214,6 @@ internal class AvslagPåMinsteinntektTest {
         withSøknad { besvar ->
             besvar(dagensDato, 12.januar)
             besvar(ønsketDato, 14.januar)
-            besvar(sisteDagMedArbeidsplikt, 5.januar)
             besvar(sisteDagMedLønn, 5.januar)
             besvar(søknadstidspunkt, 12.januar)
             besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar, "19.1" to 30.januar)))
@@ -245,7 +231,6 @@ internal class AvslagPåMinsteinntektTest {
         withSøknad { besvar ->
             besvar(dagensDato, 12.januar)
             besvar(ønsketDato, 14.februar)
-            besvar(sisteDagMedArbeidsplikt, 5.januar)
             besvar(sisteDagMedLønn, 5.januar)
             besvar(søknadstidspunkt, 12.januar)
             besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar, "19.1" to 30.januar)))
@@ -264,7 +249,6 @@ internal class AvslagPåMinsteinntektTest {
         withSøknad { besvar ->
             besvar(dagensDato, 5.januar)
             besvar(ønsketDato, 5.januar)
-            besvar(sisteDagMedArbeidsplikt, 5.januar)
             besvar(sisteDagMedLønn, 5.januar)
             besvar(søknadstidspunkt, 2.januar)
             besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
@@ -275,6 +259,23 @@ internal class AvslagPåMinsteinntektTest {
             besvar(fangstOgFisk, false)
 
             assertGjeldendeSeksjon("svangerskapsrelaterte sykepenger")
+        }
+    }
+
+    @Test
+    fun `Fangst og fisk skal manuelt behandles`() {
+        withSøknad { besvar ->
+            besvar(dagensDato, 5.januar)
+            besvar(ønsketDato, 5.januar)
+            besvar(sisteDagMedLønn, 5.januar)
+            besvar(søknadstidspunkt, 2.januar)
+            besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
+
+            besvar(sluttårsaker, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
+            besvar(harHattDagpengerSiste36mnd, false)
+            besvar(fangstOgFisk, true)
+
+            assertGjeldendeSeksjon("fangst og fisk manuell")
         }
     }
 

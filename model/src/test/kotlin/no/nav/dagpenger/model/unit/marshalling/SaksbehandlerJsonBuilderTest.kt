@@ -4,14 +4,19 @@ import io.mockk.clearStaticMockk
 import io.mockk.every
 import io.mockk.mockkStatic
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.NyttEksempel
+import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.marshalling.Språk.Companion.nynorsk
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.etter
+import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.gyldigGodkjentAv
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
@@ -68,7 +73,11 @@ internal class SaksbehandlerJsonBuilderTest {
             boolsk faktum "f5" id 5,
             boolsk faktum "f6" id 6,
             boolsk faktum "f7" id 7,
-            heltall faktum "f67" id 67 genererer 6 og 7
+            heltall faktum "f67" id 67 genererer 6 og 7,
+            dato faktum "f8" id 8,
+            dato faktum "f9" id 9,
+            maks dato "f10" av 8 og 9 id 10,
+            boolsk faktum "f11" id 11 avhengerAv 10
         )
         mockkStatic(ResourceBundle::class.java.name)
         every {
@@ -92,6 +101,7 @@ internal class SaksbehandlerJsonBuilderTest {
         assertEquals(2, json["fakta"].size())
         assertEquals("2", json["fakta"][0]["id"].asText())
         assertEquals("Oversatt tekst", json["fakta"][0]["navn"].asText())
+        assertEquals("boolean", json["fakta"][0]["type"].asText())
         assertEquals(Locale("nn", "NO"), mockBundle.lokal)
         assertEquals(
             setOf(Rolle.saksbehandler.typeNavn),
@@ -103,6 +113,18 @@ internal class SaksbehandlerJsonBuilderTest {
         )
         assertEquals(listOf("1"), json["fakta"][0]["godkjenner"].map { it.asText() })
         assertTrue(json["fakta"][1]["godkjenner"].map { it.asText() }.isEmpty())
+    }
+
+    @Test
+    fun `inkluderer utledede faktum`() {
+        val søknadprosess = søknadprosess(prototypeSøknad.dato(10) etter prototypeSøknad.dato(8) godkjentAv prototypeSøknad.boolsk(11))
+        søknadprosess.dato(8).besvar(1.januar)
+        søknadprosess.dato(9).besvar(10.januar)
+
+        SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler5").resultat().also { json ->
+            assertEquals(4, json["fakta"].size())
+            // assertTrue(json["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
+        }
     }
 
     @Test
@@ -382,6 +404,7 @@ internal class SaksbehandlerJsonBuilderTest {
             ),
             Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.boolsk(2)),
             Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeSøknad.boolsk(4)),
+            Seksjon("saksbehandler5", Rolle.saksbehandler, prototypeSøknad.boolsk(11)),
             rootSubsumsjon = prototypeSubsumsjon
         )
 

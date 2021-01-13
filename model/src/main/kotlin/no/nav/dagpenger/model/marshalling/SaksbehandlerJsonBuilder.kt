@@ -1,9 +1,11 @@
 package no.nav.dagpenger.model.marshalling
 
+import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.marshalling.Språk.Companion.bokmål
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
@@ -65,9 +67,24 @@ class SaksbehandlerJsonBuilder(
         navn: String,
         roller: Set<Rolle>,
         godkjenner: Set<Faktum<*>>,
+        clazz: Class<R>,
         svar: R?
     ) {
         if (id !in relevanteFakta) return
-        super.lagFaktumNode(id, navn, roller, godkjenner, svar)
+        super.lagFaktumNode(id, navn, roller, godkjenner, clazz, svar)
+    }
+
+    override fun <R : Comparable<R>> preVisit(
+        faktum: UtledetFaktum<R>,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        children: Set<Faktum<*>>,
+        clazz: Class<R>,
+        regel: FaktaRegel<R>,
+        svar: R
+    ) {
+        relevanteFakta += children.map { it.id }
+        super.preVisit(faktum, id, avhengigeFakta, avhengerAvFakta, children, clazz, regel, svar)
     }
 }

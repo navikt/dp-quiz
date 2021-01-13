@@ -73,7 +73,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
-        lagFaktumNode<R>(id, språk.oversett(faktum), roller, godkjenner)
+        lagFaktumNode<R>(id, språk.oversett(faktum), roller, godkjenner, clazz)
     }
 
     override fun <R : Comparable<R>> visit(
@@ -87,7 +87,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         clazz: Class<R>,
         svar: R
     ) {
-        lagFaktumNode(id, faktum.navn, roller, godkjenner, svar)
+        lagFaktumNode(id, faktum.navn, roller, godkjenner, clazz, svar)
     }
 
     override fun <R : Comparable<R>> preVisit(
@@ -99,7 +99,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         clazz: Class<R>,
         regel: FaktaRegel<R>
     ) {
-        lagFaktumNode<R>(id, faktum.navn)
+        lagFaktumNode(id, faktum.navn, clazz = clazz)
     }
 
     override fun <R : Comparable<R>> preVisit(
@@ -112,7 +112,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         regel: FaktaRegel<R>,
         svar: R
     ) {
-        lagFaktumNode(id, faktum.navn, svar = svar)
+        lagFaktumNode(id, faktum.navn, clazz = clazz, svar = svar)
     }
 
     override fun preVisit(
@@ -239,6 +239,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         navn: String,
         roller: Set<Rolle> = emptySet(),
         godkjenner: Set<Faktum<*>> = emptySet(),
+        clazz: Class<R>,
         svar: R? = null
     ) {
         if (ignore) return
@@ -247,6 +248,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
             faktumNode.put("navn", navn)
             faktumNode.put("id", id)
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.typeNavn }))
+            faktumNode.put("type", clazz.simpleName.toLowerCase())
             faktumNode.set("godkjenner", mapper.valueToTree(godkjenner.map { it.id }))
             svar?.also { faktumNode.putR(it) }
         }
