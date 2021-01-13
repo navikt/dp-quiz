@@ -4,12 +4,12 @@ import no.nav.dagpenger.model.visitor.PersonVisitor
 import java.util.UUID
 
 class Person(private val uuid: UUID, private val identer: Identer) {
-
     constructor(identer: Identer) : this(UUID.randomUUID(), identer)
 
     companion object {
         internal val prototype = Person("", "")
     }
+
     private constructor(
         fnr: String,
         aktørId: String

@@ -13,8 +13,8 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
-import no.nav.dagpenger.model.subsumsjon.eller
-import no.nav.dagpenger.model.subsumsjon.så
+import no.nav.dagpenger.model.subsumsjon.hvisGyldig
+import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -26,6 +26,7 @@ internal class SaksbehandlerSeksjonerTest {
     companion object {
         internal val uuid = UUID.randomUUID()
     }
+
     private val prototypeSøknad = Søknad(
         0,
         boolsk faktum "f1" id 1,
@@ -35,23 +36,23 @@ internal class SaksbehandlerSeksjonerTest {
         boolsk faktum "f5" id 5,
         boolsk faktum "approve5" id 6 avhengerAv 5
     )
-    private val prototypeSubsumsjon = (prototypeSøknad.boolsk(1) er true gyldigGodkjentAv prototypeSøknad.boolsk(2)) så
-        (prototypeSøknad.boolsk(3) er true ugyldigGodkjentAv prototypeSøknad.boolsk(4)) eller
-        (prototypeSøknad.boolsk(5) er true godkjentAv prototypeSøknad.boolsk(6))
-
+    private val prototypeSubsumsjon =
+        (prototypeSøknad.boolsk(1) er true gyldigGodkjentAv prototypeSøknad.boolsk(2)) hvisGyldig {
+            prototypeSøknad.boolsk(3) er true ugyldigGodkjentAv prototypeSøknad.boolsk(4)
+        } hvisUgyldig {
+            prototypeSøknad.boolsk(5) er true godkjentAv prototypeSøknad.boolsk(6)
+        }
     private val prototypeSøknadprosess = Søknadprosess(
         prototypeSøknad,
         Seksjon("søker", Rolle.søker, prototypeSøknad.boolsk(1), prototypeSøknad.boolsk(3), prototypeSøknad.boolsk(5)),
         Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeSøknad.boolsk(2)),
         Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.boolsk(4), prototypeSøknad.boolsk(6))
     )
-
     private val søknadprosessTestBygger = Versjon.Bygger(
         prototypeSøknad,
         prototypeSubsumsjon,
         mapOf(Web to prototypeSøknadprosess)
     )
-
     private lateinit var seksjoner: Søknadprosess
     private lateinit var f1: Faktum<Boolean>
     private lateinit var f3: Faktum<Boolean>

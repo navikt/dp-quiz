@@ -16,9 +16,9 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.alle
-import no.nav.dagpenger.model.subsumsjon.eller
+import no.nav.dagpenger.model.subsumsjon.hvisGyldig
+import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
-import no.nav.dagpenger.model.subsumsjon.så
 import java.time.LocalDate
 
 internal var bursdag67: GrunnleggendeFaktum<LocalDate>
@@ -31,7 +31,6 @@ internal var dimisjonsdato: GrunnleggendeFaktum<LocalDate>
 internal var virkningstidspunkt: Faktum<LocalDate>
 internal var inntekt3G: GrunnleggendeFaktum<Inntekt>
 internal var inntekt15G: GrunnleggendeFaktum<Inntekt>
-
 private val prototypeSøknad = Søknad(
     13,
     dato faktum "Datoen du fyller 67" id 1,
@@ -68,18 +67,21 @@ private val prototypeSubsumsjon = "inngangsvilkår".alle(
         ønsketdato ikkeFør sisteDagMedLønn,
         søknadsdato ikkeFør sisteDagMedLønn,
     )
-) så (
+) hvisGyldig {
     "oppfyller krav til minsteinntekt".minstEnAv(
         inntektSiste3år minst inntekt3G,
         inntektSisteÅr minst inntekt15G,
         dimisjonsdato før virkningstidspunkt
-    ) eller "oppfyller ikke kravet til minsteinntekt".alle(
+    ) hvisUgyldig {
+        "oppfyller ikke kravet til minsteinntekt".alle(
+            ønsketdato ikkeFør sisteDagMedLønn
+        )
+    }
+} hvisUgyldig {
+    "oppfyller ikke inngangsvilkår".alle(
         ønsketdato ikkeFør sisteDagMedLønn
     )
-    ) eller "oppfyller ikke inngangsvilkår".alle(
-    ønsketdato ikkeFør sisteDagMedLønn
-)
-
+}
 private val prototypeWebSøknad = Søknadprosess(
     Seksjon(
         "seksjon1",

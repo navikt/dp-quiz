@@ -10,8 +10,8 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.makro
-import no.nav.dagpenger.model.subsumsjon.så
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -32,17 +32,20 @@ internal class GenerertSubsumsjonTest {
     @Test
     fun `Makro template kan ikke ha gyldig ugyldig stier`() {
         val template = søknad boolsk 1
-        val makro = "makro template".makro(template er true) så (template er true)
+        val makro = "makro template".makro { template er true } hvisGyldig { template er true }
 
         assertThrows<IllegalArgumentException> { søknad generator 2 med (makro as MakroSubsumsjon) }
     }
 
     @Test
     fun `Makro template subsumsjon works`() {
-
-        val makro = "makro template".makro(søknad boolsk 1 er true)
+        val makro = "makro template".makro { søknad boolsk 1 er true }
         val subsumsjon = søknad generator 2 med makro
-        val søknadprosess = Søknadprosess(søknad, Seksjon("seksjon", Rolle.søker, søknad generator 2, søknad boolsk 1), rootSubsumsjon = subsumsjon)
+        val søknadprosess = Søknadprosess(
+            søknad,
+            Seksjon("seksjon", Rolle.søker, søknad generator 2, søknad boolsk 1),
+            rootSubsumsjon = subsumsjon
+        )
 
         søknadprosess.generator(2).besvar(3)
         subsumsjon.resultat()

@@ -11,8 +11,8 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.subsumsjon.eller
-import no.nav.dagpenger.model.subsumsjon.så
+import no.nav.dagpenger.model.subsumsjon.hvisGyldig
+import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -61,7 +61,11 @@ internal class ResultatJsonBuilderTest {
     @Test
     fun `inkluderer kun mulige paths`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true så (prototypeSøknad.boolsk(2) er true) eller (prototypeSøknad.boolsk(3) er true)
+            prototypeSøknad.boolsk(1) er true hvisGyldig {
+                prototypeSøknad.boolsk(2) er true
+            } hvisUgyldig {
+                prototypeSøknad.boolsk(3) er true
+            }
         )
         søknadprosess.boolsk(1).besvar(true)
         søknadprosess.boolsk(2).besvar(true)

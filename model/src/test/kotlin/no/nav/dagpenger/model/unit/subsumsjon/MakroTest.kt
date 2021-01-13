@@ -6,14 +6,13 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.subsumsjon.eller
+import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.makro
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class MakroTest {
-
     private lateinit var f1: Faktum<Boolean>
     private lateinit var f2: Faktum<Boolean>
     private lateinit var makro: Subsumsjon
@@ -28,10 +27,9 @@ internal class MakroTest {
 
         f1 = søknadprosess boolsk 1
         f2 = søknadprosess boolsk 2
-
         val s1 = f1 er true
         val s2 = f2 er true
-        makro = "makro" makro (s1 eller s2)
+        makro = "makro" makro { s1 hvisUgyldig { s2 } }
     }
 
     @Test

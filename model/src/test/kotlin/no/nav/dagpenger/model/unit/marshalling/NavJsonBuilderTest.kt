@@ -20,18 +20,16 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
+import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.makro
-import no.nav.dagpenger.model.subsumsjon.så
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class NavJsonBuilderTest {
-
     @Test
     fun `bygger behov event`() {
-
         val prototypeSøknad = Søknad(
             0,
             boolsk faktum "f1" id 1,
@@ -44,9 +42,7 @@ class NavJsonBuilderTest {
             heltall faktum "periode" id 8 genererer 9 og 10,
             dato faktum "fom" id 9,
             dato faktum "tom" id 10
-
         )
-
         val f1Faktum = prototypeSøknad.boolsk(1)
         val f2Faktum = prototypeSøknad.boolsk(2)
         val f3Faktum = prototypeSøknad.boolsk(3)
@@ -55,20 +51,18 @@ class NavJsonBuilderTest {
         val f8Faktum = prototypeSøknad.generator(8)
         val f9Faktum = prototypeSøknad.dato(9)
         val f10Faktum = prototypeSøknad.dato(10)
-
-        val periodeSubsumsjon = f8Faktum har "periode".makro(
+        val periodeSubsumsjon = f8Faktum har "periode".makro {
             f7Faktum mellom f9Faktum og f10Faktum
-        )
-
+        }
         val prototypeSubsumsjon =
-            f1Faktum er true så
+            f1Faktum er true hvisGyldig {
                 "alle".alle(
                     f2Faktum er true,
                     f3Faktum er true,
                     f4Faktum er true,
                     periodeSubsumsjon
                 )
-
+            }
         val søkerSeksjon = Seksjon("seksjon søker", Rolle.søker, f1Faktum)
         val navSeksjon = Seksjon(
             "seksjon nav",
@@ -82,14 +76,12 @@ class NavJsonBuilderTest {
             f9Faktum,
             f10Faktum
         )
-
         val prototypeFaktagrupper = Søknadprosess(
             prototypeSøknad,
             søkerSeksjon,
             navSeksjon,
             rootSubsumsjon = prototypeSubsumsjon
         )
-
         val faktumNavBehov = FaktumNavBehov(
             mapOf(
                 1 to "f1Behov",
@@ -103,7 +95,6 @@ class NavJsonBuilderTest {
                 9 to "f9Behov"
             )
         )
-
         val fakta = Versjon.Bygger(
             prototypeSøknad,
             prototypeSubsumsjon,

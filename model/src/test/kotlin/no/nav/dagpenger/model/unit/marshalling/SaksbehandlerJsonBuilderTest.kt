@@ -26,10 +26,10 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
-import no.nav.dagpenger.model.subsumsjon.eller
+import no.nav.dagpenger.model.subsumsjon.hvisGyldig
+import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
-import no.nav.dagpenger.model.subsumsjon.så
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -50,7 +50,6 @@ internal class SaksbehandlerJsonBuilderTest {
     }
 
     private class ResourceBundleMock(val lokal: Locale) : ResourceBundle() {
-
         override fun handleGetObject(key: String): Any {
             return "Oversatt tekst"
         }
@@ -89,8 +88,8 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `bygger oppgave event`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true gyldigGodkjentAv prototypeSøknad.boolsk(2) så
-                (prototypeSøknad.boolsk(3) er true ugyldigGodkjentAv prototypeSøknad.boolsk(4))
+            prototypeSøknad.boolsk(1) er true gyldigGodkjentAv prototypeSøknad.boolsk(2) hvisGyldig
+                { prototypeSøknad.boolsk(3) er true ugyldigGodkjentAv prototypeSøknad.boolsk(4) }
         )
 
         søknadprosess.boolsk(1).besvar(true)
@@ -141,9 +140,9 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `subsumsjon med gyldig sti`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true så (
+            prototypeSøknad.boolsk(1) er true hvisGyldig {
                 prototypeSøknad.boolsk(3) er true
-                )
+            }
         )
         søknadprosess.boolsk(1).besvar(true)
         søknadprosess.boolsk(3).besvar(false)
@@ -163,9 +162,9 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `subsumsjon med ugyldig sti`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true eller (
+            prototypeSøknad.boolsk(1) er true hvisUgyldig {
                 prototypeSøknad.boolsk(3) er true
-                )
+            }
         )
         søknadprosess.boolsk(1).besvar(false)
         søknadprosess.boolsk(3).besvar(false)
@@ -231,11 +230,11 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `makro subsumsjon`() {
         val søknadprosess = søknadprosess(
-            "makro" makro (
-                prototypeSøknad.boolsk(1) er true eller (
+            "makro" makro {
+                prototypeSøknad.boolsk(1) er true hvisUgyldig {
                     prototypeSøknad.boolsk(3) er true
-                    )
-                )
+                }
+            }
         )
 
         søknadprosess.boolsk(1).besvar(false)
@@ -261,7 +260,7 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `kombinasjoner av samensatte subsumsjoner`() {
         val søknadprosess = søknadprosess(
             "alle".alle(
-                "makro nivå 2" makro (prototypeSøknad.boolsk(1) er true),
+                "makro nivå 2" makro { prototypeSøknad.boolsk(1) er true },
                 "alle nivå 2".alle(
                     prototypeSøknad.boolsk(3) er true,
                     prototypeSøknad.boolsk(5) er true
@@ -324,13 +323,12 @@ internal class SaksbehandlerJsonBuilderTest {
 
     @Test
     fun ` template subsumsjoner`() {
-        val template = "template" makro (
+        val template = "template" makro {
             "alle".alle(
                 prototypeSøknad.boolsk(6) er true,
                 prototypeSøknad.boolsk(7) er true
             )
-            )
-
+        }
         val søknadprosess = søknadprosess(
             prototypeSøknad.generator(67) med template
         )

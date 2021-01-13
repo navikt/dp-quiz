@@ -33,12 +33,10 @@ internal class NySøknadService(
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         if (Configuration.prodEnvironment) return
         log.info { "Mottok ny søknadsmelding for ${packet["søknadsId"].asText()}" }
-
         val identer = Identer.Builder()
             .folkeregisterIdent(packet["fnr"].asText())
             .aktørId(packet["aktørId"].asText())
             .build()
-
         val søknadsId = packet["søknadsId"].asText()
         val faktagrupperType = Versjon.UserInterfaceType.Web
         søknadPersistence.ny(identer, faktagrupperType, versjonId)
