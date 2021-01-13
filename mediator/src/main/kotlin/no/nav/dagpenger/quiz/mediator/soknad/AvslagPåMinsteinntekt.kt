@@ -68,6 +68,8 @@ internal object AvslagPåMinsteinntekt {
     const val sykepengerSiste36mnd = 31
     const val svangerskapsrelaterteSykepenger = 32
     const val fangstFiskManuell = 33
+    const val eøsArbeid = 34
+    const val eøsArbeidManuell = 35
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -101,7 +103,9 @@ internal object AvslagPåMinsteinntekt {
             boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbrukt avhengerAv harHattDagpengerSiste36mnd,
             boolsk faktum "Sykepenger siste 36 mnd" id sykepengerSiste36mnd avhengerAv virkningstidspunkt,
             boolsk faktum "Svangerskapsrelaterte sykepenger" id svangerskapsrelaterteSykepenger avhengerAv sykepengerSiste36mnd,
-            boolsk faktum "Fangst og fisk manuell" id fangstFiskManuell avhengerAv fangstOgFisk
+            boolsk faktum "Fangst og fisk manuell" id fangstFiskManuell avhengerAv fangstOgFisk,
+            boolsk faktum "Har hatt inntekt/trygdeperioder fra EØS" id eøsArbeid avhengerAv innsendtSøknadsId,
+            boolsk faktum "EØS arbeid manuell" id eøsArbeidManuell avhengerAv eøsArbeid
         )
     internal val rettighetstype = with(søknad) {
         generator(sluttårsaker) med "sluttårsak".makro {
@@ -127,11 +131,19 @@ internal object AvslagPåMinsteinntekt {
                 dato(registrertArbeidsøkerPeriodeTom)
         }
     }
+
     private val sjekkFangstOgFisk = with(søknad) {
         "fangst og fisk" makro {
             boolsk(fangstOgFisk) er true hvisGyldig { boolsk(fangstFiskManuell) er true }
         }
     }
+
+    private val sjekkEøsArbeid = with(søknad) {
+        "Eøs arbeid" makro {
+            boolsk(eøsArbeid) er true hvisGyldig { boolsk(eøsArbeidManuell) er true }
+        }
+    }
+
     private val gjenopptak = with(søknad) {
         "skal ha gjenopptak" makro {
             boolsk(harHattDagpengerSiste36mnd) er true hvisGyldig { boolsk(periodeOppbrukt) er true }
@@ -149,8 +161,9 @@ internal object AvslagPåMinsteinntekt {
             }
         }
     }
+
     private val minsteArbeidsinntektMedVirkningstidspunkt =
-        sjekkFangstOgFisk uansett { sjekkSykepenger hvisGyldig { minsteArbeidsinntekt } }
+        sjekkEøsArbeid uansett { sjekkFangstOgFisk uansett { sjekkSykepenger hvisGyldig { minsteArbeidsinntekt } } }
 
     private val inngangsvilkår = sjekkVirkningstidspunkt hvisGyldig {
         gjenopptak hvisUgyldig {
@@ -207,6 +220,7 @@ internal object AvslagPåMinsteinntekt {
             boolsk(lærling)
         )
     }
+
     private val fangstOgfisk = with(søknad) {
         Seksjon(
             "fangstOgFisk",
@@ -214,6 +228,15 @@ internal object AvslagPåMinsteinntekt {
             boolsk(fangstOgFisk),
         )
     }
+
+    private val eøsArbeidSeksjon = with(søknad) {
+        Seksjon(
+            "eøsArbeid",
+            Rolle.nav,
+            boolsk(eøsArbeid),
+        )
+    }
+
     private val inntekter = with(søknad) {
         Seksjon(
             "inntekter",
@@ -261,6 +284,7 @@ internal object AvslagPåMinsteinntekt {
             boolsk(svangerskapsrelaterteSykepenger)
         )
     }
+
     private val manuellFangstOgFisk = with(søknad) {
         Seksjon(
             "fangst og fisk manuell",
@@ -268,6 +292,15 @@ internal object AvslagPåMinsteinntekt {
             boolsk(fangstFiskManuell)
         )
     }
+
+    private val manuellEøs = with(søknad) {
+        Seksjon(
+            "Eøs arbeid manuell",
+            Rolle.manuell,
+            boolsk(eøsArbeidManuell)
+        )
+    }
+
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             oppstart,
@@ -276,13 +309,15 @@ internal object AvslagPåMinsteinntekt {
             ytelseshistorikk,
             inntektsunntak,
             fangstOgfisk,
+            eøsArbeidSeksjon,
             inntekter,
             godkjennDato,
             arbeidsforholdNav,
             arbeidsforholdSaksbehandler,
             manuellGjenopptak,
             manuellSykepenger,
-            manuellFangstOgFisk
+            manuellFangstOgFisk,
+            manuellEøs
         )
     private val faktumNavBehov =
         FaktumNavBehov(
@@ -309,7 +344,8 @@ internal object AvslagPåMinsteinntekt {
                 lønnsgaranti to "Lønnsgaranti",
                 permittertFiskeforedling to "PermittertFiskeforedling",
                 harHattDagpengerSiste36mnd to "HarHattDagpengerSiste36Mnd",
-                sykepengerSiste36mnd to "SykepengerSiste36Måneder"
+                sykepengerSiste36mnd to "SykepengerSiste36Måneder",
+                eøsArbeid to "EØSArbeid"
             )
         )
     private val versjon = Versjon.Bygger(
