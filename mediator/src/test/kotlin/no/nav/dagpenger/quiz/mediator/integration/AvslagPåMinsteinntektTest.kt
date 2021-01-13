@@ -1,7 +1,10 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
+import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
@@ -43,11 +46,15 @@ import java.util.UUID
 internal class AvslagPåMinsteinntektTest {
     private lateinit var testRapid: TestRapid
 
+    lateinit var persistence: SøknadRecord
+    lateinit var avslagSøknad: Søknadprosess
+
     @BeforeEach
     fun setup() {
+
         Postgres.withMigratedDb {
             AvslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
-            val persistence = SøknadRecord()
+            persistence = SøknadRecord()
             testRapid = TestRapid().also {
                 FaktumSvarService(
                     søknadPersistence = persistence,
@@ -56,54 +63,50 @@ internal class AvslagPåMinsteinntektTest {
                 NySøknadService(persistence, it, AvslagPåMinsteinntekt.VERSJON_ID)
             }
         }
+
+        avslagSøknad = persistence.ny(Identer.Builder().folkeregisterIdent("12345678910").build(), Versjon.UserInterfaceType.Web, AvslagPåMinsteinntekt.VERSJON_ID)
+
+        avslagSøknad.apply {
+            dato(dagensDato).besvar(5.januar)
+            dato(ønsketDato).besvar(5.januar)
+            dato(sisteDagMedLønn).besvar(5.januar)
+            dato(søknadstidspunkt).besvar(2.januar)
+
+            generator(registreringsperioder).besvar(1)
+            dato("18.1").besvar(1.januar(2018))
+            dato("19.1").besvar(30.januar(2018))
+
+            boolsk(harHattDagpengerSiste36mnd).besvar(false)
+            boolsk(sykepengerSiste36mnd).besvar(false)
+
+            boolsk(eøsArbeid).besvar(false)
+
+            boolsk(fangstOgFisk).besvar(false)
+
+            inntekt(G3).besvar(300000.årlig)
+            inntekt(G1_5).besvar(150000.årlig)
+
+            boolsk(verneplikt).besvar(false)
+            boolsk(lærling).besvar(false)
+
+            inntekt(inntektSiste36mnd).besvar(20000.årlig)
+            inntekt(inntektSiste12mnd).besvar(5000.årlig)
+
+            generator(sluttårsaker).besvar(1)
+            boolsk("24.1").besvar(false)
+            boolsk("25.1").besvar(true)
+            boolsk("26.1").besvar(false)
+            boolsk("27.1").besvar(false)
+
+            boolsk(godkjenningRettighetstype).besvar(true)
+            boolsk(godkjenningSisteDagMedLønn).besvar(true)
+        }
     }
 
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
-        withSøknad { besvar ->
-            besvar(dagensDato, 5.januar)
-            besvar(ønsketDato, 5.januar)
-            besvar(sisteDagMedLønn, 5.januar)
-            besvar(søknadstidspunkt, 2.januar)
-            besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
-
-            assertGjeldendeSeksjon("ytelsehistorikk")
-            besvar(harHattDagpengerSiste36mnd, false)
-            besvar(sykepengerSiste36mnd, false)
-
-            assertGjeldendeSeksjon("eøsArbeid")
-            besvar(eøsArbeid, false)
-
-            assertGjeldendeSeksjon("fangstOgFisk")
-            besvar(fangstOgFisk, false)
-
-            assertGjeldendeSeksjon("grunnbeløp")
-            besvar(G3, 300000.årlig)
-            besvar(G1_5, 150000.årlig)
-
-            assertGjeldendeSeksjon("inntektsunntak")
-            besvar(verneplikt, false)
-            besvar(lærling, false)
-
-            assertGjeldendeSeksjon("inntekter")
-            besvar(inntektSiste36mnd, 20000.årlig)
-            besvar(inntektSiste12mnd, 5000.årlig)
-
-            assertGjeldendeSeksjon("rettighetstype")
-            besvar(sluttårsaker, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
-
-            assertGjeldendeSeksjon("godkjenn rettighetstype")
-            besvar(godkjenningRettighetstype, true)
-
-            assertEquals(
-                "godkjenn virkningstidspunkt",
-                testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText()
-            )
-
-            besvar(godkjenningSisteDagMedLønn, true)
-            assertEquals(23, testRapid.inspektør.size)
-            assertFalse(gjeldendeResultat())
-        }
+        // assertTrue(Søknadprosess.erFerdig(avslagSøknad))
+        assert(avslagSøknad.resultat() == false)
     }
 
     @Test
@@ -276,20 +279,8 @@ internal class AvslagPåMinsteinntektTest {
 
     @Test
     fun `Fangst og fisk skal manuelt behandles`() {
-        withSøknad { besvar ->
-            besvar(dagensDato, 5.januar)
-            besvar(ønsketDato, 5.januar)
-            besvar(sisteDagMedLønn, 5.januar)
-            besvar(søknadstidspunkt, 2.januar)
-            besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
-
-            besvar(sluttårsaker, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
-            besvar(harHattDagpengerSiste36mnd, false)
-            besvar(eøsArbeid, false)
-            besvar(fangstOgFisk, true)
-
-            assertGjeldendeSeksjon("fangst og fisk manuell")
-        }
+        avslagSøknad.boolsk(fangstOgFisk).besvar(true)
+        assertEquals("fangst og fisk manuell", avslagSøknad.nesteSeksjoner().first().navn)
     }
 
     @Test
