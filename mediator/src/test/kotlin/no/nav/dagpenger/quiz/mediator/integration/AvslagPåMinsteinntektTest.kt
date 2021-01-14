@@ -1,10 +1,14 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
+import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
@@ -105,7 +109,17 @@ internal class AvslagPåMinsteinntektTest {
 
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
-        // assertTrue(Søknadprosess.erFerdig(avslagSøknad))
+        class Visitor(avslagSøknad: Søknadprosess) : SøknadprosessVisitor {
+            val saksbehandlerSeksjoner = mutableListOf<Seksjon>()
+
+            init { avslagSøknad.accept(this) }
+
+            override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
+                if (rolle == Rolle.saksbehandler) saksbehandlerSeksjoner.add(seksjon)
+            }
+        }
+
+        assertTrue(Søknadprosess.erFerdig(Visitor(avslagSøknad).saksbehandlerSeksjoner))
         assert(avslagSøknad.resultat() == false)
     }
 
