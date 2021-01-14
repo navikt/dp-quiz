@@ -35,6 +35,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søkn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningstidspunktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkningstidspunkt
+import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.sjekkManuell
 
 internal object AvslagPåMinsteinntekt {
     private val rettighetstype = with(søknad) {
@@ -76,7 +77,7 @@ internal object AvslagPåMinsteinntekt {
     }
 
     internal val regeltre = sjekkVirkningstidspunkt hvisGyldig {
-        ManuellBehandling.sjekkManuell hvisUgyldig {
+        sjekkManuell hvisUgyldig {
             "inngangsvilkår".alle(
                 minsteArbeidsinntekt,
                 meldtSomArbeidssøker,

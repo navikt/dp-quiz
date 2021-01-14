@@ -33,11 +33,13 @@ internal object ManuellBehandling {
             boolsk(harHattDagpengerSiste36mnd) er true hvisGyldig { boolsk(periodeOppbruktManuell) er true }
         }
     }
+
     private val sjekkSykepenger = with(søknad) {
         "svangerskapsrelaterte sykepenger" makro {
             boolsk(sykepengerSiste36mnd) er true hvisGyldig { boolsk(svangerskapsrelaterteSykepengerManuell) er true }
         }
     }
+
     internal val sjekkManuell = "manuelt behandles".minstEnAv(
         sjekkGjenopptak,
         sjekkEøsArbeid,

@@ -3,6 +3,8 @@ package no.nav.dagpenger.quiz.mediator.soknad
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G1_5
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G3
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.dagensDato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeidManuell
@@ -46,14 +48,16 @@ internal object Seksjoner {
             dato(inntektsrapporteringsperiodeTom)
         )
     }
+
     private val grunnbeløp = with(søknad) {
         Seksjon(
             "grunnbeløp",
             Rolle.nav,
-            inntekt(AvslagPåMinsteinntektOppsett.G3),
-            inntekt(AvslagPåMinsteinntektOppsett.G1_5),
+            inntekt(G3),
+            inntekt(G1_5),
         )
     }
+
     private val datoer = with(søknad) {
         Seksjon(
             "datoer",
@@ -66,6 +70,7 @@ internal object Seksjoner {
             generator(registreringsperioder)
         )
     }
+
     private val ytelseshistorikk = with(søknad) {
         Seksjon(
             "ytelsehistorikk",
@@ -74,6 +79,7 @@ internal object Seksjoner {
             boolsk(sykepengerSiste36mnd)
         )
     }
+
     private val inntektsunntak = with(søknad) {
         Seksjon(
             "inntektsunntak",
@@ -114,7 +120,8 @@ internal object Seksjoner {
             boolsk(godkjenningSisteDagMedLønn)
         )
     }
-    internal val arbeidsforholdNav = with(søknad) {
+
+    private val arbeidsforholdNav = with(søknad) {
         Seksjon(
             "rettighetstype",
             Rolle.nav,
@@ -125,13 +132,15 @@ internal object Seksjoner {
             boolsk(permittert),
         )
     }
-    internal val arbeidsforholdSaksbehandler = with(søknad) {
+
+    private val arbeidsforholdSaksbehandler = with(søknad) {
         Seksjon(
             "godkjenn rettighetstype",
             Rolle.saksbehandler,
             boolsk(godkjenningRettighetstype),
         )
     }
+
     private val manuellGjenopptak = with(søknad) {
         Seksjon(
             "mulig gjenopptak manuell",
@@ -139,6 +148,7 @@ internal object Seksjoner {
             boolsk(periodeOppbruktManuell),
         )
     }
+
     private val manuellSykepenger = with(søknad) {
         Seksjon(
             "svangerskapsrelaterte sykepenger manuell",
