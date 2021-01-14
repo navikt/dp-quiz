@@ -52,11 +52,9 @@ internal object AvslagPåMinsteinntekt {
     private val sjekkVirkningstidspunkt = with(søknad) {
         "virkningstidspunkt" makro {
             dato(virkningstidspunkt) førEllerLik dato(senesteMuligeVirkningstidspunkt) hvisGyldig {
-                "i samme rapporteringsperiode" makro {
-                    dato(virkningstidspunkt) mellom dato(inntektsrapporteringsperiodeFom) og dato(
-                        inntektsrapporteringsperiodeTom
-                    )
-                }
+                dato(virkningstidspunkt) mellom dato(inntektsrapporteringsperiodeFom) og dato(
+                    inntektsrapporteringsperiodeTom
+                )
             }
         } hvisUgyldig { boolsk(uhåndterbartVirkningstidspunktManuell) er true }
     }
@@ -69,6 +67,7 @@ internal object AvslagPåMinsteinntekt {
             boolsk(lærling) er true
         ).ugyldigGodkjentAv(boolsk(godkjenningSisteDagMedLønn), boolsk(godkjenningRettighetstype))
     }
+
     private val meldtSomArbeidssøker = with(søknad) {
         generator(registreringsperioder) har "registrert arbeidssøker".makro {
             dato(virkningstidspunkt) mellom dato(registrertArbeidsøkerPeriodeFom) og
