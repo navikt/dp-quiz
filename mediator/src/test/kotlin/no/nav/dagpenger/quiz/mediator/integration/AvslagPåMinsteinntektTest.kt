@@ -124,22 +124,9 @@ internal class AvslagPåMinsteinntektTest {
     }
 
     @Test
-    fun `Søknader fra brukere som har hatt dagpeneger de siste 36 månedene blir ikke behandlet `() {
-        withSøknad { besvar ->
-            besvar(dagensDato, 5.januar)
-            besvar(ønsketDato, 5.januar)
-            besvar(sisteDagMedLønn, 5.januar)
-            besvar(søknadstidspunkt, 2.januar)
-            besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
-
-            assertGjeldendeSeksjon("ytelsehistorikk")
-
-            testRapid.inspektør.size.also {
-                besvar(harHattDagpengerSiste36mnd, true)
-                assertEquals((it + 1), testRapid.inspektør.size)
-                assertGjeldendeSeksjon("mulig gjenopptak")
-            }
-        }
+    fun `Søknader fra brukere som har hatt dagpenger de siste 36 månedene blir ikke behandlet `() {
+        avslagSøknad.boolsk(harHattDagpengerSiste36mnd).besvar(true)
+        assertEquals("mulig gjenopptak", avslagSøknad.nesteSeksjoner().first().navn)
     }
 
     @Test
