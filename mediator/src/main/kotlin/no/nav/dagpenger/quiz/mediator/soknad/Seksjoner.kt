@@ -80,28 +80,14 @@ internal object Seksjoner {
         )
     }
 
-    private val inntektsunntak = with(søknad) {
+    private val søknadsunntak = with(søknad) {
         Seksjon(
-            "inntektsunntak",
+            "søknadsunntak",
             Rolle.nav,
             boolsk(verneplikt),
-            boolsk(lærling)
-        )
-    }
-
-    private val fangstOgfisk = with(søknad) {
-        Seksjon(
-            "fangstOgFisk",
-            Rolle.nav,
-            boolsk(fangstOgFisk),
-        )
-    }
-
-    private val eøsArbeidSeksjon = with(søknad) {
-        Seksjon(
-            "eøsArbeid",
-            Rolle.nav,
+            boolsk(lærling),
             boolsk(eøsArbeid),
+            boolsk(fangstOgFisk)
         )
     }
 
@@ -113,6 +99,7 @@ internal object Seksjoner {
             inntekt(inntektSiste36mnd),
         )
     }
+
     private val godkjennDato = with(søknad) {
         Seksjon(
             "godkjenn virkningstidspunkt",
@@ -187,9 +174,7 @@ internal object Seksjoner {
             grunnbeløp,
             datoer,
             ytelseshistorikk,
-            inntektsunntak,
-            fangstOgfisk,
-            eøsArbeidSeksjon,
+            søknadsunntak,
             inntekter,
             godkjennDato,
             arbeidsforholdNav,
