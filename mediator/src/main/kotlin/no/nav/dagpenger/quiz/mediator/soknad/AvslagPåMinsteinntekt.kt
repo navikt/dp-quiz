@@ -281,14 +281,14 @@ internal object AvslagPåMinsteinntekt {
     }
     private val manuellGjenopptak = with(søknad) {
         Seksjon(
-            "mulig gjenopptak",
+            "mulig gjenopptak manuell",
             Rolle.manuell,
             boolsk(periodeOppbrukt),
         )
     }
     private val manuellSykepenger = with(søknad) {
         Seksjon(
-            "svangerskapsrelaterte sykepenger",
+            "svangerskapsrelaterte sykepenger manuell",
             Rolle.manuell,
             boolsk(svangerskapsrelaterteSykepenger)
         )
