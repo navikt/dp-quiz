@@ -15,28 +15,28 @@ import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.G1_5
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.G3
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.dagensDato
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.eøsArbeid
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.fangstOgFisk
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.godkjenningRettighetstype
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.godkjenningSisteDagMedLønn
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.harHattDagpengerSiste36mnd
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.inntektSiste12mnd
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.inntektSiste36mnd
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.inntektsrapporteringsperiodeFom
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.inntektsrapporteringsperiodeTom
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.lærling
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.registreringsperioder
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.senesteMuligeVirkningstidspunkt
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.sisteDagMedLønn
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.sluttårsaker
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.sykepengerSiste36mnd
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.søknadstidspunkt
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.verneplikt
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.ønsketDato
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G1_5
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G3
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.dagensDato
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningRettighetstype
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeFom
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningstidspunkt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sisteDagMedLønn
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sluttårsaker
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknadstidspunkt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ønsketDato
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -53,21 +53,21 @@ internal class AvslagPåMinsteinntektTest {
     fun setup() {
 
         Postgres.withMigratedDb {
-            AvslagPåMinsteinntekt.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
+            AvslagPåMinsteinntektOppsett.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
             persistence = SøknadRecord()
             testRapid = TestRapid().also {
                 FaktumSvarService(
                     søknadPersistence = persistence,
                     rapidsConnection = it
                 )
-                NySøknadService(persistence, it, AvslagPåMinsteinntekt.VERSJON_ID)
+                NySøknadService(persistence, it, AvslagPåMinsteinntektOppsett.VERSJON_ID)
             }
         }
 
         søknadsmal = persistence.ny(
             Identer.Builder().folkeregisterIdent("12345678910").build(),
             Versjon.UserInterfaceType.Web,
-            AvslagPåMinsteinntekt.VERSJON_ID
+            AvslagPåMinsteinntektOppsett.VERSJON_ID
         )
 
         søknadsmal.apply {
