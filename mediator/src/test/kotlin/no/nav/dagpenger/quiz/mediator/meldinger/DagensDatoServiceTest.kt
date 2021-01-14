@@ -18,7 +18,8 @@ internal class DagensDatoServiceTest {
         rapid.sendTestMessage(
             """{
           "@behov": [
-            "DagensDato"
+            "DagensDato",
+            "GrenseDato"
           ]
         }
             """.trimIndent()

@@ -12,8 +12,8 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.førEllerLik
 import no.nav.dagpenger.model.regel.har
-import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.minst
@@ -70,6 +70,8 @@ internal object AvslagPåMinsteinntekt {
     const val fangstFiskManuell = 33
     const val eøsArbeid = 34
     const val eøsArbeidManuell = 35
+    const val ugyldigDatoManuell = 36
+    const val grenseDato = 37
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -105,7 +107,9 @@ internal object AvslagPåMinsteinntekt {
             boolsk faktum "Svangerskapsrelaterte sykepenger" id svangerskapsrelaterteSykepenger avhengerAv sykepengerSiste36mnd,
             boolsk faktum "Fangst og fisk manuell" id fangstFiskManuell avhengerAv fangstOgFisk,
             boolsk faktum "Har hatt inntekt/trygdeperioder fra EØS" id eøsArbeid avhengerAv innsendtSøknadsId,
-            boolsk faktum "EØS arbeid manuell" id eøsArbeidManuell avhengerAv eøsArbeid
+            boolsk faktum "EØS arbeid manuell" id eøsArbeidManuell avhengerAv eøsArbeid,
+            boolsk faktum "Ugyldig dato manuell" id ugyldigDatoManuell avhengerAv virkningstidspunkt,
+            dato faktum "Grensedato 14 dager frem i tid" id grenseDato
         )
     internal val rettighetstype = with(søknad) {
         generator(sluttårsaker) med "sluttårsak".makro {
@@ -155,11 +159,15 @@ internal object AvslagPåMinsteinntekt {
         }
     }
     private val sjekkVirkningstidspunkt = with(søknad) {
-        "søker på riktig tidspunkt" makro {
-            dato(dagensDato) ikkeFør dato(virkningstidspunkt) hvisUgyldig {
-                dato(dagensDato) mellom dato(inntektsrapporteringsperiodeFom) og dato(inntektsrapporteringsperiodeTom)
+        "virkningstidspunkt" makro {
+            dato(virkningstidspunkt) førEllerLik dato(grenseDato) hvisGyldig {
+                "i samme rapporteringsperiode" makro {
+                    dato(virkningstidspunkt) mellom dato(inntektsrapporteringsperiodeFom) og dato(
+                        inntektsrapporteringsperiodeTom
+                    )
+                }
             }
-        }
+        } hvisUgyldig { boolsk(ugyldigDatoManuell) er true }
     }
 
     private val minsteArbeidsinntektMedVirkningstidspunkt =
@@ -180,6 +188,7 @@ internal object AvslagPåMinsteinntekt {
             "oppstart",
             Rolle.nav,
             dato(dagensDato),
+            dato(grenseDato),
             dato(inntektsrapporteringsperiodeFom),
             dato(inntektsrapporteringsperiodeTom)
         )
@@ -301,6 +310,14 @@ internal object AvslagPåMinsteinntekt {
         )
     }
 
+    private val manuellDatoer = with(søknad) {
+        Seksjon(
+            "datoer manuell",
+            Rolle.manuell,
+            boolsk(ugyldigDatoManuell)
+        )
+    }
+
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             oppstart,
@@ -317,7 +334,8 @@ internal object AvslagPåMinsteinntekt {
             manuellGjenopptak,
             manuellSykepenger,
             manuellFangstOgFisk,
-            manuellEøs
+            manuellEøs,
+            manuellDatoer
         )
     private val faktumNavBehov =
         FaktumNavBehov(
@@ -336,6 +354,7 @@ internal object AvslagPåMinsteinntekt {
                 registreringsperioder to "Registreringsperioder",
                 lærling to "Lærling",
                 dagensDato to "DagensDato",
+                grenseDato to "GrenseDato",
                 inntektsrapporteringsperiodeFom to "InntektsrapporteringsperiodeFom",
                 inntektsrapporteringsperiodeTom to "InntektsrapporteringsperiodeTom",
                 sluttårsaker to "Rettighetstype",
