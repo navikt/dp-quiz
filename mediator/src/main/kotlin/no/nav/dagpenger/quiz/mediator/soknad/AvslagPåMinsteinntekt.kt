@@ -1,6 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.førEllerLik
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.med
@@ -15,6 +16,7 @@ import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G1_5
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G3
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.dagensDato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningRettighetstype
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
@@ -35,6 +37,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søkn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningstidspunktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkningstidspunkt
+import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.sjekkManuell
 
 internal object AvslagPåMinsteinntekt {
     private val rettighetstype = with(søknad) {
@@ -68,15 +71,21 @@ internal object AvslagPåMinsteinntekt {
             boolsk(lærling) er true
         ).ugyldigGodkjentAv(boolsk(godkjenningSisteDagMedLønn), boolsk(godkjenningRettighetstype))
     }
+
     private val meldtSomArbeidssøker = with(søknad) {
         generator(registreringsperioder) har "registrert arbeidssøker".makro {
-            dato(virkningstidspunkt) mellom dato(registrertArbeidsøkerPeriodeFom) og
-                dato(registrertArbeidsøkerPeriodeTom)
+            dato(virkningstidspunkt) etter dato(dagensDato) hvisGyldig {
+                dato(dagensDato) mellom dato(registrertArbeidsøkerPeriodeFom) og
+                    dato(registrertArbeidsøkerPeriodeTom)
+            } hvisUgyldig {
+                dato(virkningstidspunkt) mellom dato(registrertArbeidsøkerPeriodeFom) og
+                    dato(registrertArbeidsøkerPeriodeTom)
+            }
         }
     }
 
     internal val regeltre = sjekkVirkningstidspunkt hvisGyldig {
-        ManuellBehandling.sjekkManuell hvisUgyldig {
+        sjekkManuell hvisUgyldig {
             "inngangsvilkår".alle(
                 minsteArbeidsinntekt,
                 meldtSomArbeidssøker,

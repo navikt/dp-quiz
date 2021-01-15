@@ -129,39 +129,39 @@ internal class AvslagPåMinsteinntektTest {
     }
 
     @Test
-    fun `Søknader fra brukere som har hatt dagpenger de siste 36 månedene blir ikke behandlet `() {
+    fun `Søknader fra brukere som har hatt dagpenger de siste 36 månedene blir ikke behandlet`() {
         søknadsmal.boolsk(harHattDagpengerSiste36mnd).besvar(true)
         assertEquals("mulig gjenopptak manuell", søknadsmal.nesteSeksjoner().first().navn)
     }
 
     @Test
-    fun `De som oppfyller kravet til minsteinntekt gir ingen seksjoner til saksbehandler`() {
+    fun `De som oppfyller kravet til minsteinntekt får innvilget dagpenger`() {
         søknadsmal.inntekt(inntektSiste36mnd).besvar(2000000.årlig)
         søknadsmal.inntekt(inntektSiste12mnd).besvar(5000000.årlig)
         assert(søknadsmal.resultat() == true)
     }
 
     @Test
-    fun `De som har vært lærling gir ingen seksjoner til saksbehandler`() {
+    fun `De som har vært lærling får innvilget dagpenger`() {
         søknadsmal.boolsk(lærling).besvar(true)
         assert(søknadsmal.resultat() == true)
     }
 
     @Test
-    fun `Skal ikke gi oppgaver til saksbehandler når dagens dato mer enn 14 dager før virkningstidspunkt`() {
+    fun `Skal manuelt behandles når dagens dato er mer enn 14 dager før virkningstidspunkt`() {
         søknadsmal.dato(ønsketDato).besvar(20.januar)
         assertEquals("datoer manuell", søknadsmal.nesteSeksjoner().first().navn)
     }
 
     @Test
-    fun `Skal ikke gå videre om virkningstidspunkt er fram i tid, men i annen rapporteringsperiode`() {
+    fun `Skal manuelt behandles om virkningstidspunkt er fram i tid, men i annen rapporteringsperiode`() {
         søknadsmal.dato(inntektsrapporteringsperiodeFom).besvar(1.januar)
         søknadsmal.dato(inntektsrapporteringsperiodeTom).besvar(4.januar)
         assertEquals("datoer manuell", søknadsmal.nesteSeksjoner().first().navn)
     }
 
     @Test
-    fun `Skal ikke gi oppgaver til saksbehandler hvis har sykepenger`() {
+    fun `Skal manuelt behandles hvis har sykepenger`() {
         søknadsmal.boolsk(sykepengerSiste36mnd).besvar(true)
         assertEquals("svangerskapsrelaterte sykepenger manuell", søknadsmal.nesteSeksjoner().first().navn)
     }
@@ -176,5 +176,17 @@ internal class AvslagPåMinsteinntektTest {
     fun `Eøs arbeid skal manuelt behandles`() {
         søknadsmal.boolsk(eøsArbeid).besvar(true)
         assertEquals("Eøs arbeid manuell", søknadsmal.nesteSeksjoner().first().navn)
+    }
+
+    @Test
+    fun `Virkningstidspunkt er frem i tid og bruker er registrert som arbeiddsøker på vedtaksdato`() {
+        søknadsmal.dato(dagensDato).besvar(4.januar)
+        assertEquals(false, søknadsmal.resultat())
+    }
+
+    @Test
+    fun `Virkningstidspunkt er tilbake i tid og bruker er registrert som arbeiddsøker på virkningstidspunkt`() {
+        søknadsmal.dato(dagensDato).besvar(6.januar)
+        assertEquals(false, søknadsmal.resultat())
     }
 }
