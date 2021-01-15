@@ -43,7 +43,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-internal class AvslagPåMinsteinntektTest {
+internal class RegeltreTest {
 
     lateinit var manglerInntekt: Søknadprosess
     @BeforeEach
