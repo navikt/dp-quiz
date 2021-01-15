@@ -70,7 +70,7 @@ internal object AvslagPåMinsteinntekt {
         ).ugyldigGodkjentAv(boolsk(godkjenningSisteDagMedLønn), boolsk(godkjenningRettighetstype))
     }
 
-    private val meldtSomArbeidssøker = with(søknad) {
+    internal val meldtSomArbeidssøker = with(søknad) {
         generator(registreringsperioder) har "registrert arbeidssøker".makro {
             dato(virkningstidspunkt) etter dato(dagensDato) hvisGyldig {
                 dato(dagensDato) mellom dato(registrertArbeidsøkerPeriodeFom) og
