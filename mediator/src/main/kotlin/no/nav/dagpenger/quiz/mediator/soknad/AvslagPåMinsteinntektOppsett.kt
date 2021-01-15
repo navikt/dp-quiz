@@ -93,7 +93,7 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Har hatt inntekt/trygdeperioder fra EØS" id eøsArbeid avhengerAv innsendtSøknadsId,
             boolsk faktum "EØS arbeid manuell" id eøsArbeidManuell avhengerAv eøsArbeid,
             boolsk faktum "Ugyldig dato manuell" id uhåndterbartVirkningstidspunktManuell avhengerAv virkningstidspunkt,
-            dato faktum "Grensedato 14 dager frem i tid" id senesteMuligeVirkningstidspunkt
+            dato faktum "Grensedato 14 dager frem i tid" id senesteMuligeVirkningstidspunkt avhengerAv dagensDato
         )
 
     private val faktumNavBehov =
@@ -113,7 +113,7 @@ internal object AvslagPåMinsteinntektOppsett {
                 registreringsperioder to "Registreringsperioder",
                 lærling to "Lærling",
                 dagensDato to "DagensDato",
-                senesteMuligeVirkningstidspunkt to "GrenseDato",
+                senesteMuligeVirkningstidspunkt to "SenesteMuligeVirkningstidspunkt",
                 inntektsrapporteringsperiodeFom to "InntektsrapporteringsperiodeFom",
                 inntektsrapporteringsperiodeTom to "InntektsrapporteringsperiodeTom",
                 sluttårsaker to "Rettighetstype",

@@ -3,20 +3,22 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
-import java.time.LocalDate
+import no.nav.helse.rapids_rivers.asLocalDate
 
-internal class DagensDatoService(rapidsConnection: RapidsConnection) :
+internal class SenesteMuligeVirkningstidspunktService(rapidsConnection: RapidsConnection) :
     River.PacketListener {
     init {
         River(rapidsConnection).apply {
-            validate { it.demandAll("@behov", listOf("DagensDato")) }
+            validate { it.demandAll("@behov", listOf("SenesteMuligeVirkningstidspunkt")) }
             validate { it.forbid("@løsning") }
+            validate { it.requireKey("DagensDato") }
         }.register(this)
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+        val dagensDato = packet["DagensDato"].asLocalDate()
         packet["@løsning"] = mapOf(
-            "DagensDato" to LocalDate.now()
+            "SenesteMuligeVirkningstidspunkt" to dagensDato.plusDays(14)
         )
 
         context.send(packet.toJson())

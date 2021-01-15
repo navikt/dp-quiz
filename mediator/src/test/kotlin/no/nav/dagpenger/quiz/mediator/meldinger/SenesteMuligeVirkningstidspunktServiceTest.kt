@@ -1,15 +1,13 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
-import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 
-internal class DagensDatoServiceTest {
+internal class SenesteMuligeVirkningstidspunktServiceTest {
     private val rapid = TestRapid().apply {
-        DagensDatoService(this)
+        SenesteMuligeVirkningstidspunktService(this)
     }
 
     @Test
@@ -18,15 +16,16 @@ internal class DagensDatoServiceTest {
         rapid.sendTestMessage(
             """{
           "@behov": [
-            "DagensDato"
-          ]
+            "SenesteMuligeVirkningstidspunkt"
+          ],
+          "DagensDato": "2021-01-01"
         }
             """.trimIndent()
         )
 
         with(rapid.inspektør) {
             assertNotNull(field(0, "@løsning"))
-            assertEquals(LocalDate.now(), field(0, "@løsning")["DagensDato"].asLocalDate())
+            assertEquals("2021-01-15", field(0, "@løsning")["SenesteMuligeVirkningstidspunkt"].asText())
         }
     }
 }
