@@ -5,11 +5,13 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G1_5
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G3
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.dagensDato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeidManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningRettighetstype
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
@@ -28,7 +30,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.regis
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningstidspunkt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sisteDagMedLønn
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sluttårsaker
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.svangerskapsrelaterteSykepengerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
@@ -110,9 +111,9 @@ internal object Seksjoner {
 
     private val arbeidsforholdNav = with(søknad) {
         Seksjon(
-            "rettighetstype",
+            "arbeidsforhold",
             Rolle.nav,
-            generator(sluttårsaker),
+            generator(antallEndredeArbeidsforhold),
             boolsk(ordinær),
             boolsk(lønnsgaranti),
             boolsk(permittertFiskeforedling),
@@ -168,6 +169,14 @@ internal object Seksjoner {
         )
     }
 
+    private val manuellFlereArbeidsforhold = with(søknad) {
+        Seksjon(
+            "flere arbeidsforhold manuell",
+            Rolle.manuell,
+            boolsk(flereArbeidsforholdManuell)
+        )
+    }
+
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             oppstart,
@@ -183,6 +192,7 @@ internal object Seksjoner {
             manuellSykepenger,
             manuellFangstOgFisk,
             manuellEøs,
-            manuellDatoer
+            manuellDatoer,
+            manuellFlereArbeidsforhold
         )
 }

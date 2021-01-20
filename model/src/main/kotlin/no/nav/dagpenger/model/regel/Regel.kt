@@ -108,6 +108,17 @@ private class Er<T : Comparable<T>>(private val other: T) : Regel {
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `${fakta[0]}` er lik $other"
 }
 
+infix fun <T : Comparable<T>> Faktum<T>.erIkke(other: T) = EnkelSubsumsjon(
+    ErIkke(other),
+    this
+)
+
+private class ErIkke<T : Comparable<T>>(private val other: T) : Regel {
+    override val typeNavn = "erIkke"
+    override fun resultat(fakta: List<Faktum<*>>) = fakta[0].svar() != other
+    override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `${fakta[0]}` er ikke lik $other"
+}
+
 infix fun GeneratorFaktum.med(makro: MakroSubsumsjon) = MakroSubsumsjon(
     this.navn,
     GeneratorSubsumsjon(
@@ -135,17 +146,6 @@ infix fun GeneratorFaktum.har(makro: MakroSubsumsjon) = MakroSubsumsjon(
         MinstEnAvSubsumsjon(this.navn, mutableListOf())
     )
 )
-
-fun erIkke(faktum: Faktum<Boolean>): Subsumsjon {
-    return EnkelSubsumsjon(
-        object : Regel {
-            override val typeNavn = "er ikke"
-            override fun resultat(fakta: List<Faktum<*>>) = !(fakta[0] as Faktum<Boolean>).svar()
-            override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `${fakta[0]}` ikke er sann"
-        },
-        faktum
-    )
-}
 
 fun har(faktum: Faktum<Boolean>) = EnkelSubsumsjon(
     object : Regel {

@@ -41,7 +41,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val dagensDato = 20
     const val inntektsrapporteringsperiodeFom = 21
     const val inntektsrapporteringsperiodeTom = 22
-    const val sluttårsaker = 23
+    const val antallEndredeArbeidsforhold = 23
     const val ordinær = 24
     const val permittert = 25
     const val lønnsgaranti = 26
@@ -56,6 +56,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val eøsArbeidManuell = 35
     const val uhåndterbartVirkningstidspunktManuell = 36
     const val senesteMuligeVirkningstidspunkt = 37
+    const val flereArbeidsforholdManuell = 38
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -73,18 +74,18 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Godjenning av siste dag med lønn" id godkjenningSisteDagMedLønn avhengerAv sisteDagMedLønn og dagensDato,
             dokument faktum "Innsendt søknadsId" id innsendtSøknadsId,
             heltall faktum "Antall arbeidsøker registeringsperioder" id registreringsperioder genererer registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom,
-            boolsk faktum "Lærling" id lærling,
+            boolsk faktum "Lærling" id lærling avhengerAv innsendtSøknadsId,
             dato faktum "fom" id registrertArbeidsøkerPeriodeFom,
             dato faktum "tom" id registrertArbeidsøkerPeriodeTom,
             dato faktum "Dagens dato" id dagensDato,
             dato faktum "Inntektsrapporteringsperiode fra og med" id inntektsrapporteringsperiodeFom avhengerAv virkningstidspunkt,
             dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTom avhengerAv virkningstidspunkt,
-            heltall faktum "Rettighetstype" id sluttårsaker genererer ordinær og permittert og lønnsgaranti og permittertFiskeforedling avhengerAv innsendtSøknadsId,
+            heltall faktum "sluttårsaker" id antallEndredeArbeidsforhold genererer ordinær og permittert og lønnsgaranti og permittertFiskeforedling avhengerAv innsendtSøknadsId,
             boolsk faktum "Permittert" id permittert,
             boolsk faktum "Ordinær" id ordinær,
             boolsk faktum "Lønnsgaranti" id lønnsgaranti,
             boolsk faktum "PermittertFiskeforedling" id permittertFiskeforedling,
-            boolsk faktum "Godkjenning rettighetstype" id godkjenningRettighetstype avhengerAv sluttårsaker,
+            boolsk faktum "Godkjenning rettighetstype" id godkjenningRettighetstype avhengerAv antallEndredeArbeidsforhold,
             boolsk faktum "Har hatt dagpenger siste 36mnd" id harHattDagpengerSiste36mnd avhengerAv virkningstidspunkt,
             boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbruktManuell avhengerAv harHattDagpengerSiste36mnd,
             boolsk faktum "Sykepenger siste 36 mnd" id sykepengerSiste36mnd avhengerAv virkningstidspunkt,
@@ -93,6 +94,7 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Har hatt inntekt/trygdeperioder fra EØS" id eøsArbeid avhengerAv innsendtSøknadsId,
             boolsk faktum "EØS arbeid manuell" id eøsArbeidManuell avhengerAv eøsArbeid,
             boolsk faktum "Ugyldig dato manuell" id uhåndterbartVirkningstidspunktManuell avhengerAv virkningstidspunkt,
+            boolsk faktum "Flere arbeidsforhold manuell" id flereArbeidsforholdManuell avhengerAv antallEndredeArbeidsforhold,
             dato faktum "Grensedato 14 dager frem i tid" id senesteMuligeVirkningstidspunkt avhengerAv dagensDato
         )
 
@@ -116,7 +118,7 @@ internal object AvslagPåMinsteinntektOppsett {
                 senesteMuligeVirkningstidspunkt to "SenesteMuligeVirkningstidspunkt",
                 inntektsrapporteringsperiodeFom to "InntektsrapporteringsperiodeFom",
                 inntektsrapporteringsperiodeTom to "InntektsrapporteringsperiodeTom",
-                sluttårsaker to "Rettighetstype",
+                antallEndredeArbeidsforhold to "Rettighetstype",
                 ordinær to "Ordinær",
                 permittert to "Permittert",
                 lønnsgaranti to "Lønnsgaranti",

@@ -16,6 +16,7 @@ import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G1_5
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G3
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.dagensDato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningRettighetstype
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
@@ -32,16 +33,15 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.regis
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningstidspunkt
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sluttårsaker
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningstidspunktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkningstidspunkt
-import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.sjekkManuell
+import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.skalManueltBehandles
 
 internal object AvslagPåMinsteinntekt {
-    private val rettighetstype = with(søknad) {
-        generator(sluttårsaker) med "sluttårsak".makro {
+    private val sluttårsak = with(søknad) {
+        generator(antallEndredeArbeidsforhold) med "sluttårsak".makro {
             "bare en av".bareEnAv(
                 boolsk(ordinær) er true,
                 boolsk(permittertFiskeforedling) er true,
@@ -83,11 +83,11 @@ internal object AvslagPåMinsteinntekt {
     }
 
     internal val regeltre = sjekkVirkningstidspunkt hvisGyldig {
-        sjekkManuell hvisUgyldig {
+        skalManueltBehandles hvisUgyldig {
             "inngangsvilkår".alle(
                 minsteArbeidsinntekt,
                 meldtSomArbeidssøker,
-                rettighetstype
+                sluttårsak
             )
         }
     }

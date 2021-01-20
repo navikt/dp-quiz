@@ -1,13 +1,16 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.erIkke
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeidManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.svangerskapsrelaterteSykepengerManuell
@@ -40,10 +43,18 @@ internal object ManuellBehandling {
         }
     }
 
-    internal val sjekkManuell = "manuelt behandles".minstEnAv(
-        sjekkGjenopptak,
-        sjekkEøsArbeid,
-        sjekkFangstOgFisk,
-        sjekkSykepenger
-    )
+    private val sjekkAntallArbeidsforhold = with(søknad) {
+        "antall arbeidsforhold" makro {
+            heltall(antallEndredeArbeidsforhold) erIkke 1 hvisGyldig { boolsk(flereArbeidsforholdManuell) er true }
+        }
+    }
+
+    internal val skalManueltBehandles =
+        "manuelt behandles".minstEnAv(
+            sjekkGjenopptak,
+            sjekkEøsArbeid,
+            sjekkFangstOgFisk,
+            sjekkSykepenger,
+            sjekkAntallArbeidsforhold
+        )
 }

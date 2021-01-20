@@ -16,6 +16,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.meldtSomArbe
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.regeltre
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G1_5
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G3
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.dagensDato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
@@ -30,7 +31,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærl
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningstidspunkt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sisteDagMedLønn
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sluttårsaker
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknadstidspunkt
@@ -84,7 +84,7 @@ internal class RegeltreTest {
             inntekt(inntektSiste36mnd).besvar(20000.årlig)
             inntekt(inntektSiste12mnd).besvar(5000.årlig)
 
-            generator(sluttårsaker).besvar(1)
+            generator(antallEndredeArbeidsforhold).besvar(1)
             boolsk("24.1").besvar(false)
             boolsk("25.1").besvar(true)
             boolsk("26.1").besvar(false)
@@ -110,7 +110,7 @@ internal class RegeltreTest {
         }
 
         assertTrue(Søknadprosess.erFerdig(Visitor(manglerInntekt).saksbehandlerSeksjoner))
-        assert(manglerInntekt.resultat() == false)
+        assertEquals(false, manglerInntekt.resultat())
     }
 
     @Test
@@ -123,13 +123,19 @@ internal class RegeltreTest {
     fun `De som oppfyller kravet til minsteinntekt får innvilget dagpenger`() {
         manglerInntekt.inntekt(inntektSiste36mnd).besvar(2000000.årlig)
         manglerInntekt.inntekt(inntektSiste12mnd).besvar(5000000.årlig)
-        assert(manglerInntekt.resultat() == true)
+        assertEquals(true, manglerInntekt.resultat())
     }
 
     @Test
     fun `De som har vært lærling får innvilget dagpenger`() {
         manglerInntekt.boolsk(lærling).besvar(true)
-        assert(manglerInntekt.resultat() == true)
+        assertEquals(true, manglerInntekt.resultat())
+    }
+
+    @Test
+    fun `De som har avtjent verneplikt får innvilget dagpenger`() {
+        manglerInntekt.boolsk(verneplikt).besvar(true)
+        assertEquals(true, manglerInntekt.resultat())
     }
 
     @Test
@@ -197,6 +203,12 @@ internal class RegeltreTest {
         }
 
         assertEquals(true, søknad.resultat())
+    }
+
+    @Test
+    fun `Flere arbeidsforhold skal manuelt behandles`() {
+        manglerInntekt.heltall(antallEndredeArbeidsforhold).besvar(2)
+        assertEquals("flere arbeidsforhold manuell", manglerInntekt.nesteSeksjoner().first().navn)
     }
 
     private fun byggSøknad(subsumsjon: Subsumsjon) =

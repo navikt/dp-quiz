@@ -12,6 +12,7 @@ import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G1_5
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G3
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.dagensDato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
@@ -26,7 +27,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærl
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningstidspunkt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sisteDagMedLønn
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sluttårsaker
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknadstidspunkt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
@@ -79,6 +79,9 @@ internal class AvslagPåMinsteinntektTest {
             besvar(verneplikt, false)
             besvar(lærling, false)
 
+            assertGjeldendeSeksjon("arbeidsforhold")
+            besvar(antallEndredeArbeidsforhold, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
+
             assertGjeldendeSeksjon("grunnbeløp")
             besvar(G3, 300000.årlig)
             besvar(G1_5, 150000.årlig)
@@ -86,9 +89,6 @@ internal class AvslagPåMinsteinntektTest {
             assertGjeldendeSeksjon("inntekter")
             besvar(inntektSiste36mnd, 20000.årlig)
             besvar(inntektSiste12mnd, 5000.årlig)
-
-            assertGjeldendeSeksjon("rettighetstype")
-            besvar(sluttårsaker, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
 
             assertGjeldendeSeksjon("godkjenn rettighetstype")
             besvar(godkjenningRettighetstype, true)
