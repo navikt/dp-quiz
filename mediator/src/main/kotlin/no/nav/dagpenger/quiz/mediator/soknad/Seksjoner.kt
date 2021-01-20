@@ -12,8 +12,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsA
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningRettighetstype
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSluttårsak
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
@@ -121,11 +121,11 @@ internal object Seksjoner {
         )
     }
 
-    private val arbeidsforholdSaksbehandler = with(søknad) {
+    private val sluttårsakSaksbehandler = with(søknad) {
         Seksjon(
-            "godkjenn rettighetstype",
+            "godkjenn sluttårsak",
             Rolle.saksbehandler,
-            boolsk(godkjenningRettighetstype),
+            boolsk(godkjenningSluttårsak),
         )
     }
 
@@ -187,7 +187,7 @@ internal object Seksjoner {
             inntekter,
             godkjennDato,
             arbeidsforholdNav,
-            arbeidsforholdSaksbehandler,
+            sluttårsakSaksbehandler,
             manuellGjenopptak,
             manuellSykepenger,
             manuellFangstOgFisk,

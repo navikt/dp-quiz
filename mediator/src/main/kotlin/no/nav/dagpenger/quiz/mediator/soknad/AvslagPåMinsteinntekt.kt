@@ -4,31 +4,24 @@ import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.førEllerLik
 import no.nav.dagpenger.model.regel.har
-import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
 import no.nav.dagpenger.model.subsumsjon.alle
-import no.nav.dagpenger.model.subsumsjon.bareEnAv
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G1_5
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G3
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.dagensDato
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningRettighetstype
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSluttårsak
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lønnsgaranti
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordinær
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
@@ -40,17 +33,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkn
 import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.skalManueltBehandles
 
 internal object AvslagPåMinsteinntekt {
-    private val sluttårsak = with(søknad) {
-        generator(antallEndredeArbeidsforhold) med "sluttårsak".makro {
-            "bare en av".bareEnAv(
-                boolsk(ordinær) er true,
-                boolsk(permittertFiskeforedling) er true,
-                boolsk(lønnsgaranti) er true,
-                boolsk(permittert) er true
-            )
-        }
-    }
-
     private val sjekkVirkningstidspunkt = with(søknad) {
         "virkningstidspunkt" makro {
             dato(virkningstidspunkt) førEllerLik dato(senesteMuligeVirkningstidspunkt) hvisGyldig {
@@ -67,7 +49,7 @@ internal object AvslagPåMinsteinntekt {
             inntekt(inntektSiste12mnd) minst inntekt(G1_5),
             boolsk(verneplikt) er true,
             boolsk(lærling) er true
-        ).ugyldigGodkjentAv(boolsk(godkjenningSisteDagMedLønn), boolsk(godkjenningRettighetstype))
+        ).ugyldigGodkjentAv(boolsk(godkjenningSisteDagMedLønn), boolsk(godkjenningSluttårsak))
     }
 
     internal val meldtSomArbeidssøker = with(søknad) {
@@ -86,8 +68,7 @@ internal object AvslagPåMinsteinntekt {
         skalManueltBehandles hvisUgyldig {
             "inngangsvilkår".alle(
                 minsteArbeidsinntekt,
-                meldtSomArbeidssøker,
-                sluttårsak
+                meldtSomArbeidssøker
             )
         }
     }

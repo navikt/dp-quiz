@@ -16,8 +16,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antal
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.dagensDato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningRettighetstype
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSluttårsak
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
@@ -90,8 +90,8 @@ internal class AvslagPåMinsteinntektTest {
             besvar(inntektSiste36mnd, 20000.årlig)
             besvar(inntektSiste12mnd, 5000.årlig)
 
-            assertGjeldendeSeksjon("godkjenn rettighetstype")
-            besvar(godkjenningRettighetstype, true)
+            assertGjeldendeSeksjon("godkjenn sluttårsak")
+            besvar(godkjenningSluttårsak, true)
 
             assertEquals(
                 "godkjenn siste dag med lønn",

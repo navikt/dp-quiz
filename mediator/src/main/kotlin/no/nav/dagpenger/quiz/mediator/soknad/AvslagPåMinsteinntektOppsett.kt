@@ -46,7 +46,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val permittert = 25
     const val lønnsgaranti = 26
     const val permittertFiskeforedling = 27
-    const val godkjenningRettighetstype = 28
+    const val godkjenningSluttårsak = 28
     const val harHattDagpengerSiste36mnd = 29
     const val periodeOppbruktManuell = 30
     const val sykepengerSiste36mnd = 31
@@ -85,7 +85,7 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Ordinær" id ordinær,
             boolsk faktum "Lønnsgaranti" id lønnsgaranti,
             boolsk faktum "PermittertFiskeforedling" id permittertFiskeforedling,
-            boolsk faktum "Godkjenning rettighetstype" id godkjenningRettighetstype avhengerAv antallEndredeArbeidsforhold,
+            boolsk faktum "Godkjenning sluttårsak" id godkjenningSluttårsak avhengerAv antallEndredeArbeidsforhold,
             boolsk faktum "Har hatt dagpenger siste 36mnd" id harHattDagpengerSiste36mnd avhengerAv virkningstidspunkt,
             boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbruktManuell avhengerAv harHattDagpengerSiste36mnd,
             boolsk faktum "Sykepenger siste 36 mnd" id sykepengerSiste36mnd avhengerAv virkningstidspunkt,
