@@ -103,7 +103,7 @@ internal object Seksjoner {
 
     private val godkjennDato = with(søknad) {
         Seksjon(
-            "godkjenn virkningstidspunkt",
+            "godkjenn siste dag med lønn",
             Rolle.saksbehandler,
             boolsk(godkjenningSisteDagMedLønn)
         )

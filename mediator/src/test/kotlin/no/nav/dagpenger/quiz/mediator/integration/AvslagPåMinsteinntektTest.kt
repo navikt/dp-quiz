@@ -94,7 +94,7 @@ internal class AvslagPåMinsteinntektTest {
             besvar(godkjenningRettighetstype, true)
 
             assertEquals(
-                "godkjenn virkningstidspunkt",
+                "godkjenn siste dag med lønn",
                 testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText()
             )
 
