@@ -85,7 +85,7 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Ordinær" id ordinær,
             boolsk faktum "Lønnsgaranti" id lønnsgaranti,
             boolsk faktum "PermittertFiskeforedling" id permittertFiskeforedling,
-            boolsk faktum "Godkjenning sluttårsak" id godkjenningSluttårsak avhengerAv ordinær og permittert og permittertFiskeforedling og lønnsgaranti,
+            boolsk faktum "Godkjenning sluttårsak" id godkjenningSluttårsak avhengerAv antallEndredeArbeidsforhold,
             boolsk faktum "Har hatt dagpenger siste 36mnd" id harHattDagpengerSiste36mnd avhengerAv virkningstidspunkt,
             boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbruktManuell avhengerAv harHattDagpengerSiste36mnd,
             boolsk faktum "Sykepenger siste 36 mnd" id sykepengerSiste36mnd avhengerAv virkningstidspunkt,
