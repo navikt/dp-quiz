@@ -4,7 +4,6 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.Configuration
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innsendtSøknadsId
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -31,7 +30,6 @@ internal class NySøknadService(
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
-        if (Configuration.prodEnvironment) return
         log.info { "Mottok ny søknadsmelding for ${packet["søknadsId"].asText()}" }
         val identer = Identer.Builder()
             .folkeregisterIdent(packet["fnr"].asText())
