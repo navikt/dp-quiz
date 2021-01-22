@@ -18,7 +18,7 @@ internal class SenesteMuligeVirkningstidspunktServiceTest {
           "@behov": [
             "SenesteMuligeVirkningstidspunkt"
           ],
-          "DagensDato": "2021-01-01"
+          "Behandlingsdato": "2021-01-01"
         }
             """.trimIndent()
         )

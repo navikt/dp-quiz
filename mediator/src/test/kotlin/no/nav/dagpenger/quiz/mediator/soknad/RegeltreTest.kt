@@ -17,7 +17,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.regeltre
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G1_5
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G3
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.dagensDato
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
@@ -56,7 +56,7 @@ internal class RegeltreTest {
             )
 
         manglerInntekt.apply {
-            dato(dagensDato).besvar(5.januar)
+            dato(behandlingsdato).besvar(5.januar)
             dato(ønsketDato).besvar(5.januar)
             dato(sisteDagMedLønn).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
@@ -174,7 +174,7 @@ internal class RegeltreTest {
         val søknad = byggSøknad(meldtSomArbeidssøker)
 
         søknad.apply {
-            dato(dagensDato).besvar(4.januar)
+            dato(behandlingsdato).besvar(4.januar)
             dato(ønsketDato).besvar(5.januar)
             dato(sisteDagMedLønn).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
@@ -192,7 +192,7 @@ internal class RegeltreTest {
         val søknad = byggSøknad(meldtSomArbeidssøker)
 
         søknad.apply {
-            dato(dagensDato).besvar(6.januar)
+            dato(behandlingsdato).besvar(6.januar)
             dato(ønsketDato).besvar(5.januar)
             dato(sisteDagMedLønn).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)

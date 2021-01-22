@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-internal class DagensDatoServiceTest {
+internal class BehandlingsdatoServiceTest {
     private val rapid = TestRapid().apply {
-        DagensDatoService(this)
+        BehandlingsdatoService(this)
     }
 
     @Test
@@ -18,7 +18,7 @@ internal class DagensDatoServiceTest {
         rapid.sendTestMessage(
             """{
           "@behov": [
-            "DagensDato"
+            "Behandlingsdato"
           ]
         }
             """.trimIndent()
@@ -26,7 +26,7 @@ internal class DagensDatoServiceTest {
 
         with(rapid.inspektør) {
             assertNotNull(field(0, "@løsning"))
-            assertEquals(LocalDate.now(), field(0, "@løsning")["DagensDato"].asLocalDate())
+            assertEquals(LocalDate.now(), field(0, "@løsning")["Behandlingsdato"].asLocalDate())
         }
     }
 }

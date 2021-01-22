@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G1_5
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G3
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.dagensDato
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeidManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
@@ -43,7 +43,7 @@ internal object Seksjoner {
         Seksjon(
             "oppstart",
             Rolle.nav,
-            dato(dagensDato),
+            dato(behandlingsdato),
             dato(senesteMuligeVirkningstidspunkt),
             dato(inntektsrapporteringsperiodeFom),
             dato(inntektsrapporteringsperiodeTom)

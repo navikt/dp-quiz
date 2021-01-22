@@ -38,7 +38,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val lærling = 17
     const val registrertArbeidsøkerPeriodeFom = 18
     const val registrertArbeidsøkerPeriodeTom = 19
-    const val dagensDato = 20
+    const val behandlingsdato = 20
     const val inntektsrapporteringsperiodeFom = 21
     const val inntektsrapporteringsperiodeTom = 22
     const val antallEndredeArbeidsforhold = 23
@@ -77,7 +77,7 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Lærling" id lærling avhengerAv innsendtSøknadsId,
             dato faktum "fom" id registrertArbeidsøkerPeriodeFom,
             dato faktum "tom" id registrertArbeidsøkerPeriodeTom,
-            dato faktum "Dagens dato" id dagensDato,
+            dato faktum "Behandlingsdato" id behandlingsdato,
             dato faktum "Inntektsrapporteringsperiode fra og med" id inntektsrapporteringsperiodeFom avhengerAv virkningstidspunkt,
             dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTom avhengerAv virkningstidspunkt,
             heltall faktum "sluttårsaker" id antallEndredeArbeidsforhold genererer ordinær og permittert og lønnsgaranti og permittertFiskeforedling avhengerAv innsendtSøknadsId,
@@ -95,7 +95,7 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "EØS arbeid manuell" id eøsArbeidManuell avhengerAv eøsArbeid,
             boolsk faktum "Ugyldig dato manuell" id uhåndterbartVirkningstidspunktManuell avhengerAv virkningstidspunkt,
             boolsk faktum "Flere arbeidsforhold manuell" id flereArbeidsforholdManuell avhengerAv antallEndredeArbeidsforhold,
-            dato faktum "Grensedato 14 dager frem i tid" id senesteMuligeVirkningstidspunkt avhengerAv dagensDato
+            dato faktum "Grensedato 14 dager frem i tid" id senesteMuligeVirkningstidspunkt avhengerAv behandlingsdato
         )
 
     private val faktumNavBehov =
@@ -114,7 +114,7 @@ internal object AvslagPåMinsteinntektOppsett {
                 innsendtSøknadsId to "InnsendtSøknadsId",
                 registreringsperioder to "Registreringsperioder",
                 lærling to "Lærling",
-                dagensDato to "DagensDato",
+                behandlingsdato to "Behandlingsdato",
                 senesteMuligeVirkningstidspunkt to "SenesteMuligeVirkningstidspunkt",
                 inntektsrapporteringsperiodeFom to "InntektsrapporteringsperiodeFom",
                 inntektsrapporteringsperiodeTom to "InntektsrapporteringsperiodeTom",

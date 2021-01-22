@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator
 import PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
-import no.nav.dagpenger.quiz.mediator.meldinger.DagensDatoService
+import no.nav.dagpenger.quiz.mediator.meldinger.BehandlingsdatoService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
 import no.nav.dagpenger.quiz.mediator.meldinger.SenesteMuligeVirkningstidspunktService
@@ -32,7 +32,7 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
                 AvslagPåMinsteinntektOppsett.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
                 NySøknadService(søknadRecord, rapidsConnection)
                 FaktumSvarService(søknadRecord, rapidsConnection)
-                DagensDatoService(rapidsConnection)
+                BehandlingsdatoService(rapidsConnection)
                 SenesteMuligeVirkningstidspunktService(rapidsConnection)
             }
     }

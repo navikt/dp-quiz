@@ -13,7 +13,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G1_5
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G3
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.dagensDato
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
@@ -60,7 +60,7 @@ internal class AvslagPåMinsteinntektTest {
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
         withSøknad { besvar ->
-            besvar(dagensDato, 5.januar)
+            besvar(behandlingsdato, 5.januar)
             besvar(senesteMuligeVirkningstidspunkt, 19.januar)
             besvar(ønsketDato, 5.januar)
             besvar(sisteDagMedLønn, 5.januar)
