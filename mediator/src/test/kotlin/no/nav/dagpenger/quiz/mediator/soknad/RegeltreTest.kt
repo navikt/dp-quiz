@@ -28,6 +28,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innte
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningstidspunkt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sisteDagMedLønn
@@ -44,11 +45,10 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class RegeltreTest {
-
     lateinit var manglerInntekt: Søknadprosess
+
     @BeforeEach
     fun setup() {
-
         manglerInntekt = Versjon.Bygger(søknad, regeltre, mapOf(Versjon.UserInterfaceType.Web to søknadprosess))
             .søknadprosess(
                 Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
@@ -92,6 +92,8 @@ internal class RegeltreTest {
 
             boolsk(godkjenningSluttårsak).besvar(true)
             boolsk(godkjenningSisteDagMedLønn).besvar(true)
+            // TODO: Nå sender vi alle som oppfyller kravene til minste arbeidsinntekt til manuell, vi setter denne til true så den bypasses
+            manglerInntekt.boolsk(oppfyllerMinsteinntektManuell).besvar(true)
         }
     }
 

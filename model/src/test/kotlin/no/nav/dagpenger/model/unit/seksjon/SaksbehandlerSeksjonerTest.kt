@@ -37,10 +37,10 @@ internal class SaksbehandlerSeksjonerTest {
         boolsk faktum "approve5" id 6 avhengerAv 5
     )
     private val prototypeSubsumsjon =
-        (prototypeSøknad.boolsk(1) er true gyldigGodkjentAv prototypeSøknad.boolsk(2)) hvisGyldig {
-            prototypeSøknad.boolsk(3) er true ugyldigGodkjentAv prototypeSøknad.boolsk(4)
+        ((prototypeSøknad.boolsk(1) er true).gyldigGodkjentAv(prototypeSøknad.boolsk(2))) hvisGyldig {
+            (prototypeSøknad.boolsk(3) er true).ugyldigGodkjentAv(prototypeSøknad.boolsk(4))
         } hvisUgyldig {
-            prototypeSøknad.boolsk(5) er true godkjentAv prototypeSøknad.boolsk(6)
+            (prototypeSøknad.boolsk(5) er true).godkjentAv(prototypeSøknad.boolsk(6))
         }
     private val prototypeSøknadprosess = Søknadprosess(
         prototypeSøknad,

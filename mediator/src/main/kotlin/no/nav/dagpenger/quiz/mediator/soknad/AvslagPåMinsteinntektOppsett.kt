@@ -57,6 +57,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val uhåndterbartVirkningstidspunktManuell = 36
     const val senesteMuligeVirkningstidspunkt = 37
     const val flereArbeidsforholdManuell = 38
+    const val oppfyllerMinsteinntektManuell = 39
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -95,7 +96,8 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "EØS arbeid manuell" id eøsArbeidManuell avhengerAv eøsArbeid,
             boolsk faktum "Ugyldig dato manuell" id uhåndterbartVirkningstidspunktManuell avhengerAv virkningstidspunkt,
             boolsk faktum "Flere arbeidsforhold manuell" id flereArbeidsforholdManuell avhengerAv antallEndredeArbeidsforhold,
-            dato faktum "Grensedato 14 dager frem i tid" id senesteMuligeVirkningstidspunkt avhengerAv behandlingsdato
+            dato faktum "Grensedato 14 dager frem i tid" id senesteMuligeVirkningstidspunkt avhengerAv behandlingsdato,
+            boolsk faktum "Oppfyller kravene til minste arbeidsinntekt, går til manuell" id oppfyllerMinsteinntektManuell
         )
 
     private val faktumNavBehov =

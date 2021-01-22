@@ -96,7 +96,7 @@ private val prototypeSubsumsjon =
                 personerGodkjenning
             }
         } hvisUgyldig {
-            (p2Dato etter p13Dato) gyldigGodkjentAv p19Boolean
+            (p2Dato etter p13Dato).gyldigGodkjentAv(p19Boolean)
         }
     }
 private val prototypeSeksjon1 = Seksjon("seksjon1", Rolle.nav, p1Boolean, p2Dato)

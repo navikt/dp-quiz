@@ -88,8 +88,8 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `bygger oppgave event`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true gyldigGodkjentAv prototypeSøknad.boolsk(2) hvisGyldig
-                { prototypeSøknad.boolsk(3) er true ugyldigGodkjentAv prototypeSøknad.boolsk(4) }
+            (prototypeSøknad.boolsk(1) er true).gyldigGodkjentAv(prototypeSøknad.boolsk(2)) hvisGyldig
+                { (prototypeSøknad.boolsk(3) er true).ugyldigGodkjentAv(prototypeSøknad.boolsk(4)) }
         )
 
         søknadprosess.boolsk(1).besvar(true)
@@ -117,7 +117,8 @@ internal class SaksbehandlerJsonBuilderTest {
 
     @Test
     fun `inkluderer utledede faktum`() {
-        val søknadprosess = søknadprosess(prototypeSøknad.dato(10) etter prototypeSøknad.dato(8) godkjentAv prototypeSøknad.boolsk(11))
+        val søknadprosess =
+            søknadprosess((prototypeSøknad.dato(10) etter prototypeSøknad.dato(8)).godkjentAv(prototypeSøknad.boolsk(11)))
         søknadprosess.dato(8).besvar(1.januar)
         søknadprosess.dato(9).besvar(10.januar)
 
@@ -298,7 +299,7 @@ internal class SaksbehandlerJsonBuilderTest {
         val søknadprosess = søknadprosess(
             (
                 prototypeSøknad.boolsk(1) er true
-                ) gyldigGodkjentAv prototypeSøknad.boolsk(2)
+                ).gyldigGodkjentAv(prototypeSøknad.boolsk(2))
         )
 
         søknadprosess.boolsk(1).besvar(true)
