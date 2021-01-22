@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator
 
-import PostgresDataSourceBuilder.clean
 import PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
@@ -27,7 +26,6 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
-        clean()
         runMigration()
             .also {
                 val søknadRecord = SøknadRecord()
