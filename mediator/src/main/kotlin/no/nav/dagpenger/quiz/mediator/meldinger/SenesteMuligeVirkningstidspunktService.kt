@@ -11,12 +11,12 @@ internal class SenesteMuligeVirkningstidspunktService(rapidsConnection: RapidsCo
         River(rapidsConnection).apply {
             validate { it.demandAll("@behov", listOf("SenesteMuligeVirkningstidspunkt")) }
             validate { it.forbid("@løsning") }
-            validate { it.requireKey("DagensDato") }
+            validate { it.requireKey("Behandlingsdato") }
         }.register(this)
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
-        val dagensDato = packet["DagensDato"].asLocalDate()
+        val dagensDato = packet["Behandlingsdato"].asLocalDate()
         packet["@løsning"] = mapOf(
             "SenesteMuligeVirkningstidspunkt" to dagensDato.plusDays(14)
         )

@@ -14,7 +14,7 @@ import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G1_5
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G3
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.dagensDato
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSluttårsak
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
@@ -54,8 +54,8 @@ internal object AvslagPåMinsteinntekt {
 
     internal val meldtSomArbeidssøker = with(søknad) {
         generator(registreringsperioder) har "registrert arbeidssøker".makro {
-            dato(virkningstidspunkt) etter dato(dagensDato) hvisGyldig {
-                dato(dagensDato) mellom dato(registrertArbeidsøkerPeriodeFom) og
+            dato(virkningstidspunkt) etter dato(behandlingsdato) hvisGyldig {
+                dato(behandlingsdato) mellom dato(registrertArbeidsøkerPeriodeFom) og
                     dato(registrertArbeidsøkerPeriodeTom)
             } hvisUgyldig {
                 dato(virkningstidspunkt) mellom dato(registrertArbeidsøkerPeriodeFom) og
