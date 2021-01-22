@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.marshalling
 
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -21,12 +22,14 @@ class SaksbehandlerJsonBuilder(
     lokal: Locale = bokmål
 ) : SøknadJsonBuilder(lokal = lokal) {
     private var relevanteFakta: Set<String> = mutableSetOf()
+    private val genrerteFakta = søknadprosess.søknad.filter { it.id.contains(".") }
 
     init {
         søknadprosess.søknad.accept(this)
         søknadprosess.rootSubsumsjon.mulige().accept(this)
         søknadprosess.first { seksjonNavn == it.navn && indeks == it.indeks }
             .filtrertSeksjon(søknadprosess.rootSubsumsjon).accept(this)
+        genrerteFakta.forEach { it.accept(this) }
     }
 
     override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
@@ -70,7 +73,7 @@ class SaksbehandlerJsonBuilder(
         clazz: Class<R>,
         svar: R?
     ) {
-        if (id !in relevanteFakta) return
+        if (id !in relevanteFakta ) return
         super.lagFaktumNode(id, navn, roller, godkjenner, clazz, svar)
     }
 
@@ -86,5 +89,20 @@ class SaksbehandlerJsonBuilder(
     ) {
         relevanteFakta += children.map { it.id }
         super.preVisit(faktum, id, avhengigeFakta, avhengerAvFakta, children, clazz, regel, svar)
+    }
+
+    override fun <R : Comparable<R>> visit(
+        faktum: GeneratorFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        templates: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>,
+        svar: R
+    ) {
+        relevanteFakta += setOf<String>(id)
+        relevanteFakta += genrerteFakta.map { it.id }
+        lagFaktumNode(id, faktum.navn, clazz = clazz, svar = svar)
     }
 }

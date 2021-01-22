@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.marshalling.Språk.Companion.nynorsk
+import no.nav.dagpenger.model.marshalling.SøknadJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.godkjentAv
@@ -77,12 +78,28 @@ internal class SaksbehandlerJsonBuilderTest {
             dato faktum "f8" id 8,
             dato faktum "f9" id 9,
             maks dato "f10" av 8 og 9 id 10,
-            boolsk faktum "f11" id 11 avhengerAv 10
+            boolsk faktum "f11" id 11 avhengerAv 10,
+            boolsk faktum "f12" id 12 avhengerAv 67
         )
         mockkStatic(ResourceBundle::class.java.name)
         every {
             ResourceBundle.getBundle(any() as String, any() as Locale)
         } returns mockBundle
+    }
+
+    @Test
+    fun `inkluderer genererte faktum som faktumet avhengerAv`(){
+        val søknadsprosess = søknadprosess(
+            prototypeSøknad.heltall(67) er 1 godkjentAv prototypeSøknad.boolsk(12)
+        )
+        søknadsprosess.heltall(67).besvar(1)
+        søknadsprosess.boolsk("6.1").besvar(true)
+        søknadsprosess.boolsk("7.1").besvar(true)
+
+        SaksbehandlerJsonBuilder(søknadsprosess, "saksbehandler67").resultat().also {
+            assertEquals(listOf("67","6.1","7.1","12"), it["fakta"].map { it["id"] })
+            assertEquals(4, it["fakta"].size())
+        }
     }
 
     @Test
@@ -405,6 +422,7 @@ internal class SaksbehandlerJsonBuilderTest {
             Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.boolsk(2)),
             Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeSøknad.boolsk(4)),
             Seksjon("saksbehandler5", Rolle.saksbehandler, prototypeSøknad.boolsk(11)),
+            Seksjon("saksbehandler67", Rolle.saksbehandler,prototypeSøknad.boolsk(12)),
             rootSubsumsjon = prototypeSubsumsjon
         )
 
