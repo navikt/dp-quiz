@@ -62,22 +62,23 @@ internal class AvslagPåMinsteinntektTest {
         withSøknad { besvar ->
             besvar(behandlingsdato, 5.januar)
             besvar(senesteMuligeVirkningstidspunkt, 19.januar)
-            besvar(ønsketDato, 5.januar)
-            besvar(sisteDagMedLønn, 5.januar)
-            besvar(søknadstidspunkt, 2.januar)
-            besvar(inntektsrapporteringsperiodeFom, 5.januar)
-            besvar(inntektsrapporteringsperiodeTom, 5.februar)
-            besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
-
-            assertGjeldendeSeksjon("ytelsehistorikk")
-            besvar(harHattDagpengerSiste36mnd, false)
-            besvar(sykepengerSiste36mnd, false)
-
-            assertGjeldendeSeksjon("søknadsunntak")
+            assertGjeldendeSeksjon("datafrasøknad")
             besvar(eøsArbeid, false)
             besvar(fangstOgFisk, false)
             besvar(verneplikt, false)
             besvar(lærling, false)
+            besvar(ønsketDato, 5.januar)
+            besvar(sisteDagMedLønn, 5.januar)
+            besvar(søknadstidspunkt, 2.januar)
+            assertGjeldendeSeksjon("inntektsrapporteringsperioder")
+            besvar(inntektsrapporteringsperiodeFom, 5.januar)
+            besvar(inntektsrapporteringsperiodeTom, 5.februar)
+
+            assertGjeldendeSeksjon("dagpengehistorikk")
+            besvar(harHattDagpengerSiste36mnd, false)
+
+            assertGjeldendeSeksjon("sykepengehistorikk")
+            besvar(sykepengerSiste36mnd, false)
 
             assertGjeldendeSeksjon("arbeidsforhold")
             besvar(antallEndredeArbeidsforhold, listOf(listOf("24.1" to false, "25.1" to true, "26.1" to false, "27.1" to false)))
@@ -85,6 +86,9 @@ internal class AvslagPåMinsteinntektTest {
             assertGjeldendeSeksjon("grunnbeløp")
             besvar(G3, 300000.årlig)
             besvar(G1_5, 150000.årlig)
+
+            assertGjeldendeSeksjon("arbeidsøkerperioder")
+            besvar(registreringsperioder, listOf(listOf("18.1" to 1.januar(2018), "19.1" to 30.januar(2018))))
 
             assertGjeldendeSeksjon("inntekter")
             besvar(inntektSiste36mnd, 20000.årlig)

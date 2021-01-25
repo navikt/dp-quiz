@@ -39,12 +39,23 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verne
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ønsketDato
 
 internal object Seksjoner {
-    private val oppstart = with(søknad) {
+
+    private val behandlingsdatoSeksjon = with(søknad) {
+        Seksjon("behandlingsdato", Rolle.nav, dato(behandlingsdato))
+    }
+
+    private val senesteMuligeVirkningstidpunktSeksjon = with(søknad) {
         Seksjon(
-            "oppstart",
+            "senesteMuligeVirkningstidspunkt",
             Rolle.nav,
-            dato(behandlingsdato),
-            dato(senesteMuligeVirkningstidspunkt),
+            dato(senesteMuligeVirkningstidspunkt)
+        )
+    }
+
+    private val inntektsrapporteringsperioder = with(søknad) {
+        Seksjon(
+            "inntektsrapporteringsperioder",
+            Rolle.nav,
             dato(inntektsrapporteringsperiodeFom),
             dato(inntektsrapporteringsperiodeTom)
         )
@@ -59,36 +70,43 @@ internal object Seksjoner {
         )
     }
 
-    private val datoer = with(søknad) {
+    private val dataFraSøknad = with(søknad) {
         Seksjon(
-            "datoer",
+            "datafrasøknad",
             Rolle.nav,
             dato(ønsketDato),
             dato(søknadstidspunkt),
             dato(sisteDagMedLønn),
+            boolsk(verneplikt),
+            boolsk(lærling),
+            boolsk(eøsArbeid),
+            boolsk(fangstOgFisk)
+        )
+    }
+
+    private val arbeidsøkerPerioder = with(søknad) {
+        Seksjon(
+            "arbeidsøkerperioder",
+            Rolle.nav,
             dato(registrertArbeidsøkerPeriodeFom),
             dato(registrertArbeidsøkerPeriodeTom),
             generator(registreringsperioder)
         )
     }
 
-    private val ytelseshistorikk = with(søknad) {
+    private val dagpengehistorikk = with(søknad) {
         Seksjon(
-            "ytelsehistorikk",
+            "dagpengehistorikk",
             Rolle.nav,
             boolsk(harHattDagpengerSiste36mnd),
-            boolsk(sykepengerSiste36mnd)
         )
     }
 
-    private val søknadsunntak = with(søknad) {
+    private val sykepengehistorikk = with(søknad) {
         Seksjon(
-            "søknadsunntak",
+            "sykepengehistorikk",
             Rolle.nav,
-            boolsk(verneplikt),
-            boolsk(lærling),
-            boolsk(eøsArbeid),
-            boolsk(fangstOgFisk)
+            boolsk(sykepengerSiste36mnd)
         )
     }
 
@@ -109,7 +127,7 @@ internal object Seksjoner {
         )
     }
 
-    private val arbeidsforholdNav = with(søknad) {
+    private val endredeArbeidsforhold = with(søknad) {
         Seksjon(
             "arbeidsforhold",
             Rolle.nav,
@@ -179,14 +197,17 @@ internal object Seksjoner {
 
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
-            oppstart,
+            behandlingsdatoSeksjon,
+            senesteMuligeVirkningstidpunktSeksjon,
+            inntektsrapporteringsperioder,
             grunnbeløp,
-            datoer,
-            ytelseshistorikk,
-            søknadsunntak,
+            dataFraSøknad,
+            arbeidsøkerPerioder,
+            dagpengehistorikk,
+            sykepengehistorikk,
             inntekter,
             godkjennDato,
-            arbeidsforholdNav,
+            endredeArbeidsforhold,
             sluttårsakSaksbehandler,
             manuellGjenopptak,
             manuellSykepenger,
