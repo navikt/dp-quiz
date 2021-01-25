@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.marshalling
 
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -15,18 +16,21 @@ import java.util.Locale
 import java.util.UUID
 
 class SaksbehandlerJsonBuilder(
-    søknadprosess: Søknadprosess,
+    private val søknadprosess: Søknadprosess,
     private val seksjonNavn: String,
     private val indeks: Int = 0,
     lokal: Locale = bokmål
 ) : SøknadJsonBuilder(lokal = lokal) {
     private var relevanteFakta: Set<String> = mutableSetOf()
+    private val genererteFakta = mutableSetOf<Faktum<*>>()
 
     init {
         søknadprosess.søknad.accept(this)
         søknadprosess.rootSubsumsjon.mulige().accept(this)
         søknadprosess.first { seksjonNavn == it.navn && indeks == it.indeks }
             .filtrertSeksjon(søknadprosess.rootSubsumsjon).accept(this)
+        ignore = false
+        genererteFakta.forEach { it.accept(this) }
     }
 
     override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
@@ -86,5 +90,26 @@ class SaksbehandlerJsonBuilder(
     ) {
         relevanteFakta += children.map { it.id }
         super.preVisit(faktum, id, avhengigeFakta, avhengerAvFakta, children, clazz, regel, svar)
+    }
+
+    override fun <R : Comparable<R>> visit(
+        faktum: GeneratorFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        templates: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>,
+        svar: R
+    ) {
+        relevanteFakta += setOf(id)
+
+        if (!ignore) {
+            val genererteIdeer = templates
+                .flatMap { template -> (1..(svar as Int)).map { r -> template.id + ".$r" } }
+            relevanteFakta += genererteIdeer
+            genererteFakta.addAll(genererteIdeer.map { søknadprosess.søknad.id(it) })
+        }
+        lagFaktumNode(id, faktum.navn, clazz = clazz, svar = svar)
     }
 }
