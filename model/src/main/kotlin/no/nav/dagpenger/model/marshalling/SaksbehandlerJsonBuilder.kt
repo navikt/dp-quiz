@@ -21,7 +21,7 @@ class SaksbehandlerJsonBuilder(
     private val indeks: Int = 0,
     lokal: Locale = bokmål
 ) : SøknadJsonBuilder(lokal = lokal) {
-    private var relevanteFakta: Set<String> = mutableSetOf()
+    private val relevanteFakta = mutableSetOf<String>()
     private val genererteFakta = mutableSetOf<Faktum<*>>()
 
     init {
@@ -108,7 +108,7 @@ class SaksbehandlerJsonBuilder(
             val genererteIdeer = templates
                 .flatMap { template -> (1..(svar as Int)).map { r -> template.id + ".$r" } }
             relevanteFakta += genererteIdeer
-            genererteFakta.addAll(genererteIdeer.map { søknadprosess.søknad.id(it) })
+            genererteFakta += genererteIdeer.map { søknadprosess.søknad.id(it) }
         }
         lagFaktumNode(id, faktum.navn, clazz = clazz, svar = svar)
     }
