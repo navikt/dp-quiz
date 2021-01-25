@@ -16,20 +16,21 @@ import java.util.Locale
 import java.util.UUID
 
 class SaksbehandlerJsonBuilder(
-    søknadprosess: Søknadprosess,
+    private val søknadprosess: Søknadprosess,
     private val seksjonNavn: String,
     private val indeks: Int = 0,
     lokal: Locale = bokmål
 ) : SøknadJsonBuilder(lokal = lokal) {
     private var relevanteFakta: Set<String> = mutableSetOf()
-    private val genrerteFakta = søknadprosess.søknad.filter { it.id.contains(".") }
+    private val genererteFakta = mutableSetOf<Faktum<*>>()
 
     init {
         søknadprosess.søknad.accept(this)
         søknadprosess.rootSubsumsjon.mulige().accept(this)
         søknadprosess.first { seksjonNavn == it.navn && indeks == it.indeks }
             .filtrertSeksjon(søknadprosess.rootSubsumsjon).accept(this)
-        genrerteFakta.forEach { it.accept(this) }
+        ignore = false
+        genererteFakta.forEach { it.accept(this) }
     }
 
     override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
@@ -73,7 +74,7 @@ class SaksbehandlerJsonBuilder(
         clazz: Class<R>,
         svar: R?
     ) {
-        if (id !in relevanteFakta ) return
+        if (id !in relevanteFakta) return
         super.lagFaktumNode(id, navn, roller, godkjenner, clazz, svar)
     }
 
@@ -101,8 +102,14 @@ class SaksbehandlerJsonBuilder(
         clazz: Class<R>,
         svar: R
     ) {
-        relevanteFakta += setOf<String>(id)
-        relevanteFakta += genrerteFakta.map { it.id }
+        relevanteFakta += setOf(id)
+
+        if (!ignore) {
+            val genererteIdeer = templates
+                .flatMap { template -> (1..(svar as Int)).map { r -> template.id + ".$r" } }
+            relevanteFakta += genererteIdeer
+            genererteFakta.addAll(genererteIdeer.map { søknadprosess.søknad.id(it) })
+        }
         lagFaktumNode(id, faktum.navn, clazz = clazz, svar = svar)
     }
 }
