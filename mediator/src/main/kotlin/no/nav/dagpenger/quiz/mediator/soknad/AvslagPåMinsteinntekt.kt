@@ -3,10 +3,10 @@ package no.nav.dagpenger.quiz.mediator.soknad
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.førEllerLik
+import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.minst
-import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
@@ -22,6 +22,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innte
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
@@ -42,16 +43,19 @@ internal object AvslagPåMinsteinntekt {
             }
         } hvisUgyldig { boolsk(uhåndterbartVirkningstidspunktManuell) er true }
     }
-
     private val minsteArbeidsinntekt = with(søknad) {
-        "minste arbeidsinntekt".minstEnAv(
-            inntekt(inntektSiste36mnd) minst inntekt(G3),
-            inntekt(inntektSiste12mnd) minst inntekt(G1_5),
-            boolsk(verneplikt) er true,
-            boolsk(lærling) er true
-        ).ugyldigGodkjentAv(boolsk(godkjenningSisteDagMedLønn), boolsk(godkjenningSluttårsak))
+        "oppfyller krav til minste arbeidsinntekt".makro {
+            "minste arbeidsinntekt".minstEnAv(
+                inntekt(inntektSiste36mnd) minst inntekt(G3),
+                inntekt(inntektSiste12mnd) minst inntekt(G1_5),
+                boolsk(verneplikt) er true,
+                boolsk(lærling) er true
+            ) hvisGyldig { boolsk(oppfyllerMinsteinntektManuell) er true }
+        }.godkjentAv(
+            boolsk(godkjenningSisteDagMedLønn),
+            boolsk(godkjenningSluttårsak)
+        )
     }
-
     internal val meldtSomArbeidssøker = with(søknad) {
         generator(registreringsperioder) har "registrert arbeidssøker".makro {
             dato(virkningstidspunkt) etter dato(behandlingsdato) hvisGyldig {
@@ -63,13 +67,14 @@ internal object AvslagPåMinsteinntekt {
             }
         }
     }
-
-    internal val regeltre = sjekkVirkningstidspunkt hvisGyldig {
-        skalManueltBehandles hvisUgyldig {
-            "inngangsvilkår".alle(
-                minsteArbeidsinntekt,
-                meldtSomArbeidssøker
-            )
+    internal val regeltre = with(søknad) {
+        sjekkVirkningstidspunkt hvisGyldig {
+            skalManueltBehandles hvisUgyldig {
+                "inngangsvilkår".alle(
+                    minsteArbeidsinntekt,
+                    meldtSomArbeidssøker
+                )
+            }
         }
     }
 }

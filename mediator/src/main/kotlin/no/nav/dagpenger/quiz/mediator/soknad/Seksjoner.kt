@@ -21,6 +21,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innte
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lønnsgaranti
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordinær
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
@@ -195,6 +196,14 @@ internal object Seksjoner {
         )
     }
 
+    private val manuellOppfyllerKraveneTilMinsteArbeidsinntekt = with(søknad) {
+        Seksjon(
+            "kravene til minste arbeidsforhold",
+            Rolle.manuell,
+            boolsk(oppfyllerMinsteinntektManuell)
+        )
+    }
+
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             behandlingsdatoSeksjon,
@@ -214,6 +223,7 @@ internal object Seksjoner {
             manuellFangstOgFisk,
             manuellEøs,
             manuellDatoer,
-            manuellFlereArbeidsforhold
+            manuellFlereArbeidsforhold,
+            manuellOppfyllerKraveneTilMinsteArbeidsinntekt
         )
 }

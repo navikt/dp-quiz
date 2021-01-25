@@ -23,7 +23,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning uansett resultat av child`() {
-        søknadprosess { fakta -> fakta boolsk 1 er true godkjentAv (fakta boolsk 2) }
+        søknadprosess { fakta -> (fakta boolsk 1 er true).godkjentAv(fakta boolsk 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true)
@@ -43,7 +43,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning av gyldig sti av child`() {
-        søknadprosess { fakta -> fakta boolsk 1 er true gyldigGodkjentAv (fakta boolsk 2) }
+        søknadprosess { fakta -> (fakta boolsk 1 er true).gyldigGodkjentAv(fakta boolsk 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true)
@@ -63,7 +63,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Godkjenning av ugyldig sti av child`() {
-        søknadprosess { fakta -> fakta boolsk 1 er true ugyldigGodkjentAv (fakta boolsk 2) }
+        søknadprosess { fakta -> (fakta boolsk 1 er true).ugyldigGodkjentAv(fakta boolsk 2) }
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
@@ -88,9 +88,9 @@ internal class GodkjenningsSubsumsjonTest {
             boolsk faktum "approve1" id 2
         )
 
-        assertThrows<IllegalArgumentException> { prototypeSøknad.boolsk(1) er true gyldigGodkjentAv prototypeSøknad.boolsk(2) }
-        assertThrows<IllegalArgumentException> { prototypeSøknad.boolsk(1) er true ugyldigGodkjentAv prototypeSøknad.boolsk(2) }
-        assertThrows<IllegalArgumentException> { prototypeSøknad.boolsk(1) er true godkjentAv prototypeSøknad.boolsk(2) }
+        assertThrows<IllegalArgumentException> { (prototypeSøknad.boolsk(1) er true).gyldigGodkjentAv(prototypeSøknad.boolsk(2)) }
+        assertThrows<IllegalArgumentException> { (prototypeSøknad.boolsk(1) er true).ugyldigGodkjentAv(prototypeSøknad.boolsk(2)) }
+        assertThrows<IllegalArgumentException> { (prototypeSøknad.boolsk(1) er true).godkjentAv(prototypeSøknad.boolsk(2)) }
     }
 
     private fun søknadprosess(block: (Søknad) -> Subsumsjon): Søknadprosess {
