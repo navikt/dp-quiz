@@ -13,6 +13,7 @@ import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
+import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.util.UUID
@@ -23,20 +24,24 @@ private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 internal class FaktumSvarService(
     private val søknadPersistence: SøknadPersistence,
     rapidsConnection: RapidsConnection
-) :
-    HendelseService(rapidsConnection) {
-    override val eventName = "faktum_svar"
-    override val riverName = "Faktum svar"
+) : River.PacketListener {
 
-    override fun validate(packet: JsonMessage) {
-        packet.requireKey(
-            "søknad_uuid",
-            "fakta",
-        )
-        packet.requireArray("fakta") {
-            requireKey("id")
-            requireKey("clazz")
-        }
+    init {
+        River(rapidsConnection).apply {
+            validate { message ->
+                message.demandValue("@event_name", "faktum_svar")
+                message.requireKey(
+                    "søknad_uuid",
+                    "fakta"
+                )
+                message.require("@opprettet", JsonNode::asLocalDateTime)
+                message.require("@id") { UUID.fromString(it.asText()) }
+                message.requireArray("fakta") {
+                    requireKey("id")
+                    requireKey("clazz")
+                }
+            }
+        }.register(this)
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
@@ -89,7 +94,8 @@ internal class FaktumSvarService(
     }
 
     override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
-        super.onError(problems, context)
+        log.error { problems.toString() }
+        sikkerlogg.error { problems.toExtendedReport() }
     }
 
     private fun besvar(søknadprosess: Søknadprosess, faktumId: String, svar: JsonNode, clazz: String) {
