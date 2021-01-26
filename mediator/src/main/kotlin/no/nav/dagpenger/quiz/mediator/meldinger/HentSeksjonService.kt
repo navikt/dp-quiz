@@ -10,6 +10,7 @@ import java.util.UUID
 
 internal class HentSeksjonService(rapidsConnection: RapidsConnection) :
     River.PacketListener {
+    // TODO: sjekk om denne er i bruk(kafka)
     init {
         River(rapidsConnection).apply {
             validate { packet ->

@@ -57,40 +57,42 @@ internal class FaktumSvarService(
             sikkerlogg.info { packet.toJson() }
 
             try {
-                søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web).also { søknadprosess ->
-                    sikkerlogg.info {
-                        """Hentet lagrede fakta ${
-                        søknadprosess.søknad.filter { it.erBesvart() }.map { "${it.id}: ${it.svar()}" }
-                        } """
-                    }
-                    fakta.forEach { faktumNode ->
-                        val faktumId = faktumNode["id"].asText()
-                        val svar = faktumNode["svar"]
-                        val clazz = faktumNode["clazz"].asText()
-
-                        besvar(søknadprosess, faktumId, svar, clazz)
-                    }
-                    søknadPersistence.lagre(søknadprosess.søknad)
-                    søknadprosess.nesteSeksjoner()
-                        .onEach { seksjon ->
-                            val json = seksjon.somSpørsmål()
-                            context.send(json)
-                            sikkerlogg.info { "Send ut seksjon: $json" }
-                            log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
-                        }.also {
-                            if (Søknadprosess.erFerdig(it)) {
-                                ResultatJsonBuilder(søknadprosess).resultat().also { json ->
-                                    context.send(json.toString())
-                                    sikkerlogg.info { "Send ut resultat: $json" }
-                                }
-                                log.info { "Ferdig med søknad ${søknadprosess.søknad.uuid}. Resultatet er: ${søknadprosess.resultat()}" }
-                            }
-                        }
-                }
+                val søknadprosess = søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web)
+                besvarFakta(fakta, søknadprosess)
+                sendNesteSeksjon(søknadprosess, context)
             } catch (e: Exception) {
                 log.error(e) { "feil ved svar for faktum: ${e.message}" }
             }
         }
+    }
+
+    private fun besvarFakta(fakta: List<JsonNode>, søknadprosess: Søknadprosess) {
+        fakta.forEach { faktumNode ->
+            val faktumId = faktumNode["id"].asText()
+            val svar = faktumNode["svar"]
+            val clazz = faktumNode["clazz"].asText()
+
+            besvar(søknadprosess, faktumId, svar, clazz)
+        }
+        søknadPersistence.lagre(søknadprosess.søknad)
+    }
+
+    private fun sendNesteSeksjon(søknadprosess: Søknadprosess, context: RapidsConnection.MessageContext) {
+        søknadprosess.nesteSeksjoner()
+            .onEach { seksjon ->
+                val json = seksjon.somSpørsmål()
+                context.send(json)
+                sikkerlogg.info { "Send ut seksjon: $json" }
+                log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
+            }.also { seksjon ->
+                if (Søknadprosess.erFerdig(seksjon)) {
+                    ResultatJsonBuilder(søknadprosess).resultat().also { json ->
+                        context.send(json.toString())
+                        sikkerlogg.info { "Send ut resultat: $json" }
+                    }
+                    log.info { "Ferdig med søknad ${søknadprosess.søknad.uuid}. Resultatet er: ${søknadprosess.resultat()}" }
+                }
+            }
     }
 
     override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
