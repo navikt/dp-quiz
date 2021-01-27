@@ -102,8 +102,6 @@ class SaksbehandlerJsonBuilder(
         clazz: Class<R>,
         svar: R
     ) {
-        relevanteFakta += setOf(id)
-
         if (!ignore) {
             val genererte = søknadprosess.flatMap {
                 it.filter { faktum ->
@@ -115,6 +113,5 @@ class SaksbehandlerJsonBuilder(
             relevanteFakta += genererte.map { it.id }
             genererteFakta += genererte
         }
-        lagFaktumNode(id, faktum.navn, clazz = clazz, svar = svar)
     }
 }

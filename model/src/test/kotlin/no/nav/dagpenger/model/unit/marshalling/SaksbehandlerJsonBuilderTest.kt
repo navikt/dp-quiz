@@ -99,8 +99,8 @@ internal class SaksbehandlerJsonBuilderTest {
         søknadsprosess.boolsk("7.1").besvar(true)
 
         SaksbehandlerJsonBuilder(søknadsprosess, "saksbehandler67").resultat().also {
-            assertEquals(listOf("12", "67", "6.1", "7.1"), it["fakta"].map { it["id"].asText() })
-            assertEquals(4, it["fakta"].size())
+            assertEquals(listOf("12", "6.1", "7.1"), it["fakta"].map { it["id"].asText() })
+            assertEquals(3, it["fakta"].size())
         }
 
         søknadsprosess.heltall(1314).besvar(1)
@@ -108,8 +108,8 @@ internal class SaksbehandlerJsonBuilderTest {
         søknadsprosess.boolsk("14.1").besvar(true)
 
         SaksbehandlerJsonBuilder(søknadsprosess, "saksbehandler67").resultat().also {
-            assertEquals(listOf("12", "67", "6.1", "7.1"), it["fakta"].map { it["id"].asText() })
-            assertEquals(4, it["fakta"].size())
+            assertEquals(listOf("12", "6.1", "7.1"), it["fakta"].map { it["id"].asText() })
+            assertEquals(3, it["fakta"].size())
         }
     }
 
