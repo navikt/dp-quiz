@@ -105,10 +105,15 @@ class SaksbehandlerJsonBuilder(
         relevanteFakta += setOf(id)
 
         if (!ignore) {
-            val genererteIdeer = templates
-                .flatMap { template -> (1..(svar as Int)).map { r -> template.id + ".$r" } }
-            relevanteFakta += genererteIdeer
-            genererteFakta += genererteIdeer.map { søknadprosess.søknad.id(it) }
+            val genererte = søknadprosess.flatMap {
+                it.filter { faktum ->
+                    templates.any { template ->
+                        faktum.faktumId.generertFra(template.faktumId)
+                    }
+                }
+            }
+            relevanteFakta += genererte.map { it.id }
+            genererteFakta += genererte
         }
         lagFaktumNode(id, faktum.navn, clazz = clazz, svar = svar)
     }
