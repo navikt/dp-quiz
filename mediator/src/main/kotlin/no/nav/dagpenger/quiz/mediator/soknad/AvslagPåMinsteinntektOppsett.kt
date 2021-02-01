@@ -16,7 +16,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    const val VERSJON_ID = 3
+    const val VERSJON_ID = 4
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
@@ -58,6 +58,8 @@ internal object AvslagPåMinsteinntektOppsett {
     const val senesteMuligeVirkningstidspunkt = 37
     const val flereArbeidsforholdManuell = 38
     const val oppfyllerMinsteinntektManuell = 39
+    const val harInntektNesteKalendermåned = 40
+    const val inntektNesteKalendermånedManuell = 41
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -97,7 +99,9 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Ugyldig dato manuell" id uhåndterbartVirkningstidspunktManuell avhengerAv virkningstidspunkt,
             boolsk faktum "Flere arbeidsforhold manuell" id flereArbeidsforholdManuell avhengerAv antallEndredeArbeidsforhold,
             dato faktum "Grensedato 14 dager frem i tid" id senesteMuligeVirkningstidspunkt avhengerAv behandlingsdato,
-            boolsk faktum "Oppfyller kravene til minste arbeidsinntekt, går til manuell" id oppfyllerMinsteinntektManuell
+            boolsk faktum "Oppfyller kravene til minste arbeidsinntekt, går til manuell" id oppfyllerMinsteinntektManuell,
+            boolsk faktum "Har inntekt neste kalendermåned" id harInntektNesteKalendermåned avhengerAv virkningstidspunkt,
+            boolsk faktum "Har inntekt neste kalendermåned, skal til manuell" id inntektNesteKalendermånedManuell
         )
 
     private val faktumNavBehov =

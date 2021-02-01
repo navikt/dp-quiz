@@ -12,6 +12,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangs
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektNesteKalendermånedManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.svangerskapsrelaterteSykepengerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
@@ -46,6 +48,12 @@ internal object ManuellBehandling {
     private val sjekkAntallArbeidsforhold = with(søknad) {
         "antall arbeidsforhold" makro {
             heltall(antallEndredeArbeidsforhold) erIkke 1 hvisGyldig { boolsk(flereArbeidsforholdManuell) er true }
+        }
+    }
+
+    internal val sjekkInntektNesteKalendermåned = with(søknad) {
+        "har inntekt neste kalendermåned" makro {
+            boolsk(harInntektNesteKalendermåned) er true hvisGyldig { boolsk(inntektNesteKalendermånedManuell) er true }
         }
     }
 

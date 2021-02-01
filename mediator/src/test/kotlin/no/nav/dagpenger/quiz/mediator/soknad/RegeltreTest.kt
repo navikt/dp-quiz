@@ -23,6 +23,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangs
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSluttårsak
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeFom
@@ -63,6 +64,7 @@ internal class RegeltreTest {
             dato(senesteMuligeVirkningstidspunkt).besvar(19.januar)
             dato(inntektsrapporteringsperiodeFom).besvar(5.januar)
             dato(inntektsrapporteringsperiodeTom).besvar(5.februar)
+            boolsk(harInntektNesteKalendermåned).besvar(false)
 
             generator(registreringsperioder).besvar(1)
             dato("18.1").besvar(1.januar(2018))
@@ -169,6 +171,12 @@ internal class RegeltreTest {
     fun `Eøs arbeid skal manuelt behandles`() {
         manglerInntekt.boolsk(eøsArbeid).besvar(true)
         assertEquals("Eøs arbeid manuell", manglerInntekt.nesteSeksjoner().first().navn)
+    }
+
+    @Test
+    fun `Inntekt neste kalendermåned skal manuelt behandles`() {
+        manglerInntekt.boolsk(harInntektNesteKalendermåned).besvar(true)
+        assertEquals("har inntekt neste kalendermåned manuell", manglerInntekt.nesteSeksjoner().first().navn)
     }
 
     @Test

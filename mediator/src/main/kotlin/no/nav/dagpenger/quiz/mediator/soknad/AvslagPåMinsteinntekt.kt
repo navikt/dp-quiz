@@ -31,6 +31,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søkn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningstidspunktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkningstidspunkt
+import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.sjekkInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.skalManueltBehandles
 
 internal object AvslagPåMinsteinntekt {
@@ -73,7 +74,9 @@ internal object AvslagPåMinsteinntekt {
                 "inngangsvilkår".alle(
                     minsteArbeidsinntekt,
                     meldtSomArbeidssøker
-                )
+                ) hvisUgyldig {
+                    sjekkInntektNesteKalendermåned
+                }
             }
         }
     }

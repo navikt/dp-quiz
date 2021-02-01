@@ -15,6 +15,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flere
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSluttårsak
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektNesteKalendermånedManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeFom
@@ -117,6 +119,7 @@ internal object Seksjoner {
             Rolle.nav,
             inntekt(inntektSiste12mnd),
             inntekt(inntektSiste36mnd),
+            boolsk(harInntektNesteKalendermåned)
         )
     }
 
@@ -204,6 +207,14 @@ internal object Seksjoner {
         )
     }
 
+    private val manuellHarInntektNesteKalendermåned = with(søknad) {
+        Seksjon(
+            "har inntekt neste kalendermåned manuell",
+            Rolle.manuell,
+            boolsk(inntektNesteKalendermånedManuell)
+        )
+    }
+
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             behandlingsdatoSeksjon,
@@ -224,6 +235,7 @@ internal object Seksjoner {
             manuellEøs,
             manuellDatoer,
             manuellFlereArbeidsforhold,
-            manuellOppfyllerKraveneTilMinsteArbeidsinntekt
+            manuellOppfyllerKraveneTilMinsteArbeidsinntekt,
+            manuellHarInntektNesteKalendermåned
         )
 }
