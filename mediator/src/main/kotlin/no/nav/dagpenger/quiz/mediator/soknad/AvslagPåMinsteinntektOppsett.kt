@@ -131,7 +131,8 @@ internal object AvslagPåMinsteinntektOppsett {
                 permittertFiskeforedling to "PermittertFiskeforedling",
                 harHattDagpengerSiste36mnd to "HarHattDagpengerSiste36Mnd",
                 sykepengerSiste36mnd to "SykepengerSiste36Måneder",
-                eøsArbeid to "EØSArbeid"
+                eøsArbeid to "EØSArbeid",
+                harInntektNesteKalendermåned to "HarRapportertInntektNesteMåned"
             )
         )
 
