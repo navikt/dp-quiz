@@ -51,7 +51,9 @@ internal object AvslagPåMinsteinntekt {
                 inntekt(inntektSiste12mnd) minst inntekt(G1_5),
                 boolsk(verneplikt) er true,
                 boolsk(lærling) er true
-            ) hvisGyldig { boolsk(oppfyllerMinsteinntektManuell) er true }
+            ) hvisGyldig { boolsk(oppfyllerMinsteinntektManuell) er true } hvisUgyldig {
+                sjekkInntektNesteKalendermåned
+            }
         }.godkjentAv(
             boolsk(godkjenningSisteDagMedLønn),
             boolsk(godkjenningSluttårsak)
@@ -74,9 +76,7 @@ internal object AvslagPåMinsteinntekt {
                 "inngangsvilkår".alle(
                     minsteArbeidsinntekt,
                     meldtSomArbeidssøker
-                ) hvisUgyldig {
-                    sjekkInntektNesteKalendermåned
-                }
+                )
             }
         }
     }
