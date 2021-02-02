@@ -24,7 +24,8 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     }
 
     override fun besvartAv(): String? {
-        throw IllegalStateException("Templates har ikke svar")    }
+        throw IllegalStateException("Templates har ikke svar")
+    }
 
     override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> = emptySet()
 
