@@ -120,6 +120,22 @@ internal class SøknadRecordTest {
         }
     }
 
+    @Test
+    fun `kan lagre fakta besvart med ident`() {
+        val ident = "A123456"
+        Postgres.withMigratedDb {
+            byggOriginalSøknadprosess()
+
+            originalSøknadprosess.boolsk(1).besvar(true, ident)
+            originalSøknadprosess.dato(2).besvar(LocalDate.now(), ident)
+            originalSøknadprosess.inntekt(6).besvar(10000.årlig, ident)
+            originalSøknadprosess.heltall(16).besvar(123, ident)
+            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()), ident)
+
+            hentFørsteSøknad()
+        }
+    }
+
     private fun hentFørsteSøknad(userInterfaceType: Versjon.UserInterfaceType = Web) {
         søknadRecord.lagre(originalSøknadprosess.søknad)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()

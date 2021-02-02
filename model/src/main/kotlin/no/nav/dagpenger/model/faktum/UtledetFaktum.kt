@@ -19,7 +19,9 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
         throw IllegalArgumentException("Kan ikke besvare sammensatte faktum")
     }
 
-    override fun rehydrer(r: R): Faktum<R> {
+    override fun besvartAv(): String? = null
+
+    override fun rehydrer(r: R, ident: String?): Faktum<R> {
         throw IllegalArgumentException("Kan ikke rehydrere sammensatte faktum")
     }
 

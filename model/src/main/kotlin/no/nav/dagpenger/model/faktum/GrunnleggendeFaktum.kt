@@ -36,10 +36,11 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         besvartAv = ident
     }
 
-    override fun rehydrer(r: R): Faktum<R> = this.apply {
-        super.rehydrer(r)
+    override fun rehydrer(r: R, ident: String?): Faktum<R> = this.apply {
+        super.rehydrer(r, ident)
         gjeldendeSvar = r
         tilstand = Kjent
+        besvartAv = ident
     }
 
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
@@ -55,6 +56,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     }
 
     override fun svar(): R = tilstand.svar(this)
+    override fun besvartAv(): String? = tilstand.besvartAv(this)
 
     override fun erBesvart() = tilstand == Kjent
 
@@ -91,6 +93,8 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: FaktumVisitor)
         fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>): R =
             throw IllegalStateException("Faktumet er ikke kjent enda")
+
+        fun <R: Comparable<R>> besvartAv(grunnleggendeFaktum: GrunnleggendeFaktum<R>): String? = throw IllegalStateException("Faktumet er ikke kjent enda")
     }
 
     private object Ukjent : Tilstand {
@@ -105,6 +109,8 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         override fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: FaktumVisitor) {
             faktum.acceptMedSvar(visitor)
         }
+
+        override fun <R: Comparable<R>> besvartAv(faktum: GrunnleggendeFaktum<R>): String? = faktum.besvartAv
 
         override fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>) = faktum.gjeldendeSvar
     }
