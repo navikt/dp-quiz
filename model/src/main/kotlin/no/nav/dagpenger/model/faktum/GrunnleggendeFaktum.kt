@@ -13,6 +13,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 ) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private var tilstand: Tilstand = Ukjent
     protected lateinit var gjeldendeSvar: R
+    protected var besvartAv: String? = null
 
     internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>) : this(
         faktumId,
@@ -28,10 +29,11 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     override fun clazz() = clazz
 
-    override fun besvar(r: R) = this.apply {
-        super.besvar(r)
+    override fun besvar(r: R, ident: String?) = this.apply {
+        super.besvar(r, ident)
         gjeldendeSvar = r
         tilstand = Kjent
+        besvartAv = ident
     }
 
     override fun rehydrer(r: R): Faktum<R> = this.apply {
@@ -81,11 +83,13 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     }
 
     protected open fun acceptMedSvar(visitor: FaktumVisitor) {
-        visitor.visit(this, Kjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz, gjeldendeSvar)
+        visitor.visit(this, Kjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz, gjeldendeSvar, besvartAv)
     }
 
     private interface Tilstand {
         val kode: FaktumTilstand
+
+        fun <R : Comparable<R>> svartAv(faktum: GrunnleggendeFaktum<R>): String? = throw IllegalStateException("Faktumet er ikke kjent enda")
 
         fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: FaktumVisitor)
         fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>): R =
@@ -101,6 +105,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     private object Kjent : Tilstand {
         override val kode = FaktumTilstand.Kjent
+        override fun <R : Comparable<R>> svartAv(faktum: GrunnleggendeFaktum<R>) = faktum.besvartAv
         override fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: FaktumVisitor) {
             faktum.acceptMedSvar(visitor)
         }

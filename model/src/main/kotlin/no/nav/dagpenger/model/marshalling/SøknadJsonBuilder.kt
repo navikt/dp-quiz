@@ -85,7 +85,8 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        svar: R
+        svar: R,
+        besvartAv: String?
     ) {
         lagFaktumNode(id, faktum.navn, roller, godkjenner, clazz, svar)
     }

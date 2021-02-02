@@ -15,7 +15,7 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
 
     override fun clazz() = underordnede.toList().first().clazz()
 
-    override fun besvar(r: R): Faktum<R> {
+    override fun besvar(r: R, identer: String?): Faktum<R> {
         throw IllegalArgumentException("Kan ikke besvare sammensatte faktum")
     }
 

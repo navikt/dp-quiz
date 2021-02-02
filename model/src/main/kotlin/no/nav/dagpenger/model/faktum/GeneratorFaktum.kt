@@ -20,9 +20,9 @@ class GeneratorFaktum internal constructor(
 ) {
     internal lateinit var søknad: Søknad
 
-    override fun besvar(r: Int): GrunnleggendeFaktum<Int> = this.also {
+    override fun besvar(r: Int, ident: String?): GrunnleggendeFaktum<Int> = this.also {
         if (erBesvart() && svar() != r) tilbakestill()
-        super.besvar(r)
+        super.besvar(r, ident)
         templates.forEach { template -> template.generate(r, søknad) }
     }
 

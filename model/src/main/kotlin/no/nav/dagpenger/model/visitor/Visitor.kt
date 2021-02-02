@@ -45,7 +45,8 @@ interface FaktumVisitor {
         godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        svar: R
+        svar: R,
+        besvartAv: String?
     ) {
     }
 
