@@ -54,27 +54,27 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor
     }
 
     override fun <R : Comparable<R>> visit(
-            faktum: GrunnleggendeFaktum<R>,
-            tilstand: Faktum.FaktumTilstand,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFakta: Set<Faktum<*>>,
-            godkjenner: Set<Faktum<*>>,
-            roller: Set<Rolle>,
-            clazz: Class<R>
+        faktum: GrunnleggendeFaktum<R>,
+        tilstand: Faktum.FaktumTilstand,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
     ) {
         skrivFaktum(faktum, clazz)
         avhengigheter[faktum] = avhengigeFakta
     }
 
     override fun <R : Comparable<R>> visit(
-            faktum: GeneratorFaktum,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFakta: Set<Faktum<*>>,
-            templates: List<Faktum<*>>,
-            roller: Set<Rolle>,
-            clazz: Class<R>
+        faktum: GeneratorFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        templates: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
     ) {
         skrivFaktum(faktum, clazz)
         faktumFaktum(skrivFaktum(faktum, clazz), templates, "template_faktum")
