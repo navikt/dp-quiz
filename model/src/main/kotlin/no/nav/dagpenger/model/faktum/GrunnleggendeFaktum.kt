@@ -88,9 +88,6 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     private interface Tilstand {
         val kode: FaktumTilstand
-
-        fun <R : Comparable<R>> svartAv(faktum: GrunnleggendeFaktum<R>): String? = throw IllegalStateException("Faktumet er ikke kjent enda")
-
         fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: FaktumVisitor)
         fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>): R =
             throw IllegalStateException("Faktumet er ikke kjent enda")
@@ -105,7 +102,6 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     private object Kjent : Tilstand {
         override val kode = FaktumTilstand.Kjent
-        override fun <R : Comparable<R>> svartAv(faktum: GrunnleggendeFaktum<R>) = faktum.besvartAv
         override fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: FaktumVisitor) {
             faktum.acceptMedSvar(visitor)
         }

@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.unit.faktum
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
@@ -11,24 +11,23 @@ import no.nav.dagpenger.model.visitor.SøknadVisitor
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-internal class FaktumRolleTest {
+internal class FaktumBesvartAvTest {
 
     @Test
     fun `Sjekk at ident blir lagt på når saksbehandler besvarer`() {
         val søknad = Søknad(
             0,
-            BaseFaktumFactory.Companion.boolsk faktum "f1" id 1,
+            boolsk faktum "f1" id 1,
         ).testSøknadprosess()
         val ja1 = søknad.boolsk(1)
 
         ja1.besvar(true, "A123456")
-
-        assertEquals("A123456", IdentRolleVisitor(søknad).identer.first())
+        assertEquals("A123456", BesvartAvVisitor(søknad).identer.first())
     }
 
-    internal class IdentRolleVisitor(søknadprosess: Søknadprosess) : SøknadVisitor {
+    private class BesvartAvVisitor(søknadprosess: Søknadprosess) : SøknadVisitor {
 
-        val identer = mutableListOf<String?>()
+        val identer = mutableListOf<String>()
         init {
             søknadprosess.søknad.accept(this)
         }
