@@ -12,8 +12,8 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
+import no.nav.dagpenger.quiz.mediator.helpers.assertDeepEquals
 import no.nav.dagpenger.quiz.mediator.helpers.januar
-import no.nav.helse.serde.assertDeepEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
@@ -33,6 +33,7 @@ internal class SøknadRecordTest {
     fun `ny søknadprosess`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
+            assertSesjonType(Web)
 
             assertRecordCount(1, "soknad")
             assertRecordCount(expectedFaktaCount, "faktum_verdi")
@@ -48,7 +49,7 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
-            originalSøknadprosess.boolsk(1).besvar(true)
+            originalSøknadprosess.boolsk("1").besvar(true)
             originalSøknadprosess.dato(2).besvar(LocalDate.now())
             originalSøknadprosess.inntekt(6).besvar(10000.årlig)
             originalSøknadprosess.heltall(16).besvar(123)
@@ -126,11 +127,11 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
-            originalSøknadprosess.boolsk(1).besvar(true, ident)
             originalSøknadprosess.dato(2).besvar(LocalDate.now(), ident)
             originalSøknadprosess.inntekt(6).besvar(10000.årlig, ident)
             originalSøknadprosess.heltall(16).besvar(123, ident)
             originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()), ident)
+            originalSøknadprosess.boolsk(1).besvar(true, ident)
 
             hentFørsteSøknad()
         }

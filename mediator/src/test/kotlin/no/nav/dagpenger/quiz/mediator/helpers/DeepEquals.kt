@@ -1,4 +1,4 @@
-package no.nav.helse.serde
+package no.nav.dagpenger.quiz.mediator.helpers
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -41,7 +41,7 @@ private class ModelDeepEquals {
             assertEquals(one, other, "Failure on enum: $fieldName")
         }
         if (one::class.qualifiedName!!.startsWith("no.nav.dagpenger.")) {
-            assertHelseObjectEquals(one, other)
+            assertDagpengerObjectEquals(one, other)
         } else if (one is BigDecimal && other is BigDecimal) {
             assertEquals(one.toLong(), other.toLong(), "Failure for BigDecimal: $fieldName")
         } else {
@@ -49,7 +49,7 @@ private class ModelDeepEquals {
         }
     }
 
-    private fun assertHelseObjectEquals(one: Any, other: Any) {
+    private fun assertDagpengerObjectEquals(one: Any, other: Any) {
         one::class.memberProperties
             .filterNot { it.isLateinit }
             .map { it.apply { isAccessible = true } }
