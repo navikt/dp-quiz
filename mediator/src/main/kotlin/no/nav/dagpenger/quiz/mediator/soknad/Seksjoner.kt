@@ -153,7 +153,7 @@ internal object Seksjoner {
 
     private val manuellGjenopptak = with(søknad) {
         Seksjon(
-            "mulig gjenopptak manuell",
+            "mulig gjenopptak",
             Rolle.manuell,
             boolsk(periodeOppbruktManuell),
         )
@@ -161,7 +161,7 @@ internal object Seksjoner {
 
     private val manuellSykepenger = with(søknad) {
         Seksjon(
-            "svangerskapsrelaterte sykepenger manuell",
+            "svangerskapsrelaterte sykepenger",
             Rolle.manuell,
             boolsk(svangerskapsrelaterteSykepengerManuell)
         )
@@ -169,7 +169,7 @@ internal object Seksjoner {
 
     private val manuellFangstOgFisk = with(søknad) {
         Seksjon(
-            "fangst og fisk manuell",
+            "mulige inntekter fra fangst og fisk",
             Rolle.manuell,
             boolsk(fangstOgFiskManuell)
         )
@@ -177,7 +177,7 @@ internal object Seksjoner {
 
     private val manuellEøs = with(søknad) {
         Seksjon(
-            "Eøs arbeid manuell",
+            "EØS-arbeid",
             Rolle.manuell,
             boolsk(eøsArbeidManuell)
         )
@@ -185,7 +185,7 @@ internal object Seksjoner {
 
     private val manuellDatoer = with(søknad) {
         Seksjon(
-            "datoer manuell",
+            "virkningstidspunkt vi ikke kan håndtere",
             Rolle.manuell,
             boolsk(uhåndterbartVirkningstidspunktManuell)
         )
@@ -193,7 +193,7 @@ internal object Seksjoner {
 
     private val manuellFlereArbeidsforhold = with(søknad) {
         Seksjon(
-            "flere arbeidsforhold manuell",
+            "flere arbeidsforhold",
             Rolle.manuell,
             boolsk(flereArbeidsforholdManuell)
         )
@@ -201,7 +201,7 @@ internal object Seksjoner {
 
     private val manuellOppfyllerKraveneTilMinsteArbeidsinntekt = with(søknad) {
         Seksjon(
-            "kravene til minste arbeidsforhold",
+            "kravene til minste arbeidsinntekt er oppfylt så",
             Rolle.manuell,
             boolsk(oppfyllerMinsteinntektManuell)
         )
@@ -209,7 +209,7 @@ internal object Seksjoner {
 
     private val manuellHarInntektNesteKalendermåned = with(søknad) {
         Seksjon(
-            "har inntekt neste kalendermåned manuell",
+            "det er inntekt neste kalendermåned",
             Rolle.manuell,
             boolsk(inntektNesteKalendermånedManuell)
         )
