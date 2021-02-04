@@ -145,7 +145,7 @@ abstract class Subsumsjon protected constructor(
             roller: Set<Rolle>,
             clazz: Class<R>,
             svar: R,
-            besvartAv: String?
+            besvartAv: String
         ) {
             if (!ignore) {
                 resultater.add(faktum)

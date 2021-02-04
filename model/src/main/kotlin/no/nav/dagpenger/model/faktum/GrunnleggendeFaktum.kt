@@ -13,7 +13,13 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 ) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private var tilstand: Tilstand = Ukjent
     protected lateinit var gjeldendeSvar: R
-    protected lateinit var besvartAv: String
+    private var besvartAv: Besvarer = Besvarer.ukjent
+
+    private data class Besvarer(val ident: String) {
+        companion object {
+            val ukjent = Besvarer("ukjent")
+        }
+    }
 
     internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>) : this(
         faktumId,
@@ -33,14 +39,14 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         super.besvar(r, ident)
         gjeldendeSvar = r
         tilstand = Kjent
-        besvartAv = ident ?: "ukjent"
+        besvartAv = ident?.let { Besvarer(it) } ?: Besvarer.ukjent
     }
 
     override fun rehydrer(r: R, ident: String): Faktum<R> = this.apply {
         super.rehydrer(r, ident)
         gjeldendeSvar = r
         tilstand = Kjent
-        besvartAv = ident
+        besvartAv = Besvarer(ident)
     }
 
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
@@ -85,7 +91,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     }
 
     protected open fun acceptMedSvar(visitor: FaktumVisitor) {
-        visitor.visit(this, Kjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz, gjeldendeSvar, besvartAv)
+        visitor.visit(this, Kjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz, gjeldendeSvar, besvartAv.ident)
     }
 
     private interface Tilstand {
@@ -94,7 +100,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>): R =
             throw IllegalStateException("Faktumet er ikke kjent enda")
 
-        fun <R : Comparable<R>> besvartAv(grunnleggendeFaktum: GrunnleggendeFaktum<R>): String? = throw IllegalStateException("Faktumet er ikke kjent enda")
+        fun <R : Comparable<R>> besvartAv(grunnleggendeFaktum: GrunnleggendeFaktum<R>): String = throw IllegalStateException("Faktumet er ikke kjent enda")
     }
 
     private object Ukjent : Tilstand {
@@ -110,7 +116,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
             faktum.acceptMedSvar(visitor)
         }
 
-        override fun <R : Comparable<R>> besvartAv(faktum: GrunnleggendeFaktum<R>): String? = faktum.besvartAv
+        override fun <R : Comparable<R>> besvartAv(faktum: GrunnleggendeFaktum<R>): String = faktum.besvartAv.ident
 
         override fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>) = faktum.gjeldendeSvar
     }

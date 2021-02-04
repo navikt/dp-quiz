@@ -46,7 +46,7 @@ interface FaktumVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R,
-        besvartAv: String?
+        besvartAv: String
     ) {
     }
 

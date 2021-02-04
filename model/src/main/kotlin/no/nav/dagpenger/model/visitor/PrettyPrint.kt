@@ -160,7 +160,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R,
-        besvartAv: String?
+        besvartAv: String
     ) {
         melding("Faktum: $faktum for roller ${roller.joinToString(" og ") { it.typeNavn }} er besvart med $svar")
     }
