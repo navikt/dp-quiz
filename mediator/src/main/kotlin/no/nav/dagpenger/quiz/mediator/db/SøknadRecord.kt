@@ -24,6 +24,8 @@ import java.util.UUID
 class SøknadRecord : SøknadPersistence {
     private val personRecord = PersonRecord()
 
+    private val ukjentBesvarer = 1
+
     override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int): Søknadprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
         return Versjon.id(versjonId).søknadprosess(person, type).also { søknadprosess ->
@@ -92,13 +94,14 @@ class SøknadRecord : SøknadPersistence {
                                 faktum_verdi.boolsk AS boolsk, 
                                 faktum_verdi.dato AS dato, 
                                 faktum_verdi.aarlig_inntekt AS aarlig_inntekt, 
-                                faktum_verdi.besvart_av AS besvartAv,
+                                besvarer.identifikator AS besvartAv,
                                 dokument.url AS url, 
                                 dokument.opplastet AS opplastet
                             FROM faktum_verdi
                             JOIN soknad_faktum ON faktum_verdi.soknad_id = soknad_faktum.soknad_id 
                                 AND faktum_verdi.faktum_id = soknad_faktum.faktum_id
                             LEFT JOIN dokument ON faktum_verdi.dokument_id = dokument.id
+                            LEFT JOIN besvarer ON faktum_verdi.besvart_av = besvarer.id
                             ORDER BY indeks""",
                     uuid
                 ).map {
@@ -111,7 +114,7 @@ class SøknadRecord : SøknadPersistence {
                         it.doubleOrNull("aarlig_inntekt")?.årlig,
                         it.stringOrNull("url"),
                         it.localDateTimeOrNull("opplastet"),
-                        it.stringOrNull("besvartAv")
+                        it.string("besvartAv")
                     )
                 }.asList
             )
@@ -127,7 +130,7 @@ class SøknadRecord : SøknadPersistence {
         val inntekt: Inntekt?,
         val url: String?,
         val opplastet: LocalDateTime?,
-        val besvartAv: String?,
+        val besvartAv: String,
         val id: FaktumId = if (indeks == 0) FaktumId(root_id) else FaktumId(root_id).medIndeks(indeks)
     )
 
@@ -212,22 +215,24 @@ class SøknadRecord : SøknadPersistence {
         if (localDate == LocalDate.MAX) "infinity" else localDate.toString()
 
     private fun besvart(besvartAv: String?): Int? {
-        val test = using(sessionOf(dataSource)) { session ->
+        val besvarer = besvartAv ?: return ukjentBesvarer
+        return using(sessionOf(dataSource)) { session ->
             session.run(
-                queryOf(//language=PostgreSQL
+                queryOf( //language=PostgreSQL
                     """
-            INSERT INTO besvarer (identifikator)
-            SELECT id
-            WHERE NOT EXISTS (SELECT * FROM besvarer WHERE identifikator = ?)
-            RETURNING id""",
-                    besvartAv?.let { "system" }
+                         SELECT id FROM besvarer WHERE identifikator = :besvarer""",
+                    mapOf("besvarer" to besvarer)
+                ).map { it.int(1) }.asSingle
+            ) ?: session.run(
+                queryOf( //language=PostgreSQL
+                    """
+                    INSERT INTO besvarer (identifikator) VALUES (:besvarer) RETURNING id
+                    """.trimIndent(),
+                    mapOf("besvarer" to besvarer)
                 ).map { it.int(1) }.asSingle
             )
         }
-        return test
     }
-
-
 
     private fun arkiverFaktum(søknad: Søknad, rootId: Int, indeks: Int): ExecuteQueryAction =
         queryOf( //language=PostgreSQL
@@ -258,17 +263,20 @@ class SøknadRecord : SøknadPersistence {
 
     private fun opprettTemplateFaktum(indeks: Int, søknad: Søknad, rootId: Int): ExecuteQueryAction =
         queryOf( //language=PostgreSQL
-            """INSERT INTO faktum_verdi (indeks, soknad_id, faktum_id)
-            SELECT ?, soknad.id, faktum.id
+            """INSERT INTO faktum_verdi (indeks, soknad_id, faktum_id, besvart_av)
+            SELECT :indeks, soknad.id, faktum.id, :besvartAv
             FROM soknad,
                  faktum
-            WHERE soknad.uuid = ?
+            WHERE soknad.uuid = :soknadUuid
               AND faktum.versjon_id = soknad.versjon_id
-              AND faktum.root_id = ?
+              AND faktum.root_id = :rootId
             """.trimMargin(),
-            indeks,
-            søknad.uuid,
-            rootId
+            mapOf(
+                "indeks" to indeks,
+                "soknadUuid" to søknad.uuid,
+                "rootId" to rootId,
+                "besvartAv" to ukjentBesvarer
+            )
         ).asExecute
 
     override fun opprettede(identer: Identer): Map<LocalDateTime, UUID> {

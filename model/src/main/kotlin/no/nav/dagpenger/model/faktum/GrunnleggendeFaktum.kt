@@ -13,7 +13,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 ) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private var tilstand: Tilstand = Ukjent
     protected lateinit var gjeldendeSvar: R
-    protected var besvartAv: String? = null
+    protected lateinit var besvartAv: String
 
     internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>) : this(
         faktumId,
@@ -33,10 +33,10 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         super.besvar(r, ident)
         gjeldendeSvar = r
         tilstand = Kjent
-        besvartAv = ident
+        besvartAv = ident ?: "ukjent"
     }
 
-    override fun rehydrer(r: R, ident: String?): Faktum<R> = this.apply {
+    override fun rehydrer(r: R, ident: String): Faktum<R> = this.apply {
         super.rehydrer(r, ident)
         gjeldendeSvar = r
         tilstand = Kjent
