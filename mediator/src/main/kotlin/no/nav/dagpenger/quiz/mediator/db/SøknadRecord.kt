@@ -211,7 +211,23 @@ class SøknadRecord : SøknadPersistence {
     private fun tilPostgresDato(localDate: LocalDate) =
         if (localDate == LocalDate.MAX) "infinity" else localDate.toString()
 
-    private fun besvart(besvartAv: String?) = besvartAv?.let { "'$it'" }
+    private fun besvart(besvartAv: String?): Int? {
+        val test = using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf(//language=PostgreSQL
+                    """
+            INSERT INTO besvarer (identifikator)
+            SELECT id
+            WHERE NOT EXISTS (SELECT * FROM besvarer WHERE identifikator = ?)
+            RETURNING id""",
+                    besvartAv?.let { "system" }
+                ).map { it.int(1) }.asSingle
+            )
+        }
+        return test
+    }
+
+
 
     private fun arkiverFaktum(søknad: Søknad, rootId: Int, indeks: Int): ExecuteQueryAction =
         queryOf( //language=PostgreSQL
