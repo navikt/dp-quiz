@@ -120,7 +120,7 @@ internal class RegeltreTest {
     @Test
     fun `Søknader fra brukere som har hatt dagpenger de siste 36 månedene blir ikke behandlet`() {
         manglerInntekt.boolsk(harHattDagpengerSiste36mnd).besvar(true)
-        assertEquals("mulig gjenopptak manuell", manglerInntekt.nesteSeksjoner().first().navn)
+        assertEquals("mulig gjenopptak", manglerInntekt.nesteSeksjoner().first().navn)
     }
 
     @Test
@@ -145,38 +145,38 @@ internal class RegeltreTest {
     @Test
     fun `Skal manuelt behandles når dagens dato er mer enn 14 dager før virkningstidspunkt`() {
         manglerInntekt.dato(ønsketDato).besvar(20.januar)
-        assertEquals("datoer manuell", manglerInntekt.nesteSeksjoner().first().navn)
+        assertEquals("virkningstidspunkt vi ikke kan håndtere", manglerInntekt.nesteSeksjoner().first().navn)
     }
 
     @Test
     fun `Skal manuelt behandles om virkningstidspunkt er fram i tid, men i annen rapporteringsperiode`() {
         manglerInntekt.dato(inntektsrapporteringsperiodeFom).besvar(1.januar)
         manglerInntekt.dato(inntektsrapporteringsperiodeTom).besvar(4.januar)
-        assertEquals("datoer manuell", manglerInntekt.nesteSeksjoner().first().navn)
+        assertEquals("virkningstidspunkt vi ikke kan håndtere", manglerInntekt.nesteSeksjoner().first().navn)
     }
 
     @Test
     fun `Skal manuelt behandles hvis har sykepenger`() {
         manglerInntekt.boolsk(sykepengerSiste36mnd).besvar(true)
-        assertEquals("svangerskapsrelaterte sykepenger manuell", manglerInntekt.nesteSeksjoner().first().navn)
+        assertEquals("svangerskapsrelaterte sykepenger", manglerInntekt.nesteSeksjoner().first().navn)
     }
 
     @Test
     fun `Fangst og fisk skal manuelt behandles`() {
         manglerInntekt.boolsk(fangstOgFisk).besvar(true)
-        assertEquals("fangst og fisk manuell", manglerInntekt.nesteSeksjoner().first().navn)
+        assertEquals("mulige inntekter fra fangst og fisk", manglerInntekt.nesteSeksjoner().first().navn)
     }
 
     @Test
     fun `Eøs arbeid skal manuelt behandles`() {
         manglerInntekt.boolsk(eøsArbeid).besvar(true)
-        assertEquals("Eøs arbeid manuell", manglerInntekt.nesteSeksjoner().first().navn)
+        assertEquals("EØS-arbeid", manglerInntekt.nesteSeksjoner().first().navn)
     }
 
     @Test
     fun `Inntekt neste kalendermåned skal manuelt behandles`() {
         manglerInntekt.boolsk(harInntektNesteKalendermåned).besvar(true)
-        assertEquals("har inntekt neste kalendermåned manuell", manglerInntekt.nesteSeksjoner().first().navn)
+        assertEquals("det er inntekt neste kalendermåned", manglerInntekt.nesteSeksjoner().first().navn)
     }
 
     @Test
@@ -218,7 +218,7 @@ internal class RegeltreTest {
     @Test
     fun `Flere arbeidsforhold skal manuelt behandles`() {
         manglerInntekt.heltall(antallEndredeArbeidsforhold).besvar(2)
-        assertEquals("flere arbeidsforhold manuell", manglerInntekt.nesteSeksjoner().first().navn)
+        assertEquals("flere arbeidsforhold", manglerInntekt.nesteSeksjoner().first().navn)
     }
 
     private fun byggSøknad(subsumsjon: Subsumsjon) =
