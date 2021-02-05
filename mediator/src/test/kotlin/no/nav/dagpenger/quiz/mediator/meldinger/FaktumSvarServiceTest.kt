@@ -61,6 +61,7 @@ internal class FaktumSvarServiceTest {
         assertTrue(prototypeFakta.generator(10).erBesvart())
         assertTrue(prototypeFakta.dato("11.1").erBesvart())
         assertEquals("2020-01-01", prototypeFakta.dato("11.1").svar().toString())
+        assertEquals("A123456", prototypeFakta.dato("11.1").besvartAv())
         assertTrue(prototypeFakta.dato("12.1").erBesvart())
         assertEquals("2020-01-08", prototypeFakta.dato("12.1").svar().toString())
         assertTrue(prototypeFakta.dato("11.2").erBesvart())
@@ -103,7 +104,8 @@ internal class FaktumSvarServiceTest {
             "id": "11",
             "navn": "fom",
             "clazz": "localdate",
-            "svar": "2020-01-01"
+            "svar": "2020-01-01",
+            "besvartAv": "A123456"
           },
           {
             "id": "12",

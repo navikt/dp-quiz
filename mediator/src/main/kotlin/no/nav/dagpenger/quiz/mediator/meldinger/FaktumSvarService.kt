@@ -71,8 +71,9 @@ internal class FaktumSvarService(
             val faktumId = faktumNode["id"].asText()
             val svar = faktumNode["svar"]
             val clazz = faktumNode["clazz"].asText()
+            val besvartAv = faktumNode["besvartAv"]?.asText()
 
-            besvar(søknadprosess, faktumId, svar, clazz)
+            besvar(søknadprosess, faktumId, svar, clazz, besvartAv)
         }
         søknadPersistence.lagre(søknadprosess.søknad)
     }
@@ -100,21 +101,22 @@ internal class FaktumSvarService(
         sikkerlogg.error { problems.toExtendedReport() }
     }
 
-    private fun besvar(søknadprosess: Søknadprosess, faktumId: String, svar: JsonNode, clazz: String) {
+    private fun besvar(søknadprosess: Søknadprosess, faktumId: String, svar: JsonNode, clazz: String, besvartAv: String?) {
         when (clazz) {
-            "boolean" -> søknadprosess.boolsk(faktumId).besvar(svar.asBoolean())
-            "int" -> søknadprosess.heltall(faktumId).besvar(svar.asInt())
-            "localdate" -> søknadprosess.dato(faktumId).besvar(svar.asLocalDate())
-            "inntekt" -> søknadprosess.inntekt(faktumId).besvar(svar.asDouble().årlig)
+            "boolean" -> søknadprosess.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)
+            "int" -> søknadprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv)
+            "localdate" -> søknadprosess.dato(faktumId).besvar(svar.asLocalDate(), besvartAv)
+            "inntekt" -> søknadprosess.inntekt(faktumId).besvar(svar.asDouble().årlig, besvartAv)
             "dokument" ->
                 søknadprosess.dokument(faktumId)
-                    .besvar(Dokument(svar["lastOppTidsstempel"].asLocalDateTime(), svar["url"].asText()))
+                    .besvar(Dokument(svar["lastOppTidsstempel"].asLocalDateTime(), svar["url"].asText()), besvartAv)
             "generator" -> {
                 val svarene = svar as ArrayNode
-                søknadprosess.generator(faktumId).besvar(svarene.size())
+                søknadprosess.generator(faktumId).besvar(svarene.size(), besvartAv)
                 svarene.forEachIndexed { index, genererteSvar ->
                     genererteSvar.forEach {
-                        besvar(søknadprosess, "${it["id"].asText()}.${index + 1}}", it["svar"], it["clazz"].asText())
+                        besvar(søknadprosess, "${it["id"].asText()}.${index + 1}}", it["svar"], it["clazz"].asText(), it["besvartAv"]?.asText()
+                        )
                     }
                 }
             }
