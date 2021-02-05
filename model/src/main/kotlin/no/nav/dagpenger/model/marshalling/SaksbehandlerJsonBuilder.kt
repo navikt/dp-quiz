@@ -72,10 +72,11 @@ class SaksbehandlerJsonBuilder(
         roller: Set<Rolle>,
         godkjenner: Set<Faktum<*>>,
         clazz: Class<R>,
-        svar: R?
+        svar: R?,
+        besvartAv: String?
     ) {
         if (id !in relevanteFakta) return
-        super.lagFaktumNode(id, navn, roller, godkjenner, clazz, svar)
+        super.lagFaktumNode(id, navn, roller, godkjenner, clazz, svar, besvartAv)
     }
 
     override fun <R : Comparable<R>> preVisit(

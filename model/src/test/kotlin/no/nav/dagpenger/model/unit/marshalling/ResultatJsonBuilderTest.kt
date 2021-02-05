@@ -76,6 +76,22 @@ internal class ResultatJsonBuilderTest {
         }
     }
 
+    @Test
+    fun `inkluderer besvartAv`() {
+        val søknadprosess = søknadprosess(
+            prototypeSøknad.boolsk(1) er true hvisGyldig {
+                prototypeSøknad.boolsk(2) er true
+            } hvisUgyldig {
+                prototypeSøknad.boolsk(3) er true
+            }
+        )
+        søknadprosess.boolsk(1).besvar(true, "A123456")
+        søknadprosess.boolsk(2).besvar(true)
+        ResultatJsonBuilder(søknadprosess).resultat().also {
+            assertEquals("A123456", it["fakta"][0]["besvartAv"].asText())
+        }
+    }
+
     private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Søknadprosess {
         val prototypeFaktagrupper = Søknadprosess(
             prototypeSøknad,

@@ -35,11 +35,11 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     override fun clazz() = clazz
 
-    override fun besvar(r: R, ident: String?) = this.apply {
-        super.besvar(r, ident)
+    override fun besvar(r: R, besvarer: String?) = this.apply {
+        super.besvar(r, besvarer)
         gjeldendeSvar = r
         tilstand = Kjent
-        besvartAv = ident?.let { Besvarer(it) } ?: Besvarer.ukjent
+        besvartAv = besvarer?.let { Besvarer(it) } ?: Besvarer.ukjent
     }
 
     override fun rehydrer(r: R, ident: String): Faktum<R> = this.apply {
@@ -100,7 +100,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>): R =
             throw IllegalStateException("Faktumet er ikke kjent enda")
 
-        fun <R : Comparable<R>> besvartAv(grunnleggendeFaktum: GrunnleggendeFaktum<R>): String = throw IllegalStateException("Faktumet er ikke kjent enda")
+        fun <R : Comparable<R>> besvartAv(grunnleggendeFaktum: GrunnleggendeFaktum<R>): String? = throw IllegalStateException("Faktumet er ikke kjent enda")
     }
 
     private object Ukjent : Tilstand {
@@ -116,7 +116,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
             faktum.acceptMedSvar(visitor)
         }
 
-        override fun <R : Comparable<R>> besvartAv(faktum: GrunnleggendeFaktum<R>): String = faktum.besvartAv.ident
+        override fun <R : Comparable<R>> besvartAv(faktum: GrunnleggendeFaktum<R>): String? = if (faktum.besvartAv == Besvarer.ukjent)null else faktum.besvartAv.ident
 
         override fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>) = faktum.gjeldendeSvar
     }

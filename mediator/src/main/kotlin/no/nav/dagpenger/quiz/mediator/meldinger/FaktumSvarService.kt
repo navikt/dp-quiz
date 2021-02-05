@@ -115,7 +115,12 @@ internal class FaktumSvarService(
                 søknadprosess.generator(faktumId).besvar(svarene.size(), besvartAv)
                 svarene.forEachIndexed { index, genererteSvar ->
                     genererteSvar.forEach {
-                        besvar(søknadprosess, "${it["id"].asText()}.${index + 1}}", it["svar"], it["clazz"].asText(), it["besvartAv"]?.asText()
+                        besvar(
+                            søknadprosess,
+                            "${it["id"].asText()}.${index + 1}}",
+                            it["svar"],
+                            it["clazz"].asText(),
+                            it["besvartAv"]?.asText()
                         )
                     }
                 }

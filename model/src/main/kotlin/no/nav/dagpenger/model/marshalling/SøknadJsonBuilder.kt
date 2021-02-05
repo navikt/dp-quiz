@@ -73,7 +73,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
-        lagFaktumNode<R>(id, språk.oversett(faktum), roller, godkjenner, clazz)
+        lagFaktumNode<R>(id, språk.oversett(faktum), roller, godkjenner, clazz, besvartAv = null)
     }
 
     override fun <R : Comparable<R>> visit(
@@ -88,7 +88,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         svar: R,
         besvartAv: String
     ) {
-        lagFaktumNode(id, faktum.navn, roller, godkjenner, clazz, svar)
+        lagFaktumNode(id, faktum.navn, roller, godkjenner, clazz, svar, besvartAv)
     }
 
     override fun <R : Comparable<R>> preVisit(
@@ -241,7 +241,8 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         roller: Set<Rolle> = emptySet(),
         godkjenner: Set<Faktum<*>> = emptySet(),
         clazz: Class<R>,
-        svar: R? = null
+        svar: R? = null,
+        besvartAv: String? = null
     ) {
         if (ignore) return
         if (id in faktumIder) return
@@ -252,6 +253,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
             faktumNode.put("type", clazz.simpleName.toLowerCase())
             faktumNode.set("godkjenner", mapper.valueToTree(godkjenner.map { it.id }))
             svar?.also { faktumNode.putR(it) }
+            besvartAv?.also { faktumNode.put("besvartAv", it) }
         }
         faktumIder.add(id)
     }
