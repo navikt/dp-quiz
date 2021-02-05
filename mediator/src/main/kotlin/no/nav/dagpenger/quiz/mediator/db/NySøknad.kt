@@ -108,9 +108,9 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
             session.run(
                 queryOf( //language=PostgreSQL
                     """INSERT INTO faktum_verdi
-                                (soknad_id, indeks, faktum_id, besvart_av)
+                                (soknad_id, indeks, faktum_id)
                             VALUES (?, ?,
-                                    (SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?), 1)""".trimMargin(),
+                                    (SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?))""".trimMargin(),
                     søknadId,
                     indeks,
                     versjonId,

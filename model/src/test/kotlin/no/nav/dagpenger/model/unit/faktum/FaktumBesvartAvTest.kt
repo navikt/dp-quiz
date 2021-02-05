@@ -31,8 +31,8 @@ internal class FaktumBesvartAvTest {
         init {
             søknadprosess.søknad.accept(this)
         }
-        override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, avhengerAvFakta: Set<Faktum<*>>, godkjenner: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>, svar: R, besvartAv: String) {
-            identer.add(besvartAv)
+        override fun <R : Comparable<R>> visit(faktum: GrunnleggendeFaktum<R>, tilstand: Faktum.FaktumTilstand, id: String, avhengigeFakta: Set<Faktum<*>>, avhengerAvFakta: Set<Faktum<*>>, godkjenner: Set<Faktum<*>>, roller: Set<Rolle>, clazz: Class<R>, svar: R, besvartAv: String?) {
+            besvartAv?.let { identer.add(it) }
         }
     }
 }

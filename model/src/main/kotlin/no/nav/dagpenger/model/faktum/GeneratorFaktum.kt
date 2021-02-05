@@ -26,8 +26,8 @@ class GeneratorFaktum internal constructor(
         templates.forEach { template -> template.generate(r, søknad) }
     }
 
-    override fun rehydrer(r: Int, ident: String): Faktum<Int> = this.also {
-        super.rehydrer(r, ident)
+    override fun rehydrer(r: Int, besvarer: String?): Faktum<Int> = this.also {
+        super.rehydrer(r, besvarer)
         templates.forEach { template -> template.generate(r, søknad) }
     }
 

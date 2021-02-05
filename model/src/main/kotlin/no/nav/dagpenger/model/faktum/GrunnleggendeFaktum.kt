@@ -13,13 +13,9 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 ) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private var tilstand: Tilstand = Ukjent
     protected lateinit var gjeldendeSvar: R
-    private var besvartAv: Besvarer = Besvarer.ukjent
+    private var besvartAv: Besvarer? = null
 
-    private data class Besvarer(val ident: String) {
-        companion object {
-            val ukjent = Besvarer("ukjent")
-        }
-    }
+    private data class Besvarer(val ident: String)
 
     internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>) : this(
         faktumId,
@@ -39,14 +35,14 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         super.besvar(r, besvarer)
         gjeldendeSvar = r
         tilstand = Kjent
-        besvartAv = besvarer?.let { Besvarer(it) } ?: Besvarer.ukjent
+        besvartAv = besvarer?.let { Besvarer(it) }
     }
 
-    override fun rehydrer(r: R, ident: String): Faktum<R> = this.apply {
-        super.rehydrer(r, ident)
+    override fun rehydrer(r: R, besvarer: String?): Faktum<R> = this.apply {
+        super.rehydrer(r, besvarer)
         gjeldendeSvar = r
         tilstand = Kjent
-        besvartAv = Besvarer(ident)
+        besvartAv = besvarer?.let { Besvarer(it) }
     }
 
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
@@ -91,7 +87,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     }
 
     protected open fun acceptMedSvar(visitor: FaktumVisitor) {
-        visitor.visit(this, Kjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz, gjeldendeSvar, besvartAv.ident)
+        visitor.visit(this, Kjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz, gjeldendeSvar, besvartAv?.ident)
     }
 
     private interface Tilstand {
@@ -116,7 +112,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
             faktum.acceptMedSvar(visitor)
         }
 
-        override fun <R : Comparable<R>> besvartAv(faktum: GrunnleggendeFaktum<R>): String? = if (faktum.besvartAv == Besvarer.ukjent)null else faktum.besvartAv.ident
+        override fun <R : Comparable<R>> besvartAv(faktum: GrunnleggendeFaktum<R>): String? = faktum.besvartAv?.ident
 
         override fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>) = faktum.gjeldendeSvar
     }

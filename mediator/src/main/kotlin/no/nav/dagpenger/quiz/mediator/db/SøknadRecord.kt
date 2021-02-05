@@ -24,8 +24,6 @@ import java.util.UUID
 class SøknadRecord : SøknadPersistence {
     private val personRecord = PersonRecord()
 
-    private val ukjentBesvarer = 1
-
     override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int): Søknadprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
         return Versjon.id(versjonId).søknadprosess(person, type).also { søknadprosess ->
@@ -114,7 +112,7 @@ class SøknadRecord : SøknadPersistence {
                         it.doubleOrNull("aarlig_inntekt")?.årlig,
                         it.stringOrNull("url"),
                         it.localDateTimeOrNull("opplastet"),
-                        it.string("besvartAv")
+                        it.stringOrNull("besvartAv")
                     )
                 }.asList
             )
@@ -130,7 +128,7 @@ class SøknadRecord : SøknadPersistence {
         val inntekt: Inntekt?,
         val url: String?,
         val opplastet: LocalDateTime?,
-        val besvartAv: String,
+        val besvartAv: String?,
         val id: FaktumId = if (indeks == 0) FaktumId(root_id) else FaktumId(root_id).medIndeks(indeks)
     )
 
@@ -215,7 +213,7 @@ class SøknadRecord : SøknadPersistence {
         if (localDate == LocalDate.MAX) "infinity" else localDate.toString()
 
     private fun besvart(besvartAv: String?): Int? {
-        val besvarer = besvartAv ?: return ukjentBesvarer
+        val besvarer = besvartAv ?: return null
         return using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL
@@ -263,8 +261,8 @@ class SøknadRecord : SøknadPersistence {
 
     private fun opprettTemplateFaktum(indeks: Int, søknad: Søknad, rootId: Int): ExecuteQueryAction =
         queryOf( //language=PostgreSQL
-            """INSERT INTO faktum_verdi (indeks, soknad_id, faktum_id, besvart_av)
-            SELECT :indeks, soknad.id, faktum.id, :besvartAv
+            """INSERT INTO faktum_verdi (indeks, soknad_id, faktum_id)
+            SELECT :indeks, soknad.id, faktum.id
             FROM soknad,
                  faktum
             WHERE soknad.uuid = :soknadUuid
@@ -274,8 +272,7 @@ class SøknadRecord : SøknadPersistence {
             mapOf(
                 "indeks" to indeks,
                 "soknadUuid" to søknad.uuid,
-                "rootId" to rootId,
-                "besvartAv" to ukjentBesvarer
+                "rootId" to rootId
             )
         ).asExecute
 
