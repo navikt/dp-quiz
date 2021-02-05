@@ -18,5 +18,5 @@ dependencies {
     implementation(Kotlin.Logging.kotlinLogging)
 
     testImplementation(Mockk.mockk)
-    testImplementation("org.testcontainers:postgresql:1.15.0-rc2")
+    testImplementation("org.testcontainers:postgresql:1.15.1")
 }
