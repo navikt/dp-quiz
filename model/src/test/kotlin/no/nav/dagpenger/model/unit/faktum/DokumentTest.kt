@@ -17,6 +17,7 @@ class DokumentTest {
         assertEquals(document, document)
         assertEquals(document, Dokument(nå, url))
         assertEquals(Dokument(nå, url), document)
+        assertNotEquals(document, Dokument(LocalDateTime.now(), url.plus("/foo")))
         assertNotEquals(document, Any())
         assertNotEquals(document, null)
     }
