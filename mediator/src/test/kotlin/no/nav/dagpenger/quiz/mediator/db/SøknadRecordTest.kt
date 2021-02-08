@@ -137,6 +137,17 @@ internal class SøknadRecordTest {
         }
     }
 
+    @Test
+    fun `BUG - dokument lagret flere ganger selvom det ikke er endringer `() {
+        Postgres.withMigratedDb {
+            byggOriginalSøknadprosess()
+            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()))
+            hentFørsteSøknad()
+            hentFørsteSøknad()
+            assertRecordCount(1, "gammel_faktum_verdi")
+        }
+    }
+
     private fun hentFørsteSøknad(userInterfaceType: Versjon.UserInterfaceType = Web) {
         søknadRecord.lagre(originalSøknadprosess.søknad)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()

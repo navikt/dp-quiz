@@ -10,10 +10,13 @@ class Dokument(private val lastOppTidsstempel: LocalDateTime, private val url: S
 
     internal constructor(opplastingsdato: LocalDate) : this(opplastingsdato.atStartOfDay())
 
-    internal fun toUrl() = url
+    private fun toUrl() = url
 
     fun <R> reflection(block: (LocalDateTime, String) -> R) = block(
         lastOppTidsstempel,
         toUrl()
     )
+    override fun equals(other: Any?) = other is Dokument && this.equals(other)
+
+    private fun equals(other: Dokument) = lastOppTidsstempel == other.lastOppTidsstempel && url == other.url
 }
