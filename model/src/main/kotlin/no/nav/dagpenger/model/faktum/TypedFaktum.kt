@@ -15,6 +15,8 @@ interface TypedFaktum {
     infix fun dokument(id: String): Faktum<Dokument>
     infix fun heltall(rootId: Int): Faktum<Int>
     infix fun heltall(id: String): Faktum<Int>
+    infix fun desimaltall(rootId: Int): Faktum<Double>
+    infix fun desimaltall(id: String): Faktum<Double>
     infix fun generator(rootId: Int): Faktum<Int>
     infix fun generator(id: String): Faktum<Int>
 }

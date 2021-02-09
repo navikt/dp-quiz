@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.factory
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.ALLE_JA
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MAKS_DATO
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MAKS_INNTEKT
+import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MULTIPLIKASJON_INNTEKT
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.Inntekt
@@ -22,6 +23,10 @@ class UtledetFaktumFactory<T : Comparable<T>>(
             infix fun inntekt(navn: String) = UtledetFaktumFactory(navn, MAKS_INNTEKT)
         }
 
+        object multiplikasjon  {
+            infix fun inntekt(navn: String) = UtledetFaktumFactory(navn, MULTIPLIKASJON_INNTEKT)
+        }
+
         object alle {
             infix fun ja(navn: String) = UtledetFaktumFactory(navn, ALLE_JA)
         }
@@ -30,6 +35,8 @@ class UtledetFaktumFactory<T : Comparable<T>>(
     override fun og(otherId: Int) = this.also { childIder.add(otherId) }
 
     infix fun av(otherId: Int) = this.also { childIder.add(otherId) }
+
+    infix fun multiplisertMed(otherId: Int) = this.also { childIder.add(otherId) }
 
     infix fun id(rootId: Int) = this.also { this.rootId = rootId }
 
@@ -54,6 +61,7 @@ class FaktaRegel<R : Comparable<R>> private constructor(
     companion object {
         internal val MAKS_DATO = FaktaRegel("MAKS_DATO", UtledetFaktum<LocalDate>::max)
         internal val MAKS_INNTEKT = FaktaRegel("MAKS_INNTEKT", UtledetFaktum<Inntekt>::max)
+        internal val MULTIPLIKASJON_INNTEKT = FaktaRegel("MULTIPLIKASJON_INNTEKT", UtledetFaktum<Inntekt>::multiplikasjon)
         internal val ALLE_JA = FaktaRegel("ALLE_JA", UtledetFaktum<Boolean>::alle)
     }
 }

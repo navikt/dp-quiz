@@ -106,6 +106,10 @@ class Søknad private constructor(
     override infix fun heltall(id: String) = heltall(FaktumId(id))
     internal infix fun heltall(faktumId: FaktumId) = id(faktumId) as Faktum<Int>
 
+    override infix fun desimaltall(rootId: Int) = desimaltall(FaktumId(rootId))
+    override infix fun desimaltall(id: String) = desimaltall(FaktumId(id))
+    private infix fun desimaltall(faktumId: FaktumId) = id(faktumId) as Faktum<Double>
+
     override infix fun generator(rootId: Int) = generator(FaktumId(rootId))
     override infix fun generator(id: String) = generator(FaktumId(id))
     internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
