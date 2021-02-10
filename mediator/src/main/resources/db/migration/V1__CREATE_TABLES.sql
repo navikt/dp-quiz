@@ -119,7 +119,6 @@ CREATE TABLE IF NOT EXISTS faktum_verdi
     dokument_id    BIGINT                   NULL REFERENCES dokument (id),
     dato           DATE                     NULL,
     heltall        INT                      NULL,
-    desimaltall    DOUBLE PRECISION         NULL,
     opprettet      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
@@ -135,7 +134,6 @@ CREATE TABLE IF NOT EXISTS gammel_faktum_verdi
     dokument_id    BIGINT                   NULL REFERENCES dokument (id),
     dato           DATE                     NULL,
     heltall        INT                      NULL,
-    desimaltall    DOUBLE PRECISION         NULL,
     opprettet      TIMESTAMP WITH TIME ZONE NOT NULL,
     PRIMARY KEY (id)
 );

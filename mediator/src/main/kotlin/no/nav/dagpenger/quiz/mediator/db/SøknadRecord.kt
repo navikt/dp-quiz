@@ -69,6 +69,7 @@ class SøknadRecord : SøknadPersistence {
         if (row.boolsk != null) (faktum as Faktum<Boolean>).rehydrer(row.boolsk, row.besvartAv)
         if (row.dato != null) (faktum as Faktum<LocalDate>).rehydrer(row.dato, row.besvartAv)
         if (row.inntekt != null) (faktum as Faktum<Inntekt>).rehydrer(row.inntekt, row.besvartAv)
+        if (row.desimaltall != null) (faktum as Faktum<Double>).rehydrer(row.desimaltall, row.besvartAv)
         if (row.opplastet != null && row.url != null) (faktum as Faktum<Dokument>).rehydrer(
             Dokument(
                 row.opplastet,
@@ -89,6 +90,7 @@ class SøknadRecord : SøknadPersistence {
                                 soknad_faktum.root_id as root_id,
                                 faktum_verdi.indeks as indeks,
                                 faktum_verdi.heltall AS heltall, 
+                                faktum_verdi.desimaltall AS desimaltall, 
                                 faktum_verdi.boolsk AS boolsk, 
                                 faktum_verdi.dato AS dato, 
                                 faktum_verdi.aarlig_inntekt AS aarlig_inntekt, 
@@ -112,7 +114,8 @@ class SøknadRecord : SøknadPersistence {
                         it.doubleOrNull("aarlig_inntekt")?.årlig,
                         it.stringOrNull("url"),
                         it.localDateTimeOrNull("opplastet"),
-                        it.stringOrNull("besvartAv")
+                        it.stringOrNull("besvartAv"),
+                        it.doubleOrNull("desimaltall")
                     )
                 }.asList
             )
@@ -129,6 +132,7 @@ class SøknadRecord : SøknadPersistence {
         val url: String?,
         val opplastet: LocalDateTime?,
         val besvartAv: String?,
+        val desimaltall: Double?,
         val id: FaktumId = if (indeks == 0) FaktumId(root_id) else FaktumId(root_id).medIndeks(indeks)
     )
 
@@ -202,6 +206,7 @@ class SøknadRecord : SøknadPersistence {
             is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
             is LocalDate -> """UPDATE faktum_verdi  SET dato = '${tilPostgresDato(svar)}' , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
             is Int -> """UPDATE faktum_verdi  SET heltall = $svar, besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
+            is Double -> """UPDATE faktum_verdi  SET desimaltall = $svar, besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
             is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
 |                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id) , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
             else -> throw IllegalArgumentException("Ugyldig type: ${svar.javaClass}")
