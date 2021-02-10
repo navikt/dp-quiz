@@ -6,6 +6,7 @@ import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
@@ -160,6 +161,7 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor
                 byggMap(LocalDate::class.java, 3) { navn, rootId -> dato faktum navn id rootId }
                 byggMap(Dokument::class.java, 4) { navn, rootId -> dokument faktum navn id rootId }
                 byggMap(Inntekt::class.java, 5) { navn, rootId -> inntekt faktum navn id rootId }
+                byggMap(Double::class.java, 6) { navn, rootId -> desimaltall faktum navn id rootId }
             }
 
             operator fun get(clazz: Class<*>) = kodeMap[clazz] ?: throw NoSuchElementException("Ukjent klasse $clazz")

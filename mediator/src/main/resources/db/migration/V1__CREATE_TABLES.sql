@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS faktum
     faktum_type INT                      NOT NULL,
     root_id     INT                      NOT NULL,
     navn_id     BIGSERIAL                NOT NULL REFERENCES navn (id),
-    regel       VARCHAR(16)              NULL,
+    regel       VARCHAR(36)              NULL,
     opprettet   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
@@ -119,6 +119,7 @@ CREATE TABLE IF NOT EXISTS faktum_verdi
     dokument_id    BIGINT                   NULL REFERENCES dokument (id),
     dato           DATE                     NULL,
     heltall        INT                      NULL,
+    desimaltall    DOUBLE PRECISION         NULL,
     opprettet      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     PRIMARY KEY (id)
 );
@@ -134,6 +135,7 @@ CREATE TABLE IF NOT EXISTS gammel_faktum_verdi
     dokument_id    BIGINT                   NULL REFERENCES dokument (id),
     dato           DATE                     NULL,
     heltall        INT                      NULL,
+    desimaltall    DOUBLE PRECISION         NULL,
     opprettet      TIMESTAMP WITH TIME ZONE NOT NULL,
     PRIMARY KEY (id)
 );

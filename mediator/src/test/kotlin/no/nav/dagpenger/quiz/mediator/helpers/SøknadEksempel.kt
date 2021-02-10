@@ -22,7 +22,7 @@ internal object SøknadEksempel {
 
     val prototypeSøknad1 = Søknad(
         versjonId,
-        boolsk faktum "f1_bool" id 1 avhengerAv 14,
+        boolsk faktum "f1_bool" id 1 avhengerAv 17,
         boolsk faktum "f2_bool" id 2,
         heltall faktum "f3_heltall" id 3,
         dato faktum "f4_dato" id 4,
@@ -30,7 +30,7 @@ internal object SøknadEksempel {
         inntekt faktum "f6_inntekt" id 6,
         dokument faktum "f7_dokument" id 7,
         boolsk faktum "f8_bool" id 8,
-        dokument faktum "innsendt søknadsid" id 14, // NySøknadService trenger dette faktumet
+        dokument faktum "innsendt søknadsid" id 17, // NySøknadService trenger dette faktumet
     )
 
     private val webPrototypeSøknad = Søknadprosess(
@@ -87,7 +87,7 @@ internal object SøknadEksempel {
             6 to "f6Behov",
             7 to "f7Behov",
             8 to "f8Behov",
-            14 to "InnsendtSøknadsId"
+            17 to "InnsendtSøknadsId"
         )
     )
     val versjon = Versjon.Bygger(

@@ -23,7 +23,7 @@ class UtledetFaktumFactory<T : Comparable<T>>(
             infix fun inntekt(navn: String) = UtledetFaktumFactory(navn, MAKS_INNTEKT)
         }
 
-        object multiplikasjon  {
+        object multiplikasjon {
             infix fun inntekt(navn: String) = UtledetFaktumFactory(navn, MULTIPLIKASJON_INNTEKT)
         }
 

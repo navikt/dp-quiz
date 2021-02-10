@@ -12,8 +12,6 @@ import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G1_5
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G3
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSluttårsak
@@ -22,6 +20,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innte
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.nedreMinsteinntektsterskel
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
@@ -31,6 +30,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søkn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningstidspunktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkningstidspunkt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.øvreMinsteinntektsterskel
 import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.sjekkInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.skalManueltBehandles
 
@@ -47,8 +47,8 @@ internal object AvslagPåMinsteinntekt {
     private val minsteArbeidsinntekt = with(søknad) {
         "oppfyller krav til minste arbeidsinntekt".makro {
             "minste arbeidsinntekt".minstEnAv(
-                inntekt(inntektSiste36mnd) minst inntekt(G3),
-                inntekt(inntektSiste12mnd) minst inntekt(G1_5),
+                inntekt(inntektSiste36mnd) minst inntekt(øvreMinsteinntektsterskel),
+                inntekt(inntektSiste12mnd) minst inntekt(nedreMinsteinntektsterskel),
                 boolsk(verneplikt) er true,
                 boolsk(lærling) er true
             ) hvisGyldig { boolsk(oppfyllerMinsteinntektManuell) er true } hvisUgyldig {
