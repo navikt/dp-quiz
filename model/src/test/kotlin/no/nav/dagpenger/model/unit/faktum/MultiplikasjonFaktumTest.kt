@@ -26,7 +26,7 @@ internal class MultiplikasjonFaktumTest {
             0,
             desimaltall faktum "faktor" id 1,
             inntekt faktum "g" id 2,
-            multiplikasjon inntekt "multiplikasjon" av 1 multiplisertMed 2 id 3
+            multiplikasjon inntekt "multiplikasjon" av 1 ganger 2 id 3
         ).testSøknadprosess()
 
         faktor = søknadprosess desimaltall 1

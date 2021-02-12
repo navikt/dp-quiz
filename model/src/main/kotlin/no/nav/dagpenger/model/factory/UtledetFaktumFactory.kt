@@ -36,7 +36,7 @@ class UtledetFaktumFactory<T : Comparable<T>>(
 
     infix fun av(otherId: Int) = this.also { childIder.add(otherId) }
 
-    infix fun multiplisertMed(otherId: Int) = this.also { childIder.add(otherId) }
+    infix fun ganger(otherId: Int) = this.also { childIder.add(otherId) }
 
     infix fun id(rootId: Int) = this.also { this.rootId = rootId }
 
