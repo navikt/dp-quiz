@@ -24,6 +24,10 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
             infix fun faktum(navn: String) = BaseFaktumFactory(Int::class.java, navn)
         }
 
+        object desimaltall {
+            infix fun faktum(navn: String) = BaseFaktumFactory(Double::class.java, navn)
+        }
+
         object dokument {
             infix fun faktum(navn: String) = BaseFaktumFactory(Dokument::class.java, navn)
         }

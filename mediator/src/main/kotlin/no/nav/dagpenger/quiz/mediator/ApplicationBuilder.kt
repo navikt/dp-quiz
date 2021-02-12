@@ -7,6 +7,7 @@ import no.nav.dagpenger.quiz.mediator.meldinger.BehandlingsdatoService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
 import no.nav.dagpenger.quiz.mediator.meldinger.SenesteMuligeVirkningstidspunktService
+import no.nav.dagpenger.quiz.mediator.meldinger.TerskelFaktorService
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -34,6 +35,7 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
                 FaktumSvarService(søknadRecord, rapidsConnection)
                 BehandlingsdatoService(rapidsConnection)
                 SenesteMuligeVirkningstidspunktService(rapidsConnection)
+                TerskelFaktorService(rapidsConnection)
             }
     }
 }

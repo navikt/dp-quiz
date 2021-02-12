@@ -14,14 +14,13 @@ import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.meldtSomArbeidssøker
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.regeltre
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G1_5
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.G3
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSluttårsak
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
@@ -29,8 +28,15 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innte
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lønnsgaranti
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.nedreFaktor
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordinær
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningstidspunkt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sisteDagMedLønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
@@ -38,6 +44,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søkn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknadstidspunkt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ønsketDato
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.øvreFaktor
 import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -67,8 +74,8 @@ internal class RegeltreTest {
             boolsk(harInntektNesteKalendermåned).besvar(false)
 
             generator(registreringsperioder).besvar(1)
-            dato("18.1").besvar(1.januar(2018))
-            dato("19.1").besvar(30.januar(2018))
+            dato("$registrertArbeidsøkerPeriodeFom.1").besvar(1.januar(2018))
+            dato("$registrertArbeidsøkerPeriodeTom.1").besvar(30.januar(2018))
 
             boolsk(harHattDagpengerSiste36mnd).besvar(false)
             boolsk(sykepengerSiste36mnd).besvar(false)
@@ -77,8 +84,9 @@ internal class RegeltreTest {
 
             boolsk(fangstOgFisk).besvar(false)
 
-            inntekt(G3).besvar(300000.årlig)
-            inntekt(G1_5).besvar(150000.årlig)
+            inntekt(grunnbeløp).besvar(100000.årlig)
+            desimaltall(nedreFaktor).besvar(1.5)
+            desimaltall(øvreFaktor).besvar(3.0)
 
             boolsk(verneplikt).besvar(false)
             boolsk(lærling).besvar(false)
@@ -87,10 +95,10 @@ internal class RegeltreTest {
             inntekt(inntektSiste12mnd).besvar(5000.årlig)
 
             generator(antallEndredeArbeidsforhold).besvar(1)
-            boolsk("24.1").besvar(false)
-            boolsk("25.1").besvar(true)
-            boolsk("26.1").besvar(false)
-            boolsk("27.1").besvar(false)
+            boolsk("$ordinær.1").besvar(false)
+            boolsk("$permittert.1").besvar(true)
+            boolsk("$lønnsgaranti.1").besvar(false)
+            boolsk("$permittertFiskeforedling.1").besvar(false)
 
             boolsk(godkjenningSluttårsak).besvar(true)
             boolsk(godkjenningSisteDagMedLønn).besvar(true)
@@ -190,8 +198,8 @@ internal class RegeltreTest {
             dato(søknadstidspunkt).besvar(2.januar)
 
             generator(registreringsperioder).besvar(1)
-            dato("18.1").besvar(1.januar(2018))
-            dato("19.1").besvar(4.januar(2018))
+            dato("$registrertArbeidsøkerPeriodeFom.1").besvar(1.januar(2018))
+            dato("$registrertArbeidsøkerPeriodeTom.1").besvar(4.januar(2018))
         }
 
         assertEquals(true, søknad.resultat())
@@ -208,8 +216,8 @@ internal class RegeltreTest {
             dato(søknadstidspunkt).besvar(2.januar)
 
             generator(registreringsperioder).besvar(1)
-            dato("18.1").besvar(1.januar(2018))
-            dato("19.1").besvar(6.januar(2018))
+            dato("$registrertArbeidsøkerPeriodeFom.1").besvar(1.januar(2018))
+            dato("$registrertArbeidsøkerPeriodeTom.1").besvar(6.januar(2018))
         }
 
         assertEquals(true, søknad.resultat())

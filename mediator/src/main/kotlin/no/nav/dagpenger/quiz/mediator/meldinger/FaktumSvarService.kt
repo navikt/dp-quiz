@@ -105,6 +105,7 @@ internal class FaktumSvarService(
         when (clazz) {
             "boolean" -> søknadprosess.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)
             "int" -> søknadprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv)
+            "double" -> søknadprosess.desimaltall(faktumId).besvar(svar.asDouble(), besvartAv)
             "localdate" -> søknadprosess.dato(faktumId).besvar(svar.asLocalDate(), besvartAv)
             "inntekt" -> søknadprosess.inntekt(faktumId).besvar(svar.asDouble().årlig, besvartAv)
             "dokument" ->

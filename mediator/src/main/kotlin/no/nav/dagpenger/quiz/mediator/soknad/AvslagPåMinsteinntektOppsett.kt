@@ -3,10 +3,12 @@ package no.nav.dagpenger.quiz.mediator.soknad
 import mu.KotlinLogging
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.multiplikasjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -16,7 +18,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    const val VERSJON_ID = 4
+    const val VERSJON_ID = 5
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
@@ -28,38 +30,41 @@ internal object AvslagPåMinsteinntektOppsett {
     const val fangstOgFisk = 5
     const val inntektSiste36mnd = 6
     const val inntektSiste12mnd = 7
-    const val G3 = 8
-    const val G1_5 = 9
-    const val søknadstidspunkt = 10
-    const val verneplikt = 11
-    const val godkjenningSisteDagMedLønn = 12
-    const val innsendtSøknadsId = 14
-    const val registreringsperioder = 16
-    const val lærling = 17
-    const val registrertArbeidsøkerPeriodeFom = 18
-    const val registrertArbeidsøkerPeriodeTom = 19
-    const val behandlingsdato = 20
-    const val inntektsrapporteringsperiodeFom = 21
-    const val inntektsrapporteringsperiodeTom = 22
-    const val antallEndredeArbeidsforhold = 23
-    const val ordinær = 24
-    const val permittert = 25
-    const val lønnsgaranti = 26
-    const val permittertFiskeforedling = 27
-    const val godkjenningSluttårsak = 28
-    const val harHattDagpengerSiste36mnd = 29
-    const val periodeOppbruktManuell = 30
-    const val sykepengerSiste36mnd = 31
-    const val svangerskapsrelaterteSykepengerManuell = 32
-    const val fangstOgFiskManuell = 33
-    const val eøsArbeid = 34
-    const val eøsArbeidManuell = 35
-    const val uhåndterbartVirkningstidspunktManuell = 36
-    const val senesteMuligeVirkningstidspunkt = 37
-    const val flereArbeidsforholdManuell = 38
-    const val oppfyllerMinsteinntektManuell = 39
-    const val harInntektNesteKalendermåned = 40
-    const val inntektNesteKalendermånedManuell = 41
+    const val øvreFaktor = 8
+    const val nedreFaktor = 9
+    const val øvreMinsteinntektsterskel = 10
+    const val nedreMinsteinntektsterskel = 11
+    const val grunnbeløp = 12
+    const val søknadstidspunkt = 13
+    const val verneplikt = 14
+    const val godkjenningSisteDagMedLønn = 15
+    const val innsendtSøknadsId = 17
+    const val registreringsperioder = 19
+    const val lærling = 20
+    const val registrertArbeidsøkerPeriodeFom = 21
+    const val registrertArbeidsøkerPeriodeTom = 22
+    const val behandlingsdato = 23
+    const val inntektsrapporteringsperiodeFom = 24
+    const val inntektsrapporteringsperiodeTom = 25
+    const val antallEndredeArbeidsforhold = 26
+    const val ordinær = 27
+    const val permittert = 28
+    const val lønnsgaranti = 29
+    const val permittertFiskeforedling = 30
+    const val godkjenningSluttårsak = 31
+    const val harHattDagpengerSiste36mnd = 32
+    const val periodeOppbruktManuell = 33
+    const val sykepengerSiste36mnd = 34
+    const val svangerskapsrelaterteSykepengerManuell = 35
+    const val fangstOgFiskManuell = 36
+    const val eøsArbeid = 37
+    const val eøsArbeidManuell = 38
+    const val uhåndterbartVirkningstidspunktManuell = 39
+    const val senesteMuligeVirkningstidspunkt = 40
+    const val flereArbeidsforholdManuell = 41
+    const val oppfyllerMinsteinntektManuell = 42
+    const val harInntektNesteKalendermåned = 43
+    const val inntektNesteKalendermånedManuell = 44
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -70,8 +75,11 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Driver med fangst og fisk" id fangstOgFisk avhengerAv innsendtSøknadsId,
             inntekt faktum "Inntekt siste 36 mnd" id inntektSiste36mnd avhengerAv virkningstidspunkt og fangstOgFisk,
             inntekt faktum "Inntekt siste 12 mnd" id inntektSiste12mnd avhengerAv virkningstidspunkt og fangstOgFisk,
-            inntekt faktum "3G" id G3 avhengerAv virkningstidspunkt,
-            inntekt faktum "1,5G" id G1_5 avhengerAv virkningstidspunkt,
+            inntekt faktum "Grunnbeløp" id grunnbeløp avhengerAv virkningstidspunkt,
+            desimaltall faktum "Øvre faktor" id øvreFaktor avhengerAv virkningstidspunkt,
+            desimaltall faktum "Nedre faktor" id nedreFaktor avhengerAv virkningstidspunkt,
+            multiplikasjon inntekt "Øvre minsteinntektsterskel" av øvreFaktor ganger grunnbeløp id nedreMinsteinntektsterskel,
+            multiplikasjon inntekt "Nedre minsteinntektsterskel" av nedreFaktor ganger grunnbeløp id øvreMinsteinntektsterskel,
             dato faktum "Søknadstidspunkt" id søknadstidspunkt avhengerAv innsendtSøknadsId,
             boolsk faktum "Verneplikt" id verneplikt avhengerAv innsendtSøknadsId,
             boolsk faktum "Godkjenning av siste dag med lønn" id godkjenningSisteDagMedLønn avhengerAv sisteDagMedLønn,
@@ -113,8 +121,9 @@ internal object AvslagPåMinsteinntektOppsett {
                 fangstOgFisk to "FangstOgFiske",
                 inntektSiste36mnd to "InntektSiste3År",
                 inntektSiste12mnd to "InntektSiste12Mnd",
-                G3 to "3G",
-                G1_5 to "1_5G",
+                øvreFaktor to "ØvreTerskelFaktor",
+                nedreFaktor to "NedreTerskelFaktor",
+                grunnbeløp to "Grunnbeløp",
                 søknadstidspunkt to "Søknadstidspunkt",
                 verneplikt to "Verneplikt",
                 innsendtSøknadsId to "InnsendtSøknadsId",
