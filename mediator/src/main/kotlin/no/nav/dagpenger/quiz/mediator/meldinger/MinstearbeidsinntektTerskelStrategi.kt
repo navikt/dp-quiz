@@ -6,8 +6,8 @@ import java.time.LocalDate
 object MinstearbeidsinntektFaktorStrategi {
 
     private val terskler = listOf(
-        MinstearbeidsinntektTerskel(20.mars(2020), 30.oktober(2020), Faktor(0.75, 2.25)), // Forskrift
-        MinstearbeidsinntektTerskel(19.februar(2021), 30.september(2021), Faktor(0.75, 2.25)), // Forskrift
+        MinstearbeidsinntektTerskel(20.mars(2020), 30.oktober(2020), Faktor(0.75, 2.25)), // Forskrift § 2-2.Midlertidig krav til minsteinntekt – unntak fra folketrygdloven § 4-4
+        MinstearbeidsinntektTerskel(19.februar(2021), 30.september(2021), Faktor(0.75, 2.25)), // Forskrift § 2-2.Midlertidig krav til minsteinntekt – unntak fra folketrygdloven § 4-4
         MinstearbeidsinntektTerskel(LocalDate.MIN, LocalDate.MAX, Faktor(1.5, 3.0)) // https://lovdata.no/lov/1997-02-28-19/§4-4
     )
 
