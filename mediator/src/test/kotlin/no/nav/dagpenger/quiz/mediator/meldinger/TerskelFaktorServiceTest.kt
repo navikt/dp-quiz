@@ -17,7 +17,8 @@ class TerskelFaktorServiceTest {
           "@behov": [
             "ØvreTerskelFaktor",
             "NedreTerskelFaktor"
-          ]
+          ],
+          "Virkningstidspunkt": "2020-12-01"
         }
             """.trimIndent()
         )
