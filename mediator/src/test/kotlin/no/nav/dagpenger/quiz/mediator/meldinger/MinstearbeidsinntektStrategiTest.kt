@@ -12,7 +12,7 @@ class MinstearbeidsinntektStrategiTest {
     fun `skal returnere terskel i henhold til §4-4 `() {
         assertEquals(Faktor(1.5, 3.0), finnFaktor(LocalDate.of(2020, 3, 19)))
         assertEquals(Faktor(1.5, 3.0), finnFaktor(LocalDate.of(2020, 11, 1)))
-        assertEquals(Faktor(1.5, 3.0), finnFaktor(LocalDate.of(2021, 7, 1)))
+        assertEquals(Faktor(1.5, 3.0), finnFaktor(LocalDate.of(2021, 10, 1)))
     }
 
     @Test
@@ -23,7 +23,7 @@ class MinstearbeidsinntektStrategiTest {
 
     @Test
     fun `skal returnere rett ved andre forskrift for korona periode`() {
-        assertEquals(Faktor(0.75, 2.25), finnFaktor(LocalDate.of(2021, 2, 1)))
-        assertEquals(Faktor(0.75, 2.25), finnFaktor(LocalDate.of(2021, 6, 30)))
+        assertEquals(Faktor(0.75, 2.25), finnFaktor(LocalDate.of(2021, 2, 19)))
+        assertEquals(Faktor(0.75, 2.25), finnFaktor(LocalDate.of(2021, 9, 30)))
     }
 }
