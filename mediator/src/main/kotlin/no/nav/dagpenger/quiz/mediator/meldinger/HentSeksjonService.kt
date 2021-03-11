@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import java.util.UUID
@@ -24,7 +25,7 @@ internal class HentSeksjonService(rapidsConnection: RapidsConnection) :
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+    override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
         val seksjonNavn = packet["seksjon_navn"].asText()
         val indeks = packet["indeks"].asInt()
@@ -33,6 +34,6 @@ internal class HentSeksjonService(rapidsConnection: RapidsConnection) :
         val json = SaksbehandlerJsonBuilder(fakta, seksjonNavn, indeks).resultat()
         json.put("@event_name", packet["@event_name"].asText())
         json.put("@id", packet["@id"].asText())
-        context.send(json.toString())
+        context.publish(json.toString())
     }
 }

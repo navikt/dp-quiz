@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innsendtSøknadsId
 import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
@@ -29,7 +30,7 @@ internal class NySøknadService(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+    override fun onPacket(packet: JsonMessage, context: MessageContext) {
         log.info { "Mottok ny søknadsmelding for ${packet["søknadsId"].asText()}" }
         val identer = Identer.Builder()
             .folkeregisterIdent(packet["fnr"].asText())
@@ -47,13 +48,13 @@ internal class NySøknadService(
 
                 søknadprosess.nesteSeksjoner()
                     .forEach { seksjon ->
-                        context.send(seksjon.somSpørsmål().also { sikkerLogg.debug { it } })
+                        context.publish(seksjon.somSpørsmål().also { sikkerLogg.debug { it } })
                         log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
                     }
             }
     }
 
-    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+    override fun onError(problems: MessageProblems, context: MessageContext) {
         log.error { problems.toString() }
         sikkerLogg.error { problems.toExtendedReport() }
     }

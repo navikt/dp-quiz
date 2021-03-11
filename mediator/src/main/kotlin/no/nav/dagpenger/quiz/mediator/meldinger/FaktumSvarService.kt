@@ -11,6 +11,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
@@ -44,7 +45,7 @@ internal class FaktumSvarService(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+    override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
         if (fakta.isEmpty()) return
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
@@ -78,17 +79,17 @@ internal class FaktumSvarService(
         søknadPersistence.lagre(søknadprosess.søknad)
     }
 
-    private fun sendNesteSeksjon(søknadprosess: Søknadprosess, context: RapidsConnection.MessageContext) {
+    private fun sendNesteSeksjon(søknadprosess: Søknadprosess, context: MessageContext) {
         søknadprosess.nesteSeksjoner()
             .onEach { seksjon ->
                 val json = seksjon.somSpørsmål()
-                context.send(json)
+                context.publish(json)
                 sikkerlogg.info { "Send ut seksjon: $json" }
                 log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
             }.also { seksjon ->
                 if (Søknadprosess.erFerdig(seksjon)) {
                     ResultatJsonBuilder(søknadprosess).resultat().also { json ->
-                        context.send(json.toString())
+                        context.publish(json.toString())
                         sikkerlogg.info { "Send ut resultat: $json" }
                     }
                     log.info { "Ferdig med søknad ${søknadprosess.søknad.uuid}. Resultatet er: ${søknadprosess.resultat()}" }
@@ -96,7 +97,7 @@ internal class FaktumSvarService(
             }
     }
 
-    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+    override fun onError(problems: MessageProblems, context: MessageContext) {
         log.error { problems.toString() }
         sikkerlogg.error { problems.toExtendedReport() }
     }
