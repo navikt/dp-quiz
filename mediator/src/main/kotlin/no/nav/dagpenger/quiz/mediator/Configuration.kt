@@ -19,4 +19,3 @@ internal object Configuration {
         map + pair.second
     }
 }
-
