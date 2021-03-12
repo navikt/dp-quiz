@@ -1,3 +1,4 @@
 alerts_slack_channel: "#team-dagpenger-alert"
 db_tier: db-custom-4-15360
 db_size: 100
+kafka_pool: nav-prod

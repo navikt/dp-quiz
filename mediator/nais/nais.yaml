@@ -42,6 +42,8 @@ spec:
       mountPath: "/var/run/secrets/nais.io/service_user"
   envFrom:
     - configmap: kafka-bootstrap-servers
+  kafka:
+    pool: {{ kafka_pool }}
   gcp:
     sqlInstances:
       - name: dp-quiz-mediator
