@@ -16,7 +16,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 internal class ApplicationBuilder() : RapidsConnection.StatusListener {
 
     private val rapidsConnection = RapidApplication.Builder(
-        RapidApplication.RapidApplicationConfig.fromEnv(Configuration.rapidApplication)
+        RapidApplication.RapidApplicationConfig.fromEnv(Configuration.config)
     ).build()
 
     init {
