@@ -1,13 +1,13 @@
 package no.nav.dagpenger.quiz.mediator
 
 import PostgresDataSourceBuilder.runMigration
+import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
+import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningstidspunktService
+import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
-import no.nav.dagpenger.quiz.mediator.meldinger.BehandlingsdatoService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
-import no.nav.dagpenger.quiz.mediator.meldinger.SenesteMuligeVirkningstidspunktService
-import no.nav.dagpenger.quiz.mediator.meldinger.TerskelFaktorService
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection

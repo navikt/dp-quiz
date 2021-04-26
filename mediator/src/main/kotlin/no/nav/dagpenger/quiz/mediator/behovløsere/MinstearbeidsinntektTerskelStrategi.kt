@@ -1,4 +1,4 @@
-package no.nav.dagpenger.quiz.mediator.meldinger
+package no.nav.dagpenger.quiz.mediator.behovløsere
 
 import java.time.LocalDate
 

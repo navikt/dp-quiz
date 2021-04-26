@@ -1,7 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
-import no.nav.dagpenger.quiz.mediator.meldinger.MinstearbeidsinntektFaktorStrategi.Faktor
-import no.nav.dagpenger.quiz.mediator.meldinger.MinstearbeidsinntektFaktorStrategi.finnFaktor
+import no.nav.dagpenger.quiz.mediator.behovløsere.MinstearbeidsinntektFaktorStrategi.Faktor
+import no.nav.dagpenger.quiz.mediator.behovløsere.MinstearbeidsinntektFaktorStrategi.finnFaktor
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertEquals

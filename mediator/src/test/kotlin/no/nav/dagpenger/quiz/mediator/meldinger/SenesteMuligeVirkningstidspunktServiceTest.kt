@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
+import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningstidspunktService
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
