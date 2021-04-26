@@ -29,7 +29,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innte
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lønnsgaranti
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.nedreFaktor
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektfaktor12mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektfaktor36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordinær
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
@@ -44,7 +45,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søkn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknadstidspunkt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ønsketDato
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.øvreFaktor
 import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -85,8 +85,8 @@ internal class RegeltreTest {
             boolsk(fangstOgFisk).besvar(false)
 
             inntekt(grunnbeløp).besvar(100000.årlig)
-            desimaltall(nedreFaktor).besvar(1.5)
-            desimaltall(øvreFaktor).besvar(3.0)
+            desimaltall(minsteinntektfaktor12mnd).besvar(1.5)
+            desimaltall(minsteinntektfaktor36mnd).besvar(3.0)
 
             boolsk(verneplikt).besvar(false)
             boolsk(lærling).besvar(false)

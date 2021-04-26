@@ -30,10 +30,10 @@ internal object AvslagPåMinsteinntektOppsett {
     const val fangstOgFisk = 5
     const val inntektSiste36mnd = 6
     const val inntektSiste12mnd = 7
-    const val øvreFaktor = 8
-    const val nedreFaktor = 9
-    const val øvreMinsteinntektsterskel = 10
-    const val nedreMinsteinntektsterskel = 11
+    const val minsteinntektfaktor36mnd = 8
+    const val minsteinntektfaktor12mnd = 9
+    const val minsteinntektsterskel36mnd = 10
+    const val minsteinntektsterskel12mnd = 11
     const val grunnbeløp = 12
     const val søknadstidspunkt = 13
     const val verneplikt = 14
@@ -76,10 +76,10 @@ internal object AvslagPåMinsteinntektOppsett {
             inntekt faktum "Inntekt siste 36 mnd" id inntektSiste36mnd avhengerAv virkningstidspunkt og fangstOgFisk,
             inntekt faktum "Inntekt siste 12 mnd" id inntektSiste12mnd avhengerAv virkningstidspunkt og fangstOgFisk,
             inntekt faktum "Grunnbeløp" id grunnbeløp avhengerAv virkningstidspunkt,
-            desimaltall faktum "Øvre faktor" id øvreFaktor avhengerAv virkningstidspunkt,
-            desimaltall faktum "Nedre faktor" id nedreFaktor avhengerAv virkningstidspunkt,
-            multiplikasjon inntekt "Øvre minsteinntektsterskel" av øvreFaktor ganger grunnbeløp id nedreMinsteinntektsterskel,
-            multiplikasjon inntekt "Nedre minsteinntektsterskel" av nedreFaktor ganger grunnbeløp id øvreMinsteinntektsterskel,
+            desimaltall faktum "Øvre faktor" id minsteinntektfaktor36mnd avhengerAv virkningstidspunkt,
+            desimaltall faktum "Nedre faktor" id minsteinntektfaktor12mnd avhengerAv virkningstidspunkt,
+            multiplikasjon inntekt "Minsteinntektsterskel siste 36 mnd" av minsteinntektfaktor36mnd ganger grunnbeløp id minsteinntektsterskel36mnd,
+            multiplikasjon inntekt "Minsteinntektsterskel siste 12 mnd" av minsteinntektfaktor12mnd ganger grunnbeløp id minsteinntektsterskel12mnd,
             dato faktum "Søknadstidspunkt" id søknadstidspunkt avhengerAv innsendtSøknadsId,
             boolsk faktum "Verneplikt" id verneplikt avhengerAv innsendtSøknadsId,
             boolsk faktum "Godkjenning av siste dag med lønn" id godkjenningSisteDagMedLønn avhengerAv sisteDagMedLønn,
@@ -121,8 +121,8 @@ internal object AvslagPåMinsteinntektOppsett {
                 fangstOgFisk to "FangstOgFiske",
                 inntektSiste36mnd to "InntektSiste3År",
                 inntektSiste12mnd to "InntektSiste12Mnd",
-                øvreFaktor to "ØvreTerskelFaktor",
-                nedreFaktor to "NedreTerskelFaktor",
+                minsteinntektfaktor36mnd to "ØvreTerskelFaktor",
+                minsteinntektfaktor12mnd to "NedreTerskelFaktor",
                 grunnbeløp to "Grunnbeløp",
                 søknadstidspunkt to "Søknadstidspunkt",
                 verneplikt to "Verneplikt",

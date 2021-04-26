@@ -20,7 +20,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innte
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.nedreMinsteinntektsterskel
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektsterskel12mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektsterskel36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
@@ -30,7 +31,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søkn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningstidspunktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkningstidspunkt
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.øvreMinsteinntektsterskel
 import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.sjekkInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.skalManueltBehandles
 
@@ -38,17 +38,16 @@ internal object AvslagPåMinsteinntekt {
     private val sjekkVirkningstidspunkt = with(søknad) {
         "virkningstidspunkt" makro {
             dato(virkningstidspunkt) førEllerLik dato(senesteMuligeVirkningstidspunkt) hvisGyldig {
-                dato(virkningstidspunkt) mellom dato(inntektsrapporteringsperiodeFom) og dato(
-                    inntektsrapporteringsperiodeTom
-                )
+                dato(virkningstidspunkt) mellom
+                    dato(inntektsrapporteringsperiodeFom) og dato(inntektsrapporteringsperiodeTom)
             }
         } hvisUgyldig { boolsk(uhåndterbartVirkningstidspunktManuell) er true }
     }
     private val minsteArbeidsinntekt = with(søknad) {
         "oppfyller krav til minste arbeidsinntekt".makro {
             "minste arbeidsinntekt".minstEnAv(
-                inntekt(inntektSiste36mnd) minst inntekt(øvreMinsteinntektsterskel),
-                inntekt(inntektSiste12mnd) minst inntekt(nedreMinsteinntektsterskel),
+                inntekt(inntektSiste36mnd) minst inntekt(minsteinntektsterskel36mnd),
+                inntekt(inntektSiste12mnd) minst inntekt(minsteinntektsterskel12mnd),
                 boolsk(verneplikt) er true,
                 boolsk(lærling) er true
             ) hvisGyldig { boolsk(oppfyllerMinsteinntektManuell) er true } hvisUgyldig {
@@ -70,7 +69,7 @@ internal object AvslagPåMinsteinntekt {
             }
         }
     }
-    internal val regeltre = with(søknad) {
+    internal val regeltre =
         sjekkVirkningstidspunkt hvisGyldig {
             skalManueltBehandles hvisUgyldig {
                 "inngangsvilkår".alle(
@@ -79,5 +78,4 @@ internal object AvslagPåMinsteinntekt {
                 )
             }
         }
-    }
 }
