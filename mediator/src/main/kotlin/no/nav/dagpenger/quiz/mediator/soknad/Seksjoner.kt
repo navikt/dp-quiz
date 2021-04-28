@@ -120,7 +120,14 @@ internal object Seksjoner {
             "inntekter",
             Rolle.nav,
             inntekt(inntektSiste12mnd),
-            inntekt(inntektSiste36mnd),
+            inntekt(inntektSiste36mnd)
+        )
+    }
+
+    private val inntektNesteKalendermåned = with(søknad) {
+        Seksjon(
+            "inntekt neste kalendermåned",
+            Rolle.nav,
             boolsk(harInntektNesteKalendermåned)
         )
     }
@@ -228,6 +235,7 @@ internal object Seksjoner {
             dagpengehistorikk,
             sykepengehistorikk,
             inntekter,
+            inntektNesteKalendermåned,
             godkjennDato,
             endredeArbeidsforhold,
             sluttårsakSaksbehandler,
