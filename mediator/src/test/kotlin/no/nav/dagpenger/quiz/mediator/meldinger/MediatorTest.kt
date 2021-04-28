@@ -81,8 +81,8 @@ internal class MediatorTest {
             )
         )
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(8, "boolean", "true")))
-        assertEquals(9, testRapid.inspektør.size)
-        assertEquals("prosess_resultat", testRapid.inspektør.field(8, "@event_name").asText())
+        assertEquals(8, testRapid.inspektør.size)
+        assertEquals("prosess_resultat", testRapid.inspektør.field(7, "@event_name").asText())
     }
 
     @Test

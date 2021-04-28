@@ -4,7 +4,6 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TypedFaktum
-import no.nav.dagpenger.model.seksjon.Seksjon.Companion.saksbehandlerSeksjoner
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
@@ -51,7 +50,8 @@ class Søknadprosess private constructor(
 
     fun nesteSeksjoner(): List<Seksjon> =
         if (rootSubsumsjon.resultat() != null)
-            saksbehandlerSeksjoner(rootSubsumsjon.relevanteFakta())
+        // saksbehandlerSeksjoner(rootSubsumsjon.relevanteFakta()
+            emptyList()
         else
             listOf(seksjoner.first { rootSubsumsjon.nesteFakta() in it })
 
