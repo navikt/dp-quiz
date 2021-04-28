@@ -3,7 +3,6 @@ package no.nav.dagpenger.quiz.mediator.soknad
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.førEllerLik
-import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.minst
@@ -13,8 +12,6 @@ import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.makro
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSluttårsak
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeFom
@@ -53,10 +50,14 @@ internal object AvslagPåMinsteinntekt {
             ) hvisGyldig { boolsk(oppfyllerMinsteinntektManuell) er true } hvisUgyldig {
                 sjekkInntektNesteKalendermåned
             }
-        }.godkjentAv(
-            boolsk(godkjenningSisteDagMedLønn),
-            boolsk(godkjenningSluttårsak)
+        }
+       /*
+            Skrudd av godkjenning, for å teste kvalitet uten saksbehandler. Skriving til arena er skrudd av.
+            .godkjentAv(
+              boolsk(godkjenningSisteDagMedLønn),
+              boolsk(godkjenningSluttårsak)
         )
+       */
     }
     internal val meldtSomArbeidssøker = with(søknad) {
         generator(registreringsperioder) har "registrert arbeidssøker".makro {
