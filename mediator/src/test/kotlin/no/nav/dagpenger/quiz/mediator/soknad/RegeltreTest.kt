@@ -18,8 +18,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antal
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSluttårsak
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
@@ -100,8 +98,8 @@ internal class RegeltreTest {
             boolsk("$lønnsgaranti.1").besvar(false)
             boolsk("$permittertFiskeforedling.1").besvar(false)
 
-            boolsk(godkjenningSluttårsak).besvar(true)
-            boolsk(godkjenningSisteDagMedLønn).besvar(true)
+            // boolsk(godkjenningSluttårsak).besvar(true)
+            // boolsk(godkjenningSisteDagMedLønn).besvar(true)
             // TODO: Nå sender vi alle som oppfyller kravene til minste arbeidsinntekt til manuell, vi setter denne til true så den bypasses
             manglerInntekt.boolsk(oppfyllerMinsteinntektManuell).besvar(true)
         }

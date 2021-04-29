@@ -10,8 +10,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsA
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSisteDagMedLønn
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.godkjenningSluttårsak
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
@@ -132,6 +130,7 @@ internal object Seksjoner {
         )
     }
 
+    /*
     private val godkjennDato = with(søknad) {
         Seksjon(
             "godkjenn siste dag med lønn",
@@ -139,6 +138,15 @@ internal object Seksjoner {
             boolsk(godkjenningSisteDagMedLønn)
         )
     }
+
+    private val godkjennSluttårsak = with(søknad) {
+        Seksjon(
+            "godkjenn sluttårsak",
+            Rolle.saksbehandler,
+            boolsk(godkjenningSluttårsak),
+        )
+    }
+     */
 
     private val endredeArbeidsforhold = with(søknad) {
         Seksjon(
@@ -149,14 +157,6 @@ internal object Seksjoner {
             boolsk(lønnsgaranti),
             boolsk(permittertFiskeforedling),
             boolsk(permittert),
-        )
-    }
-
-    private val sluttårsakSaksbehandler = with(søknad) {
-        Seksjon(
-            "godkjenn sluttårsak",
-            Rolle.saksbehandler,
-            boolsk(godkjenningSluttårsak),
         )
     }
 
@@ -236,9 +236,9 @@ internal object Seksjoner {
             sykepengehistorikk,
             inntekter,
             inntektNesteKalendermåned,
-            godkjennDato,
+            // godkjennDato,
             endredeArbeidsforhold,
-            sluttårsakSaksbehandler,
+            // godkjennSluttårsak,
             manuellGjenopptak,
             manuellSykepenger,
             manuellFangstOgFisk,

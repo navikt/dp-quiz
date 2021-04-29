@@ -18,7 +18,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    const val VERSJON_ID = 5
+    const val VERSJON_ID = 6
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
@@ -37,7 +37,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val grunnbeløp = 12
     const val søknadstidspunkt = 13
     const val verneplikt = 14
-    const val godkjenningSisteDagMedLønn = 15
+    // const val godkjenningSisteDagMedLønn = 15
     const val innsendtSøknadsId = 17
     const val registreringsperioder = 19
     const val lærling = 20
@@ -51,7 +51,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val permittert = 28
     const val lønnsgaranti = 29
     const val permittertFiskeforedling = 30
-    const val godkjenningSluttårsak = 31
+    // const val godkjenningSluttårsak = 31
     const val harHattDagpengerSiste36mnd = 32
     const val periodeOppbruktManuell = 33
     const val sykepengerSiste36mnd = 34
@@ -82,7 +82,7 @@ internal object AvslagPåMinsteinntektOppsett {
             multiplikasjon inntekt "Minsteinntektsterskel siste 12 mnd" av minsteinntektfaktor12mnd ganger grunnbeløp id minsteinntektsterskel12mnd,
             dato faktum "Søknadstidspunkt" id søknadstidspunkt avhengerAv innsendtSøknadsId,
             boolsk faktum "Verneplikt" id verneplikt avhengerAv innsendtSøknadsId,
-            boolsk faktum "Godkjenning av siste dag med lønn" id godkjenningSisteDagMedLønn avhengerAv sisteDagMedLønn,
+            // boolsk faktum "Godkjenning av siste dag med lønn" id godkjenningSisteDagMedLønn avhengerAv sisteDagMedLønn,
             dokument faktum "Innsendt søknadsId" id innsendtSøknadsId,
             heltall faktum "Antall arbeidsøker registeringsperioder" id registreringsperioder genererer registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom,
             boolsk faktum "Lærling" id lærling avhengerAv innsendtSøknadsId,
@@ -96,7 +96,7 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Ordinær" id ordinær,
             boolsk faktum "Lønnsgaranti" id lønnsgaranti,
             boolsk faktum "PermittertFiskeforedling" id permittertFiskeforedling,
-            boolsk faktum "Godkjenning sluttårsak" id godkjenningSluttårsak avhengerAv antallEndredeArbeidsforhold,
+            // boolsk faktum "Godkjenning sluttårsak" id godkjenningSluttårsak avhengerAv antallEndredeArbeidsforhold,
             boolsk faktum "Har hatt dagpenger siste 36mnd" id harHattDagpengerSiste36mnd avhengerAv virkningstidspunkt,
             boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbruktManuell avhengerAv harHattDagpengerSiste36mnd,
             boolsk faktum "Sykepenger siste 36 mnd" id sykepengerSiste36mnd avhengerAv virkningstidspunkt,
