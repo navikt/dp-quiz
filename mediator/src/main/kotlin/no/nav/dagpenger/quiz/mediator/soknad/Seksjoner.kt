@@ -68,8 +68,15 @@ internal object Seksjoner {
             "minsteinntektKonstanter",
             Rolle.nav,
             desimaltall(minsteinntektfaktor12mnd),
-            desimaltall(minsteinntektfaktor36mnd),
-            inntekt(grunnbeløp),
+            desimaltall(minsteinntektfaktor36mnd)
+        )
+    }
+
+    private val grunnbeløpSeksjon = with(søknad) {
+        Seksjon(
+            "grunnbeløp",
+            Rolle.nav,
+            inntekt(grunnbeløp)
         )
     }
 
@@ -230,6 +237,7 @@ internal object Seksjoner {
             senesteMuligeVirkningstidpunktSeksjon,
             inntektsrapporteringsperioder,
             minsteinntektKonstanter,
+            grunnbeløpSeksjon,
             dataFraSøknad,
             arbeidsøkerPerioder,
             dagpengehistorikk,
