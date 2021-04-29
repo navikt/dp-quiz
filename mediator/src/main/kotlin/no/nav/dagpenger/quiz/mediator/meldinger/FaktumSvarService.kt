@@ -86,8 +86,8 @@ internal class FaktumSvarService(
                 context.publish(json)
                 sikkerlogg.info { "Send ut seksjon: $json" }
                 log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
-            }.also { seksjoner ->
-                if (Søknadprosess.erFerdig(seksjoner)) {
+            }.also { seksjon ->
+                if (Søknadprosess.erFerdig(seksjon)) {
                     ResultatJsonBuilder(søknadprosess).resultat().also { json ->
                         context.publish(json.toString())
                         sikkerlogg.info { "Send ut resultat: $json" }

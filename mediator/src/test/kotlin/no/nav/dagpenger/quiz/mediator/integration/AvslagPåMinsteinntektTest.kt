@@ -116,7 +116,7 @@ internal class AvslagPåMinsteinntektTest {
             besvar(godkjenningSisteDagMedLønn, true)
             assertEquals(28, testRapid.inspektør.size)
              */
-            assertEquals(22, testRapid.inspektør.size)
+            assertEquals(24, testRapid.inspektør.size)
             assertFalse(gjeldendeResultat())
         }
     }
