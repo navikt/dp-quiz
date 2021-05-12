@@ -38,6 +38,7 @@ internal class NySøknadService(
             .build()
         val søknadsId = packet["søknadsId"].asText()
         val faktagrupperType = Versjon.UserInterfaceType.Web
+
         søknadPersistence.ny(identer, faktagrupperType, versjonId)
             .also { søknadprosess ->
                 // TODO: Fikse dette
