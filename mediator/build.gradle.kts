@@ -17,6 +17,11 @@ dependencies {
     implementation(Konfig.konfig)
     implementation(Kotlin.Logging.kotlinLogging)
 
+    // unleash
+    implementation("no.finn.unleash:unleash-client-java:4.2.1") {
+        exclude("org.apache.logging.log4j")
+    }
+
     testImplementation(Mockk.mockk)
     testImplementation(TestContainers.postgresql)
 }

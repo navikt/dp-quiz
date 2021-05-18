@@ -1,20 +1,13 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import no.nav.dagpenger.quiz.mediator.helpers.desember
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -30,19 +23,12 @@ internal class MediatorTest {
     private companion object {
         private val meldingsfabrikk = TestMeldingFactory("fødselsnummer", "aktør")
         private val testRapid = TestRapid()
-        private val grupperer = TestLagring()
+        private val grupperer = SøknadPersistenceFake()
 
         init {
             NySøknadService(grupperer, testRapid, SøknadEksempel.versjonId)
             FaktumSvarService(grupperer, testRapid)
         }
-    }
-
-    @Test
-    fun `Start ny søknad, og send første seksjon`() {
-        testRapid.sendTestMessage(meldingsfabrikk.nySøknadMelding())
-        assertEquals(1, testRapid.inspektør.size)
-        assertNotNull(grupperer.søknadprosess)
     }
 
     @Test
@@ -118,39 +104,6 @@ internal class MediatorTest {
         )
         assertEquals(3, testRapid.inspektør.size)
         assertEquals(2, grupperer.hentet, "Fakta hvor minst ett faktum har svar laster søknaden")
-    }
-
-    private class TestLagring : SøknadPersistence {
-        var søknadprosess: Søknadprosess? = null
-        var hentet: Int = 0
-
-        override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int) =
-            Versjon.id(versjonId).søknadprosess(Person(identer), type)
-                .also { søknadprosess = it }
-
-        override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?) = søknadprosess!!.also { hentet++ }
-
-        override fun lagre(søknad: Søknad): Boolean {
-            søknadprosess = Versjon.id(SøknadEksempel.versjonId).søknadprosess(søknad, Versjon.UserInterfaceType.Web)
-            return true
-        }
-
-        override fun opprettede(identer: Identer): Map<LocalDateTime, UUID> {
-            TODO("Not yet implemented")
-        }
-
-        override fun lagreResultat(resultat: Boolean, søknad: Søknad): Boolean {
-            TODO("Not yet implemented")
-        }
-
-        override fun hentResultat(uuid: UUID): Boolean {
-            TODO("Not yet implemented")
-        }
-
-        fun reset() {
-            søknadprosess = null
-            hentet = 0
-        }
     }
 }
 
