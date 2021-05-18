@@ -23,7 +23,7 @@ internal class MediatorTest {
     private companion object {
         private val meldingsfabrikk = TestMeldingFactory("fødselsnummer", "aktør")
         private val testRapid = TestRapid()
-        private val grupperer = SøknadPersistanceFake()
+        private val grupperer = SøknadPersistenceFake()
 
         init {
             NySøknadService(grupperer, testRapid, SøknadEksempel.versjonId)

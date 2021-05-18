@@ -10,7 +10,7 @@ import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class SøknadPersistanceFake : SøknadPersistence {
+internal class SøknadPersistenceFake : SøknadPersistence {
     var søknadprosess: Søknadprosess? = null
     var hentet: Int = 0
 

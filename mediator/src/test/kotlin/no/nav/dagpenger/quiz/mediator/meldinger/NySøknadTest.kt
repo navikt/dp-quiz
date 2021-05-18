@@ -1,10 +1,13 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
+import no.finn.unleash.FakeUnleash
+import no.nav.dagpenger.quiz.mediator.FEATURE_MOTTA_SØKNAD
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.intellij.lang.annotations.Language
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -20,26 +23,35 @@ internal class NySøknadTest {
 
     private companion object {
         private val testRapid = TestRapid()
-        private val søknadPersistance = SøknadPersistanceFake()
+        private val søknadPersistance = SøknadPersistenceFake()
+        private val fakeUnleash = FakeUnleash()
 
         init {
             NySøknadService(søknadPersistance, testRapid, SøknadEksempel.versjonId)
-            MottattSøknadService(søknadPersistance, testRapid, SøknadEksempel.versjonId)
+            MottattSøknadService(søknadPersistance, testRapid, fakeUnleash, SøknadEksempel.versjonId)
         }
     }
 
     @Test
     fun `Start ny søknad, og send første seksjon`() {
         testRapid.sendTestMessage(nySøknadMelding())
-        Assertions.assertEquals(1, testRapid.inspektør.size)
-        Assertions.assertNotNull(søknadPersistance.søknadprosess)
+        assertEquals(1, testRapid.inspektør.size)
+        assertNotNull(søknadPersistance.søknadprosess)
     }
 
     @Test
     fun `Start ny søknadprosess, trigget av innsending_ferdigstilt fra dp-mottak`() {
+        fakeUnleash.enable(FEATURE_MOTTA_SØKNAD)
         testRapid.sendTestMessage(innsendingFerdigstiltJson)
-        // Assertions.assertEquals(1, testRapid.inspektør.size)
-        // Assertions.assertNotNull(søknadPersistance.søknadprosess)
+        assertEquals(1, testRapid.inspektør.size)
+        assertNotNull(søknadPersistance.søknadprosess)
+    }
+
+    @Test
+    fun `Ikke start ny søknadprosess, når motta-søknad-flagg er av`() {
+        fakeUnleash.disable(FEATURE_MOTTA_SØKNAD)
+        testRapid.sendTestMessage(innsendingFerdigstiltJson)
+        assertEquals(0, testRapid.inspektør.size)
     }
 
     private fun nySøknadMelding() =
