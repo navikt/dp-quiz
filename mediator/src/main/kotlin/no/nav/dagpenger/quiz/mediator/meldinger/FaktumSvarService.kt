@@ -48,10 +48,15 @@ internal class FaktumSvarService(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        if (unleash.isEnabled("dp-quiz.ignorer.svar")) return
+        val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
+
+        if (unleash.isEnabled("dp-quiz.ignorer.svar")) {
+            log.info { "Skip svar for $søknadUuid pga feature toggle" }
+            return
+        }
+
         val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
         if (fakta.isEmpty()) return
-        val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
 
         withLoggingContext(
             "id" to UUID.fromString(packet["@id"].asText()).toString(),
