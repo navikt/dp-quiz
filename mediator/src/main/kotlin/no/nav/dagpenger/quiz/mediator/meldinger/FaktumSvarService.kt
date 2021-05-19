@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.finn.unleash.Unleash
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
@@ -24,7 +25,8 @@ private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
 internal class FaktumSvarService(
     private val søknadPersistence: SøknadPersistence,
-    rapidsConnection: RapidsConnection
+    rapidsConnection: RapidsConnection,
+    private val unleash: Unleash
 ) : River.PacketListener {
 
     init {
@@ -46,6 +48,7 @@ internal class FaktumSvarService(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
+        if (unleash.isEnabled("dp-quiz.ignorer.svar")) return
         val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
         if (fakta.isEmpty()) return
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())

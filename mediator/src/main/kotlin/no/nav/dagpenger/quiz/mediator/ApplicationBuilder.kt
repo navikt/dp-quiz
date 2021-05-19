@@ -38,7 +38,7 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
                 AvslagPåMinsteinntektOppsett.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
                 NySøknadService(søknadRecord, rapidsConnection)
                 MottattSøknadService(søknadRecord, rapidsConnection, unleash)
-                FaktumSvarService(søknadRecord, rapidsConnection)
+                FaktumSvarService(søknadRecord, rapidsConnection, unleash)
                 BehandlingsdatoService(rapidsConnection)
                 SenesteMuligeVirkningstidspunktService(rapidsConnection)
                 TerskelFaktorService(rapidsConnection)

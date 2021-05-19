@@ -3,6 +3,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.finn.unleash.FakeUnleash
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Rolle
@@ -50,7 +51,8 @@ internal class FaktumSvarServiceTest {
     val testRapid = TestRapid().also {
         FaktumSvarService(
             søknadPersistence = søknadPersistence,
-            rapidsConnection = it
+            rapidsConnection = it,
+            unleash = FakeUnleash()
         )
     }
 

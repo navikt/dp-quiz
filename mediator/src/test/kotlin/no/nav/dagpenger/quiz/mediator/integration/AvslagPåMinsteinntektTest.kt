@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
+import no.finn.unleash.FakeUnleash
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
@@ -56,7 +57,8 @@ internal class AvslagPåMinsteinntektTest {
             testRapid = TestRapid().also {
                 FaktumSvarService(
                     søknadPersistence = persistence,
-                    rapidsConnection = it
+                    rapidsConnection = it,
+                    unleash = FakeUnleash()
                 )
                 NySøknadService(persistence, it, AvslagPåMinsteinntektOppsett.VERSJON_ID)
             }

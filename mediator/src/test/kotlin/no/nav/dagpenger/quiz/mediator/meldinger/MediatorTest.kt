@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
+import no.finn.unleash.FakeUnleash
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
@@ -27,7 +28,7 @@ internal class MediatorTest {
 
         init {
             NySøknadService(grupperer, testRapid, SøknadEksempel.versjonId)
-            FaktumSvarService(grupperer, testRapid)
+            FaktumSvarService(grupperer, testRapid, FakeUnleash())
         }
     }
 
