@@ -42,7 +42,6 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
                 BehandlingsdatoService(rapidsConnection)
                 SenesteMuligeVirkningstidspunktService(rapidsConnection)
                 TerskelFaktorService(rapidsConnection)
-                log.info { "starta" }
             }
     }
 }
