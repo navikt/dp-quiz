@@ -25,6 +25,7 @@ internal class MottattSøknadService(
     private val versjonId: Int = Versjon.siste
 ) : River.PacketListener {
     init {
+        log.info { "starter mottattsøknad" }
         River(rapidsConnection).apply {
             validate {
                 it.demandValue("@event_name", "innsending_ferdigstilt")
