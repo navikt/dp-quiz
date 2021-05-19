@@ -28,13 +28,13 @@ class ByClusterStrategy(private val currentCluster: Cluster) : Strategy {
 }
 
 enum class Cluster {
-    DEV_FSS, PROD_FSS, ANNET;
+    DEV_GCP, PROD_GCP, ANNET;
 
     companion object {
         val current: Cluster by lazy {
             when (System.getenv("NAIS_CLUSTER_NAME")) {
-                "dev-fss" -> DEV_FSS
-                "prod-fss" -> PROD_FSS
+                "dev-gcp" -> DEV_GCP
+                "prod-gcp" -> PROD_GCP
                 else -> ANNET
             }
         }
