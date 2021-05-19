@@ -37,6 +37,7 @@ internal class MottattSøknadService(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
+        log.info { "Mottok ${packet["søknadsData.brukerBehandlingId"].asText()} før toggle" }
         if (!unleash.isEnabled(FEATURE_MOTTA_SØKNAD)) return
 
         log.info { "Mottok søknad med id ${packet["søknadsData.brukerBehandlingId"].asText()}" }

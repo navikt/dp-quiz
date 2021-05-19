@@ -7,7 +7,7 @@ import no.finn.unleash.util.UnleashConfig
 const val FEATURE_MOTTA_SØKNAD = "dp-quiz.motta.soknad"
 
 fun setupUnleash(unleashApiUrl: String): DefaultUnleash {
-    val appName = "dp-regel-api"
+    val appName = "dp-quiz"
     val unleashconfig = UnleashConfig.builder()
         .appName(appName)
         .instanceId(appName)

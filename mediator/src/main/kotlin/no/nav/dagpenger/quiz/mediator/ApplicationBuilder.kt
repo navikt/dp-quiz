@@ -1,6 +1,7 @@
 package no.nav.dagpenger.quiz.mediator
 
 import PostgresDataSourceBuilder.runMigration
+import mu.KotlinLogging
 import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningstidspunktService
 import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
@@ -12,6 +13,8 @@ import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
+
+private val log = KotlinLogging.logger {}
 
 // Understands how to build our application server
 internal class ApplicationBuilder() : RapidsConnection.StatusListener {
@@ -39,6 +42,7 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
                 BehandlingsdatoService(rapidsConnection)
                 SenesteMuligeVirkningstidspunktService(rapidsConnection)
                 TerskelFaktorService(rapidsConnection)
+                log.info { "starta" }
             }
     }
 }
