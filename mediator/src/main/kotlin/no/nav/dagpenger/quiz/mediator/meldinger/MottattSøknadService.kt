@@ -32,6 +32,7 @@ internal class MottattSøknadService(
                 it.requireKey("søknadsData.brukerBehandlingId")
                 it.requireKey("fødselsnummer")
                 it.requireKey("aktørId")
+                it.requireKey("journalpostId")
             }
         }.register(this)
     }
@@ -46,6 +47,7 @@ internal class MottattSøknadService(
             .build()
         val søknadsId = packet["søknadsData.brukerBehandlingId"].asText()
         val faktagrupperType = Versjon.UserInterfaceType.Web
+        val journalpostId = packet["journalpostId"].asText()
 
         søknadPersistence.ny(identer, faktagrupperType, versjonId)
             .also { søknadprosess ->
@@ -53,7 +55,7 @@ internal class MottattSøknadService(
                 søknadprosess.dokument(innsendtSøknadsId).besvar(Dokument(LocalDateTime.now(), url = søknadsId))
                 søknadPersistence.lagre(søknadprosess.søknad)
 
-                log.info { "Opprettet ny søknadprosess ${søknadprosess.søknad.uuid} på grunn av søknad $søknadsId" }
+                log.info { "Opprettet ny søknadprosess ${søknadprosess.søknad.uuid} på grunn av journalføring $journalpostId for søknad $søknadsId" }
 
                 søknadprosess.nesteSeksjoner()
                     .forEach { seksjon ->
