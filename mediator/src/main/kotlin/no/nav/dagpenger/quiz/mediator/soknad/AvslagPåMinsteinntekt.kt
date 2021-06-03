@@ -54,7 +54,6 @@ internal object AvslagPåMinsteinntekt {
        /*
             Skrudd av godkjenning, for å teste kvalitet uten saksbehandler. Skriving til arena er skrudd av.
             .godkjentAv(
-              boolsk(godkjenningSisteDagMedLønn),
               boolsk(godkjenningSluttårsak)
         )
        */

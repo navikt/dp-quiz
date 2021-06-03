@@ -33,7 +33,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.regis
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningstidspunkt
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sisteDagMedLønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknadstidspunkt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
@@ -76,7 +75,6 @@ internal class AvslagPåMinsteinntektTest {
             besvar(verneplikt, false)
             besvar(lærling, false)
             besvar(ønsketDato, 5.januar)
-            besvar(sisteDagMedLønn, 5.januar)
             besvar(søknadstidspunkt, 2.januar)
             assertGjeldendeSeksjon("inntektsrapporteringsperioder")
             besvar(inntektsrapporteringsperiodeFom, 5.januar)
@@ -110,15 +108,9 @@ internal class AvslagPåMinsteinntektTest {
             assertGjeldendeSeksjon("godkjenn sluttårsak")
             besvar(godkjenningSluttårsak, true)
 
-            assertEquals(
-                "godkjenn siste dag med lønn",
-                testRapid.inspektør.field(testRapid.inspektør.size - 2, "seksjon_navn").asText()
-            )
-
-            besvar(godkjenningSisteDagMedLønn, true)
             assertEquals(28, testRapid.inspektør.size)
              */
-            assertEquals(22, testRapid.inspektør.size)
+            assertEquals(21, testRapid.inspektør.size)
             assertFalse(gjeldendeResultat())
         }
     }

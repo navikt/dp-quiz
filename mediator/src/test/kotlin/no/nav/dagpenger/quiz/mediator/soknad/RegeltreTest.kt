@@ -37,7 +37,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.regis
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningstidspunkt
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sisteDagMedLønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknadstidspunkt
@@ -64,7 +63,6 @@ internal class RegeltreTest {
         manglerInntekt.apply {
             dato(behandlingsdato).besvar(5.januar)
             dato(ønsketDato).besvar(5.januar)
-            dato(sisteDagMedLønn).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
             dato(senesteMuligeVirkningstidspunkt).besvar(19.januar)
             dato(inntektsrapporteringsperiodeFom).besvar(5.januar)
@@ -192,7 +190,6 @@ internal class RegeltreTest {
         søknad.apply {
             dato(behandlingsdato).besvar(4.januar)
             dato(ønsketDato).besvar(5.januar)
-            dato(sisteDagMedLønn).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
 
             generator(registreringsperioder).besvar(1)
@@ -210,7 +207,6 @@ internal class RegeltreTest {
         søknad.apply {
             dato(behandlingsdato).besvar(6.januar)
             dato(ønsketDato).besvar(5.januar)
-            dato(sisteDagMedLønn).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
 
             generator(registreringsperioder).besvar(1)

@@ -18,14 +18,13 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    const val VERSJON_ID = 6
+    const val VERSJON_ID = 7
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
     }
 
     const val ønsketDato = 1
-    const val sisteDagMedLønn = 3
     const val virkningstidspunkt = 4
     const val fangstOgFisk = 5
     const val inntektSiste36mnd = 6
@@ -37,7 +36,6 @@ internal object AvslagPåMinsteinntektOppsett {
     const val grunnbeløp = 12
     const val søknadstidspunkt = 13
     const val verneplikt = 14
-    // const val godkjenningSisteDagMedLønn = 15
     const val innsendtSøknadsId = 17
     const val registreringsperioder = 19
     const val lærling = 20
@@ -70,8 +68,7 @@ internal object AvslagPåMinsteinntektOppsett {
         get() = Søknad(
             VERSJON_ID,
             dato faktum "Ønsker dagpenger fra dato" id ønsketDato avhengerAv innsendtSøknadsId,
-            dato faktum "Siste dag med lønn" id sisteDagMedLønn avhengerAv innsendtSøknadsId,
-            maks dato "Virkningstidspunkt" av ønsketDato og sisteDagMedLønn og søknadstidspunkt id virkningstidspunkt,
+            maks dato "Virkningstidspunkt" av ønsketDato og søknadstidspunkt id virkningstidspunkt,
             boolsk faktum "Driver med fangst og fisk" id fangstOgFisk avhengerAv innsendtSøknadsId,
             inntekt faktum "Inntekt siste 36 mnd" id inntektSiste36mnd avhengerAv virkningstidspunkt og fangstOgFisk,
             inntekt faktum "Inntekt siste 12 mnd" id inntektSiste12mnd avhengerAv virkningstidspunkt og fangstOgFisk,
@@ -82,7 +79,6 @@ internal object AvslagPåMinsteinntektOppsett {
             multiplikasjon inntekt "Minsteinntektsterskel siste 12 mnd" av minsteinntektfaktor12mnd ganger grunnbeløp id minsteinntektsterskel12mnd,
             dato faktum "Søknadstidspunkt" id søknadstidspunkt avhengerAv innsendtSøknadsId,
             boolsk faktum "Verneplikt" id verneplikt avhengerAv innsendtSøknadsId,
-            // boolsk faktum "Godkjenning av siste dag med lønn" id godkjenningSisteDagMedLønn avhengerAv sisteDagMedLønn,
             dokument faktum "Innsendt søknadsId" id innsendtSøknadsId,
             heltall faktum "Antall arbeidsøker registeringsperioder" id registreringsperioder genererer registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom,
             boolsk faktum "Lærling" id lærling avhengerAv innsendtSøknadsId,
@@ -116,7 +112,6 @@ internal object AvslagPåMinsteinntektOppsett {
         FaktumNavBehov(
             mapOf(
                 ønsketDato to "ØnskerDagpengerFraDato",
-                sisteDagMedLønn to "SisteDagMedLønn",
                 virkningstidspunkt to "Virkningstidspunkt",
                 fangstOgFisk to "FangstOgFiske",
                 inntektSiste36mnd to "InntektSiste3År",

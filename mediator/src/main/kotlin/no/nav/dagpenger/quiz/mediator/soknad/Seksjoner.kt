@@ -31,7 +31,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.regis
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningstidspunkt
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sisteDagMedLønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.svangerskapsrelaterteSykepengerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
@@ -86,7 +85,6 @@ internal object Seksjoner {
             Rolle.nav,
             dato(ønsketDato),
             dato(søknadstidspunkt),
-            dato(sisteDagMedLønn),
             boolsk(verneplikt),
             boolsk(lærling),
             boolsk(eøsArbeid),
@@ -138,13 +136,6 @@ internal object Seksjoner {
     }
 
     /*
-    private val godkjennDato = with(søknad) {
-        Seksjon(
-            "godkjenn siste dag med lønn",
-            Rolle.saksbehandler,
-            boolsk(godkjenningSisteDagMedLønn)
-        )
-    }
 
     private val godkjennSluttårsak = with(søknad) {
         Seksjon(
