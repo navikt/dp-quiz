@@ -1,14 +1,14 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
-import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningstidspunktService
+import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningsdatoService
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
-internal class SenesteMuligeVirkningstidspunktServiceTest {
+internal class SenesteMuligeVirkningsdatoServiceTest {
     private val rapid = TestRapid().apply {
-        SenesteMuligeVirkningstidspunktService(this)
+        SenesteMuligeVirkningsdatoService(this)
     }
 
     @Test

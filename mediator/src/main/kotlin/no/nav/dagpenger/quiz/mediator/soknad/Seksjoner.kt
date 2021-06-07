@@ -30,12 +30,12 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permi
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningstidspunkt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.svangerskapsrelaterteSykepengerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknadstidspunkt
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningstidspunktManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningsdatoManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ønsketDato
 
@@ -45,11 +45,11 @@ internal object Seksjoner {
         Seksjon("behandlingsdato", Rolle.nav, dato(behandlingsdato))
     }
 
-    private val senesteMuligeVirkningstidpunktSeksjon = with(søknad) {
+    private val senesteMuligeVirkningsdatoSeksjon = with(søknad) {
         Seksjon(
             "senesteMuligeVirkningstidspunkt",
             Rolle.nav,
-            dato(senesteMuligeVirkningstidspunkt)
+            dato(senesteMuligeVirkningsdato)
         )
     }
 
@@ -194,7 +194,7 @@ internal object Seksjoner {
         Seksjon(
             "virkningstidspunkt vi ikke kan håndtere",
             Rolle.manuell,
-            boolsk(uhåndterbartVirkningstidspunktManuell)
+            boolsk(uhåndterbartVirkningsdatoManuell)
         )
     }
 
@@ -225,7 +225,7 @@ internal object Seksjoner {
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             behandlingsdatoSeksjon,
-            senesteMuligeVirkningstidpunktSeksjon,
+            senesteMuligeVirkningsdatoSeksjon,
             inntektsrapporteringsperioder,
             minsteinntektKonstanter,
             grunnbeløpSeksjon,

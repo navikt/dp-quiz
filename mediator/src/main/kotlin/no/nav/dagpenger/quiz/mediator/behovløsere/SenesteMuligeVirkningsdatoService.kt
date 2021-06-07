@@ -6,7 +6,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDate
 
-internal class SenesteMuligeVirkningstidspunktService(rapidsConnection: RapidsConnection) :
+internal class SenesteMuligeVirkningsdatoService(rapidsConnection: RapidsConnection) :
     River.PacketListener {
     init {
         River(rapidsConnection).apply {

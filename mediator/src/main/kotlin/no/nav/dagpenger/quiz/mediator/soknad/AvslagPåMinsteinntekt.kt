@@ -23,22 +23,22 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfy
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningstidspunkt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningstidspunktManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningsdatoManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkningstidspunkt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.sjekkInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.skalManueltBehandles
 
 internal object AvslagPåMinsteinntekt {
-    private val sjekkVirkningstidspunkt = with(søknad) {
-        "virkningstidspunkt" makro {
-            dato(virkningstidspunkt) førEllerLik dato(senesteMuligeVirkningstidspunkt) hvisGyldig {
-                dato(virkningstidspunkt) mellom
+    private val sjekkVirkningsdato = with(søknad) {
+        "virkningsdato" makro {
+            dato(virkningsdato) førEllerLik dato(senesteMuligeVirkningsdato) hvisGyldig {
+                dato(virkningsdato) mellom
                     dato(inntektsrapporteringsperiodeFom) og dato(inntektsrapporteringsperiodeTom)
             }
-        } hvisUgyldig { boolsk(uhåndterbartVirkningstidspunktManuell) er true }
+        } hvisUgyldig { boolsk(uhåndterbartVirkningsdatoManuell) er true }
     }
     private val minsteArbeidsinntekt = with(søknad) {
         "oppfyller krav til minste arbeidsinntekt".makro {
@@ -60,17 +60,17 @@ internal object AvslagPåMinsteinntekt {
     }
     internal val meldtSomArbeidssøker = with(søknad) {
         generator(registreringsperioder) har "registrert arbeidssøker".makro {
-            dato(virkningstidspunkt) etter dato(behandlingsdato) hvisGyldig {
+            dato(virkningsdato) etter dato(behandlingsdato) hvisGyldig {
                 dato(behandlingsdato) mellom dato(registrertArbeidsøkerPeriodeFom) og
                     dato(registrertArbeidsøkerPeriodeTom)
             } hvisUgyldig {
-                dato(virkningstidspunkt) mellom dato(registrertArbeidsøkerPeriodeFom) og
+                dato(virkningsdato) mellom dato(registrertArbeidsøkerPeriodeFom) og
                     dato(registrertArbeidsøkerPeriodeTom)
             }
         }
     }
     internal val regeltre =
-        sjekkVirkningstidspunkt hvisGyldig {
+        sjekkVirkningsdato hvisGyldig {
             skalManueltBehandles hvisUgyldig {
                 "inngangsvilkår".alle(
                     minsteArbeidsinntekt,

@@ -18,14 +18,14 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    const val VERSJON_ID = 7
+    const val VERSJON_ID = 8
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
     }
 
     const val ønsketDato = 1
-    const val virkningstidspunkt = 4
+    const val virkningsdato = 4
     const val fangstOgFisk = 5
     const val inntektSiste36mnd = 6
     const val inntektSiste12mnd = 7
@@ -49,6 +49,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val permittert = 28
     const val lønnsgaranti = 29
     const val permittertFiskeforedling = 30
+
     // const val godkjenningSluttårsak = 31
     const val harHattDagpengerSiste36mnd = 32
     const val periodeOppbruktManuell = 33
@@ -57,8 +58,8 @@ internal object AvslagPåMinsteinntektOppsett {
     const val fangstOgFiskManuell = 36
     const val eøsArbeid = 37
     const val eøsArbeidManuell = 38
-    const val uhåndterbartVirkningstidspunktManuell = 39
-    const val senesteMuligeVirkningstidspunkt = 40
+    const val uhåndterbartVirkningsdatoManuell = 39
+    const val senesteMuligeVirkningsdato = 40
     const val flereArbeidsforholdManuell = 41
     const val oppfyllerMinsteinntektManuell = 42
     const val harInntektNesteKalendermåned = 43
@@ -68,13 +69,13 @@ internal object AvslagPåMinsteinntektOppsett {
         get() = Søknad(
             VERSJON_ID,
             dato faktum "Ønsker dagpenger fra dato" id ønsketDato avhengerAv innsendtSøknadsId,
-            maks dato "Virkningstidspunkt" av ønsketDato og søknadstidspunkt id virkningstidspunkt,
+            maks dato "Virkningsdato" av ønsketDato og søknadstidspunkt id virkningsdato,
             boolsk faktum "Driver med fangst og fisk" id fangstOgFisk avhengerAv innsendtSøknadsId,
-            inntekt faktum "Inntekt siste 36 mnd" id inntektSiste36mnd avhengerAv virkningstidspunkt og fangstOgFisk,
-            inntekt faktum "Inntekt siste 12 mnd" id inntektSiste12mnd avhengerAv virkningstidspunkt og fangstOgFisk,
-            inntekt faktum "Grunnbeløp" id grunnbeløp avhengerAv virkningstidspunkt,
-            desimaltall faktum "Øvre faktor" id minsteinntektfaktor36mnd avhengerAv virkningstidspunkt,
-            desimaltall faktum "Nedre faktor" id minsteinntektfaktor12mnd avhengerAv virkningstidspunkt,
+            inntekt faktum "Inntekt siste 36 mnd" id inntektSiste36mnd avhengerAv virkningsdato og fangstOgFisk,
+            inntekt faktum "Inntekt siste 12 mnd" id inntektSiste12mnd avhengerAv virkningsdato og fangstOgFisk,
+            inntekt faktum "Grunnbeløp" id grunnbeløp avhengerAv virkningsdato,
+            desimaltall faktum "Øvre faktor" id minsteinntektfaktor36mnd avhengerAv virkningsdato,
+            desimaltall faktum "Nedre faktor" id minsteinntektfaktor12mnd avhengerAv virkningsdato,
             multiplikasjon inntekt "Minsteinntektsterskel siste 36 mnd" av minsteinntektfaktor36mnd ganger grunnbeløp id minsteinntektsterskel36mnd,
             multiplikasjon inntekt "Minsteinntektsterskel siste 12 mnd" av minsteinntektfaktor12mnd ganger grunnbeløp id minsteinntektsterskel12mnd,
             dato faktum "Søknadstidspunkt" id søknadstidspunkt avhengerAv innsendtSøknadsId,
@@ -85,26 +86,26 @@ internal object AvslagPåMinsteinntektOppsett {
             dato faktum "fom" id registrertArbeidsøkerPeriodeFom,
             dato faktum "tom" id registrertArbeidsøkerPeriodeTom,
             dato faktum "Behandlingsdato" id behandlingsdato,
-            dato faktum "Inntektsrapporteringsperiode fra og med" id inntektsrapporteringsperiodeFom avhengerAv virkningstidspunkt,
-            dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTom avhengerAv virkningstidspunkt,
+            dato faktum "Inntektsrapporteringsperiode fra og med" id inntektsrapporteringsperiodeFom avhengerAv virkningsdato,
+            dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTom avhengerAv virkningsdato,
             heltall faktum "sluttårsaker" id antallEndredeArbeidsforhold genererer ordinær og permittert og lønnsgaranti og permittertFiskeforedling avhengerAv innsendtSøknadsId,
             boolsk faktum "Permittert" id permittert,
             boolsk faktum "Ordinær" id ordinær,
             boolsk faktum "Lønnsgaranti" id lønnsgaranti,
             boolsk faktum "PermittertFiskeforedling" id permittertFiskeforedling,
             // boolsk faktum "Godkjenning sluttårsak" id godkjenningSluttårsak avhengerAv antallEndredeArbeidsforhold,
-            boolsk faktum "Har hatt dagpenger siste 36mnd" id harHattDagpengerSiste36mnd avhengerAv virkningstidspunkt,
+            boolsk faktum "Har hatt dagpenger siste 36mnd" id harHattDagpengerSiste36mnd avhengerAv virkningsdato,
             boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbruktManuell avhengerAv harHattDagpengerSiste36mnd,
-            boolsk faktum "Sykepenger siste 36 mnd" id sykepengerSiste36mnd avhengerAv virkningstidspunkt,
+            boolsk faktum "Sykepenger siste 36 mnd" id sykepengerSiste36mnd avhengerAv virkningsdato,
             boolsk faktum "Svangerskapsrelaterte sykepenger" id svangerskapsrelaterteSykepengerManuell avhengerAv sykepengerSiste36mnd,
             boolsk faktum "Fangst og fisk manuell" id fangstOgFiskManuell avhengerAv fangstOgFisk,
             boolsk faktum "Har hatt inntekt/trygdeperioder fra EØS" id eøsArbeid avhengerAv innsendtSøknadsId,
             boolsk faktum "EØS arbeid manuell" id eøsArbeidManuell avhengerAv eøsArbeid,
-            boolsk faktum "Ugyldig dato manuell" id uhåndterbartVirkningstidspunktManuell avhengerAv virkningstidspunkt,
+            boolsk faktum "Ugyldig dato manuell" id uhåndterbartVirkningsdatoManuell avhengerAv virkningsdato,
             boolsk faktum "Flere arbeidsforhold manuell" id flereArbeidsforholdManuell avhengerAv antallEndredeArbeidsforhold,
-            dato faktum "Grensedato 14 dager frem i tid" id senesteMuligeVirkningstidspunkt avhengerAv behandlingsdato,
+            dato faktum "Grensedato 14 dager frem i tid" id senesteMuligeVirkningsdato avhengerAv behandlingsdato,
             boolsk faktum "Oppfyller kravene til minste arbeidsinntekt, går til manuell" id oppfyllerMinsteinntektManuell,
-            boolsk faktum "Har inntekt neste kalendermåned" id harInntektNesteKalendermåned avhengerAv virkningstidspunkt,
+            boolsk faktum "Har inntekt neste kalendermåned" id harInntektNesteKalendermåned avhengerAv virkningsdato,
             boolsk faktum "Har inntekt neste kalendermåned, skal til manuell" id inntektNesteKalendermånedManuell
         )
 
@@ -112,7 +113,7 @@ internal object AvslagPåMinsteinntektOppsett {
         FaktumNavBehov(
             mapOf(
                 ønsketDato to "ØnskerDagpengerFraDato",
-                virkningstidspunkt to "Virkningstidspunkt",
+                virkningsdato to "Virkningstidspunkt",
                 fangstOgFisk to "FangstOgFiske",
                 inntektSiste36mnd to "InntektSiste3År",
                 inntektSiste12mnd to "InntektSiste12Mnd",
@@ -125,7 +126,7 @@ internal object AvslagPåMinsteinntektOppsett {
                 registreringsperioder to "Registreringsperioder",
                 lærling to "Lærling",
                 behandlingsdato to "Behandlingsdato",
-                senesteMuligeVirkningstidspunkt to "SenesteMuligeVirkningstidspunkt",
+                senesteMuligeVirkningsdato to "SenesteMuligeVirkningstidspunkt",
                 inntektsrapporteringsperiodeFom to "InntektsrapporteringsperiodeFom",
                 inntektsrapporteringsperiodeTom to "InntektsrapporteringsperiodeTom",
                 antallEndredeArbeidsforhold to "Rettighetstype",

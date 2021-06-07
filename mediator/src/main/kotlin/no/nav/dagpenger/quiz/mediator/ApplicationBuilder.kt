@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator
 import PostgresDataSourceBuilder.runMigration
 import mu.KotlinLogging
 import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
-import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningstidspunktService
+import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
@@ -40,7 +40,7 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
                 MottattSøknadService(søknadRecord, rapidsConnection, unleash)
                 FaktumSvarService(søknadRecord, rapidsConnection, unleash)
                 BehandlingsdatoService(rapidsConnection)
-                SenesteMuligeVirkningstidspunktService(rapidsConnection)
+                SenesteMuligeVirkningsdatoService(rapidsConnection)
                 TerskelFaktorService(rapidsConnection)
             }
     }
