@@ -39,5 +39,3 @@ internal object AvslagPåMinsteinntekt {
             }
         }
 }
-
-// en subsjomsjon som brancher

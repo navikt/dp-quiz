@@ -12,8 +12,8 @@ import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.JaAction
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.NeiAction
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.UansettAction
-import no.nav.dagpenger.model.subsumsjon.SubRegeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.SubRegeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
