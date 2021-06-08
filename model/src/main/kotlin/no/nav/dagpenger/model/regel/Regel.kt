@@ -139,7 +139,7 @@ infix fun GeneratorFaktum.med(subRegeltre: SubRegeltreSubsumsjon) = SubRegeltreS
         this,
         subRegeltre.apply {
             require(gyldig == TomSubsumsjon && ugyldig == TomSubsumsjon) {
-                "Generator makroer kan ikke ha gyldig eller ugyldig stier"
+                "Generator sub-regeltre kan ikke ha gyldig eller ugyldig stier"
             }
         },
         AlleSubsumsjon(this.navn, mutableListOf())
@@ -153,7 +153,7 @@ infix fun GeneratorFaktum.har(subRegeltre: SubRegeltreSubsumsjon) = SubRegeltreS
         this,
         subRegeltre.apply {
             require(gyldig == TomSubsumsjon && ugyldig == TomSubsumsjon) {
-                "Generator makroer kan ikke ha gyldig eller ugyldig stier"
+                "Generator sub-regeltre kan ikke ha gyldig eller ugyldig stier"
             }
         },
         MinstEnAvSubsumsjon(this.navn, mutableListOf())

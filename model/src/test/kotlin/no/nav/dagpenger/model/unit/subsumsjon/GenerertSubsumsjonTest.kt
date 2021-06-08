@@ -32,15 +32,15 @@ internal class GenerertSubsumsjonTest {
     @Test
     fun `Subregeltre kan ikke ha gyldig ugyldig stier`() {
         val template = søknad boolsk 1
-        val makro = "regeltre".medRegeltre { template er true } hvisGyldig { template er true }
+        val subRegeltre = "regeltre".medRegeltre { template er true } hvisGyldig { template er true }
 
-        assertThrows<IllegalArgumentException> { søknad generator 2 med (makro as SubRegeltreSubsumsjon) }
+        assertThrows<IllegalArgumentException> { søknad generator 2 med (subRegeltre as SubRegeltreSubsumsjon) }
     }
 
     @Test
     fun `Subregeltre subsumsjon works`() {
-        val makro = "regeltre".medRegeltre { søknad boolsk 1 er true }
-        val subsumsjon = søknad generator 2 med makro
+        val subRegeltre = "regeltre".medRegeltre { søknad boolsk 1 er true }
+        val subsumsjon = søknad generator 2 med subRegeltre
         val søknadprosess = Søknadprosess(
             søknad,
             Seksjon("seksjon", Rolle.søker, søknad generator 2, søknad boolsk 1),

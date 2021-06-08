@@ -160,7 +160,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
     }
 
     override fun preVisit(subsumsjon: SubRegeltreSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
-        putSubsumsjon(lokaltResultat, subsumsjon, "Makro subsumsjon")
+        putSubsumsjon(lokaltResultat, subsumsjon, "Sub-regeltre subsumsjon")
     }
 
     override fun postVisit(subsumsjon: SubRegeltreSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
