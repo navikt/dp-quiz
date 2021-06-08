@@ -6,7 +6,6 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
-import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
@@ -20,8 +19,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHa
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeFom
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lønnsgaranti
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektfaktor12mnd
@@ -29,9 +26,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minst
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordinær
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.arbeidssøkerregistreringsperioder
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknadstidspunkt
@@ -76,9 +70,6 @@ internal class AvslagPåMinsteinntektTest {
             besvar(lærling, false)
             besvar(ønsketDato, 5.januar)
             besvar(søknadstidspunkt, 2.januar)
-            assertGjeldendeSeksjon("inntektsrapporteringsperioder")
-            besvar(inntektsrapporteringsperiodeFom, 5.januar)
-            besvar(inntektsrapporteringsperiodeTom, 5.februar)
             besvar(harInntektNesteKalendermåned, false)
 
             assertGjeldendeSeksjon("dagpengehistorikk")
@@ -95,9 +86,6 @@ internal class AvslagPåMinsteinntektTest {
             besvar(minsteinntektfaktor12mnd, 3.0)
             besvar(grunnbeløp, 100000.årlig)
 
-            assertGjeldendeSeksjon("arbeidsøkerperioder")
-            besvar(arbeidssøkerregistreringsperioder, listOf(listOf("$registrertArbeidsøkerPeriodeFom.1" to 1.januar(2018), "$registrertArbeidsøkerPeriodeTom.1" to 30.januar(2018))))
-
             assertGjeldendeSeksjon("inntekter")
             besvar(inntektSiste36mnd, 20000.årlig)
             besvar(inntektSiste12mnd, 5000.årlig)
@@ -110,7 +98,7 @@ internal class AvslagPåMinsteinntektTest {
 
             assertEquals(28, testRapid.inspektør.size)
              */
-            assertEquals(21, testRapid.inspektør.size)
+            assertEquals(18, testRapid.inspektør.size)
             assertFalse(gjeldendeResultat())
         }
     }

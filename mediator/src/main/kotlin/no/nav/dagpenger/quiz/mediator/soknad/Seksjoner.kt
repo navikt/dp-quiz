@@ -16,8 +16,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harIn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektNesteKalendermånedManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeFom
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lønnsgaranti
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektfaktor12mnd
@@ -27,9 +25,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordin
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.arbeidssøkerregistreringsperioder
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.svangerskapsrelaterteSykepengerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
@@ -50,15 +45,6 @@ internal object Seksjoner {
             "senesteMuligeVirkningstidspunkt",
             Rolle.nav,
             dato(senesteMuligeVirkningsdato)
-        )
-    }
-
-    private val inntektsrapporteringsperioder = with(søknad) {
-        Seksjon(
-            "inntektsrapporteringsperioder",
-            Rolle.nav,
-            dato(inntektsrapporteringsperiodeFom),
-            dato(inntektsrapporteringsperiodeTom)
         )
     }
 
@@ -89,16 +75,6 @@ internal object Seksjoner {
             boolsk(lærling),
             boolsk(eøsArbeid),
             boolsk(fangstOgFisk)
-        )
-    }
-
-    private val arbeidsøkerPerioder = with(søknad) {
-        Seksjon(
-            "arbeidsøkerperioder",
-            Rolle.nav,
-            dato(registrertArbeidsøkerPeriodeFom),
-            dato(registrertArbeidsøkerPeriodeTom),
-            generator(arbeidssøkerregistreringsperioder)
         )
     }
 
@@ -226,16 +202,13 @@ internal object Seksjoner {
         Søknadprosess(
             behandlingsdatoSeksjon,
             senesteMuligeVirkningsdatoSeksjon,
-            inntektsrapporteringsperioder,
             minsteinntektKonstanter,
             grunnbeløpSeksjon,
             dataFraSøknad,
-            arbeidsøkerPerioder,
             dagpengehistorikk,
             sykepengehistorikk,
             inntekter,
             inntektNesteKalendermåned,
-            // godkjennDato,
             endredeArbeidsforhold,
             // godkjennSluttårsak,
             manuellGjenopptak,
