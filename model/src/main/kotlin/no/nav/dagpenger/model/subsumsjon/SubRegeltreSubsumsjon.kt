@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
-class MakroSubsumsjon private constructor(
+class SubRegeltreSubsumsjon private constructor(
     navn: String,
     private val child: Subsumsjon,
     gyldigSubsumsjon: Subsumsjon,
@@ -13,14 +13,14 @@ class MakroSubsumsjon private constructor(
 
     internal constructor(navn: String, child: Subsumsjon) : this(navn, child, TomSubsumsjon, TomSubsumsjon)
 
-    override fun deepCopy(søknadprosess: Søknadprosess) = MakroSubsumsjon(
+    override fun deepCopy(søknadprosess: Søknadprosess) = SubRegeltreSubsumsjon(
         navn,
         child.deepCopy(søknadprosess),
         gyldigSubsumsjon.deepCopy(søknadprosess),
         ugyldigSubsumsjon.deepCopy(søknadprosess)
     )
 
-    override fun bygg(søknad: Søknad) = MakroSubsumsjon(
+    override fun bygg(søknad: Søknad) = SubRegeltreSubsumsjon(
         navn,
         child.bygg(søknad),
         gyldigSubsumsjon.bygg(søknad),
@@ -28,7 +28,7 @@ class MakroSubsumsjon private constructor(
     )
 
     override fun deepCopy(): Subsumsjon {
-        return MakroSubsumsjon(
+        return SubRegeltreSubsumsjon(
             navn,
             child.deepCopy(),
             gyldigSubsumsjon.deepCopy(),
@@ -37,7 +37,7 @@ class MakroSubsumsjon private constructor(
     }
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Subsumsjon {
-        return MakroSubsumsjon(
+        return SubRegeltreSubsumsjon(
             "$navn [$indeks]",
             child.deepCopy(indeks, søknad),
             gyldigSubsumsjon.deepCopy(indeks, søknad),

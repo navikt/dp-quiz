@@ -18,7 +18,7 @@ import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.BareEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
-import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.SubRegeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
@@ -159,8 +159,8 @@ interface SubsumsjonVisitor : FaktumVisitor {
     fun postVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun preVisit(subsumsjon: BareEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun postVisit(subsumsjon: BareEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun preVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun postVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun preVisit(subsumsjon: SubRegeltreSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun postVisit(subsumsjon: SubRegeltreSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun preVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,

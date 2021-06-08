@@ -24,7 +24,7 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
-import no.nav.dagpenger.model.subsumsjon.makro
+import no.nav.dagpenger.model.subsumsjon.medRegeltre
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.uansett
 
@@ -76,14 +76,14 @@ private val datosjekk = "datosjekk".alle(
     p2Dato etter p_3_4_5Dato,
     p3Dato før p4Dato
 )
-private val dokumentOpplastning = "dokumentopplastning" makro {
+private val dokumentOpplastning = "dokumentopplastning" medRegeltre {
     p10Boolean er true hvisUgyldig { p12Boolean av p11Dokument }
 }
 private val inntektValidering = "inntektvalidering".minstEnAv(
     p6Inntekt minst p8Inntekt,
     p7Inntekt minst p9Inntekt
 )
-private val alderSjekk = "aldersjekk" makro {
+private val alderSjekk = "aldersjekk" medRegeltre {
     p16Int under 18 hvisGyldig { p17Boolean er true }
 }
 private val personerGodkjenning = p15Int med alderSjekk uansett { p14Boolean er true }

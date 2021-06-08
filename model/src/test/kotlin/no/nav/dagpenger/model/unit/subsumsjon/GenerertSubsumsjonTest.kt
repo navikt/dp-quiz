@@ -9,9 +9,9 @@ import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
-import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.SubRegeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
-import no.nav.dagpenger.model.subsumsjon.makro
+import no.nav.dagpenger.model.subsumsjon.medRegeltre
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -30,16 +30,16 @@ internal class GenerertSubsumsjonTest {
     }
 
     @Test
-    fun `Makro template kan ikke ha gyldig ugyldig stier`() {
+    fun `Subregeltre kan ikke ha gyldig ugyldig stier`() {
         val template = søknad boolsk 1
-        val makro = "makro template".makro { template er true } hvisGyldig { template er true }
+        val makro = "regeltre".medRegeltre { template er true } hvisGyldig { template er true }
 
-        assertThrows<IllegalArgumentException> { søknad generator 2 med (makro as MakroSubsumsjon) }
+        assertThrows<IllegalArgumentException> { søknad generator 2 med (makro as SubRegeltreSubsumsjon) }
     }
 
     @Test
-    fun `Makro template subsumsjon works`() {
-        val makro = "makro template".makro { søknad boolsk 1 er true }
+    fun `Subregeltre subsumsjon works`() {
+        val makro = "regeltre".medRegeltre { søknad boolsk 1 er true }
         val subsumsjon = søknad generator 2 med makro
         val søknadprosess = Søknadprosess(
             søknad,

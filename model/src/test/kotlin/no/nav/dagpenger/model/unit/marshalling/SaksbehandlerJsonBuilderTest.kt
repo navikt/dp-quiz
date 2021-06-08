@@ -28,7 +28,7 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
-import no.nav.dagpenger.model.subsumsjon.makro
+import no.nav.dagpenger.model.subsumsjon.medRegeltre
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -259,7 +259,7 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `makro subsumsjon`() {
         val søknadprosess = søknadprosess(
-            "makro" makro {
+            "makro" medRegeltre {
                 prototypeSøknad.boolsk(1) er true hvisUgyldig {
                     prototypeSøknad.boolsk(3) er true
                 }
@@ -289,7 +289,7 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `kombinasjoner av samensatte subsumsjoner`() {
         val søknadprosess = søknadprosess(
             "alle".alle(
-                "makro nivå 2" makro { prototypeSøknad.boolsk(1) er true },
+                "makro nivå 2" medRegeltre { prototypeSøknad.boolsk(1) er true },
                 "alle nivå 2".alle(
                     prototypeSøknad.boolsk(3) er true,
                     prototypeSøknad.boolsk(5) er true
@@ -352,7 +352,7 @@ internal class SaksbehandlerJsonBuilderTest {
 
     @Test
     fun ` template subsumsjoner`() {
-        val template = "template" makro {
+        val template = "template" medRegeltre {
             "alle".alle(
                 prototypeSøknad.boolsk(6) er true,
                 prototypeSøknad.boolsk(7) er true

@@ -33,7 +33,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfy
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordinær
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.arbeidssøkerregistreringsperioder
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningsdato
@@ -69,7 +69,7 @@ internal class RegeltreTest {
             dato(inntektsrapporteringsperiodeTom).besvar(5.februar)
             boolsk(harInntektNesteKalendermåned).besvar(false)
 
-            generator(registreringsperioder).besvar(1)
+            generator(arbeidssøkerregistreringsperioder).besvar(1)
             dato("$registrertArbeidsøkerPeriodeFom.1").besvar(1.januar(2018))
             dato("$registrertArbeidsøkerPeriodeTom.1").besvar(30.januar(2018))
 
@@ -192,7 +192,7 @@ internal class RegeltreTest {
             dato(ønsketDato).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
 
-            generator(registreringsperioder).besvar(1)
+            generator(arbeidssøkerregistreringsperioder).besvar(1)
             dato("$registrertArbeidsøkerPeriodeFom.1").besvar(1.januar(2018))
             dato("$registrertArbeidsøkerPeriodeTom.1").besvar(4.januar(2018))
         }
@@ -209,7 +209,7 @@ internal class RegeltreTest {
             dato(ønsketDato).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
 
-            generator(registreringsperioder).besvar(1)
+            generator(arbeidssøkerregistreringsperioder).besvar(1)
             dato("$registrertArbeidsøkerPeriodeFom.1").besvar(1.januar(2018))
             dato("$registrertArbeidsøkerPeriodeTom.1").besvar(6.januar(2018))
         }

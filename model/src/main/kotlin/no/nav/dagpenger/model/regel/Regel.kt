@@ -12,7 +12,7 @@ import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.JaAction
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.NeiAction
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.UansettAction
-import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.SubRegeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
@@ -132,12 +132,12 @@ private class ErIkke<T : Comparable<T>>(private val other: T) : Regel {
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `${fakta[0]}` er ikke lik $other"
 }
 
-infix fun GeneratorFaktum.med(makro: MakroSubsumsjon) = MakroSubsumsjon(
+infix fun GeneratorFaktum.med(subRegeltre: SubRegeltreSubsumsjon) = SubRegeltreSubsumsjon(
     this.navn,
     GeneratorSubsumsjon(
         Er(0),
         this,
-        makro.apply {
+        subRegeltre.apply {
             require(gyldig == TomSubsumsjon && ugyldig == TomSubsumsjon) {
                 "Generator makroer kan ikke ha gyldig eller ugyldig stier"
             }
@@ -146,12 +146,12 @@ infix fun GeneratorFaktum.med(makro: MakroSubsumsjon) = MakroSubsumsjon(
     )
 )
 
-infix fun GeneratorFaktum.har(makro: MakroSubsumsjon) = MakroSubsumsjon(
+infix fun GeneratorFaktum.har(subRegeltre: SubRegeltreSubsumsjon) = SubRegeltreSubsumsjon(
     this.navn,
     GeneratorSubsumsjon(
         Er(0),
         this,
-        makro.apply {
+        subRegeltre.apply {
             require(gyldig == TomSubsumsjon && ugyldig == TomSubsumsjon) {
                 "Generator makroer kan ikke ha gyldig eller ugyldig stier"
             }
