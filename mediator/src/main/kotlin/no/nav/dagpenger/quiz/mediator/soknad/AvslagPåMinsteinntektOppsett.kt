@@ -39,8 +39,6 @@ internal object AvslagPåMinsteinntektOppsett {
     const val innsendtSøknadsId = 17
     const val lærling = 20
     const val behandlingsdato = 23
-    const val inntektsrapporteringsperiodeFom = 24
-    const val inntektsrapporteringsperiodeTom = 25
     const val antallEndredeArbeidsforhold = 26
     const val ordinær = 27
     const val permittert = 28
@@ -80,8 +78,6 @@ internal object AvslagPåMinsteinntektOppsett {
             dokument faktum "Innsendt søknadsId" id innsendtSøknadsId,
             boolsk faktum "Lærling" id lærling avhengerAv innsendtSøknadsId,
             dato faktum "Behandlingsdato" id behandlingsdato,
-            dato faktum "Inntektsrapporteringsperiode fra og med" id inntektsrapporteringsperiodeFom avhengerAv virkningsdato,
-            dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTom avhengerAv virkningsdato,
             heltall faktum "sluttårsaker" id antallEndredeArbeidsforhold genererer ordinær og permittert og lønnsgaranti og permittertFiskeforedling avhengerAv innsendtSøknadsId,
             boolsk faktum "Permittert" id permittert,
             boolsk faktum "Ordinær" id ordinær,
@@ -120,8 +116,6 @@ internal object AvslagPåMinsteinntektOppsett {
                 lærling to "Lærling",
                 behandlingsdato to "Behandlingsdato",
                 senesteMuligeVirkningsdato to "SenesteMuligeVirkningstidspunkt",
-                inntektsrapporteringsperiodeFom to "InntektsrapporteringsperiodeFom",
-                inntektsrapporteringsperiodeTom to "InntektsrapporteringsperiodeTom",
                 antallEndredeArbeidsforhold to "Rettighetstype",
                 ordinær to "Ordinær",
                 permittert to "Permittert",

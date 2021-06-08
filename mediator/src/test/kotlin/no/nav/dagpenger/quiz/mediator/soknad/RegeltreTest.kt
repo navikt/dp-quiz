@@ -9,7 +9,6 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
-import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.regeltre
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
@@ -21,8 +20,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHa
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeFom
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lønnsgaranti
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektfaktor12mnd
@@ -60,8 +57,6 @@ internal class RegeltreTest {
             dato(ønsketDato).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
             dato(senesteMuligeVirkningsdato).besvar(19.januar)
-            dato(inntektsrapporteringsperiodeFom).besvar(5.januar)
-            dato(inntektsrapporteringsperiodeTom).besvar(5.februar)
             boolsk(harInntektNesteKalendermåned).besvar(false)
 
             boolsk(harHattDagpengerSiste36mnd).besvar(false)
@@ -139,13 +134,6 @@ internal class RegeltreTest {
     @Test
     fun `Skal manuelt behandles når dagens dato er mer enn 14 dager før virkningstidspunkt`() {
         manglerInntekt.dato(ønsketDato).besvar(20.januar)
-        assertEquals("virkningstidspunkt vi ikke kan håndtere", manglerInntekt.nesteSeksjoner().first().navn)
-    }
-
-    @Test
-    fun `Skal manuelt behandles om virkningstidspunkt er fram i tid, men i annen rapporteringsperiode`() {
-        manglerInntekt.dato(inntektsrapporteringsperiodeFom).besvar(1.januar)
-        manglerInntekt.dato(inntektsrapporteringsperiodeTom).besvar(4.januar)
         assertEquals("virkningstidspunkt vi ikke kan håndtere", manglerInntekt.nesteSeksjoner().first().navn)
     }
 

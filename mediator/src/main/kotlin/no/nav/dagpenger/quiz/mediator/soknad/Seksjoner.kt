@@ -16,8 +16,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harIn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektNesteKalendermånedManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeFom
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lønnsgaranti
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektfaktor12mnd
@@ -47,15 +45,6 @@ internal object Seksjoner {
             "senesteMuligeVirkningstidspunkt",
             Rolle.nav,
             dato(senesteMuligeVirkningsdato)
-        )
-    }
-
-    private val inntektsrapporteringsperioder = with(søknad) {
-        Seksjon(
-            "inntektsrapporteringsperioder",
-            Rolle.nav,
-            dato(inntektsrapporteringsperiodeFom),
-            dato(inntektsrapporteringsperiodeTom)
         )
     }
 
@@ -213,7 +202,6 @@ internal object Seksjoner {
         Søknadprosess(
             behandlingsdatoSeksjon,
             senesteMuligeVirkningsdatoSeksjon,
-            inntektsrapporteringsperioder,
             minsteinntektKonstanter,
             grunnbeløpSeksjon,
             dataFraSøknad,
