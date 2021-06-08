@@ -18,7 +18,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    const val VERSJON_ID = 8
+    const val VERSJON_ID = 9
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
@@ -37,10 +37,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val søknadstidspunkt = 13
     const val verneplikt = 14
     const val innsendtSøknadsId = 17
-    const val registreringsperioder = 19
     const val lærling = 20
-    const val registrertArbeidsøkerPeriodeFom = 21
-    const val registrertArbeidsøkerPeriodeTom = 22
     const val behandlingsdato = 23
     const val inntektsrapporteringsperiodeFom = 24
     const val inntektsrapporteringsperiodeTom = 25
@@ -81,10 +78,7 @@ internal object AvslagPåMinsteinntektOppsett {
             dato faktum "Søknadstidspunkt" id søknadstidspunkt avhengerAv innsendtSøknadsId,
             boolsk faktum "Verneplikt" id verneplikt avhengerAv innsendtSøknadsId,
             dokument faktum "Innsendt søknadsId" id innsendtSøknadsId,
-            heltall faktum "Antall arbeidsøker registeringsperioder" id registreringsperioder genererer registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom,
             boolsk faktum "Lærling" id lærling avhengerAv innsendtSøknadsId,
-            dato faktum "fom" id registrertArbeidsøkerPeriodeFom,
-            dato faktum "tom" id registrertArbeidsøkerPeriodeTom,
             dato faktum "Behandlingsdato" id behandlingsdato,
             dato faktum "Inntektsrapporteringsperiode fra og med" id inntektsrapporteringsperiodeFom avhengerAv virkningsdato,
             dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTom avhengerAv virkningsdato,
@@ -123,7 +117,6 @@ internal object AvslagPåMinsteinntektOppsett {
                 søknadstidspunkt to "Søknadstidspunkt",
                 verneplikt to "Verneplikt",
                 innsendtSøknadsId to "InnsendtSøknadsId",
-                registreringsperioder to "Registreringsperioder",
                 lærling to "Lærling",
                 behandlingsdato to "Behandlingsdato",
                 senesteMuligeVirkningsdato to "SenesteMuligeVirkningstidspunkt",

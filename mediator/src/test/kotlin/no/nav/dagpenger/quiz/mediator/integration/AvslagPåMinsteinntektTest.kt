@@ -29,9 +29,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minst
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordinær
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknadstidspunkt
@@ -95,9 +92,6 @@ internal class AvslagPåMinsteinntektTest {
             besvar(minsteinntektfaktor12mnd, 3.0)
             besvar(grunnbeløp, 100000.årlig)
 
-            assertGjeldendeSeksjon("arbeidsøkerperioder")
-            besvar(registreringsperioder, listOf(listOf("$registrertArbeidsøkerPeriodeFom.1" to 1.januar(2018), "$registrertArbeidsøkerPeriodeTom.1" to 30.januar(2018))))
-
             assertGjeldendeSeksjon("inntekter")
             besvar(inntektSiste36mnd, 20000.årlig)
             besvar(inntektSiste12mnd, 5000.årlig)
@@ -110,7 +104,7 @@ internal class AvslagPåMinsteinntektTest {
 
             assertEquals(28, testRapid.inspektør.size)
              */
-            assertEquals(21, testRapid.inspektør.size)
+            assertEquals(20, testRapid.inspektør.size)
             assertFalse(gjeldendeResultat())
         }
     }

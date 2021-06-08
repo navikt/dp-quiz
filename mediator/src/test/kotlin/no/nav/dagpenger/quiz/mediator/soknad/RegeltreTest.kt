@@ -8,11 +8,9 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.meldtSomArbeidssøker
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.regeltre
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
@@ -33,9 +31,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfy
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordinær
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
@@ -50,7 +45,7 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class RegeltreTest {
-    lateinit var manglerInntekt: Søknadprosess
+    private lateinit var manglerInntekt: Søknadprosess
 
     @BeforeEach
     fun setup() {
@@ -68,10 +63,6 @@ internal class RegeltreTest {
             dato(inntektsrapporteringsperiodeFom).besvar(5.januar)
             dato(inntektsrapporteringsperiodeTom).besvar(5.februar)
             boolsk(harInntektNesteKalendermåned).besvar(false)
-
-            generator(registreringsperioder).besvar(1)
-            dato("$registrertArbeidsøkerPeriodeFom.1").besvar(1.januar(2018))
-            dato("$registrertArbeidsøkerPeriodeTom.1").besvar(30.januar(2018))
 
             boolsk(harHattDagpengerSiste36mnd).besvar(false)
             boolsk(sykepengerSiste36mnd).besvar(false)
@@ -97,7 +88,6 @@ internal class RegeltreTest {
             boolsk("$permittertFiskeforedling.1").besvar(false)
 
             // boolsk(godkjenningSluttårsak).besvar(true)
-            // boolsk(godkjenningSisteDagMedLønn).besvar(true)
             // TODO: Nå sender vi alle som oppfyller kravene til minste arbeidsinntekt til manuell, vi setter denne til true så den bypasses
             manglerInntekt.boolsk(oppfyllerMinsteinntektManuell).besvar(true)
         }
@@ -184,49 +174,8 @@ internal class RegeltreTest {
     }
 
     @Test
-    fun `Virkningstidspunkt er frem i tid og bruker er registrert som arbeiddsøker på vedtaksdato`() {
-        val søknad = byggSøknad(meldtSomArbeidssøker)
-
-        søknad.apply {
-            dato(behandlingsdato).besvar(4.januar)
-            dato(ønsketDato).besvar(5.januar)
-            dato(søknadstidspunkt).besvar(2.januar)
-
-            generator(registreringsperioder).besvar(1)
-            dato("$registrertArbeidsøkerPeriodeFom.1").besvar(1.januar(2018))
-            dato("$registrertArbeidsøkerPeriodeTom.1").besvar(4.januar(2018))
-        }
-
-        assertEquals(true, søknad.resultat())
-    }
-
-    @Test
-    fun `Virkningstidspunkt er tilbake i tid og bruker er registrert som arbeiddsøker på virkningstidspunkt`() {
-        val søknad = byggSøknad(meldtSomArbeidssøker)
-
-        søknad.apply {
-            dato(behandlingsdato).besvar(6.januar)
-            dato(ønsketDato).besvar(5.januar)
-            dato(søknadstidspunkt).besvar(2.januar)
-
-            generator(registreringsperioder).besvar(1)
-            dato("$registrertArbeidsøkerPeriodeFom.1").besvar(1.januar(2018))
-            dato("$registrertArbeidsøkerPeriodeTom.1").besvar(6.januar(2018))
-        }
-
-        assertEquals(true, søknad.resultat())
-    }
-
-    @Test
     fun `Flere arbeidsforhold skal manuelt behandles`() {
         manglerInntekt.heltall(antallEndredeArbeidsforhold).besvar(2)
         assertEquals("flere arbeidsforhold", manglerInntekt.nesteSeksjoner().first().navn)
     }
-
-    private fun byggSøknad(subsumsjon: Subsumsjon) =
-        Versjon.Bygger(søknad, subsumsjon, mapOf(Versjon.UserInterfaceType.Web to søknadprosess))
-            .søknadprosess(
-                Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
-                Versjon.UserInterfaceType.Web
-            )
 }
