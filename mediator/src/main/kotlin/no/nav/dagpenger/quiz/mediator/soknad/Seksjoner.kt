@@ -25,6 +25,9 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordin
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.svangerskapsrelaterteSykepengerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
@@ -75,6 +78,16 @@ internal object Seksjoner {
             boolsk(lærling),
             boolsk(eøsArbeid),
             boolsk(fangstOgFisk)
+        )
+    }
+
+    private val arbeidsøkerPerioder = with(søknad) {
+        Seksjon(
+            "arbeidsøkerperioder",
+            Rolle.nav,
+            dato(registrertArbeidsøkerPeriodeFom),
+            dato(registrertArbeidsøkerPeriodeTom),
+            generator(registreringsperioder)
         )
     }
 
@@ -205,6 +218,7 @@ internal object Seksjoner {
             minsteinntektKonstanter,
             grunnbeløpSeksjon,
             dataFraSøknad,
+            arbeidsøkerPerioder,
             dagpengehistorikk,
             sykepengehistorikk,
             inntekter,
