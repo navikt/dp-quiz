@@ -13,7 +13,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
-import no.nav.dagpenger.model.subsumsjon.makro
+import no.nav.dagpenger.model.subsumsjon.deltre
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -33,7 +33,7 @@ class PeriodeGeneratorTest {
             dato faktum "tom" id 3,
             dato faktum "ønsket dato" id 4
         )
-        val prototypeSubsumsjon = søknadPrototype generator 1 har "periode".makro {
+        val prototypeSubsumsjon = søknadPrototype generator 1 har "periode".deltre {
             søknadPrototype.dato(4) mellom søknadPrototype.dato(2) og søknadPrototype.dato(3)
         }
 

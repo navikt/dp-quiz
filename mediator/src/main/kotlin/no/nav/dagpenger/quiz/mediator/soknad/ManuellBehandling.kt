@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.regel.erIkke
 import no.nav.dagpenger.model.regel.førEllerLik
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
-import no.nav.dagpenger.model.subsumsjon.makro
+import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
@@ -27,37 +27,37 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkn
 internal object ManuellBehandling {
 
     private val sjekkFangstOgFisk = with(søknad) {
-        "fangst og fisk" makro {
+        "fangst og fisk" deltre {
             boolsk(fangstOgFisk) er true hvisGyldig { boolsk(fangstOgFiskManuell) er true }
         }
     }
 
     private val sjekkEøsArbeid = with(søknad) {
-        "eøs arbeid" makro {
+        "eøs arbeid" deltre {
             boolsk(eøsArbeid) er true hvisGyldig { boolsk(eøsArbeidManuell) er true }
         }
     }
 
     private val sjekkGjenopptak = with(søknad) {
-        "skal ha gjenopptak" makro {
+        "skal ha gjenopptak" deltre {
             boolsk(harHattDagpengerSiste36mnd) er true hvisGyldig { boolsk(periodeOppbruktManuell) er true }
         }
     }
 
     private val sjekkSykepenger = with(søknad) {
-        "svangerskapsrelaterte sykepenger" makro {
+        "svangerskapsrelaterte sykepenger" deltre {
             boolsk(sykepengerSiste36mnd) er true hvisGyldig { boolsk(svangerskapsrelaterteSykepengerManuell) er true }
         }
     }
 
     private val sjekkAntallArbeidsforhold = with(søknad) {
-        "antall arbeidsforhold" makro {
+        "antall arbeidsforhold" deltre {
             heltall(antallEndredeArbeidsforhold) erIkke 1 hvisGyldig { boolsk(flereArbeidsforholdManuell) er true }
         }
     }
 
     internal val sjekkInntektNesteKalendermåned = with(søknad) {
-        "har inntekt neste kalendermåned" makro {
+        "har inntekt neste kalendermåned" deltre {
             boolsk(harInntektNesteKalendermåned) er true hvisGyldig { boolsk(inntektNesteKalendermånedManuell) er true }
         }
     }

@@ -21,7 +21,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
-import no.nav.dagpenger.model.subsumsjon.makro
+import no.nav.dagpenger.model.subsumsjon.deltre
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -51,7 +51,7 @@ class NavJsonBuilderTest {
         val f8Faktum = prototypeSøknad.generator(8)
         val f9Faktum = prototypeSøknad.dato(9)
         val f10Faktum = prototypeSøknad.dato(10)
-        val periodeSubsumsjon = f8Faktum har "periode".makro {
+        val periodeSubsumsjon = f8Faktum har "periode".deltre {
             f7Faktum mellom f9Faktum og f10Faktum
         }
         val prototypeSubsumsjon =
