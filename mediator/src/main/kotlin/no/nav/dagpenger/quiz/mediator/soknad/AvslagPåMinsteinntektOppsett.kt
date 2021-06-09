@@ -8,6 +8,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.min
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.multiplikasjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
@@ -18,7 +19,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    const val VERSJON_ID = 10
+    const val VERSJON_ID = 11
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
@@ -62,6 +63,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val oppfyllerMinsteinntektManuell = 42
     const val harInntektNesteKalendermåned = 43
     const val inntektNesteKalendermånedManuell = 44
+    const val førsteDatoAvVirkningsdatoOgBehandlingsdato = 45
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -102,7 +104,8 @@ internal object AvslagPåMinsteinntektOppsett {
             dato faktum "Grensedato 14 dager frem i tid" id senesteMuligeVirkningsdato avhengerAv behandlingsdato,
             boolsk faktum "Oppfyller kravene til minste arbeidsinntekt, går til manuell" id oppfyllerMinsteinntektManuell,
             boolsk faktum "Har inntekt neste kalendermåned" id harInntektNesteKalendermåned avhengerAv virkningsdato,
-            boolsk faktum "Har inntekt neste kalendermåned, skal til manuell" id inntektNesteKalendermånedManuell
+            boolsk faktum "Har inntekt neste kalendermåned, skal til manuell" id inntektNesteKalendermånedManuell,
+            min dato "Første dato av virkningsdato og behandlingsdato" id førsteDatoAvVirkningsdatoOgBehandlingsdato av virkningsdato og behandlingsdato
         )
 
     private val faktumNavBehov =

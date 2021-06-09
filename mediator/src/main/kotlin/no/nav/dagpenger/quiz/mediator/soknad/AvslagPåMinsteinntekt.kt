@@ -1,16 +1,15 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.subsumsjon.alle
+import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
-import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.førsteDatoAvVirkningsdatoOgBehandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
@@ -22,7 +21,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.regis
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.sjekkInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.sjekkVirkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.skalManueltBehandles
@@ -42,14 +40,9 @@ internal object AvslagPåMinsteinntekt {
     }
 
     internal val meldtSomArbeidssøker = with(søknad) {
-        generator(registreringsperioder) har "registrert arbeidssøker".deltre {
-            dato(virkningsdato) etter dato(behandlingsdato) hvisGyldig {
-                dato(behandlingsdato) mellom dato(registrertArbeidsøkerPeriodeFom) og
-                    dato(registrertArbeidsøkerPeriodeTom)
-            } hvisUgyldig {
-                dato(virkningsdato) mellom dato(registrertArbeidsøkerPeriodeFom) og
-                    dato(registrertArbeidsøkerPeriodeTom)
-            }
+        generator(registreringsperioder) har "arbeidsøkerregistrering".deltre {
+            dato(førsteDatoAvVirkningsdatoOgBehandlingsdato) mellom dato(registrertArbeidsøkerPeriodeFom) og
+                dato(registrertArbeidsøkerPeriodeTom)
         }
     }
 

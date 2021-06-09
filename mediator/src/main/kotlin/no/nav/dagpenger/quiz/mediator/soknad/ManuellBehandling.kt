@@ -3,9 +3,9 @@ package no.nav.dagpenger.quiz.mediator.soknad
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.erIkke
 import no.nav.dagpenger.model.regel.førEllerLik
+import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
-import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
