@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
+// Evalueres til resultatet av det underliggende subsumsjonstreet
 class MakroSubsumsjon private constructor(
     navn: String,
     private val child: Subsumsjon,

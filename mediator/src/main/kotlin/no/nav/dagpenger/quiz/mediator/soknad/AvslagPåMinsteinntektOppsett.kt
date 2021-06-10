@@ -38,10 +38,10 @@ internal object AvslagPåMinsteinntektOppsett {
     const val søknadstidspunkt = 13
     const val verneplikt = 14
     const val innsendtSøknadsId = 17
-    const val registreringsperioder = 19
+    const val registrertArbeidssøkerPerioder = 19
     const val lærling = 20
-    const val registrertArbeidsøkerPeriodeFom = 21
-    const val registrertArbeidsøkerPeriodeTom = 22
+    const val registrertArbeidssøkerPeriodeFom = 21
+    const val registrertArbeidssøkerPeriodeTom = 22
     const val behandlingsdato = 23
     const val antallEndredeArbeidsforhold = 26
     const val ordinær = 27
@@ -63,7 +63,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val oppfyllerMinsteinntektManuell = 42
     const val harInntektNesteKalendermåned = 43
     const val inntektNesteKalendermånedManuell = 44
-    const val førsteDatoAvVirkningsdatoOgBehandlingsdato = 45
+    const val førsteAvVirkningsdatoOgBehandlingsdato = 45
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -81,10 +81,10 @@ internal object AvslagPåMinsteinntektOppsett {
             dato faktum "Søknadstidspunkt" id søknadstidspunkt avhengerAv innsendtSøknadsId,
             boolsk faktum "Verneplikt" id verneplikt avhengerAv innsendtSøknadsId,
             dokument faktum "Innsendt søknadsId" id innsendtSøknadsId,
-            heltall faktum "Antall arbeidsøker registeringsperioder" id registreringsperioder genererer registrertArbeidsøkerPeriodeFom og registrertArbeidsøkerPeriodeTom,
+            heltall faktum "Antall arbeidsøker registeringsperioder" id registrertArbeidssøkerPerioder genererer registrertArbeidssøkerPeriodeFom og registrertArbeidssøkerPeriodeTom,
             boolsk faktum "Lærling" id lærling avhengerAv innsendtSøknadsId,
-            dato faktum "fom" id registrertArbeidsøkerPeriodeFom,
-            dato faktum "tom" id registrertArbeidsøkerPeriodeTom,
+            dato faktum "fom" id registrertArbeidssøkerPeriodeFom,
+            dato faktum "tom" id registrertArbeidssøkerPeriodeTom,
             dato faktum "Behandlingsdato" id behandlingsdato,
             heltall faktum "sluttårsaker" id antallEndredeArbeidsforhold genererer ordinær og permittert og lønnsgaranti og permittertFiskeforedling avhengerAv innsendtSøknadsId,
             boolsk faktum "Permittert" id permittert,
@@ -105,7 +105,7 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Oppfyller kravene til minste arbeidsinntekt, går til manuell" id oppfyllerMinsteinntektManuell,
             boolsk faktum "Har inntekt neste kalendermåned" id harInntektNesteKalendermåned avhengerAv virkningsdato,
             boolsk faktum "Har inntekt neste kalendermåned, skal til manuell" id inntektNesteKalendermånedManuell,
-            min dato "Første dato av virkningsdato og behandlingsdato" id førsteDatoAvVirkningsdatoOgBehandlingsdato av virkningsdato og behandlingsdato
+            min dato "Første dato av virkningsdato og behandlingsdato" id førsteAvVirkningsdatoOgBehandlingsdato av virkningsdato og behandlingsdato
         )
 
     private val faktumNavBehov =
@@ -122,7 +122,7 @@ internal object AvslagPåMinsteinntektOppsett {
                 søknadstidspunkt to "Søknadstidspunkt",
                 verneplikt to "Verneplikt",
                 innsendtSøknadsId to "InnsendtSøknadsId",
-                registreringsperioder to "Registreringsperioder",
+                registrertArbeidssøkerPerioder to "Registreringsperioder",
                 lærling to "Lærling",
                 behandlingsdato to "Behandlingsdato",
                 senesteMuligeVirkningsdato to "SenesteMuligeVirkningstidspunkt",

@@ -30,9 +30,9 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfy
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordinær
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registreringsperioder
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeFom
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidsøkerPeriodeTom
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeFom
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeTom
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPerioder
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
@@ -64,9 +64,9 @@ internal class RegeltreTest {
             dato(senesteMuligeVirkningsdato).besvar(19.januar)
             boolsk(harInntektNesteKalendermåned).besvar(false)
 
-            generator(registreringsperioder).besvar(1)
-            dato("$registrertArbeidsøkerPeriodeFom.1").besvar(1.januar(2018))
-            dato("$registrertArbeidsøkerPeriodeTom.1").besvar(30.januar(2018))
+            generator(registrertArbeidssøkerPerioder).besvar(1)
+            dato("$registrertArbeidssøkerPeriodeFom.1").besvar(1.januar(2018))
+            dato("$registrertArbeidssøkerPeriodeTom.1").besvar(30.januar(2018))
 
             boolsk(harHattDagpengerSiste36mnd).besvar(false)
             boolsk(sykepengerSiste36mnd).besvar(false)
@@ -179,9 +179,9 @@ internal class RegeltreTest {
             dato(ønsketDato).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
 
-            generator(registreringsperioder).besvar(1)
-            dato("$registrertArbeidsøkerPeriodeFom.1").besvar(1.januar(2018))
-            dato("$registrertArbeidsøkerPeriodeTom.1").besvar(4.januar(2018))
+            generator(registrertArbeidssøkerPerioder).besvar(1)
+            dato("$registrertArbeidssøkerPeriodeFom.1").besvar(1.januar(2018))
+            dato("$registrertArbeidssøkerPeriodeTom.1").besvar(4.januar(2018))
         }
 
         assertEquals(true, søknad.resultat())
@@ -196,9 +196,9 @@ internal class RegeltreTest {
             dato(ønsketDato).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
 
-            generator(registreringsperioder).besvar(1)
-            dato("$registrertArbeidsøkerPeriodeFom.1").besvar(1.januar(2018))
-            dato("$registrertArbeidsøkerPeriodeTom.1").besvar(6.januar(2018))
+            generator(registrertArbeidssøkerPerioder).besvar(1)
+            dato("$registrertArbeidssøkerPeriodeFom.1").besvar(1.januar(2018))
+            dato("$registrertArbeidssøkerPeriodeTom.1").besvar(6.januar(2018))
         }
 
         assertEquals(true, søknad.resultat())
