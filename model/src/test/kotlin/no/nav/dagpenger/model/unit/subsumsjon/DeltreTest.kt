@@ -12,10 +12,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-internal class MakroTest {
+internal class DeltreTest {
     private lateinit var f1: Faktum<Boolean>
     private lateinit var f2: Faktum<Boolean>
-    private lateinit var makro: Subsumsjon
+    private lateinit var deltre: Subsumsjon
 
     @BeforeEach
     fun setup() {
@@ -29,19 +29,19 @@ internal class MakroTest {
         f2 = søknadprosess boolsk 2
         val s1 = f1 er true
         val s2 = f2 er true
-        makro = "makro" deltre { s1 hvisUgyldig { s2 } }
+        deltre = "deltre" deltre { s1 hvisUgyldig { s2 } }
     }
 
     @Test
-    fun `makro resultat er lik child resultat`() {
-        assertEquals(null, makro.resultat())
+    fun `deltre resultat er lik child resultat`() {
+        assertEquals(null, deltre.resultat())
         f1.besvar(true)
-        assertEquals(true, makro.resultat())
+        assertEquals(true, deltre.resultat())
         f1.besvar(false)
-        assertEquals(null, makro.resultat())
+        assertEquals(null, deltre.resultat())
         f2.besvar(true)
-        assertEquals(true, makro.resultat())
+        assertEquals(true, deltre.resultat())
         f2.besvar(false)
-        assertEquals(false, makro.resultat())
+        assertEquals(false, deltre.resultat())
     }
 }

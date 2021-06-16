@@ -20,7 +20,7 @@ import no.nav.dagpenger.model.subsumsjon.BareEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action
-import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
@@ -159,11 +159,11 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         subsumsjonNoder.removeAt(0)
     }
 
-    override fun preVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
-        putSubsumsjon(lokaltResultat, subsumsjon, "Makro subsumsjon")
+    override fun preVisit(subsumsjon: DeltreSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+        putSubsumsjon(lokaltResultat, subsumsjon, "Deltre subsumsjon")
     }
 
-    override fun postVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(subsumsjon: DeltreSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
         if (ignoreSubsumsjon != null) return
         subsumsjonNoder.removeAt(0)
     }

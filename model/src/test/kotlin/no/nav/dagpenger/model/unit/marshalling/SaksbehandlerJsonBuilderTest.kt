@@ -257,9 +257,9 @@ internal class SaksbehandlerJsonBuilderTest {
     }
 
     @Test
-    fun `makro subsumsjon`() {
+    fun `deltre subsumsjon`() {
         val søknadprosess = søknadprosess(
-            "makro" deltre {
+            "deltre" deltre {
                 prototypeSøknad.boolsk(1) er true hvisUgyldig {
                     prototypeSøknad.boolsk(3) er true
                 }
@@ -289,7 +289,7 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `kombinasjoner av samensatte subsumsjoner`() {
         val søknadprosess = søknadprosess(
             "alle".alle(
-                "makro nivå 2" deltre { prototypeSøknad.boolsk(1) er true },
+                "deltre nivå 2" deltre { prototypeSøknad.boolsk(1) er true },
                 "alle nivå 2".alle(
                     prototypeSøknad.boolsk(3) er true,
                     prototypeSøknad.boolsk(5) er true
@@ -372,13 +372,13 @@ internal class SaksbehandlerJsonBuilderTest {
 
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
-            assertEquals("Makro subsumsjon", json["subsumsjoner"][0]["type"].asText())
+            assertEquals("Deltre subsumsjon", json["subsumsjoner"][0]["type"].asText())
             assertEquals(2, json["subsumsjoner"][0]["subsumsjoner"].size())
             assertEquals("Enkel subsumsjon", json["subsumsjoner"][0]["subsumsjoner"][0]["type"].asText())
             assertEquals("Alle subsumsjon", json["subsumsjoner"][0]["subsumsjoner"][1]["type"].asText())
             assertEquals(3, json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"].size())
             assertEquals(
-                "Makro subsumsjon",
+                "Deltre subsumsjon",
                 json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["type"].asText()
             )
             assertEquals(1, json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"].size())

@@ -224,7 +224,7 @@ fun String.bareEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon = BareEnAvSubsu
 
 infix fun Subsumsjon.hvisGyldig(block: SubsumsjonGenerator) = this.also { this.gyldig(block()) }
 infix fun Subsumsjon.hvisUgyldig(block: SubsumsjonGenerator) = this.also { this.ugyldig(block()) }
-infix fun String.deltre(block: SubsumsjonGenerator) = MakroSubsumsjon(this, block())
+infix fun String.deltre(block: SubsumsjonGenerator) = DeltreSubsumsjon(this, block())
 
 infix fun Subsumsjon.uansett(block: SubsumsjonGenerator): Subsumsjon {
     val child = block()

@@ -18,7 +18,7 @@ import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.BareEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
-import no.nav.dagpenger.model.subsumsjon.MakroSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
@@ -151,23 +151,41 @@ interface SøknadprosessVisitor : SubsumsjonVisitor, SøknadVisitor {
 }
 
 interface SubsumsjonVisitor : FaktumVisitor {
-    fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun preVisit(
+        subsumsjon: EnkelSubsumsjon,
+        regel: Regel,
+        fakta: List<Faktum<*>>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?
+    ) {
+    }
+
+    fun postVisit(
+        subsumsjon: EnkelSubsumsjon,
+        regel: Regel,
+        fakta: List<Faktum<*>>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?
+    ) {
+    }
+
     fun preVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun postVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun preVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun postVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun preVisit(subsumsjon: BareEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun postVisit(subsumsjon: BareEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun preVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun postVisit(subsumsjon: MakroSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun preVisit(subsumsjon: DeltreSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun postVisit(subsumsjon: DeltreSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun preVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,
         godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         resultat: Boolean?,
         childResultat: Boolean?
-    ) {}
+    ) {
+    }
+
     fun postVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,
