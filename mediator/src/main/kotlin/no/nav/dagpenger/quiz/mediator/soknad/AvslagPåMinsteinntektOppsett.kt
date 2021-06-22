@@ -19,7 +19,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    const val VERSJON_ID = 12
+    const val VERSJON_ID = 13
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
@@ -48,8 +48,6 @@ internal object AvslagPåMinsteinntektOppsett {
     const val permittert = 28
     const val lønnsgaranti = 29
     const val permittertFiskeforedling = 30
-
-    // const val godkjenningSluttårsak = 31
     const val harHattDagpengerSiste36mnd = 32
     const val periodeOppbruktManuell = 33
     const val sykepengerSiste36mnd = 34
@@ -69,6 +67,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val kanJobbeHvorSomHelst = 48
     const val villigTilÅBytteYrke = 49
     const val reellArbeidssøkerManuell = 50
+    const val registrertArbeidssøkerManuell = 51
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -96,7 +95,6 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Ordinær" id ordinær,
             boolsk faktum "Lønnsgaranti" id lønnsgaranti,
             boolsk faktum "PermittertFiskeforedling" id permittertFiskeforedling,
-            // boolsk faktum "Godkjenning sluttårsak" id godkjenningSluttårsak avhengerAv antallEndredeArbeidsforhold,
             boolsk faktum "Har hatt dagpenger siste 36mnd" id harHattDagpengerSiste36mnd avhengerAv virkningsdato,
             boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbruktManuell avhengerAv harHattDagpengerSiste36mnd,
             boolsk faktum "Sykepenger siste 36 mnd" id sykepengerSiste36mnd avhengerAv virkningsdato,
@@ -115,7 +113,8 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Har ingen helsemessige begrensninger for arbeid" id helseTilAlleTyperJobb avhengerAv innsendtSøknadsId,
             boolsk faktum "Har mulighet til å jobbe hvor som helst" id kanJobbeHvorSomHelst avhengerAv innsendtSøknadsId,
             boolsk faktum "Er villig til å bytte yrke eller gå ned i lønn" id villigTilÅBytteYrke avhengerAv innsendtSøknadsId,
-            boolsk faktum "Reell arbeidssøker manuell" id reellArbeidssøkerManuell avhengerAv kanJobbeDeltid og helseTilAlleTyperJobb og kanJobbeHvorSomHelst og villigTilÅBytteYrke
+            boolsk faktum "Reell arbeidssøker manuell" id reellArbeidssøkerManuell avhengerAv kanJobbeDeltid og helseTilAlleTyperJobb og kanJobbeHvorSomHelst og villigTilÅBytteYrke,
+            boolsk faktum "Registrert arbeidssøker manuell" id registrertArbeidssøkerManuell avhengerAv registrertArbeidssøkerPerioder
         )
 
     private val faktumNavBehov =

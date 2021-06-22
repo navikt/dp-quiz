@@ -83,6 +83,9 @@ internal class AvslagPåMinsteinntektTest {
             besvar(villigTilÅBytteYrke, true)
             besvar(kanJobbeHvorSomHelst, true)
 
+            assertGjeldendeSeksjon("arbeidsøkerperioder")
+            besvar(registrertArbeidssøkerPerioder, listOf(listOf("$registrertArbeidssøkerPeriodeFom.1" to 1.januar(2018), "$registrertArbeidssøkerPeriodeTom.1" to 30.januar(2018))))
+
             assertGjeldendeSeksjon("dagpengehistorikk")
             besvar(harHattDagpengerSiste36mnd, false)
 
@@ -97,21 +100,10 @@ internal class AvslagPåMinsteinntektTest {
             besvar(minsteinntektfaktor12mnd, 3.0)
             besvar(grunnbeløp, 100000.årlig)
 
-            assertGjeldendeSeksjon("arbeidsøkerperioder")
-            besvar(registrertArbeidssøkerPerioder, listOf(listOf("$registrertArbeidssøkerPeriodeFom.1" to 1.januar(2018), "$registrertArbeidssøkerPeriodeTom.1" to 30.januar(2018))))
-
             assertGjeldendeSeksjon("inntekter")
             besvar(inntektSiste36mnd, 20000.årlig)
             besvar(inntektSiste12mnd, 5000.årlig)
 
-            /*
-            Skrudd av godkjenning, for å teste kvalitet uten saksbehandler. Skriving til arena er skrudd av.
-
-            assertGjeldendeSeksjon("godkjenn sluttårsak")
-            besvar(godkjenningSluttårsak, true)
-
-            assertEquals(28, testRapid.inspektør.size)
-             */
             assertEquals(23, testRapid.inspektør.size)
             assertFalse(gjeldendeResultat())
         }

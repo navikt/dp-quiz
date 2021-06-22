@@ -29,6 +29,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.perio
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.reellArbeidssøkerManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPerioder
@@ -228,6 +229,14 @@ internal object Seksjoner {
         )
     }
 
+    private val manuellErIkkeRegistrertArbeidssøker = with(søknad) {
+        Seksjon(
+            "ikke registrert arbeidssøker",
+            Rolle.manuell,
+            boolsk(registrertArbeidssøkerManuell)
+        )
+    }
+
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             behandlingsdatoSeksjon,
@@ -241,7 +250,6 @@ internal object Seksjoner {
             inntekter,
             inntektNesteKalendermåned,
             endredeArbeidsforhold,
-            // godkjennSluttårsak,
             manuellGjenopptak,
             manuellSykepenger,
             manuellFangstOgFisk,
@@ -250,6 +258,7 @@ internal object Seksjoner {
             manuellFlereArbeidsforhold,
             manuellOppfyllerKraveneTilMinsteArbeidsinntekt,
             manuellHarInntektNesteKalendermåned,
-            manuellErIkkeReellArbeidssøker
+            manuellErIkkeReellArbeidssøker,
+            manuellErIkkeRegistrertArbeidssøker
         )
 }

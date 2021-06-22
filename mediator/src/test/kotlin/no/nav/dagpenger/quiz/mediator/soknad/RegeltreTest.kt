@@ -11,7 +11,6 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import no.nav.dagpenger.quiz.mediator.helpers.januar
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.meldtSomArbeidssøker
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.regeltre
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
@@ -183,40 +182,6 @@ internal class RegeltreTest {
     }
 
     @Test
-    fun `Virkningstidspunkt er frem i tid og bruker er registrert som arbeiddsøker på vedtaksdato`() {
-        val søknad = byggSøknad(meldtSomArbeidssøker)
-
-        søknad.apply {
-            dato(behandlingsdato).besvar(4.januar)
-            dato(ønsketDato).besvar(5.januar)
-            dato(søknadstidspunkt).besvar(2.januar)
-
-            generator(registrertArbeidssøkerPerioder).besvar(1)
-            dato("$registrertArbeidssøkerPeriodeFom.1").besvar(1.januar(2018))
-            dato("$registrertArbeidssøkerPeriodeTom.1").besvar(4.januar(2018))
-        }
-
-        assertEquals(true, søknad.resultat())
-    }
-
-    @Test
-    fun `Virkningstidspunkt er tilbake i tid og bruker er registrert som arbeiddsøker på virkningstidspunkt`() {
-        val søknad = byggSøknad(meldtSomArbeidssøker)
-
-        søknad.apply {
-            dato(behandlingsdato).besvar(6.januar)
-            dato(ønsketDato).besvar(5.januar)
-            dato(søknadstidspunkt).besvar(2.januar)
-
-            generator(registrertArbeidssøkerPerioder).besvar(1)
-            dato("$registrertArbeidssøkerPeriodeFom.1").besvar(1.januar(2018))
-            dato("$registrertArbeidssøkerPeriodeTom.1").besvar(6.januar(2018))
-        }
-
-        assertEquals(true, søknad.resultat())
-    }
-
-    @Test
     fun `Flere arbeidsforhold skal manuelt behandles`() {
         manglerInntekt.heltall(antallEndredeArbeidsforhold).besvar(2)
         assertEquals("flere arbeidsforhold", manglerInntekt.nesteSeksjoner().first().navn)
@@ -227,6 +192,13 @@ internal class RegeltreTest {
     fun `Søkere som ikke er reelle arbeidssøkere skal manuelt behandles`(faktum: Int) {
         manglerInntekt.boolsk(faktum).besvar(false)
         assertEquals("ikke reell arbeidssøker", manglerInntekt.nesteSeksjoner().first().navn)
+    }
+
+    @Test
+    fun `Ikke registrert arbeidssøker skal manuelt behandles`() {
+        manglerInntekt.dato("$registrertArbeidssøkerPeriodeFom.1").besvar(1.januar(2017))
+        manglerInntekt.dato("$registrertArbeidssøkerPeriodeTom.1").besvar(30.januar(2017))
+        assertEquals("ikke registrert arbeidssøker", manglerInntekt.nesteSeksjoner().first().navn)
     }
 
     companion object {

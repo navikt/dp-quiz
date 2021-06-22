@@ -16,6 +16,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærl
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektsterskel12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektsterskel36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPerioder
@@ -39,20 +40,25 @@ internal object AvslagPåMinsteinntekt {
         }
     }
 
-    internal val meldtSomArbeidssøker = with(søknad) {
-        generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
-            dato(førsteAvVirkningsdatoOgBehandlingsdato) mellom dato(registrertArbeidssøkerPeriodeFom) og
-                dato(registrertArbeidssøkerPeriodeTom)
+    internal val sjekkRegistrertArbeidssøker = with(søknad) {
+        "bb" deltre {
+            generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
+                dato(førsteAvVirkningsdatoOgBehandlingsdato) mellom
+                    dato(registrertArbeidssøkerPeriodeFom) og dato(registrertArbeidssøkerPeriodeTom)
+            } hvisUgyldig {
+                boolsk(registrertArbeidssøkerManuell) er true
+            }
         }
     }
 
     internal val regeltre =
         sjekkVirkningsdato hvisGyldig {
-            skalManueltBehandles hvisUgyldig {
-                "inngangsvilkår".alle(
-                    minsteArbeidsinntekt,
-                    meldtSomArbeidssøker
-                )
+            sjekkRegistrertArbeidssøker hvisGyldig {
+                skalManueltBehandles hvisUgyldig {
+                    "inngangsvilkår".alle(
+                        minsteArbeidsinntekt
+                    )
+                }
             }
         }
 }
