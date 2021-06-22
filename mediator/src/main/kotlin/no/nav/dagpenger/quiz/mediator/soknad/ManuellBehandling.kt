@@ -15,13 +15,18 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangs
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.helseTilAlleTyperJobb
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektNesteKalendermånedManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.reellArbeidssøkerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.svangerskapsrelaterteSykepengerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningsdatoManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.villigTilÅBytteYrke
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkningsdato
 
 internal object ManuellBehandling {
@@ -68,12 +73,26 @@ internal object ManuellBehandling {
         }
     }
 
+    private val sjekkReellArbeidssøker = with(søknad) {
+        "aa" deltre {
+            "er reell arbeidssøker".minstEnAv(
+                boolsk(kanJobbeDeltid) er false,
+                boolsk(helseTilAlleTyperJobb) er false,
+                boolsk(kanJobbeHvorSomHelst) er false,
+                boolsk(villigTilÅBytteYrke) er false
+            ) hvisGyldig {
+                boolsk(reellArbeidssøkerManuell) er true
+            }
+        }
+    }
+
     internal val skalManueltBehandles =
         "manuelt behandles".minstEnAv(
             sjekkGjenopptak,
             sjekkEøsArbeid,
             sjekkFangstOgFisk,
             sjekkSykepenger,
-            sjekkAntallArbeidsforhold
+            sjekkAntallArbeidsforhold,
+            sjekkReellArbeidssøker
         )
 }

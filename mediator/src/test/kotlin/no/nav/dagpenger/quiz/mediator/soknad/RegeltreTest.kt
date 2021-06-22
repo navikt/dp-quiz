@@ -20,8 +20,11 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangs
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.helseTilAlleTyperJobb
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lønnsgaranti
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektfaktor12mnd
@@ -38,12 +41,16 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykep
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknadstidspunkt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.villigTilÅBytteYrke
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ønsketDato
 import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import java.util.UUID
 
 internal class RegeltreTest {
@@ -63,6 +70,11 @@ internal class RegeltreTest {
             dato(søknadstidspunkt).besvar(2.januar)
             dato(senesteMuligeVirkningsdato).besvar(19.januar)
             boolsk(harInntektNesteKalendermåned).besvar(false)
+
+            boolsk(helseTilAlleTyperJobb).besvar(true)
+            boolsk(kanJobbeHvorSomHelst).besvar(true)
+            boolsk(villigTilÅBytteYrke).besvar(true)
+            boolsk(kanJobbeDeltid).besvar(true)
 
             generator(registrertArbeidssøkerPerioder).besvar(1)
             dato("$registrertArbeidssøkerPeriodeFom.1").besvar(1.januar(2018))
@@ -208,6 +220,23 @@ internal class RegeltreTest {
     fun `Flere arbeidsforhold skal manuelt behandles`() {
         manglerInntekt.heltall(antallEndredeArbeidsforhold).besvar(2)
         assertEquals("flere arbeidsforhold", manglerInntekt.nesteSeksjoner().first().navn)
+    }
+
+    @ParameterizedTest
+    @MethodSource("reellArbeidssøkerFaktum")
+    fun `Søkere som ikke er reelle arbeidssøkere skal manuelt behandles`(faktum: Int) {
+        manglerInntekt.boolsk(faktum).besvar(false)
+        assertEquals("ikke reell arbeidssøker", manglerInntekt.nesteSeksjoner().first().navn)
+    }
+
+    companion object {
+        @JvmStatic
+        private fun reellArbeidssøkerFaktum() = listOf(
+            Arguments.of(kanJobbeDeltid),
+            Arguments.of(kanJobbeHvorSomHelst),
+            Arguments.of(helseTilAlleTyperJobb),
+            Arguments.of(villigTilÅBytteYrke)
+        )
     }
 
     private fun byggSøknad(subsumsjon: Subsumsjon) =

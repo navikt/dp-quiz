@@ -24,4 +24,5 @@ dependencies {
 
     testImplementation(Mockk.mockk)
     testImplementation(TestContainers.postgresql)
+    testImplementation(Junit5.params)
 }
