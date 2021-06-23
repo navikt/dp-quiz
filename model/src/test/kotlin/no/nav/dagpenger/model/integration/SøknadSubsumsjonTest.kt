@@ -69,18 +69,18 @@ internal class SøknadSubsumsjonTest {
         søknadprosess.dokument(11).besvar(Dokument(4.januar))
 
         søknadprosess.nesteFakta().also { fakta ->
-            assertEquals(4, fakta.size)
-            assertIder(fakta, 6, 8, 7, 9)
+            assertEquals(2, fakta.size)
+            assertIder(fakta, 6, 8)
         }
 
         assertEquals(søknadprosess[1], søknadprosess.nesteSeksjoner().first())
         assertEquals(4, søknadprosess[1].fakta().size)
         assertIder(søknadprosess[1].fakta(), 6, 7, 8, 9)
-
         søknadprosess.inntekt(6).besvar(20000.månedlig)
         søknadprosess.inntekt(7).besvar(10000.månedlig)
         søknadprosess.inntekt(8).besvar(5000.månedlig)
         søknadprosess.inntekt(9).besvar(2500.månedlig)
+
         søknadprosess.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
             assertIder(fakta, 15)
