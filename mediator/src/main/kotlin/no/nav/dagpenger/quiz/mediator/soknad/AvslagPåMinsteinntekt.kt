@@ -4,10 +4,11 @@ import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.minst
-import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
+import no.nav.dagpenger.model.subsumsjon.hvisGyldigManuell
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
+import no.nav.dagpenger.model.subsumsjon.hvisUgyldigManuell
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.førsteAvVirkningsdatoOgBehandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
@@ -34,7 +35,7 @@ internal object AvslagPåMinsteinntekt {
                 inntekt(inntektSiste12mnd) minst inntekt(minsteinntektsterskel12mnd),
                 boolsk(verneplikt) er true,
                 boolsk(lærling) er true
-            ) hvisGyldig { boolsk(oppfyllerMinsteinntektManuell) er true } hvisUgyldig {
+            ) hvisGyldigManuell(boolsk(oppfyllerMinsteinntektManuell)) hvisUgyldig {
                 sjekkInntektNesteKalendermåned
             }
         }
@@ -45,9 +46,7 @@ internal object AvslagPåMinsteinntekt {
             generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
                 dato(førsteAvVirkningsdatoOgBehandlingsdato) mellom
                     dato(registrertArbeidssøkerPeriodeFom) og dato(registrertArbeidssøkerPeriodeTom)
-            } hvisUgyldig {
-                boolsk(registrertArbeidssøkerManuell) er true
-            }
+            } hvisUgyldigManuell(boolsk(registrertArbeidssøkerManuell))
         }
     }
 
@@ -55,9 +54,7 @@ internal object AvslagPåMinsteinntekt {
         sjekkVirkningsdato hvisGyldig {
             sjekkRegistrertArbeidssøker hvisGyldig {
                 skalManueltBehandles hvisUgyldig {
-                    "inngangsvilkår".alle(
-                        minsteArbeidsinntekt
-                    )
+                    minsteArbeidsinntekt
                 }
             }
         }

@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.UtledetFaktum
+import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
@@ -224,6 +225,10 @@ fun String.bareEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon = BareEnAvSubsu
 
 infix fun Subsumsjon.hvisGyldig(block: SubsumsjonGenerator) = this.also { this.gyldig(block()) }
 infix fun Subsumsjon.hvisUgyldig(block: SubsumsjonGenerator) = this.also { this.ugyldig(block()) }
+
+infix fun Subsumsjon.hvisUgyldigManuell(manuellFaktum: Faktum<Boolean>) = hvisUgyldig { manuellFaktum er true }
+infix fun Subsumsjon.hvisGyldigManuell(manuellFaktum: Faktum<Boolean>) = hvisGyldig { manuellFaktum er true }
+
 infix fun String.deltre(block: SubsumsjonGenerator) = DeltreSubsumsjon(this, block())
 
 infix fun Subsumsjon.uansett(block: SubsumsjonGenerator): Subsumsjon {
