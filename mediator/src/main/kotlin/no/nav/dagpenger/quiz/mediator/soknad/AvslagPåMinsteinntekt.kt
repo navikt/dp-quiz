@@ -55,7 +55,8 @@ internal object AvslagPåMinsteinntekt {
 
     private val sjekkSykepenger = with(søknad) {
         boolsk(AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd) er true hvisGyldigManuell (
-            boolsk(svangerskapsrelaterteSykepengerManuell))
+            boolsk(svangerskapsrelaterteSykepengerManuell)
+            )
     }
 
     internal val regeltre =
