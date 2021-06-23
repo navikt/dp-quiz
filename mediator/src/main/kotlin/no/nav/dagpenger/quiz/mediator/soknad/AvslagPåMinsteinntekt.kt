@@ -42,7 +42,7 @@ internal object AvslagPåMinsteinntekt {
     }
 
     internal val sjekkRegistrertArbeidssøker = with(søknad) {
-        "bb" deltre {
+        "registrert arbeidssøker" deltre {
             generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
                 dato(førsteAvVirkningsdatoOgBehandlingsdato) mellom
                     dato(registrertArbeidssøkerPeriodeFom) og dato(registrertArbeidssøkerPeriodeTom)

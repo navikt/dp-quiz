@@ -72,8 +72,8 @@ internal object ManuellBehandling {
     }
 
     private val sjekkReellArbeidssøker = with(søknad) {
-        "aa" deltre {
-            "er reell arbeidssøker".minstEnAv(
+        "reell arbeidssøker" deltre {
+            "er ikke reell arbeidssøker".minstEnAv(
                 boolsk(kanJobbeDeltid) er false,
                 boolsk(helseTilAlleTyperJobb) er false,
                 boolsk(kanJobbeHvorSomHelst) er false,
