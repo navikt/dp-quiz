@@ -31,8 +31,8 @@ abstract class SammensattSubsumsjon protected constructor(
     }
 
     override fun lokaltResultat(): Boolean? {
-        if (subsumsjoner.any { it.lokaltResultat() == null }) return null
-        return subsumsjoner.all { it.lokaltResultat()!! }
+        if (subsumsjoner.any { it.resultat() == null }) return null
+        return subsumsjoner.all { it.resultat()!! }
     }
 
     override fun toString() = PrettyPrint(this).result()

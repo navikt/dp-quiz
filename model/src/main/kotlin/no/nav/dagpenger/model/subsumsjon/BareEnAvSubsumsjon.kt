@@ -59,7 +59,7 @@ class BareEnAvSubsumsjon private constructor(
     }
 
     override fun lokaltResultat(): Boolean? {
-        if (subsumsjoner.any { it.lokaltResultat() == null }) return null
-        return subsumsjoner.filter { it.lokaltResultat()!! }.size == 1
+        if (subsumsjoner.any { it.resultat() == null }) return null
+        return subsumsjoner.filter { it.resultat()!! }.size == 1
     }
 }

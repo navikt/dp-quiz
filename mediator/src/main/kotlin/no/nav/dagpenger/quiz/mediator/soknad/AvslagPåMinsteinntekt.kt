@@ -29,25 +29,21 @@ import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.skalManueltBehand
 
 internal object AvslagPåMinsteinntekt {
     private val minsteArbeidsinntekt = with(søknad) {
-        "oppfyller krav til minste arbeidsinntekt".deltre {
-            "minste arbeidsinntekt".minstEnAv(
-                inntekt(inntektSiste36mnd) minst inntekt(minsteinntektsterskel36mnd),
-                inntekt(inntektSiste12mnd) minst inntekt(minsteinntektsterskel12mnd),
-                boolsk(verneplikt) er true,
-                boolsk(lærling) er true
-            ) hvisGyldigManuell(boolsk(oppfyllerMinsteinntektManuell)) hvisUgyldig {
-                sjekkInntektNesteKalendermåned
-            }
+        "minste arbeidsinntekt".minstEnAv(
+            inntekt(inntektSiste36mnd) minst inntekt(minsteinntektsterskel36mnd),
+            inntekt(inntektSiste12mnd) minst inntekt(minsteinntektsterskel12mnd),
+            boolsk(verneplikt) er true,
+            boolsk(lærling) er true
+        ) hvisGyldigManuell(boolsk(oppfyllerMinsteinntektManuell)) hvisUgyldig {
+            sjekkInntektNesteKalendermåned
         }
     }
 
-    internal val sjekkRegistrertArbeidssøker = with(søknad) {
-        "registrert arbeidssøker" deltre {
-            generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
-                dato(førsteAvVirkningsdatoOgBehandlingsdato) mellom
-                    dato(registrertArbeidssøkerPeriodeFom) og dato(registrertArbeidssøkerPeriodeTom)
-            } hvisUgyldigManuell(boolsk(registrertArbeidssøkerManuell))
-        }
+    private val sjekkRegistrertArbeidssøker = with(søknad) {
+        generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
+            dato(førsteAvVirkningsdatoOgBehandlingsdato) mellom
+                dato(registrertArbeidssøkerPeriodeFom) og dato(registrertArbeidssøkerPeriodeTom)
+        } hvisUgyldigManuell(boolsk(registrertArbeidssøkerManuell))
     }
 
     internal val regeltre =

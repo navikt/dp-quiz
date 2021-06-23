@@ -3,7 +3,6 @@ package no.nav.dagpenger.quiz.mediator.soknad
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.erIkke
 import no.nav.dagpenger.model.regel.førEllerLik
-import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisGyldigManuell
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldigManuell
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
@@ -32,39 +31,27 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkn
 internal object ManuellBehandling {
 
     private val sjekkFangstOgFisk = with(søknad) {
-        "fangst og fisk" deltre {
-            boolsk(fangstOgFisk) er true hvisGyldigManuell(boolsk(fangstOgFiskManuell))
-        }
+        boolsk(fangstOgFisk) er true hvisGyldigManuell(boolsk(fangstOgFiskManuell))
     }
 
     private val sjekkEøsArbeid = with(søknad) {
-        "eøs arbeid" deltre {
-            boolsk(eøsArbeid) er true hvisGyldigManuell(boolsk(eøsArbeidManuell))
-        }
+        boolsk(eøsArbeid) er true hvisGyldigManuell(boolsk(eøsArbeidManuell))
     }
 
     private val sjekkGjenopptak = with(søknad) {
-        "skal ha gjenopptak" deltre {
-            boolsk(harHattDagpengerSiste36mnd) er true hvisGyldigManuell(boolsk(periodeOppbruktManuell))
-        }
+        boolsk(harHattDagpengerSiste36mnd) er true hvisGyldigManuell(boolsk(periodeOppbruktManuell))
     }
 
     private val sjekkSykepenger = with(søknad) {
-        "svangerskapsrelaterte sykepenger" deltre {
-            boolsk(sykepengerSiste36mnd) er true hvisGyldigManuell(boolsk(svangerskapsrelaterteSykepengerManuell))
-        }
+        boolsk(sykepengerSiste36mnd) er true hvisGyldigManuell(boolsk(svangerskapsrelaterteSykepengerManuell))
     }
 
     private val sjekkAntallArbeidsforhold = with(søknad) {
-        "antall arbeidsforhold" deltre {
-            heltall(antallEndredeArbeidsforhold) erIkke 1 hvisGyldigManuell(boolsk(flereArbeidsforholdManuell))
-        }
+        heltall(antallEndredeArbeidsforhold) erIkke 1 hvisGyldigManuell(boolsk(flereArbeidsforholdManuell))
     }
 
     internal val sjekkInntektNesteKalendermåned = with(søknad) {
-        "har inntekt neste kalendermåned" deltre {
-            boolsk(harInntektNesteKalendermåned) er true hvisGyldigManuell(boolsk(inntektNesteKalendermånedManuell))
-        }
+        boolsk(harInntektNesteKalendermåned) er true hvisGyldigManuell(boolsk(inntektNesteKalendermånedManuell))
     }
 
     internal val sjekkVirkningsdato = with(søknad) {
@@ -72,14 +59,12 @@ internal object ManuellBehandling {
     }
 
     private val sjekkReellArbeidssøker = with(søknad) {
-        "reell arbeidssøker" deltre {
-            "er ikke reell arbeidssøker".minstEnAv(
-                boolsk(kanJobbeDeltid) er false,
-                boolsk(helseTilAlleTyperJobb) er false,
-                boolsk(kanJobbeHvorSomHelst) er false,
-                boolsk(villigTilÅBytteYrke) er false
-            ) hvisGyldigManuell(boolsk(reellArbeidssøkerManuell))
-        }
+        "er ikke reell arbeidssøker".minstEnAv(
+            boolsk(kanJobbeDeltid) er false,
+            boolsk(helseTilAlleTyperJobb) er false,
+            boolsk(kanJobbeHvorSomHelst) er false,
+            boolsk(villigTilÅBytteYrke) er false
+        ) hvisGyldigManuell(boolsk(reellArbeidssøkerManuell))
     }
 
     internal val skalManueltBehandles =
