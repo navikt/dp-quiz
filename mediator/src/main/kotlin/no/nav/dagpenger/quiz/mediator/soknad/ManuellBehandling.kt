@@ -38,14 +38,6 @@ internal object ManuellBehandling {
         boolsk(eøsArbeid) er true hvisGyldigManuell(boolsk(eøsArbeidManuell))
     }
 
-    private val sjekkGjenopptak = with(søknad) {
-        boolsk(harHattDagpengerSiste36mnd) er true hvisGyldigManuell(boolsk(periodeOppbruktManuell))
-    }
-
-    private val sjekkSykepenger = with(søknad) {
-        boolsk(sykepengerSiste36mnd) er true hvisGyldigManuell(boolsk(svangerskapsrelaterteSykepengerManuell))
-    }
-
     private val sjekkAntallArbeidsforhold = with(søknad) {
         heltall(antallEndredeArbeidsforhold) erIkke 1 hvisGyldigManuell(boolsk(flereArbeidsforholdManuell))
     }
@@ -69,10 +61,8 @@ internal object ManuellBehandling {
 
     internal val skalManueltBehandles =
         "manuelt behandles".minstEnAv(
-            sjekkGjenopptak,
             sjekkEøsArbeid,
             sjekkFangstOgFisk,
-            sjekkSykepenger,
             sjekkAntallArbeidsforhold,
             sjekkReellArbeidssøker
         )

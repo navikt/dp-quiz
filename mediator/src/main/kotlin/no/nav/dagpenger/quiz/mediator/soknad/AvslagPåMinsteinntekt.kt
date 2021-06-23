@@ -11,16 +11,19 @@ import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldigManuell
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.førsteAvVirkningsdatoOgBehandlingsdato
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektsterskel12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektsterskel36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPerioder
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.svangerskapsrelaterteSykepengerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.sjekkInntektNesteKalendermåned
@@ -34,7 +37,7 @@ internal object AvslagPåMinsteinntekt {
             inntekt(inntektSiste12mnd) minst inntekt(minsteinntektsterskel12mnd),
             boolsk(verneplikt) er true,
             boolsk(lærling) er true
-        ) hvisGyldigManuell(boolsk(oppfyllerMinsteinntektManuell)) hvisUgyldig {
+        ) hvisGyldigManuell (boolsk(oppfyllerMinsteinntektManuell)) hvisUgyldig {
             sjekkInntektNesteKalendermåned
         }
     }
@@ -43,14 +46,27 @@ internal object AvslagPåMinsteinntekt {
         generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
             dato(førsteAvVirkningsdatoOgBehandlingsdato) mellom
                 dato(registrertArbeidssøkerPeriodeFom) og dato(registrertArbeidssøkerPeriodeTom)
-        } hvisUgyldigManuell(boolsk(registrertArbeidssøkerManuell))
+        } hvisUgyldigManuell (boolsk(registrertArbeidssøkerManuell))
+    }
+
+    private val sjekkGjenopptak = with(søknad) {
+        boolsk(harHattDagpengerSiste36mnd) er true hvisGyldigManuell (boolsk(periodeOppbruktManuell))
+    }
+
+    private val sjekkSykepenger = with(søknad) {
+        boolsk(AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd) er true hvisGyldigManuell (
+            boolsk(svangerskapsrelaterteSykepengerManuell))
     }
 
     internal val regeltre =
         sjekkVirkningsdato hvisGyldig {
-            sjekkRegistrertArbeidssøker hvisGyldig {
-                skalManueltBehandles hvisUgyldig {
-                    minsteArbeidsinntekt
+            skalManueltBehandles hvisUgyldig {
+                sjekkGjenopptak hvisUgyldig {
+                    sjekkSykepenger hvisUgyldig {
+                        sjekkRegistrertArbeidssøker hvisGyldig {
+                            minsteArbeidsinntekt
+                        }
+                    }
                 }
             }
         }

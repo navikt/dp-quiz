@@ -83,8 +83,8 @@ internal class AvslagPåMinsteinntektTest {
             besvar(villigTilÅBytteYrke, true)
             besvar(kanJobbeHvorSomHelst, true)
 
-            assertGjeldendeSeksjon("arbeidsøkerperioder")
-            besvar(registrertArbeidssøkerPerioder, listOf(listOf("$registrertArbeidssøkerPeriodeFom.1" to 1.januar(2018), "$registrertArbeidssøkerPeriodeTom.1" to 30.januar(2018))))
+            assertGjeldendeSeksjon("arbeidsforhold")
+            besvar(antallEndredeArbeidsforhold, listOf(listOf("$ordinær.1" to false, "$permittert.1" to true, "$lønnsgaranti.1" to false, "$permittertFiskeforedling.1" to false)))
 
             assertGjeldendeSeksjon("dagpengehistorikk")
             besvar(harHattDagpengerSiste36mnd, false)
@@ -92,8 +92,8 @@ internal class AvslagPåMinsteinntektTest {
             assertGjeldendeSeksjon("sykepengehistorikk")
             besvar(sykepengerSiste36mnd, false)
 
-            assertGjeldendeSeksjon("arbeidsforhold")
-            besvar(antallEndredeArbeidsforhold, listOf(listOf("$ordinær.1" to false, "$permittert.1" to true, "$lønnsgaranti.1" to false, "$permittertFiskeforedling.1" to false)))
+            assertGjeldendeSeksjon("arbeidsøkerperioder")
+            besvar(registrertArbeidssøkerPerioder, listOf(listOf("$registrertArbeidssøkerPeriodeFom.1" to 1.januar(2018), "$registrertArbeidssøkerPeriodeTom.1" to 30.januar(2018))))
 
             assertGjeldendeSeksjon("minsteinntektKonstanter")
             besvar(minsteinntektfaktor36mnd, 1.5)
