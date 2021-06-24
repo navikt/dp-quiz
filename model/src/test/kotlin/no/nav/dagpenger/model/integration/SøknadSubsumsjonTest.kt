@@ -27,8 +27,8 @@ internal class SøknadSubsumsjonTest {
     @Test
     fun `Faktagrupper subsumsjon integrasjonstest`() {
         søknadprosess.nesteFakta().also { fakta ->
-            assertEquals(5, fakta.size)
-            assertIder(fakta, 1, 2, 3, 4, 5)
+            assertEquals(1, fakta.size)
+            assertIder(fakta, 1)
         }
 
         assertEquals(søknadprosess[0], søknadprosess.nesteSeksjoner().first())
@@ -92,24 +92,29 @@ internal class SøknadSubsumsjonTest {
         søknadprosess.generator(15).besvar(2)
         assertEquals(3, søknadprosess[2].fakta().size) // Genererte 2 til
         søknadprosess.nesteFakta().also { fakta ->
-            assertEquals(2, fakta.size) // Feltene i første genererte subsumsjon
-            assertEquals(listOf("16.1", "16.2"), fakta.map { it.id })
+            assertEquals(1, fakta.size) // Feltene i første genererte subsumsjon
+            assertEquals(listOf("16.1"), fakta.map { it.id })
         }
-
-        assertEquals(søknadprosess[2], søknadprosess.nesteSeksjoner().first())
-        assertEquals(3, søknadprosess[2].fakta().size)
-        assertEquals(listOf("15", "16.1", "16.2"), søknadprosess[2].fakta().map { it.id })
         (søknadprosess[2].first { it.id == "16.1" } as Faktum<Int>).besvar(17)
-        (søknadprosess[2].first { it.id == "16.2" } as Faktum<Int>).besvar(19)
+
         søknadprosess.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
             assertEquals(listOf("17.1"), fakta.map { it.id })
         }
-
         assertEquals(søknadprosess[7], søknadprosess.nesteSeksjoner().first())
         assertEquals(2, søknadprosess[7].fakta().size)
         assertEquals(listOf("17.1", "18.1"), søknadprosess[7].fakta().map { it.id })
         (søknadprosess[7].first { it.id == "17.1" } as Faktum<Boolean>).besvar(true)
+
+        søknadprosess.nesteFakta().also { fakta ->
+            assertEquals(1, fakta.size) // Feltene i første genererte subsumsjon
+            assertEquals(listOf("16.2"), fakta.map { it.id })
+        }
+        assertEquals(søknadprosess[2], søknadprosess.nesteSeksjoner().first())
+        assertEquals(3, søknadprosess[2].fakta().size)
+        assertEquals(listOf("15", "16.1", "16.2"), søknadprosess[2].fakta().map { it.id })
+        (søknadprosess[2].first { it.id == "16.2" } as Faktum<Int>).besvar(19)
+
         søknadprosess.nesteFakta().also { fakta ->
             assertEquals(1, fakta.size)
             assertIder(fakta, 14)

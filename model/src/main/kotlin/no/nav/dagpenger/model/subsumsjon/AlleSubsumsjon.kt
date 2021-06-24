@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
@@ -44,6 +45,15 @@ class AlleSubsumsjon private constructor(
             ugyldigSubsumsjon.deepCopy()
         )
     }
+
+    override fun nesteFakta(): Set<GrunnleggendeFaktum<*>> =
+        subsumsjoner.map { it.nesteFakta() }.filterNot { it.isEmpty() }.let {
+            when (lokaltResultat()) {
+                null -> it.firstOrNull() ?: emptySet()
+                true -> gyldigSubsumsjon.nesteFakta()
+                false -> ugyldigSubsumsjon.nesteFakta()
+            }
+        }
 
     override fun accept(visitor: SubsumsjonVisitor) {
         resultat().also {
