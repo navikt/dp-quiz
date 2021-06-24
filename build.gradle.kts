@@ -66,10 +66,6 @@ subprojects {
         maven("https://jitpack.io")
     }
 
-    tasks.named("jar") {
-        dependsOn("test")
-    }
-
     tasks.named("compileKotlin") {
         dependsOn("spotlessCheck")
     }
