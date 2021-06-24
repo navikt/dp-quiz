@@ -12,62 +12,47 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangs
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.helseTilAlleTyperJobb
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.reellArbeidssøkerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.svangerskapsrelaterteSykepengerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningsdatoManuell
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.villigTilÅBytteYrke
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkningsdato
 
 internal object ManuellBehandling {
 
-    private val sjekkFangstOgFisk = with(søknad) {
+    private val hattInntektFraFangstOgFisk = with(søknad) {
         boolsk(fangstOgFisk) er true hvisGyldigManuell(boolsk(fangstOgFiskManuell))
     }
 
-    private val sjekkEøsArbeid = with(søknad) {
+    private val harArbeidetEøs = with(søknad) {
         boolsk(eøsArbeid) er true hvisGyldigManuell(boolsk(eøsArbeidManuell))
     }
 
-    private val sjekkAntallArbeidsforhold = with(søknad) {
+    private val harFlereArbeidsforhold = with(søknad) {
         heltall(antallEndredeArbeidsforhold) erIkke 1 hvisGyldigManuell(boolsk(flereArbeidsforholdManuell))
     }
 
-    private val sjekkVirkningsdato = with(søknad) {
+    private val kanBehandleVirkningsdato = with(søknad) {
         dato(virkningsdato) etter dato(senesteMuligeVirkningsdato) hvisGyldigManuell(boolsk(uhåndterbartVirkningsdatoManuell))
     }
 
-    private val sjekkReellArbeidssøker = with(søknad) {
-        "er ikke reell arbeidssøker".minstEnAv(
-            boolsk(kanJobbeDeltid) er false,
-            boolsk(helseTilAlleTyperJobb) er false,
-            boolsk(kanJobbeHvorSomHelst) er false,
-            boolsk(villigTilÅBytteYrke) er false
-        ) hvisGyldigManuell(boolsk(reellArbeidssøkerManuell))
-    }
-
-    private val sjekkGjenopptak = with(søknad) {
+    private val erMuligGjenopptak = with(søknad) {
         boolsk(harHattDagpengerSiste36mnd) er true hvisGyldigManuell (boolsk(periodeOppbruktManuell))
     }
 
-    private val sjekkSykepenger = with(søknad) {
+    private val harHattSykepenger = with(søknad) {
         boolsk(sykepengerSiste36mnd) er true hvisGyldigManuell (boolsk(svangerskapsrelaterteSykepengerManuell))
     }
 
     internal val skalManueltBehandles =
         "manuelt behandles".minstEnAv(
-            sjekkVirkningsdato,
-            sjekkEøsArbeid,
-            sjekkFangstOgFisk,
-            sjekkAntallArbeidsforhold,
-            sjekkReellArbeidssøker,
-            sjekkGjenopptak,
-            sjekkSykepenger
+            kanBehandleVirkningsdato,
+            harArbeidetEøs,
+            hattInntektFraFangstOgFisk,
+            harFlereArbeidsforhold,
+            erMuligGjenopptak,
+            harHattSykepenger
         )
 }

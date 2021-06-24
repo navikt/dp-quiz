@@ -92,13 +92,13 @@ internal class AvslagPåMinsteinntektTest {
             assertGjeldendeSeksjon("sykepengehistorikk")
             besvar(sykepengerSiste36mnd, false)
 
-            assertGjeldendeSeksjon("arbeidsøkerperioder")
-            besvar(registrertArbeidssøkerPerioder, listOf(listOf("$registrertArbeidssøkerPeriodeFom.1" to 1.januar(2018), "$registrertArbeidssøkerPeriodeTom.1" to 30.januar(2018))))
-
             assertGjeldendeSeksjon("minsteinntektKonstanter")
             besvar(minsteinntektfaktor36mnd, 1.5)
             besvar(minsteinntektfaktor12mnd, 3.0)
             besvar(grunnbeløp, 100000.årlig)
+
+            assertGjeldendeSeksjon("arbeidsøkerperioder")
+            besvar(registrertArbeidssøkerPerioder, listOf(listOf("$registrertArbeidssøkerPeriodeFom.1" to 1.januar(2018), "$registrertArbeidssøkerPeriodeTom.1" to 30.januar(2018))))
 
             assertGjeldendeSeksjon("inntekter")
             besvar(inntektSiste36mnd, 20000.årlig)
