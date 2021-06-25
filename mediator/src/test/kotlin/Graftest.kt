@@ -15,6 +15,7 @@ import guru.nidi.graphviz.model.Factory.node
 import guru.nidi.graphviz.model.Graph
 import guru.nidi.graphviz.model.Link
 import guru.nidi.graphviz.toGraphviz
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
@@ -30,6 +31,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
+import no.nav.dagpenger.model.subsumsjon.hvisUgyldigManuell
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -104,6 +106,7 @@ class Graftest {
     private val virkningsdato = 8
     private val inntekt3G = 9
     private val inntekt15G = 10
+    private val manuell = 11
 
     private val prototypeSøknad = Søknad(
         509,
@@ -116,7 +119,8 @@ class Graftest {
         dato faktum "Dimisjonsdato" id dimisjonsdato,
         maks dato "Hvilken dato vedtaket skal gjelde fra" av 2 og 3 og 4 id virkningsdato,
         inntekt faktum "3G" id inntekt3G,
-        inntekt faktum "1.5G" id inntekt15G
+        inntekt faktum "1.5G" id inntekt15G,
+        boolsk faktum "Manuell fordi noe" id manuell
     )
 
     private val prototypeWebSøknad =
@@ -135,17 +139,22 @@ class Graftest {
                     inntekt(inntekt3G),
                     inntekt(inntektSiste3år),
                     inntekt(inntektSisteÅr)
+                ),
+                Seksjon(
+                    "manuell",
+                    Rolle.manuell,
+                    boolsk(manuell)
                 )
             )
         }
 
     private val prototypeSubsumsjon = with(prototypeSøknad) {
         inntekt(inntektSisteÅr) minst inntekt(inntekt15G) hvisGyldig {
-            inntekt(inntektSiste3år) minst inntekt(inntekt3G)
+            inntekt(inntektSiste3år) minst inntekt(inntekt3G) hvisUgyldigManuell (boolsk(manuell))
         } hvisUgyldig {
             dato(bursdag67) før dato(søknadsdato) hvisGyldig {
                 "bursdagssjekker".minstEnAv(
-                    dato(bursdag67) før dato(sisteDagMedLønn),
+                    dato(bursdag67) før dato(sisteDagMedLønn) hvisGyldig { dato(bursdag67) før dato(bursdag67) },
                     dato(bursdag67) før dato(dimisjonsdato)
                 )
             }
@@ -172,7 +181,7 @@ class Graftest {
             graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE)]
 
             SubsumsjonsGraf(søknadprosess, this)
-        }.toGraphviz().width(10000).render(Format.PNG).toFile(File("example/ex2.png"))
+        }.toGraphviz().scale(10.0).render(Format.PNG).toFile(File("example/ex2.png"))
         Runtime.getRuntime().exec("open example/ex2.png")
     }
 }

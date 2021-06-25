@@ -12,6 +12,7 @@ import guru.nidi.graphviz.model.Compass.SOUTH
 import guru.nidi.graphviz.model.Compass.SOUTH_EAST
 import guru.nidi.graphviz.model.Compass.SOUTH_WEST
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.KantTyper.GYLDIG
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.KantTyper.SAMMENSATT
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.KantTyper.UGYLDIG
@@ -30,6 +31,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
     var forrigeNode = "rot"
     var steps = 0
     private var kantType = GYLDIG
+    private var løvnode = false
 
     private enum class KantTyper {
         GYLDIG, UGYLDIG, SAMMENSATT
@@ -57,9 +59,16 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
         // if(noder.first() == subsumsjon.toString()) return
 
         with(kraphvizContext) {
-            val label = listOf(fakta[0].navn, regel.typeNavn, fakta[1].navn)
-            (noder.first() / kantRetning() - subsumsjon.navn[Label.lines(*label.toTypedArray())])[kantFarge()][kantType()]
+
+            if (fakta.any { it.harRolle(Rolle.manuell) }) {
+                løvnode = true
+                (noder.first() / kantRetning() - subsumsjon.navn[Label.lines("Manuell behandling")][RED][RED.font()])[kantFarge()][kantType()]
+            } else {
+                val label = listOf(fakta[0].navn, regel.typeNavn) + if (fakta.size == 2) listOf(fakta[1].navn) else listOf()
+                (noder.first() / kantRetning() - subsumsjon.navn[Label.lines(*label.toTypedArray())])[kantFarge()][kantType()]
+            }
         }
+
         noder.add(0, subsumsjon.navn)
     }
 
@@ -71,6 +80,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
         resultat: Boolean?
     ) {
         noder.removeFirst()
+        løvnode = false
     }
 
     override fun preVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
@@ -102,7 +112,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
     }
 
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
-        if (child is TomSubsumsjon) {
+        if (child is TomSubsumsjon && !løvnode) {
             with(kraphvizContext) {
                 (parent.navn - "Innvilget$steps"[GREEN][GREEN.font()][Label.lines("Innvilget")])[GREEN]
                 steps++
@@ -112,7 +122,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
     }
 
     override fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
-        if (child is TomSubsumsjon) {
+        if (child is TomSubsumsjon && !løvnode) {
             with(kraphvizContext) {
                 (parent.navn - "Avslag$steps"[RED][RED.font()][Label.lines("Avslag")])[RED]
                 steps++
