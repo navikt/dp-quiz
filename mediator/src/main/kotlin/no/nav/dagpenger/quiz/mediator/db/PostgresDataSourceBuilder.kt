@@ -31,10 +31,12 @@ internal object PostgresDataSourceBuilder {
 
     fun clean() = Flyway.configure().dataSource(dataSource).load().clean()
 
-    internal fun runMigration(initSql: String? = null) =
+    internal fun runMigration(initSql: String? = null): Int =
         Flyway.configure()
             .dataSource(dataSource)
             .initSql(initSql)
             .load()
             .migrate()
+            .migrations
+            .size
 }

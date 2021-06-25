@@ -48,8 +48,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
+import org.junit.jupiter.params.provider.ValueSource
 import java.util.UUID
 
 internal class RegeltreTest {
@@ -188,7 +187,7 @@ internal class RegeltreTest {
     }
 
     @ParameterizedTest
-    @MethodSource("reellArbeidssøkerFaktum")
+    @ValueSource(ints = [kanJobbeDeltid, kanJobbeHvorSomHelst, helseTilAlleTyperJobb, villigTilÅBytteYrke])
     fun `Søkere som ikke er reelle arbeidssøkere skal manuelt behandles`(faktum: Int) {
         manglerInntekt.boolsk(faktum).besvar(false)
         assertEquals("ikke reell arbeidssøker", manglerInntekt.nesteSeksjoner().first().navn)
@@ -199,16 +198,6 @@ internal class RegeltreTest {
         manglerInntekt.dato("$registrertArbeidssøkerPeriodeFom.1").besvar(1.januar(2017))
         manglerInntekt.dato("$registrertArbeidssøkerPeriodeTom.1").besvar(30.januar(2017))
         assertEquals("ikke registrert arbeidssøker", manglerInntekt.nesteSeksjoner().first().navn)
-    }
-
-    companion object {
-        @JvmStatic
-        private fun reellArbeidssøkerFaktum() = listOf(
-            Arguments.of(kanJobbeDeltid),
-            Arguments.of(kanJobbeHvorSomHelst),
-            Arguments.of(helseTilAlleTyperJobb),
-            Arguments.of(villigTilÅBytteYrke)
-        )
     }
 
     private fun byggSøknad(subsumsjon: Subsumsjon) =

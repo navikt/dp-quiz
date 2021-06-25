@@ -29,6 +29,7 @@ allprojects {
 
     dependencies {
         implementation(kotlin("stdlib"))
+        implementation(kotlin("reflect"))
 
         testRuntimeOnly(Junit5.engine)
         testImplementation(Junit5.api)
