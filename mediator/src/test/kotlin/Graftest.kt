@@ -33,6 +33,7 @@ import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldigManuell
+import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -155,7 +156,7 @@ class Graftest {
             dato(bursdag67) før dato(søknadsdato) hvisGyldig {
                 "bursdagssjekker".alle(
                     dato(bursdag67) før dato(sisteDagMedLønn) hvisGyldig { dato(bursdag67) før dato(bursdag67) },
-                    "flere sjekker".alle(
+                    "flere sjekker".minstEnAv(
                         dato(bursdag67) før dato(dimisjonsdato),
                         inntekt(inntekt15G) minst inntekt(inntekt3G)
                     )

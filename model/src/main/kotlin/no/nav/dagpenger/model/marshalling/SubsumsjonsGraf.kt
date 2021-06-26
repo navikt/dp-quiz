@@ -12,8 +12,8 @@ import guru.nidi.graphviz.model.Compass.SOUTH_EAST
 import guru.nidi.graphviz.model.Compass.SOUTH_WEST
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.KantTyper.GYLDIG
-import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.KantTyper.UGYLDIG
+import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.Kanttype.GYLDIG
+import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.Kanttype.UGYLDIG
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
@@ -29,11 +29,11 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
     SøknadprosessVisitor {
 
     var index = 0
-    private var kantType = GYLDIG
-    private var løvnode = false
+    private var currentKanttype = GYLDIG
 
-    private val sammensattNoder = mutableListOf<String>()
+    private val opprettetAvSammensatt = mutableListOf<String>()
     private val noder = mutableListOf<String>("rot")
+    private val iSammensattSubtre = mutableListOf<String>("Enkel")
 
     init {
         søknadprosess.accept(this)
@@ -56,13 +56,12 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
             val label = listOf(fakta[0].navn, regel.typeNavn) + if (fakta.size == 2) listOf(fakta[1].navn) else listOf()
             subsumsjon.navn[Label.lines(*label.toTypedArray())]
 
-            if (subsumsjon.navn in sammensattNoder) {
+            if (subsumsjon.navn in opprettetAvSammensatt) {
                 noder.add(0, subsumsjon.navn)
                 return
             }
 
             if (fakta.any { it.harRolle(Rolle.manuell) }) {
-                løvnode = true
                 (noder.first() / kantRetning() - subsumsjon.navn[Label.lines("Manuell behandling")][RED][RED.font()])[kantFarge()][kantType()]
             } else {
                 (noder.first() / kantRetning() - subsumsjon.navn)[kantFarge()][kantType()]
@@ -80,79 +79,87 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
         resultat: Boolean?
     ) {
         noder.removeFirst()
-        løvnode = false
     }
 
     override fun preVisit(subsumsjon: AlleSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
-        sammensattNode(subsumsjon, subsumsjoner, "Alle")
+        lagSammensattNode(subsumsjon, subsumsjoner, "Alle")
     }
 
     override fun postVisit(subsumsjon: AlleSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
-        noder.removeFirst()
+        ryddSammensattNode()
     }
 
     override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
-        sammensattNode(subsumsjon, subsumsjoner, "Minst en av")
+        lagSammensattNode(subsumsjon, subsumsjoner, "Minst en av")
     }
 
     override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
-        noder.removeFirst()
+        ryddSammensattNode()
     }
 
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
-        if (child is TomSubsumsjon && !løvnode) {
-            with(kraphvizContext) {
-                (parent.navn - "Innvilget$index"[GREEN][GREEN.font()][Label.lines("Innvilget")])[GREEN]
-                index++
-            }
-        }
-        kantType = GYLDIG
+        kant(parent, child, GYLDIG)
     }
 
     override fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
-        if (child is TomSubsumsjon && !løvnode) {
+        kant(parent, child, UGYLDIG)
+    }
+
+    private fun kant(parent: Subsumsjon, child: Subsumsjon, kanttype: Kanttype) {
+        val label = when (kanttype) {
+            GYLDIG -> "Innvilget"
+            UGYLDIG -> "Avslag"
+        }
+        currentKanttype = kanttype
+
+        val erManuell = parent.alleFakta().any { it.harRolle(Rolle.manuell) }
+
+        if (child is TomSubsumsjon && !erManuell) {
             with(kraphvizContext) {
-                (parent.navn - "Avslag$index"[RED][RED.font()][Label.lines("Avslag")])[RED]
+                (parent.navn - "$label$index"[kantFarge()][kantFarge().font()][Label.lines(label)])[kantFarge()]
                 index++
             }
         }
-        kantType = UGYLDIG
     }
 
-    private fun sammensattNode(subsumsjon: SammensattSubsumsjon, subsumsjoner: List<Subsumsjon>, label: String) {
-        if (subsumsjon.navn !in sammensattNoder) {
-            with(kraphvizContext) {
+    private fun lagSammensattNode(subsumsjon: SammensattSubsumsjon, subsumsjoner: List<Subsumsjon>, label: String) {
+        with(kraphvizContext) {
+            if (subsumsjon.navn !in opprettetAvSammensatt) {
                 (noder.first() / kantRetning() - subsumsjon.navn)[kantFarge()][kantType()]
             }
-        }
 
-        with(kraphvizContext) {
             subsumsjon.navn[Label.lines(label, subsumsjon.navn)]
 
             subsumsjoner.forEach {
                 (subsumsjon.navn / EAST - it.navn)[BLACK][Arrow.NONE][Style.DASHED]
-                sammensattNoder.add(it.navn)
+                opprettetAvSammensatt.add(it.navn)
             }
         }
         noder.add(0, subsumsjon.navn)
+        iSammensattSubtre.add(0, "Sammensatt")
     }
 
-    private fun kantRetning() = when (kantType) {
+    private fun ryddSammensattNode() {
+        noder.removeFirst()
+        iSammensattSubtre.removeFirst()
+    }
+
+    private fun kantRetning() = when (currentKanttype) {
         GYLDIG -> SOUTH_WEST
         UGYLDIG -> SOUTH_EAST
     }
 
-    private fun kantFarge() = when (kantType) {
+    private fun kantFarge() = when (currentKanttype) {
         GYLDIG -> GREEN
         UGYLDIG -> RED
     }
 
-    private fun kantType() = when (kantType) {
+    private fun kantType() = when (currentKanttype) {
         GYLDIG -> Arrow.NORMAL
         UGYLDIG -> Arrow.NORMAL
     }
 
-    private enum class KantTyper {
+    private enum class Kanttype {
         GYLDIG, UGYLDIG
     }
 }
