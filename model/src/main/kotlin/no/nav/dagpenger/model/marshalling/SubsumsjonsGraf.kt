@@ -6,10 +6,12 @@ import guru.nidi.graphviz.attribute.Color.BLACK
 import guru.nidi.graphviz.attribute.Color.GREEN
 import guru.nidi.graphviz.attribute.Color.RED
 import guru.nidi.graphviz.attribute.Label
+import guru.nidi.graphviz.attribute.LinkAttr
 import guru.nidi.graphviz.attribute.Style
 import guru.nidi.graphviz.model.Compass.EAST
 import guru.nidi.graphviz.model.Compass.SOUTH_EAST
 import guru.nidi.graphviz.model.Compass.SOUTH_WEST
+import guru.nidi.graphviz.model.Compass.WEST
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.Kanttype.GYLDIG
@@ -21,7 +23,6 @@ import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.SammensattSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.util.UUID
 
@@ -53,8 +54,8 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
         // if(noder.first() == subsumsjon.navn) return
 
         with(kraphvizContext) {
-            val label = listOf(fakta[0].navn, regel.typeNavn) + if (fakta.size == 2) listOf(fakta[1].navn) else listOf()
-            subsumsjon.navn[Label.lines(*label.toTypedArray())]
+            val navnelinjer = listOf(fakta[0].navn, regel.typeNavn) + if (fakta.size == 2) listOf(fakta[1].navn) else listOf()
+            subsumsjon.navn[Label.lines(*navnelinjer.toTypedArray())]
 
             if (subsumsjon.navn in opprettetAvSammensatt) {
                 noder.add(0, subsumsjon.navn)
@@ -64,7 +65,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
             if (fakta.any { it.harRolle(Rolle.manuell) }) {
                 (noder.first() / kantRetning() - subsumsjon.navn[Label.lines("Manuell behandling")][RED][RED.font()])[kantFarge()][kantType()]
             } else {
-                (noder.first() / kantRetning() - subsumsjon.navn)[kantFarge()][kantType()]
+                (noder.first() / kantRetning() - subsumsjon.navn)[kantFarge()][kantType()][LinkAttr.weight(10.0)]
             }
         }
 
@@ -114,24 +115,27 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
 
         val erManuell = parent.alleFakta().any { it.harRolle(Rolle.manuell) }
 
+        /*
         if (child is TomSubsumsjon && !erManuell) {
             with(kraphvizContext) {
                 (parent.navn - "$label$index"[kantFarge()][kantFarge().font()][Label.lines(label)])[kantFarge()]
                 index++
             }
         }
+         */
     }
 
     private fun lagSammensattNode(subsumsjon: SammensattSubsumsjon, subsumsjoner: List<Subsumsjon>, label: String) {
         with(kraphvizContext) {
             if (subsumsjon.navn !in opprettetAvSammensatt) {
-                (noder.first() / kantRetning() - subsumsjon.navn)[kantFarge()][kantType()]
+                (noder.first() / kantRetning() - subsumsjon.navn)[kantFarge()][kantType()][LinkAttr.weight(10.0)]
             }
 
             subsumsjon.navn[Label.lines(label, subsumsjon.navn)]
 
             subsumsjoner.forEach {
-                (subsumsjon.navn / EAST - it.navn)[BLACK][Arrow.NONE][Style.DASHED]
+                val retning = if (subsumsjon is AlleSubsumsjon) WEST else EAST
+                (subsumsjon.navn / retning - it.navn)[BLACK][Arrow.NONE][Style.DASHED]
                 opprettetAvSammensatt.add(it.navn)
             }
         }

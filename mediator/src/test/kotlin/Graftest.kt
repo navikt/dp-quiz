@@ -34,6 +34,9 @@ import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldigManuell
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
+import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -167,7 +170,7 @@ class Graftest {
 
     @Test
     @Disabled
-    fun avslag() {
+    fun `tegne subsumsjonsgraf`() {
 
         val søknadprosess = Versjon.Bygger(
             prototypeSøknad,
@@ -186,6 +189,30 @@ class Graftest {
 
             SubsumsjonsGraf(søknadprosess, this)
         }.toGraphviz().scale(10.0).render(Format.PNG).toFile(File("example/ex2.png"))
+        Runtime.getRuntime().exec("open example/ex2.png")
+    }
+
+    @Test
+    @Disabled
+    fun `avslag`() {
+
+        val manglerInntekt = Versjon.Bygger(
+            AvslagPåMinsteinntektOppsett.søknad,
+            AvslagPåMinsteinntekt.regeltre,
+            mapOf(Versjon.UserInterfaceType.Web to Seksjoner.søknadprosess)
+        )
+            .søknadprosess(
+                Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
+                Versjon.UserInterfaceType.Web
+            )
+
+        graph(directed = true) {
+            edge["color" eq "black", Arrow.NORMAL]
+            node[Color.BLACK]
+            graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE)]
+
+            SubsumsjonsGraf(manglerInntekt, this)
+        }.toGraphviz().scale(2.0).render(Format.PNG).toFile(File("example/ex2.png"))
         Runtime.getRuntime().exec("open example/ex2.png")
     }
 }
