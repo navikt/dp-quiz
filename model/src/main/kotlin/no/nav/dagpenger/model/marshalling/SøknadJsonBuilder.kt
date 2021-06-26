@@ -132,20 +132,20 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         }
     }
 
-    override fun preVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(subsumsjon: AlleSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
         putSubsumsjon(lokaltResultat, subsumsjon, "Alle subsumsjon")
     }
 
-    override fun postVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(subsumsjon: AlleSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
         if (ignoreSubsumsjon != null) return
         subsumsjonNoder.removeAt(0)
     }
 
-    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
         putSubsumsjon(lokaltResultat, subsumsjon, "Minst en av subsumsjon")
     }
 
-    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
         if (ignoreSubsumsjon != null) return
         subsumsjonNoder.removeAt(0)
     }

@@ -29,10 +29,10 @@ import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldigManuell
-import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -153,9 +153,12 @@ class Graftest {
             inntekt(inntektSiste3år) minst inntekt(inntekt3G) hvisUgyldigManuell (boolsk(manuell))
         } hvisUgyldig {
             dato(bursdag67) før dato(søknadsdato) hvisGyldig {
-                "bursdagssjekker".minstEnAv(
+                "bursdagssjekker".alle(
                     dato(bursdag67) før dato(sisteDagMedLønn) hvisGyldig { dato(bursdag67) før dato(bursdag67) },
-                    dato(bursdag67) før dato(dimisjonsdato)
+                    "flere sjekker".alle(
+                        dato(bursdag67) før dato(dimisjonsdato),
+                        inntekt(inntekt15G) minst inntekt(inntekt3G)
+                    )
                 )
             }
         }
