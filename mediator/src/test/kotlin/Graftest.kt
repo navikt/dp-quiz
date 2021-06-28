@@ -60,6 +60,7 @@ class Graftest {
 
             )
         Graphviz.fromGraph(g).height(300).render(Format.PNG).toFile(File("example/ex1.png"))
+        Runtime.getRuntime().exec("open example/ex1.png")
     }
 
     @Test
@@ -87,16 +88,36 @@ class Graftest {
         graph(directed = true) {
             edge["color" eq "black", Arrow.NORMAL]
             node[Color.BLACK]
-            graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE)]
+            graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE), GraphAttr.COMPOUND]
 
             "a" - "b" - "c"
             ("c"[Color.RED] - "d"[Color.BLUE])
             ("d" / Compass.SOUTH_WEST - "f")[LinkAttr.weight(15.0)][Color.GREEN] - "g" - "h"
             ("d" / Compass.SOUTH_EAST - "avslag")[LinkAttr.weight(10.0)][Color.RED]
-            ("d" / Compass.EAST - "e" / Compass.WEST)[Color.BLACK][Arrow.NONE]
+            ("d" / Compass.EAST - "e" / Compass.WEST)[Color.BLACK][Arrow.NONE] // [attr("weight", 5000)]
             ("d" / Compass.EAST - "e2" / Compass.WEST)[Color.BLACK][Arrow.NONE] - "e21"
             ("d" / Compass.EAST - "e3" / Compass.WEST)[Color.BLACK][Arrow.NONE] - "e31" - "e32"
-        }.toGraphviz().width(1000).render(Format.PNG).toFile(File("example/ex2.png"))
+
+            ("c" - "x2")[Style.INVIS]
+
+            ("c" - "x")[attr("lhead", "cluster_bob")]
+            graph(cluster = true, name = "bob") {
+                ("x" - "y")
+
+                graph(cluster = true, name = "bob3") {
+                    ("xx" - "yy")
+                }
+                ("x" - "xx")[attr("lhead", "cluster_bob3")][attr("constraint", false)]
+            }
+
+            graph(cluster = true, name = "bob2") {
+                ("x2" - "y2")
+            }
+
+            ("y" - "y2")[attr("ltail", "cluster_bob"), attr("lhead", "cluster_bob2")]
+        }
+            .toGraphviz().scale(10.0).render(Format.PNG).toFile(File("example/ex2.png"))
+        // .toGraphviz().scale(10.0).render(Format.DOT).toFile(File("example/ex2.dot"))
         Runtime.getRuntime().exec("open example/ex2.png")
     }
 
@@ -185,10 +206,10 @@ class Graftest {
         graph(directed = true) {
             edge["color" eq "black", Arrow.NORMAL]
             node[Color.BLACK]
-            graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE)]
+            graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE), GraphAttr.COMPOUND]
 
             SubsumsjonsGraf(søknadprosess, this)
-        }.toGraphviz().scale(10.0).render(Format.PNG).toFile(File("example/ex2.png"))
+        }.toGraphviz().scale(8.0).render(Format.PNG).toFile(File("example/ex2.png"))
         Runtime.getRuntime().exec("open example/ex2.png")
     }
 
@@ -209,7 +230,7 @@ class Graftest {
         graph(directed = true) {
             edge["color" eq "black", Arrow.NORMAL]
             node[Color.BLACK]
-            graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE)]
+            graph[Rank.dir(Rank.RankDir.LEFT_TO_RIGHT), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE), GraphAttr.COMPOUND]
 
             SubsumsjonsGraf(manglerInntekt, this)
         }.toGraphviz().scale(2.0).render(Format.PNG).toFile(File("example/ex2.png"))

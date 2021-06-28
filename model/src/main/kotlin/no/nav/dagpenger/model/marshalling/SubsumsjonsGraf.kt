@@ -2,12 +2,13 @@ package no.nav.dagpenger.model.marshalling
 
 import guru.nidi.graphviz.KraphvizContext
 import guru.nidi.graphviz.attribute.Arrow
-import guru.nidi.graphviz.attribute.Color.BLACK
+import guru.nidi.graphviz.attribute.Attributes.attr
 import guru.nidi.graphviz.attribute.Color.GREEN
 import guru.nidi.graphviz.attribute.Color.RED
 import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.attribute.LinkAttr
-import guru.nidi.graphviz.attribute.Style
+import guru.nidi.graphviz.graph
+import guru.nidi.graphviz.model.Compass
 import guru.nidi.graphviz.model.Compass.EAST
 import guru.nidi.graphviz.model.Compass.SOUTH_EAST
 import guru.nidi.graphviz.model.Compass.SOUTH_WEST
@@ -36,6 +37,8 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
     private val noder = mutableListOf<String>("rot")
     private val iSammensattSubtre = mutableListOf<String>("Enkel")
 
+    private val grafContext = mutableListOf(kraphvizContext)
+
     init {
         søknadprosess.accept(this)
     }
@@ -63,7 +66,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
             }
 
             if (fakta.any { it.harRolle(Rolle.manuell) }) {
-                (noder.first() / kantRetning() - subsumsjon.navn[Label.lines("Manuell behandling")][RED][RED.font()])[kantFarge()][kantType()]
+                (noder.first() / kantRetning() - subsumsjon.navn[Label.lines("Manuell behandling")][RED][RED.font()])[kantFarge()][kantType()][LinkAttr.weight(10.0)]
             } else {
                 (noder.first() / kantRetning() - subsumsjon.navn)[kantFarge()][kantType()][LinkAttr.weight(10.0)]
             }
@@ -130,14 +133,17 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
             if (subsumsjon.navn !in opprettetAvSammensatt) {
                 (noder.first() / kantRetning() - subsumsjon.navn)[kantFarge()][kantType()][LinkAttr.weight(10.0)]
             }
-
             subsumsjon.navn[Label.lines(label, subsumsjon.navn)]
 
-            subsumsjoner.forEach {
-                val retning = if (subsumsjon is AlleSubsumsjon) WEST else EAST
-                (subsumsjon.navn / retning - it.navn)[BLACK][Arrow.NONE][Style.DASHED]
-                opprettetAvSammensatt.add(it.navn)
-            }
+            graph(directed = true, cluster = true, name = subsumsjon.navn) {
+                subsumsjoner.forEach {
+                    val retning = if (subsumsjon is AlleSubsumsjon) WEST else EAST
+                    val retningMotsatt = if (subsumsjon is AlleSubsumsjon) EAST else WEST
+                    it.navn / Compass.NORTH
+                    opprettetAvSammensatt.add(it.navn)
+                }
+            }.graphAttrs().add(Label.lines("$label ${subsumsjon.navn}"))
+            (subsumsjon.navn - subsumsjoner.first().navn)[attr("lhead", "cluster_${subsumsjon.navn}")]
         }
         noder.add(0, subsumsjon.navn)
         iSammensattSubtre.add(0, "Sammensatt")
