@@ -247,7 +247,7 @@ class Graftest {
         val graf = graph(directed = true) {
             edge["color" eq "black", Arrow.NORMAL]
             node[Color.BLACK]
-            graph[Rank.dir(Rank.RankDir.LEFT_TO_RIGHT), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE), GraphAttr.COMPOUND]
+            graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE), GraphAttr.COMPOUND]
         }
         SubsumsjonsGraf(manglerInntekt, graf)
         graf.toGraphviz().scale(2.0).render(Format.PNG).toFile(File("example/ex2.png"))

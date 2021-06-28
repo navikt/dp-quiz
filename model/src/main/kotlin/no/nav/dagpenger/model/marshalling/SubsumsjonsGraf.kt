@@ -3,7 +3,10 @@ package no.nav.dagpenger.model.marshalling
 import guru.nidi.graphviz.attribute.Attributes.attr
 import guru.nidi.graphviz.attribute.Color.GREEN
 import guru.nidi.graphviz.attribute.Color.RED
+import guru.nidi.graphviz.attribute.GraphAttr
 import guru.nidi.graphviz.attribute.Label
+import guru.nidi.graphviz.attribute.Rank
+import guru.nidi.graphviz.model.Compass.EAST
 import guru.nidi.graphviz.model.Compass.SOUTH
 import guru.nidi.graphviz.model.Compass.SOUTH_EAST
 import guru.nidi.graphviz.model.Compass.SOUTH_WEST
@@ -23,6 +26,7 @@ import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.SammensattSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.util.UUID
 
@@ -127,14 +131,36 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
 
         val erManuell = parent.alleFakta().any { it.harRolle(Rolle.manuell) }
 
-        /*
-        if (child is TomSubsumsjon && !erManuell) {
+        if(child is TomSubsumsjon && !erManuell && parent is SammensattSubsumsjon && subGrafer.size == 2) {
+            subGrafer[1].let{
+                it.add(
+                    node(parent.navn).link(
+                        between(port(kantRetning()), node("$label$index").with(kantFarge().font(), kantFarge(), Label.lines(label)))
+                            .with(kantFarge(), attr("weight", 10)))
+                )
+                index++
+            }
+        }
+
+        if (child is TomSubsumsjon && !erManuell && subGrafer.size == 1) {
+            subGrafer.first().let{
+                it.add(
+                    node(parent.navn).link(
+                        between(port(kantRetning()), node("$label$index").with(kantFarge().font(), kantFarge(), Label.lines(label)))
+                            .with(kantFarge(), attr("weight", 10)))
+                    )
+                index++
+
+            }
+            /*
             with(kraphvizContext) {
                 (parent.navn - "$label$index"[kantFarge()][kantFarge().font()][Label.lines(label)])[kantFarge()]
                 index++
             }
+
+             */
         }
-         */
+
     }
 
     private fun lagSammensattNode(subsumsjon: SammensattSubsumsjon, subsumsjoner: List<Subsumsjon>, label: String) {
@@ -153,7 +179,9 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
             }
 
             val subgraf =
-                mutGraph().setCluster(true).setDirected(true).setName(subsumsjon.navn).graphAttrs().add(nodeLabel)
+                mutGraph().setCluster(true).setDirected(true).setName(subsumsjon.navn)
+                    .graphAttrs().add(Rank.dir(Rank.RankDir.TOP_TO_BOTTOM))
+                    .graphAttrs().add(nodeLabel)
             subsumsjoner.forEach { child ->
                 subgraf.add(node(child.navn))
                 opprettetAvSammensatt.add(child.navn)
@@ -162,7 +190,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
 
             it.add(
                 node(subsumsjon.navn).link(
-                    between(port(SOUTH), node(subsumsjoner.first().navn))
+                    between(port(EAST), node(subsumsjoner.first().navn))
                         .with(attr("lhead", "cluster_${subsumsjon.navn}"))
                 )
             )
