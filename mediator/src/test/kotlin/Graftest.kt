@@ -12,8 +12,8 @@ import guru.nidi.graphviz.engine.Graphviz
 import guru.nidi.graphviz.graph
 import guru.nidi.graphviz.model.Compass
 import guru.nidi.graphviz.model.Factory.node
-import guru.nidi.graphviz.model.Graph
 import guru.nidi.graphviz.model.Link
+import guru.nidi.graphviz.model.MutableGraph
 import guru.nidi.graphviz.toGraphviz
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
@@ -47,8 +47,8 @@ class Graftest {
     @Test
     @Disabled
     fun test() {
-        val g: Graph = guru.nidi.graphviz.model.Factory.graph("example1").directed()
-            .graphAttr().with(Rank.dir(Rank.RankDir.LEFT_TO_RIGHT))
+        val g: MutableGraph = guru.nidi.graphviz.model.Factory.graph("example1").directed()
+            .graphAttr().with(Rank.dir(Rank.RankDir.LEFT_TO_RIGHT), GraphAttr.COMPOUND)
             .nodeAttr().with(Font.name("arial"))
             .linkAttr().with("class", "link-class")
             .with(
@@ -58,7 +58,19 @@ class Graftest {
                 node("a").with(Color.RED).link(node("hvor lang kan denne teksten være før den blir stygg?")),
                 node("1").with(Color.RED).link(node("2")),
 
-            )
+            ).toMutable()
+
+        g.add(node("2b").with(Color.RED).link(node("2")))
+
+        val g2: MutableGraph = guru.nidi.graphviz.model.Factory.graph("eeeeeee").directed().cluster()
+            .graphAttr().with(Rank.dir(Rank.RankDir.LEFT_TO_RIGHT), GraphAttr.COMPOUND)
+            .nodeAttr().with(Font.name("arial"))
+            .linkAttr().with("class", "link-class")
+            .with(node("xxy").with(Color.RED).link(node("yy"))).toMutable()
+
+        g2.addTo(g)
+        g2.add(node("xxyzz").with(Color.RED).link(node("yy")))
+
         Graphviz.fromGraph(g).height(300).render(Format.PNG).toFile(File("example/ex1.png"))
         Runtime.getRuntime().exec("open example/ex1.png")
     }
@@ -85,7 +97,8 @@ class Graftest {
     @Test
     @Disabled
     fun test3() {
-        graph(directed = true) {
+        var indreGraf: MutableGraph? = null
+        val resultat = graph(directed = true) {
             edge["color" eq "black", Arrow.NORMAL]
             node[Color.BLACK]
             graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE), GraphAttr.COMPOUND]
@@ -104,7 +117,7 @@ class Graftest {
             graph(cluster = true, name = "bob") {
                 ("x" - "y")
 
-                graph(cluster = true, name = "bob3") {
+                indreGraf = graph(cluster = true, name = "bob3") {
                     ("xx" - "yy")
                 }
                 ("x" - "xx")[attr("lhead", "cluster_bob3")][attr("constraint", false)]
@@ -116,7 +129,10 @@ class Graftest {
 
             ("y" - "y2")[attr("ltail", "cluster_bob"), attr("lhead", "cluster_bob2")]
         }
-            .toGraphviz().scale(10.0).render(Format.PNG).toFile(File("example/ex2.png"))
+
+        indreGraf!!.add(node("xxx").with(Color.RED).link(node("yyy")))
+
+        resultat.toGraphviz().scale(10.0).render(Format.PNG).toFile(File("example/ex2.png"))
         // .toGraphviz().scale(10.0).render(Format.DOT).toFile(File("example/ex2.dot"))
         Runtime.getRuntime().exec("open example/ex2.png")
     }
@@ -203,13 +219,14 @@ class Graftest {
                 Versjon.UserInterfaceType.Web
             )
 
-        graph(directed = true) {
+        val graf = graph(directed = true) {
             edge["color" eq "black", Arrow.NORMAL]
             node[Color.BLACK]
             graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE), GraphAttr.COMPOUND]
+        }
+        SubsumsjonsGraf(søknadprosess, graf)
 
-            SubsumsjonsGraf(søknadprosess, this)
-        }.toGraphviz().scale(8.0).render(Format.PNG).toFile(File("example/ex2.png"))
+        graf.toGraphviz().scale(8.0).render(Format.PNG).toFile(File("example/ex2.png"))
         Runtime.getRuntime().exec("open example/ex2.png")
     }
 
@@ -227,13 +244,13 @@ class Graftest {
                 Versjon.UserInterfaceType.Web
             )
 
-        graph(directed = true) {
+        val graf = graph(directed = true) {
             edge["color" eq "black", Arrow.NORMAL]
             node[Color.BLACK]
             graph[Rank.dir(Rank.RankDir.LEFT_TO_RIGHT), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE), GraphAttr.COMPOUND]
-
-            SubsumsjonsGraf(manglerInntekt, this)
-        }.toGraphviz().scale(2.0).render(Format.PNG).toFile(File("example/ex2.png"))
+        }
+        SubsumsjonsGraf(manglerInntekt, graf)
+        graf.toGraphviz().scale(2.0).render(Format.PNG).toFile(File("example/ex2.png"))
         Runtime.getRuntime().exec("open example/ex2.png")
     }
 }

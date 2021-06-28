@@ -1,18 +1,17 @@
 package no.nav.dagpenger.model.marshalling
 
-import guru.nidi.graphviz.KraphvizContext
-import guru.nidi.graphviz.attribute.Arrow
 import guru.nidi.graphviz.attribute.Attributes.attr
 import guru.nidi.graphviz.attribute.Color.GREEN
 import guru.nidi.graphviz.attribute.Color.RED
 import guru.nidi.graphviz.attribute.Label
-import guru.nidi.graphviz.attribute.LinkAttr
-import guru.nidi.graphviz.graph
-import guru.nidi.graphviz.model.Compass
-import guru.nidi.graphviz.model.Compass.EAST
+import guru.nidi.graphviz.model.Compass.SOUTH
 import guru.nidi.graphviz.model.Compass.SOUTH_EAST
 import guru.nidi.graphviz.model.Compass.SOUTH_WEST
-import guru.nidi.graphviz.model.Compass.WEST
+import guru.nidi.graphviz.model.Factory.between
+import guru.nidi.graphviz.model.Factory.mutGraph
+import guru.nidi.graphviz.model.Factory.node
+import guru.nidi.graphviz.model.Factory.port
+import guru.nidi.graphviz.model.MutableGraph
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.Kanttype.GYLDIG
@@ -27,19 +26,19 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.util.UUID
 
-class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContext: KraphvizContext) :
+class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: MutableGraph) :
     SøknadprosessVisitor {
 
     var index = 0
     private var currentKanttype = GYLDIG
 
     private val opprettetAvSammensatt = mutableListOf<String>()
-    private val noder = mutableListOf<String>("rot")
-    private val iSammensattSubtre = mutableListOf<String>("Enkel")
+    private val noder = mutableListOf<String>()
 
-    private val grafContext = mutableListOf(kraphvizContext)
+    private val subGrafer = mutableListOf<MutableGraph>()
 
     init {
+        subGrafer.add(0, rotGraf)
         søknadprosess.accept(this)
     }
 
@@ -54,25 +53,35 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
         lokaltResultat: Boolean?,
         resultat: Boolean?
     ) {
-        // if(noder.first() == subsumsjon.navn) return
 
-        with(kraphvizContext) {
-            val navnelinjer = listOf(fakta[0].navn, regel.typeNavn) + if (fakta.size == 2) listOf(fakta[1].navn) else listOf()
-            subsumsjon.navn[Label.lines(*navnelinjer.toTypedArray())]
+        subGrafer.first().let {
+            val navnelinjer = nodeNavn(fakta, regel)
+            it.add(node(subsumsjon.navn).with(Label.lines(*navnelinjer.toTypedArray())))
+
+            if (noder.first() == subsumsjon.navn) return
 
             if (subsumsjon.navn in opprettetAvSammensatt) {
                 noder.add(0, subsumsjon.navn)
                 return
             }
 
-            if (fakta.any { it.harRolle(Rolle.manuell) }) {
-                (noder.first() / kantRetning() - subsumsjon.navn[Label.lines("Manuell behandling")][RED][RED.font()])[kantFarge()][kantType()][LinkAttr.weight(10.0)]
-            } else {
-                (noder.first() / kantRetning() - subsumsjon.navn)[kantFarge()][kantType()][LinkAttr.weight(10.0)]
-            }
-        }
+            val tilNode = if (fakta.any { it.harRolle(Rolle.manuell) }) {
+                node(subsumsjon.navn).with(RED, RED.font())
+            } else node(subsumsjon.navn)
 
+            it.add(
+                node(noder.first()).link(
+                    between(port(kantRetning()), tilNode)
+                        .with(kantFarge(), attr("weight", 10))
+                )
+            )
+        }
         noder.add(0, subsumsjon.navn)
+    }
+
+    private fun nodeNavn(fakta: List<Faktum<*>>, regel: Regel): List<String> {
+        if (fakta.any { it.harRolle(Rolle.manuell) }) return listOf("Manuell behandling")
+        return listOf(fakta[0].navn, regel.typeNavn) + if (fakta.size == 2) listOf(fakta[1].navn) else listOf()
     }
 
     override fun postVisit(
@@ -129,29 +138,43 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
     }
 
     private fun lagSammensattNode(subsumsjon: SammensattSubsumsjon, subsumsjoner: List<Subsumsjon>, label: String) {
-        with(kraphvizContext) {
-            if (subsumsjon.navn !in opprettetAvSammensatt) {
-                (noder.first() / kantRetning() - subsumsjon.navn)[kantFarge()][kantType()][LinkAttr.weight(10.0)]
-            }
-            subsumsjon.navn[Label.lines(label, subsumsjon.navn)]
 
-            graph(directed = true, cluster = true, name = subsumsjon.navn) {
-                subsumsjoner.forEach {
-                    val retning = if (subsumsjon is AlleSubsumsjon) WEST else EAST
-                    val retningMotsatt = if (subsumsjon is AlleSubsumsjon) EAST else WEST
-                    it.navn / Compass.NORTH
-                    opprettetAvSammensatt.add(it.navn)
-                }
-            }.graphAttrs().add(Label.lines("$label ${subsumsjon.navn}"))
-            (subsumsjon.navn - subsumsjoner.first().navn)[attr("lhead", "cluster_${subsumsjon.navn}")]
+        subGrafer.first().let {
+            val nodeLabel = Label.lines(label, subsumsjon.navn)
+            it.add(node(subsumsjon.navn).with(nodeLabel))
+
+            if (subsumsjon.navn !in opprettetAvSammensatt) {
+                it.add(
+                    node(noder.first()).link(
+                        between(port(kantRetning()), node(subsumsjon.navn))
+                            .with(kantFarge(), attr("weight", 10))
+                    )
+                )
+            }
+
+            val subgraf =
+                mutGraph().setCluster(true).setDirected(true).setName(subsumsjon.navn).graphAttrs().add(nodeLabel)
+            subsumsjoner.forEach { child ->
+                subgraf.add(node(child.navn))
+                opprettetAvSammensatt.add(child.navn)
+            }
+            subgraf.addTo(it)
+
+            it.add(
+                node(subsumsjon.navn).link(
+                    between(port(SOUTH), node(subsumsjoner.first().navn))
+                        .with(attr("lhead", "cluster_${subsumsjon.navn}"))
+                )
+            )
+            subGrafer.add(0, subgraf)
         }
+
         noder.add(0, subsumsjon.navn)
-        iSammensattSubtre.add(0, "Sammensatt")
     }
 
     private fun ryddSammensattNode() {
         noder.removeFirst()
-        iSammensattSubtre.removeFirst()
+        subGrafer.removeFirst()
     }
 
     private fun kantRetning() = when (currentKanttype) {
@@ -162,11 +185,6 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val kraphvizContex
     private fun kantFarge() = when (currentKanttype) {
         GYLDIG -> GREEN
         UGYLDIG -> RED
-    }
-
-    private fun kantType() = when (currentKanttype) {
-        GYLDIG -> Arrow.NORMAL
-        UGYLDIG -> Arrow.NORMAL
     }
 
     private enum class Kanttype {
