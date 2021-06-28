@@ -197,8 +197,11 @@ class Graftest {
                 "bursdagssjekker".alle(
                     dato(bursdag67) før dato(sisteDagMedLønn) hvisGyldig { dato(bursdag67) før dato(bursdag67) },
                     "flere sjekker".minstEnAv(
-                        dato(bursdag67) før dato(dimisjonsdato),
-                        inntekt(inntekt15G) minst inntekt(inntekt3G)
+                        dato(bursdag67) før dato(dimisjonsdato)
+                    ) hvisGyldig { dato(ønsketdato) før dato(ønsketdato) },
+                    "enda flere sjekker ".minstEnAv(
+                        inntekt(inntekt15G) minst inntekt(inntekt3G),
+                        inntekt(inntekt15G) minst inntekt(inntekt15G)
                     )
                 )
             }
@@ -250,7 +253,7 @@ class Graftest {
             graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE), GraphAttr.COMPOUND]
         }
         SubsumsjonsGraf(manglerInntekt, graf)
-        graf.toGraphviz().scale(2.0).render(Format.PNG).toFile(File("example/ex2.png"))
+        graf.toGraphviz().scale(5.0).render(Format.PNG).toFile(File("example/ex2.png"))
         Runtime.getRuntime().exec("open example/ex2.png")
     }
 }

@@ -69,7 +69,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
                 return
             }
 
-            val tilNode = if (fakta.any { it.harRolle(Rolle.manuell) }) {
+            val tilNode = if (fakta.any { faktum -> faktum.harRolle(Rolle.manuell) }) {
                 node(subsumsjon.navn).with(RED, RED.font())
             } else node(subsumsjon.navn)
 
@@ -115,6 +115,11 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
     }
 
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
+        if(parent is SammensattSubsumsjon) {
+            //Under-subsumsjonene har blitt behandlet, og gyldig/ugyldig-treene skal ikke være med i boksen
+            val subGraf = subGrafer.removeFirst()
+            subGraf.addTo(subGrafer.first())
+        }
         kant(parent, child, GYLDIG)
     }
 
@@ -131,6 +136,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
 
         val erManuell = parent.alleFakta().any { it.harRolle(Rolle.manuell) }
 
+        /*
         if(child is TomSubsumsjon && !erManuell && parent is SammensattSubsumsjon && subGrafer.size == 2) {
             subGrafer[1].let{
                 it.add(
@@ -141,6 +147,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
                 index++
             }
         }
+        */
 
         if (child is TomSubsumsjon && !erManuell && subGrafer.size == 1) {
             subGrafer.first().let{
@@ -152,14 +159,8 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
                 index++
 
             }
-            /*
-            with(kraphvizContext) {
-                (parent.navn - "$label$index"[kantFarge()][kantFarge().font()][Label.lines(label)])[kantFarge()]
-                index++
-            }
-
-             */
         }
+
 
     }
 
@@ -167,9 +168,9 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
 
         subGrafer.first().let {
             val nodeLabel = Label.lines(label, subsumsjon.navn)
-            it.add(node(subsumsjon.navn).with(nodeLabel))
+            rotGraf.add(node(subsumsjon.navn).with(nodeLabel))
 
-            if (subsumsjon.navn !in opprettetAvSammensatt) {
+            if (subsumsjon.navn !in opprettetAvSammensatt && noder.first() != subsumsjon.navn) {
                 it.add(
                     node(noder.first()).link(
                         between(port(kantRetning()), node(subsumsjon.navn))
@@ -180,13 +181,13 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
 
             val subgraf =
                 mutGraph().setCluster(true).setDirected(true).setName(subsumsjon.navn)
-                    .graphAttrs().add(Rank.dir(Rank.RankDir.TOP_TO_BOTTOM))
+                    .graphAttrs().add(Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.COMPOUND, nodeLabel)
                     .graphAttrs().add(nodeLabel)
+
             subsumsjoner.forEach { child ->
                 subgraf.add(node(child.navn))
                 opprettetAvSammensatt.add(child.navn)
             }
-            subgraf.addTo(it)
 
             it.add(
                 node(subsumsjon.navn).link(
@@ -202,7 +203,6 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
 
     private fun ryddSammensattNode() {
         noder.removeFirst()
-        subGrafer.removeFirst()
     }
 
     private fun kantRetning() = when (currentKanttype) {
