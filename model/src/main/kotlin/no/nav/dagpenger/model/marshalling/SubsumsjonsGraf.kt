@@ -7,7 +7,6 @@ import guru.nidi.graphviz.attribute.GraphAttr
 import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.attribute.Rank
 import guru.nidi.graphviz.model.Compass.EAST
-import guru.nidi.graphviz.model.Compass.SOUTH
 import guru.nidi.graphviz.model.Compass.SOUTH_EAST
 import guru.nidi.graphviz.model.Compass.SOUTH_WEST
 import guru.nidi.graphviz.model.Factory.between
@@ -22,6 +21,7 @@ import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.Kanttype.UGYLDIG
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.SammensattSubsumsjon
@@ -50,14 +50,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
         noder.add(søknadprosess.rootSubsumsjon.navn)
     }
 
-    override fun preVisit(
-        subsumsjon: EnkelSubsumsjon,
-        regel: Regel,
-        fakta: List<Faktum<*>>,
-        lokaltResultat: Boolean?,
-        resultat: Boolean?
-    ) {
-
+    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
         subGrafer.first().let {
             val navnelinjer = nodeNavn(fakta, regel)
             it.add(node(subsumsjon.navn).with(Label.lines(*navnelinjer.toTypedArray())))
@@ -85,16 +78,11 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
 
     private fun nodeNavn(fakta: List<Faktum<*>>, regel: Regel): List<String> {
         if (fakta.any { it.harRolle(Rolle.manuell) }) return listOf("Manuell behandling")
-        return listOf(fakta[0].navn, regel.typeNavn) + if (fakta.size == 2) listOf(fakta[1].navn) else listOf()
+        if (fakta.size == 1) return listOf(regel.kortNavn(fakta))
+        return listOf(fakta[0].navn, regel.typeNavn, fakta[1].navn)
     }
 
-    override fun postVisit(
-        subsumsjon: EnkelSubsumsjon,
-        regel: Regel,
-        fakta: List<Faktum<*>>,
-        lokaltResultat: Boolean?,
-        resultat: Boolean?
-    ) {
+    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
         noder.removeFirst()
     }
 
@@ -114,9 +102,17 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
         ryddSammensattNode()
     }
 
+    override fun preVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+        lagSammensattNode(subsumsjon, listOf(child), "Deltre")
+    }
+
+    override fun postVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+        ryddSammensattNode()
+    }
+
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
-        if(parent is SammensattSubsumsjon) {
-            //Under-subsumsjonene har blitt behandlet, og gyldig/ugyldig-treene skal ikke være med i boksen
+        if (parent is SammensattSubsumsjon) {
+            // Under-subsumsjonene har blitt behandlet, og gyldig/ugyldig-treene skal ikke være med i boksen
             val subGraf = subGrafer.removeFirst()
             subGraf.addTo(subGrafer.first())
         }
@@ -136,32 +132,17 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
 
         val erManuell = parent.alleFakta().any { it.harRolle(Rolle.manuell) }
 
-        /*
-        if(child is TomSubsumsjon && !erManuell && parent is SammensattSubsumsjon && subGrafer.size == 2) {
-            subGrafer[1].let{
+        if (child is TomSubsumsjon && !erManuell && subGrafer.size == 1) {
+            subGrafer.first().let {
                 it.add(
                     node(parent.navn).link(
                         between(port(kantRetning()), node("$label$index").with(kantFarge().font(), kantFarge(), Label.lines(label)))
-                            .with(kantFarge(), attr("weight", 10)))
+                            .with(kantFarge(), attr("weight", 10))
+                    )
                 )
                 index++
             }
         }
-        */
-
-        if (child is TomSubsumsjon && !erManuell && subGrafer.size == 1) {
-            subGrafer.first().let{
-                it.add(
-                    node(parent.navn).link(
-                        between(port(kantRetning()), node("$label$index").with(kantFarge().font(), kantFarge(), Label.lines(label)))
-                            .with(kantFarge(), attr("weight", 10)))
-                    )
-                index++
-
-            }
-        }
-
-
     }
 
     private fun lagSammensattNode(subsumsjon: SammensattSubsumsjon, subsumsjoner: List<Subsumsjon>, label: String) {

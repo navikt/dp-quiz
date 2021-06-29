@@ -175,8 +175,8 @@ interface SubsumsjonVisitor : FaktumVisitor {
     fun postVisit(subsumsjon: MinstEnAvSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun preVisit(subsumsjon: BareEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun postVisit(subsumsjon: BareEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun preVisit(subsumsjon: DeltreSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun postVisit(subsumsjon: DeltreSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun preVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun postVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun preVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,

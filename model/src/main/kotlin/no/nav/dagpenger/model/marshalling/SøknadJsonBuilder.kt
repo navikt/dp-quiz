@@ -159,11 +159,11 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         subsumsjonNoder.removeAt(0)
     }
 
-    override fun preVisit(subsumsjon: DeltreSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
         putSubsumsjon(lokaltResultat, subsumsjon, "Deltre subsumsjon")
     }
 
-    override fun postVisit(subsumsjon: DeltreSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
         if (ignoreSubsumsjon != null) return
         subsumsjonNoder.removeAt(0)
     }

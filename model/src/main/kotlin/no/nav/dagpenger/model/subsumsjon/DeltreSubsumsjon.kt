@@ -48,9 +48,9 @@ class DeltreSubsumsjon private constructor(
 
     override fun accept(visitor: SubsumsjonVisitor) {
         resultat().also {
-            visitor.preVisit(this, lokaltResultat(), it)
+            visitor.preVisit(this, child, lokaltResultat(), it)
             super.accept(visitor)
-            visitor.postVisit(this, lokaltResultat(), it)
+            visitor.postVisit(this, child, lokaltResultat(), it)
         }
     }
 

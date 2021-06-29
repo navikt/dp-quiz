@@ -24,12 +24,14 @@ import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf
+import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
+import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldigManuell
@@ -148,6 +150,7 @@ class Graftest {
     private val inntekt3G = 9
     private val inntekt15G = 10
     private val manuell = 11
+    private val registrertArbeidssøker = 12
 
     private val prototypeSøknad = Søknad(
         509,
@@ -161,7 +164,8 @@ class Graftest {
         maks dato "Hvilken dato vedtaket skal gjelde fra" av 2 og 3 og 4 id virkningsdato,
         inntekt faktum "3G" id inntekt3G,
         inntekt faktum "1.5G" id inntekt15G,
-        boolsk faktum "Manuell fordi noe" id manuell
+        boolsk faktum "Manuell fordi noe" id manuell,
+        boolsk faktum "Registrert arbeidssøker" id registrertArbeidssøker
     )
 
     private val prototypeWebSøknad =
@@ -179,7 +183,8 @@ class Graftest {
                     inntekt(inntekt15G),
                     inntekt(inntekt3G),
                     inntekt(inntektSiste3år),
-                    inntekt(inntektSisteÅr)
+                    inntekt(inntektSisteÅr),
+                    boolsk(registrertArbeidssøker)
                 ),
                 Seksjon(
                     "manuell",
@@ -190,8 +195,8 @@ class Graftest {
         }
 
     private val prototypeSubsumsjon = with(prototypeSøknad) {
-        inntekt(inntektSisteÅr) minst inntekt(inntekt15G) hvisGyldig {
-            inntekt(inntektSiste3år) minst inntekt(inntekt3G) hvisUgyldigManuell (boolsk(manuell))
+        boolsk(registrertArbeidssøker) er true hvisGyldig {
+            "deltre".deltre { inntekt(inntektSisteÅr) minst inntekt(inntekt15G) hvisUgyldigManuell (boolsk(manuell)) }
         } hvisUgyldig {
             dato(bursdag67) før dato(søknadsdato) hvisGyldig {
                 "bursdagssjekker".alle(
@@ -229,7 +234,7 @@ class Graftest {
         }
         SubsumsjonsGraf(søknadprosess, graf)
 
-        graf.toGraphviz().scale(8.0).render(Format.PNG).toFile(File("example/ex2.png"))
+        graf.toGraphviz().scale(3.0).render(Format.PNG).toFile(File("example/ex2.png"))
         Runtime.getRuntime().exec("open example/ex2.png")
     }
 
@@ -253,7 +258,7 @@ class Graftest {
             graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE), GraphAttr.COMPOUND]
         }
         SubsumsjonsGraf(manglerInntekt, graf)
-        graf.toGraphviz().scale(5.0).render(Format.PNG).toFile(File("example/ex2.png"))
+        graf.toGraphviz().scale(2.0).render(Format.PNG).toFile(File("example/ex2.png"))
         Runtime.getRuntime().exec("open example/ex2.png")
     }
 }
