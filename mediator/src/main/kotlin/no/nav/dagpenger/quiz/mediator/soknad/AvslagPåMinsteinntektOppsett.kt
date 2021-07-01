@@ -43,6 +43,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val registrertArbeidssøkerPeriodeFom = 21
     const val registrertArbeidssøkerPeriodeTom = 22
     const val behandlingsdato = 23
+    const val inntektsrapporteringsperiodeTom = 25
     const val antallEndredeArbeidsforhold = 26
     const val ordinær = 27
     const val permittert = 28
@@ -114,7 +115,8 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Har mulighet til å jobbe hvor som helst" id kanJobbeHvorSomHelst avhengerAv innsendtSøknadsId,
             boolsk faktum "Er villig til å bytte yrke eller gå ned i lønn" id villigTilÅBytteYrke avhengerAv innsendtSøknadsId,
             boolsk faktum "Reell arbeidssøker manuell" id reellArbeidssøkerManuell avhengerAv kanJobbeDeltid og helseTilAlleTyperJobb og kanJobbeHvorSomHelst og villigTilÅBytteYrke,
-            boolsk faktum "Registrert arbeidssøker manuell" id registrertArbeidssøkerManuell avhengerAv registrertArbeidssøkerPerioder
+            boolsk faktum "Registrert arbeidssøker manuell" id registrertArbeidssøkerManuell avhengerAv registrertArbeidssøkerPerioder,
+            dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTom avhengerAv behandlingsdato
         )
 
     private val faktumNavBehov =
@@ -147,7 +149,8 @@ internal object AvslagPåMinsteinntektOppsett {
                 kanJobbeDeltid to "KanJobbeDeltid",
                 helseTilAlleTyperJobb to "HelseTilAlleTyperJobb",
                 kanJobbeHvorSomHelst to "KanJobbeHvorSomHelst",
-                villigTilÅBytteYrke to "VilligTilÅBytteYrke"
+                villigTilÅBytteYrke to "VilligTilÅBytteYrke",
+                inntektsrapporteringsperiodeTom to "InntektsrapporteringsperiodeTom"
             )
         )
 

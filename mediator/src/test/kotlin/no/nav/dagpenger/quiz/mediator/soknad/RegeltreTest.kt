@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.regeltre
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
@@ -22,6 +23,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harIn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.helseTilAlleTyperJobb
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
@@ -81,6 +83,7 @@ internal class RegeltreTest {
             boolsk(harHattDagpengerSiste36mnd).besvar(false)
             boolsk(sykepengerSiste36mnd).besvar(false)
 
+            dato(inntektsrapporteringsperiodeTom).besvar(5.februar)
             boolsk(eøsArbeid).besvar(false)
 
             boolsk(fangstOgFisk).besvar(false)
@@ -151,8 +154,8 @@ internal class RegeltreTest {
     }
 
     @Test
-    fun `Skal manuelt behandles når dagens dato er mer enn 14 dager før virkningstidspunkt`() {
-        manglerInntekt.dato(ønsketDato).besvar(20.januar)
+    fun `Skal manuelt behandles når virkningsdato er senere enn dagens inntektsrapporteringsperiode`() {
+        manglerInntekt.dato(inntektsrapporteringsperiodeTom).besvar(1.januar)
         assertEquals("virkningstidspunkt vi ikke kan håndtere", manglerInntekt.nesteSeksjoner().first().navn)
     }
 

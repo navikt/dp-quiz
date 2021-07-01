@@ -17,6 +17,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.helse
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektNesteKalendermånedManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
@@ -237,6 +238,14 @@ internal object Seksjoner {
         )
     }
 
+    private val inntektsrapporteringsperioder = with(søknad) {
+        Seksjon(
+            "inntektsrapporteringsperioder",
+            Rolle.nav,
+            dato(inntektsrapporteringsperiodeTom)
+        )
+    }
+
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             behandlingsdatoSeksjon,
@@ -250,6 +259,7 @@ internal object Seksjoner {
             inntekter,
             inntektNesteKalendermåned,
             endredeArbeidsforhold,
+            inntektsrapporteringsperioder,
             manuellGjenopptak,
             manuellSykepenger,
             manuellFangstOgFisk,

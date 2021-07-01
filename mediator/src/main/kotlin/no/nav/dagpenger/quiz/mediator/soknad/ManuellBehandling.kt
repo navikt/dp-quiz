@@ -12,8 +12,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangs
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.svangerskapsrelaterteSykepengerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
@@ -27,15 +27,17 @@ internal object ManuellBehandling {
     }
 
     private val harArbeidetEøs = with(søknad) {
-        boolsk(eøsArbeid) er true hvisGyldigManuell(boolsk(eøsArbeidManuell))
+        boolsk(eøsArbeid) er true hvisGyldigManuell (boolsk(eøsArbeidManuell))
     }
 
     private val harFlereArbeidsforhold = with(søknad) {
-        heltall(antallEndredeArbeidsforhold) erIkke 1 hvisGyldigManuell(boolsk(flereArbeidsforholdManuell))
+        heltall(antallEndredeArbeidsforhold) erIkke 1 hvisGyldigManuell (boolsk(flereArbeidsforholdManuell))
     }
 
-    private val kanBehandleVirkningsdato = with(søknad) {
-        dato(virkningsdato) etter dato(senesteMuligeVirkningsdato) hvisGyldigManuell(boolsk(uhåndterbartVirkningsdatoManuell))
+    private val virkningsdatoEtterNåværendeInntektsrapporteringsperiode = with(søknad) {
+        dato(virkningsdato) etter dato(inntektsrapporteringsperiodeTom) hvisGyldigManuell (boolsk(
+            uhåndterbartVirkningsdatoManuell
+        ))
     }
 
     private val erMuligGjenopptak = with(søknad) {
@@ -48,7 +50,7 @@ internal object ManuellBehandling {
 
     internal val skalManueltBehandles =
         "manuelt behandles".minstEnAv(
-            kanBehandleVirkningsdato,
+            virkningsdatoEtterNåværendeInntektsrapporteringsperiode,
             harArbeidetEøs,
             hattInntektFraFangstOgFisk,
             harFlereArbeidsforhold,

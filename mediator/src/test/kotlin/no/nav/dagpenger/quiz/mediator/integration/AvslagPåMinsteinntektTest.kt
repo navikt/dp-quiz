@@ -20,6 +20,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harIn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.helseTilAlleTyperJobb
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
@@ -83,8 +84,21 @@ internal class AvslagPåMinsteinntektTest {
             besvar(villigTilÅBytteYrke, true)
             besvar(kanJobbeHvorSomHelst, true)
 
+            assertGjeldendeSeksjon("inntektsrapporteringsperioder")
+            besvar(inntektsrapporteringsperiodeTom, 10.januar)
+
             assertGjeldendeSeksjon("arbeidsforhold")
-            besvar(antallEndredeArbeidsforhold, listOf(listOf("$ordinær.1" to false, "$permittert.1" to true, "$lønnsgaranti.1" to false, "$permittertFiskeforedling.1" to false)))
+            besvar(
+                antallEndredeArbeidsforhold,
+                listOf(
+                    listOf(
+                        "$ordinær.1" to false,
+                        "$permittert.1" to true,
+                        "$lønnsgaranti.1" to false,
+                        "$permittertFiskeforedling.1" to false
+                    )
+                )
+            )
 
             assertGjeldendeSeksjon("dagpengehistorikk")
             besvar(harHattDagpengerSiste36mnd, false)
@@ -104,7 +118,6 @@ internal class AvslagPåMinsteinntektTest {
             besvar(inntektSiste36mnd, 20000.årlig)
             besvar(inntektSiste12mnd, 5000.årlig)
 
-            assertEquals(23, testRapid.inspektør.size)
             assertFalse(gjeldendeResultat())
         }
     }
