@@ -35,9 +35,11 @@ internal object ManuellBehandling {
     }
 
     private val virkningsdatoEtterNåværendeInntektsrapporteringsperiode = with(søknad) {
-        dato(virkningsdato) etter dato(inntektsrapporteringsperiodeTom) hvisGyldigManuell (boolsk(
-            uhåndterbartVirkningsdatoManuell
-        ))
+        dato(virkningsdato) etter dato(inntektsrapporteringsperiodeTom) hvisGyldigManuell (
+            boolsk(
+                uhåndterbartVirkningsdatoManuell
+            )
+            )
     }
 
     private val erMuligGjenopptak = with(søknad) {
