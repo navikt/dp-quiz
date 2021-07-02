@@ -90,7 +90,7 @@ internal object AvslagPåMinsteinntektOppsett {
             dato faktum "fom" id registrertArbeidssøkerPeriodeFom,
             dato faktum "tom" id registrertArbeidssøkerPeriodeTom,
             dato faktum "Behandlingsdato" id behandlingsdato,
-            heltall faktum "sluttårsaker" id antallEndredeArbeidsforhold genererer ordinær og permittert og lønnsgaranti og permittertFiskeforedling avhengerAv innsendtSøknadsId,
+            heltall faktum "Antall endrede arbeidsforhold" id antallEndredeArbeidsforhold genererer ordinær og permittert og lønnsgaranti og permittertFiskeforedling avhengerAv innsendtSøknadsId,
             boolsk faktum "Permittert" id permittert,
             boolsk faktum "Ordinær" id ordinær,
             boolsk faktum "Lønnsgaranti" id lønnsgaranti,

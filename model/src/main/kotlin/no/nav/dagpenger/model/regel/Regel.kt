@@ -120,7 +120,7 @@ private class Er<T : Comparable<T>>(private val other: T) : Regel {
     override val typeNavn = "er"
     override fun resultat(fakta: List<Faktum<*>>) = fakta[0].svar() == other
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `${fakta[0]}` er lik $other"
-    override fun kortNavn(fakta: List<Faktum<*>>) = "${fakta[0].navn} er lik $other"
+    override fun kortNavn(fakta: List<Faktum<*>>) = "${fakta[0].navn} $typeNavn $other"
 }
 
 infix fun <T : Comparable<T>> Faktum<T>.erIkke(other: T) = EnkelSubsumsjon(
@@ -129,10 +129,10 @@ infix fun <T : Comparable<T>> Faktum<T>.erIkke(other: T) = EnkelSubsumsjon(
 )
 
 private class ErIkke<T : Comparable<T>>(private val other: T) : Regel {
-    override val typeNavn = "erIkke"
+    override val typeNavn = "er ikke"
     override fun resultat(fakta: List<Faktum<*>>) = fakta[0].svar() != other
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `${fakta[0]}` er ikke lik $other"
-    override fun kortNavn(fakta: List<Faktum<*>>) = "${fakta[0].navn} er ikke lik $other"
+    override fun kortNavn(fakta: List<Faktum<*>>) = "${fakta[0].navn} $typeNavn $other"
 }
 
 infix fun GeneratorFaktum.med(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
