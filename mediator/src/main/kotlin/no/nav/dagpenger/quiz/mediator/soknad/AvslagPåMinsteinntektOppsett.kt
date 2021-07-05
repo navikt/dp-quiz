@@ -19,7 +19,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    const val VERSJON_ID = 14
+    const val VERSJON_ID = 15
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
@@ -69,6 +69,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val villigTilÅBytteYrke = 49
     const val reellArbeidssøkerManuell = 50
     const val registrertArbeidssøkerManuell = 51
+    const val arenaFagsakId = 52
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -116,7 +117,9 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Er villig til å bytte yrke eller gå ned i lønn" id villigTilÅBytteYrke avhengerAv innsendtSøknadsId,
             boolsk faktum "Reell arbeidssøker manuell" id reellArbeidssøkerManuell avhengerAv kanJobbeDeltid og helseTilAlleTyperJobb og kanJobbeHvorSomHelst og villigTilÅBytteYrke,
             boolsk faktum "Registrert arbeidssøker manuell" id registrertArbeidssøkerManuell avhengerAv registrertArbeidssøkerPerioder,
-            dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTom avhengerAv behandlingsdato
+            dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTom avhengerAv behandlingsdato,
+            dokument faktum "FagsakId i Arena" id arenaFagsakId
+
         )
 
     private val faktumNavBehov =

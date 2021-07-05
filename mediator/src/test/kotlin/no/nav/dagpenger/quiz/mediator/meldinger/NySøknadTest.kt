@@ -3,15 +3,12 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import no.finn.unleash.FakeUnleash
 import no.nav.dagpenger.quiz.mediator.FEATURE_MOTTA_SØKNAD
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
-import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
-import java.util.UUID
 
 internal class NySøknadTest {
 
@@ -27,16 +24,8 @@ internal class NySøknadTest {
         private val fakeUnleash = FakeUnleash()
 
         init {
-            NySøknadService(søknadPersistance, testRapid, SøknadEksempel.versjonId)
             MottattSøknadService(søknadPersistance, testRapid, fakeUnleash, SøknadEksempel.versjonId)
         }
-    }
-
-    @Test
-    fun `Start ny søknad, og send første seksjon`() {
-        testRapid.sendTestMessage(nySøknadMelding())
-        assertEquals(1, testRapid.inspektør.size)
-        assertNotNull(søknadPersistance.søknadprosess)
     }
 
     @Test
@@ -53,16 +42,6 @@ internal class NySøknadTest {
         testRapid.sendTestMessage(innsendingFerdigstiltJson)
         assertEquals(0, testRapid.inspektør.size)
     }
-
-    private fun nySøknadMelding() =
-        mutableMapOf<String, Any>(
-            "@id" to UUID.randomUUID(),
-            "@event_name" to "Søknad",
-            "@opprettet" to LocalDateTime.now(),
-            "fnr" to "fødelsnummer",
-            "aktørId" to "aktør",
-            "søknadsId" to "mf68etellerannet"
-        ).let { JsonMessage.newMessage(it).toJson() }
 
     @Language("JSON")
     val innsendingFerdigstiltJson =
