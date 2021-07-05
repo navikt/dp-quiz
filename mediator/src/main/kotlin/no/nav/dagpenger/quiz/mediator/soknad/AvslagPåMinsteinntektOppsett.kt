@@ -86,7 +86,7 @@ internal object AvslagPåMinsteinntektOppsett {
             multiplikasjon inntekt "Minsteinntektsterskel siste 12 mnd" av minsteinntektfaktor12mnd ganger grunnbeløp id minsteinntektsterskel12mnd,
             dato faktum "Søknadstidspunkt" id søknadstidspunkt avhengerAv innsendtSøknadsId,
             boolsk faktum "Verneplikt" id verneplikt avhengerAv innsendtSøknadsId,
-            dokument faktum "Innsendt søknadsId" id innsendtSøknadsId,
+            dokument faktum "Innsendt søknadsId" id innsendtSøknadsId avhengerAv arenaFagsakId,
             heltall faktum "Antall arbeidsøker registeringsperioder" id registrertArbeidssøkerPerioder genererer registrertArbeidssøkerPeriodeFom og registrertArbeidssøkerPeriodeTom,
             boolsk faktum "Lærling" id lærling avhengerAv innsendtSøknadsId,
             dato faktum "fom" id registrertArbeidssøkerPeriodeFom,

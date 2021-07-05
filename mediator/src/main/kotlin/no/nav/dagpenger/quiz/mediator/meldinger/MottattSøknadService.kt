@@ -54,12 +54,12 @@ internal class MottattSøknadService(
 
         søknadPersistence.ny(identer, faktagrupperType, versjonId)
             .also { søknadprosess ->
-                // Litt stygt, men så lenge vi leser fra innsendt søknad, så må vi lagre id-en for å hente ut data fra søknaden.
-                søknadprosess.dokument(innsendtSøknadsId).besvar(Dokument(LocalDateTime.now(), url = søknadsId))
                 // Arena-fagsakId for at arena-sink skal kunne lage vedtak på riktig sak
                 if (!packet["fagsakId"].isMissingOrNull()) {
                     søknadprosess.dokument(arenaFagsakId).besvar(Dokument(LocalDateTime.now(), url = packet["fagsakId"].asText()))
                 }
+                // Litt stygt, men så lenge vi leser fra innsendt søknad, så må vi lagre id-en for å hente ut data fra søknaden.
+                søknadprosess.dokument(innsendtSøknadsId).besvar(Dokument(LocalDateTime.now(), url = søknadsId))
                 søknadPersistence.lagre(søknadprosess.søknad)
 
                 log.info { "Opprettet ny søknadprosess ${søknadprosess.søknad.uuid} på grunn av journalføring $journalpostId for søknad $søknadsId" }
