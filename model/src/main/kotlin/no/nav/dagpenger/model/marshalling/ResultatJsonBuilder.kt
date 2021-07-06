@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.marshalling
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon.accept
 import java.lang.IllegalStateException
 import java.time.LocalDateTime
 import java.util.Locale
@@ -16,7 +17,9 @@ class ResultatJsonBuilder(
     init {
         søknadprosess.søknad.accept(this)
         søknadprosess.rootSubsumsjon.mulige().accept(this)
-        søknadprosess.forEach { it.accept(this) }
+
+        ignore = false
+        søknadprosess.søknad.forEach { if (it.erBesvart()) it.accept(this) }
     }
 
     override fun resultat(): ObjectNode {

@@ -60,8 +60,8 @@ internal class MottattSøknadService(
                 }
                 // Litt stygt, men så lenge vi leser fra innsendt søknad, så må vi lagre id-en for å hente ut data fra søknaden.
                 søknadprosess.dokument(innsendtSøknadsId).besvar(Dokument(LocalDateTime.now(), url = søknadsId))
-                søknadPersistence.lagre(søknadprosess.søknad)
 
+                søknadPersistence.lagre(søknadprosess.søknad)
                 log.info { "Opprettet ny søknadprosess ${søknadprosess.søknad.uuid} på grunn av journalføring $journalpostId for søknad $søknadsId" }
 
                 søknadprosess.nesteSeksjoner()

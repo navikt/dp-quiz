@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
+import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
@@ -14,6 +15,7 @@ import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.regeltre
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.arenaFagsakId
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
@@ -21,6 +23,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.helseTilAlleTyperJobb
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innsendtSøknadsId
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
@@ -51,6 +54,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import java.time.LocalDateTime
 import java.util.UUID
 
 internal class RegeltreTest {
@@ -65,6 +69,9 @@ internal class RegeltreTest {
             )
 
         manglerInntekt.apply {
+            dokument(arenaFagsakId).besvar(Dokument(LocalDateTime.now(), "123123"))
+            dokument(innsendtSøknadsId).besvar(Dokument(LocalDateTime.now(), "ABCD123"))
+
             dato(behandlingsdato).besvar(5.januar)
             dato(ønsketDato).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
