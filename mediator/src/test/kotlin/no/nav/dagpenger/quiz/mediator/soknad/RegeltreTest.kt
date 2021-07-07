@@ -19,6 +19,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.arena
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
@@ -110,6 +111,8 @@ internal class RegeltreTest {
             boolsk("$permittert.1").besvar(true)
             boolsk("$lønnsgaranti.1").besvar(false)
             boolsk("$permittertFiskeforedling.1").besvar(false)
+
+            boolsk(fortsattRettKorona).besvar(false)
 
             // boolsk(godkjenningSluttårsak).besvar(true)
             // TODO: Nå sender vi alle som oppfyller kravene til minste arbeidsinntekt til manuell, vi setter denne til true så den bypasses
@@ -208,6 +211,12 @@ internal class RegeltreTest {
         manglerInntekt.dato("$registrertArbeidssøkerPeriodeFom.1").besvar(1.januar(2017))
         manglerInntekt.dato("$registrertArbeidssøkerPeriodeTom.1").besvar(30.januar(2017))
         assertEquals("ikke registrert arbeidssøker", manglerInntekt.nesteSeksjoner().first().navn)
+    }
+
+    @Test
+    fun `Har fortsatt rett til dagpenger under korona skal manuelt behandles`() {
+        manglerInntekt.boolsk(fortsattRettKorona).besvar(true)
+        assertEquals("fortsatt rett korona", manglerInntekt.nesteSeksjoner().first().navn)
     }
 
     private fun byggSøknad(subsumsjon: Subsumsjon) =

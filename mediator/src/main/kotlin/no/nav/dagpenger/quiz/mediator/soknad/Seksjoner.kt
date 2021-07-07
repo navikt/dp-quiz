@@ -10,6 +10,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsA
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKoronaManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
@@ -88,7 +90,8 @@ internal object Seksjoner {
             boolsk(kanJobbeDeltid),
             boolsk(helseTilAlleTyperJobb),
             boolsk(kanJobbeHvorSomHelst),
-            boolsk(villigTilÅBytteYrke)
+            boolsk(villigTilÅBytteYrke),
+            boolsk(fortsattRettKorona)
         )
     }
 
@@ -238,6 +241,14 @@ internal object Seksjoner {
         )
     }
 
+    private val manuellFortsattRettKorona = with(søknad) {
+        Seksjon(
+            "fortsatt rett korona",
+            Rolle.manuell,
+            boolsk(fortsattRettKoronaManuell)
+        )
+    }
+
     private val inntektsrapporteringsperioder = with(søknad) {
         Seksjon(
             "inntektsrapporteringsperioder",
@@ -269,6 +280,7 @@ internal object Seksjoner {
             manuellOppfyllerKraveneTilMinsteArbeidsinntekt,
             manuellHarInntektNesteKalendermåned,
             manuellErIkkeReellArbeidssøker,
-            manuellErIkkeRegistrertArbeidssøker
+            manuellErIkkeRegistrertArbeidssøker,
+            manuellFortsattRettKorona
         )
 }

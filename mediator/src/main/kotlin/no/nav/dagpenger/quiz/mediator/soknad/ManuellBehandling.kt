@@ -11,6 +11,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsA
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKoronaManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
@@ -50,8 +52,13 @@ internal object ManuellBehandling {
         boolsk(sykepengerSiste36mnd) er true hvisGyldigManuell (boolsk(svangerskapsrelaterteSykepengerManuell))
     }
 
+    private val harFortsattRettKorona = with(søknad) {
+        boolsk(fortsattRettKorona) er true hvisGyldigManuell (boolsk(fortsattRettKoronaManuell))
+    }
+
     internal val skalManueltBehandles =
         "manuelt behandles".minstEnAv(
+            harFortsattRettKorona,
             virkningsdatoEtterNåværendeInntektsrapporteringsperiode,
             harArbeidetEøs,
             hattInntektFraFangstOgFisk,

@@ -19,7 +19,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    const val VERSJON_ID = 17
+    const val VERSJON_ID = 18
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
@@ -70,6 +70,8 @@ internal object AvslagPåMinsteinntektOppsett {
     const val reellArbeidssøkerManuell = 50
     const val registrertArbeidssøkerManuell = 51
     const val arenaFagsakId = 52
+    const val fortsattRettKorona = 53
+    const val fortsattRettKoronaManuell = 54
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -118,7 +120,9 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Reell arbeidssøker manuell" id reellArbeidssøkerManuell avhengerAv kanJobbeDeltid og helseTilAlleTyperJobb og kanJobbeHvorSomHelst og villigTilÅBytteYrke,
             boolsk faktum "Registrert arbeidssøker manuell" id registrertArbeidssøkerManuell avhengerAv registrertArbeidssøkerPerioder,
             dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTom avhengerAv behandlingsdato,
-            dokument faktum "FagsakId i Arena" id arenaFagsakId
+            dokument faktum "FagsakId i Arena" id arenaFagsakId,
+            boolsk faktum "Har fortsatt rett til dagpenger i korona-periode" id fortsattRettKorona,
+            boolsk faktum "Fortsatt rett korona manuell" id fortsattRettKoronaManuell
 
         )
 
@@ -153,7 +157,8 @@ internal object AvslagPåMinsteinntektOppsett {
                 helseTilAlleTyperJobb to "HelseTilAlleTyperJobb",
                 kanJobbeHvorSomHelst to "KanJobbeHvorSomHelst",
                 villigTilÅBytteYrke to "VilligTilÅBytteYrke",
-                inntektsrapporteringsperiodeTom to "InntektsrapporteringsperiodeTom"
+                inntektsrapporteringsperiodeTom to "InntektsrapporteringsperiodeTom",
+                fortsattRettKorona to "FortsattRettKorona"
             )
         )
 
