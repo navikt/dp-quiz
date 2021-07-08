@@ -12,7 +12,6 @@ import no.nav.dagpenger.model.subsumsjon.hvisGyldigManuell
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldigManuell
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.forGammelGrensedato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.førsteAvVirkningsdatoOgBehandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.helseTilAlleTyperJobb
@@ -25,6 +24,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærl
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektsterskel12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektsterskel36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.over67årFradato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.reellArbeidssøkerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeFom
@@ -69,7 +69,7 @@ internal object AvslagPåMinsteinntekt {
     }
 
     internal val regeltre = with(søknad) {
-        dato(virkningsdato) før dato(forGammelGrensedato) hvisGyldig {
+        dato(virkningsdato) før dato(over67årFradato) hvisGyldig {
             skalManueltBehandles hvisUgyldig {
                 "inngangsvilkår".alle(
                     erRegistrertArbeidssøker,

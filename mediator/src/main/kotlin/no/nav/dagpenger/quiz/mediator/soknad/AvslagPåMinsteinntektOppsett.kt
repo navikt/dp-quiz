@@ -72,7 +72,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val arenaFagsakId = 52
     const val fortsattRettKorona = 53
     const val fortsattRettKoronaManuell = 54
-    const val forGammelGrensedato = 55
+    const val over67årFradato = 55
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -124,8 +124,7 @@ internal object AvslagPåMinsteinntektOppsett {
             dokument faktum "FagsakId i Arena" id arenaFagsakId,
             boolsk faktum "Har fortsatt rett til dagpenger i korona-periode" id fortsattRettKorona,
             boolsk faktum "Fortsatt rett korona manuell" id fortsattRettKoronaManuell,
-            dato faktum "For gammel-grensedato" id forGammelGrensedato
-
+            dato faktum "Over 67 år fra-dato" id over67årFradato
         )
 
     private val faktumNavBehov =
@@ -161,7 +160,7 @@ internal object AvslagPåMinsteinntektOppsett {
                 villigTilÅBytteYrke to "VilligTilÅBytteYrke",
                 inntektsrapporteringsperiodeTom to "InntektsrapporteringsperiodeTom",
                 fortsattRettKorona to "FortsattRettKorona",
-                forGammelGrensedato to "ForGammelGrensedato"
+                over67årFradato to "ForGammelGrensedato"
             )
         )
 

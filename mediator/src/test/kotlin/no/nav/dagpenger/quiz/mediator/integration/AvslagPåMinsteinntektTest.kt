@@ -15,7 +15,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antal
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.forGammelGrensedato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
@@ -31,6 +30,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lønn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektfaktor12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektfaktor36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordinær
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.over67årFradato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeFom
@@ -89,7 +89,7 @@ internal class AvslagPåMinsteinntektTest {
             besvar(fortsattRettKorona, false)
 
             assertGjeldendeSeksjon("alder")
-            besvar(forGammelGrensedato, 1.desember)
+            besvar(over67årFradato, 1.desember)
 
             assertGjeldendeSeksjon("inntektsrapporteringsperioder")
             besvar(inntektsrapporteringsperiodeTom, 10.januar)

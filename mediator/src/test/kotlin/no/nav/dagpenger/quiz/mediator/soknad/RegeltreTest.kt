@@ -20,7 +20,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.arena
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.forGammelGrensedato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
@@ -38,6 +37,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minst
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektfaktor36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordinær
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.over67årFradato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeFom
@@ -75,7 +75,7 @@ internal class RegeltreTest {
             dokument(arenaFagsakId).besvar(Dokument(LocalDateTime.now(), "123123"))
             dokument(innsendtSøknadsId).besvar(Dokument(LocalDateTime.now(), "ABCD123"))
 
-            dato(forGammelGrensedato).besvar(1.desember)
+            dato(over67årFradato).besvar(1.desember)
 
             dato(behandlingsdato).besvar(5.januar)
             dato(ønsketDato).besvar(5.januar)
@@ -127,7 +127,7 @@ internal class RegeltreTest {
     @Test
     fun `De som er over 67 år får avslag`() {
         manglerInntekt.inntekt(inntektSiste36mnd).besvar(2000000.årlig)
-        manglerInntekt.dato(forGammelGrensedato).besvar(1.januar)
+        manglerInntekt.dato(over67årFradato).besvar(1.januar)
 
         class Visitor(avslagSøknad: Søknadprosess) : SøknadprosessVisitor {
             val saksbehandlerSeksjoner = mutableListOf<Seksjon>()
