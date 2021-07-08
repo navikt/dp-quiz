@@ -11,6 +11,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.quiz.mediator.helpers.desember
 import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.regeltre
@@ -19,6 +20,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.arena
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.forGammelGrensedato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
@@ -73,6 +75,8 @@ internal class RegeltreTest {
             dokument(arenaFagsakId).besvar(Dokument(LocalDateTime.now(), "123123"))
             dokument(innsendtSøknadsId).besvar(Dokument(LocalDateTime.now(), "ABCD123"))
 
+            dato(forGammelGrensedato).besvar(1.desember)
+
             dato(behandlingsdato).besvar(5.januar)
             dato(ønsketDato).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
@@ -118,6 +122,27 @@ internal class RegeltreTest {
             // TODO: Nå sender vi alle som oppfyller kravene til minste arbeidsinntekt til manuell, vi setter denne til true så den bypasses
             manglerInntekt.boolsk(oppfyllerMinsteinntektManuell).besvar(true)
         }
+    }
+
+    @Test
+    fun `De som er over 67 år får avslag`() {
+        manglerInntekt.inntekt(inntektSiste36mnd).besvar(2000000.årlig)
+        manglerInntekt.dato(forGammelGrensedato).besvar(1.januar)
+
+        class Visitor(avslagSøknad: Søknadprosess) : SøknadprosessVisitor {
+            val saksbehandlerSeksjoner = mutableListOf<Seksjon>()
+
+            init {
+                avslagSøknad.accept(this)
+            }
+
+            override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
+                if (rolle == Rolle.saksbehandler) saksbehandlerSeksjoner.add(seksjon)
+            }
+        }
+
+        assertTrue(Søknadprosess.erFerdig(Visitor(manglerInntekt).saksbehandlerSeksjoner))
+        assertEquals(false, manglerInntekt.resultat())
     }
 
     @Test

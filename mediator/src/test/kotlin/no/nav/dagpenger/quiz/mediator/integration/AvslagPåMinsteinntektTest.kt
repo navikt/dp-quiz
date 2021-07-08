@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
+import no.nav.dagpenger.quiz.mediator.helpers.desember
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
@@ -14,6 +15,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antal
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.forGammelGrensedato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
@@ -85,6 +87,9 @@ internal class AvslagPåMinsteinntektTest {
             besvar(villigTilÅBytteYrke, true)
             besvar(kanJobbeHvorSomHelst, true)
             besvar(fortsattRettKorona, false)
+
+            assertGjeldendeSeksjon("alder")
+            besvar(forGammelGrensedato, 1.desember)
 
             assertGjeldendeSeksjon("inntektsrapporteringsperioder")
             besvar(inntektsrapporteringsperiodeTom, 10.januar)
