@@ -69,7 +69,9 @@ internal object AvslagPåMinsteinntekt {
     }
 
     internal val regeltre = with(søknad) {
-        dato(virkningsdato) før dato(over67årFradato) hvisGyldig {
+        "under 67år" deltre {
+            dato(virkningsdato) før dato(over67årFradato)
+        } hvisGyldig {
             skalManueltBehandles hvisUgyldig {
                 "inngangsvilkår".alle(
                     erRegistrertArbeidssøker,
