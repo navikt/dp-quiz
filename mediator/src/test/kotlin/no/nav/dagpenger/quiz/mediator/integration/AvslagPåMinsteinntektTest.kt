@@ -74,6 +74,20 @@ internal class AvslagPåMinsteinntektTest {
         withSøknad { besvar ->
             besvar(behandlingsdato, 5.januar)
             besvar(senesteMuligeVirkningsdato, 19.januar)
+
+            assertGjeldendeSeksjon("arbeidsforhold")
+            besvar(
+                antallEndredeArbeidsforhold,
+                listOf(
+                    listOf(
+                        "$ordinær.1" to false,
+                        "$permittert.1" to true,
+                        "$lønnsgaranti.1" to false,
+                        "$permittertFiskeforedling.1" to false
+                    )
+                )
+            )
+
             assertGjeldendeSeksjon("datafrasøknad")
             besvar(eøsArbeid, false)
             besvar(fangstOgFisk, false)
@@ -93,19 +107,6 @@ internal class AvslagPåMinsteinntektTest {
 
             assertGjeldendeSeksjon("inntektsrapporteringsperioder")
             besvar(inntektsrapporteringsperiodeTom, 10.januar)
-
-            assertGjeldendeSeksjon("arbeidsforhold")
-            besvar(
-                antallEndredeArbeidsforhold,
-                listOf(
-                    listOf(
-                        "$ordinær.1" to false,
-                        "$permittert.1" to true,
-                        "$lønnsgaranti.1" to false,
-                        "$permittertFiskeforedling.1" to false
-                    )
-                )
-            )
 
             assertGjeldendeSeksjon("dagpengehistorikk")
             besvar(harHattDagpengerSiste36mnd, false)

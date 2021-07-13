@@ -12,6 +12,8 @@ import no.nav.dagpenger.model.subsumsjon.hvisGyldigManuell
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
 import no.nav.dagpenger.model.subsumsjon.hvisUgyldigManuell
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.førsteAvVirkningsdatoOgBehandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.helseTilAlleTyperJobb
@@ -68,17 +70,26 @@ internal object AvslagPåMinsteinntekt {
         ) hvisUgyldigManuell (boolsk(reellArbeidssøkerManuell))
     }
 
-    internal val regeltre = with(søknad) {
+    private val under67år = with(søknad) {
         "under 67år" deltre {
             dato(virkningsdato) før dato(over67årFradato)
-        } hvisGyldig {
-            skalManueltBehandles hvisUgyldig {
-                "inngangsvilkår".alle(
-                    erRegistrertArbeidssøker,
-                    erReellArbeidssøker,
-                    minsteArbeidsinntekt
-                )
-            }
         }
     }
+
+    private val harEttArbeidsforhold = with(søknad) {
+        heltall(antallEndredeArbeidsforhold) er 1 hvisUgyldigManuell (boolsk(flereArbeidsforholdManuell))
+    }
+
+    internal val regeltre =
+        harEttArbeidsforhold hvisGyldig {
+            under67år hvisGyldig {
+                skalManueltBehandles hvisUgyldig {
+                    "inngangsvilkår".alle(
+                        erRegistrertArbeidssøker,
+                        erReellArbeidssøker,
+                        minsteArbeidsinntekt
+                    )
+                }
+            }
+        }
 }
