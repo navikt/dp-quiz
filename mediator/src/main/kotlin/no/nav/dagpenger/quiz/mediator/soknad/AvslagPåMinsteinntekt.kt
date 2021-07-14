@@ -82,14 +82,14 @@ internal object AvslagPåMinsteinntekt {
 
     internal val regeltre =
         harEttArbeidsforhold hvisGyldig {
-            // under67år hvisGyldig {
-            skalManueltBehandles hvisUgyldig {
-                "inngangsvilkår".alle(
-                    erRegistrertArbeidssøker,
-                    erReellArbeidssøker,
-                    minsteArbeidsinntekt
-                )
+            under67år hvisGyldig {
+                skalManueltBehandles hvisUgyldig {
+                    "inngangsvilkår".alle(
+                        erRegistrertArbeidssøker,
+                        erReellArbeidssøker,
+                        minsteArbeidsinntekt
+                    )
+                }
             }
-            // }
         }
 }

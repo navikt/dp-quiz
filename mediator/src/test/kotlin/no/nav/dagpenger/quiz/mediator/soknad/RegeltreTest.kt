@@ -54,7 +54,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -126,7 +125,6 @@ internal class RegeltreTest {
     }
 
     @Test
-    @Disabled
     fun `De som er over 67 år får avslag`() {
         manglerInntekt.inntekt(inntektSiste36mnd).besvar(2000000.årlig)
         manglerInntekt.dato(over67årFradato).besvar(1.januar)
