@@ -11,20 +11,20 @@ class GeneratorSubsumsjon internal constructor(
     private val faktum: GeneratorFaktum,
     private val deltre: DeltreSubsumsjon,
     private val resultatSubsumsjon: SammensattSubsumsjon
-) : EnkelSubsumsjon(regel, listOf(faktum), TomSubsumsjon, resultatSubsumsjon) {
+) : EnkelSubsumsjon(regel, listOf(faktum), resultatSubsumsjon, TomSubsumsjon) {
 
     override fun lokaltResultat(): Boolean? {
         return super.lokaltResultat().also { resultat ->
             when (resultat) {
-                false -> {
-                    (ugyldig as SammensattSubsumsjon).also { sammensattSubsumsjon ->
+                true -> {
+                    (gyldig as SammensattSubsumsjon).also { sammensattSubsumsjon ->
                         if (sammensattSubsumsjon.size != faktum.svar()) sammensattSubsumsjon.clear()
                         if (sammensattSubsumsjon.isEmpty())
                             sammensattSubsumsjon.addAll((1..faktum.svar()).map { deltre.deepCopy(it, faktum.søknad) })
                     }
                 }
                 else -> {
-                    (ugyldig as SammensattSubsumsjon).clear()
+                    (gyldig as SammensattSubsumsjon).clear()
                 }
             }
         }

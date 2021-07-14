@@ -239,6 +239,12 @@ internal class RegeltreTest {
     }
 
     @Test
+    fun `Aldri registrert arbeidssøker skal manuelt behandles`() {
+        manglerInntekt.generator(registrertArbeidssøkerPerioder).besvar(0)
+        assertEquals("ikke registrert arbeidssøker", manglerInntekt.nesteSeksjoner().first().navn)
+    }
+
+    @Test
     fun `Har fortsatt rett til dagpenger under korona skal manuelt behandles`() {
         manglerInntekt.boolsk(fortsattRettKorona).besvar(true)
         assertEquals("fortsatt rett korona", manglerInntekt.nesteSeksjoner().first().navn)
