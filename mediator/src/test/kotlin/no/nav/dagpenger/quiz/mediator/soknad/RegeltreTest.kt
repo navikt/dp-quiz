@@ -52,8 +52,10 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.villi
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ønsketDato
 import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -125,6 +127,7 @@ internal class RegeltreTest {
     }
 
     @Test
+    @Disabled
     fun `De som er over 67 år får avslag`() {
         manglerInntekt.inntekt(inntektSiste36mnd).besvar(2000000.årlig)
         manglerInntekt.dato(over67årFradato).besvar(1.januar)
@@ -143,6 +146,19 @@ internal class RegeltreTest {
 
         assertTrue(Søknadprosess.erFerdig(Visitor(manglerInntekt).saksbehandlerSeksjoner))
         assertEquals(false, manglerInntekt.resultat())
+    }
+
+    @Test
+    fun `Skal manuelt behandles hvis over 67`() {
+        manglerInntekt.inntekt(inntektSiste36mnd).besvar(2000000.årlig)
+        manglerInntekt.dato(over67årFradato).besvar(1.januar)
+
+        assertNesteSeksjon("over 67 år")
+    }
+
+    private fun assertNesteSeksjon(navn: String) {
+        assertFalse(manglerInntekt.nesteSeksjoner().isEmpty(), "Regeltre evaluert ferdig, ingen neste seksjon")
+        assertEquals(navn, manglerInntekt.nesteSeksjoner().first().navn)
     }
 
     @Test

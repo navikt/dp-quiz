@@ -29,6 +29,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minst
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordinær
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.over67årFradato
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.over67årManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
@@ -250,6 +251,14 @@ internal object Seksjoner {
         )
     }
 
+    private val manuellOver67år = with(søknad) {
+        Seksjon(
+            "over 67 år",
+            Rolle.manuell,
+            boolsk(over67årManuell)
+        )
+    }
+
     private val inntektsrapporteringsperioder = with(søknad) {
         Seksjon(
             "inntektsrapporteringsperioder",
@@ -291,6 +300,7 @@ internal object Seksjoner {
             manuellHarInntektNesteKalendermåned,
             manuellErIkkeReellArbeidssøker,
             manuellErIkkeRegistrertArbeidssøker,
-            manuellFortsattRettKorona
+            manuellFortsattRettKorona,
+            manuellOver67år
         )
 }
