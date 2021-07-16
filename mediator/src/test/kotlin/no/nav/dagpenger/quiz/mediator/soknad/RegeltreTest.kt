@@ -9,7 +9,6 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import no.nav.dagpenger.quiz.mediator.helpers.desember
 import no.nav.dagpenger.quiz.mediator.helpers.februar
@@ -156,11 +155,6 @@ internal class RegeltreTest {
         assertNesteSeksjon("over 67 år")
     }
 
-    private fun assertNesteSeksjon(navn: String) {
-        assertFalse(manglerInntekt.nesteSeksjoner().isEmpty(), "Regeltre evaluert ferdig, ingen neste seksjon")
-        assertEquals(navn, manglerInntekt.nesteSeksjoner().first().navn)
-    }
-
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
         class Visitor(avslagSøknad: Søknadprosess) : SøknadprosessVisitor {
@@ -182,7 +176,7 @@ internal class RegeltreTest {
     @Test
     fun `Søknader fra brukere som har hatt dagpenger de siste 36 månedene blir ikke behandlet`() {
         manglerInntekt.boolsk(harHattDagpengerSiste36mnd).besvar(true)
-        assertEquals("mulig gjenopptak", manglerInntekt.nesteSeksjoner().first().navn)
+        assertNesteSeksjon("mulig gjenopptak")
     }
 
     @Test
@@ -207,69 +201,67 @@ internal class RegeltreTest {
     @Test
     fun `Skal manuelt behandles når virkningsdato er senere enn dagens inntektsrapporteringsperiode`() {
         manglerInntekt.dato(inntektsrapporteringsperiodeTom).besvar(1.januar)
-        assertEquals("virkningstidspunkt vi ikke kan håndtere", manglerInntekt.nesteSeksjoner().first().navn)
+        assertNesteSeksjon("virkningstidspunkt vi ikke kan håndtere")
     }
 
     @Test
     fun `Skal manuelt behandles hvis har sykepenger`() {
         manglerInntekt.boolsk(sykepengerSiste36mnd).besvar(true)
-        assertEquals("svangerskapsrelaterte sykepenger", manglerInntekt.nesteSeksjoner().first().navn)
+        assertNesteSeksjon("svangerskapsrelaterte sykepenger")
     }
 
     @Test
     fun `Fangst og fisk skal manuelt behandles`() {
         manglerInntekt.boolsk(fangstOgFisk).besvar(true)
-        assertEquals("mulige inntekter fra fangst og fisk", manglerInntekt.nesteSeksjoner().first().navn)
+        assertNesteSeksjon("mulige inntekter fra fangst og fisk")
     }
 
     @Test
     fun `Eøs arbeid skal manuelt behandles`() {
         manglerInntekt.boolsk(eøsArbeid).besvar(true)
-        assertEquals("EØS-arbeid", manglerInntekt.nesteSeksjoner().first().navn)
+        assertNesteSeksjon("EØS-arbeid")
     }
 
     @Test
     fun `Inntekt neste kalendermåned skal manuelt behandles`() {
         manglerInntekt.boolsk(harInntektNesteKalendermåned).besvar(true)
-        assertEquals("det er inntekt neste kalendermåned", manglerInntekt.nesteSeksjoner().first().navn)
+        assertNesteSeksjon("det er inntekt neste kalendermåned")
     }
 
     @Test
     fun `Flere arbeidsforhold skal manuelt behandles`() {
         manglerInntekt.heltall(antallEndredeArbeidsforhold).besvar(2)
-        assertEquals("flere arbeidsforhold", manglerInntekt.nesteSeksjoner().first().navn)
+        assertNesteSeksjon("flere arbeidsforhold")
     }
 
     @ParameterizedTest
     @ValueSource(ints = [kanJobbeDeltid, kanJobbeHvorSomHelst, helseTilAlleTyperJobb, villigTilÅBytteYrke])
     fun `Søkere som ikke er reelle arbeidssøkere skal manuelt behandles`(faktum: Int) {
         manglerInntekt.boolsk(faktum).besvar(false)
-        assertEquals("ikke reell arbeidssøker", manglerInntekt.nesteSeksjoner().first().navn)
+        assertNesteSeksjon("ikke reell arbeidssøker")
     }
 
     @Test
     fun `Ikke registrert arbeidssøker skal manuelt behandles`() {
         manglerInntekt.dato("$registrertArbeidssøkerPeriodeFom.1").besvar(1.januar(2017))
         manglerInntekt.dato("$registrertArbeidssøkerPeriodeTom.1").besvar(30.januar(2017))
-        assertEquals("ikke registrert arbeidssøker", manglerInntekt.nesteSeksjoner().first().navn)
+        assertNesteSeksjon("ikke registrert arbeidssøker")
     }
 
     @Test
     fun `Aldri registrert arbeidssøker skal manuelt behandles`() {
         manglerInntekt.generator(registrertArbeidssøkerPerioder).besvar(0)
-        assertEquals("ikke registrert arbeidssøker", manglerInntekt.nesteSeksjoner().first().navn)
+        assertNesteSeksjon("ikke registrert arbeidssøker")
     }
 
     @Test
     fun `Har fortsatt rett til dagpenger under korona skal manuelt behandles`() {
         manglerInntekt.boolsk(fortsattRettKorona).besvar(true)
-        assertEquals("fortsatt rett korona", manglerInntekt.nesteSeksjoner().first().navn)
+        assertNesteSeksjon("fortsatt rett korona")
     }
 
-    private fun byggSøknad(subsumsjon: Subsumsjon) =
-        Versjon.Bygger(søknad, subsumsjon, mapOf(Versjon.UserInterfaceType.Web to søknadprosess))
-            .søknadprosess(
-                Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
-                Versjon.UserInterfaceType.Web
-            )
+    private fun assertNesteSeksjon(navn: String) {
+        assertFalse(manglerInntekt.nesteSeksjoner().isEmpty(), "Regeltre evaluert ferdig, ingen neste seksjon")
+        assertEquals(navn, manglerInntekt.nesteSeksjoner().first().navn)
+    }
 }
