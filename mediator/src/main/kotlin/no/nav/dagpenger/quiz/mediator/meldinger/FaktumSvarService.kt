@@ -97,6 +97,7 @@ internal class FaktumSvarService(
             }.also { seksjon ->
                 if (Søknadprosess.erFerdig(seksjon)) {
                     ResultatJsonBuilder(søknadprosess).resultat().also { json ->
+                        søknadPersistence.lagreResultat(søknadprosess.resultat()!!, søknadprosess.søknad, json)
                         context.publish(json.toString())
                         sikkerlogg.info { "Send ut resultat: $json" }
                     }

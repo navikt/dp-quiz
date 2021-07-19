@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.db
 
+import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -12,6 +13,6 @@ interface SøknadPersistence {
     fun hent(uuid: UUID, type: Versjon.UserInterfaceType? = null): Søknadprosess
     fun lagre(søknad: Søknad): Boolean
     fun opprettede(identer: Identer): Map<LocalDateTime, UUID>
-    fun lagreResultat(resultat: Boolean, søknad: Søknad): Boolean
+    fun lagreResultat(resultat: Boolean, søknad: Søknad, resultatJson: ObjectNode)
     fun hentResultat(uuid: UUID): Boolean
 }

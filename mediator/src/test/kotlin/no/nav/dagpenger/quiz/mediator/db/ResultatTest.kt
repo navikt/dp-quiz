@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -21,7 +22,7 @@ internal class ResultatTest {
     private lateinit var søknadRecord: SøknadRecord
 
     @Test
-    fun `happy path`() {
+    fun `Lagre resultat`() {
         val versjonId = 934
         Postgres.withMigratedDb {
             val prototypeFakta = Søknad(
@@ -51,7 +52,7 @@ internal class ResultatTest {
 
             søknadprosess.boolsk(19).besvar(false)
             val resultat = søknadprosess.resultat()
-            søknadRecord.lagreResultat(resultat!!, søknadprosess.søknad)
+            søknadRecord.lagreResultat(resultat!!, søknadprosess.søknad, ResultatJsonBuilder(søknadprosess).resultat())
             val hentaResultat = søknadRecord.hentResultat(søknadprosess.søknad.uuid)
             assertEquals(resultat, hentaResultat)
         }

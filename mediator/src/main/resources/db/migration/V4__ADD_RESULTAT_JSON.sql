@@ -1,0 +1,2 @@
+ALTER TABLE resultat
+    ADD COLUMN IF NOT EXISTS DATA JSONB NOT NULL default '{}';

@@ -1,6 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.db
 
 import PostgresDataSourceBuilder.dataSource
+import com.fasterxml.jackson.databind.node.ObjectNode
 import kotliquery.action.ExecuteQueryAction
 import kotliquery.action.UpdateQueryAction
 import kotliquery.queryOf
@@ -16,6 +17,7 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import org.postgresql.util.PGobject
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -292,17 +294,21 @@ class SøknadRecord : SøknadPersistence {
         }.toMap()
     }
 
-    override fun lagreResultat(resultat: Boolean, søknad: Søknad): Boolean {
-        return using(sessionOf(dataSource)) { session ->
+    override fun lagreResultat(resultat: Boolean, søknad: Søknad, resultatJson: ObjectNode) {
+        using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL
                     """
-                    INSERT INTO resultat (resultat, soknad_id) 
-                        SELECT ?, soknad.id 
+                    INSERT INTO resultat (resultat, data, soknad_id) 
+                        SELECT ?, ?, soknad.id
                         FROM soknad 
                         WHERE soknad.uuid = ? 
                     """.trimMargin(),
                     resultat,
+                    PGobject().apply {
+                        type = "jsonb"
+                        value = resultatJson.toString()
+                    },
                     søknad.uuid
                 ).asExecute
             )
