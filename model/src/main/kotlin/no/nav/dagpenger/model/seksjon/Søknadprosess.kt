@@ -23,11 +23,6 @@ class Søknadprosess private constructor(
         seksjoner.toMutableList()
     )
 
-    companion object {
-        fun erFerdig(seksjoner: List<Seksjon>) =
-            seksjoner.all { fakta -> fakta.all { faktum -> faktum.erBesvart() } }
-    }
-
     internal constructor(søknad: Søknad, vararg seksjoner: Seksjon, rootSubsumsjon: Subsumsjon = TomSubsumsjon) : this(
         søknad,
         rootSubsumsjon,
@@ -73,4 +68,6 @@ class Søknadprosess private constructor(
     internal fun nesteFakta() = rootSubsumsjon.nesteFakta()
 
     fun resultat() = rootSubsumsjon.resultat()
+
+    fun erFerdig() = nesteSeksjoner().all { fakta -> fakta.all { faktum -> faktum.erBesvart() } }
 }

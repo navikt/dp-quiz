@@ -119,9 +119,7 @@ internal class RegeltreTest {
 
             boolsk(fortsattRettKorona).besvar(false)
 
-            // boolsk(godkjenningSluttårsak).besvar(true)
-            // TODO: Nå sender vi alle som oppfyller kravene til minste arbeidsinntekt til manuell, vi setter denne til true så den bypasses
-            manglerInntekt.boolsk(oppfyllerMinsteinntektManuell).besvar(true)
+            boolsk(oppfyllerMinsteinntektManuell).besvar(true) // Omgå manuell-seksjon
         }
     }
 
@@ -131,19 +129,7 @@ internal class RegeltreTest {
         manglerInntekt.inntekt(inntektSiste36mnd).besvar(2000000.årlig)
         manglerInntekt.dato(over67årFradato).besvar(1.januar)
 
-        class Visitor(avslagSøknad: Søknadprosess) : SøknadprosessVisitor {
-            val saksbehandlerSeksjoner = mutableListOf<Seksjon>()
-
-            init {
-                avslagSøknad.accept(this)
-            }
-
-            override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
-                if (rolle == Rolle.saksbehandler) saksbehandlerSeksjoner.add(seksjon)
-            }
-        }
-
-        assertTrue(Søknadprosess.erFerdig(Visitor(manglerInntekt).saksbehandlerSeksjoner))
+        assertTrue(manglerInntekt.erFerdig())
         assertEquals(false, manglerInntekt.resultat())
     }
 
@@ -157,19 +143,7 @@ internal class RegeltreTest {
 
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
-        class Visitor(avslagSøknad: Søknadprosess) : SøknadprosessVisitor {
-            val saksbehandlerSeksjoner = mutableListOf<Seksjon>()
-
-            init {
-                avslagSøknad.accept(this)
-            }
-
-            override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
-                if (rolle == Rolle.saksbehandler) saksbehandlerSeksjoner.add(seksjon)
-            }
-        }
-
-        assertTrue(Søknadprosess.erFerdig(Visitor(manglerInntekt).saksbehandlerSeksjoner))
+        assertTrue(manglerInntekt.erFerdig())
         assertEquals(false, manglerInntekt.resultat())
     }
 
