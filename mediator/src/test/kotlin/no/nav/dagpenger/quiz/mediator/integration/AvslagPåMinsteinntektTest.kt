@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.quiz.mediator.FEATURE_MOTTA_SØKNAD
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
+import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.desember
@@ -58,15 +59,17 @@ internal class AvslagPåMinsteinntektTest {
     fun setup() {
         Postgres.withMigratedDb {
             AvslagPåMinsteinntektOppsett.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
-            val persistence = SøknadRecord()
+            val søknadPersistence = SøknadRecord()
+            val resultatPersistence = ResultatRecord()
             val unleash = FakeUnleash().also { it.enable(FEATURE_MOTTA_SØKNAD) }
             testRapid = TestRapid().also {
                 FaktumSvarService(
-                    søknadPersistence = persistence,
+                    søknadPersistence = søknadPersistence,
+                    resultatPersistence = resultatPersistence,
                     rapidsConnection = it,
-                    unleash
+                    unleash = unleash
                 )
-                MottattSøknadService(persistence, it, unleash, AvslagPåMinsteinntektOppsett.VERSJON_ID)
+                MottattSøknadService(søknadPersistence, it, unleash, AvslagPåMinsteinntektOppsett.VERSJON_ID)
             }
         }
     }

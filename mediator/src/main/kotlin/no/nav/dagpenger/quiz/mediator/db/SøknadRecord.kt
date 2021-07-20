@@ -1,7 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.db
 
 import PostgresDataSourceBuilder.dataSource
-import com.fasterxml.jackson.databind.node.ObjectNode
 import kotliquery.action.ExecuteQueryAction
 import kotliquery.action.UpdateQueryAction
 import kotliquery.queryOf
@@ -17,7 +16,6 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
-import org.postgresql.util.PGobject
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -292,37 +290,5 @@ class SøknadRecord : SøknadPersistence {
                 ).map { it.localDateTime(1) to UUID.fromString(it.string(2)) }.asList
             )
         }.toMap()
-    }
-
-    override fun lagreResultat(resultat: Boolean, søknad: Søknad, resultatJson: ObjectNode) {
-        using(sessionOf(dataSource)) { session ->
-            session.run(
-                queryOf( //language=PostgreSQL
-                    """
-                    INSERT INTO resultat (resultat, data, soknad_id) 
-                        SELECT ?, ?, soknad.id
-                        FROM soknad 
-                        WHERE soknad.uuid = ? 
-                    """.trimMargin(),
-                    resultat,
-                    PGobject().apply {
-                        type = "jsonb"
-                        value = resultatJson.toString()
-                    },
-                    søknad.uuid
-                ).asExecute
-            )
-        }
-    }
-
-    override fun hentResultat(uuid: UUID): Boolean {
-        return using(sessionOf(dataSource)) { session ->
-            session.run(
-                queryOf( //language=PostgreSQL
-                    "SELECT resultat FROM resultat WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
-                    uuid
-                ).map { it.boolean("resultat") }.asSingle
-            )
-        } ?: throw IllegalArgumentException("Resultat finnes ikke for søknad, uuid: $uuid")
     }
 }

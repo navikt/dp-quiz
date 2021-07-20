@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.hvisGyldig
+import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
@@ -46,14 +47,17 @@ internal class FaktumSvarServiceTest {
     ).registrer()
 
     val søknadPersistence = mockk<SøknadPersistence>().also {
-        every { it.hent(any(), any()) } returns Versjon.id(versjonId).søknadprosess(prototypeFakta, Versjon.UserInterfaceType.Web)
+        every { it.hent(any(), any()) } returns Versjon.id(versjonId)
+            .søknadprosess(prototypeFakta, Versjon.UserInterfaceType.Web)
         every { it.lagre(any() as Søknad) } returns true
-        every { it.lagreResultat(any(), any(), any()) } returns Unit
     }
+
+    val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
 
     val testRapid = TestRapid().also {
         FaktumSvarService(
             søknadPersistence = søknadPersistence,
+            resultatPersistence = resultatPersistence,
             rapidsConnection = it,
             unleash = FakeUnleash()
         )
@@ -76,7 +80,7 @@ internal class FaktumSvarServiceTest {
 
         verify(exactly = 1) { søknadPersistence.hent(any(), any()) }
         verify(exactly = 1) { søknadPersistence.lagre(any() as Søknad) }
-        verify(exactly = 1) { søknadPersistence.lagreResultat(any(), any(), any()) }
+        verify(exactly = 1) { resultatPersistence.lagreResultat(any(), any(), any()) }
     }
 
     //language=json

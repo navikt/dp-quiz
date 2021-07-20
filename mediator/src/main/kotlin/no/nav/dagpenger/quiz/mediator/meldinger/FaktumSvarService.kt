@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -25,6 +26,7 @@ private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
 internal class FaktumSvarService(
     private val søknadPersistence: SøknadPersistence,
+    private val resultatPersistence: ResultatPersistence,
     rapidsConnection: RapidsConnection,
     private val unleash: Unleash
 ) : River.PacketListener {
@@ -100,7 +102,7 @@ internal class FaktumSvarService(
 
     private fun sendResultat(søknadprosess: Søknadprosess, context: MessageContext) {
         ResultatJsonBuilder(søknadprosess).resultat().also { json ->
-            søknadPersistence.lagreResultat(søknadprosess.resultat()!!, søknadprosess.søknad, json)
+            resultatPersistence.lagreResultat(søknadprosess.resultat()!!, søknadprosess.søknad.uuid, json)
             context.publish(json.toString())
             sikkerlogg.info { "Send ut resultat: $json" }
         }

@@ -20,6 +20,7 @@ internal class ResultatTest {
 
     private lateinit var søknadprosess: Søknadprosess
     private lateinit var søknadRecord: SøknadRecord
+    private lateinit var resultatRecord: ResultatRecord
 
     @Test
     fun `Lagre resultat`() {
@@ -44,16 +45,24 @@ internal class ResultatTest {
             ).registrer()
             FaktumTable(prototypeFakta, versjonId)
             søknadRecord = SøknadRecord()
+            resultatRecord = ResultatRecord()
+
             søknadprosess = søknadRecord.ny(
                 IDENT,
                 Versjon.UserInterfaceType.Web,
                 versjonId
             )
-
             søknadprosess.boolsk(19).besvar(false)
+
             val resultat = søknadprosess.resultat()
-            søknadRecord.lagreResultat(resultat!!, søknadprosess.søknad, ResultatJsonBuilder(søknadprosess).resultat())
-            val hentaResultat = søknadRecord.hentResultat(søknadprosess.søknad.uuid)
+            resultatRecord.lagreResultat(
+                resultat!!,
+                søknadprosess.søknad.uuid,
+                ResultatJsonBuilder(søknadprosess).resultat()
+            )
+
+            val hentaResultat = resultatRecord.hentResultat(søknadprosess.søknad.uuid)
+
             assertEquals(resultat, hentaResultat)
         }
     }

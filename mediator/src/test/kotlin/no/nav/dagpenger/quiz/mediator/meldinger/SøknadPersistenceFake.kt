@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
-import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Søknad
@@ -27,12 +26,6 @@ internal class SøknadPersistenceFake : SøknadPersistence {
     }
 
     override fun opprettede(identer: Identer): Map<LocalDateTime, UUID> {
-        TODO("Not yet implemented")
-    }
-
-    override fun lagreResultat(resultat: Boolean, søknad: Søknad, resultatJson: ObjectNode) {}
-
-    override fun hentResultat(uuid: UUID): Boolean {
         TODO("Not yet implemented")
     }
 
