@@ -9,7 +9,6 @@ import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.MottattSøknadService
-import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -36,7 +35,6 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
                 val søknadRecord = SøknadRecord()
                 val unleash = setupUnleash(Configuration.config["unleash.url"]!!)
                 AvslagPåMinsteinntektOppsett.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
-                NySøknadService(søknadRecord, rapidsConnection)
                 MottattSøknadService(søknadRecord, rapidsConnection, unleash)
                 FaktumSvarService(søknadRecord, rapidsConnection, unleash)
                 BehandlingsdatoService(rapidsConnection)

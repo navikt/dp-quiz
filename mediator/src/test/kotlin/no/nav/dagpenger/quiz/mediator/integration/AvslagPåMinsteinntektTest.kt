@@ -3,13 +3,14 @@ package no.nav.dagpenger.quiz.mediator.integration
 import no.finn.unleash.FakeUnleash
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.quiz.mediator.FEATURE_MOTTA_SØKNAD
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.desember
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
-import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
+import no.nav.dagpenger.quiz.mediator.meldinger.MottattSøknadService
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
@@ -58,13 +59,14 @@ internal class AvslagPåMinsteinntektTest {
         Postgres.withMigratedDb {
             AvslagPåMinsteinntektOppsett.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
             val persistence = SøknadRecord()
+            val unleash = FakeUnleash().also { it.enable(FEATURE_MOTTA_SØKNAD) }
             testRapid = TestRapid().also {
                 FaktumSvarService(
                     søknadPersistence = persistence,
                     rapidsConnection = it,
-                    unleash = FakeUnleash()
+                    unleash
                 )
-                NySøknadService(persistence, it, AvslagPåMinsteinntektOppsett.VERSJON_ID)
+                MottattSøknadService(persistence, it, unleash, AvslagPåMinsteinntektOppsett.VERSJON_ID)
             }
         }
     }
@@ -212,10 +214,15 @@ internal class AvslagPåMinsteinntektTest {
     private fun søknad(): String {
         testRapid.sendTestMessage(
             """{
-              "@event_name": "Søknad",
-              "fnr": "123456789",
+              "@event_name": "innsending_ferdigstilt",
+              "fødselsnummer": "123456789",
               "aktørId": "",
-              "søknadsId": "9876"
+              "søknadsId": "9876",
+              "journalpostId": "493389306",
+              "type": "NySøknad",
+              "søknadsData": {
+            "brukerBehandlingId": "10010WQMW"
+          }
             }
             """.trimIndent()
         )
