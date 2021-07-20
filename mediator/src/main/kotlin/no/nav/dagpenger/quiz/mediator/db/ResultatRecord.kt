@@ -11,6 +11,7 @@ import java.util.UUID
 interface ResultatPersistence {
     fun lagreResultat(resultat: Boolean, søknadUuid: UUID, resultatJson: ObjectNode)
     fun hentResultat(uuid: UUID): Boolean
+    fun lagreManuellBehandling(uuid: UUID, grunn: String)
 }
 
 // Skjønner utfallet av behandlingen av en søknad
@@ -46,5 +47,22 @@ class ResultatRecord : ResultatPersistence {
                 ).map { it.boolean("resultat") }.asSingle
             )
         } ?: throw IllegalArgumentException("Resultat finnes ikke for søknad, uuid: $uuid")
+    }
+
+    override fun lagreManuellBehandling(søknadUuid: UUID, grunn: String) {
+        using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf( //language=PostgreSQL
+                    """
+                    INSERT INTO manuell_behandling (soknad_id, grunn) 
+                        SELECT soknad.id, ?
+                        FROM soknad 
+                        WHERE soknad.uuid = ? 
+                    """.trimMargin(),
+                    grunn,
+                    søknadUuid
+                ).asExecute
+            )
+        }
     }
 }

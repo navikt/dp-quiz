@@ -1,5 +1,9 @@
 package no.nav.dagpenger.quiz.mediator.db
 
+import PostgresDataSourceBuilder.dataSource
+import kotliquery.queryOf
+import kotliquery.sessionOf
+import kotliquery.using
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Rolle
@@ -22,27 +26,27 @@ internal class ResultatTest {
     private lateinit var søknadRecord: SøknadRecord
     private lateinit var resultatRecord: ResultatRecord
 
-    @Test
-    fun `Lagre resultat`() {
-        val versjonId = 934
-        Postgres.withMigratedDb {
-            val prototypeFakta = Søknad(
-                versjonId,
-                boolsk faktum "f1" id 19
-            )
-            Versjon.Bygger(
-                prototypeFakta,
-                prototypeFakta boolsk 19 er true,
-                mapOf(
-                    Versjon.UserInterfaceType.Web to Søknadprosess(
-                        Seksjon(
-                            "seksjon",
-                            Rolle.nav,
-                            *(prototypeFakta.map { it }.toTypedArray())
-                        )
+    private fun setup(versjonId: Int) {
+        val prototypeFakta = Søknad(
+            versjonId,
+            boolsk faktum "f1" id 19
+        )
+
+        Versjon.Bygger(
+            prototypeFakta,
+            prototypeFakta boolsk 19 er true,
+            mapOf(
+                Versjon.UserInterfaceType.Web to Søknadprosess(
+                    Seksjon(
+                        "seksjon",
+                        Rolle.nav,
+                        *(prototypeFakta.map { it }.toTypedArray())
                     )
                 )
-            ).registrer()
+            )
+        ).registrer()
+
+        Postgres.withMigratedDb {
             FaktumTable(prototypeFakta, versjonId)
             søknadRecord = SøknadRecord()
             resultatRecord = ResultatRecord()
@@ -52,18 +56,41 @@ internal class ResultatTest {
                 Versjon.UserInterfaceType.Web,
                 versjonId
             )
-            søknadprosess.boolsk(19).besvar(false)
-
-            val resultat = søknadprosess.resultat()
-            resultatRecord.lagreResultat(
-                resultat!!,
-                søknadprosess.søknad.uuid,
-                ResultatJsonBuilder(søknadprosess).resultat()
-            )
-
-            val hentaResultat = resultatRecord.hentResultat(søknadprosess.søknad.uuid)
-
-            assertEquals(resultat, hentaResultat)
         }
+    }
+
+    @Test
+    fun `Lagre resultat`() {
+        setup(935)
+        søknadprosess.boolsk(19).besvar(false)
+
+        val resultat = søknadprosess.resultat()
+        resultatRecord.lagreResultat(
+            resultat!!,
+            søknadprosess.søknad.uuid,
+            ResultatJsonBuilder(søknadprosess).resultat()
+        )
+
+        val hentaResultat = resultatRecord.hentResultat(søknadprosess.søknad.uuid)
+
+        assertEquals(resultat, hentaResultat)
+    }
+
+    @Test
+    fun `Lagrer sendt til manuell behandling`() {
+        setup(936)
+        val seksjonsnavn = "manuell seksjon"
+        resultatRecord.lagreManuellBehandling(søknadprosess.søknad.uuid, seksjonsnavn)
+
+        val grunn = using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf( //language=PostgreSQL
+                    "SELECT grunn FROM manuell_behandling WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
+                    søknadprosess.søknad.uuid
+                ).map { it.string("grunn") }.asSingle
+            )
+        }
+
+        assertEquals(seksjonsnavn, grunn)
     }
 }
