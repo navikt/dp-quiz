@@ -29,8 +29,8 @@ class ManuellBehandlingSink(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        log.info { "Mottok melding om manuell behandling" }
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
+        log.info { "Mottok melding om manuell behandling for søknad $søknadUuid" }
         val seksjonNavn = packet["seksjon_navn"].asText()
 
         resultatPersistence.lagreManuellBehandling(søknadUuid, seksjonNavn)
