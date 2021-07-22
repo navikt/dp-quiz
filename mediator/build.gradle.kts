@@ -25,6 +25,4 @@ dependencies {
     testImplementation(Mockk.mockk)
     testImplementation(TestContainers.postgresql)
     testImplementation(Junit5.params)
-    testImplementation("guru.nidi:graphviz-java:0.18.1")
-    testImplementation("guru.nidi:graphviz-kotlin:0.18.1")
 }

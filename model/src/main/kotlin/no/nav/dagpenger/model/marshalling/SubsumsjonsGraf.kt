@@ -1,11 +1,15 @@
 package no.nav.dagpenger.model.marshalling
 
+import guru.nidi.graphviz.attribute.Arrow
 import guru.nidi.graphviz.attribute.Attributes.attr
+import guru.nidi.graphviz.attribute.Color
 import guru.nidi.graphviz.attribute.Color.GREEN
 import guru.nidi.graphviz.attribute.Color.RED
 import guru.nidi.graphviz.attribute.GraphAttr
 import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.attribute.Rank
+import guru.nidi.graphviz.engine.Format
+import guru.nidi.graphviz.graph
 import guru.nidi.graphviz.model.Compass.EAST
 import guru.nidi.graphviz.model.Compass.SOUTH_EAST
 import guru.nidi.graphviz.model.Compass.SOUTH_WEST
@@ -14,6 +18,7 @@ import guru.nidi.graphviz.model.Factory.mutGraph
 import guru.nidi.graphviz.model.Factory.node
 import guru.nidi.graphviz.model.Factory.port
 import guru.nidi.graphviz.model.MutableGraph
+import guru.nidi.graphviz.toGraphviz
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.Kanttype.GYLDIG
@@ -28,9 +33,10 @@ import no.nav.dagpenger.model.subsumsjon.SammensattSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import java.io.File
 import java.util.UUID
 
-class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: MutableGraph) :
+class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     SøknadprosessVisitor {
 
     var index = 0
@@ -41,9 +47,19 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess, private val rotGraf: Mutab
 
     private val subGrafer = mutableListOf<MutableGraph>()
 
+    private val rotGraf: MutableGraph = graph(directed = true) {
+        edge["color" eq "black", Arrow.NORMAL]
+        node[Color.BLACK]
+        graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE), GraphAttr.COMPOUND]
+    }
+
     init {
         subGrafer.add(0, rotGraf)
         søknadprosess.accept(this)
+    }
+
+    fun skrivTilFil(filnavn: String) {
+        rotGraf.toGraphviz().scale(5.0).render(Format.PNG).toFile(File(filnavn))
     }
 
     override fun preVisit(søknadprosess: Søknadprosess, uuid: UUID) {
