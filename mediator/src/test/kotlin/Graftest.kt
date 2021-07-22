@@ -93,7 +93,7 @@ class Graftest {
             } hvisUgyldig {
                 dato(bursdag67) før dato(søknadsdato) hvisGyldig {
                     "bursdagssjekker".alle(
-                        dato(bursdag67) før dato(sisteDagMedLønn) hvisGyldig { dato(bursdag67) før dato(bursdag67) },
+                       dato(bursdag67) før dato(sisteDagMedLønn) hvisGyldig { dato(bursdag67) før dato(bursdag67) },
                         "flere sjekker".minstEnAv(
                             dato(bursdag67) før dato(dimisjonsdato)
                         ) hvisGyldig { dato(ønsketdato) før dato(ønsketdato) },

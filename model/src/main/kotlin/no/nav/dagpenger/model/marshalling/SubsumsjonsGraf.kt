@@ -7,10 +7,12 @@ import guru.nidi.graphviz.attribute.Color.GREEN
 import guru.nidi.graphviz.attribute.Color.RED
 import guru.nidi.graphviz.attribute.GraphAttr
 import guru.nidi.graphviz.attribute.Label
+import guru.nidi.graphviz.attribute.NodeAttr
 import guru.nidi.graphviz.attribute.Rank
+import guru.nidi.graphviz.attribute.Shape
+import guru.nidi.graphviz.attribute.Style
 import guru.nidi.graphviz.engine.Format
 import guru.nidi.graphviz.graph
-import guru.nidi.graphviz.model.Compass.EAST
 import guru.nidi.graphviz.model.Compass.SOUTH_EAST
 import guru.nidi.graphviz.model.Compass.SOUTH_WEST
 import guru.nidi.graphviz.model.Factory.between
@@ -46,7 +48,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
 
     private val opprettetAvSammensatt = mutableListOf<String>()
     private val noder = mutableListOf<Subsumsjon>()
-    private val sammensattAnker = mutableListOf<Subsumsjon>()
+    private val sammensattAnker = mutableListOf<String>()
 
     private val subGrafer = mutableListOf<MutableGraph>()
 
@@ -104,7 +106,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
 
     private fun sammensattTilEnkel(tilNode: Node) {
         subGrafer.first().add(
-            node(sammensattAnker.first().navn).link(
+            node(sammensattAnker.first()).link(
                 between(
                     port(kantRetning()),
                     tilNode
@@ -188,7 +190,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
 
     private fun utfallFraSammensatt(parent: Subsumsjon) {
         subGrafer.first().add(
-            node(sammensattAnker.first().navn).link(
+            node(sammensattAnker.first()).link(
                 between(
                     port(kantRetning()),
                     node("utfall$index").withUtfallAttrs()
@@ -211,39 +213,32 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
 
         subGrafer.first().let {
             val nodeLabel = Label.lines(label, subsumsjon.navn)
-            rotGraf.add(node(subsumsjon.navn).with(nodeLabel))
-
-            if (subsumsjon.navn !in opprettetAvSammensatt && noder.first().navn != subsumsjon.navn) {
-                it.add(
-                    node(noder.first().navn).link(
-                        between(
-                            port(kantRetning()),
-                            node(subsumsjon.navn)
-                        ).withUtfallAttrs()
-                    )
-                )
-            }
 
             val subgraf =
                 mutGraph().setCluster(true).setDirected(true).setName(subsumsjon.navn)
                     .graphAttrs().add(Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.COMPOUND, nodeLabel)
                     .graphAttrs().add(nodeLabel)
 
+            sammensattAnker.add(0, "${subsumsjon.navn}_dummy")
+
+            subgraf.add(node(sammensattAnker.first()).with(Style.INVIS, Shape.NONE, Label.of("")))
+
+            if (subsumsjon.navn !in opprettetAvSammensatt && noder.first().navn != subsumsjon.navn) {
+                it.add(
+                    node(noder.first().navn).link(
+                        between(
+                            port(kantRetning()),
+                            node(sammensattAnker.first())
+                        ).withUtfallAttrs().with(attr("lhead", "cluster_${subsumsjon.navn}"), attr("minlen", 2))
+                    )
+                )
+            }
+
             subsumsjoner.forEach { child ->
-                subgraf.add(node(child.navn))
+                if(child !is SammensattSubsumsjon) subgraf.add(node(child.navn))
                 opprettetAvSammensatt.add(child.navn)
             }
 
-            sammensattAnker.add(0, subsumsjoner.first())
-
-            it.add(
-                node(subsumsjon.navn).link(
-                    between(
-                        port(EAST),
-                        node(sammensattAnker.first().navn)
-                    ).with(attr("lhead", "cluster_${subsumsjon.navn}"))
-                )
-            )
             subGrafer.add(0, subgraf)
         }
 
