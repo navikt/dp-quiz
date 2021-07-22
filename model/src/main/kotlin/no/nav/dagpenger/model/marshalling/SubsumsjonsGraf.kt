@@ -44,6 +44,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
 
     private val opprettetAvSammensatt = mutableListOf<String>()
     private val noder = mutableListOf<String>()
+    private val sammensattAnker = mutableListOf<Subsumsjon>()
 
     private val subGrafer = mutableListOf<MutableGraph>()
 
@@ -150,10 +151,17 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
 
         if (child is TomSubsumsjon && !erManuell && subGrafer.size == 1) {
             subGrafer.first().let {
+                val fra =
+                    if(parent is SammensattSubsumsjon) node(sammensattAnker.first().navn)
+                    else node(parent.navn)
+
+                val linkAttrs = mutableListOf(kantFarge(), attr("weight", 10))
+                if(parent is SammensattSubsumsjon) linkAttrs.add(attr("ltail", "cluster_${parent.navn}"))
+
                 it.add(
-                    node(parent.navn).link(
+                    fra.link(
                         between(port(kantRetning()), node("$label$index").with(kantFarge().font(), kantFarge(), Label.lines(label)))
-                            .with(kantFarge(), attr("weight", 10))
+                            .with(*linkAttrs.toTypedArray())
                     )
                 )
                 index++
@@ -186,9 +194,11 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
                 opprettetAvSammensatt.add(child.navn)
             }
 
+            sammensattAnker.add(0, subsumsjoner.first())
+
             it.add(
                 node(subsumsjon.navn).link(
-                    between(port(EAST), node(subsumsjoner.first().navn))
+                    between(port(EAST), node(sammensattAnker.first().navn))
                         .with(attr("lhead", "cluster_${subsumsjon.navn}"))
                 )
             )
@@ -200,6 +210,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
 
     private fun ryddSammensattNode() {
         noder.removeFirst()
+        sammensattAnker.removeFirst()
     }
 
     private fun kantRetning() = when (currentKanttype) {
