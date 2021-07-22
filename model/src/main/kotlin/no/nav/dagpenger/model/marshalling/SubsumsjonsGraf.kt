@@ -45,7 +45,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     private var currentKanttype = GYLDIG
 
     private val opprettetAvSammensatt = mutableListOf<String>()
-    private val noder = mutableListOf<String>()
+    private val noder = mutableListOf<Subsumsjon>()
     private val sammensattAnker = mutableListOf<Subsumsjon>()
 
     private val subGrafer = mutableListOf<MutableGraph>()
@@ -66,7 +66,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     }
 
     override fun preVisit(søknadprosess: Søknadprosess, uuid: UUID) {
-        noder.add(søknadprosess.rootSubsumsjon.navn)
+        noder.add(søknadprosess.rootSubsumsjon)
     }
 
     override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
@@ -74,10 +74,10 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
             val navnelinjer = nodeNavn(fakta, regel)
             it.add(node(subsumsjon.navn).with(Label.lines(*navnelinjer.toTypedArray())))
 
-            if (noder.first() == subsumsjon.navn) return
+            if (noder.first() == subsumsjon) return
 
             if (subsumsjon.navn in opprettetAvSammensatt) {
-                noder.add(0, subsumsjon.navn)
+                noder.add(0, subsumsjon)
                 return
             }
 
@@ -85,16 +85,32 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
                 node(subsumsjon.navn).with(RED, RED.font())
             } else node(subsumsjon.navn)
 
-            it.add(
-                node(noder.first()).link(
-                    between(
-                        port(kantRetning()),
-                        tilNode
-                    ).withUtfallAttrs()
-                )
-            )
+            if(noder.first() is SammensattSubsumsjon) sammensattTilEnkel(tilNode)
+            else enkelTilEnkel(tilNode)
         }
-        noder.add(0, subsumsjon.navn)
+        noder.add(0, subsumsjon)
+    }
+
+    private fun enkelTilEnkel(tilNode: Node) {
+        subGrafer.first().add(
+            node(noder.first().navn).link(
+                between(
+                    port(kantRetning()),
+                    tilNode
+                ).withUtfallAttrs()
+            )
+        )
+    }
+
+    private fun sammensattTilEnkel(tilNode: Node) {
+        subGrafer.first().add(
+            node(sammensattAnker.first().navn).link(
+                between(
+                    port(kantRetning()),
+                    tilNode
+                ).withUtfallAttrs().with(attr("ltail", "cluster_${noder.first().navn}"))
+            )
+        )
     }
 
     private fun nodeNavn(fakta: List<Faktum<*>>, regel: Regel): List<String> {
@@ -197,9 +213,9 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
             val nodeLabel = Label.lines(label, subsumsjon.navn)
             rotGraf.add(node(subsumsjon.navn).with(nodeLabel))
 
-            if (subsumsjon.navn !in opprettetAvSammensatt && noder.first() != subsumsjon.navn) {
+            if (subsumsjon.navn !in opprettetAvSammensatt && noder.first().navn != subsumsjon.navn) {
                 it.add(
-                    node(noder.first()).link(
+                    node(noder.first().navn).link(
                         between(
                             port(kantRetning()),
                             node(subsumsjon.navn)
@@ -231,7 +247,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
             subGrafer.add(0, subgraf)
         }
 
-        noder.add(0, subsumsjon.navn)
+        noder.add(0, subsumsjon)
     }
 
     private fun ryddSammensattNode() {
