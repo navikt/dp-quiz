@@ -1,8 +1,11 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
+import io.mockk.mockk
 import no.finn.unleash.FakeUnleash
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.quiz.mediator.FEATURE_MOTTA_SØKNAD
+import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import no.nav.dagpenger.quiz.mediator.helpers.desember
 import no.nav.dagpenger.quiz.mediator.helpers.januar
@@ -25,10 +28,12 @@ internal class MediatorTest {
         private val meldingsfabrikk = TestMeldingFactory("fødselsnummer", "aktør")
         private val testRapid = TestRapid()
         private val grupperer = SøknadPersistenceFake()
+        private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
+        private val unleash = FakeUnleash().also { it.enable(FEATURE_MOTTA_SØKNAD) }
 
         init {
-            NySøknadService(grupperer, testRapid, SøknadEksempel.versjonId)
-            FaktumSvarService(grupperer, testRapid, FakeUnleash())
+            MottattSøknadService(grupperer, testRapid, unleash, SøknadEksempel.versjonId)
+            FaktumSvarService(grupperer, resultatPersistence, testRapid, unleash)
         }
     }
 
@@ -68,8 +73,8 @@ internal class MediatorTest {
             )
         )
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(8, "boolean", "true")))
-        assertEquals(9, testRapid.inspektør.size)
-        assertEquals("prosess_resultat", testRapid.inspektør.field(8, "@event_name").asText())
+        assertEquals(8, testRapid.inspektør.size)
+        assertEquals("prosess_resultat", testRapid.inspektør.field(7, "@event_name").asText())
     }
 
     @Test
@@ -112,11 +117,13 @@ private data class FaktumSvar(val faktumId: Int, val clazz: String, val svar: An
 
 private class TestMeldingFactory(private val fnr: String, private val aktørId: String) {
     fun nySøknadMelding(): String = nyHendelse(
-        "Søknad",
+        "innsending_ferdigstilt",
         mapOf(
-            "fnr" to fnr,
+            "fødselsnummer" to fnr,
             "aktørId" to aktørId,
-            "søknadsId" to "mf68etellerannet"
+            "type" to "NySøknad",
+            "journalpostId" to "493389306",
+            "søknadsData" to mapOf("brukerBehandlingId" to "mf68etellerannet")
         )
     )
 

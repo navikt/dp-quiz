@@ -138,7 +138,7 @@ private class ErIkke<T : Comparable<T>>(private val other: T) : Regel {
 infix fun GeneratorFaktum.med(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
     this.navn,
     GeneratorSubsumsjon(
-        Er(0),
+        ErIkke(0),
         this,
         deltre.apply {
             require(gyldig == TomSubsumsjon && ugyldig == TomSubsumsjon) {
@@ -152,7 +152,7 @@ infix fun GeneratorFaktum.med(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
 infix fun GeneratorFaktum.har(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
     this.navn,
     GeneratorSubsumsjon(
-        Er(0),
+        ErIkke(0),
         this,
         deltre.apply {
             require(gyldig == TomSubsumsjon && ugyldig == TomSubsumsjon) {
@@ -161,15 +161,6 @@ infix fun GeneratorFaktum.har(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
         },
         MinstEnAvSubsumsjon(this.navn, mutableListOf())
     )
-)
-
-fun har(faktum: Faktum<Boolean>) = EnkelSubsumsjon(
-    object : Regel {
-        override val typeNavn = "har"
-        override fun resultat(fakta: List<Faktum<*>>) = (fakta[0] as Faktum<Boolean>).svar()
-        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `${fakta[0]}` er sann"
-    },
-    faktum
 )
 
 infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon =

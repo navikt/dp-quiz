@@ -30,7 +30,8 @@ internal object SøknadEksempel {
         inntekt faktum "f6_inntekt" id 6,
         dokument faktum "f7_dokument" id 7,
         boolsk faktum "f8_bool" id 8,
-        dokument faktum "innsendt søknadsid" id 17, // NySøknadService trenger dette faktumet
+        dokument faktum "innsendt søknadsid" id 17, // MottattSøknadService trenger dette faktumet
+        dokument faktum "arena fagsakid" id 52, // MottattSøknadService trenger dette faktumet
     )
 
     private val webPrototypeSøknad = Søknadprosess(

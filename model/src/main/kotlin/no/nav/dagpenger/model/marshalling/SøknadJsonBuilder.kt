@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt
@@ -111,6 +112,19 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         regel: FaktaRegel<R>,
+        svar: R
+    ) {
+        lagFaktumNode(id, faktum.navn, clazz = clazz, svar = svar)
+    }
+
+    override fun <R : Comparable<R>> visit(
+        faktum: GeneratorFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        templates: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>,
         svar: R
     ) {
         lagFaktumNode(id, faktum.navn, clazz = clazz, svar = svar)

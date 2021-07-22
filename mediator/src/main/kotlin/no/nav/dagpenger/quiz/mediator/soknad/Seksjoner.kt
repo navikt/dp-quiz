@@ -10,6 +10,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsA
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKoronaManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
@@ -17,6 +19,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.helse
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektNesteKalendermånedManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
@@ -25,6 +28,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minst
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektfaktor36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ordinær
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.over67årFradato
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.over67årManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittert
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
@@ -87,7 +92,8 @@ internal object Seksjoner {
             boolsk(kanJobbeDeltid),
             boolsk(helseTilAlleTyperJobb),
             boolsk(kanJobbeHvorSomHelst),
-            boolsk(villigTilÅBytteYrke)
+            boolsk(villigTilÅBytteYrke),
+            boolsk(fortsattRettKorona)
         )
     }
 
@@ -237,6 +243,38 @@ internal object Seksjoner {
         )
     }
 
+    private val manuellFortsattRettKorona = with(søknad) {
+        Seksjon(
+            "fortsatt rett korona",
+            Rolle.manuell,
+            boolsk(fortsattRettKoronaManuell)
+        )
+    }
+
+    private val manuellOver67år = with(søknad) {
+        Seksjon(
+            "over 67 år",
+            Rolle.manuell,
+            boolsk(over67årManuell)
+        )
+    }
+
+    private val inntektsrapporteringsperioder = with(søknad) {
+        Seksjon(
+            "inntektsrapporteringsperioder",
+            Rolle.nav,
+            dato(inntektsrapporteringsperiodeTom)
+        )
+    }
+
+    private val alder = with(søknad) {
+        Seksjon(
+            "alder",
+            Rolle.nav,
+            dato(over67årFradato)
+        )
+    }
+
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             behandlingsdatoSeksjon,
@@ -250,6 +288,8 @@ internal object Seksjoner {
             inntekter,
             inntektNesteKalendermåned,
             endredeArbeidsforhold,
+            inntektsrapporteringsperioder,
+            alder,
             manuellGjenopptak,
             manuellSykepenger,
             manuellFangstOgFisk,
@@ -259,6 +299,8 @@ internal object Seksjoner {
             manuellOppfyllerKraveneTilMinsteArbeidsinntekt,
             manuellHarInntektNesteKalendermåned,
             manuellErIkkeReellArbeidssøker,
-            manuellErIkkeRegistrertArbeidssøker
+            manuellErIkkeRegistrertArbeidssøker,
+            manuellFortsattRettKorona,
+            manuellOver67år
         )
 }

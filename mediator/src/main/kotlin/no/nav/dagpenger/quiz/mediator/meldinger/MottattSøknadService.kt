@@ -7,12 +7,14 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.FEATURE_MOTTA_SØKNAD
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.arenaFagsakId
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innsendtSøknadsId
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
+import no.nav.helse.rapids_rivers.isMissingOrNull
 import java.time.LocalDateTime
 
 private val log = KotlinLogging.logger {}
@@ -33,6 +35,7 @@ internal class MottattSøknadService(
                 it.requireKey("fødselsnummer")
                 it.requireKey("aktørId")
                 it.requireKey("journalpostId")
+                it.interestedIn("fagsakId")
             }
         }.register(this)
     }
@@ -51,10 +54,14 @@ internal class MottattSøknadService(
 
         søknadPersistence.ny(identer, faktagrupperType, versjonId)
             .also { søknadprosess ->
+                // Arena-fagsakId for at arena-sink skal kunne lage vedtak på riktig sak
+                if (!packet["fagsakId"].isMissingOrNull()) {
+                    søknadprosess.dokument(arenaFagsakId).besvar(Dokument(LocalDateTime.now(), url = packet["fagsakId"].asText()))
+                }
                 // Litt stygt, men så lenge vi leser fra innsendt søknad, så må vi lagre id-en for å hente ut data fra søknaden.
                 søknadprosess.dokument(innsendtSøknadsId).besvar(Dokument(LocalDateTime.now(), url = søknadsId))
-                søknadPersistence.lagre(søknadprosess.søknad)
 
+                søknadPersistence.lagre(søknadprosess.søknad)
                 log.info { "Opprettet ny søknadprosess ${søknadprosess.søknad.uuid} på grunn av journalføring $journalpostId for søknad $søknadsId" }
 
                 søknadprosess.nesteSeksjoner()

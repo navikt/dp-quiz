@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -25,6 +26,7 @@ private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
 internal class FaktumSvarService(
     private val søknadPersistence: SøknadPersistence,
+    private val resultatPersistence: ResultatPersistence,
     rapidsConnection: RapidsConnection,
     private val unleash: Unleash
 ) : River.PacketListener {
@@ -65,12 +67,13 @@ internal class FaktumSvarService(
             log.info { "Mottok ny(e) fakta (${fakta.joinToString(",") { it["id"].asText() }}) for $søknadUuid" }
             sikkerlogg.info { packet.toJson() }
 
-            try {
-                val søknadprosess = søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web)
-                besvarFakta(fakta, søknadprosess)
+            val søknadprosess = søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web)
+            besvarFakta(fakta, søknadprosess)
+
+            if (søknadprosess.erFerdig()) {
+                sendResultat(søknadprosess, context)
+            } else {
                 sendNesteSeksjon(søknadprosess, context)
-            } catch (e: Exception) {
-                log.error(e) { "feil ved svar for faktum: ${e.message}" }
             }
         }
     }
@@ -94,15 +97,16 @@ internal class FaktumSvarService(
                 context.publish(json)
                 sikkerlogg.info { "Send ut seksjon: $json" }
                 log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
-            }.also { seksjon ->
-                if (Søknadprosess.erFerdig(seksjon)) {
-                    ResultatJsonBuilder(søknadprosess).resultat().also { json ->
-                        context.publish(json.toString())
-                        sikkerlogg.info { "Send ut resultat: $json" }
-                    }
-                    log.info { "Ferdig med søknad ${søknadprosess.søknad.uuid}. Resultatet er: ${søknadprosess.resultat()}" }
-                }
             }
+    }
+
+    private fun sendResultat(søknadprosess: Søknadprosess, context: MessageContext) {
+        ResultatJsonBuilder(søknadprosess).resultat().also { json ->
+            resultatPersistence.lagreResultat(søknadprosess.resultat()!!, søknadprosess.søknad.uuid, json)
+            context.publish(json.toString())
+            sikkerlogg.info { "Send ut resultat: $json" }
+        }
+        log.info { "Ferdig med søknad ${søknadprosess.søknad.uuid}. Resultatet er: ${søknadprosess.resultat()}" }
     }
 
     override fun onError(problems: MessageProblems, context: MessageContext) {
@@ -110,7 +114,13 @@ internal class FaktumSvarService(
         sikkerlogg.error { problems.toExtendedReport() }
     }
 
-    private fun besvar(søknadprosess: Søknadprosess, faktumId: String, svar: JsonNode, clazz: String, besvartAv: String?) {
+    private fun besvar(
+        søknadprosess: Søknadprosess,
+        faktumId: String,
+        svar: JsonNode,
+        clazz: String,
+        besvartAv: String?
+    ) {
         when (clazz) {
             "boolean" -> søknadprosess.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)
             "int" -> søknadprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv)

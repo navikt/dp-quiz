@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testPerson
@@ -20,7 +21,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class PeriodeGeneratorTest {
+class GeneratorFaktumTest {
 
     private lateinit var søknadprosessTestBygger: Versjon.Bygger
 
@@ -48,13 +49,11 @@ class PeriodeGeneratorTest {
                 Rolle.nav,
                 søknadPrototype dato 2,
                 søknadPrototype dato 3,
-
             ),
             Seksjon(
                 "søknadsdato",
                 Rolle.søker,
                 søknadPrototype dato 4,
-
             ),
         )
         søknadprosessTestBygger = Versjon.Bygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
@@ -77,5 +76,44 @@ class PeriodeGeneratorTest {
 
         søknadprosess.dato(4).besvar(8.januar)
         assertTrue(søknadprosess.rootSubsumsjon.resultat()!!)
+    }
+
+    @Test
+    fun ` har med tom generator blir false `() {
+        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
+        søknadprosess.generator(1).besvar(0)
+        assertEquals(false, søknadprosess.rootSubsumsjon.resultat())
+    }
+
+    @Test
+    fun ` har med en gyldig generert subsumsjon blir true `() {
+        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
+        søknadprosess.generator(1).besvar(1)
+        søknadprosess.dato("2.1").besvar(1.januar)
+        søknadprosess.dato("3.1").besvar(8.januar)
+        søknadprosess.dato(4).besvar(5.januar)
+        assertEquals(true, søknadprosess.rootSubsumsjon.resultat())
+    }
+
+    @Test
+    fun ` har med en ugyldig generert subsumsjon blir false `() {
+        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
+        søknadprosess.generator(1).besvar(1)
+        søknadprosess.dato("2.1").besvar(1.desember)
+        søknadprosess.dato("3.1").besvar(8.desember)
+        søknadprosess.dato(4).besvar(5.januar)
+        assertEquals(false, søknadprosess.rootSubsumsjon.resultat())
+    }
+
+    @Test
+    fun ` har med gyldig og ugyldig genererte subsumsjoner blir true `() {
+        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
+        søknadprosess.generator(1).besvar(2)
+        søknadprosess.dato("2.1").besvar(1.desember)
+        søknadprosess.dato("3.1").besvar(8.desember)
+        søknadprosess.dato("2.2").besvar(1.januar)
+        søknadprosess.dato("3.2").besvar(8.januar)
+        søknadprosess.dato(4).besvar(5.januar)
+        assertEquals(true, søknadprosess.rootSubsumsjon.resultat())
     }
 }

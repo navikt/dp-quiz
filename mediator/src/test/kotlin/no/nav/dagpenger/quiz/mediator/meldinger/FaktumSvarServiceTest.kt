@@ -8,10 +8,13 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.subsumsjon.hvisGyldig
+import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
@@ -31,7 +34,7 @@ internal class FaktumSvarServiceTest {
 
     val versjon = Versjon.Bygger(
         prototypeFakta,
-        prototypeFakta dato 11 etter (prototypeFakta dato 12),
+        prototypeFakta heltall 10 er 1 hvisGyldig { prototypeFakta dato 11 etter (prototypeFakta dato 12) },
         mapOf(
             Versjon.UserInterfaceType.Web to Søknadprosess(
                 Seksjon(
@@ -44,13 +47,17 @@ internal class FaktumSvarServiceTest {
     ).registrer()
 
     val søknadPersistence = mockk<SøknadPersistence>().also {
-        every { it.hent(any(), any()) } returns Versjon.id(versjonId).søknadprosess(prototypeFakta, Versjon.UserInterfaceType.Web)
+        every { it.hent(any(), any()) } returns Versjon.id(versjonId)
+            .søknadprosess(prototypeFakta, Versjon.UserInterfaceType.Web)
         every { it.lagre(any() as Søknad) } returns true
     }
+
+    val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
 
     val testRapid = TestRapid().also {
         FaktumSvarService(
             søknadPersistence = søknadPersistence,
+            resultatPersistence = resultatPersistence,
             rapidsConnection = it,
             unleash = FakeUnleash()
         )
@@ -73,6 +80,7 @@ internal class FaktumSvarServiceTest {
 
         verify(exactly = 1) { søknadPersistence.hent(any(), any()) }
         verify(exactly = 1) { søknadPersistence.lagre(any() as Søknad) }
+        verify(exactly = 1) { resultatPersistence.lagreResultat(any(), any(), any()) }
     }
 
     //language=json

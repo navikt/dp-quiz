@@ -29,6 +29,7 @@ allprojects {
 
     dependencies {
         implementation(kotlin("stdlib"))
+        implementation(kotlin("reflect"))
 
         testRuntimeOnly(Junit5.engine)
         testImplementation(Junit5.api)
@@ -64,10 +65,6 @@ subprojects {
     repositories {
         jcenter()
         maven("https://jitpack.io")
-    }
-
-    tasks.named("jar") {
-        dependsOn("test")
     }
 
     tasks.named("compileKotlin") {

@@ -6,10 +6,11 @@ import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
+import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
+import no.nav.dagpenger.quiz.mediator.meldinger.ManuellBehandlingSink
 import no.nav.dagpenger.quiz.mediator.meldinger.MottattSøknadService
-import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadService
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -34,14 +35,15 @@ internal class ApplicationBuilder() : RapidsConnection.StatusListener {
         runMigration()
             .also {
                 val søknadRecord = SøknadRecord()
+                val resultatRecord = ResultatRecord()
                 val unleash = setupUnleash(Configuration.config["unleash.url"]!!)
                 AvslagPåMinsteinntektOppsett.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
-                NySøknadService(søknadRecord, rapidsConnection)
                 MottattSøknadService(søknadRecord, rapidsConnection, unleash)
-                FaktumSvarService(søknadRecord, rapidsConnection, unleash)
+                FaktumSvarService(søknadRecord, resultatRecord, rapidsConnection, unleash)
                 BehandlingsdatoService(rapidsConnection)
                 SenesteMuligeVirkningsdatoService(rapidsConnection)
                 TerskelFaktorService(rapidsConnection)
+                ManuellBehandlingSink(rapidsConnection, resultatRecord)
             }
     }
 }

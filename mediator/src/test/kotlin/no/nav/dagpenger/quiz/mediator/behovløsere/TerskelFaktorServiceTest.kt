@@ -1,6 +1,5 @@
-package no.nav.dagpenger.quiz.mediator.meldinger
+package no.nav.dagpenger.quiz.mediator.behovløsere
 
-import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

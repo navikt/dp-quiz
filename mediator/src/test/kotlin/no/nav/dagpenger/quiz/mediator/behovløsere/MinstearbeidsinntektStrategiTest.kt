@@ -1,4 +1,4 @@
-package no.nav.dagpenger.quiz.mediator.meldinger
+package no.nav.dagpenger.quiz.mediator.behovløsere
 
 import no.nav.dagpenger.quiz.mediator.behovløsere.MinstearbeidsinntektFaktorStrategi.Faktor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MinstearbeidsinntektFaktorStrategi.finnFaktor

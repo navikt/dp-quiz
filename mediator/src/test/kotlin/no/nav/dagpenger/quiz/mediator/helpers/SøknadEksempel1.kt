@@ -15,9 +15,9 @@ import no.nav.dagpenger.model.seksjon.Versjon
 
 internal object SøknadEksempel1 {
 
-    val versjonId = 15
+    val versjonId = 888
     internal val prototypeFakta1 = Søknad(
-        15,
+        888,
         boolsk faktum "f1" id 1 avhengerAv 11,
         dato faktum "f2" id 2,
         dato faktum "f3" id 3,

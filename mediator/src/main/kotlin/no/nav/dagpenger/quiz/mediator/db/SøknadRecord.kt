@@ -291,32 +291,4 @@ class SøknadRecord : SøknadPersistence {
             )
         }.toMap()
     }
-
-    override fun lagreResultat(resultat: Boolean, søknad: Søknad): Boolean {
-        return using(sessionOf(dataSource)) { session ->
-            session.run(
-                queryOf( //language=PostgreSQL
-                    """
-                    INSERT INTO resultat (resultat, soknad_id) 
-                        SELECT ?, soknad.id 
-                        FROM soknad 
-                        WHERE soknad.uuid = ? 
-                    """.trimMargin(),
-                    resultat,
-                    søknad.uuid
-                ).asExecute
-            )
-        }
-    }
-
-    override fun hentResultat(uuid: UUID): Boolean {
-        return using(sessionOf(dataSource)) { session ->
-            session.run(
-                queryOf( //language=PostgreSQL
-                    "SELECT resultat FROM resultat WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
-                    uuid
-                ).map { it.boolean("resultat") }.asSingle
-            )
-        } ?: throw IllegalArgumentException("Resultat finnes ikke for søknad, uuid: $uuid")
-    }
 }

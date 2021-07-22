@@ -50,11 +50,11 @@ internal class GenerertSubsumsjonTest {
         søknadprosess.generator(2).besvar(3)
         subsumsjon.resultat()
 
-        assertEquals(3, (subsumsjon[0].ugyldig as AlleSubsumsjon).size)
+        assertEquals(3, (subsumsjon[0].gyldig as AlleSubsumsjon).size)
 
         søknadprosess.generator(2).besvar(2)
         subsumsjon.resultat()
 
-        assertEquals(2, (subsumsjon[0].ugyldig as AlleSubsumsjon).size)
+        assertEquals(2, (subsumsjon[0].gyldig as AlleSubsumsjon).size)
     }
 }

@@ -19,7 +19,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    const val VERSJON_ID = 13
+    const val VERSJON_ID = 20
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
@@ -43,6 +43,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val registrertArbeidssøkerPeriodeFom = 21
     const val registrertArbeidssøkerPeriodeTom = 22
     const val behandlingsdato = 23
+    const val inntektsrapporteringsperiodeTom = 25
     const val antallEndredeArbeidsforhold = 26
     const val ordinær = 27
     const val permittert = 28
@@ -68,6 +69,11 @@ internal object AvslagPåMinsteinntektOppsett {
     const val villigTilÅBytteYrke = 49
     const val reellArbeidssøkerManuell = 50
     const val registrertArbeidssøkerManuell = 51
+    const val arenaFagsakId = 52
+    const val fortsattRettKorona = 53
+    const val fortsattRettKoronaManuell = 54
+    const val over67årFradato = 55
+    const val over67årManuell = 56
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -114,7 +120,13 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Har mulighet til å jobbe hvor som helst" id kanJobbeHvorSomHelst avhengerAv innsendtSøknadsId,
             boolsk faktum "Er villig til å bytte yrke eller gå ned i lønn" id villigTilÅBytteYrke avhengerAv innsendtSøknadsId,
             boolsk faktum "Reell arbeidssøker manuell" id reellArbeidssøkerManuell avhengerAv kanJobbeDeltid og helseTilAlleTyperJobb og kanJobbeHvorSomHelst og villigTilÅBytteYrke,
-            boolsk faktum "Registrert arbeidssøker manuell" id registrertArbeidssøkerManuell avhengerAv registrertArbeidssøkerPerioder
+            boolsk faktum "Registrert arbeidssøker manuell" id registrertArbeidssøkerManuell avhengerAv registrertArbeidssøkerPerioder,
+            dato faktum "Inntektsrapporteringsperiode til og med" id inntektsrapporteringsperiodeTom avhengerAv behandlingsdato,
+            dokument faktum "FagsakId i Arena" id arenaFagsakId,
+            boolsk faktum "Har fortsatt rett til dagpenger i korona-periode" id fortsattRettKorona,
+            boolsk faktum "Fortsatt rett korona manuell" id fortsattRettKoronaManuell,
+            dato faktum "Over 67 år fra-dato" id over67årFradato,
+            boolsk faktum "Over 67 år manuell" id over67årManuell
         )
 
     private val faktumNavBehov =
@@ -147,7 +159,10 @@ internal object AvslagPåMinsteinntektOppsett {
                 kanJobbeDeltid to "KanJobbeDeltid",
                 helseTilAlleTyperJobb to "HelseTilAlleTyperJobb",
                 kanJobbeHvorSomHelst to "KanJobbeHvorSomHelst",
-                villigTilÅBytteYrke to "VilligTilÅBytteYrke"
+                villigTilÅBytteYrke to "VilligTilÅBytteYrke",
+                inntektsrapporteringsperiodeTom to "InntektsrapporteringsperiodeTom",
+                fortsattRettKorona to "FortsattRettKorona",
+                over67årFradato to "ForGammelGrensedato"
             )
         )
 

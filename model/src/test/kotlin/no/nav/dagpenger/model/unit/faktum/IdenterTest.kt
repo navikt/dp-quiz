@@ -1,9 +1,9 @@
 package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.faktum.Identer
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 
 class IdenterTest {
 

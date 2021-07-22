@@ -20,7 +20,7 @@ internal class FlereSøknaderTest {
             val søknad1 = søknadRecord.ny(
                 Identer.Builder().folkeregisterIdent("10987654321").build(),
                 Versjon.UserInterfaceType.Web,
-                15
+                888
             )
             val søknad2 = søknadRecord.ny(
                 Identer.Builder().folkeregisterIdent("12345678910").build(),
