@@ -17,6 +17,7 @@ import guru.nidi.graphviz.model.Factory.between
 import guru.nidi.graphviz.model.Factory.mutGraph
 import guru.nidi.graphviz.model.Factory.node
 import guru.nidi.graphviz.model.Factory.port
+import guru.nidi.graphviz.model.Link
 import guru.nidi.graphviz.model.MutableGraph
 import guru.nidi.graphviz.model.Node
 import guru.nidi.graphviz.toGraphviz
@@ -86,8 +87,10 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
 
             it.add(
                 node(noder.first()).link(
-                    between(port(kantRetning()), tilNode)
-                        .with(kantFarge(), attr("weight", 10))
+                    between(
+                        port(kantRetning()),
+                        tilNode
+                    ).withUtfallAttrs()
                 )
             )
         }
@@ -162,7 +165,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
                 between(
                     port(kantRetning()),
                     node("utfall$index").withUtfallAttrs()
-                ).with(kantFarge(), attr("weight", 10))
+                ).withUtfallAttrs()
             )
         )
     }
@@ -170,11 +173,15 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     private fun utfallFraSammensatt(parent: Subsumsjon) {
         subGrafer.first().add(
             node(sammensattAnker.first().navn).link(
-                between(port(kantRetning()), node("utfall$index").withUtfallAttrs())
-                    .with(kantFarge(), attr("weight", 10), attr("ltail", "cluster_${parent.navn}"))
+                between(
+                    port(kantRetning()),
+                    node("utfall$index").withUtfallAttrs()
+                ).withUtfallAttrs().with(attr("ltail", "cluster_${parent.navn}"))
             )
         )
     }
+
+    private fun Link.withUtfallAttrs() = this.with(kantFarge(), attr("weight", 10))
 
     private fun Node.withUtfallAttrs(): Node {
         val label = when (currentKanttype) {
@@ -193,8 +200,10 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
             if (subsumsjon.navn !in opprettetAvSammensatt && noder.first() != subsumsjon.navn) {
                 it.add(
                     node(noder.first()).link(
-                        between(port(kantRetning()), node(subsumsjon.navn))
-                            .with(kantFarge(), attr("weight", 10))
+                        between(
+                            port(kantRetning()),
+                            node(subsumsjon.navn)
+                        ).withUtfallAttrs()
                     )
                 )
             }
@@ -213,8 +222,10 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
 
             it.add(
                 node(subsumsjon.navn).link(
-                    between(port(EAST), node(sammensattAnker.first().navn))
-                        .with(attr("lhead", "cluster_${subsumsjon.navn}"))
+                    between(
+                        port(EAST),
+                        node(sammensattAnker.first().navn)
+                    ).with(attr("lhead", "cluster_${subsumsjon.navn}"))
                 )
             )
             subGrafer.add(0, subgraf)
