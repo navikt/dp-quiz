@@ -18,6 +18,7 @@ import guru.nidi.graphviz.model.Factory.mutGraph
 import guru.nidi.graphviz.model.Factory.node
 import guru.nidi.graphviz.model.Factory.port
 import guru.nidi.graphviz.model.MutableGraph
+import guru.nidi.graphviz.model.Node
 import guru.nidi.graphviz.toGraphviz
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
@@ -141,32 +142,46 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     }
 
     private fun kant(parent: Subsumsjon, child: Subsumsjon, kanttype: Kanttype) {
-        val label = when (kanttype) {
-            GYLDIG -> "Innvilget"
-            UGYLDIG -> "Avslag"
-        }
         currentKanttype = kanttype
 
         val erManuell = parent.alleFakta().any { it.harRolle(Rolle.manuell) }
 
         if (child is TomSubsumsjon && !erManuell && subGrafer.size == 1) {
-            subGrafer.first().let {
-                val fra =
-                    if(parent is SammensattSubsumsjon) node(sammensattAnker.first().navn)
-                    else node(parent.navn)
-
-                val linkAttrs = mutableListOf(kantFarge(), attr("weight", 10))
-                if(parent is SammensattSubsumsjon) linkAttrs.add(attr("ltail", "cluster_${parent.navn}"))
-
-                it.add(
-                    fra.link(
-                        between(port(kantRetning()), node("$label$index").with(kantFarge().font(), kantFarge(), Label.lines(label)))
-                            .with(*linkAttrs.toTypedArray())
-                    )
-                )
-                index++
+            if (parent is SammensattSubsumsjon) {
+                utfallFraSammensatt(parent)
+            } else {
+                utfallFraEnkel(parent)
             }
+            index++
         }
+    }
+
+    private fun utfallFraEnkel(parent: Subsumsjon) {
+        subGrafer.first().add(
+            node(parent.navn).link(
+                between(
+                    port(kantRetning()),
+                    node("utfall$index").withUtfallAttrs()
+                ).with(kantFarge(), attr("weight", 10))
+            )
+        )
+    }
+
+    private fun utfallFraSammensatt(parent: Subsumsjon) {
+        subGrafer.first().add(
+            node(sammensattAnker.first().navn).link(
+                between(port(kantRetning()), node("utfall$index").withUtfallAttrs())
+                    .with(kantFarge(), attr("weight", 10), attr("ltail", "cluster_${parent.navn}"))
+            )
+        )
+    }
+
+    private fun Node.withUtfallAttrs(): Node {
+        val label = when (currentKanttype) {
+            GYLDIG -> "Innvilget"
+            UGYLDIG -> "Avslag"
+        }
+        return this.with(kantFarge().font(), kantFarge(), Label.lines(label))
     }
 
     private fun lagSammensattNode(subsumsjon: SammensattSubsumsjon, subsumsjoner: List<Subsumsjon>, label: String) {
