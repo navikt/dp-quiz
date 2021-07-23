@@ -29,7 +29,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
 
     override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> = emptySet()
 
-    override fun leggTilHvis(kode: Faktum.FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>) {
+    override fun leggTilHvis(kode: FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>) {
         // Ignorert
     }
 

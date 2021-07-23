@@ -5,7 +5,7 @@ import java.util.Locale
 import java.util.MissingResourceException
 import java.util.ResourceBundle
 
-class Språk(private val lokal: Locale = bokmål, private val versjonId: Int) {
+class Språk(private val lokal: Locale = bokmål, versjonId: Int) {
 
     private val basename = "oversettelser_v$versjonId"
 

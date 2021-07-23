@@ -18,7 +18,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class ManuellBehandlingJsonBuilder(private val søknadprosess: Søknadprosess, private val seksjonNavn: String, indeks: Int = 0) :
+class ManuellBehandlingJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: String, indeks: Int = 0) :
     SøknadprosessVisitor {
 
     private val mapper = ObjectMapper()
@@ -49,7 +49,7 @@ class ManuellBehandlingJsonBuilder(private val søknadprosess: Søknadprosess, p
     override fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {
         identerNode.addObject().also { identNode ->
             identNode.put("id", id)
-            identNode.put("type", type.name.toLowerCase())
+            identNode.put("type", type.name.lowercase())
             identNode.put("historisk", historisk)
         }
     }
@@ -84,7 +84,7 @@ class ManuellBehandlingJsonBuilder(private val søknadprosess: Søknadprosess, p
                 jsonTemplates.addObject().also {
                     it.put("id", template.id)
                     it.put("navn", template.navn)
-                    it.put("clazz", template.clazz().simpleName.toLowerCase())
+                    it.put("clazz", template.clazz().simpleName.lowercase())
                 }
             }
             lagFaktumNode(id, faktum.navn)

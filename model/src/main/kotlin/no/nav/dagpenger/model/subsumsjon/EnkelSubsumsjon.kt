@@ -12,7 +12,7 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 open class EnkelSubsumsjon protected constructor(
     protected val regel: Regel,
-    protected val subsumsjonFakta: List<Faktum<*>>,
+    private val subsumsjonFakta: List<Faktum<*>>,
     gyldigSubsumsjon: Subsumsjon,
     ugyldigSubsumsjon: Subsumsjon
 ) : Subsumsjon(regel.toString(subsumsjonFakta), gyldigSubsumsjon, ugyldigSubsumsjon) {
@@ -20,11 +20,11 @@ open class EnkelSubsumsjon protected constructor(
         this(regel, fakta.toList(), TomSubsumsjon, TomSubsumsjon)
 
     override fun accept(visitor: SubsumsjonVisitor) {
-        resultat().also {
-            visitor.preVisit(this, regel, subsumsjonFakta, lokaltResultat(), it)
+        resultat().also { resultat ->
+            visitor.preVisit(this, regel, subsumsjonFakta, lokaltResultat(), resultat)
             subsumsjonFakta.forEach { it.accept(visitor) }
             super.accept(visitor)
-            visitor.postVisit(this, regel, subsumsjonFakta, lokaltResultat(), it)
+            visitor.postVisit(this, regel, subsumsjonFakta, lokaltResultat(), resultat)
         }
     }
 

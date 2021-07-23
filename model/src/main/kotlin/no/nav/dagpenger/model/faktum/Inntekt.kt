@@ -4,12 +4,9 @@ import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
-class Inntekt : Comparable<Inntekt> {
+class Inntekt private constructor(private val årlig: Double) : Comparable<Inntekt> {
 
-    private val årlig: Double
-
-    private constructor(årlig: Double) {
-        this.årlig = årlig
+    init {
         require(
             this.årlig !in listOf(
                 Double.POSITIVE_INFINITY,
@@ -55,7 +52,7 @@ class Inntekt : Comparable<Inntekt> {
 
     private fun tilMånedligDouble() = årlig / 12
 
-    internal fun rundTilDaglig() = Inntekt((årlig / ARBEIDSDAGER_PER_ÅR).roundToInt() * ARBEIDSDAGER_PER_ÅR.toDouble())
+    private fun rundTilDaglig() = Inntekt((årlig / ARBEIDSDAGER_PER_ÅR).roundToInt() * ARBEIDSDAGER_PER_ÅR.toDouble())
 
     internal operator fun plus(other: Inntekt) = Inntekt(this.årlig + other.årlig)
 

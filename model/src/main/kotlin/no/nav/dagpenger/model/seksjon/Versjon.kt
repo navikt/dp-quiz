@@ -44,17 +44,17 @@ class Versjon private constructor(
     class Bygger(
         private val prototypeSøknad: Søknad,
         private val prototypeSubsumsjon: Subsumsjon,
-        private val prototypeUserInterfaces: Map<Versjon.UserInterfaceType, Søknadprosess>,
+        private val prototypeUserInterfaces: Map<UserInterfaceType, Søknadprosess>,
         internal val faktumNavBehov: FaktumNavBehov? = null
     ) {
         fun søknadprosess(
             person: Person,
-            type: Versjon.UserInterfaceType,
+            type: UserInterfaceType,
             uuid: UUID = UUID.randomUUID()
         ): Søknadprosess =
             søknadprosess(prototypeSøknad.bygg(person, prototypeSøknad.versjonId, uuid), type)
 
-        fun søknadprosess(søknad: Søknad, type: Versjon.UserInterfaceType): Søknadprosess {
+        fun søknadprosess(søknad: Søknad, type: UserInterfaceType): Søknadprosess {
             val subsumsjon = prototypeSubsumsjon.bygg(søknad)
             return prototypeUserInterfaces[type]?.bygg(søknad, subsumsjon)
                 ?: throw IllegalArgumentException("Kan ikke finne søknadprosess av type $type")

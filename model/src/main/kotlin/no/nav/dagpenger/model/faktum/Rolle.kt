@@ -21,25 +21,25 @@ abstract class Rolle {
 
 // Forstår hvordan den skal stille spørsmål til nav
 class Nav internal constructor() : Rolle() {
-    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override val typeNavn = this.javaClass.simpleName.lowercase()
 
     override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) =
         NavJsonBuilder(søknadprosess, seksjonNavn).resultat().toString()
 }
 
 class Søker internal constructor() : Rolle() {
-    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override val typeNavn = this.javaClass.simpleName.lowercase()
     override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) = "søker"
 }
 
 class Saksbehandler internal constructor() : Rolle() {
-    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override val typeNavn = this.javaClass.simpleName.lowercase()
     override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) =
         SaksbehandlerJsonBuilder(søknadprosess, seksjonNavn).resultat().toString()
 }
 
 class Manuell internal constructor() : Rolle() {
-    override val typeNavn = this.javaClass.simpleName.toLowerCase()
+    override val typeNavn = this.javaClass.simpleName.lowercase()
     override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) =
         ManuellBehandlingJsonBuilder(søknadprosess, seksjonNavn).resultat().toString()
 }

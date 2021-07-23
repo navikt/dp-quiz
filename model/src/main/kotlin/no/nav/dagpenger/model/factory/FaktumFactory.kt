@@ -13,7 +13,7 @@ abstract class FaktumFactory<T : Comparable<T>> {
 
     internal fun avhengerAv(faktumMap: Map<FaktumId, Faktum<*>>) {
         avhengigheter.forEach {
-            (faktumMap[FaktumId(it)] as Faktum<*>)?.harAvhengighet(faktumMap[FaktumId(rootId)] as Faktum<*>)
+            (faktumMap[FaktumId(it)] as Faktum<*>).harAvhengighet(faktumMap[FaktumId(rootId)] as Faktum<*>)
         }
     }
 

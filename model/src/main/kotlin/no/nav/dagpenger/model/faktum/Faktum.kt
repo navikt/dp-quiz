@@ -20,7 +20,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
         }
 
         internal fun List<Faktum<*>>.deepCopy(søknadprosess: Søknadprosess): List<Faktum<*>> = this
-            .mapNotNull { prototype ->
+            .map { prototype ->
                 søknadprosess.faktum(prototype.faktumId).also {
                     prototype.deepCopyAvhengigheter(it, søknadprosess)
                 }

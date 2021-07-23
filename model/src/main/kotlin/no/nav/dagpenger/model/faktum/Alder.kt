@@ -1,6 +1,5 @@
 package no.nav.dagpenger.model.faktum
 
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.YEARS
 
@@ -11,7 +10,6 @@ internal class Alder(fødselsnummer: String) {
         fødselsnummer.substring(2, 4).toInt(),
         fødselsnummer.substring(0, 2).toInt().toDay()
     )
-    internal val øvreAldersgrense = fødselsdag.plusYears(67).øvreAldersgrense()
 
     private fun Int.toDay() = if (this > 40) this - 40 else this
 
@@ -23,14 +21,6 @@ internal class Alder(fødselsnummer: String) {
             else -> 2000
         }
     }
-
-    private fun LocalDate.øvreAldersgrense() = this.minusDays(
-        when (this.dayOfWeek) {
-            DayOfWeek.SUNDAY -> 1
-            DayOfWeek.MONDAY -> 2
-            else -> 0
-        }
-    )
 
     internal fun alderPåDato(dato: LocalDate) = YEARS.between(fødselsdag, dato).toInt()
 }

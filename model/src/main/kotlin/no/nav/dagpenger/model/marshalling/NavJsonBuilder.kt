@@ -54,7 +54,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
     override fun visit(type: Type, id: String, historisk: Boolean) {
         identerNode.addObject().also { identNode ->
             identNode.put("id", id)
-            identNode.put("type", type.name.toLowerCase())
+            identNode.put("type", type.name.lowercase())
             identNode.put("historisk", historisk)
         }
     }
@@ -90,7 +90,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
                 jsonTemplates.addObject().also {
                     it.put("id", template.id)
                     it.put("navn", template.navn)
-                    it.put("clazz", template.clazz().simpleName.toLowerCase())
+                    it.put("clazz", template.clazz().simpleName.lowercase())
                 }
             }
             lagFaktumNode(id, "generator", jsonTemplates)
@@ -114,7 +114,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
         if (id in faktumIder) return
         if (avhengerAvFakta.all { it.erBesvart() }) {
             behovNode.add(faktumNavBehov[rootId])
-            lagFaktumNode(id, clazz.simpleName.toLowerCase())
+            lagFaktumNode(id, clazz.simpleName.lowercase())
             avhengerAvFakta.forEach {
                 root.putR(faktumNavBehov[it.reflection { rootId, _ -> rootId }], it.svar())
             }

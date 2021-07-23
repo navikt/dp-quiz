@@ -11,10 +11,6 @@ abstract class SammensattSubsumsjon protected constructor(
     gyldigSubsumsjon: Subsumsjon,
     ugyldigSubsumsjon: Subsumsjon
 ) : Subsumsjon(navn, gyldigSubsumsjon, ugyldigSubsumsjon), MutableList<Subsumsjon> by subsumsjoner {
-
-    internal constructor(navn: String, subsumsjoner: List<Subsumsjon>) :
-        this(navn, subsumsjoner.toMutableList(), TomSubsumsjon, TomSubsumsjon)
-
     override fun alleFakta(): List<Faktum<*>> = subsumsjoner.flatMap { it.alleFakta() }
 
     override fun nesteFakta(): Set<GrunnleggendeFaktum<*>> =

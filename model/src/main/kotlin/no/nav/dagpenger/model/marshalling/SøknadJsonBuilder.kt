@@ -51,7 +51,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
     override fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {
         identerNode.addObject().also { identNode ->
             identNode.put("id", id)
-            identNode.put("type", type.name.toLowerCase())
+            identNode.put("type", type.name.lowercase())
             identNode.put("historisk", historisk)
         }
     }
@@ -264,7 +264,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
             faktumNode.put("navn", navn)
             faktumNode.put("id", id)
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.typeNavn }))
-            faktumNode.put("type", clazz.simpleName.toLowerCase())
+            faktumNode.put("type", clazz.simpleName.lowercase())
             faktumNode.set("godkjenner", mapper.valueToTree(godkjenner.map { it.id }))
             svar?.also { faktumNode.putR(it) }
             besvartAv?.also { faktumNode.put("besvartAv", it) }

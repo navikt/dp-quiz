@@ -47,7 +47,7 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> =
         underordnede.flatMap { it.grunnleggendeFakta() }.toSet()
 
-    override fun leggTilHvis(kode: Faktum.FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>) {
+    override fun leggTilHvis(kode: FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>) {
         this.underordnede.forEach { it.leggTilHvis(kode, fakta) }
     }
 
