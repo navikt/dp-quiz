@@ -1,6 +1,7 @@
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Identer
@@ -10,6 +11,8 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.før
+import no.nav.dagpenger.model.regel.har
+import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -44,6 +47,8 @@ class Graftest {
         val inntekt15G = 10
         val manuell = 11
         val registrertArbeidssøker = 12
+        val registrertArbeidssøkerPerioder = 13
+        val registrertArbeidssøkerPeriodeTom = 15
 
         val prototypeSøknad = Søknad(
             509,
@@ -58,8 +63,10 @@ class Graftest {
             inntekt faktum "3G" id inntekt3G,
             inntekt faktum "1.5G" id inntekt15G,
             boolsk faktum "Manuell fordi noe" id manuell,
-            boolsk faktum "Registrert arbeidssøker" id registrertArbeidssøker
-        )
+            boolsk faktum "Registrert arbeidssøker" id registrertArbeidssøker,
+            heltall faktum "Antall arbeidsøker registeringsperioder" id registrertArbeidssøkerPerioder genererer registrertArbeidssøkerPeriodeTom,
+            dato faktum "arbeidssøker til" id registrertArbeidssøkerPeriodeTom
+            )
 
         val prototypeWebSøknad =
             with(prototypeSøknad) {
@@ -89,7 +96,9 @@ class Graftest {
 
         val prototypeSubsumsjon = with(prototypeSøknad) {
             boolsk(registrertArbeidssøker) er true hvisGyldig {
-                "deltre".deltre { inntekt(inntektSisteÅr) minst inntekt(inntekt15G) hvisUgyldigManuell (boolsk(manuell)) }
+                generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
+                    dato(søknadsdato) før dato(registrertArbeidssøkerPeriodeTom)
+                }
             } hvisUgyldig {
                 dato(bursdag67) før dato(søknadsdato) hvisGyldig {
                     "bursdagssjekker".alle(
@@ -103,6 +112,8 @@ class Graftest {
                         )
                     ) hvisGyldig {
                         "minst ein".minstEnAv(dato(sisteDagMedLønn) før dato(sisteDagMedLønn))
+                    } hvisUgyldig {
+                        "deltre".deltre { inntekt(inntektSisteÅr) minst inntekt(inntekt15G) hvisUgyldigManuell (boolsk(manuell)) }
                     }
                 }
             }
