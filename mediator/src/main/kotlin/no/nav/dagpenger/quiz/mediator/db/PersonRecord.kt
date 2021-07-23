@@ -1,12 +1,12 @@
 package no.nav.dagpenger.quiz.mediator.db
 
-import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.visitor.PersonVisitor
+import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.util.UUID
 
 internal class PersonRecord {

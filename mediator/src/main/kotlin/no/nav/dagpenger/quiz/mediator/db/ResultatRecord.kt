@@ -1,10 +1,10 @@
 package no.nav.dagpenger.quiz.mediator.db
 
-import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import com.fasterxml.jackson.databind.node.ObjectNode
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import org.postgresql.util.PGobject
 import java.util.UUID
 

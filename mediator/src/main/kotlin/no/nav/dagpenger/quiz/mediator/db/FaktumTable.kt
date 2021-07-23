@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.db
 
-import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
@@ -23,6 +22,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.time.LocalDate
 import java.util.UUID
 
