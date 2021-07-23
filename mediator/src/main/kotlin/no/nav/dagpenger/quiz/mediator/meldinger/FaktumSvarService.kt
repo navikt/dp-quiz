@@ -21,15 +21,17 @@ import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.util.UUID
 
-private val log = KotlinLogging.logger {}
-private val sikkerlogg = KotlinLogging.logger("tjenestekall")
-
 internal class FaktumSvarService(
     private val søknadPersistence: SøknadPersistence,
     private val resultatPersistence: ResultatPersistence,
     rapidsConnection: RapidsConnection,
     private val unleash: Unleash
 ) : River.PacketListener {
+
+    private companion object {
+        private val log = KotlinLogging.logger {}
+        private val sikkerlogg = KotlinLogging.logger("tjenestekall")
+    }
 
     init {
         River(rapidsConnection).apply {

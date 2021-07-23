@@ -17,15 +17,18 @@ import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.isMissingOrNull
 import java.time.LocalDateTime
 
-private val log = KotlinLogging.logger {}
-private val sikkerLogg = KotlinLogging.logger("tjenestekall")
-
 internal class MottattSøknadService(
     private val søknadPersistence: SøknadPersistence,
     rapidsConnection: RapidsConnection,
     private val unleash: Unleash,
     private val versjonId: Int = Versjon.siste
 ) : River.PacketListener {
+
+    private companion object {
+        private val log = KotlinLogging.logger {}
+        private val sikkerlogg = KotlinLogging.logger("tjenestekall")
+    }
+
     init {
         River(rapidsConnection).apply {
             validate {
@@ -66,7 +69,7 @@ internal class MottattSøknadService(
 
                 søknadprosess.nesteSeksjoner()
                     .forEach { seksjon ->
-                        context.publish(seksjon.somSpørsmål().also { sikkerLogg.debug { it } })
+                        context.publish(seksjon.somSpørsmål().also { sikkerlogg.debug { it } })
                         log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
                     }
             }
@@ -74,6 +77,6 @@ internal class MottattSøknadService(
 
     override fun onError(problems: MessageProblems, context: MessageContext) {
         log.error { problems.toString() }
-        sikkerLogg.error { problems.toExtendedReport() }
+        sikkerlogg.error { problems.toExtendedReport() }
     }
 }
