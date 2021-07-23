@@ -7,7 +7,6 @@ import guru.nidi.graphviz.attribute.Color.GREEN
 import guru.nidi.graphviz.attribute.Color.RED
 import guru.nidi.graphviz.attribute.GraphAttr
 import guru.nidi.graphviz.attribute.Label
-import guru.nidi.graphviz.attribute.NodeAttr
 import guru.nidi.graphviz.attribute.Rank
 import guru.nidi.graphviz.attribute.Shape
 import guru.nidi.graphviz.attribute.Style
@@ -87,7 +86,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
                 node(subsumsjon.navn).with(RED, RED.font())
             } else node(subsumsjon.navn)
 
-            if(noder.first() is SammensattSubsumsjon) sammensattTilEnkel(tilNode)
+            if (noder.first() is SammensattSubsumsjon) sammensattTilEnkel(tilNode)
             else enkelTilEnkel(tilNode)
         }
         noder.add(0, subsumsjon)
@@ -224,18 +223,15 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
             subgraf.add(node(sammensattAnker.first()).with(Style.INVIS, Shape.NONE, Label.of("")))
 
             if (subsumsjon.navn !in opprettetAvSammensatt && noder.first().navn != subsumsjon.navn) {
-                it.add(
-                    node(noder.first().navn).link(
-                        between(
-                            port(kantRetning()),
-                            node(sammensattAnker.first())
-                        ).withUtfallAttrs().with(attr("lhead", "cluster_${subsumsjon.navn}"), attr("minlen", 2))
-                    )
-                )
+                if (noder.first() is SammensattSubsumsjon) {
+                    sammensattTilSammensatt(subsumsjon.navn)
+                } else {
+                    enkelTilSammensatt(subsumsjon.navn)
+                }
             }
 
             subsumsjoner.forEach { child ->
-                if(child !is SammensattSubsumsjon) subgraf.add(node(child.navn))
+                if (child !is SammensattSubsumsjon) subgraf.add(node(child.navn))
                 opprettetAvSammensatt.add(child.navn)
             }
 
@@ -243,6 +239,32 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
         }
 
         noder.add(0, subsumsjon)
+    }
+
+    private fun enkelTilSammensatt(tilCluster: String) {
+        subGrafer.first().add(
+            node(noder.first().navn).link(
+                between(
+                    port(kantRetning()),
+                    node(sammensattAnker.first())
+                ).withUtfallAttrs().with(attr("lhead", "cluster_$tilCluster"), attr("minlen", 2))
+            )
+        )
+    }
+
+    private fun sammensattTilSammensatt(tilCluster: String) {
+        subGrafer.first().add(
+            node(sammensattAnker[1]).link(
+                between(
+                    port(kantRetning()),
+                    node(sammensattAnker.first())
+                ).withUtfallAttrs().with(
+                    attr("ltail", "cluster_${noder.first().navn}"),
+                    attr("lhead", "cluster_$tilCluster"),
+                    attr("minlen", 3)
+                )
+            )
+        )
     }
 
     private fun ryddSammensattNode() {
