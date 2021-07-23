@@ -136,7 +136,7 @@ private class ErIkke<T : Comparable<T>>(private val other: T) : Regel {
 }
 
 infix fun GeneratorFaktum.med(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
-    "generatordeltre ${this.navn}",
+    "Alle ${this.navn} med",
     GeneratorSubsumsjon(
         ErIkke(0),
         this,
@@ -150,7 +150,7 @@ infix fun GeneratorFaktum.med(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
 )
 
 infix fun GeneratorFaktum.har(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
-    "generatordeltre ${this.navn}",
+    "Minst en av ${this.navn} har",
     GeneratorSubsumsjon(
         ErIkke(0),
         this,

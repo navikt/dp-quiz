@@ -31,6 +31,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.GeneratorSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.SammensattSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -48,6 +49,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     private val opprettetAvSammensatt = mutableListOf<String>()
     private val noder = mutableListOf<Subsumsjon>()
     private val sammensattAnker = mutableListOf<String>()
+    private var iGeneratorSubsumsjon = false
 
     private val subGrafer = mutableListOf<MutableGraph>()
 
@@ -70,7 +72,19 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
         noder.add(søknadprosess.rootSubsumsjon)
     }
 
+    override fun preVisit(subsumsjon: GeneratorSubsumsjon, deltre: DeltreSubsumsjon) {
+        opprettetAvSammensatt.add(deltre.navn)
+        deltre.accept(this)
+        iGeneratorSubsumsjon = true
+    }
+
+    override fun postVisit(subsumsjon: GeneratorSubsumsjon, deltre: DeltreSubsumsjon) {
+        iGeneratorSubsumsjon = false
+    }
+
     override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
+        if (iGeneratorSubsumsjon) return
+
         subGrafer.first().let {
             val navnelinjer = nodeNavn(fakta, regel)
             it.add(node(subsumsjon.navn).with(Label.lines(*navnelinjer.toTypedArray())))
@@ -121,6 +135,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     }
 
     override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
+        if (iGeneratorSubsumsjon) return
         noder.removeFirst()
     }
 
@@ -141,7 +156,11 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     }
 
     override fun preVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
-        lagSammensattNode(subsumsjon, listOf(child), "Deltre")
+        if (child is GeneratorSubsumsjon) {
+            lagSammensattNode(subsumsjon, emptyList(), "Generator")
+        } else {
+            lagSammensattNode(subsumsjon, listOf(child), "Deltre")
+        }
     }
 
     override fun postVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
@@ -149,6 +168,8 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     }
 
     override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
+        if (iGeneratorSubsumsjon) return
+
         if (parent is SammensattSubsumsjon) {
             // Under-subsumsjonene har blitt behandlet, og gyldig/ugyldig-treene skal ikke være med i boksen
             val subGraf = subGrafer.removeFirst()
@@ -158,6 +179,8 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     }
 
     override fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
+        if (iGeneratorSubsumsjon) return
+
         kant(parent, child, UGYLDIG)
     }
 
@@ -209,6 +232,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     }
 
     private fun lagSammensattNode(subsumsjon: SammensattSubsumsjon, subsumsjoner: List<Subsumsjon>, label: String) {
+        if (iGeneratorSubsumsjon) return
 
         subGrafer.first().let {
             val nodeLabel = Label.lines(label, subsumsjon.navn)
@@ -268,6 +292,8 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     }
 
     private fun ryddSammensattNode() {
+        if (iGeneratorSubsumsjon) return
+
         noder.removeFirst()
         sammensattAnker.removeFirst()
     }
