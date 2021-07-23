@@ -18,6 +18,7 @@ import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.BareEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.GeneratorSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -168,6 +169,9 @@ interface SubsumsjonVisitor : FaktumVisitor {
         resultat: Boolean?
     ) {
     }
+
+    fun preVisit(subsumsjon: GeneratorSubsumsjon, deltre: DeltreSubsumsjon) {}
+    fun postVisit(subsumsjon: GeneratorSubsumsjon, deltre: DeltreSubsumsjon) {}
 
     fun preVisit(subsumsjon: AlleSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun postVisit(subsumsjon: AlleSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {}

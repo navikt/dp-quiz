@@ -12,7 +12,6 @@ import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.har
-import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -66,7 +65,7 @@ class Graftest {
             boolsk faktum "Registrert arbeidssøker" id registrertArbeidssøker,
             heltall faktum "Antall arbeidsøker registeringsperioder" id registrertArbeidssøkerPerioder genererer registrertArbeidssøkerPeriodeTom,
             dato faktum "arbeidssøker til" id registrertArbeidssøkerPeriodeTom
-            )
+        )
 
         val prototypeWebSøknad =
             with(prototypeSøknad) {
