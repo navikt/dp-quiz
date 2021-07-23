@@ -1,6 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.helpers
 
-import PostgresDataSourceBuilder
+import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.containers.PostgreSQLContainer.POSTGRESQL_PORT
 

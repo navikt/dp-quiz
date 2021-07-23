@@ -1,6 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.db
 
-import PostgresDataSourceBuilder.dataSource
+import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import com.fasterxml.jackson.databind.node.ObjectNode
 import kotliquery.queryOf
 import kotliquery.sessionOf
@@ -10,8 +10,8 @@ import java.util.UUID
 
 interface ResultatPersistence {
     fun lagreResultat(resultat: Boolean, søknadUuid: UUID, resultatJson: ObjectNode)
-    fun hentResultat(uuid: UUID): Boolean
-    fun lagreManuellBehandling(uuid: UUID, grunn: String)
+    fun hentResultat(søknadUuid: UUID): Boolean
+    fun lagreManuellBehandling(søknadUuid: UUID, grunn: String)
 }
 
 // Skjønner utfallet av behandlingen av en søknad
@@ -38,15 +38,15 @@ class ResultatRecord : ResultatPersistence {
         }
     }
 
-    override fun hentResultat(uuid: UUID): Boolean {
+    override fun hentResultat(søknadUuid: UUID): Boolean {
         return using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL
                     "SELECT resultat FROM resultat WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
-                    uuid
+                    søknadUuid
                 ).map { it.boolean("resultat") }.asSingle
             )
-        } ?: throw IllegalArgumentException("Resultat finnes ikke for søknad, uuid: $uuid")
+        } ?: throw IllegalArgumentException("Resultat finnes ikke for søknad, uuid: $søknadUuid")
     }
 
     override fun lagreManuellBehandling(søknadUuid: UUID, grunn: String) {

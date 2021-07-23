@@ -1,6 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.db
 
-import PostgresDataSourceBuilder.dataSource
+import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
@@ -145,7 +145,7 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor
             }
 
     // Understands an encoding of basic Faktum types
-    internal class ClassKode() {
+    internal class ClassKode {
         companion object {
             private val factoryMap = mutableMapOf<Int, (String, Int) -> FaktumFactory<*>>()
             private val kodeMap = mutableMapOf<Class<*>, Int>()

@@ -1,3 +1,5 @@
+package no.nav.dagpenger.quiz.mediator.db
+
 import ch.qos.logback.core.util.OptionHelper.getEnv
 import ch.qos.logback.core.util.OptionHelper.getSystemProperty
 import com.zaxxer.hikari.HikariDataSource
