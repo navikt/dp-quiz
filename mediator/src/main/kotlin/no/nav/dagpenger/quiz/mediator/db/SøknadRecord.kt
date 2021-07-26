@@ -24,12 +24,39 @@ import java.util.UUID
 class SøknadRecord : SøknadPersistence {
     private val personRecord = PersonRecord()
 
-    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int): Søknadprosess {
+    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int, dryRun: Boolean): Søknadprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
-        return Versjon.id(versjonId).søknadprosess(person, type).also { søknadprosess ->
+        return Versjon.id(versjonId).søknadprosess(person, type, dryRun).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
+            lagreDryRun(søknadprosess.søknad.uuid, dryRun)
         }
     }
+
+    private fun lagreDryRun(søknadUuid: UUID, dryRun: Boolean) {
+        using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf( //language=PostgreSQL
+                    """
+                    INSERT INTO dry_run (soknad_id, dry_run) 
+                        SELECT soknad.id, ?
+                        FROM soknad 
+                        WHERE soknad.uuid = ? 
+                    """.trimMargin(),
+                    dryRun,
+                    søknadUuid
+                ).asExecute
+            )
+        }
+    }
+
+    fun hentDryRun(søknadUuid: UUID) = using(sessionOf(dataSource)) { session ->
+        session.run(
+            queryOf( //language=PostgreSQL
+                "SELECT dry_run FROM dry_run WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
+                søknadUuid
+            ).map { it.boolean("dry_run") }.asSingle
+        )
+    } ?: true
 
     override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?): Søknadprosess {
         data class SoknadRad(val personId: UUID, val versjonId: Int, var typeId: Int)
@@ -51,10 +78,13 @@ class SøknadRecord : SøknadPersistence {
             )
         } ?: throw IllegalArgumentException("Søknad finnes ikke, uuid: $uuid")
 
+        val dryRun = hentDryRun(uuid)
+
         return Versjon.id(rad.versjonId)
             .søknadprosess(
                 personRecord.hentPerson(rad.personId),
                 Versjon.UserInterfaceType.fromId(rad.typeId),
+                dryRun,
                 uuid
             )
             .also { søknadprosess ->

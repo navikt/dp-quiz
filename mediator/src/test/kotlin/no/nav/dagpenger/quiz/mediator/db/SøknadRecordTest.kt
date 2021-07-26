@@ -14,10 +14,11 @@ import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
 import no.nav.dagpenger.quiz.mediator.helpers.assertDeepEquals
 import no.nav.dagpenger.quiz.mediator.helpers.januar
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
-import kotlin.test.assertEquals
 
 internal class SøknadRecordTest {
     companion object {
@@ -145,6 +146,19 @@ internal class SøknadRecordTest {
             hentFørsteSøknad()
             hentFørsteSøknad()
             assertRecordCount(1, "gammel_faktum_verdi")
+        }
+    }
+
+    @Test
+    fun `lagre dryRun-flagg`() {
+        Postgres.withMigratedDb {
+            FaktumTable(SøknadEksempel1.prototypeFakta1, SøknadEksempel1.versjonId)
+            søknadRecord = SøknadRecord()
+            originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, 888, dryRun = true)
+
+            hentFørsteSøknad()
+
+            assertTrue { rehydrertSøknadprosess.dryRun() }
         }
     }
 

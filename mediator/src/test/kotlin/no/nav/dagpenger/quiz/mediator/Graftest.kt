@@ -122,11 +122,10 @@ class Graftest {
             prototypeSøknad,
             prototypeSubsumsjon,
             mapOf(Versjon.UserInterfaceType.Web to prototypeWebSøknad)
+        ).søknadprosess(
+            Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
+            Versjon.UserInterfaceType.Web,
         )
-            .søknadprosess(
-                Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
-                Versjon.UserInterfaceType.Web
-            )
 
         SubsumsjonsGraf(søknadprosess).skrivTilFil("grafer/ex2.png")
         Runtime.getRuntime().exec("open grafer/ex2.png")

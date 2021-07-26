@@ -14,7 +14,8 @@ class Søknadprosess private constructor(
     val søknad: Søknad,
     internal val rootSubsumsjon: Subsumsjon,
     private val uuid: UUID,
-    private val seksjoner: MutableList<Seksjon>
+    private val seksjoner: MutableList<Seksjon>,
+    private val dryrun: Boolean = false
 ) : TypedFaktum by søknad, MutableList<Seksjon> by seksjoner {
     constructor(vararg seksjoner: Seksjon) : this(
         Søknad(1),
@@ -62,12 +63,14 @@ class Søknadprosess private constructor(
 
     fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
 
-    internal fun bygg(søknad: Søknad, subsumsjon: Subsumsjon) =
-        Søknadprosess(søknad, subsumsjon, UUID.randomUUID(), seksjoner.map { it.bygg(søknad) }.toMutableList())
+    internal fun bygg(søknad: Søknad, subsumsjon: Subsumsjon, dryRun: Boolean) =
+        Søknadprosess(søknad, subsumsjon, UUID.randomUUID(), seksjoner.map { it.bygg(søknad) }.toMutableList(), dryRun)
 
     internal fun nesteFakta() = rootSubsumsjon.nesteFakta()
 
     fun resultat() = rootSubsumsjon.resultat()
 
     fun erFerdig() = nesteSeksjoner().all { fakta -> fakta.all { faktum -> faktum.erBesvart() } }
+
+    fun dryRun() = dryrun
 }

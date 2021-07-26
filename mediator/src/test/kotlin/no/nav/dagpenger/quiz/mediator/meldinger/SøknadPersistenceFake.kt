@@ -14,7 +14,7 @@ internal class SøknadPersistenceFake : SøknadPersistence {
     var søknadprosess: Søknadprosess? = null
     var hentet: Int = 0
 
-    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int) =
+    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int, dryRun: Boolean) =
         Versjon.id(versjonId).søknadprosess(Person(identer), type)
             .also { søknadprosess = it }
 
