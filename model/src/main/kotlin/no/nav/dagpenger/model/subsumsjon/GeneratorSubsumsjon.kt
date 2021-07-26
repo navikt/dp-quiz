@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class GeneratorSubsumsjon internal constructor(
     regel: Regel,
@@ -28,6 +29,12 @@ class GeneratorSubsumsjon internal constructor(
                 }
             }
         }
+    }
+
+    override fun accept(visitor: SubsumsjonVisitor) {
+        visitor.preVisit(this, deltre)
+        super.accept(visitor)
+        visitor.postVisit(this, deltre)
     }
 
     override fun deepCopy(søknadprosess: Søknadprosess) = GeneratorSubsumsjon(

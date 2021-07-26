@@ -24,6 +24,7 @@ interface Regel {
     fun saksbehandlerForklaring(fakta: List<Faktum<*>>): String = "saksbehandlerforklaring"
     fun resultat(fakta: List<Faktum<*>>): Boolean
     fun toString(fakta: List<Faktum<*>>): String
+    fun kortNavn(fakta: List<Faktum<*>>): String = toString(fakta)
 }
 
 infix fun Faktum<LocalDate>.etter(tidligsteDato: Faktum<LocalDate>) = EnkelSubsumsjon(
@@ -119,6 +120,7 @@ private class Er<T : Comparable<T>>(private val other: T) : Regel {
     override val typeNavn = "er"
     override fun resultat(fakta: List<Faktum<*>>) = fakta[0].svar() == other
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `${fakta[0]}` er lik $other"
+    override fun kortNavn(fakta: List<Faktum<*>>) = "${fakta[0].navn} $typeNavn $other"
 }
 
 infix fun <T : Comparable<T>> Faktum<T>.erIkke(other: T) = EnkelSubsumsjon(
@@ -127,13 +129,14 @@ infix fun <T : Comparable<T>> Faktum<T>.erIkke(other: T) = EnkelSubsumsjon(
 )
 
 private class ErIkke<T : Comparable<T>>(private val other: T) : Regel {
-    override val typeNavn = "erIkke"
+    override val typeNavn = "er ikke"
     override fun resultat(fakta: List<Faktum<*>>) = fakta[0].svar() != other
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at `${fakta[0]}` er ikke lik $other"
+    override fun kortNavn(fakta: List<Faktum<*>>) = "${fakta[0].navn} $typeNavn $other"
 }
 
 infix fun GeneratorFaktum.med(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
-    this.navn,
+    "Alle ${this.navn} med",
     GeneratorSubsumsjon(
         ErIkke(0),
         this,
@@ -147,7 +150,7 @@ infix fun GeneratorFaktum.med(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
 )
 
 infix fun GeneratorFaktum.har(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
-    this.navn,
+    "Minst en av ${this.navn} har",
     GeneratorSubsumsjon(
         ErIkke(0),
         this,

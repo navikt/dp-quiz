@@ -146,20 +146,20 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         }
     }
 
-    override fun preVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(subsumsjon: AlleSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
         putSubsumsjon(lokaltResultat, subsumsjon, "Alle subsumsjon")
     }
 
-    override fun postVisit(subsumsjon: AlleSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(subsumsjon: AlleSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
         if (ignoreSubsumsjon != null) return
         subsumsjonNoder.removeAt(0)
     }
 
-    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
         putSubsumsjon(lokaltResultat, subsumsjon, "Minst en av subsumsjon")
     }
 
-    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
         if (ignoreSubsumsjon != null) return
         subsumsjonNoder.removeAt(0)
     }
@@ -173,11 +173,11 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         subsumsjonNoder.removeAt(0)
     }
 
-    override fun preVisit(subsumsjon: DeltreSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
         putSubsumsjon(lokaltResultat, subsumsjon, "Deltre subsumsjon")
     }
 
-    override fun postVisit(subsumsjon: DeltreSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
         if (ignoreSubsumsjon != null) return
         subsumsjonNoder.removeAt(0)
     }
