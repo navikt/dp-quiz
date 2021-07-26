@@ -1,4 +1,4 @@
-
+package no.nav.dagpenger.quiz.mediator
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
@@ -128,8 +128,8 @@ class Graftest {
                 Versjon.UserInterfaceType.Web
             )
 
-        SubsumsjonsGraf(søknadprosess).skrivTilFil("example/ex2.png")
-        Runtime.getRuntime().exec("open example/ex2.png")
+        SubsumsjonsGraf(søknadprosess).skrivTilFil("grafer/ex2.png")
+        Runtime.getRuntime().exec("open grafer/ex2.png")
     }
 
     @Test
@@ -146,7 +146,7 @@ class Graftest {
                 Versjon.UserInterfaceType.Web
             )
 
-        SubsumsjonsGraf(manglerInntekt).skrivTilFil("example/ex2.png")
-        Runtime.getRuntime().exec("open example/ex2.png")
+        SubsumsjonsGraf(manglerInntekt).skrivTilFil("grafer/ex2.png")
+        Runtime.getRuntime().exec("open grafer/ex2.png")
     }
 }
