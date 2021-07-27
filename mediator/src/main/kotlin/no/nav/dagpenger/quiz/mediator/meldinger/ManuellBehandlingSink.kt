@@ -9,7 +9,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import java.util.UUID
 
-class ManuellBehandlingSink(
+internal class ManuellBehandlingSink(
     rapidsConnection: RapidsConnection,
     private val resultatPersistence: ResultatPersistence
 ) : River.PacketListener {

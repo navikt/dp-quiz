@@ -29,13 +29,13 @@ class Versjon private constructor(
     fun søknadprosess(
         person: Person,
         type: UserInterfaceType,
-        dryRun: Boolean = true,
+        saksbehandlesPåEkte: Boolean = false,
         uuid: UUID = UUID.randomUUID()
     ): Søknadprosess =
-        bygger.søknadprosess(person, type, uuid, dryRun)
+        bygger.søknadprosess(person, type, uuid, saksbehandlesPåEkte)
 
-    fun søknadprosess(søknad: Søknad, type: UserInterfaceType, dryRun: Boolean = true) =
-        bygger.søknadprosess(søknad, type, dryRun)
+    fun søknadprosess(søknad: Søknad, type: UserInterfaceType, saksbehandlesPåEkte: Boolean = false) =
+        bygger.søknadprosess(søknad, type, saksbehandlesPåEkte)
 
     enum class UserInterfaceType(val id: Int) {
         Web(1),
@@ -56,17 +56,17 @@ class Versjon private constructor(
             person: Person,
             type: UserInterfaceType,
             uuid: UUID = UUID.randomUUID(),
-            dryRun: Boolean = true
+            saksbehandlesPåEkte: Boolean = false
         ): Søknadprosess =
-            søknadprosess(prototypeSøknad.bygg(person, prototypeSøknad.versjonId, uuid), type, dryRun)
+            søknadprosess(prototypeSøknad.bygg(person, prototypeSøknad.versjonId, uuid), type, saksbehandlesPåEkte)
 
         fun søknadprosess(
             søknad: Søknad,
             type: UserInterfaceType,
-            dryRun: Boolean = true
+            saksbehandlesPåEkte: Boolean = false
         ): Søknadprosess {
             val subsumsjon = prototypeSubsumsjon.bygg(søknad)
-            return prototypeUserInterfaces[type]?.bygg(søknad, subsumsjon, dryRun)
+            return prototypeUserInterfaces[type]?.bygg(søknad, subsumsjon, saksbehandlesPåEkte)
                 ?: throw IllegalArgumentException("Kan ikke finne søknadprosess av type $type")
         }
 

@@ -24,39 +24,39 @@ import java.util.UUID
 class SøknadRecord : SøknadPersistence {
     private val personRecord = PersonRecord()
 
-    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int, dryRun: Boolean): Søknadprosess {
+    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int, saksbehandlesPåEkte: Boolean): Søknadprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
-        return Versjon.id(versjonId).søknadprosess(person, type, dryRun).also { søknadprosess ->
+        return Versjon.id(versjonId).søknadprosess(person, type, saksbehandlesPåEkte).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
-            lagreDryRun(søknadprosess.søknad.uuid, dryRun)
+            lagreSaksbehandlesPåEkte(søknadprosess.søknad.uuid, saksbehandlesPåEkte)
         }
     }
 
-    private fun lagreDryRun(søknadUuid: UUID, dryRun: Boolean) {
+    private fun lagreSaksbehandlesPåEkte(søknadUuid: UUID, saksbehandlesPåEkte: Boolean) {
         using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL
                     """
-                    INSERT INTO dry_run (soknad_id, dry_run) 
+                    INSERT INTO saksbehandles_på_ekte (soknad_id, saksbehandles_på_ekte) 
                         SELECT soknad.id, ?
                         FROM soknad 
                         WHERE soknad.uuid = ? 
                     """.trimMargin(),
-                    dryRun,
+                    saksbehandlesPåEkte,
                     søknadUuid
                 ).asExecute
             )
         }
     }
 
-    fun hentDryRun(søknadUuid: UUID) = using(sessionOf(dataSource)) { session ->
+    private fun skalSaksbehandlesPåEkte(søknadUuid: UUID) = using(sessionOf(dataSource)) { session ->
         session.run(
             queryOf( //language=PostgreSQL
-                "SELECT dry_run FROM dry_run WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
+                "SELECT saksbehandles_på_ekte FROM saksbehandles_på_ekte WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
                 søknadUuid
-            ).map { it.boolean("dry_run") }.asSingle
+            ).map { it.boolean("saksbehandles_på_ekte") }.asSingle
         )
-    } ?: true
+    } ?: false
 
     override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?): Søknadprosess {
         data class SoknadRad(val personId: UUID, val versjonId: Int, var typeId: Int)
@@ -78,13 +78,13 @@ class SøknadRecord : SøknadPersistence {
             )
         } ?: throw IllegalArgumentException("Søknad finnes ikke, uuid: $uuid")
 
-        val dryRun = hentDryRun(uuid)
+        val saksbehandlesPåEkte = skalSaksbehandlesPåEkte(uuid)
 
         return Versjon.id(rad.versjonId)
             .søknadprosess(
                 personRecord.hentPerson(rad.personId),
                 Versjon.UserInterfaceType.fromId(rad.typeId),
-                dryRun,
+                saksbehandlesPåEkte,
                 uuid
             )
             .also { søknadprosess ->

@@ -150,15 +150,15 @@ internal class SøknadRecordTest {
     }
 
     @Test
-    fun `lagre dryRun-flagg`() {
+    fun `lagre saksbehandle på ekte-flagg`() {
         Postgres.withMigratedDb {
             FaktumTable(SøknadEksempel1.prototypeFakta1, SøknadEksempel1.versjonId)
             søknadRecord = SøknadRecord()
-            originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, 888, dryRun = true)
+            originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, 888, saksbehandlesPåEkte = true)
 
             hentFørsteSøknad()
 
-            assertTrue { rehydrertSøknadprosess.dryRun() }
+            assertTrue { rehydrertSøknadprosess.saksbehandlesPåEkte() }
         }
     }
 
