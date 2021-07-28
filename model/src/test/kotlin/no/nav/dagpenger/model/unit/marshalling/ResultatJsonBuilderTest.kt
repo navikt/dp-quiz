@@ -92,7 +92,17 @@ internal class ResultatJsonBuilderTest {
         }
     }
 
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Søknadprosess {
+    @Test
+    fun `inkluderer saksbehandle på ekte`() {
+        val søknadprosess = søknadprosess(prototypeSøknad.boolsk(1) er true)
+        søknadprosess.boolsk(1).besvar(true)
+
+        ResultatJsonBuilder(søknadprosess).resultat().also {
+            assertEquals(false, it["saksbehandles_på_ekte"].asBoolean())
+        }
+    }
+
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon, saksbehandlesPåEkte: Boolean = false): Søknadprosess {
         val prototypeFaktagrupper = Søknadprosess(
             prototypeSøknad,
             Seksjon(
@@ -106,13 +116,13 @@ internal class ResultatJsonBuilderTest {
             ),
             Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.boolsk(2)),
             Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeSøknad.boolsk(4)),
-            rootSubsumsjon = prototypeSubsumsjon
+            rootSubsumsjon = prototypeSubsumsjon,
         )
 
         return Versjon.Bygger(
             prototypeSøknad,
             prototypeSubsumsjon,
             mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
-        ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
+        ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web, saksbehandlesPåEkte = saksbehandlesPåEkte)
     }
 }
