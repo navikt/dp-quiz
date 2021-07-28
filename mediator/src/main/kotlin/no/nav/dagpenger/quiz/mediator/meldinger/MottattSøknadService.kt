@@ -55,7 +55,7 @@ internal class MottattSøknadService(
         val faktagrupperType = Versjon.UserInterfaceType.Web
         val journalpostId = packet["journalpostId"].asText()
 
-        søknadPersistence.ny(identer, faktagrupperType, versjonId, saksbehandlesPåEkte = false)
+        søknadPersistence.ny(identer, faktagrupperType, versjonId, saksbehandlesPåEkte = true)
             .also { søknadprosess ->
                 // Arena-fagsakId for at arena-sink skal kunne lage vedtak på riktig sak
                 if (!packet["fagsakId"].isMissingOrNull()) {
