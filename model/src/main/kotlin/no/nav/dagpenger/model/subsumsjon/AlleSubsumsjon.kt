@@ -8,32 +8,37 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 class AlleSubsumsjon private constructor(
     navn: String,
     subsumsjoner: MutableList<Subsumsjon>,
-    gyldigSubsumsjon: Subsumsjon,
-    ugyldigSubsumsjon: Subsumsjon
-) : SammensattSubsumsjon(navn, subsumsjoner, gyldigSubsumsjon, ugyldigSubsumsjon) {
+    oppfyltSubsumsjon: Subsumsjon,
+    ikkeOppfyltSubsumsjon: Subsumsjon
+) : SammensattSubsumsjon(navn, subsumsjoner, oppfyltSubsumsjon, ikkeOppfyltSubsumsjon) {
 
-    internal constructor(navn: String, subsumsjoner: List<Subsumsjon>) : this(navn, subsumsjoner.toMutableList(), TomSubsumsjon, TomSubsumsjon)
+    internal constructor(navn: String, subsumsjoner: List<Subsumsjon>) : this(
+        navn,
+        subsumsjoner.toMutableList(),
+        TomSubsumsjon,
+        TomSubsumsjon
+    )
 
     override fun deepCopy(søknadprosess: Søknadprosess) = AlleSubsumsjon(
         navn,
         subsumsjoner.map { it.deepCopy(søknadprosess) }.toMutableList(),
-        gyldigSubsumsjon.deepCopy(søknadprosess),
-        ugyldigSubsumsjon.deepCopy(søknadprosess)
+        oppfyltSubsumsjon.deepCopy(søknadprosess),
+        ikkeOppfyltSubsumsjon.deepCopy(søknadprosess)
     )
 
     override fun bygg(søknad: Søknad) = AlleSubsumsjon(
         navn,
         subsumsjoner.map { it.bygg(søknad) }.toMutableList(),
-        gyldigSubsumsjon.bygg(søknad),
-        ugyldigSubsumsjon.bygg(søknad)
+        oppfyltSubsumsjon.bygg(søknad),
+        ikkeOppfyltSubsumsjon.bygg(søknad)
     )
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Subsumsjon {
         return AlleSubsumsjon(
             "$navn [$indeks]",
             subsumsjoner.map { it.deepCopy(indeks, søknad) }.toMutableList(),
-            gyldigSubsumsjon.deepCopy(indeks, søknad),
-            ugyldigSubsumsjon.deepCopy(indeks, søknad)
+            oppfyltSubsumsjon.deepCopy(indeks, søknad),
+            ikkeOppfyltSubsumsjon.deepCopy(indeks, søknad)
         )
     }
 
@@ -41,8 +46,8 @@ class AlleSubsumsjon private constructor(
         return AlleSubsumsjon(
             navn,
             subsumsjoner.map { it.deepCopy() }.toMutableList(),
-            gyldigSubsumsjon.deepCopy(),
-            ugyldigSubsumsjon.deepCopy()
+            oppfyltSubsumsjon.deepCopy(),
+            ikkeOppfyltSubsumsjon.deepCopy()
         )
     }
 
@@ -50,8 +55,8 @@ class AlleSubsumsjon private constructor(
         subsumsjoner.map { it.nesteFakta() }.filterNot { it.isEmpty() }.let {
             when (lokaltResultat()) {
                 null -> it.firstOrNull() ?: emptySet()
-                true -> gyldigSubsumsjon.nesteFakta()
-                false -> ugyldigSubsumsjon.nesteFakta()
+                true -> oppfyltSubsumsjon.nesteFakta()
+                false -> ikkeOppfyltSubsumsjon.nesteFakta()
             }
         }
 

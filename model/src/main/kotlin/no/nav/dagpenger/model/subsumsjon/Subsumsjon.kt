@@ -13,22 +13,22 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 abstract class Subsumsjon protected constructor(
     internal val navn: String,
-    gyldigSubsumsjon: Subsumsjon?,
-    ugyldigSubsumsjon: Subsumsjon?
+    oppfyltSubsumsjon: Subsumsjon?,
+    ikkeOppfyltSubsumsjon: Subsumsjon?
 ) : Iterable<Subsumsjon> {
-    protected lateinit var gyldigSubsumsjon: Subsumsjon
-    protected lateinit var ugyldigSubsumsjon: Subsumsjon
+    protected lateinit var oppfyltSubsumsjon: Subsumsjon
+    protected lateinit var ikkeOppfyltSubsumsjon: Subsumsjon
 
     init {
-        if (gyldigSubsumsjon != null) this.gyldigSubsumsjon = gyldigSubsumsjon
-        if (ugyldigSubsumsjon != null) this.ugyldigSubsumsjon = ugyldigSubsumsjon
+        if (oppfyltSubsumsjon != null) this.oppfyltSubsumsjon = oppfyltSubsumsjon
+        if (ikkeOppfyltSubsumsjon != null) this.ikkeOppfyltSubsumsjon = ikkeOppfyltSubsumsjon
     }
 
     internal constructor(navn: String) : this(navn, TomSubsumsjon, TomSubsumsjon)
 
     open fun resultat(): Boolean? = when (lokaltResultat()) {
-        true -> if (gyldig is TomSubsumsjon) true else gyldig.resultat()
-        false -> if (ugyldig is TomSubsumsjon) false else ugyldig.resultat()
+        true -> if (oppfylt is TomSubsumsjon) true else oppfylt.resultat()
+        false -> if (ikkeOppfylt is TomSubsumsjon) false else ikkeOppfylt.resultat()
         null -> null
     }
 
@@ -47,27 +47,27 @@ abstract class Subsumsjon protected constructor(
     internal abstract fun nesteFakta(): Set<GrunnleggendeFaktum<*>>
 
     internal open fun accept(visitor: SubsumsjonVisitor) {
-        visitor.preVisitGyldig(this, gyldigSubsumsjon)
-        gyldigSubsumsjon.accept(visitor)
-        visitor.postVisitGyldig(this, gyldigSubsumsjon)
+        visitor.preVisitOppfylt(this, oppfyltSubsumsjon)
+        oppfyltSubsumsjon.accept(visitor)
+        visitor.postVisitOppfylt(this, oppfyltSubsumsjon)
 
-        visitor.preVisitUgyldig(this, ugyldigSubsumsjon)
-        ugyldigSubsumsjon.accept(visitor)
-        visitor.postVisitUgyldig(this, ugyldigSubsumsjon)
+        visitor.preVisitIkkeOppfylt(this, ikkeOppfyltSubsumsjon)
+        ikkeOppfyltSubsumsjon.accept(visitor)
+        visitor.postVisitIkkeOppfylt(this, ikkeOppfyltSubsumsjon)
     }
 
     internal abstract operator fun get(indeks: Int): Subsumsjon
 
-    internal val gyldig get() = gyldigSubsumsjon
+    internal val oppfylt get() = oppfyltSubsumsjon
 
-    internal fun gyldig(child: Subsumsjon) {
-        this.gyldigSubsumsjon = child
+    internal fun oppfylt(child: Subsumsjon) {
+        this.oppfyltSubsumsjon = child
     }
 
-    internal val ugyldig get() = ugyldigSubsumsjon
+    internal val ikkeOppfylt get() = ikkeOppfyltSubsumsjon
 
-    internal fun ugyldig(child: Subsumsjon) {
-        this.ugyldigSubsumsjon = child
+    internal fun ikkeOppfylt(child: Subsumsjon) {
+        this.ikkeOppfyltSubsumsjon = child
     }
 
     internal fun mulige(): Subsumsjon = this.deepCopy()._mulige()
@@ -75,16 +75,16 @@ abstract class Subsumsjon protected constructor(
     internal open fun _mulige(): Subsumsjon = this.also { copy ->
         when (lokaltResultat()) {
             true -> {
-                copy.ugyldig(TomSubsumsjon)
-                copy.gyldigSubsumsjon._mulige()
+                copy.ikkeOppfylt(TomSubsumsjon)
+                copy.oppfyltSubsumsjon._mulige()
             }
             false -> {
-                copy.gyldig(TomSubsumsjon)
-                copy.ugyldigSubsumsjon._mulige()
+                copy.oppfylt(TomSubsumsjon)
+                copy.ikkeOppfyltSubsumsjon._mulige()
             }
             null -> {
-                copy.gyldigSubsumsjon._mulige()
-                copy.ugyldigSubsumsjon._mulige()
+                copy.oppfyltSubsumsjon._mulige()
+                copy.ikkeOppfyltSubsumsjon._mulige()
             }
         }
     }
@@ -223,19 +223,19 @@ fun String.minstEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon {
 
 fun String.bareEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon = BareEnAvSubsumsjon(this, subsumsjoner.toList())
 
-infix fun Subsumsjon.hvisGyldig(block: SubsumsjonGenerator) = this.also { this.gyldig(block()) }
-infix fun Subsumsjon.hvisUgyldig(block: SubsumsjonGenerator) = this.also { this.ugyldig(block()) }
+infix fun Subsumsjon.hvisOppfylt(block: SubsumsjonGenerator) = this.also { this.oppfylt(block()) }
+infix fun Subsumsjon.hvisIkkeOppfylt(block: SubsumsjonGenerator) = this.also { this.ikkeOppfylt(block()) }
 
-infix fun Subsumsjon.hvisUgyldigManuell(manuellFaktum: Faktum<Boolean>) = hvisUgyldig { manuellFaktum er true }
-infix fun Subsumsjon.hvisGyldigManuell(manuellFaktum: Faktum<Boolean>) = hvisGyldig { manuellFaktum er true }
+infix fun Subsumsjon.hvisIkkeOppfyltManuell(manuellFaktum: Faktum<Boolean>) = hvisIkkeOppfylt { manuellFaktum er true }
+infix fun Subsumsjon.hvisOppfyltManuell(manuellFaktum: Faktum<Boolean>) = hvisOppfylt { manuellFaktum er true }
 
 infix fun String.deltre(block: SubsumsjonGenerator) = DeltreSubsumsjon(this, block())
 
 infix fun Subsumsjon.uansett(block: SubsumsjonGenerator): Subsumsjon {
     val child = block()
     return this.also {
-        this.gyldig(child)
-        this.ugyldig(child)
+        this.oppfylt(child)
+        this.ikkeOppfylt(child)
     }
 }
 

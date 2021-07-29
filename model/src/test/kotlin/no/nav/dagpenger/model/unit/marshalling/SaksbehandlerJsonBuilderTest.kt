@@ -17,9 +17,9 @@ import no.nav.dagpenger.model.marshalling.Språk.Companion.nynorsk
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.godkjentAv
-import no.nav.dagpenger.model.regel.gyldigGodkjentAv
+import no.nav.dagpenger.model.regel.ikkeOppfyltGodkjentAv
 import no.nav.dagpenger.model.regel.med
-import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
+import no.nav.dagpenger.model.regel.oppfyltGodkjentAv
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -27,8 +27,8 @@ import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
-import no.nav.dagpenger.model.subsumsjon.hvisGyldig
-import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
+import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -116,8 +116,8 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `bygger oppgave event`() {
         val søknadprosess = søknadprosess(
-            (prototypeSøknad.boolsk(1) er true).gyldigGodkjentAv(prototypeSøknad.boolsk(2)) hvisGyldig
-                { (prototypeSøknad.boolsk(3) er true).ugyldigGodkjentAv(prototypeSøknad.boolsk(4)) }
+            (prototypeSøknad.boolsk(1) er true).oppfyltGodkjentAv(prototypeSøknad.boolsk(2)) hvisOppfylt
+                { (prototypeSøknad.boolsk(3) er true).ikkeOppfyltGodkjentAv(prototypeSøknad.boolsk(4)) }
         )
 
         søknadprosess.boolsk(1).besvar(true)
@@ -167,9 +167,9 @@ internal class SaksbehandlerJsonBuilderTest {
     }
 
     @Test
-    fun `subsumsjon med gyldig sti`() {
+    fun `subsumsjon med oppfylt sti`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true hvisGyldig {
+            prototypeSøknad.boolsk(1) er true hvisOppfylt {
                 prototypeSøknad.boolsk(3) er true
             }
         )
@@ -189,9 +189,9 @@ internal class SaksbehandlerJsonBuilderTest {
     }
 
     @Test
-    fun `subsumsjon med ugyldig sti`() {
+    fun `subsumsjon med ikke oppfylt sti`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true hvisUgyldig {
+            prototypeSøknad.boolsk(1) er true hvisIkkeOppfylt {
                 prototypeSøknad.boolsk(3) er true
             }
         )
@@ -260,7 +260,7 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `deltre subsumsjon`() {
         val søknadprosess = søknadprosess(
             "deltre" deltre {
-                prototypeSøknad.boolsk(1) er true hvisUgyldig {
+                prototypeSøknad.boolsk(1) er true hvisIkkeOppfylt {
                     prototypeSøknad.boolsk(3) er true
                 }
             }
@@ -327,7 +327,7 @@ internal class SaksbehandlerJsonBuilderTest {
         val søknadprosess = søknadprosess(
             (
                 prototypeSøknad.boolsk(1) er true
-                ).gyldigGodkjentAv(prototypeSøknad.boolsk(2))
+                ).oppfyltGodkjentAv(prototypeSøknad.boolsk(2))
         )
 
         søknadprosess.boolsk(1).besvar(true)

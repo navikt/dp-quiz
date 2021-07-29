@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
-import no.nav.dagpenger.model.subsumsjon.hvisGyldig
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -30,9 +30,9 @@ internal class GenerertSubsumsjonTest {
     }
 
     @Test
-    fun `Deltre template kan ikke ha gyldig ugyldig stier`() {
+    fun `Deltre template kan ikke ha oppfylte eller ikke oppfylte stier`() {
         val template = søknad boolsk 1
-        val deltre = "deltre template".deltre { template er true } hvisGyldig { template er true }
+        val deltre = "deltre template".deltre { template er true } hvisOppfylt { template er true }
 
         assertThrows<IllegalArgumentException> { søknad generator 2 med (deltre as DeltreSubsumsjon) }
     }
@@ -50,11 +50,11 @@ internal class GenerertSubsumsjonTest {
         søknadprosess.generator(2).besvar(3)
         subsumsjon.resultat()
 
-        assertEquals(3, (subsumsjon[0].gyldig as AlleSubsumsjon).size)
+        assertEquals(3, (subsumsjon[0].oppfylt as AlleSubsumsjon).size)
 
         søknadprosess.generator(2).besvar(2)
         subsumsjon.resultat()
 
-        assertEquals(2, (subsumsjon[0].gyldig as AlleSubsumsjon).size)
+        assertEquals(2, (subsumsjon[0].oppfylt as AlleSubsumsjon).size)
     }
 }

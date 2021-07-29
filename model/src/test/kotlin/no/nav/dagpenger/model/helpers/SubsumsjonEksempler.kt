@@ -16,8 +16,8 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.alle
-import no.nav.dagpenger.model.subsumsjon.hvisGyldig
-import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
+import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import java.time.LocalDate
 
@@ -67,17 +67,17 @@ private val prototypeSubsumsjon = "inngangsvilkår".alle(
         ønsketdato ikkeFør sisteDagMedLønn,
         søknadsdato ikkeFør sisteDagMedLønn,
     )
-) hvisGyldig {
+) hvisOppfylt {
     "oppfyller krav til minsteinntekt".minstEnAv(
         inntektSiste3år minst inntekt3G,
         inntektSisteÅr minst inntekt15G,
         dimisjonsdato før virkningstidspunkt
-    ) hvisUgyldig {
+    ) hvisIkkeOppfylt {
         "oppfyller ikke kravet til minsteinntekt".alle(
             ønsketdato ikkeFør sisteDagMedLønn
         )
     }
-} hvisUgyldig {
+} hvisIkkeOppfylt {
     "oppfyller ikke inngangsvilkår".alle(
         ønsketdato ikkeFør sisteDagMedLønn
     )

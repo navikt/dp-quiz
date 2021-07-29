@@ -86,7 +86,7 @@ class GeneratorFaktumTest {
     }
 
     @Test
-    fun ` har med en gyldig generert subsumsjon blir true `() {
+    fun ` har med en oppfylt generert subsumsjon blir true `() {
         val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
         søknadprosess.generator(1).besvar(1)
         søknadprosess.dato("2.1").besvar(1.januar)
@@ -96,7 +96,7 @@ class GeneratorFaktumTest {
     }
 
     @Test
-    fun ` har med en ugyldig generert subsumsjon blir false `() {
+    fun ` har med en ikke oppfylt generert subsumsjon blir false `() {
         val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
         søknadprosess.generator(1).besvar(1)
         søknadprosess.dato("2.1").besvar(1.desember)
@@ -106,7 +106,7 @@ class GeneratorFaktumTest {
     }
 
     @Test
-    fun ` har med gyldig og ugyldig genererte subsumsjoner blir true `() {
+    fun ` har med oppfylt og ikke oppfylt genererte subsumsjoner blir true `() {
         val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
         søknadprosess.generator(1).besvar(2)
         søknadprosess.dato("2.1").besvar(1.desember)

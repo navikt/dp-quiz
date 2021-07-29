@@ -12,9 +12,9 @@ import no.nav.dagpenger.model.regel.av
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.før
-import no.nav.dagpenger.model.regel.gyldigGodkjentAv
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.minst
+import no.nav.dagpenger.model.regel.oppfyltGodkjentAv
 import no.nav.dagpenger.model.regel.under
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -23,8 +23,8 @@ import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
-import no.nav.dagpenger.model.subsumsjon.hvisGyldig
-import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
+import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.uansett
 
@@ -77,26 +77,26 @@ private val datosjekk = "datosjekk".alle(
     p3Dato før p4Dato
 )
 private val dokumentOpplastning = "dokumentopplastning" deltre {
-    p10Boolean er true hvisUgyldig { p12Boolean av p11Dokument }
+    p10Boolean er true hvisIkkeOppfylt { p12Boolean av p11Dokument }
 }
 private val inntektValidering = "inntektvalidering".minstEnAv(
     p6Inntekt minst p8Inntekt,
     p7Inntekt minst p9Inntekt
 )
 private val alderSjekk = "aldersjekk" deltre {
-    p16Int under 18 hvisGyldig { p17Boolean er true }
+    p16Int under 18 hvisOppfylt { p17Boolean er true }
 }
 private val personerGodkjenning = p15Int med alderSjekk uansett { p14Boolean er true }
 
 /* ktlint-disable parameter-list-wrapping */
 private val prototypeSubsumsjon =
-    datosjekk hvisGyldig {
-        dokumentOpplastning hvisGyldig {
-            inntektValidering hvisGyldig {
+    datosjekk hvisOppfylt {
+        dokumentOpplastning hvisOppfylt {
+            inntektValidering hvisOppfylt {
                 personerGodkjenning
             }
-        } hvisUgyldig {
-            (p2Dato etter p13Dato).gyldigGodkjentAv(p19Boolean)
+        } hvisIkkeOppfylt {
+            (p2Dato etter p13Dato).oppfyltGodkjentAv(p19Boolean)
         }
     }
 private val prototypeSeksjon1 = Seksjon("seksjon1", Rolle.nav, p1Boolean, p2Dato)

@@ -141,8 +141,8 @@ infix fun GeneratorFaktum.med(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
         ErIkke(0),
         this,
         deltre.apply {
-            require(gyldig == TomSubsumsjon && ugyldig == TomSubsumsjon) {
-                "Generator deltrær kan ikke ha gyldig eller ugyldig stier"
+            require(oppfylt == TomSubsumsjon && ikkeOppfylt == TomSubsumsjon) {
+                "Generator deltrær kan ikke ha oppfylte eller ikke oppfylte stier"
             }
         },
         AlleSubsumsjon(this.navn, mutableListOf())
@@ -155,8 +155,8 @@ infix fun GeneratorFaktum.har(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
         ErIkke(0),
         this,
         deltre.apply {
-            require(gyldig == TomSubsumsjon && ugyldig == TomSubsumsjon) {
-                "Generator deltrær kan ikke ha gyldig eller ugyldig stier"
+            require(oppfylt == TomSubsumsjon && ikkeOppfylt == TomSubsumsjon) {
+                "Generator deltrær kan ikke ha oppfylte eller ikke oppfylte stier"
             }
         },
         MinstEnAvSubsumsjon(this.navn, mutableListOf())
@@ -195,12 +195,12 @@ fun Subsumsjon.godkjentAv(vararg faktum: Faktum<Boolean>) =
         faktum.forEach { it.sjekkAvhengigheter() }
     }
 
-fun Subsumsjon.gyldigGodkjentAv(vararg faktum: Faktum<Boolean>) =
+fun Subsumsjon.oppfyltGodkjentAv(vararg faktum: Faktum<Boolean>) =
     GodkjenningsSubsumsjon(JaAction, this, faktum.map { it as GrunnleggendeFaktum<Boolean> }).also {
         faktum.forEach { it.sjekkAvhengigheter() }
     }
 
-fun Subsumsjon.ugyldigGodkjentAv(vararg faktum: Faktum<Boolean>) =
+fun Subsumsjon.ikkeOppfyltGodkjentAv(vararg faktum: Faktum<Boolean>) =
     GodkjenningsSubsumsjon(NeiAction, this, faktum.map { it as GrunnleggendeFaktum<Boolean> }).also {
         faktum.forEach { it.sjekkAvhengigheter() }
     }

@@ -216,21 +216,21 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         }
     }
 
-    override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
+    override fun preVisitOppfylt(parent: Subsumsjon, child: Subsumsjon) {
         if (ignoreSubsumsjon != null) return
         if (parent.lokaltResultat() == false) ignoreSubsumsjon = parent
     }
 
-    override fun postVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
+    override fun postVisitOppfylt(parent: Subsumsjon, child: Subsumsjon) {
         if (parent == ignoreSubsumsjon) ignoreSubsumsjon = null
     }
 
-    override fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
+    override fun preVisitIkkeOppfylt(parent: Subsumsjon, child: Subsumsjon) {
         if (ignoreSubsumsjon != null) return
         if (parent.lokaltResultat() == true) ignoreSubsumsjon = parent
     }
 
-    override fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
+    override fun postVisitIkkeOppfylt(parent: Subsumsjon, child: Subsumsjon) {
         if (parent == ignoreSubsumsjon) ignoreSubsumsjon = null
     }
 

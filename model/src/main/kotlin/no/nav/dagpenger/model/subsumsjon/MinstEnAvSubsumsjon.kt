@@ -8,32 +8,37 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 class MinstEnAvSubsumsjon private constructor(
     navn: String,
     subsumsjoner: List<Subsumsjon>,
-    gyldigSubsumsjon: Subsumsjon,
-    ugyldigSubsumsjon: Subsumsjon
-) : SammensattSubsumsjon(navn, subsumsjoner.toMutableList(), gyldigSubsumsjon, ugyldigSubsumsjon) {
+    oppfyltSubsumsjon: Subsumsjon,
+    ikkeOppfyltSubsumsjon: Subsumsjon
+) : SammensattSubsumsjon(navn, subsumsjoner.toMutableList(), oppfyltSubsumsjon, ikkeOppfyltSubsumsjon) {
 
-    internal constructor(navn: String, subsumsjoner: List<Subsumsjon>) : this(navn, subsumsjoner, TomSubsumsjon, TomSubsumsjon)
+    internal constructor(navn: String, subsumsjoner: List<Subsumsjon>) : this(
+        navn,
+        subsumsjoner,
+        TomSubsumsjon,
+        TomSubsumsjon
+    )
 
     override fun deepCopy(søknadprosess: Søknadprosess) = MinstEnAvSubsumsjon(
         navn,
         subsumsjoner.map { it.deepCopy(søknadprosess) },
-        gyldigSubsumsjon.deepCopy(søknadprosess),
-        ugyldigSubsumsjon.deepCopy(søknadprosess)
+        oppfyltSubsumsjon.deepCopy(søknadprosess),
+        ikkeOppfyltSubsumsjon.deepCopy(søknadprosess)
     )
 
     override fun bygg(søknad: Søknad) = MinstEnAvSubsumsjon(
         navn,
         subsumsjoner.map { it.bygg(søknad) }.toMutableList(),
-        gyldigSubsumsjon.bygg(søknad),
-        ugyldigSubsumsjon.bygg(søknad)
+        oppfyltSubsumsjon.bygg(søknad),
+        ikkeOppfyltSubsumsjon.bygg(søknad)
     )
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Subsumsjon {
         return MinstEnAvSubsumsjon(
             "$navn [$indeks]",
             subsumsjoner.map { it.deepCopy(indeks, søknad) }.toMutableList(),
-            gyldigSubsumsjon.deepCopy(indeks, søknad),
-            ugyldigSubsumsjon.deepCopy(indeks, søknad)
+            oppfyltSubsumsjon.deepCopy(indeks, søknad),
+            ikkeOppfyltSubsumsjon.deepCopy(indeks, søknad)
         )
     }
 
@@ -41,8 +46,8 @@ class MinstEnAvSubsumsjon private constructor(
         return MinstEnAvSubsumsjon(
             navn,
             subsumsjoner.map { it.deepCopy() },
-            gyldigSubsumsjon.deepCopy(),
-            ugyldigSubsumsjon.deepCopy()
+            oppfyltSubsumsjon.deepCopy(),
+            ikkeOppfyltSubsumsjon.deepCopy()
         )
     }
 
@@ -50,8 +55,8 @@ class MinstEnAvSubsumsjon private constructor(
         subsumsjoner.map { it.nesteFakta() }.filterNot { it.isEmpty() }.let {
             when (lokaltResultat()) {
                 null -> it.firstOrNull() ?: emptySet()
-                true -> gyldigSubsumsjon.nesteFakta()
-                false -> ugyldigSubsumsjon.nesteFakta()
+                true -> oppfyltSubsumsjon.nesteFakta()
+                false -> ikkeOppfyltSubsumsjon.nesteFakta()
             }
         }
 

@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
-import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
+import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -29,7 +29,7 @@ internal class DeltreTest {
         f2 = søknadprosess boolsk 2
         val s1 = f1 er true
         val s2 = f2 er true
-        deltre = "deltre" deltre { s1 hvisUgyldig { s2 } }
+        deltre = "deltre" deltre { s1 hvisIkkeOppfylt { s2 } }
     }
 
     @Test

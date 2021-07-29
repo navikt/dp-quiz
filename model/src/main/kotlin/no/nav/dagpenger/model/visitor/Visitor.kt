@@ -196,11 +196,19 @@ interface SubsumsjonVisitor : FaktumVisitor {
         godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         resultat: Boolean?,
         childResultat: Boolean?
-    ) {}
+    ) {
+    }
+
     fun preVisit(subsumsjon: GodkjenningsSubsumsjon, action: GodkjenningsSubsumsjon.Action, lokaltResultat: Boolean?) {}
-    fun postVisit(subsumsjon: GodkjenningsSubsumsjon, action: GodkjenningsSubsumsjon.Action, lokaltResultat: Boolean?) {}
-    fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {}
-    fun postVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {}
-    fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {}
-    fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {}
+    fun postVisit(
+        subsumsjon: GodkjenningsSubsumsjon,
+        action: GodkjenningsSubsumsjon.Action,
+        lokaltResultat: Boolean?
+    ) {
+    }
+
+    fun preVisitOppfylt(parent: Subsumsjon, child: Subsumsjon) {}
+    fun postVisitOppfylt(parent: Subsumsjon, child: Subsumsjon) {}
+    fun preVisitIkkeOppfylt(parent: Subsumsjon, child: Subsumsjon) {}
+    fun postVisitIkkeOppfylt(parent: Subsumsjon, child: Subsumsjon) {}
 }

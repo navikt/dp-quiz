@@ -6,8 +6,8 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
-import no.nav.dagpenger.model.regel.gyldigGodkjentAv
-import no.nav.dagpenger.model.regel.ugyldigGodkjentAv
+import no.nav.dagpenger.model.regel.ikkeOppfyltGodkjentAv
+import no.nav.dagpenger.model.regel.oppfyltGodkjentAv
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -42,8 +42,8 @@ internal class GodkjenningsSubsumsjonTest {
     }
 
     @Test
-    fun `Godkjenning av gyldig sti av child`() {
-        søknadprosess { fakta -> (fakta boolsk 1 er true).gyldigGodkjentAv(fakta boolsk 2) }
+    fun `Godkjenning av oppfylt sti av child`() {
+        søknadprosess { fakta -> (fakta boolsk 1 er true).oppfyltGodkjentAv(fakta boolsk 2) }
 
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true)
@@ -62,8 +62,8 @@ internal class GodkjenningsSubsumsjonTest {
     }
 
     @Test
-    fun `Godkjenning av ugyldig sti av child`() {
-        søknadprosess { fakta -> (fakta boolsk 1 er true).ugyldigGodkjentAv(fakta boolsk 2) }
+    fun `Godkjenning av ikke oppfylt sti av child`() {
+        søknadprosess { fakta -> (fakta boolsk 1 er true).ikkeOppfyltGodkjentAv(fakta boolsk 2) }
         assertEquals(null, godkjenningsSubsumsjon.resultat())
         faktum.besvar(true)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
@@ -88,8 +88,18 @@ internal class GodkjenningsSubsumsjonTest {
             boolsk faktum "approve1" id 2
         )
 
-        assertThrows<IllegalArgumentException> { (prototypeSøknad.boolsk(1) er true).gyldigGodkjentAv(prototypeSøknad.boolsk(2)) }
-        assertThrows<IllegalArgumentException> { (prototypeSøknad.boolsk(1) er true).ugyldigGodkjentAv(prototypeSøknad.boolsk(2)) }
+        assertThrows<IllegalArgumentException> {
+            (prototypeSøknad.boolsk(1) er true).oppfyltGodkjentAv(
+                prototypeSøknad.boolsk(
+                    2
+                )
+            )
+        }
+        assertThrows<IllegalArgumentException> {
+            (prototypeSøknad.boolsk(1) er true).ikkeOppfyltGodkjentAv(
+                prototypeSøknad.boolsk(2)
+            )
+        }
         assertThrows<IllegalArgumentException> { (prototypeSøknad.boolsk(1) er true).godkjentAv(prototypeSøknad.boolsk(2)) }
     }
 

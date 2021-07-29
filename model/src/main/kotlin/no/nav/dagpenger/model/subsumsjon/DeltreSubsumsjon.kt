@@ -8,32 +8,32 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 class DeltreSubsumsjon private constructor(
     navn: String,
     private val child: Subsumsjon,
-    gyldigSubsumsjon: Subsumsjon,
-    ugyldigSubsumsjon: Subsumsjon
-) : SammensattSubsumsjon(navn, mutableListOf(child), gyldigSubsumsjon, ugyldigSubsumsjon) {
+    oppfyltSubsumsjon: Subsumsjon,
+    ikkeOppfyltSubsumsjon: Subsumsjon
+) : SammensattSubsumsjon(navn, mutableListOf(child), oppfyltSubsumsjon, ikkeOppfyltSubsumsjon) {
 
     internal constructor(navn: String, child: Subsumsjon) : this(navn, child, TomSubsumsjon, TomSubsumsjon)
 
     override fun deepCopy(søknadprosess: Søknadprosess) = DeltreSubsumsjon(
         navn,
         child.deepCopy(søknadprosess),
-        gyldigSubsumsjon.deepCopy(søknadprosess),
-        ugyldigSubsumsjon.deepCopy(søknadprosess)
+        oppfyltSubsumsjon.deepCopy(søknadprosess),
+        ikkeOppfyltSubsumsjon.deepCopy(søknadprosess)
     )
 
     override fun bygg(søknad: Søknad) = DeltreSubsumsjon(
         navn,
         child.bygg(søknad),
-        gyldigSubsumsjon.bygg(søknad),
-        ugyldigSubsumsjon.bygg(søknad)
+        oppfyltSubsumsjon.bygg(søknad),
+        ikkeOppfyltSubsumsjon.bygg(søknad)
     )
 
     override fun deepCopy(): Subsumsjon {
         return DeltreSubsumsjon(
             navn,
             child.deepCopy(),
-            gyldigSubsumsjon.deepCopy(),
-            ugyldigSubsumsjon.deepCopy()
+            oppfyltSubsumsjon.deepCopy(),
+            ikkeOppfyltSubsumsjon.deepCopy()
         )
     }
 
@@ -41,8 +41,8 @@ class DeltreSubsumsjon private constructor(
         return DeltreSubsumsjon(
             "$navn [$indeks]",
             child.deepCopy(indeks, søknad),
-            gyldigSubsumsjon.deepCopy(indeks, søknad),
-            ugyldigSubsumsjon.deepCopy(indeks, søknad)
+            oppfyltSubsumsjon.deepCopy(indeks, søknad),
+            ikkeOppfyltSubsumsjon.deepCopy(indeks, søknad)
         )
     }
 

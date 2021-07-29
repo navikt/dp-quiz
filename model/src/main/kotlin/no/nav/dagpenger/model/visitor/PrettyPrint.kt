@@ -117,25 +117,25 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         indentTeller--
     }
 
-    override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
+    override fun preVisitOppfylt(parent: Subsumsjon, child: Subsumsjon) {
         if (child is TomSubsumsjon) return
 
         indentTeller--
-        melding(">>Hvis ${parent.navn} er gyldig: ")
+        melding(">>Hvis ${parent.navn} er oppfylt: ")
         indentTeller++
     }
 
-    override fun postVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {} // Tom med vilje
+    override fun postVisitOppfylt(parent: Subsumsjon, child: Subsumsjon) {} // Tom med vilje
 
-    override fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
+    override fun preVisitIkkeOppfylt(parent: Subsumsjon, child: Subsumsjon) {
         if (child is TomSubsumsjon) return
 
         indentTeller--
-        melding("||Hvis ${parent.navn} ikke er gyldig: ")
+        melding("||Hvis ${parent.navn} ikke er oppfylt: ")
         indentTeller++
     }
 
-    override fun postVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {} // Tom med vilje
+    override fun postVisitIkkeOppfylt(parent: Subsumsjon, child: Subsumsjon) {} // Tom med vilje
 
     override fun <R : Comparable<R>> visit(
         faktum: GrunnleggendeFaktum<R>,

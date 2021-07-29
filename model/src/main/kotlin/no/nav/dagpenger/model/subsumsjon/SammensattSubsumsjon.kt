@@ -8,17 +8,17 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 abstract class SammensattSubsumsjon protected constructor(
     navn: String,
     protected open val subsumsjoner: MutableList<Subsumsjon>,
-    gyldigSubsumsjon: Subsumsjon,
-    ugyldigSubsumsjon: Subsumsjon
-) : Subsumsjon(navn, gyldigSubsumsjon, ugyldigSubsumsjon), MutableList<Subsumsjon> by subsumsjoner {
+    oppfyltSubsumsjon: Subsumsjon,
+    ikkeOppfyltSubsumsjon: Subsumsjon
+) : Subsumsjon(navn, oppfyltSubsumsjon, ikkeOppfyltSubsumsjon), MutableList<Subsumsjon> by subsumsjoner {
     override fun alleFakta(): List<Faktum<*>> = subsumsjoner.flatMap { it.alleFakta() }
 
     override fun nesteFakta(): Set<GrunnleggendeFaktum<*>> =
         subsumsjoner.flatMap { it.nesteFakta() }.toSet().let {
             when (lokaltResultat()) {
                 null -> it
-                true -> gyldigSubsumsjon.nesteFakta()
-                false -> ugyldigSubsumsjon.nesteFakta()
+                true -> oppfyltSubsumsjon.nesteFakta()
+                false -> ikkeOppfyltSubsumsjon.nesteFakta()
             }
         }
     override fun accept(visitor: SubsumsjonVisitor) {

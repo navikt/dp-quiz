@@ -24,8 +24,8 @@ import guru.nidi.graphviz.model.Node
 import guru.nidi.graphviz.toGraphviz
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.Kanttype.GYLDIG
-import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.Kanttype.UGYLDIG
+import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.Kanttype.IKKE_OPPFYLT
+import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.Kanttype.OPPFYLT
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
@@ -44,7 +44,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     SøknadprosessVisitor {
 
     var index = 0
-    private var currentKanttype = GYLDIG
+    private var currentKanttype = OPPFYLT
 
     private val opprettetAvSammensatt = mutableListOf<String>()
     private val noder = mutableListOf<Subsumsjon>()
@@ -167,21 +167,21 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
         ryddSammensattNode()
     }
 
-    override fun preVisitGyldig(parent: Subsumsjon, child: Subsumsjon) {
+    override fun preVisitOppfylt(parent: Subsumsjon, child: Subsumsjon) {
         if (iGeneratorSubsumsjon) return
 
         if (parent is SammensattSubsumsjon) {
-            // Under-subsumsjonene har blitt behandlet, og gyldig/ugyldig-treene skal ikke være med i boksen
+            // Under-subsumsjonene har blitt behandlet, og oppfylt/ikke oppfylt-treene skal ikke være med i boksen
             val subGraf = subGrafer.removeFirst()
             subGraf.addTo(subGrafer.first())
         }
-        kant(parent, child, GYLDIG)
+        kant(parent, child, OPPFYLT)
     }
 
-    override fun preVisitUgyldig(parent: Subsumsjon, child: Subsumsjon) {
+    override fun preVisitIkkeOppfylt(parent: Subsumsjon, child: Subsumsjon) {
         if (iGeneratorSubsumsjon) return
 
-        kant(parent, child, UGYLDIG)
+        kant(parent, child, IKKE_OPPFYLT)
     }
 
     private fun kant(parent: Subsumsjon, child: Subsumsjon, kanttype: Kanttype) {
@@ -225,8 +225,8 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
 
     private fun Node.withUtfallAttrs(): Node {
         val label = when (currentKanttype) {
-            GYLDIG -> "Innvilget"
-            UGYLDIG -> "Avslag"
+            OPPFYLT -> "Innvilget"
+            IKKE_OPPFYLT -> "Avslag"
         }
         return this.with(kantFarge().font(), kantFarge(), Label.lines(label))
     }
@@ -299,16 +299,16 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     }
 
     private fun kantRetning() = when (currentKanttype) {
-        GYLDIG -> SOUTH_WEST
-        UGYLDIG -> SOUTH_EAST
+        OPPFYLT -> SOUTH_WEST
+        IKKE_OPPFYLT -> SOUTH_EAST
     }
 
     private fun kantFarge() = when (currentKanttype) {
-        GYLDIG -> GREEN
-        UGYLDIG -> RED
+        OPPFYLT -> GREEN
+        IKKE_OPPFYLT -> RED
     }
 
     private enum class Kanttype {
-        GYLDIG, UGYLDIG
+        OPPFYLT, IKKE_OPPFYLT
     }
 }

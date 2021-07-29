@@ -21,9 +21,9 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.deltre
-import no.nav.dagpenger.model.subsumsjon.hvisGyldig
-import no.nav.dagpenger.model.subsumsjon.hvisGyldigManuell
-import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
+import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
+import no.nav.dagpenger.model.subsumsjon.hvisOppfyltManuell
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -160,13 +160,13 @@ class IntroTilQuizGrafer {
             }
 
         val regeltre = with(testSøknad) {
-            dato(søknadstidspunkt) før dato(dato67år) hvisGyldig {
+            dato(søknadstidspunkt) før dato(dato67år) hvisOppfylt {
                 "minstekrav arbeidsinntekt".minstEnAv(
                     inntekt(inntektSiste36mnd) minst inntekt(G3),
                     inntekt(inntektSiste12mnd) minst inntekt(G15),
                     boolsk(verneplikt) er true,
                     boolsk(lærling) er true
-                ) hvisGyldigManuell(boolsk(oppfyllerMinsteinntektManuell))
+                ) hvisOppfyltManuell (boolsk(oppfyllerMinsteinntektManuell))
             }
         }
 
@@ -187,39 +187,39 @@ class IntroTilQuizGrafer {
     }
 
     private fun regelTreMedMinstEnAv() = with(testSøknad) {
-        dato(søknadstidspunkt) før dato(dato67år) hvisGyldig {
+        dato(søknadstidspunkt) før dato(dato67år) hvisOppfylt {
             "minstekrav arbeidsinntekt".minstEnAv(
                 inntekt(inntektSiste36mnd) minst inntekt(G3),
                 inntekt(inntektSiste12mnd) minst inntekt(G15),
                 boolsk(verneplikt) er true,
                 boolsk(lærling) er true
-            ) hvisGyldigManuell(boolsk(oppfyllerMinsteinntektManuell))
+            ) hvisOppfyltManuell (boolsk(oppfyllerMinsteinntektManuell))
         }
     }
 
     private fun regelTreMedDeltre() = with(testSøknad) {
-        dato(søknadstidspunkt) før dato(dato67år) hvisGyldig {
+        dato(søknadstidspunkt) før dato(dato67år) hvisOppfylt {
             "minstekrav arbeidsinntekt".deltre {
-                inntekt(inntektSiste36mnd) minst inntekt(G3) hvisUgyldig {
-                    inntekt(inntektSiste12mnd) minst inntekt(G15) hvisUgyldig {
-                        boolsk(verneplikt) er true hvisUgyldig {
+                inntekt(inntektSiste36mnd) minst inntekt(G3) hvisIkkeOppfylt {
+                    inntekt(inntektSiste12mnd) minst inntekt(G15) hvisIkkeOppfylt {
+                        boolsk(verneplikt) er true hvisIkkeOppfylt {
                             boolsk(lærling) er true
                         }
                     }
                 }
-            } hvisGyldigManuell(boolsk(oppfyllerMinsteinntektManuell))
+            } hvisOppfyltManuell (boolsk(oppfyllerMinsteinntektManuell))
         }
     }
 
     private fun regeltreMedManuell() = with(testSøknad) {
-        dato(søknadstidspunkt) før dato(dato67år) hvisGyldig {
-            inntekt(inntektSiste36mnd) minst inntekt(G3) hvisUgyldig {
-                inntekt(inntektSiste12mnd) minst inntekt(G15) hvisUgyldig {
-                    boolsk(verneplikt) er true hvisUgyldig {
-                        boolsk(lærling) er true hvisGyldigManuell(boolsk(oppfyllerLærlingManuell))
-                    } hvisGyldigManuell(boolsk(oppfyllerVernepliktManuell))
-                } hvisGyldigManuell(boolsk(oppfyllerInntekt12MånederManuell))
-            } hvisGyldigManuell(boolsk(oppfyllerInntekt36MånederManuell))
+        dato(søknadstidspunkt) før dato(dato67år) hvisOppfylt {
+            inntekt(inntektSiste36mnd) minst inntekt(G3) hvisIkkeOppfylt {
+                inntekt(inntektSiste12mnd) minst inntekt(G15) hvisIkkeOppfylt {
+                    boolsk(verneplikt) er true hvisIkkeOppfylt {
+                        boolsk(lærling) er true hvisOppfyltManuell (boolsk(oppfyllerLærlingManuell))
+                    } hvisOppfyltManuell (boolsk(oppfyllerVernepliktManuell))
+                } hvisOppfyltManuell (boolsk(oppfyllerInntekt12MånederManuell))
+            } hvisOppfyltManuell (boolsk(oppfyllerInntekt36MånederManuell))
         }
     }
 }

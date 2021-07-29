@@ -7,10 +7,10 @@ import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
-import no.nav.dagpenger.model.subsumsjon.hvisGyldig
-import no.nav.dagpenger.model.subsumsjon.hvisGyldigManuell
-import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
-import no.nav.dagpenger.model.subsumsjon.hvisUgyldigManuell
+import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
+import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfyltManuell
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
+import no.nav.dagpenger.model.subsumsjon.hvisOppfyltManuell
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
@@ -41,7 +41,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.skalManueltBehand
 
 internal object AvslagPåMinsteinntekt {
     private val sjekkInntektNesteKalendermåned = with(søknad) {
-        boolsk(harInntektNesteKalendermåned) er true hvisGyldigManuell (boolsk(inntektNesteKalendermånedManuell))
+        boolsk(harInntektNesteKalendermåned) er true hvisOppfyltManuell (boolsk(inntektNesteKalendermånedManuell))
     }
 
     private val minsteArbeidsinntekt = with(søknad) {
@@ -50,7 +50,7 @@ internal object AvslagPåMinsteinntekt {
             inntekt(inntektSiste12mnd) minst inntekt(minsteinntektsterskel12mnd),
             boolsk(verneplikt) er true,
             boolsk(lærling) er true
-        ) hvisGyldigManuell (boolsk(oppfyllerMinsteinntektManuell)) hvisUgyldig {
+        ) hvisOppfyltManuell (boolsk(oppfyllerMinsteinntektManuell)) hvisIkkeOppfylt {
             sjekkInntektNesteKalendermåned
         }
     }
@@ -59,7 +59,7 @@ internal object AvslagPåMinsteinntekt {
         generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
             dato(førsteAvVirkningsdatoOgBehandlingsdato) mellom
                 dato(registrertArbeidssøkerPeriodeFom) og dato(registrertArbeidssøkerPeriodeTom)
-        } hvisUgyldigManuell (boolsk(registrertArbeidssøkerManuell))
+        } hvisIkkeOppfyltManuell (boolsk(registrertArbeidssøkerManuell))
     }
 
     private val erReellArbeidssøker = with(søknad) {
@@ -68,23 +68,23 @@ internal object AvslagPåMinsteinntekt {
             boolsk(helseTilAlleTyperJobb) er true,
             boolsk(kanJobbeHvorSomHelst) er true,
             boolsk(villigTilÅBytteYrke) er true
-        ) hvisUgyldigManuell (boolsk(reellArbeidssøkerManuell))
+        ) hvisIkkeOppfyltManuell (boolsk(reellArbeidssøkerManuell))
     }
 
     private val under67år = with(søknad) {
         "under 67år" deltre {
             dato(virkningsdato) før dato(over67årFradato)
-        } hvisUgyldigManuell (boolsk(over67årManuell))
+        } hvisIkkeOppfyltManuell (boolsk(over67årManuell))
     }
 
     private val harEttArbeidsforhold = with(søknad) {
-        heltall(antallEndredeArbeidsforhold) er 1 hvisUgyldigManuell (boolsk(flereArbeidsforholdManuell))
+        heltall(antallEndredeArbeidsforhold) er 1 hvisIkkeOppfyltManuell (boolsk(flereArbeidsforholdManuell))
     }
 
     internal val regeltre =
-        harEttArbeidsforhold hvisGyldig {
-            under67år hvisGyldig {
-                skalManueltBehandles hvisUgyldig {
+        harEttArbeidsforhold hvisOppfylt {
+            under67år hvisOppfylt {
+                skalManueltBehandles hvisIkkeOppfylt {
                     "inngangsvilkår".alle(
                         erRegistrertArbeidssøker,
                         erReellArbeidssøker,

@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
-import no.nav.dagpenger.model.subsumsjon.hvisGyldig
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -21,7 +21,7 @@ class NesteSeksjonTest {
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1
         )
-        val prototypeSubsumsjon = prototypesøknad.boolsk(1) er true hvisGyldig {
+        val prototypeSubsumsjon = prototypesøknad.boolsk(1) er true hvisOppfylt {
             prototypesøknad.boolsk(2) er true
         }
         val prototypeSøknadprosess = Søknadprosess(
@@ -43,7 +43,7 @@ class NesteSeksjonTest {
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1
         )
-        val prototypeSubsumsjon = prototypesøknad.boolsk(1) er true hvisGyldig {
+        val prototypeSubsumsjon = prototypesøknad.boolsk(1) er true hvisOppfylt {
             prototypesøknad.boolsk(2) er true
         }
         val prototypeSøknadprosess = Søknadprosess(

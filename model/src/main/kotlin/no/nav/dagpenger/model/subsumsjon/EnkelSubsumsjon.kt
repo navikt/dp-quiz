@@ -13,9 +13,9 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 open class EnkelSubsumsjon protected constructor(
     protected val regel: Regel,
     private val subsumsjonFakta: List<Faktum<*>>,
-    gyldigSubsumsjon: Subsumsjon,
-    ugyldigSubsumsjon: Subsumsjon
-) : Subsumsjon(regel.toString(subsumsjonFakta), gyldigSubsumsjon, ugyldigSubsumsjon) {
+    oppfyltSubsumsjon: Subsumsjon,
+    ikkeOppfyltSubsumsjon: Subsumsjon
+) : Subsumsjon(regel.toString(subsumsjonFakta), oppfyltSubsumsjon, ikkeOppfyltSubsumsjon) {
     internal constructor(regel: Regel, vararg fakta: Faktum<*>) :
         this(regel, fakta.toList(), TomSubsumsjon, TomSubsumsjon)
 
@@ -33,37 +33,37 @@ open class EnkelSubsumsjon protected constructor(
     override fun deepCopy(søknadprosess: Søknadprosess) = deepCopy(
         regel,
         subsumsjonFakta.deepCopy(søknadprosess),
-        gyldigSubsumsjon.deepCopy(søknadprosess),
-        ugyldigSubsumsjon.deepCopy(søknadprosess)
+        oppfyltSubsumsjon.deepCopy(søknadprosess),
+        ikkeOppfyltSubsumsjon.deepCopy(søknadprosess)
     )
 
     override fun bygg(søknad: Søknad) = deepCopy(
         regel,
         this.subsumsjonFakta.map { søknad.id(it.faktumId) },
-        gyldigSubsumsjon.bygg(søknad),
-        ugyldigSubsumsjon.bygg(søknad)
+        oppfyltSubsumsjon.bygg(søknad),
+        ikkeOppfyltSubsumsjon.bygg(søknad)
     )
 
     override fun deepCopy() = deepCopy(
         regel,
         subsumsjonFakta,
-        gyldigSubsumsjon.deepCopy(),
-        ugyldigSubsumsjon.deepCopy()
+        oppfyltSubsumsjon.deepCopy(),
+        ikkeOppfyltSubsumsjon.deepCopy()
     )
 
     override fun deepCopy(indeks: Int, søknad: Søknad) = deepCopy(
         regel,
         subsumsjonFakta.deepCopy(indeks, søknad),
-        gyldigSubsumsjon.deepCopy(indeks, søknad),
-        ugyldigSubsumsjon.deepCopy(indeks, søknad)
+        oppfyltSubsumsjon.deepCopy(indeks, søknad),
+        ikkeOppfyltSubsumsjon.deepCopy(indeks, søknad)
     )
 
     private fun deepCopy(
         regel: Regel,
         fakta: List<Faktum<*>>,
-        gyldigSubsumsjon: Subsumsjon,
-        ugyldigSubsumsjon: Subsumsjon
-    ) = EnkelSubsumsjon(regel, fakta, gyldigSubsumsjon, ugyldigSubsumsjon)
+        oppfyltSubsumsjon: Subsumsjon,
+        ikkeOppfyltSubsumsjon: Subsumsjon
+    ) = EnkelSubsumsjon(regel, fakta, oppfyltSubsumsjon, ikkeOppfyltSubsumsjon)
 
     override fun nesteFakta() = ukjenteFakta().takeIf { it.isNotEmpty() } ?: nesteSubsumsjon().nesteFakta()
 
@@ -71,7 +71,7 @@ open class EnkelSubsumsjon protected constructor(
         subsumsjonFakta.forEach { faktum -> faktum.leggTilHvis(Ukjent, it) }
     }
 
-    private fun nesteSubsumsjon() = if (lokaltResultat() == true) gyldigSubsumsjon else ugyldigSubsumsjon
+    private fun nesteSubsumsjon() = if (lokaltResultat() == true) oppfyltSubsumsjon else ikkeOppfyltSubsumsjon
 
     override fun lokaltResultat() = if (subsumsjonFakta.erBesvart()) regel.resultat(subsumsjonFakta) else null
 

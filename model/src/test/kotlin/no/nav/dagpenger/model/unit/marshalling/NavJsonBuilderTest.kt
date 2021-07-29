@@ -21,7 +21,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
-import no.nav.dagpenger.model.subsumsjon.hvisGyldig
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -55,7 +55,7 @@ class NavJsonBuilderTest {
             f7Faktum mellom f9Faktum og f10Faktum
         }
         val prototypeSubsumsjon =
-            f1Faktum er true hvisGyldig {
+            f1Faktum er true hvisOppfylt {
                 "alle".alle(
                     f2Faktum er true,
                     f3Faktum er true,

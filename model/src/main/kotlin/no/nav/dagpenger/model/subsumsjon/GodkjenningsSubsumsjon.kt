@@ -11,9 +11,9 @@ class GodkjenningsSubsumsjon private constructor(
     private val action: Action,
     private val child: Subsumsjon,
     private val godkjenningsfakta: List<GrunnleggendeFaktum<Boolean>>,
-    gyldigSubsumsjon: Subsumsjon,
-    ugyldigSubsumsjon: Subsumsjon
-) : SammensattSubsumsjon(navn, mutableListOf(child), gyldigSubsumsjon, ugyldigSubsumsjon) {
+    oppfyltSubsumsjon: Subsumsjon,
+    ikkeOppfyltSubsumsjon: Subsumsjon
+) : SammensattSubsumsjon(navn, mutableListOf(child), oppfyltSubsumsjon, ikkeOppfyltSubsumsjon) {
 
     init {
         godkjenningsfakta.forEach { it.godkjenner(child.alleFakta()) }
@@ -55,8 +55,8 @@ class GodkjenningsSubsumsjon private constructor(
         action,
         child.deepCopy(søknadprosess),
         godkjenningsfakta.map { søknadprosess.boolsk(it.id) as GrunnleggendeFaktum<Boolean> },
-        gyldigSubsumsjon.deepCopy(søknadprosess),
-        ugyldigSubsumsjon.deepCopy(søknadprosess)
+        oppfyltSubsumsjon.deepCopy(søknadprosess),
+        ikkeOppfyltSubsumsjon.deepCopy(søknadprosess)
     )
 
     override fun bygg(søknad: Søknad) = GodkjenningsSubsumsjon(
@@ -64,8 +64,8 @@ class GodkjenningsSubsumsjon private constructor(
         action,
         child.bygg(søknad),
         godkjenningsfakta.map { søknad.boolsk(it.id) as GrunnleggendeFaktum<Boolean> },
-        gyldigSubsumsjon.bygg(søknad),
-        ugyldigSubsumsjon.bygg(søknad)
+        oppfyltSubsumsjon.bygg(søknad),
+        ikkeOppfyltSubsumsjon.bygg(søknad)
     )
 
     override fun alleFakta(): List<Faktum<*>> = child.alleFakta()
@@ -76,8 +76,8 @@ class GodkjenningsSubsumsjon private constructor(
             action,
             child.deepCopy(),
             godkjenningsfakta,
-            gyldigSubsumsjon.deepCopy(),
-            ugyldigSubsumsjon.deepCopy()
+            oppfyltSubsumsjon.deepCopy(),
+            ikkeOppfyltSubsumsjon.deepCopy()
         )
     }
 
@@ -87,8 +87,8 @@ class GodkjenningsSubsumsjon private constructor(
             action,
             child.deepCopy(indeks, søknad),
             godkjenningsfakta,
-            gyldigSubsumsjon.deepCopy(indeks, søknad),
-            ugyldigSubsumsjon.deepCopy(indeks, søknad)
+            oppfyltSubsumsjon.deepCopy(indeks, søknad),
+            ikkeOppfyltSubsumsjon.deepCopy(indeks, søknad)
         )
     }
 

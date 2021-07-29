@@ -18,9 +18,9 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
-import no.nav.dagpenger.model.subsumsjon.hvisGyldig
-import no.nav.dagpenger.model.subsumsjon.hvisUgyldig
-import no.nav.dagpenger.model.subsumsjon.hvisUgyldigManuell
+import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
+import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfyltManuell
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
@@ -94,25 +94,29 @@ class Graftest {
             }
 
         val prototypeSubsumsjon = with(prototypeSøknad) {
-            boolsk(registrertArbeidssøker) er true hvisGyldig {
+            boolsk(registrertArbeidssøker) er true hvisOppfylt {
                 generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
                     dato(søknadsdato) før dato(registrertArbeidssøkerPeriodeTom)
                 }
-            } hvisUgyldig {
-                dato(bursdag67) før dato(søknadsdato) hvisGyldig {
+            } hvisIkkeOppfylt {
+                dato(bursdag67) før dato(søknadsdato) hvisOppfylt {
                     "bursdagssjekker".alle(
-                        dato(bursdag67) før dato(sisteDagMedLønn) hvisGyldig { dato(bursdag67) før dato(bursdag67) },
+                        dato(bursdag67) før dato(sisteDagMedLønn) hvisOppfylt { dato(bursdag67) før dato(bursdag67) },
                         "flere sjekker".minstEnAv(
                             dato(bursdag67) før dato(dimisjonsdato)
-                        ) hvisGyldig { dato(ønsketdato) før dato(ønsketdato) },
+                        ) hvisOppfylt { dato(ønsketdato) før dato(ønsketdato) },
                         "enda flere sjekker ".minstEnAv(
                             inntekt(inntekt15G) minst inntekt(inntekt3G),
                             inntekt(inntekt15G) minst inntekt(inntekt15G)
                         )
-                    ) hvisGyldig {
+                    ) hvisOppfylt {
                         "minst ein".minstEnAv(dato(sisteDagMedLønn) før dato(sisteDagMedLønn))
-                    } hvisUgyldig {
-                        "deltre".deltre { inntekt(inntektSisteÅr) minst inntekt(inntekt15G) hvisUgyldigManuell (boolsk(manuell)) }
+                    } hvisIkkeOppfylt {
+                        "deltre".deltre {
+                            inntekt(inntektSisteÅr) minst inntekt(inntekt15G) hvisIkkeOppfyltManuell (boolsk(
+                                manuell
+                            ))
+                        }
                     }
                 }
             }

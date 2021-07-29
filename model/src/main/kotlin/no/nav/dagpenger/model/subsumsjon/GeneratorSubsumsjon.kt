@@ -18,14 +18,14 @@ class GeneratorSubsumsjon internal constructor(
         return super.lokaltResultat().also { resultat ->
             when (resultat) {
                 true -> {
-                    (gyldig as SammensattSubsumsjon).also { sammensattSubsumsjon ->
+                    (oppfylt as SammensattSubsumsjon).also { sammensattSubsumsjon ->
                         if (sammensattSubsumsjon.size != faktum.svar()) sammensattSubsumsjon.clear()
                         if (sammensattSubsumsjon.isEmpty())
                             sammensattSubsumsjon.addAll((1..faktum.svar()).map { deltre.deepCopy(it, faktum.søknad) })
                     }
                 }
                 else -> {
-                    (gyldig as SammensattSubsumsjon).clear()
+                    (oppfylt as SammensattSubsumsjon).clear()
                 }
             }
         }

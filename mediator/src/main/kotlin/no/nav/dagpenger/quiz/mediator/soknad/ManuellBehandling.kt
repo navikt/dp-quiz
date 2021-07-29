@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad
 
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
-import no.nav.dagpenger.model.subsumsjon.hvisGyldigManuell
+import no.nav.dagpenger.model.subsumsjon.hvisOppfyltManuell
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeidManuell
@@ -22,27 +22,29 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkn
 internal object ManuellBehandling {
 
     private val hattInntektFraFangstOgFisk = with(søknad) {
-        boolsk(fangstOgFisk) er true hvisGyldigManuell(boolsk(fangstOgFiskManuell))
+        boolsk(fangstOgFisk) er true hvisOppfyltManuell (boolsk(fangstOgFiskManuell))
     }
 
     private val harArbeidetEøs = with(søknad) {
-        boolsk(eøsArbeid) er true hvisGyldigManuell (boolsk(eøsArbeidManuell))
+        boolsk(eøsArbeid) er true hvisOppfyltManuell (boolsk(eøsArbeidManuell))
     }
 
     private val virkningsdatoEtterNåværendeInntektsrapporteringsperiode = with(søknad) {
-        dato(virkningsdato) etter dato(inntektsrapporteringsperiodeTom) hvisGyldigManuell (boolsk(uhåndterbartVirkningsdatoManuell))
+        dato(virkningsdato) etter dato(inntektsrapporteringsperiodeTom) hvisOppfyltManuell (boolsk(
+            uhåndterbartVirkningsdatoManuell
+        ))
     }
 
     private val erMuligGjenopptak = with(søknad) {
-        boolsk(harHattDagpengerSiste36mnd) er true hvisGyldigManuell (boolsk(periodeOppbruktManuell))
+        boolsk(harHattDagpengerSiste36mnd) er true hvisOppfyltManuell (boolsk(periodeOppbruktManuell))
     }
 
     private val harHattSykepenger = with(søknad) {
-        boolsk(sykepengerSiste36mnd) er true hvisGyldigManuell (boolsk(svangerskapsrelaterteSykepengerManuell))
+        boolsk(sykepengerSiste36mnd) er true hvisOppfyltManuell (boolsk(svangerskapsrelaterteSykepengerManuell))
     }
 
     private val harFortsattRettKorona = with(søknad) {
-        boolsk(fortsattRettKorona) er true hvisGyldigManuell (boolsk(fortsattRettKoronaManuell))
+        boolsk(fortsattRettKorona) er true hvisOppfyltManuell (boolsk(fortsattRettKoronaManuell))
     }
 
     internal val skalManueltBehandles =
