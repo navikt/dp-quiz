@@ -113,9 +113,11 @@ class Graftest {
                         "minst ein".minstEnAv(dato(sisteDagMedLønn) før dato(sisteDagMedLønn))
                     } hvisIkkeOppfylt {
                         "deltre".deltre {
-                            inntekt(inntektSisteÅr) minst inntekt(inntekt15G) hvisIkkeOppfyltManuell (boolsk(
-                                manuell
-                            ))
+                            inntekt(inntektSisteÅr) minst inntekt(inntekt15G) hvisIkkeOppfyltManuell (
+                                boolsk(
+                                    manuell
+                                )
+                                )
                         }
                     }
                 }
