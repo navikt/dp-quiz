@@ -24,6 +24,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innse
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.jobbetUtenforNorge
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
@@ -94,6 +95,7 @@ internal class RegeltreTest {
 
             dato(inntektsrapporteringsperiodeTom).besvar(5.februar)
             boolsk(eøsArbeid).besvar(false)
+            boolsk(jobbetUtenforNorge).besvar(false)
 
             boolsk(fangstOgFisk).besvar(false)
 
@@ -190,6 +192,12 @@ internal class RegeltreTest {
     fun `Eøs arbeid skal manuelt behandles`() {
         manglerInntekt.boolsk(eøsArbeid).besvar(true)
         assertNesteSeksjon("EØS-arbeid")
+    }
+
+    @Test
+    fun `Arbeidsforhold utenfor Norge skal manuelt behandles`() {
+        manglerInntekt.boolsk(jobbetUtenforNorge).besvar(true)
+        assertNesteSeksjon("jobbet utenfor Norge")
     }
 
     @Test

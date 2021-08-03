@@ -20,6 +20,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innte
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.jobbetUtenforNorgeManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
@@ -195,6 +196,14 @@ internal object Seksjoner {
         )
     }
 
+    private val manuellJobbetUtenforNorge = with(søknad) {
+        Seksjon(
+            "jobbet utenfor Norge",
+            Rolle.manuell,
+            boolsk(jobbetUtenforNorgeManuell)
+        )
+    }
+
     private val manuellDatoer = with(søknad) {
         Seksjon(
             "virkningstidspunkt vi ikke kan håndtere",
@@ -301,6 +310,7 @@ internal object Seksjoner {
             manuellErIkkeReellArbeidssøker,
             manuellErIkkeRegistrertArbeidssøker,
             manuellFortsattRettKorona,
-            manuellOver67år
+            manuellOver67år,
+            manuellJobbetUtenforNorge,
         )
 }

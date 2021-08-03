@@ -12,6 +12,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.forts
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKoronaManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.jobbetUtenforNorge
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.jobbetUtenforNorgeManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.svangerskapsrelaterteSykepengerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
@@ -27,6 +29,10 @@ internal object ManuellBehandling {
 
     private val harArbeidetEøs = with(søknad) {
         boolsk(eøsArbeid) er true hvisOppfyltManuell (boolsk(eøsArbeidManuell))
+    }
+
+    private val harJobbetUtenforNorge = with(søknad) {
+        boolsk(jobbetUtenforNorge) er true hvisOppfyltManuell (boolsk(jobbetUtenforNorgeManuell))
     }
 
     private val virkningsdatoEtterNåværendeInntektsrapporteringsperiode = with(søknad) {
@@ -56,6 +62,7 @@ internal object ManuellBehandling {
             harArbeidetEøs,
             hattInntektFraFangstOgFisk,
             erMuligGjenopptak,
-            harHattSykepenger
+            harHattSykepenger,
+            harJobbetUtenforNorge,
         )
 }
