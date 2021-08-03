@@ -11,6 +11,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangs
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKoronaManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.hattLukkedeSakerSiste8Uker
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.hattLukkedeSakerSiste8UkerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektsrapporteringsperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.jobbetUtenforNorge
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.jobbetUtenforNorgeManuell
@@ -55,6 +57,10 @@ internal object ManuellBehandling {
         boolsk(fortsattRettKorona) er true hvisOppfyltManuell (boolsk(fortsattRettKoronaManuell))
     }
 
+    private val harHattLukkedeSakerSiste8Uker = with(søknad) {
+        boolsk(hattLukkedeSakerSiste8Uker) er true hvisOppfyltManuell (boolsk(hattLukkedeSakerSiste8UkerManuell))
+    }
+
     internal val skalManueltBehandles =
         "manuelt behandles".minstEnAv(
             harFortsattRettKorona,
@@ -64,5 +70,6 @@ internal object ManuellBehandling {
             erMuligGjenopptak,
             harHattSykepenger,
             harJobbetUtenforNorge,
+            harHattLukkedeSakerSiste8Uker
         )
 }

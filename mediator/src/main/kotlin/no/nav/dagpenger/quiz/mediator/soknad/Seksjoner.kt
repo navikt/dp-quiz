@@ -15,6 +15,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.forts
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.hattLukkedeSakerSiste8Uker
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.hattLukkedeSakerSiste8UkerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.helseTilAlleTyperJobb
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektNesteKalendermånedManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
@@ -115,6 +117,7 @@ internal object Seksjoner {
             "dagpengehistorikk",
             Rolle.nav,
             boolsk(harHattDagpengerSiste36mnd),
+            boolsk(hattLukkedeSakerSiste8Uker),
         )
     }
 
@@ -171,6 +174,14 @@ internal object Seksjoner {
             "mulig gjenopptak",
             Rolle.manuell,
             boolsk(periodeOppbruktManuell),
+        )
+    }
+
+    private val manuellHattLukkedeSakerSiste8Uker = with(søknad) {
+        Seksjon(
+            "har hatt lukkede saker siste 8 uker",
+            Rolle.manuell,
+            boolsk(hattLukkedeSakerSiste8UkerManuell),
         )
     }
 
@@ -314,5 +325,6 @@ internal object Seksjoner {
             manuellFortsattRettKorona,
             manuellOver67år,
             manuellJobbetUtenforNorge,
+            manuellHattLukkedeSakerSiste8Uker,
         )
 }

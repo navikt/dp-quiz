@@ -19,6 +19,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.forts
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.hattLukkedeSakerSiste8Uker
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.helseTilAlleTyperJobb
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innsendtSøknadsId
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.inntektSiste12mnd
@@ -91,6 +92,7 @@ internal class RegeltreTest {
             dato("$registrertArbeidssøkerPeriodeTom.1").besvar(30.januar(2018))
 
             boolsk(harHattDagpengerSiste36mnd).besvar(false)
+            boolsk(hattLukkedeSakerSiste8Uker).besvar(false)
             boolsk(sykepengerSiste36mnd).besvar(false)
 
             dato(inntektsrapporteringsperiodeTom).besvar(5.februar)
@@ -149,6 +151,12 @@ internal class RegeltreTest {
     fun `Søknader fra brukere som har hatt dagpenger de siste 36 månedene blir ikke behandlet`() {
         manglerInntekt.boolsk(harHattDagpengerSiste36mnd).besvar(true)
         assertNesteSeksjon("mulig gjenopptak")
+    }
+
+    @Test
+    fun `Søknader fra brukere som har hatt lukkede saker siste 8 uker blir ikke behandlet`() {
+        manglerInntekt.boolsk(hattLukkedeSakerSiste8Uker).besvar(true)
+        assertNesteSeksjon("har hatt lukkede saker siste 8 uker")
     }
 
     @Test

@@ -19,7 +19,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    const val VERSJON_ID = 21
+    const val VERSJON_ID = 22
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
@@ -76,6 +76,8 @@ internal object AvslagPåMinsteinntektOppsett {
     const val over67årManuell = 56
     const val jobbetUtenforNorge = 57
     const val jobbetUtenforNorgeManuell = 58
+    const val hattLukkedeSakerSiste8Uker = 59
+    const val hattLukkedeSakerSiste8UkerManuell = 60
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -131,6 +133,8 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Over 67 år manuell" id over67årManuell,
             boolsk faktum "Har jobbet utenfor Norge" id jobbetUtenforNorge avhengerAv innsendtSøknadsId,
             boolsk faktum "Har jobbet utenfor Norge manuell" id jobbetUtenforNorgeManuell avhengerAv jobbetUtenforNorge,
+            boolsk faktum "Har hatt lukkede saker siste 8 uker" id hattLukkedeSakerSiste8Uker avhengerAv virkningsdato,
+            boolsk faktum "Har hatt lukkede saker siste 8 uker manuell" id hattLukkedeSakerSiste8UkerManuell avhengerAv hattLukkedeSakerSiste8Uker,
         )
 
     private val faktumNavBehov =
@@ -168,6 +172,7 @@ internal object AvslagPåMinsteinntektOppsett {
                 fortsattRettKorona to "FortsattRettKorona",
                 over67årFradato to "ForGammelGrensedato",
                 jobbetUtenforNorge to "JobbetUtenforNorge",
+                hattLukkedeSakerSiste8Uker to "HarHattLukketSiste8Uker",
             )
         )
 
