@@ -27,7 +27,7 @@ internal object AvslagPåMinsteinntektOppsett {
 
     const val ønsketDato = 1
     const val virkningsdato = 4
-    const val fangstOgFisk = 5
+    const val fangstOgFiskInntektSiste36mnd = 5
     const val inntektSiste36mnd = 6
     const val inntektSiste12mnd = 7
     const val minsteinntektfaktor36mnd = 8
@@ -84,9 +84,9 @@ internal object AvslagPåMinsteinntektOppsett {
             VERSJON_ID,
             dato faktum "Ønsker dagpenger fra dato" id ønsketDato avhengerAv innsendtSøknadsId,
             maks dato "Virkningsdato" av ønsketDato og søknadstidspunkt id virkningsdato,
-            boolsk faktum "Driver med fangst og fisk" id fangstOgFisk avhengerAv innsendtSøknadsId,
-            inntekt faktum "Inntekt siste 36 mnd" id inntektSiste36mnd avhengerAv virkningsdato og fangstOgFisk,
-            inntekt faktum "Inntekt siste 12 mnd" id inntektSiste12mnd avhengerAv virkningsdato og fangstOgFisk,
+            boolsk faktum "Har hatt inntekt fra fangst og fisk siste 36 mnd" id fangstOgFiskInntektSiste36mnd avhengerAv virkningsdato,
+            inntekt faktum "Inntekt siste 36 mnd" id inntektSiste36mnd avhengerAv virkningsdato og fangstOgFiskInntektSiste36mnd,
+            inntekt faktum "Inntekt siste 12 mnd" id inntektSiste12mnd avhengerAv virkningsdato og fangstOgFiskInntektSiste36mnd,
             inntekt faktum "Grunnbeløp" id grunnbeløp avhengerAv virkningsdato,
             desimaltall faktum "Øvre faktor" id minsteinntektfaktor36mnd avhengerAv virkningsdato,
             desimaltall faktum "Nedre faktor" id minsteinntektfaktor12mnd avhengerAv virkningsdato,
@@ -109,7 +109,7 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbruktManuell avhengerAv harHattDagpengerSiste36mnd,
             boolsk faktum "Sykepenger siste 36 mnd" id sykepengerSiste36mnd avhengerAv virkningsdato,
             boolsk faktum "Svangerskapsrelaterte sykepenger" id svangerskapsrelaterteSykepengerManuell avhengerAv sykepengerSiste36mnd,
-            boolsk faktum "Fangst og fisk manuell" id fangstOgFiskManuell avhengerAv fangstOgFisk,
+            boolsk faktum "Fangst og fisk manuell" id fangstOgFiskManuell avhengerAv fangstOgFiskInntektSiste36mnd,
             boolsk faktum "Har hatt inntekt/trygdeperioder fra EØS" id eøsArbeid avhengerAv innsendtSøknadsId,
             boolsk faktum "EØS arbeid manuell" id eøsArbeidManuell avhengerAv eøsArbeid,
             boolsk faktum "Ugyldig dato manuell" id uhåndterbartVirkningsdatoManuell avhengerAv virkningsdato,
@@ -142,7 +142,7 @@ internal object AvslagPåMinsteinntektOppsett {
             mapOf(
                 ønsketDato to "ØnskerDagpengerFraDato",
                 virkningsdato to "Virkningstidspunkt",
-                fangstOgFisk to "FangstOgFiske",
+                fangstOgFiskInntektSiste36mnd to "FangstOgFiskeInntektSiste36mnd",
                 inntektSiste36mnd to "InntektSiste3År",
                 inntektSiste12mnd to "InntektSiste12Mnd",
                 minsteinntektfaktor36mnd to "ØvreTerskelFaktor",
