@@ -124,7 +124,6 @@ internal class RegeltreTest {
     }
 
     @Test
-    @Disabled
     fun `De som er over 67 år får avslag`() {
         manglerInntekt.inntekt(inntektSiste36mnd).besvar(2000000.årlig)
         manglerInntekt.dato(over67årFradato).besvar(1.januar)
@@ -134,6 +133,7 @@ internal class RegeltreTest {
     }
 
     @Test
+    @Disabled
     fun `Skal manuelt behandles hvis over 67`() {
         manglerInntekt.inntekt(inntektSiste36mnd).besvar(2000000.årlig)
         manglerInntekt.dato(over67årFradato).besvar(1.januar)
