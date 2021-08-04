@@ -116,6 +116,13 @@ internal object Seksjoner {
             "dagpengehistorikk",
             Rolle.nav,
             boolsk(harHattDagpengerSiste36mnd),
+        )
+    }
+
+    private val lukkedeSaker = with(søknad) {
+        Seksjon(
+            "lukkedeSaker",
+            Rolle.nav,
             boolsk(hattLukkedeSakerSiste8Uker),
         )
     }
@@ -313,6 +320,7 @@ internal object Seksjoner {
             dataFraSøknad,
             arbeidsøkerPerioder,
             dagpengehistorikk,
+            lukkedeSaker,
             inntektshistorikk,
             sykepengehistorikk,
             inntekter,
