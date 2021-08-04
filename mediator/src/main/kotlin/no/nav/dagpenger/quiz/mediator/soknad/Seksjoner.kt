@@ -7,7 +7,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antal
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeidManuell
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
@@ -92,7 +92,6 @@ internal object Seksjoner {
             boolsk(verneplikt),
             boolsk(lærling),
             boolsk(eøsArbeid),
-            boolsk(fangstOgFisk),
             boolsk(kanJobbeDeltid),
             boolsk(helseTilAlleTyperJobb),
             boolsk(kanJobbeHvorSomHelst),
@@ -118,6 +117,14 @@ internal object Seksjoner {
             Rolle.nav,
             boolsk(harHattDagpengerSiste36mnd),
             boolsk(hattLukkedeSakerSiste8Uker),
+        )
+    }
+
+    private val inntektshistorikk = with(søknad) {
+        Seksjon(
+            "inntektshistorikk",
+            Rolle.nav,
+            boolsk(fangstOgFiskInntektSiste36mnd)
         )
     }
 
@@ -306,6 +313,7 @@ internal object Seksjoner {
             dataFraSøknad,
             arbeidsøkerPerioder,
             dagpengehistorikk,
+            inntektshistorikk,
             sykepengehistorikk,
             inntekter,
             inntektNesteKalendermåned,

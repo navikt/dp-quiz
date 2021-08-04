@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.subsumsjon.hvisOppfyltManuell
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeidManuell
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKoronaManuell
@@ -26,7 +26,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkn
 internal object ManuellBehandling {
 
     private val hattInntektFraFangstOgFisk = with(søknad) {
-        boolsk(fangstOgFisk) er true hvisOppfyltManuell (boolsk(fangstOgFiskManuell))
+        boolsk(fangstOgFiskInntektSiste36mnd) er true hvisOppfyltManuell (boolsk(fangstOgFiskManuell))
     }
 
     private val harArbeidetEøs = with(søknad) {

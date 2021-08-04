@@ -14,7 +14,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antal
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.arenaFagsakId
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFisk
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
@@ -99,7 +99,7 @@ internal class RegeltreTest {
             boolsk(eøsArbeid).besvar(false)
             boolsk(jobbetUtenforNorge).besvar(false)
 
-            boolsk(fangstOgFisk).besvar(false)
+            boolsk(fangstOgFiskInntektSiste36mnd).besvar(false)
 
             inntekt(grunnbeløp).besvar(100000.årlig)
             desimaltall(minsteinntektfaktor12mnd).besvar(1.5)
@@ -192,7 +192,7 @@ internal class RegeltreTest {
 
     @Test
     fun `Fangst og fisk skal manuelt behandles`() {
-        manglerInntekt.boolsk(fangstOgFisk).besvar(true)
+        manglerInntekt.boolsk(fangstOgFiskInntektSiste36mnd).besvar(true)
         assertNesteSeksjon("mulige inntekter fra fangst og fisk")
     }
 
