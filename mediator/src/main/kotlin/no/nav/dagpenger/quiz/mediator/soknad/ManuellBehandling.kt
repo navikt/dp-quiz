@@ -24,7 +24,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhån
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkningsdato
 
 internal object ManuellBehandling {
-
     private val hattInntektFraFangstOgFisk = with(søknad) {
         boolsk(fangstOgFiskInntektSiste36mnd) er true hvisOppfyltManuell (boolsk(fangstOgFiskManuell))
     }

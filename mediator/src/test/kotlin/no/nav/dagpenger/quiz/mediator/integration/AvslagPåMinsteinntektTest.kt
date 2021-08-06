@@ -77,6 +77,29 @@ internal class AvslagPåMinsteinntektTest {
     }
 
     @Test
+    fun `De som har virkningsdato for langt fram i tid går til manuell`() {
+        withSøknad { besvar ->
+            besvar(behandlingsdato, 5.januar)
+            besvar(ønsketDato, 5.desember)
+            besvar(søknadstidspunkt, 5.desember)
+            besvar(senesteMuligeVirkningsdato, 19.januar)
+            assertGjeldendeSeksjon("arbeidsforhold")
+            besvar(
+                antallEndredeArbeidsforhold,
+                listOf(
+                    listOf(
+                        "$ordinær.1" to false,
+                        "$permittert.1" to true,
+                        "$lønnsgaranti.1" to false,
+                        "$permittertFiskeforedling.1" to false
+                    )
+                )
+            )
+            assertGjeldendeSeksjon("virkningstidspunkt vi ikke kan håndtere")
+        }
+    }
+
+    @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
         withSøknad { besvar ->
             besvar(behandlingsdato, 5.januar)
@@ -127,7 +150,15 @@ internal class AvslagPåMinsteinntektTest {
             besvar(sykepengerSiste36mnd, false)
 
             assertGjeldendeSeksjon("arbeidsøkerperioder")
-            besvar(registrertArbeidssøkerPerioder, listOf(listOf("$registrertArbeidssøkerPeriodeFom.1" to 1.januar(2018), "$registrertArbeidssøkerPeriodeTom.1" to 30.januar(2018))))
+            besvar(
+                registrertArbeidssøkerPerioder,
+                listOf(
+                    listOf(
+                        "$registrertArbeidssøkerPeriodeFom.1" to 1.januar(2018),
+                        "$registrertArbeidssøkerPeriodeTom.1" to 30.januar(2018)
+                    )
+                )
+            )
 
             assertGjeldendeSeksjon("minsteinntektKonstanter")
             besvar(minsteinntektfaktor36mnd, 1.5)

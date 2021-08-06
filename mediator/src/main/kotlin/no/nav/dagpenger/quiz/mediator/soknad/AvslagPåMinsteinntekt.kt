@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad
 
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.før
+import no.nav.dagpenger.model.regel.førEllerLik
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.minst
@@ -32,7 +33,9 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.regis
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPerioder
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søknad
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningsdatoManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.villigTilÅBytteYrke
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkningsdato
@@ -74,15 +77,24 @@ internal object AvslagPåMinsteinntekt {
     private val harEttArbeidsforhold = with(søknad) {
         heltall(antallEndredeArbeidsforhold) er 1 hvisIkkeOppfyltManuell (boolsk(flereArbeidsforholdManuell))
     }
+    private val virkningsdatoErHåndterbar = with(søknad) {
+        dato(virkningsdato) førEllerLik dato(senesteMuligeVirkningsdato) hvisIkkeOppfyltManuell (
+            boolsk(
+                uhåndterbartVirkningsdatoManuell
+            )
+            )
+    }
     internal val regeltre =
         harEttArbeidsforhold hvisOppfylt {
-            under67år hvisOppfylt {
-                skalManueltBehandles hvisIkkeOppfylt {
-                    "inngangsvilkår".alle(
-                        erRegistrertArbeidssøker,
-                        erReellArbeidssøker,
-                        minsteArbeidsinntekt
-                    )
+            virkningsdatoErHåndterbar hvisOppfylt {
+                under67år hvisOppfylt {
+                    skalManueltBehandles hvisIkkeOppfylt {
+                        "inngangsvilkår".alle(
+                            erRegistrertArbeidssøker,
+                            erReellArbeidssøker,
+                            minsteArbeidsinntekt
+                        )
+                    }
                 }
             }
         }
