@@ -8,12 +8,6 @@ plugins {
     id(Spotless.spotless) version Spotless.version
 }
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-}
-
 repositories {
     mavenCentral()
     maven("https://packages.confluent.io/maven/")
@@ -63,7 +57,7 @@ allprojects {
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     repositories {
-        jcenter()
+        mavenCentral()
         maven("https://jitpack.io")
     }
 

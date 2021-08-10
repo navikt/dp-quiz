@@ -4,7 +4,7 @@ plugins {
 }
 
 application {
-    mainClassName = "no.nav.dagpenger.quiz.mediator.AppKt"
+    mainClass.set("no.nav.dagpenger.quiz.mediator.AppKt")
 }
 
 dependencies {
