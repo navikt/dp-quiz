@@ -9,7 +9,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsA
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeidManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKoronaManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
@@ -239,14 +238,6 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellFlereArbeidsforhold = with(søknad) {
-        Seksjon(
-            "flere arbeidsforhold",
-            Rolle.manuell,
-            boolsk(flereArbeidsforholdManuell)
-        )
-    }
-
     private val manuellOppfyllerKraveneTilMinsteArbeidsinntekt = with(søknad) {
         Seksjon(
             "kravene til minste arbeidsinntekt er oppfylt så",
@@ -333,7 +324,6 @@ internal object Seksjoner {
             manuellFangstOgFisk,
             manuellEøs,
             manuellDatoer,
-            manuellFlereArbeidsforhold,
             manuellOppfyllerKraveneTilMinsteArbeidsinntekt,
             manuellHarInntektNesteKalendermåned,
             manuellErIkkeReellArbeidssøker,

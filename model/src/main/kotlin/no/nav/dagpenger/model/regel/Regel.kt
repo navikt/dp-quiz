@@ -190,6 +190,21 @@ private class Under(private val maksAlder: Int) : Regel {
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er under $maksAlder"
 }
 
+infix fun Faktum<Int>.minst(tall: Int): Subsumsjon {
+    return EnkelSubsumsjon(
+        Minst(tall),
+        this
+    )
+}
+
+private class Minst(private val tall: Int) : Regel {
+    override val typeNavn = "minst"
+    override fun resultat(fakta: List<Faktum<*>>) =
+        (fakta[0] as Faktum<Int>).svar() >= tall
+
+    override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er minst $tall"
+}
+
 fun Subsumsjon.godkjentAv(vararg faktum: Faktum<Boolean>) =
     GodkjenningsSubsumsjon(UansettAction, this, faktum.map { it as GrunnleggendeFaktum<Boolean> }).also {
         faktum.forEach { it.sjekkAvhengigheter() }

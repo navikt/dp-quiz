@@ -102,8 +102,6 @@ internal class AvslagPåMinsteinntektTest {
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
         withSøknad { besvar ->
-            besvar(behandlingsdato, 5.januar)
-            besvar(senesteMuligeVirkningsdato, 19.januar)
 
             assertGjeldendeSeksjon("arbeidsforhold")
             besvar(
@@ -114,9 +112,19 @@ internal class AvslagPåMinsteinntektTest {
                         "$permittert.1" to true,
                         "$lønnsgaranti.1" to false,
                         "$permittertFiskeforedling.1" to false
-                    )
+                    ),
+                    listOf(
+                        "$ordinær.2" to false,
+                        "$permittert.2" to true,
+                        "$lønnsgaranti.2" to false,
+                        "$permittertFiskeforedling.2" to false
+                    ),
+
                 )
             )
+
+            besvar(behandlingsdato, 5.januar)
+            besvar(senesteMuligeVirkningsdato, 19.januar)
 
             assertGjeldendeSeksjon("datafrasøknad")
             besvar(eøsArbeid, false)
@@ -170,6 +178,8 @@ internal class AvslagPåMinsteinntektTest {
             besvar(inntektSiste12mnd, 5000.årlig)
 
             assertFalse(gjeldendeResultat())
+
+            assertFalse(gjeldendeFakta("27.1")!!)
         }
     }
 
@@ -177,6 +187,8 @@ internal class AvslagPåMinsteinntektTest {
         assertEquals(expected, testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
 
     private fun gjeldendeResultat() = testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean()
+
+    private fun gjeldendeFakta(id: String) = testRapid.inspektør.field(testRapid.inspektør.size - 1, "fakta").find { it["id"].asText() == id }?.get("svar")?.asBoolean()
 
     private fun withSøknad(
         block: (

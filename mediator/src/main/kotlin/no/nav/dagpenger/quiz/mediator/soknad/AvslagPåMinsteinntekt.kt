@@ -14,7 +14,6 @@ import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfyltManuell
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.flereArbeidsforholdManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.førsteAvVirkningsdatoOgBehandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.helseTilAlleTyperJobb
@@ -74,9 +73,7 @@ internal object AvslagPåMinsteinntekt {
             dato(virkningsdato) før dato(over67årFradato)
         }
     }
-    private val harEttArbeidsforhold = with(søknad) {
-        heltall(antallEndredeArbeidsforhold) er 1 hvisIkkeOppfyltManuell (boolsk(flereArbeidsforholdManuell))
-    }
+
     private val virkningsdatoErHåndterbar = with(søknad) {
         dato(virkningsdato) førEllerLik dato(senesteMuligeVirkningsdato) hvisIkkeOppfyltManuell (
             boolsk(
@@ -84,8 +81,13 @@ internal object AvslagPåMinsteinntekt {
             )
             )
     }
+
+    private val hentArbeidsforholdArena = with(søknad) {
+        heltall(antallEndredeArbeidsforhold) minst (0)
+    }
+
     internal val regeltre =
-        harEttArbeidsforhold hvisOppfylt {
+        hentArbeidsforholdArena hvisOppfylt {
             virkningsdatoErHåndterbar hvisOppfylt {
                 under67år hvisOppfylt {
                     skalManueltBehandles hvisIkkeOppfylt {

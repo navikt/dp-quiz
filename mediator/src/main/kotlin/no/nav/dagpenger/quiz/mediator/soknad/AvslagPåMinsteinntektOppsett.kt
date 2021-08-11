@@ -58,7 +58,6 @@ internal object AvslagPåMinsteinntektOppsett {
     const val eøsArbeidManuell = 38
     const val uhåndterbartVirkningsdatoManuell = 39
     const val senesteMuligeVirkningsdato = 40
-    const val flereArbeidsforholdManuell = 41
     const val oppfyllerMinsteinntektManuell = 42
     const val harInntektNesteKalendermåned = 43
     const val inntektNesteKalendermånedManuell = 44
@@ -113,7 +112,6 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Har hatt inntekt/trygdeperioder fra EØS" id eøsArbeid avhengerAv innsendtSøknadsId,
             boolsk faktum "EØS arbeid manuell" id eøsArbeidManuell avhengerAv eøsArbeid,
             boolsk faktum "Ugyldig dato manuell" id uhåndterbartVirkningsdatoManuell avhengerAv virkningsdato,
-            boolsk faktum "Flere arbeidsforhold manuell" id flereArbeidsforholdManuell avhengerAv antallEndredeArbeidsforhold,
             dato faktum "Grensedato 14 dager frem i tid" id senesteMuligeVirkningsdato avhengerAv behandlingsdato,
             boolsk faktum "Oppfyller kravene til minste arbeidsinntekt, går til manuell" id oppfyllerMinsteinntektManuell,
             boolsk faktum "Har inntekt neste kalendermåned" id harInntektNesteKalendermåned avhengerAv virkningsdato,

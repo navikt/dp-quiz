@@ -214,12 +214,6 @@ internal class RegeltreTest {
         assertNesteSeksjon("det er inntekt neste kalendermåned")
     }
 
-    @Test
-    fun `Flere arbeidsforhold skal manuelt behandles`() {
-        manglerInntekt.heltall(antallEndredeArbeidsforhold).besvar(2)
-        assertNesteSeksjon("flere arbeidsforhold")
-    }
-
     @ParameterizedTest
     @ValueSource(ints = [kanJobbeDeltid, kanJobbeHvorSomHelst, helseTilAlleTyperJobb, villigTilÅBytteYrke])
     fun `Søkere som ikke er reelle arbeidssøkere skal manuelt behandles`(faktum: Int) {
