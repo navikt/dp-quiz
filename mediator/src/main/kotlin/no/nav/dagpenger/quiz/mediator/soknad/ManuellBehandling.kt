@@ -2,6 +2,9 @@ package no.nav.dagpenger.quiz.mediator.soknad
 
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
+import no.nav.dagpenger.model.regel.etterEllerLik
+import no.nav.dagpenger.model.regel.før
+import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.hvisOppfyltManuell
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
@@ -60,6 +63,13 @@ internal object ManuellBehandling {
         boolsk(hattLukkedeSakerSiste8Uker) er true hvisOppfyltManuell (boolsk(hattLukkedeSakerSiste8UkerManuell))
     }
 
+    private val ønskerEtterFørsteOktober = with(søknad) {
+        "grensedato".alle(
+            dato(AvslagPåMinsteinntektOppsett.søknadstidspunkt) før dato(AvslagPåMinsteinntektOppsett.førsteOktober),
+            dato(AvslagPåMinsteinntektOppsett.ønsketDato) etterEllerLik dato(AvslagPåMinsteinntektOppsett.førsteOktober)
+        ) hvisOppfyltManuell (boolsk(uhåndterbartVirkningsdatoManuell))
+    }
+
     internal val skalManueltBehandles =
         "manuelt behandles".minstEnAv(
             harFortsattRettKorona,
@@ -69,6 +79,7 @@ internal object ManuellBehandling {
             erMuligGjenopptak,
             harHattSykepenger,
             harJobbetUtenforNorge,
-            harHattLukkedeSakerSiste8Uker
+            harHattLukkedeSakerSiste8Uker,
+            ønskerEtterFørsteOktober
         )
 }

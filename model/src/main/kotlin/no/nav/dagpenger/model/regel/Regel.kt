@@ -86,6 +86,17 @@ infix fun Faktum<LocalDate>.førEllerLik(senesteDato: Faktum<LocalDate>) = Enkel
     this,
     senesteDato
 )
+infix fun Faktum<LocalDate>.etterEllerLik(senesteDato: Faktum<LocalDate>) = EnkelSubsumsjon(
+    object : Regel {
+        override val typeNavn = "etter eller lik"
+        override fun resultat(fakta: List<Faktum<*>>) =
+            (fakta[0] as Faktum<LocalDate>).svar() >= (fakta[1] as Faktum<LocalDate>).svar()
+
+        override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er etter eller lik '${fakta[1]}'"
+    },
+    this,
+    senesteDato
+)
 
 infix fun Faktum<LocalDate>.mellom(fom: Faktum<LocalDate>) = PeriodeSubsumsjonBuilder(this, fom)
 

@@ -18,6 +18,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behan
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.førsteOktober
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
@@ -83,6 +84,7 @@ internal class AvslagPåMinsteinntektTest {
             besvar(ønsketDato, 5.desember)
             besvar(søknadstidspunkt, 5.desember)
             besvar(senesteMuligeVirkningsdato, 19.januar)
+            besvar(førsteOktober, 6.desember)
             assertGjeldendeSeksjon("arbeidsforhold")
             besvar(
                 antallEndredeArbeidsforhold,
@@ -134,6 +136,7 @@ internal class AvslagPåMinsteinntektTest {
             besvar(lærling, false)
             besvar(ønsketDato, 5.januar)
             besvar(søknadstidspunkt, 2.januar)
+            besvar(førsteOktober, 1.januar)
             besvar(harInntektNesteKalendermåned, false)
             besvar(kanJobbeDeltid, true)
             besvar(helseTilAlleTyperJobb, true)
