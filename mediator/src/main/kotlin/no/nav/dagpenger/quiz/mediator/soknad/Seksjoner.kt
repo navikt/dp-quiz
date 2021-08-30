@@ -58,12 +58,15 @@ internal object Seksjoner {
         Seksjon("behandlingsdato", Rolle.nav, dato(behandlingsdato))
     }
 
+    private val førsteOktoberSeksjon = with(søknad) {
+        Seksjon("førsteOktoberSeksjon", Rolle.nav, dato(førsteOktober))
+    }
+
     private val senesteMuligeVirkningsdatoSeksjon = with(søknad) {
         Seksjon(
             "senesteMuligeVirkningstidspunkt",
             Rolle.nav,
-            dato(senesteMuligeVirkningsdato),
-            dato(førsteOktober)
+            dato(senesteMuligeVirkningsdato)
         )
     }
 
@@ -307,6 +310,7 @@ internal object Seksjoner {
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             behandlingsdatoSeksjon,
+            førsteOktoberSeksjon,
             senesteMuligeVirkningsdatoSeksjon,
             minsteinntektKonstanter,
             grunnbeløpSeksjon,
