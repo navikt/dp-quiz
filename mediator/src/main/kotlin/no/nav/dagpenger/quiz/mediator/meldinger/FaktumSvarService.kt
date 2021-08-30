@@ -63,8 +63,8 @@ internal class FaktumSvarService(
         if (fakta.isEmpty()) return
 
         withLoggingContext(
-            "id" to UUID.fromString(packet["@id"].asText()).toString(),
-            "søknadUuid" to søknadUuid.toString()
+            "behovId" to UUID.fromString(packet["@id"].asText()).toString(),
+            "soknadUuid" to søknadUuid.toString()
         ) {
             log.info { "Mottok ny(e) fakta (${fakta.joinToString(",") { it["id"].asText() }}) for $søknadUuid" }
             sikkerlogg.info { packet.toJson() }
