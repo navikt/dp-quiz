@@ -3,7 +3,6 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import mu.KotlinLogging
-import mu.withLoggingContext
 import no.finn.unleash.Unleash
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
@@ -19,6 +18,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
+import no.nav.helse.rapids_rivers.withMDC
 import java.util.UUID
 
 internal class FaktumSvarService(
@@ -62,9 +62,11 @@ internal class FaktumSvarService(
         val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
         if (fakta.isEmpty()) return
 
-        withLoggingContext(
-            "behovId" to UUID.fromString(packet["@id"].asText()).toString(),
-            "soknadUuid" to søknadUuid.toString()
+        withMDC(
+            mapOf(
+                "behovId" to UUID.fromString(packet["@id"].asText()).toString(),
+                "soknadUuid" to søknadUuid.toString()
+            )
         ) {
             log.info { "Mottok ny(e) fakta (${fakta.joinToString(",") { it["id"].asText() }}) for $søknadUuid" }
             sikkerlogg.info { packet.toJson() }
