@@ -63,10 +63,10 @@ internal object ManuellBehandling {
         boolsk(hattLukkedeSakerSiste8Uker) er true hvisOppfyltManuell (boolsk(hattLukkedeSakerSiste8UkerManuell))
     }
 
-    private val ønskerEtterFørsteOktober = with(søknad) {
-        "grensedato".alle(
-            dato(AvslagPåMinsteinntektOppsett.søknadstidspunkt) før dato(AvslagPåMinsteinntektOppsett.førsteOktober),
-            dato(AvslagPåMinsteinntektOppsett.ønsketDato) etterEllerLik dato(AvslagPåMinsteinntektOppsett.førsteOktober)
+    private val ønskerEtterKoronaperiode = with(søknad) {
+        "ønsker etter koronaperiode".alle(
+            dato(AvslagPåMinsteinntektOppsett.søknadstidspunkt) før dato(AvslagPåMinsteinntektOppsett.koronaperiodeTom),
+            dato(AvslagPåMinsteinntektOppsett.ønsketDato) etterEllerLik dato(AvslagPåMinsteinntektOppsett.koronaperiodeTom)
         ) hvisOppfyltManuell (boolsk(uhåndterbartVirkningsdatoManuell))
     }
 
@@ -80,6 +80,6 @@ internal object ManuellBehandling {
             harHattSykepenger,
             harJobbetUtenforNorge,
             harHattLukkedeSakerSiste8Uker,
-            ønskerEtterFørsteOktober
+            ønskerEtterKoronaperiode
         )
 }

@@ -16,7 +16,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behan
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.fortsattRettKorona
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.førsteOktober
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
@@ -29,6 +28,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innte
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.jobbetUtenforNorge
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.koronaperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lønnsgaranti
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektfaktor12mnd
@@ -80,7 +80,7 @@ internal class RegeltreTest {
             dato(behandlingsdato).besvar(5.januar)
             dato(ønsketDato).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
-            dato(førsteOktober).besvar(1.januar)
+            dato(koronaperiodeTom).besvar(1.januar)
             dato(senesteMuligeVirkningsdato).besvar(19.januar)
             boolsk(harInntektNesteKalendermåned).besvar(false)
 
@@ -244,7 +244,7 @@ internal class RegeltreTest {
 
     @Test
     fun `søknadstidspunkt før 1oktober og ønsketDato etter bør gå til manuell`() {
-        manglerInntekt.dato(førsteOktober).besvar(3.januar)
+        manglerInntekt.dato(koronaperiodeTom).besvar(3.januar)
         assertNesteSeksjon("virkningstidspunkt vi ikke kan håndtere")
     }
 

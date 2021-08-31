@@ -6,7 +6,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import java.time.LocalDate
 
-internal class FørsteOktoberService(rapidsConnection: RapidsConnection) :
+internal class KoronaperiodeService(rapidsConnection: RapidsConnection) :
     River.PacketListener {
     init {
         River(rapidsConnection).apply {
