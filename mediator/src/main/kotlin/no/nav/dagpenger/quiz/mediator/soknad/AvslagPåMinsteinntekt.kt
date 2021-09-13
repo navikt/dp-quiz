@@ -38,13 +38,13 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.uhån
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.villigTilÅBytteYrke
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.virkningsdato
-import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.skalManueltBehandles
+import no.nav.dagpenger.quiz.mediator.soknad.ManuellBehandling.`skal behandles av Arena`
 
 internal object AvslagPåMinsteinntekt {
     private val sjekkInntektNesteKalendermåned = with(søknad) {
         boolsk(harInntektNesteKalendermåned) er true hvisOppfyltManuell (boolsk(inntektNesteKalendermånedManuell))
     }
-    private val minsteArbeidsinntekt = with(søknad) {
+    private val `oppfyller krav til minste arbeidsinntekt eller unntakene` = with(søknad) {
         "minste arbeidsinntekt".minstEnAv(
             inntekt(inntektSiste36mnd) minst inntekt(minsteinntektsterskel36mnd),
             inntekt(inntektSiste12mnd) minst inntekt(minsteinntektsterskel12mnd),
@@ -54,13 +54,15 @@ internal object AvslagPåMinsteinntekt {
             sjekkInntektNesteKalendermåned
         }
     }
-    private val erRegistrertArbeidssøker = with(søknad) {
+
+    private val `må være registrert som arbeidssøker ved virkningstidspunkt eller behandlingsdato` = with(søknad) {
         generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
             dato(førsteAvVirkningsdatoOgBehandlingsdato) mellom
                 dato(registrertArbeidssøkerPeriodeFom) og dato(registrertArbeidssøkerPeriodeTom)
         } hvisIkkeOppfyltManuell (boolsk(registrertArbeidssøkerManuell))
     }
-    private val erReellArbeidssøker = with(søknad) {
+
+    private val `er reell arbeidssøker` = with(søknad) {
         "er reell arbeidssøker".alle(
             boolsk(kanJobbeDeltid) er true,
             boolsk(helseTilAlleTyperJobb) er true,
@@ -68,13 +70,14 @@ internal object AvslagPåMinsteinntekt {
             boolsk(villigTilÅBytteYrke) er true
         ) hvisIkkeOppfyltManuell (boolsk(reellArbeidssøkerManuell))
     }
-    private val under67år = with(søknad) {
+
+    private val `søkeren må være under 67 år ved virkningstidspunkt` = with(søknad) {
         "under 67år" deltre {
             dato(virkningsdato) før dato(over67årFradato)
         }
     }
 
-    private val virkningsdatoErHåndterbar = with(søknad) {
+    private val `virkningstidspunkt kan ikke være mer enn 14 dager frem i tid` = with(søknad) {
         dato(virkningsdato) førEllerLik dato(senesteMuligeVirkningsdato) hvisIkkeOppfyltManuell (
             boolsk(
                 uhåndterbartVirkningsdatoManuell
@@ -82,19 +85,19 @@ internal object AvslagPåMinsteinntekt {
             )
     }
 
-    private val hentArbeidsforholdArena = with(søknad) {
+    private val `har hentet arbeidsforhold` = with(søknad) {
         heltall(antallEndredeArbeidsforhold) minst (0)
     }
 
     internal val regeltre =
-        hentArbeidsforholdArena hvisOppfylt {
-            virkningsdatoErHåndterbar hvisOppfylt {
-                under67år hvisOppfylt {
-                    skalManueltBehandles hvisIkkeOppfylt {
+        `har hentet arbeidsforhold` hvisOppfylt {
+            `virkningstidspunkt kan ikke være mer enn 14 dager frem i tid` hvisOppfylt {
+                `søkeren må være under 67 år ved virkningstidspunkt` hvisOppfylt {
+                    `skal behandles av Arena` hvisIkkeOppfylt {
                         "inngangsvilkår".alle(
-                            erRegistrertArbeidssøker,
-                            erReellArbeidssøker,
-                            minsteArbeidsinntekt
+                            `må være registrert som arbeidssøker ved virkningstidspunkt eller behandlingsdato`,
+                            `er reell arbeidssøker`,
+                            `oppfyller krav til minste arbeidsinntekt eller unntakene`
                         )
                     }
                 }

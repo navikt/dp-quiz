@@ -70,7 +70,7 @@ internal object ManuellBehandling {
         ) hvisOppfyltManuell (boolsk(uhåndterbartVirkningsdatoManuell))
     }
 
-    internal val skalManueltBehandles =
+    internal val `skal behandles av Arena` =
         "manuelt behandles".minstEnAv(
             harFortsattRettKorona,
             virkningsdatoEtterNåværendeInntektsrapporteringsperiode,
