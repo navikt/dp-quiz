@@ -3,7 +3,6 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import mu.KotlinLogging
-import no.finn.unleash.Unleash
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
@@ -24,8 +23,7 @@ import java.util.UUID
 internal class FaktumSvarService(
     private val søknadPersistence: SøknadPersistence,
     private val resultatPersistence: ResultatPersistence,
-    rapidsConnection: RapidsConnection,
-    private val unleash: Unleash
+    rapidsConnection: RapidsConnection
 ) : River.PacketListener {
 
     private companion object {
@@ -53,12 +51,6 @@ internal class FaktumSvarService(
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
-
-        if (unleash.isEnabled("dp-quiz.ignorer.svar")) {
-            log.info { "Skip svar for $søknadUuid pga feature toggle" }
-            return
-        }
-
         val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
         if (fakta.isEmpty()) return
 

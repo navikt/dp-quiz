@@ -1,9 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
-import no.finn.unleash.FakeUnleash
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.quiz.mediator.FEATURE_MOTTA_SØKNAD
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
@@ -64,15 +62,13 @@ internal class AvslagPåMinsteinntektTest {
             AvslagPåMinsteinntektOppsett.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
             val søknadPersistence = SøknadRecord()
             val resultatPersistence = ResultatRecord()
-            val unleash = FakeUnleash().also { it.enable(FEATURE_MOTTA_SØKNAD) }
             testRapid = TestRapid().also {
                 FaktumSvarService(
                     søknadPersistence = søknadPersistence,
                     resultatPersistence = resultatPersistence,
-                    rapidsConnection = it,
-                    unleash = unleash
+                    rapidsConnection = it
                 )
-                MottattSøknadService(søknadPersistence, it, unleash, AvslagPåMinsteinntektOppsett.VERSJON_ID)
+                MottattSøknadService(søknadPersistence, it, AvslagPåMinsteinntektOppsett.VERSJON_ID)
             }
         }
     }
@@ -218,7 +214,7 @@ internal class AvslagPåMinsteinntektTest {
               "fakta": [{
                 "id": "$faktumId",
                 "svar": "$svar",
-                "clazz": "${svar::class.java.simpleName.toLowerCase()}"
+                "clazz": "${svar::class.java.simpleName.lowercase()}"
             }
               ],
               "@opprettet": "${LocalDateTime.now()}",
@@ -265,7 +261,7 @@ internal class AvslagPåMinsteinntektTest {
     }
 
     private fun lagSvar(faktumId: String, svar: Any) =
-        """{"id": "$faktumId", "svar": "$svar", "clazz": "${svar::class.java.simpleName.toLowerCase()}"}"""
+        """{"id": "$faktumId", "svar": "$svar", "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
 
     private fun søknad(): String {
         testRapid.sendTestMessage(

@@ -1,10 +1,8 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
 import io.mockk.mockk
-import no.finn.unleash.FakeUnleash
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.quiz.mediator.FEATURE_MOTTA_SØKNAD
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import no.nav.dagpenger.quiz.mediator.helpers.desember
@@ -29,11 +27,10 @@ internal class MediatorTest {
         private val testRapid = TestRapid()
         private val grupperer = SøknadPersistenceFake()
         private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
-        private val unleash = FakeUnleash().also { it.enable(FEATURE_MOTTA_SØKNAD) }
 
         init {
-            MottattSøknadService(grupperer, testRapid, unleash, SøknadEksempel.versjonId)
-            FaktumSvarService(grupperer, resultatPersistence, testRapid, unleash)
+            MottattSøknadService(grupperer, testRapid, SøknadEksempel.versjonId)
+            FaktumSvarService(grupperer, resultatPersistence, testRapid)
         }
     }
 

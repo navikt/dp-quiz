@@ -34,10 +34,9 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
             .also {
                 val søknadRecord = SøknadRecord()
                 val resultatRecord = ResultatRecord()
-                val unleash = setupUnleash(Configuration.config["unleash.url"]!!)
                 AvslagPåMinsteinntektOppsett.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
-                MottattSøknadService(søknadRecord, rapidsConnection, unleash)
-                FaktumSvarService(søknadRecord, resultatRecord, rapidsConnection, unleash)
+                MottattSøknadService(søknadRecord, rapidsConnection)
+                FaktumSvarService(søknadRecord, resultatRecord, rapidsConnection)
                 BehandlingsdatoService(rapidsConnection)
                 SenesteMuligeVirkningsdatoService(rapidsConnection)
                 TerskelFaktorService(rapidsConnection)
