@@ -10,7 +10,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.Gjenopptak
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertTrue
+import java.time.LocalDateTime
+import java.util.UUID
 
 class GjenopptakTest : SøknadBesvarer() {
 
@@ -33,6 +34,20 @@ class GjenopptakTest : SøknadBesvarer() {
 
     @Test
     fun `Svar på om bruker har noe å gjenoppta`() {
-        assertTrue { true }
+        withSøknad(ønskerRettighetsavklaring) { besvar ->
+            assertGjeldendeSeksjon("gjenopptak")
+        }
     }
+
+    //language=JSON
+    private val ønskerRettighetsavklaring =
+        """
+        {
+          "@event_name": "ønsker_rettighetsavklaring",
+          "@opprettet": "${LocalDateTime.now()}",
+          "@id": "${UUID.randomUUID()}",
+          "fødselsnummer": "123456789"
+        }
+        
+        """.trimIndent()
 }

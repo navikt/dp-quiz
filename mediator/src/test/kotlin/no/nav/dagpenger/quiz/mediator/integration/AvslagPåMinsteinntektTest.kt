@@ -70,7 +70,7 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
 
     @Test
     fun `De som har virkningsdato for langt fram i tid går til manuell`() {
-        withSøknad { besvar ->
+        withSøknad(søknadFraInnsending) { besvar ->
             besvar(behandlingsdato, 5.januar)
             besvar(ønsketDato, 5.desember)
             besvar(søknadstidspunkt, 5.desember)
@@ -94,7 +94,7 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
 
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
-        withSøknad { besvar ->
+        withSøknad(søknadFraInnsending) { besvar ->
 
             assertGjeldendeSeksjon("arbeidsforhold")
             besvar(
@@ -176,4 +176,19 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
             assertFalse(gjeldendeFakta("27.1")!!)
         }
     }
+
+    //language=JSON
+    private val søknadFraInnsending =
+        """{
+              "@event_name": "innsending_ferdigstilt",
+              "fødselsnummer": "123456789",
+              "aktørId": "",
+              "søknadsId": "9876",
+              "journalpostId": "493389306",
+              "type": "NySøknad",
+              "søknadsData": {
+            "brukerBehandlingId": "10010WQMW"
+          }
+            }
+        """.trimIndent()
 }

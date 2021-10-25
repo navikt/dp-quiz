@@ -23,11 +23,12 @@ abstract class SøknadBesvarer {
             ?.asBoolean()
 
     protected fun withSøknad(
+        event: String,
         block: (
             besvar: (faktumId: Int, svar: Any) -> Unit,
         ) -> Unit
     ) {
-        val søknadsId = søknad()
+        val søknadsId = søknad(event)
         block { b: Int, c: Any ->
             val faktumId = b.toString()
             when (c) {
@@ -97,19 +98,7 @@ abstract class SøknadBesvarer {
         """{"id": "$faktumId", "svar": "$svar", "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
 
     protected fun søknad(
-        event: String =
-            """{
-              "@event_name": "innsending_ferdigstilt",
-              "fødselsnummer": "123456789",
-              "aktørId": "",
-              "søknadsId": "9876",
-              "journalpostId": "493389306",
-              "type": "NySøknad",
-              "søknadsData": {
-            "brukerBehandlingId": "10010WQMW"
-          }
-            }
-            """.trimIndent()
+        event: String
     ): String {
         testRapid.sendTestMessage(event)
         return testRapid.inspektør.field(0, "søknad_uuid").asText()

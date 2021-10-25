@@ -1,20 +1,24 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
+import mu.KotlinLogging
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 
 internal object Gjenopptak {
+
+    private val logger = KotlinLogging.logger { }
 
     const val VERSJON_ID = 100
 
     const val gjenopptak = 1
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
-        registrer(Gjenopptak.søknad, Gjenopptak.VERSJON_ID)
+        registrer(søknad, VERSJON_ID)
     }
 
     internal val søknad: Søknad
@@ -22,23 +26,30 @@ internal object Gjenopptak {
             VERSJON_ID,
             boolsk faktum "Har du hatt dagpenger siste 52 uker" id gjenopptak,
         )
-}
 
-internal object GjenopptakSeksjoner {
-    internal val gjenopptakSøknadsprosess: Søknadprosess =
-        Søknadprosess(
-            GjenopptakSeksjon.gjenopptak
-        )
-}
-
-internal object GjenopptakSeksjon {
-    val gjenopptak = with(Gjenopptak.søknad) {
-        Seksjon("gjenopptak", Rolle.søker, dato(Gjenopptak.gjenopptak))
+    private object Seksjoner {
+        val gjenopptak = with(søknad) {
+            Seksjon("gjenopptak", Rolle.søker, dato(Gjenopptak.gjenopptak))
+        }
     }
-}
 
-internal object SkalBeslutteGjenopptak {
-    val sjekkGjenopptak = with(Gjenopptak.søknad) {
-        boolsk(Gjenopptak.gjenopptak) er true
+    internal val søknadsprosess: Søknadprosess =
+        Søknadprosess(
+            Seksjoner.gjenopptak
+        )
+
+    val regeltre = with(søknad) {
+        boolsk(gjenopptak) er true
+    }
+
+    private val versjon = Versjon.Bygger(
+        prototypeSøknad = søknad,
+        prototypeSubsumsjon = regeltre,
+        prototypeUserInterfaces = mapOf(
+            Versjon.UserInterfaceType.Web to søknadsprosess
+        ),
+        faktumNavBehov = null
+    ).registrer().also {
+        logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
     }
 }

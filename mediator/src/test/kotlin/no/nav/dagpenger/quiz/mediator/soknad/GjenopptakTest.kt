@@ -17,8 +17,8 @@ class GjenopptakTest {
     fun setup() {
         gjenopptak = Versjon.Bygger(
             Gjenopptak.søknad,
-            SkalBeslutteGjenopptak.sjekkGjenopptak,
-            mapOf(Versjon.UserInterfaceType.Web to GjenopptakSeksjoner.gjenopptakSøknadsprosess)
+            Gjenopptak.regeltre,
+            mapOf(Versjon.UserInterfaceType.Web to Gjenopptak.søknadsprosess)
         )
             .søknadprosess(
                 Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
