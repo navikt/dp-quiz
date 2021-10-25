@@ -13,12 +13,13 @@ import java.util.UUID
 class GjenopptakTest {
     private lateinit var gjenopptak: Søknadprosess
 
-
     @BeforeEach
     fun setup() {
         gjenopptak = Versjon.Bygger(
             Gjenopptak.søknad,
-            SkalBeslutteGjenopptak.sjekkGjenopptak, mapOf(Versjon.UserInterfaceType.Web to GjenopptakSeksjoner.gjenopptakSøknadsprosess))
+            SkalBeslutteGjenopptak.sjekkGjenopptak,
+            mapOf(Versjon.UserInterfaceType.Web to GjenopptakSeksjoner.gjenopptakSøknadsprosess)
+        )
             .søknadprosess(
                 Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
                 Versjon.UserInterfaceType.Web
@@ -29,11 +30,9 @@ class GjenopptakTest {
         }
     }
 
-
     @Test
     fun `Besvarte gjenopptak med Ja`() {
         assertTrue(gjenopptak.erFerdig())
         assertEquals(true, gjenopptak.resultat())
     }
-
 }

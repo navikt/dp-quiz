@@ -9,7 +9,6 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 
 internal object Gjenopptak {
 
-
     const val VERSJON_ID = 100
 
     const val gjenopptak = 1
@@ -21,13 +20,9 @@ internal object Gjenopptak {
     internal val søknad: Søknad
         get() = Søknad(
             VERSJON_ID,
-            boolsk faktum "Har du hatt dagpenger siste 52 uker" id  gjenopptak,
+            boolsk faktum "Har du hatt dagpenger siste 52 uker" id gjenopptak,
         )
-
-
-
 }
-
 
 internal object GjenopptakSeksjoner {
     internal val gjenopptakSøknadsprosess: Søknadprosess =
@@ -36,18 +31,14 @@ internal object GjenopptakSeksjoner {
         )
 }
 
-
 internal object GjenopptakSeksjon {
     val gjenopptak = with(Gjenopptak.søknad) {
         Seksjon("gjenopptak", Rolle.søker, dato(Gjenopptak.gjenopptak))
     }
-
 }
-
 
 internal object SkalBeslutteGjenopptak {
     val sjekkGjenopptak = with(Gjenopptak.søknad) {
         boolsk(Gjenopptak.gjenopptak) er true
     }
-
 }
