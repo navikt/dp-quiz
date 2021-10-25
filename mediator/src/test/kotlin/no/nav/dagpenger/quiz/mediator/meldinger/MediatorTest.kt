@@ -29,7 +29,7 @@ internal class MediatorTest {
         private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
 
         init {
-            MottattSøknadService(grupperer, testRapid, SøknadEksempel.versjonId)
+            AvslagPåMinsteinntektService(grupperer, testRapid, SøknadEksempel.versjonId)
             FaktumSvarService(grupperer, resultatPersistence, testRapid)
         }
     }

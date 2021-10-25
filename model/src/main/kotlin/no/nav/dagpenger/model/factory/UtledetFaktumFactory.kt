@@ -65,7 +65,7 @@ class FaktaRegel<R : Comparable<R>> private constructor(
 
     companion object {
         internal val MAKS_DATO = FaktaRegel("MAKS_DATO", UtledetFaktum<LocalDate>::max)
-        internal val MIN_DATO = FaktaRegel("MAKS_DATO", UtledetFaktum<LocalDate>::min)
+        internal val MIN_DATO = FaktaRegel("MIN_DATO", UtledetFaktum<LocalDate>::min)
         internal val MAKS_INNTEKT = FaktaRegel("MAKS_INNTEKT", UtledetFaktum<Inntekt>::max)
         internal val MULTIPLIKASJON_INNTEKT = FaktaRegel("MULTIPLIKASJON_INNTEKT", UtledetFaktum<Inntekt>::multiplikasjon)
         internal val ALLE_JA = FaktaRegel("ALLE_JA", UtledetFaktum<Boolean>::alle)

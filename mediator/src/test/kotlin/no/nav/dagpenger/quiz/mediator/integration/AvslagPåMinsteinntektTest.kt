@@ -9,7 +9,7 @@ import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.desember
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
-import no.nav.dagpenger.quiz.mediator.meldinger.MottattSøknadService
+import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
@@ -45,6 +45,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.søkn
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.villigTilÅBytteYrke
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ønsketDato
+import no.nav.dagpenger.quiz.mediator.soknad.Gjenopptak
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -60,6 +61,7 @@ internal class AvslagPåMinsteinntektTest {
     fun setup() {
         Postgres.withMigratedDb {
             AvslagPåMinsteinntektOppsett.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
+            Gjenopptak.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
             val søknadPersistence = SøknadRecord()
             val resultatPersistence = ResultatRecord()
             testRapid = TestRapid().also {
@@ -68,7 +70,7 @@ internal class AvslagPåMinsteinntektTest {
                     resultatPersistence = resultatPersistence,
                     rapidsConnection = it
                 )
-                MottattSøknadService(søknadPersistence, it, AvslagPåMinsteinntektOppsett.VERSJON_ID)
+                AvslagPåMinsteinntektService(søknadPersistence, it, AvslagPåMinsteinntektOppsett.VERSJON_ID)
             }
         }
     }
