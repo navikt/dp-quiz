@@ -12,9 +12,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.marshalling.Språk
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
-import no.nav.dagpenger.model.marshalling.SøknadJsonBuilder
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -31,6 +29,7 @@ import java.util.Locale
 import java.util.ResourceBundle
 import java.util.UUID
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class SøkerJsonBuilderTest {
 
@@ -93,9 +92,19 @@ class SøkerJsonBuilderTest {
 
         val søkerJson = SøkerJsonBuilder(søknadprosess, "søker").resultat()
 
-        assertEquals("søker-oppgave", søkerJson["@event_name"].asText())
+        assertEquals("søker_oppgave", søkerJson["@event_name"].asText())
         assertDoesNotThrow { søkerJson["@id"].asText().also { UUID.fromString(it) } }
         assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
+        assertDoesNotThrow { søkerJson["søknad_uuid"].asText().also { UUID.fromString(it) } }
+        assertEquals("søker", søkerJson["seksjon_navn"].asText())
+        assertEquals(2, søkerJson["fakta"].size())
+        assertEquals("1", søkerJson["fakta"][0]["id"].asText())
+        assertEquals("3", søkerJson["fakta"][1]["id"].asText())
+        assertNotNull(søkerJson["identer"])
+        assertEquals("12020052345", søkerJson["identer"][0]["id"].asText())
+        assertEquals("folkeregisterident", søkerJson["identer"][0]["type"].asText())
+        assertEquals("aktørId", søkerJson["identer"][1]["id"].asText())
+        assertEquals("aktørid", søkerJson["identer"][1]["type"].asText())
     }
 
     private fun søkerSubsumsjon() = "regel" deltre {

@@ -8,7 +8,7 @@ import java.util.UUID
 
 class SøkerJsonBuilder(
     søknadprosess: Søknadprosess,
-    seksjonNavn: String,
+    private val seksjonNavn: String,
     private val indeks: Int = 0,
     lokal: Locale = Språk.bokmål
 ) : SøknadJsonBuilder(lokal = lokal) {
@@ -23,8 +23,12 @@ class SøkerJsonBuilder(
 
     override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
         super.preVisit(søknad, versjonId, uuid)
-        root.put("@event_name", "søker-oppgave")
+        root.put("@event_name", "søker_oppgave")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("@opprettet", "${LocalDateTime.now()}")
+        root.put("søknad_uuid", "$uuid")
+        root.put("seksjon_navn", seksjonNavn)
+        root.set("identer", identerNode)
+        root.set("fakta", faktaNode)
     }
 }
