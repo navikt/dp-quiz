@@ -15,7 +15,6 @@ internal object Gjenopptak {
 
     const val VERSJON_ID = 100
 
-
     const val `Har du hatt dagpenger i løpet av de siste 52 ukene` = 1
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
