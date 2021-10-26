@@ -7,11 +7,13 @@ import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.GjenopptakService
 import no.nav.dagpenger.quiz.mediator.soknad.Gjenopptak
+import no.nav.dagpenger.quiz.mediator.soknad.Gjenopptak.`Har du hatt dagpenger i løpet av de siste 52 ukene`
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
+import kotlin.test.assertTrue
 
 class GjenopptakTest : SøknadBesvarer() {
 
@@ -36,6 +38,8 @@ class GjenopptakTest : SøknadBesvarer() {
     fun `Svar på om bruker har noe å gjenoppta`() {
         withSøknad(ønskerRettighetsavklaring) { besvar ->
             assertGjeldendeSeksjon("gjenopptak")
+            besvar(`Har du hatt dagpenger i løpet av de siste 52 ukene`, true)
+            assertTrue(gjeldendeResultat())
         }
     }
 

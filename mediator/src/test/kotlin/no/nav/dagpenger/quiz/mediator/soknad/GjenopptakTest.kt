@@ -26,7 +26,7 @@ class GjenopptakTest {
             )
 
         gjenopptak.apply {
-            this.boolsk(Gjenopptak.gjenopptak).besvar(true)
+            this.boolsk(Gjenopptak.`Har du hatt dagpenger i løpet av de siste 52 ukene`).besvar(true)
         }
     }
 

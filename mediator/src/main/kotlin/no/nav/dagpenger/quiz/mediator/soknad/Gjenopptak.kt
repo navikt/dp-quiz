@@ -15,7 +15,8 @@ internal object Gjenopptak {
 
     const val VERSJON_ID = 100
 
-    const val gjenopptak = 1
+
+    const val `Har du hatt dagpenger i løpet av de siste 52 ukene` = 1
 
     fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
         registrer(søknad, VERSJON_ID)
@@ -24,12 +25,12 @@ internal object Gjenopptak {
     internal val søknad: Søknad
         get() = Søknad(
             VERSJON_ID,
-            boolsk faktum "Har du hatt dagpenger siste 52 uker" id gjenopptak,
+            boolsk faktum "Har du hatt dagpenger siste 52 uker" id `Har du hatt dagpenger i løpet av de siste 52 ukene`,
         )
 
     private object Seksjoner {
         val gjenopptak = with(søknad) {
-            Seksjon("gjenopptak", Rolle.søker, dato(Gjenopptak.gjenopptak))
+            Seksjon("gjenopptak", Rolle.søker, dato(`Har du hatt dagpenger i løpet av de siste 52 ukene`))
         }
     }
 
@@ -39,7 +40,7 @@ internal object Gjenopptak {
         )
 
     val regeltre = with(søknad) {
-        boolsk(gjenopptak) er true
+        boolsk(`Har du hatt dagpenger i løpet av de siste 52 ukene`) er true
     }
 
     private val versjon = Versjon.Bygger(
