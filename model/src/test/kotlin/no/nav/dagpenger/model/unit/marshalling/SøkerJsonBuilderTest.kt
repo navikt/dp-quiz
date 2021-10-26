@@ -3,16 +3,16 @@ package no.nav.dagpenger.model.unit.marshalling
 import io.mockk.clearStaticMockk
 import io.mockk.every
 import io.mockk.mockkStatic
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
-import no.nav.dagpenger.model.factory.UtledetFaktumFactory
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.marshalling.Språk
+import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
+import no.nav.dagpenger.model.marshalling.SøknadJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -24,9 +24,13 @@ import no.nav.dagpenger.model.subsumsjon.deltre
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import java.time.LocalDateTime
 import java.util.Enumeration
 import java.util.Locale
 import java.util.ResourceBundle
+import java.util.UUID
+import kotlin.test.assertEquals
 
 class SøkerJsonBuilderTest {
 
@@ -82,16 +86,22 @@ class SøkerJsonBuilderTest {
     }
 
     @Test
-    fun `Jaja det finner vi ut av`() {
+    fun `SøkerJsonBuilder inneholder riktig eventnavn og metadata`() {
 
-        val template = "template" deltre {
-            "alle".alle(
-                prototypeSøknad.boolsk(6) er true,
-                prototypeSøknad.boolsk(7) er true
-            )
-        }
-        val søknadprosess = søknadprosess(
-            prototypeSøknad.generator(67) med template
+        val regel = søkerSubsumsjon()
+        val søknadprosess = søknadprosess(regel)
+
+        val søkerJson = SøkerJsonBuilder(søknadprosess, "søker").resultat()
+
+        assertEquals("søker-oppgave", søkerJson["@event_name"].asText())
+        assertDoesNotThrow { søkerJson["@id"].asText().also { UUID.fromString(it) } }
+        assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
+    }
+
+    private fun søkerSubsumsjon() = "regel" deltre {
+        "alle".alle(
+            prototypeSøknad.boolsk(1) er true,
+            prototypeSøknad.boolsk(3) er true
         )
     }
 
