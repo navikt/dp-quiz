@@ -7,20 +7,17 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.marshalling.Språk.Companion.bokmål
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.time.LocalDateTime
-import java.util.Locale
 import java.util.UUID
 
 class SaksbehandlerJsonBuilder(
     private val søknadprosess: Søknadprosess,
     private val seksjonNavn: String,
-    private val indeks: Int = 0,
-    lokal: Locale = bokmål
-) : SøknadJsonBuilder(lokal = lokal) {
+    private val indeks: Int = 0
+) : SøknadJsonBuilder() {
     private val relevanteFakta = mutableSetOf<String>()
     private val genererteFakta = mutableSetOf<Faktum<*>>()
 

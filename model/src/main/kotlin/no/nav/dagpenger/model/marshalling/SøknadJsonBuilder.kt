@@ -13,7 +13,6 @@ import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.marshalling.Språk.Companion.bokmål
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
@@ -26,10 +25,9 @@ import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.time.LocalDate
-import java.util.Locale
 import java.util.UUID
 
-abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : SøknadprosessVisitor {
+abstract class SøknadJsonBuilder : SøknadprosessVisitor {
     private val mapper = ObjectMapper()
     protected val root: ObjectNode = mapper.createObjectNode()
     protected val faktaNode = mapper.createArrayNode()
@@ -41,11 +39,9 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
     private val subsumsjonNoder = mutableListOf<ArrayNode>(subsumsjonRoot)
     open fun resultat() = root
     private var versjonId = 0
-    private lateinit var språk: Språk
 
     override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
         this.versjonId = versjonId
-        this.språk = Språk(lokal, versjonId)
     }
 
     override fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {
@@ -74,7 +70,7 @@ abstract class SøknadJsonBuilder(private val lokal: Locale = bokmål) : Søknad
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
-        lagFaktumNode<R>(id, språk.oversett(faktum), roller, godkjenner, clazz, besvartAv = null)
+        lagFaktumNode<R>(id, faktum.navn, roller, godkjenner, clazz, besvartAv = null)
     }
 
     override fun <R : Comparable<R>> visit(

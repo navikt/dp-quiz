@@ -1,8 +1,6 @@
 package no.nav.dagpenger.model.unit.marshalling
 
 import io.mockk.clearStaticMockk
-import io.mockk.every
-import io.mockk.mockkStatic
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
@@ -10,7 +8,6 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
-import no.nav.dagpenger.model.marshalling.Språk
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -24,8 +21,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.LocalDateTime
-import java.util.Enumeration
-import java.util.Locale
 import java.util.ResourceBundle
 import java.util.UUID
 import kotlin.test.assertEquals
@@ -38,18 +33,6 @@ class SøkerJsonBuilderTest {
     companion object {
         private var versjonId = 170
     }
-
-    private class ResourceBundleMock(val lokal: Locale) : ResourceBundle() {
-        override fun handleGetObject(key: String): Any {
-            return "Oversatt tekst"
-        }
-
-        override fun getKeys(): Enumeration<String> {
-            TODO("Not yet implemented")
-        }
-    }
-
-    private val mockBundle = ResourceBundleMock(Språk.nynorsk)
 
     @BeforeEach
     fun setup() {
@@ -73,10 +56,6 @@ class SøkerJsonBuilderTest {
             boolsk faktum "f13" id 13,
             boolsk faktum "f14" id 14,
         )
-        mockkStatic(ResourceBundle::class.java.name)
-        every {
-            ResourceBundle.getBundle(any() as String, any() as Locale)
-        } returns mockBundle
     }
 
     @AfterEach

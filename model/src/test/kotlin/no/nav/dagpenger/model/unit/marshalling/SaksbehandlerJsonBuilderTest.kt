@@ -1,8 +1,6 @@
 package no.nav.dagpenger.model.unit.marshalling
 
 import io.mockk.clearStaticMockk
-import io.mockk.every
-import io.mockk.mockkStatic
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
@@ -13,7 +11,6 @@ import no.nav.dagpenger.model.helpers.NyttEksempel
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
-import no.nav.dagpenger.model.marshalling.Språk.Companion.nynorsk
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.godkjentAv
@@ -37,8 +34,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import java.util.Enumeration
-import java.util.Locale
 import java.util.ResourceBundle
 import java.util.UUID
 
@@ -48,18 +43,6 @@ internal class SaksbehandlerJsonBuilderTest {
     companion object {
         private var versjonId = 170
     }
-
-    private class ResourceBundleMock(val lokal: Locale) : ResourceBundle() {
-        override fun handleGetObject(key: String): Any {
-            return "Oversatt tekst"
-        }
-
-        override fun getKeys(): Enumeration<String> {
-            TODO("Not yet implemented")
-        }
-    }
-
-    private val mockBundle = ResourceBundleMock(nynorsk)
 
     @BeforeEach
     fun setup() {
@@ -83,10 +66,6 @@ internal class SaksbehandlerJsonBuilderTest {
             boolsk faktum "f13" id 13,
             boolsk faktum "f14" id 14,
         )
-        mockkStatic(ResourceBundle::class.java.name)
-        every {
-            ResourceBundle.getBundle(any() as String, any() as Locale)
-        } returns mockBundle
     }
 
     @Test
@@ -121,16 +100,15 @@ internal class SaksbehandlerJsonBuilderTest {
         )
 
         søknadprosess.boolsk(1).besvar(true)
-        val json = SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2", lokal = nynorsk).resultat()
+        val json = SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat()
 
         assertEquals("oppgave", json["@event_name"].asText())
         assertDoesNotThrow { UUID.fromString(json["søknad_uuid"].asText()) }
         assertEquals("saksbehandler2", json["seksjon_navn"].asText())
         assertEquals(2, json["fakta"].size())
         assertEquals("2", json["fakta"][0]["id"].asText())
-        assertEquals("Oversatt tekst", json["fakta"][0]["navn"].asText())
+        assertEquals("f2", json["fakta"][0]["navn"].asText())
         assertEquals("boolean", json["fakta"][0]["type"].asText())
-        assertEquals(Locale("nn", "NO"), mockBundle.lokal)
         assertEquals(
             setOf(Rolle.saksbehandler.typeNavn),
             json["fakta"][0]["roller"].map { it.asText() }.toSet()

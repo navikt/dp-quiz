@@ -3,15 +3,13 @@ package no.nav.dagpenger.model.marshalling
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import java.time.LocalDateTime
-import java.util.Locale
 import java.util.UUID
 
 class SøkerJsonBuilder(
     søknadprosess: Søknadprosess,
     private val seksjonNavn: String,
-    private val indeks: Int = 0,
-    lokal: Locale = Språk.bokmål
-) : SøknadJsonBuilder(lokal = lokal) {
+    private val indeks: Int = 0
+) : SøknadJsonBuilder() {
 
     init {
         søknadprosess.søknad.accept(this)

@@ -4,13 +4,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import java.time.LocalDateTime
-import java.util.Locale
 import java.util.UUID
 
 class ResultatJsonBuilder(
     private val søknadprosess: Søknadprosess,
-    språk: Locale = Språk.bokmål
-) : SøknadJsonBuilder(språk) {
+) : SøknadJsonBuilder() {
 
     init {
         søknadprosess.søknad.accept(this)
