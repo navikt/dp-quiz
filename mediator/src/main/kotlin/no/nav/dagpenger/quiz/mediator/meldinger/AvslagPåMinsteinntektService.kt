@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.arenaFagsakId
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innsendtSøknadsId
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -15,10 +16,10 @@ import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.isMissingOrNull
 import java.time.LocalDateTime
 
-internal class MottattSøknadService(
+internal class AvslagPåMinsteinntektService(
     private val søknadPersistence: SøknadPersistence,
     rapidsConnection: RapidsConnection,
-    private val versjonId: Int = Versjon.siste
+    private val versjonId: Int = AvslagPåMinsteinntektOppsett.VERSJON_ID
 ) : River.PacketListener {
 
     private companion object {

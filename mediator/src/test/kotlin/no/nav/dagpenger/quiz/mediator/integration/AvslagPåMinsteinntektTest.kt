@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
-import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
@@ -8,8 +7,8 @@ import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.desember
 import no.nav.dagpenger.quiz.mediator.helpers.januar
+import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
-import no.nav.dagpenger.quiz.mediator.meldinger.MottattSøknadService
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.behandlingsdato
@@ -46,15 +45,11 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.verne
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.villigTilÅBytteYrke
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.ønsketDato
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
-import java.util.UUID
 
-internal class AvslagPåMinsteinntektTest {
-    private lateinit var testRapid: TestRapid
+internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
 
     @BeforeEach
     fun setup() {
@@ -68,14 +63,14 @@ internal class AvslagPåMinsteinntektTest {
                     resultatPersistence = resultatPersistence,
                     rapidsConnection = it
                 )
-                MottattSøknadService(søknadPersistence, it, AvslagPåMinsteinntektOppsett.VERSJON_ID)
+                AvslagPåMinsteinntektService(søknadPersistence, it, AvslagPåMinsteinntektOppsett.VERSJON_ID)
             }
         }
     }
 
     @Test
     fun `De som har virkningsdato for langt fram i tid går til manuell`() {
-        withSøknad { besvar ->
+        withSøknad(søknadFraInnsending) { besvar ->
             besvar(behandlingsdato, 5.januar)
             besvar(ønsketDato, 5.desember)
             besvar(søknadstidspunkt, 5.desember)
@@ -99,7 +94,7 @@ internal class AvslagPåMinsteinntektTest {
 
     @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
-        withSøknad { besvar ->
+        withSøknad(søknadFraInnsending) { besvar ->
 
             assertGjeldendeSeksjon("arbeidsforhold")
             besvar(
@@ -182,90 +177,9 @@ internal class AvslagPåMinsteinntektTest {
         }
     }
 
-    private fun assertGjeldendeSeksjon(expected: String) =
-        assertEquals(expected, testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjon_navn").asText())
-
-    private fun gjeldendeResultat() = testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean()
-
-    private fun gjeldendeFakta(id: String) = testRapid.inspektør.field(testRapid.inspektør.size - 1, "fakta").find { it["id"].asText() == id }?.get("svar")?.asBoolean()
-
-    private fun withSøknad(
-        block: (
-            besvar: (faktumId: Int, svar: Any) -> Unit,
-        ) -> Unit
-    ) {
-        val søknadsId = søknad()
-        block { b: Int, c: Any ->
-            val faktumId = b.toString()
-            when (c) {
-                is Inntekt -> besvarInntekt(søknadsId, faktumId, c)
-                is List<*> -> besvarGenerator(søknadsId, faktumId, c as List<List<Pair<String, Any>>>)
-                else -> besvar(søknadsId, faktumId, c)
-            }
-        }
-    }
-
-    private fun besvar(søknadsId: String, faktumId: String, svar: Any) {
-        //language=JSON
-        testRapid.sendTestMessage(
-            """{
-              "søknad_uuid": "$søknadsId",
-              "@event_name": "faktum_svar",
-              "fakta": [{
-                "id": "$faktumId",
-                "svar": "$svar",
-                "clazz": "${svar::class.java.simpleName.lowercase()}"
-            }
-              ],
-              "@opprettet": "${LocalDateTime.now()}",
-              "@id": "${UUID.randomUUID()}"
-            }
-            """.trimIndent()
-        )
-    }
-
-    private fun besvarInntekt(søknadsId: String, faktumId: String, svar: Inntekt) {
-        val årligInntekt: Double = svar.reflection { d, _, _, _ -> return@reflection d }
-        //language=JSON
-        testRapid.sendTestMessage(
-            """{
-              "søknad_uuid": "$søknadsId",
-              "@event_name": "faktum_svar",
-              "fakta": [{
-                "id": "$faktumId",
-                "svar": "$årligInntekt",
-                "clazz": "inntekt"
-            }
-              ],
-              "@opprettet": "${LocalDateTime.now()}",
-              "@id": "${UUID.randomUUID()}"
-            }
-            """.trimIndent()
-        )
-    }
-
-    private fun besvarGenerator(søknadsId: String, faktumId: String, svar: List<List<Pair<String, Any>>>) {
-        val noe = svar.map { it.map { lagSvar(it.first, it.second) } }
-        val fakta = mutableListOf("""{"id": "$faktumId", "svar": $noe, "clazz": "generator"}""")
-        //language=JSON
-        testRapid.sendTestMessage(
-            """{
-              "søknad_uuid": "$søknadsId",
-              "@event_name": "faktum_svar",
-              "fakta": $fakta,
-              "@opprettet": "${LocalDateTime.now()}",
-              "@id": "${UUID.randomUUID()}"
-            }
-            """.trimIndent()
-        )
-    }
-
-    private fun lagSvar(faktumId: String, svar: Any) =
-        """{"id": "$faktumId", "svar": "$svar", "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
-
-    private fun søknad(): String {
-        testRapid.sendTestMessage(
-            """{
+    //language=JSON
+    private val søknadFraInnsending =
+        """{
               "@event_name": "innsending_ferdigstilt",
               "fødselsnummer": "123456789",
               "aktørId": "",
@@ -276,8 +190,5 @@ internal class AvslagPåMinsteinntektTest {
             "brukerBehandlingId": "10010WQMW"
           }
             }
-            """.trimIndent()
-        )
-        return testRapid.inspektør.field(0, "søknad_uuid").asText()
-    }
+        """.trimIndent()
 }

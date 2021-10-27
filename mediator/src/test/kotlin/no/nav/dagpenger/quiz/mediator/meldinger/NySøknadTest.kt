@@ -21,7 +21,7 @@ internal class NySøknadTest {
         private val søknadPersistance = SøknadPersistenceFake()
 
         init {
-            MottattSøknadService(søknadPersistance, testRapid, SøknadEksempel.versjonId)
+            AvslagPåMinsteinntektService(søknadPersistance, testRapid, SøknadEksempel.versjonId)
         }
     }
 

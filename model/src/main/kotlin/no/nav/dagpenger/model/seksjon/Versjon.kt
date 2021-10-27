@@ -52,6 +52,7 @@ class Versjon private constructor(
         private val prototypeUserInterfaces: Map<UserInterfaceType, Søknadprosess>,
         internal val faktumNavBehov: FaktumNavBehov? = null
     ) {
+
         fun søknadprosess(
             person: Person,
             type: UserInterfaceType,
