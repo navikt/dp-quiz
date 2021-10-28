@@ -44,9 +44,7 @@ internal class GjenopptakService(
             log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid} på grunn av ønsket rettighetsavklaring" }
             søknadsprosess.nesteSeksjoner()
                 .forEach { seksjon ->
-                    val nesteSeksjon = seksjon.somSpørsmål()
-                    log.info { nesteSeksjon }
-                    context.publish(nesteSeksjon)
+                    context.publish(seksjon.somSpørsmål().also { sikkerlogg.debug { it } })
                     log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadsprosess.søknad.uuid}" }
                 }
         }
