@@ -28,5 +28,6 @@ class SøkerJsonBuilder(
         root.put("seksjon_navn", seksjonNavn)
         root.set("identer", identerNode)
         root.set("fakta", faktaNode)
+        root.set("subsumsjon", subsumsjonRoot)
     }
 }
