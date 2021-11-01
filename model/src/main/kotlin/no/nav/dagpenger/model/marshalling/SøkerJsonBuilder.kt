@@ -26,8 +26,9 @@ class SøkerJsonBuilder(
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("søknad_uuid", "$uuid")
         root.put("seksjon_navn", seksjonNavn)
+        root.put("indeks", indeks)
         root.set("identer", identerNode)
         root.set("fakta", faktaNode)
-        root.set("subsumsjon", subsumsjonRoot)
+        root.set("subsumsjoner", subsumsjonRoot)
     }
 }

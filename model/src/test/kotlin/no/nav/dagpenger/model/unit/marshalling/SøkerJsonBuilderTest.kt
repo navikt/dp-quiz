@@ -84,7 +84,8 @@ class SøkerJsonBuilderTest {
         assertEquals("folkeregisterident", søkerJson["identer"][0]["type"].asText())
         assertEquals("aktørId", søkerJson["identer"][1]["id"].asText())
         assertEquals("aktørid", søkerJson["identer"][1]["type"].asText())
-        assertNotNull(søkerJson["subsumsjon"], "Skal ha med subsumsjon")
+        assertNotNull(søkerJson["subsumsjoner"], "Skal ha med subsumsjon")
+        assertEquals(1, søkerJson["subsumsjoner"].size())
     }
 
     private fun søkerSubsumsjon() = "regel" deltre {
