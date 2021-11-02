@@ -24,9 +24,9 @@ import java.util.UUID
 class SøknadRecord : SøknadPersistence {
     private val personRecord = PersonRecord()
 
-    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int, saksbehandlesPåEkte: Boolean): Søknadprosess {
+    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int, saksbehandlesPåEkte: Boolean, uuid: UUID): Søknadprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
-        return Versjon.id(versjonId).søknadprosess(person, type, saksbehandlesPåEkte).also { søknadprosess ->
+        return Versjon.id(versjonId).søknadprosess(person, type, saksbehandlesPåEkte, uuid).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
             lagreSaksbehandlesPåEkte(søknadprosess.søknad.uuid, saksbehandlesPåEkte)
         }

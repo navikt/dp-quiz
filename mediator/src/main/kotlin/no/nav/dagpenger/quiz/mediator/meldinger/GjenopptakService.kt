@@ -26,6 +26,7 @@ internal class GjenopptakService(
             validate {
                 it.demandValue("@event_name", "ønsker_rettighetsavklaring")
                 it.requireKey("@id", "@opprettet")
+                it.requireKey("uuid")
                 it.requireKey("fødselsnummer")
             }
         }.register(this)
