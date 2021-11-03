@@ -42,7 +42,7 @@ internal class GjenopptakService(
 
         val søknadUuid = packet["søknad_uuid"].asText().let { søknadUuid -> UUID.fromString(søknadUuid) }
         val faktagrupperType = Versjon.UserInterfaceType.Web
-        søknadPersistence.ny(identer, faktagrupperType, versjonId, saksbehandlesPåEkte = true, søknadUuid).also { søknadsprosess ->
+        søknadPersistence.ny(identer, faktagrupperType, versjonId, søknadUuid).also { søknadsprosess ->
             søknadPersistence.lagre(søknadsprosess.søknad)
             log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid} på grunn av ønsket rettighetsavklaring" }
             søknadsprosess.nesteSeksjoner()

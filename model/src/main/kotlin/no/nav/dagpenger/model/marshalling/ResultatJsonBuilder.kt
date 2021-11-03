@@ -16,8 +16,6 @@ class ResultatJsonBuilder(
 
         ignore = false
         søknadprosess.søknad.forEach { if (it.erBesvart()) it.accept(this) }
-
-        root.put("saksbehandles_på_ekte", søknadprosess.saksbehandlesPåEkte())
     }
 
     override fun resultat(): ObjectNode {

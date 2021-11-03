@@ -24,39 +24,12 @@ import java.util.UUID
 class SøknadRecord : SøknadPersistence {
     private val personRecord = PersonRecord()
 
-    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int, saksbehandlesPåEkte: Boolean, uuid: UUID): Søknadprosess {
+    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int, uuid: UUID): Søknadprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
-        return Versjon.id(versjonId).søknadprosess(person, type, saksbehandlesPåEkte, uuid).also { søknadprosess ->
+        return Versjon.id(versjonId).søknadprosess(person, type, uuid).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
-            lagreSaksbehandlesPåEkte(søknadprosess.søknad.uuid, saksbehandlesPåEkte)
         }
     }
-
-    private fun lagreSaksbehandlesPåEkte(søknadUuid: UUID, saksbehandlesPåEkte: Boolean) {
-        using(sessionOf(dataSource)) { session ->
-            session.run(
-                queryOf( //language=PostgreSQL
-                    """
-                    INSERT INTO saksbehandles_på_ekte (soknad_id, saksbehandles_på_ekte) 
-                        SELECT soknad.id, ?
-                        FROM soknad 
-                        WHERE soknad.uuid = ? 
-                    """.trimMargin(),
-                    saksbehandlesPåEkte,
-                    søknadUuid
-                ).asExecute
-            )
-        }
-    }
-
-    private fun skalSaksbehandlesPåEkte(søknadUuid: UUID) = using(sessionOf(dataSource)) { session ->
-        session.run(
-            queryOf( //language=PostgreSQL
-                "SELECT saksbehandles_på_ekte FROM saksbehandles_på_ekte WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
-                søknadUuid
-            ).map { it.boolean("saksbehandles_på_ekte") }.asSingle
-        )
-    } ?: false
 
     override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?): Søknadprosess {
         data class SoknadRad(val personId: UUID, val versjonId: Int, var typeId: Int)
@@ -78,14 +51,11 @@ class SøknadRecord : SøknadPersistence {
             )
         } ?: throw IllegalArgumentException("Søknad finnes ikke, uuid: $uuid")
 
-        val saksbehandlesPåEkte = skalSaksbehandlesPåEkte(uuid)
-
         return Versjon.id(rad.versjonId)
             .søknadprosess(
-                personRecord.hentPerson(rad.personId),
-                Versjon.UserInterfaceType.fromId(rad.typeId),
-                saksbehandlesPåEkte,
-                uuid
+                person = personRecord.hentPerson(rad.personId),
+                type = Versjon.UserInterfaceType.fromId(rad.typeId),
+                uuid = uuid
             )
             .also { søknadprosess ->
                 svarList(uuid).onEach { row ->

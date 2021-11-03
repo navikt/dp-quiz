@@ -18,7 +18,6 @@ internal class SøknadPersistenceFake : SøknadPersistence {
         identer: Identer,
         type: Versjon.UserInterfaceType,
         versjonId: Int,
-        saksbehandlesPåEkte: Boolean,
         uuid: UUID
     ): Søknadprosess =
         Versjon.id(versjonId).søknadprosess(Person(identer), type)
