@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class GjenopptakTest : SøknadBesvarer() {
@@ -37,11 +38,15 @@ class GjenopptakTest : SøknadBesvarer() {
     @Test
     fun `Svar på om bruker har noe å gjenoppta`() {
         withSøknad(ønskerRettighetsavklaring) { besvar ->
+            val firstMessage = testRapid.inspektør.message(0)
+            assertEquals(søknadUUID, firstMessage["søknad_uuid"].asText().let { soknadId -> UUID.fromString(soknadId) })
             assertGjeldendeSeksjon("gjenopptak")
             besvar(`Har du hatt dagpenger i løpet av de siste 52 ukene`, true)
             assertTrue(gjeldendeResultat())
         }
     }
+
+    private val søknadUUID = UUID.randomUUID()
 
     //language=JSON
     private val ønskerRettighetsavklaring =
@@ -50,6 +55,7 @@ class GjenopptakTest : SøknadBesvarer() {
           "@event_name": "ønsker_rettighetsavklaring",
           "@opprettet": "${LocalDateTime.now()}",
           "@id": "${UUID.randomUUID()}",
+          "søknad_uuid": "$søknadUUID",
           "fødselsnummer": "123456789"
         }
         

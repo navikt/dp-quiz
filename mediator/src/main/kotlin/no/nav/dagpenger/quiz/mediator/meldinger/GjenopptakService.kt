@@ -9,6 +9,7 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
+import java.util.UUID
 
 internal class GjenopptakService(
     private val søknadPersistence: SøknadRecord,
@@ -26,7 +27,7 @@ internal class GjenopptakService(
             validate {
                 it.demandValue("@event_name", "ønsker_rettighetsavklaring")
                 it.requireKey("@id", "@opprettet")
-                it.requireKey("uuid")
+                it.requireKey("søknad_uuid")
                 it.requireKey("fødselsnummer")
             }
         }.register(this)
@@ -39,8 +40,9 @@ internal class GjenopptakService(
             // @todo: Aktør id?
             .build()
 
+        val søknadUuid = packet["søknad_uuid"].asText().let { søknadUuid -> UUID.fromString(søknadUuid) }
         val faktagrupperType = Versjon.UserInterfaceType.Web
-        søknadPersistence.ny(identer, faktagrupperType, versjonId, saksbehandlesPåEkte = true).also { søknadsprosess ->
+        søknadPersistence.ny(identer, faktagrupperType, versjonId, saksbehandlesPåEkte = true, søknadUuid).also { søknadsprosess ->
             søknadPersistence.lagre(søknadsprosess.søknad)
             log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid} på grunn av ønsket rettighetsavklaring" }
             søknadsprosess.nesteSeksjoner()
