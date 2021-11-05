@@ -4,17 +4,17 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
-import no.nav.dagpenger.quiz.mediator.soknad.Gjenopptak
+import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import java.util.UUID
 
-internal class GjenopptakService(
+internal class DagpengerService(
     private val søknadPersistence: SøknadRecord,
     rapidsConnection: RapidsConnection,
-    private val versjonId: Int = Gjenopptak.VERSJON_ID
+    private val versjonId: Int = Dagpenger.VERSJON_ID
 ) : River.PacketListener {
 
     private companion object {

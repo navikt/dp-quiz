@@ -10,29 +10,29 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-class GjenopptakTest {
-    private lateinit var gjenopptak: Søknadprosess
+class DagpengerTest {
+    private lateinit var dagpenger: Søknadprosess
 
     @BeforeEach
     fun setup() {
-        gjenopptak = Versjon.Bygger(
-            Gjenopptak.søknad,
-            Gjenopptak.regeltre,
-            mapOf(Versjon.UserInterfaceType.Web to Gjenopptak.søknadsprosess)
+        dagpenger = Versjon.Bygger(
+            Dagpenger.søknad,
+            Dagpenger.regeltre,
+            mapOf(Versjon.UserInterfaceType.Web to Dagpenger.søknadsprosess)
         )
             .søknadprosess(
                 Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
                 Versjon.UserInterfaceType.Web
             )
 
-        gjenopptak.apply {
-            this.boolsk(Gjenopptak.`Har du hatt dagpenger i løpet av de siste 52 ukene`).besvar(true)
+        dagpenger.apply {
+            this.boolsk(Dagpenger.`Har du hatt dagpenger i løpet av de siste 52 ukene`).besvar(true)
         }
     }
 
     @Test
     fun `Besvarte gjenopptak med Ja`() {
-        assertTrue(gjenopptak.erFerdig())
-        assertEquals(true, gjenopptak.resultat())
+        assertTrue(dagpenger.erFerdig())
+        assertEquals(true, dagpenger.resultat())
     }
 }
