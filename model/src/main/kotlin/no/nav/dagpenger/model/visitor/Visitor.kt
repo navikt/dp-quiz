@@ -185,7 +185,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,
         godkjenning: List<GrunnleggendeFaktum<Boolean>>,
-        resultat: Boolean?,
+        lokaltResultat: Boolean?,
         childResultat: Boolean?
     ) {
     }

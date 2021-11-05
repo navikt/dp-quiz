@@ -61,10 +61,10 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,
         godkjenning: List<GrunnleggendeFaktum<Boolean>>,
-        resultat: Boolean?,
+        lokaltResultat: Boolean?,
         childResultat: Boolean?
     ) {
-        melding("${status(resultat)} Resultat av subsumsjon ${subsumsjon.navn}")
+        melding("${status(lokaltResultat)} Resultat av subsumsjon ${subsumsjon.navn}")
         indentTeller++
     }
     override fun postVisit(

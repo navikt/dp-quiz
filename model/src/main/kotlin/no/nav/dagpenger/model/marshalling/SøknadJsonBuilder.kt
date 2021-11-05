@@ -139,6 +139,10 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
             subsumsjonNode.put("navn", subsumsjon.navn)
             subsumsjonNode.put("forklaring", subsumsjon.saksbehandlerForklaring())
             subsumsjonNode.put("type", "Enkel subsumsjon")
+            val faktaNode = fakta.fold(subsumsjonNode.arrayNode()) { faktaArrayNode, fakta ->
+                faktaArrayNode.add(fakta.id)
+            }
+            subsumsjonNode.set("fakta", faktaNode)
         }
     }
 

@@ -88,6 +88,21 @@ class SøkerJsonBuilderTest {
         assertEquals(1, søkerJson["subsumsjoner"].size())
     }
 
+    @Test
+    fun `Subsumsjoner inneholder fakta den er avhengige av `() {
+        val regel = søkerSubsumsjon()
+        val søknadprosess = søknadprosess(regel)
+
+        val søkerJson = SøkerJsonBuilder(søknadprosess, "søker").resultat()
+        assertEquals(1, søkerJson["subsumsjoner"].size())
+        søkerJson["subsumsjoner"].also {
+            assertEquals(1, it[0]["subsumsjoner"][0]["subsumsjoner"][0]["fakta"].size())
+            assertEquals("1", it[0]["subsumsjoner"][0]["subsumsjoner"][0]["fakta"][0].asText())
+            assertEquals(1, it[0]["subsumsjoner"][0]["subsumsjoner"][1]["fakta"].size())
+            assertEquals("3", it[0]["subsumsjoner"][0]["subsumsjoner"][1]["fakta"][0].asText())
+        }
+    }
+
     private fun søkerSubsumsjon() = "regel" deltre {
         "alle".alle(
             prototypeSøknad.boolsk(1) er true,
