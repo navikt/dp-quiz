@@ -17,7 +17,7 @@ class DagpengerTest {
     fun setup() {
         dagpenger = Versjon.Bygger(
             Dagpenger.søknad,
-            Dagpenger.regeltre,
+            Dagpenger.Subsumsjoner.regeltre,
             mapOf(Versjon.UserInterfaceType.Web to Dagpenger.søknadsprosess)
         )
             .søknadprosess(

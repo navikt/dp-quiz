@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.regel.av
+import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.før
@@ -77,7 +77,7 @@ private val datosjekk = "datosjekk".alle(
     p3Dato før p4Dato
 )
 private val dokumentOpplastning = "dokumentopplastning" deltre {
-    p10Boolean er true hvisIkkeOppfylt { p12Boolean av p11Dokument }
+    p10Boolean er true hvisIkkeOppfylt { p12Boolean dokumenteresAv p11Dokument }
 }
 private val inntektValidering = "inntektvalidering".minstEnAv(
     p6Inntekt minst p8Inntekt,

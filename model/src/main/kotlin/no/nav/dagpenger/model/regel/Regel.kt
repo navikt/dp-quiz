@@ -174,7 +174,7 @@ infix fun GeneratorFaktum.har(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
     )
 )
 
-infix fun Faktum<Boolean>.av(dokument: Faktum<Dokument>): Subsumsjon =
+infix fun Faktum<Boolean>.dokumenteresAv(dokument: Faktum<Dokument>): Subsumsjon =
     GodkjenningsSubsumsjon(
         JaAction,
         EnkelSubsumsjon(

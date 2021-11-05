@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
+import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions
@@ -29,14 +30,38 @@ abstract class SøknadBesvarer {
         ) -> Unit
     ) {
         val søknadsId = søknad(event)
-        block { b: Int, c: Any ->
-            val faktumId = b.toString()
-            when (c) {
-                is Inntekt -> besvarInntekt(søknadsId, faktumId, c)
-                is List<*> -> besvarGenerator(søknadsId, faktumId, c as List<List<Pair<String, Any>>>)
-                else -> besvar(søknadsId, faktumId, c)
+        block { faktumId: Int, svar: Any ->
+            val _faktumId = faktumId.toString()
+            when (svar) {
+                is Inntekt -> besvarInntekt(søknadsId, _faktumId, svar)
+                is Dokument -> besvarDokument(søknadsId, _faktumId, svar)
+                is List<*> -> besvarGenerator(søknadsId, _faktumId, svar as List<List<Pair<String, Any>>>)
+                else -> besvar(søknadsId, _faktumId, svar)
             }
         }
+    }
+
+    protected fun besvarDokument(søknadsId: String, faktumId: String, svar: Dokument) {
+        val (lastOppTidsstempel, url) = svar.reflection { localDateTime, url -> Pair(localDateTime, url) }
+        //language=JSON
+        testRapid.sendTestMessage(
+            """{
+              "søknad_uuid": "$søknadsId",
+              "@event_name": "faktum_svar",
+              "fakta": [{
+                "id": "$faktumId",
+                "svar": {
+                    "lastOppTidsstempel": "$lastOppTidsstempel",
+                    "ur": "$url"
+                },
+                "clazz": "inntekt"
+            }
+              ],
+              "@opprettet": "${LocalDateTime.now()}",
+              "@id": "${UUID.randomUUID()}"
+            }
+            """.trimIndent()
+        )
     }
 
     protected fun besvar(søknadsId: String, faktumId: String, svar: Any) {
@@ -59,7 +84,7 @@ abstract class SøknadBesvarer {
     }
 
     protected fun besvarInntekt(søknadsId: String, faktumId: String, svar: Inntekt) {
-        val årligInntekt: Double = svar.reflection { d, _, _, _ -> return@reflection d }
+        val årligInntekt: Double = svar.reflection { årlig, _, _, _ -> return@reflection årlig }
         //language=JSON
         testRapid.sendTestMessage(
             """{

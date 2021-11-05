@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.faktum
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+// @todo: url i konstruktør burde være typet og ikke pre ufyllt?
 class Dokument(private val lastOppTidsstempel: LocalDateTime, private val url: String = "http:") : Comparable<Dokument> {
     override fun compareTo(other: Dokument): Int {
         return this.lastOppTidsstempel.compareTo(other.lastOppTidsstempel)
