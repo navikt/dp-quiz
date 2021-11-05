@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.regel.av
+import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -75,7 +75,7 @@ internal object SøknadEksempel {
         prototypeSøknad1 heltall 3 er 2,
         prototypeSøknad1 dato 4 er 24.desember,
         prototypeSøknad1 inntekt 5 minst (prototypeSøknad1 inntekt 6),
-        prototypeSøknad1 boolsk 8 av (prototypeSøknad1 dokument 7)
+        prototypeSøknad1 boolsk 8 dokumenteresAv (prototypeSøknad1 dokument 7)
     )
 
     val faktumNavBehov = FaktumNavBehov(

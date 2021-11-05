@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknadprosess
-import no.nav.dagpenger.model.regel.av
+import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -34,7 +34,7 @@ internal class DokumentSubsumsjonTest {
 
         dokumentFaktum = søknadprosess dokument 1
         dokumentGodkjenning = søknadprosess boolsk 2
-        subsumsjon = dokumentGodkjenning av dokumentFaktum
+        subsumsjon = dokumentGodkjenning dokumenteresAv dokumentFaktum
         assertEquals(null, subsumsjon.resultat())
         dokumentFaktum.besvar(Dokument(1.januar))
     }

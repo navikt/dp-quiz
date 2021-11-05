@@ -45,10 +45,18 @@ class Søknadprosess private constructor(
     fun <T : Comparable<T>> faktum(id: Int): Faktum<T> = (søknad.id(id) as Faktum<T>)
 
     fun nesteSeksjoner(): List<Seksjon> =
-        if (rootSubsumsjon.resultat() != null)
+        if (rootSubsumsjon.resultat() != null) {
             saksbehandlerSeksjoner(rootSubsumsjon.relevanteFakta())
-        else
-            listOf(seksjoner.first { rootSubsumsjon.nesteFakta() in it })
+        } else {
+            val nesteFakta = rootSubsumsjon.nesteFakta()
+            listOf(
+                seksjoner.firstOrNull { nesteFakta in it } ?: throw NoSuchElementException(
+                    "Fant ikke seksjon med fakta:\n ${
+                    nesteFakta.map { "Id=${it.id}, navn='${it.navn}'" }
+                    }"
+                )
+            )
+        }
 
     fun accept(visitor: SøknadprosessVisitor) {
         visitor.preVisit(this, uuid)

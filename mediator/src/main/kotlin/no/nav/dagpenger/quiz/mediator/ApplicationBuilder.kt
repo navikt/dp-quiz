@@ -9,11 +9,11 @@ import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
+import no.nav.dagpenger.quiz.mediator.meldinger.DagpengerService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
-import no.nav.dagpenger.quiz.mediator.meldinger.GjenopptakService
 import no.nav.dagpenger.quiz.mediator.meldinger.ManuellBehandlingSink
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
-import no.nav.dagpenger.quiz.mediator.soknad.Gjenopptak
+import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
@@ -38,8 +38,8 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 val resultatRecord = ResultatRecord()
                 AvslagPåMinsteinntektOppsett.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
                 AvslagPåMinsteinntektService(søknadRecord, rapidsConnection)
-                Gjenopptak.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
-                GjenopptakService(søknadRecord, rapidsConnection)
+                Dagpenger.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
+                DagpengerService(søknadRecord, rapidsConnection)
                 FaktumSvarService(søknadRecord, resultatRecord, rapidsConnection)
                 BehandlingsdatoService(rapidsConnection)
                 SenesteMuligeVirkningsdatoService(rapidsConnection)
