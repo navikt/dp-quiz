@@ -78,6 +78,8 @@ class DagpengerTest : SøknadBesvarer() {
                     url = "https://nav.no/sti/til/dokument.pdf"
                 )
             )
+            assertGjeldendeSeksjon("Har avtjent verneplikt")
+            besvar(`Avtjent militærtjeneste minst 3 av siste 6 mnd`, true)
             assertTrue(gjeldendeResultat())
         }
     }

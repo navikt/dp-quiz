@@ -77,9 +77,9 @@ internal object Dagpenger {
         )
 
     object Subsumsjoner {
-        val helDeltid = with(søknad) {
+        val villigTilHeltidOgDeltid = with(søknad) {
             (boolsk(`Villig til å ta hel og deltidsjobb`) er true).hvisIkkeOppfylt {
-                "ee".minstEnAv(
+                "svare på".minstEnAv(
                     boolsk(`Redusert helse, fysisk eller psykisk`).dokumenteresAv(dokument(`Bekreftelse fra relevant fagpersonell`))
                 )
             }
@@ -87,7 +87,7 @@ internal object Dagpenger {
 
         val reellArbeidsøker = with(søknad) {
             "er reell arbeidssøker hvis".alle(
-                helDeltid,
+                villigTilHeltidOgDeltid,
                 boolsk(`Villig til å ta arbeid i hele Norge`) er true,
                 boolsk(`Villig til å ta alle typer arbeid`) er true,
                 boolsk(`Villig til å ta ethvert arbeid`) er true
