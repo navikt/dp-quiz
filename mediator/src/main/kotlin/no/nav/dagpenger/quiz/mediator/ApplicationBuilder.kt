@@ -1,7 +1,6 @@
 package no.nav.dagpenger.quiz.mediator
 
 import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
-import no.nav.dagpenger.quiz.mediator.behovløsere.KoronaperiodeService
 import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
@@ -45,7 +44,6 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 SenesteMuligeVirkningsdatoService(rapidsConnection)
                 TerskelFaktorService(rapidsConnection)
                 ManuellBehandlingSink(rapidsConnection, resultatRecord)
-                KoronaperiodeService(rapidsConnection)
             }
     }
 }

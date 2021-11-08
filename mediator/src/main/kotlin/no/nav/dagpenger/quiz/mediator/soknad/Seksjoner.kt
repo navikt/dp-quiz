@@ -25,7 +25,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.jobbe
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.jobbetUtenforNorgeManuell
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.koronaperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lønnsgaranti
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektfaktor12mnd
@@ -56,10 +55,6 @@ internal object Seksjoner {
 
     private val behandlingsdatoSeksjon = with(søknad) {
         Seksjon("behandlingsdato", Rolle.nav, dato(behandlingsdato))
-    }
-
-    private val førsteOktoberSeksjon = with(søknad) {
-        Seksjon("førsteOktoberSeksjon", Rolle.nav, dato(koronaperiodeTom))
     }
 
     private val senesteMuligeVirkningsdatoSeksjon = with(søknad) {
@@ -310,7 +305,6 @@ internal object Seksjoner {
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             behandlingsdatoSeksjon,
-            førsteOktoberSeksjon,
             senesteMuligeVirkningsdatoSeksjon,
             minsteinntektKonstanter,
             grunnbeløpSeksjon,

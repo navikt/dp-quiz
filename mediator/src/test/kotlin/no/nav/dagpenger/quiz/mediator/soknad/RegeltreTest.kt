@@ -28,7 +28,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innte
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.jobbetUtenforNorge
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.koronaperiodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.lønnsgaranti
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.minsteinntektfaktor12mnd
@@ -80,7 +79,6 @@ internal class RegeltreTest {
             dato(behandlingsdato).besvar(5.januar)
             dato(ønsketDato).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
-            dato(koronaperiodeTom).besvar(1.januar)
             dato(senesteMuligeVirkningsdato).besvar(19.januar)
             boolsk(harInntektNesteKalendermåned).besvar(false)
 
@@ -240,12 +238,6 @@ internal class RegeltreTest {
     fun `Har fortsatt rett til dagpenger under korona skal manuelt behandles`() {
         manglerInntekt.boolsk(fortsattRettKorona).besvar(true)
         assertNesteSeksjon("fortsatt rett korona")
-    }
-
-    @Test
-    fun `søknadstidspunkt før 1oktober og ønsketDato etter bør gå til manuell`() {
-        manglerInntekt.dato(koronaperiodeTom).besvar(3.januar)
-        assertNesteSeksjon("virkningstidspunkt vi ikke kan håndtere")
     }
 
     private fun assertNesteSeksjon(navn: String) {
