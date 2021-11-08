@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
-import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
@@ -9,8 +8,6 @@ import no.nav.dagpenger.quiz.mediator.meldinger.DagpengerService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.`Avtjent militærtjeneste minst 3 av siste 6 mnd`
-import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.`Bekreftelse fra relevant fagpersonell`
-import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.`Redusert helse, fysisk eller psykisk`
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.`Villig til å ta alle typer arbeid`
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.`Villig til å ta arbeid i hele Norge`
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.`Villig til å ta ethvert arbeid`
