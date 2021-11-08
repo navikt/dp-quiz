@@ -58,32 +58,6 @@ class DagpengerTest : SøknadBesvarer() {
         }
     }
 
-    @Test
-    fun ` Reell arbeidssøker med redusert helse, fysisk eller psykisk svart Ja `() {
-        withSøknad(ønskerRettighetsavklaring) { besvar ->
-            val firstMessage = testRapid.inspektør.message(0)
-            assertEquals(søknadUUID, firstMessage["søknad_uuid"].asText().let { soknadId -> UUID.fromString(soknadId) })
-            assertGjeldendeSeksjon("Er reell arbeidssøker")
-            besvar(`Villig til å ta hel og deltidsjobb`, false)
-            besvar(`Villig til å ta arbeid i hele Norge`, true)
-            besvar(`Villig til å ta alle typer arbeid`, true)
-            besvar(`Villig til å ta ethvert arbeid`, true)
-            assertGjeldendeSeksjon("Er reell arbeidssøker")
-            besvar(`Redusert helse, fysisk eller psykisk`, true)
-            assertGjeldendeSeksjon("Er reell arbeidssøker")
-            besvar(
-                `Bekreftelse fra relevant fagpersonell`,
-                Dokument(
-                    lastOppTidsstempel = LocalDateTime.now(),
-                    url = "https://nav.no/sti/til/dokument.pdf"
-                )
-            )
-            assertGjeldendeSeksjon("Har avtjent verneplikt")
-            besvar(`Avtjent militærtjeneste minst 3 av siste 6 mnd`, true)
-            assertTrue(gjeldendeResultat())
-        }
-    }
-
     private val søknadUUID = UUID.randomUUID()
 
     //language=JSON
