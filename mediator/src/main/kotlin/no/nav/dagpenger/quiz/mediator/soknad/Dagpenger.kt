@@ -50,18 +50,25 @@ internal object Dagpenger {
 
     private object Seksjoner {
         val gjenopptak = with(søknad) {
-            Seksjon("gjenopptak", Rolle.søker, dato(`Har du hatt dagpenger i løpet av de siste 52 ukene`))
+            Seksjon("Gjenopptak", Rolle.søker, dato(`Har du hatt dagpenger i løpet av de siste 52 ukene`))
         }
         val reellArbeidsøker = with(søknad) {
             Seksjon(
                 "Er reell arbeidssøker",
                 Rolle.søker,
                 boolsk(`Villig til å ta hel og deltidsjobb`),
-                boolsk(`Redusert helse, fysisk eller psykisk`),
-                dokument(`Bekreftelse fra relevant fagpersonell`),
                 boolsk(`Villig til å ta arbeid i hele Norge`),
                 boolsk(`Villig til å ta alle typer arbeid`),
                 boolsk(`Villig til å ta ethvert arbeid`)
+            )
+        }
+
+        val unntakReellArbeidsøker = with(søknad) {
+            Seksjon(
+                "Reell arbeidssøker unntak",
+                Rolle.søker,
+                boolsk(`Redusert helse, fysisk eller psykisk`),
+                dokument(`Bekreftelse fra relevant fagpersonell`),
             )
         }
         val verneplikt = with(søknad) {
@@ -73,6 +80,7 @@ internal object Dagpenger {
         Søknadprosess(
             Seksjoner.gjenopptak,
             Seksjoner.reellArbeidsøker,
+            Seksjoner.unntakReellArbeidsøker,
             Seksjoner.verneplikt,
         )
 

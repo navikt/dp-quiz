@@ -36,6 +36,17 @@ class DagpengerTest {
     }
 
     @Test
+    fun `Reell arbeidssøker `() {
+        dagpenger.boolsk(`Villig til å ta hel og deltidsjobb`).besvar(true)
+        dagpenger.boolsk(`Villig til å ta arbeid i hele Norge`).besvar(true)
+        dagpenger.boolsk(`Villig til å ta alle typer arbeid`).besvar(true)
+        dagpenger.boolsk(`Villig til å ta ethvert arbeid`).besvar(true)
+        dagpenger.boolsk(`Avtjent militærtjeneste minst 3 av siste 6 mnd`).besvar(true)
+
+        assertTrue(dagpenger.erFerdig())
+        assertEquals(true, dagpenger.resultat())
+    }
+    @Test
     fun `Reell arbeidssøker med redusert helse, fysisk eller psykisk svart Ja `() {
         dagpenger.boolsk(`Villig til å ta hel og deltidsjobb`).besvar(false)
         dagpenger.boolsk(`Villig til å ta arbeid i hele Norge`).besvar(true)
