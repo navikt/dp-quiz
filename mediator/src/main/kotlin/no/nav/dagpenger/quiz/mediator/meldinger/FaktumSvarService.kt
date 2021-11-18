@@ -53,7 +53,6 @@ internal class FaktumSvarService(
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
         val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
         if (fakta.isEmpty()) return
-        if (System.getenv()["NAIS_CLUSTER_NAME"] == "dev-gcp" && "9c7f0e08-560f-4d01-99bf-358bac9449e8" == packet["søknad_uuid"].asText()) { return }
 
         withMDC(
             mapOf(
