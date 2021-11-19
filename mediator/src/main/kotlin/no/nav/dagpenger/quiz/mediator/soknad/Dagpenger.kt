@@ -88,7 +88,9 @@ internal object Dagpenger {
         val villigTilHeltidOgDeltid = with(søknad) {
             (boolsk(`Villig til å ta hel og deltidsjobb`) er true).hvisIkkeOppfylt {
                 "svare på".minstEnAv(
-                    boolsk(`Redusert helse, fysisk eller psykisk`).dokumenteresAv(dokument(`Bekreftelse fra relevant fagpersonell`))
+                    (boolsk(`Redusert helse, fysisk eller psykisk`) er true).hvisOppfylt {
+                        boolsk(`Redusert helse, fysisk eller psykisk`).dokumenteresAv(dokument(`Bekreftelse fra relevant fagpersonell`))
+                    }
                 )
             }
         }
