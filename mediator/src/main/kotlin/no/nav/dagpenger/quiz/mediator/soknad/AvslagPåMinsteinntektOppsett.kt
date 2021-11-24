@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.min
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.multiplikasjon
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -19,9 +20,9 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    const val VERSJON_ID = 26
+    private val VERSJON_ID = ProsessVersjon("AvslagPåMinsteinntekt", 26)
 
-    fun registrer(registrer: (søknad: Søknad, versjonId: Int) -> Unit) {
+    fun registrer(registrer: (søknad: Søknad, prosessVersjon: ProsessVersjon) -> Unit) {
         registrer(søknad, VERSJON_ID)
     }
 
