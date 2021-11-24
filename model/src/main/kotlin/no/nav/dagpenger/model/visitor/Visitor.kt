@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -138,8 +139,8 @@ interface PersonVisitor : IdentVisitor {
 }
 
 interface SøknadVisitor : PersonVisitor, FaktumVisitor {
-    fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {}
-    fun postVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {}
+    fun preVisit(søknad: Søknad, prosessVersjon: ProsessVersjon, uuid: UUID) {}
+    fun postVisit(søknad: Søknad, prosessVersjon: ProsessVersjon, uuid: UUID) {}
 }
 
 interface SøknadprosessVisitor : SubsumsjonVisitor, SøknadVisitor {

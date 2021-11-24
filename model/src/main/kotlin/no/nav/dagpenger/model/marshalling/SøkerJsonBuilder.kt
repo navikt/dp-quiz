@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.marshalling
 
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import java.time.LocalDateTime
@@ -19,8 +20,8 @@ class SøkerJsonBuilder(
         ignore = false
     }
 
-    override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
-        super.preVisit(søknad, versjonId, uuid)
+    override fun preVisit(søknad: Søknad, prosessVersjon: ProsessVersjon, uuid: UUID) {
+        super.preVisit(søknad, prosessVersjon, uuid)
         root.put("@event_name", "søker_oppgave")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("@opprettet", "${LocalDateTime.now()}")

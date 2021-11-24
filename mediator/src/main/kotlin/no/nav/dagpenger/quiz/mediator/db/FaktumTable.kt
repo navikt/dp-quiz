@@ -17,6 +17,7 @@ import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -108,7 +109,7 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor
         avhengigheter[faktum] = avhengigeFakta
     }
 
-    override fun postVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
+    override fun postVisit(søknad: Søknad, prosessVersjon: ProsessVersjon, uuid: UUID) {
         avhengigheter.forEach { (parent, children) -> faktumFaktum(dbIder[parent]!!, children, "avhengig_faktum") }
     }
 

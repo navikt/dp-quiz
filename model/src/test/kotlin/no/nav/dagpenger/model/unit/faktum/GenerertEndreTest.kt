@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
@@ -21,7 +22,7 @@ class GenerertEndreTest {
     @BeforeEach
     fun setup() {
         val prototypeSøknad = Søknad(
-            59,
+            ProsessVersjon("test", 59),
             heltall faktum "generator" id 4 genererer 1 og 2 og 3,
             boolsk faktum "template1" id 1,
             boolsk faktum "template2" id 2,

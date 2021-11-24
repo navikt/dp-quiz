@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
@@ -23,7 +24,7 @@ internal class GenerertSubsumsjonTest {
     @BeforeEach
     fun setup() {
         søknad = Søknad(
-            0,
+            ProsessVersjon("test", 0),
             boolsk faktum "template" id 1,
             heltall faktum "generator" id 2 genererer 1
         )

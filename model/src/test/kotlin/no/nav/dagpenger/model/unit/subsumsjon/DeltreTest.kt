@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.regel.er
@@ -20,7 +21,7 @@ internal class DeltreTest {
     @BeforeEach
     fun setup() {
         val søknadprosess = Søknad(
-            0,
+            ProsessVersjon("test", 0),
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2
         ).testSøknadprosess()

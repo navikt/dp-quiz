@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.NyttEksempel
@@ -40,15 +41,12 @@ import java.util.UUID
 internal class SaksbehandlerJsonBuilderTest {
     private lateinit var prototypeSøknad: Søknad
 
-    companion object {
-        private var versjonId = 170
-    }
+    private var prosessVersjon = ProsessVersjon("test", 170)
 
     @BeforeEach
     fun setup() {
-        versjonId--
         prototypeSøknad = Søknad(
-            versjonId,
+            prosessVersjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1,
             boolsk faktum "f3" id 3,

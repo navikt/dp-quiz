@@ -8,18 +8,18 @@ import java.util.UUID
 
 class Søknad private constructor(
     private val person: Person,
-    internal val versjonId: Int,
+    internal val prosessVersjon: ProsessVersjon,
     val uuid: UUID,
     private val faktaMap: MutableMap<FaktumId, Faktum<*>>
 ) : TypedFaktum, Iterable<Faktum<*>> {
 
     internal val size get() = faktaMap.size
 
-    constructor(versjonId: Int, vararg factories: FaktumFactory<*>) : this(Person.prototype, versjonId, UUID.randomUUID(), factories.toList())
+    constructor(prosessVersjon: ProsessVersjon, vararg factories: FaktumFactory<*>) : this(Person.prototype, prosessVersjon, UUID.randomUUID(), factories.toList())
 
-    constructor(person: Person, versjonId: Int, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
+    constructor(person: Person, prosessVersjon: ProsessVersjon, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
         person,
-        versjonId,
+        prosessVersjon,
         uuid,
         factories.toFaktaMap()
     )
@@ -113,10 +113,10 @@ class Søknad private constructor(
     override infix fun generator(id: String) = generator(FaktumId(id))
     internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
 
-    fun bygg(person: Person, versjonId: Int, uuid: UUID = UUID.randomUUID()): Søknad {
+    fun bygg(person: Person, prosessVersjon: ProsessVersjon, uuid: UUID = UUID.randomUUID()): Søknad {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktaMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
-        return Søknad(person, versjonId, uuid, mapOfFakta)
+        return Søknad(person, prosessVersjon, uuid, mapOfFakta)
     }
 
     override fun iterator(): MutableIterator<Faktum<*>> {
@@ -149,8 +149,8 @@ class Søknad private constructor(
 
     fun accept(visitor: SøknadVisitor) {
         person.accept(visitor)
-        visitor.preVisit(this, versjonId, uuid)
+        visitor.preVisit(this, prosessVersjon, uuid)
         this.forEach { it.accept(visitor) }
-        visitor.postVisit(this, versjonId, uuid)
+        visitor.postVisit(this, prosessVersjon, uuid)
     }
 }

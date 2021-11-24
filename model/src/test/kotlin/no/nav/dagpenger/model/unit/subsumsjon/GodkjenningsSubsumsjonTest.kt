@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
@@ -20,6 +21,8 @@ internal class GodkjenningsSubsumsjonTest {
     private lateinit var godkjenningsSubsumsjon: Subsumsjon
     private lateinit var faktum: Faktum<Boolean>
     private lateinit var godkjenning: Faktum<Boolean>
+
+    private val testversjon = ProsessVersjon("test", 0)
 
     @Test
     fun `Godkjenning uansett resultat av child`() {
@@ -83,7 +86,7 @@ internal class GodkjenningsSubsumsjonTest {
     @Test
     fun `Trenger avhengighet for å godkjenne`() {
         val prototypeSøknad = Søknad(
-            0,
+            testversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "approve1" id 2
         )
@@ -105,7 +108,7 @@ internal class GodkjenningsSubsumsjonTest {
 
     private fun søknadprosess(block: (Søknad) -> Subsumsjon): Søknadprosess {
         val søknad = Søknad(
-            0,
+            testversjon,
             boolsk faktum "faktum" id 1,
             boolsk faktum "godkjenning" id 2 avhengerAv 1
         )

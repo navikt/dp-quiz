@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
@@ -30,13 +31,10 @@ class SøkerJsonBuilderTest {
 
     private lateinit var prototypeSøknad: Søknad
 
-    companion object {
-        private var versjonId = 170
-    }
+    private var versjonId = ProsessVersjon("test", 170)
 
     @BeforeEach
     fun setup() {
-        versjonId--
         prototypeSøknad = Søknad(
             versjonId,
             boolsk faktum "f1" id 1,

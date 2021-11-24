@@ -11,7 +11,6 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -25,7 +24,6 @@ import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.time.LocalDate
-import java.util.UUID
 
 abstract class SøknadJsonBuilder : SøknadprosessVisitor {
     private val mapper = ObjectMapper()
@@ -38,11 +36,6 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
     private val faktumIder = mutableSetOf<String>()
     private val subsumsjonNoder = mutableListOf<ArrayNode>(subsumsjonRoot)
     open fun resultat() = root
-    private var versjonId = 0
-
-    override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
-        this.versjonId = versjonId
-    }
 
     override fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {
         identerNode.addObject().also { identNode ->

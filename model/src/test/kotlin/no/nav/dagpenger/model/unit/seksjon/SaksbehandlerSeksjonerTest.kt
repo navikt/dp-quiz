@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.unit.seksjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
@@ -28,7 +29,7 @@ internal class SaksbehandlerSeksjonerTest {
     }
 
     private val prototypeSøknad = Søknad(
-        0,
+        ProsessVersjon("test", 0),
         boolsk faktum "f1" id 1,
         boolsk faktum "approve1" id 2 avhengerAv 1,
         boolsk faktum "f3" id 3,

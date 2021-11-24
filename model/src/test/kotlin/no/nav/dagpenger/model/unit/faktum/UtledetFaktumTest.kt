@@ -1,7 +1,9 @@
 package no.nav.dagpenger.model.unit.faktum
+
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknadprosess
@@ -20,13 +22,13 @@ internal class UtledetFaktumTest {
     private lateinit var dato2: Faktum<LocalDate>
     private lateinit var dato5: Faktum<LocalDate>
     private lateinit var dato6: Faktum<LocalDate>
-    companion object {
-        private var versjonId = 110
-    }
+
+    private var versjonId = ProsessVersjon("test", 110)
+
     @BeforeEach
     fun setup() {
         søknadprosess = Søknad(
-            versjonId--,
+            versjonId,
             maks dato "maks dato" av 1 og 3 og 6 id 4,
             maks dato "maks dato" av 1 og 2 og 5 id 3,
             dato faktum "dato1" id 1,

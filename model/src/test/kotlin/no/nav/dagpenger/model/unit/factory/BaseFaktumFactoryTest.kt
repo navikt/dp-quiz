@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.daglig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknadprosess
@@ -22,6 +23,8 @@ import kotlin.test.assertTrue
 
 internal class BaseFaktumFactoryTest {
 
+    private val testversjon = ProsessVersjon("test", 0)
+
     @Test
     fun boolean() {
         (boolsk faktum "boolean" id 3).also { factory ->
@@ -32,7 +35,7 @@ internal class BaseFaktumFactoryTest {
 
     @Test
     fun `boolean factory faktum`() {
-        val søknadprosess = Søknad(0, boolsk faktum "boolean" id 3).testSøknadprosess()
+        val søknadprosess = Søknad(testversjon, boolsk faktum "boolean" id 3).testSøknadprosess()
         val faktum = søknadprosess boolsk 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
@@ -46,7 +49,7 @@ internal class BaseFaktumFactoryTest {
 
     @Test
     fun `heltall factory faktum`() {
-        val søknadprosess = Søknad(0, heltall faktum "heltall" id 3).testSøknadprosess()
+        val søknadprosess = Søknad(testversjon, heltall faktum "heltall" id 3).testSøknadprosess()
         val faktum = søknadprosess heltall 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
@@ -60,7 +63,7 @@ internal class BaseFaktumFactoryTest {
 
     @Test
     fun `Inntekt factory faktum`() {
-        val søknadprosess = Søknad(0, inntekt faktum "inntekt" id 3).testSøknadprosess()
+        val søknadprosess = Søknad(testversjon, inntekt faktum "inntekt" id 3).testSøknadprosess()
         val faktum = søknadprosess inntekt 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
@@ -74,7 +77,7 @@ internal class BaseFaktumFactoryTest {
 
     @Test
     fun `Dato factory faktum`() {
-        val søknadprosess = Søknad(0, dato faktum "dato" id 3).testSøknadprosess()
+        val søknadprosess = Søknad(testversjon, dato faktum "dato" id 3).testSøknadprosess()
         val faktum = søknadprosess dato 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
@@ -88,7 +91,7 @@ internal class BaseFaktumFactoryTest {
 
     @Test
     fun `Dokument factory faktum`() {
-        val søknadprosess = Søknad(0, dokument faktum "dokument" id 3).testSøknadprosess()
+        val søknadprosess = Søknad(testversjon, dokument faktum "dokument" id 3).testSøknadprosess()
         val faktum = søknadprosess dokument 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }

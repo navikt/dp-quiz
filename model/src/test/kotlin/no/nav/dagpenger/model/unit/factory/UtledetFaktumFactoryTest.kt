@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.alle
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
@@ -20,10 +21,12 @@ import org.junit.jupiter.api.assertThrows
 
 internal class UtledetFaktumFactoryTest {
 
+    private val testversjon = ProsessVersjon("test", 89)
+
     @Test
     fun `maks dato`() {
         val søknad = Søknad(
-            89,
+            testversjon,
             dato faktum "dato1" id 1,
             dato faktum "dato2" id 2,
             dato faktum "dato3" id 3,
@@ -59,7 +62,7 @@ internal class UtledetFaktumFactoryTest {
     @Test
     fun `maks inntekt`() {
         val søknad = Søknad(
-            88,
+            testversjon,
             inntekt faktum "inntekt1" id 1,
             inntekt faktum "inntekt2" id 2,
             inntekt faktum "inntekt3" id 3,
@@ -95,7 +98,7 @@ internal class UtledetFaktumFactoryTest {
     @Test
     fun `boolean and`() {
         val søknad = Søknad(
-            87,
+            testversjon,
             boolsk faktum "jaNei1" id 1,
             boolsk faktum "jaNei2" id 2,
             boolsk faktum "jaNei3" id 3,
@@ -131,7 +134,7 @@ internal class UtledetFaktumFactoryTest {
     fun `avhengigheter til utledetfaktum`() {
 
         val søknad = Søknad(
-            85,
+            testversjon,
             dato faktum "dato1" id 1,
             dato faktum "dato2" id 2,
             dato faktum "dato3" id 3,

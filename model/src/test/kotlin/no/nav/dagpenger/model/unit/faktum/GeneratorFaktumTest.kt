@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.desember
@@ -28,7 +29,7 @@ class GeneratorFaktumTest {
     @BeforeEach
     fun setup() {
         val søknadPrototype = Søknad(
-            0,
+            ProsessVersjon("test", 0),
             heltall faktum "periode antall" id 1 genererer 2 og 3,
             dato faktum "fom" id 2,
             dato faktum "tom" id 3,

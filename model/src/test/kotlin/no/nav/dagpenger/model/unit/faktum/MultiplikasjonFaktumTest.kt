@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.multiplikas
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -23,7 +24,7 @@ internal class MultiplikasjonFaktumTest {
     @BeforeEach
     fun setup() {
         søknadprosess = Søknad(
-            0,
+            ProsessVersjon("test", 0),
             desimaltall faktum "faktor" id 1,
             inntekt faktum "g" id 2,
             multiplikasjon inntekt "multiplikasjon" av 1 ganger 2 id 3

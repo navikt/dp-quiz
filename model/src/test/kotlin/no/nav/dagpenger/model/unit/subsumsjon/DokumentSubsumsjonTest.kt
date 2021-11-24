@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknadprosess
@@ -19,13 +20,10 @@ internal class DokumentSubsumsjonTest {
     private lateinit var dokumentGodkjenning: Faktum<Boolean>
     private lateinit var subsumsjon: Subsumsjon
 
-    companion object {
-        private var versjonId = 300
-    }
+    private var versjonId = ProsessVersjon("test", 300)
 
     @BeforeEach
     fun setUp() {
-        versjonId --
         val søknadprosess = Søknad(
             versjonId,
             dokument faktum "dokument" id 1,

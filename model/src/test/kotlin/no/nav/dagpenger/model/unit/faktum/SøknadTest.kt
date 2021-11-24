@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -21,9 +22,11 @@ import kotlin.test.assertEquals
 
 class SøknadTest {
 
+    private val testversjon = ProsessVersjon("test", 10)
+
     @Test
     fun `søknad med ett faktum`() {
-        val søknad = Søknad(10, boolsk faktum "janei" id 3)
+        val søknad = Søknad(testversjon, boolsk faktum "janei" id 3)
         assertFalse((søknad id 3).erBesvart())
         assertFalse((søknad id "3").erBesvart())
         assertEquals(1, søknad.size)
@@ -33,7 +36,7 @@ class SøknadTest {
     @Test
     fun `fakta med avhengigheter`() {
         val søknad = Søknad(
-            9,
+            testversjon,
             dokument faktum "f11" id 11,
             boolsk faktum "f12" id 12 avhengerAv 11
         )
@@ -51,7 +54,7 @@ class SøknadTest {
     @Test
     fun `sammensatte fakta`() {
         val søknad = Søknad(
-            8,
+            testversjon,
             dato faktum "f3" id 3,
             dato faktum "f4" id 4,
             dato faktum "f5" id 5,
@@ -73,7 +76,7 @@ class SøknadTest {
     @Test
     fun `fakta templater `() {
         val søknad = Søknad(
-            7,
+            testversjon,
             heltall faktum "antall barn" id 15 genererer 16 og 17 og 18,
             heltall faktum "alder barn" id 16,
             boolsk faktum "skal du ha penger for barn" id 17,
@@ -92,7 +95,7 @@ class SøknadTest {
     @Test
     fun `sortere utledede faktum`() {
         val søknad = Søknad(
-            6,
+            testversjon,
             dato faktum "f3" id 3,
             dato faktum "f4" id 4,
             dato faktum "f5" id 5,
@@ -108,7 +111,7 @@ class SøknadTest {
     fun `Søknad med duplikate ider `() {
         assertThrows<IllegalArgumentException> {
             Søknad(
-                5,
+                testversjon,
                 heltall faktum "f11" id 11,
                 dokument faktum "whoops" id 11,
             )

@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.regel.er
@@ -12,7 +13,7 @@ import org.junit.jupiter.api.Test
 class BareEnAvSubsumsjonTest {
 
     private val søknad = Søknad(
-        0,
+        ProsessVersjon("test", 0),
         boolsk faktum "neida" id 1,
         boolsk faktum "joda" id 2,
         boolsk faktum "ja" id 3

@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.før
@@ -32,7 +33,7 @@ internal var virkningstidspunkt: Faktum<LocalDate>
 internal var inntekt3G: GrunnleggendeFaktum<Inntekt>
 internal var inntekt15G: GrunnleggendeFaktum<Inntekt>
 private val prototypeSøknad = Søknad(
-    13,
+    ProsessVersjon("SubsumsjonEks", 13),
     dato faktum "Datoen du fyller 67" id 1,
     dato faktum "Datoen du søker om dagpenger" id 2,
     dato faktum "Datoen du ønsker dagpenger fra" id 3,

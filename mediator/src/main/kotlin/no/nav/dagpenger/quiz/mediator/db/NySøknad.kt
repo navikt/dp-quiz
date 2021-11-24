@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Person
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -34,14 +35,14 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         personId = uuid
     }
 
-    override fun preVisit(søknad: Søknad, versjonId: Int, uuid: UUID) {
-        this.versjonId = versjonId
+    override fun preVisit(søknad: Søknad, prosessVersjon: ProsessVersjon, uuid: UUID) {
+        this.versjonId = prosessVersjon
         søknadId = using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
                     "INSERT INTO soknad(uuid, versjon_id, person_id, sesjon_type_id) VALUES (?, ?, ?, ?) returning id",
                     uuid,
-                    versjonId,
+                    prosessVersjon,
                     personId,
                     type.id
                 ).map { it.int(1) }.asSingle
