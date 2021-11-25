@@ -9,6 +9,8 @@ metadata:
 spec:
   image: {{image}}
   port: 8080
+  strategy:
+    type: Recreate
   liveness:
     path: /isalive
     timeout: 1
