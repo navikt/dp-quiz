@@ -28,25 +28,41 @@ import java.time.LocalDate
 import java.util.UUID
 
 // Forstår initialisering av faktum tabellen
-class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor {
+class FaktumTable(søknad: Søknad) : SøknadVisitor {
 
     private var rootId: Int = 0
     private var indeks: Int = 0
     private val dbIder = mutableMapOf<Faktum<*>, Int>()
     private val avhengigheter = mutableMapOf<Faktum<*>, Set<Faktum<*>>>()
+    private var prosessVersjonId = 0
 
     init {
-        if (!exists(versjonId)) søknad.accept(this)
+        if (!exists(prosessVersjon)) søknad.accept(this)
     }
 
     companion object {
-        private fun exists(versjonId: Int): Boolean {
-            val query = queryOf("SELECT versjon_id FROM faktum WHERE versjon_id = :versjonId", mapOf("versjonId" to versjonId))
+        private fun exists(prosessVersjon: ProsessVersjon): Boolean {
+            val query = queryOf(//language=PostgreSQL
+                "SELECT id FROM V1_PROSESSVERSJON WHERE navn = :navn AND versjon_id = :versjon_id",
+                mapOf("navn" to prosessVersjon.navn, "versjon_id" to prosessVersjon.versjon)
+            )
             return using(sessionOf(dataSource)) { session ->
                 session.run(
                     query.map { true }.asSingle
                 ) ?: false
             }
+        }
+    }
+
+    override fun preVisit(søknad: Søknad, prosessVersjon: ProsessVersjon, uuid: UUID) {
+        val query = queryOf(//language=PostgreSQL
+            "INSERT INTO V1_PROSESSVERSJON (navn, versjon_id) VALUES (:navn, :versjon_id) RETURNING id",
+            mapOf("navn" to prosessVersjon.navn, "versjon_id" to prosessVersjon.versjon)
+        )
+        prosessVersjonId = using(sessionOf(dataSource)) { session ->
+            session.run(
+                query.map { rad ->  rad.int("id") }.asSingle
+            )?: throw IllegalStateException("Klarte ikke å opprette prosessversjon, $prosessVersjon")
         }
     }
 
@@ -135,7 +151,7 @@ class FaktumTable(søknad: Søknad, private val versjonId: Int) : SøknadVisitor
                         """WITH inserted_id as (INSERT INTO navn (navn) values (?) returning id)
                                INSERT INTO faktum (versjon_id, faktum_type, root_id, regel, navn_id ) SELECT ?, ?, ?, ?, id from inserted_id returning id""".trimMargin(),
                         faktum.navn,
-                        versjonId,
+                        prosessVersjonId,
                         ClassKode[clazz],
                         rootId,
                         regel?.navn

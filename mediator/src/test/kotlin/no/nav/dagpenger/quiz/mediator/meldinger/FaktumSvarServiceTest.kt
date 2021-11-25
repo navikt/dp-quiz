@@ -5,6 +5,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
@@ -22,9 +23,9 @@ import kotlin.test.assertTrue
 
 internal class FaktumSvarServiceTest {
 
-    private val versjonId = 1458
+    private val prosessVersjon = ProsessVersjon("test", 1458)
     val prototypeFakta = Søknad(
-        versjonId,
+        prosessVersjon,
         heltall faktum "generator" id 10 genererer 11 og 12,
         dato faktum "fom" id 11,
         dato faktum "tom" id 12,
@@ -46,7 +47,7 @@ internal class FaktumSvarServiceTest {
     ).registrer()
 
     val søknadPersistence = mockk<SøknadPersistence>().also {
-        every { it.hent(any(), any()) } returns Versjon.id(versjonId)
+        every { it.hent(any(), any()) } returns Versjon.id(prosessVersjon)
             .søknadprosess(prototypeFakta, Versjon.UserInterfaceType.Web)
         every { it.lagre(any() as Søknad) } returns true
     }

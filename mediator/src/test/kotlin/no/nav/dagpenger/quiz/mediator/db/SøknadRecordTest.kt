@@ -6,6 +6,7 @@ import kotliquery.using
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
@@ -37,7 +38,7 @@ internal class SøknadRecordTest {
 
             assertRecordCount(1, "soknad")
             assertRecordCount(expectedFaktaCount, "faktum_verdi")
-            SøknadRecord().ny(UNG_PERSON_FNR_2018, Web, 888)
+            SøknadRecord().ny(UNG_PERSON_FNR_2018, Web, ProsessVersjon("test", 888))
             assertRecordCount(2, "soknad")
             assertRecordCount(expectedFaktaCount * 2, "faktum_verdi")
             hentFørsteSøknad()
@@ -157,9 +158,9 @@ internal class SøknadRecordTest {
     }
 
     private fun byggOriginalSøknadprosess() {
-        FaktumTable(SøknadEksempel1.prototypeFakta1, SøknadEksempel1.versjonId)
+        FaktumTable(SøknadEksempel1.prototypeFakta1, SøknadEksempel1.prosessVersjon)
         søknadRecord = SøknadRecord()
-        originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, 888)
+        originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, ProsessVersjon("test", 888))
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

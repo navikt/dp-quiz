@@ -12,6 +12,7 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Identer.Ident
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -24,15 +25,15 @@ import java.util.UUID
 class SøknadRecord : SøknadPersistence {
     private val personRecord = PersonRecord()
 
-    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, versjonId: Int, uuid: UUID): Søknadprosess {
+    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, prosessVersjon: ProsessVersjon, uuid: UUID): Søknadprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
-        return Versjon.id(versjonId).søknadprosess(person, type, uuid).also { søknadprosess ->
+        return Versjon.id(prosessVersjon).søknadprosess(person, type, uuid).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
         }
     }
 
     override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?): Søknadprosess {
-        data class SoknadRad(val personId: UUID, val versjonId: Int, var typeId: Int)
+        data class SoknadRad(val personId: UUID, val navn: String, val versjonId: Int, var typeId: Int)
 
         val rad = using(sessionOf(dataSource)) { session ->
             if (type != null) {
@@ -43,15 +44,15 @@ class SøknadRecord : SøknadPersistence {
 
             session.run(
                 queryOf( //language=PostgreSQL
-                    "SELECT person_id, versjon_id, sesjon_type_id FROM soknad WHERE uuid = ?",
+                    "SELECT soknad.person_id, versjon.navn , versjon.versjon_id, soknad.sesjon_type_id FROM soknad JOIN V1_PROSESSVERSJON as versjon ON (versjon.id = soknad.versjon_id) WHERE uuid = ?",
                     uuid
                 ).map { row ->
-                    SoknadRad(UUID.fromString(row.string(1)), row.int(2), row.int(3))
+                    SoknadRad(UUID.fromString(row.string(1)), row.string(2), row.int(3), row.int(4))
                 }.asSingle
             )
         } ?: throw IllegalArgumentException("Søknad finnes ikke, uuid: $uuid")
 
-        return Versjon.id(rad.versjonId)
+        return Versjon.id(ProsessVersjon(rad.navn, rad.versjonId))
             .søknadprosess(
                 person = personRecord.hentPerson(rad.personId),
                 type = Versjon.UserInterfaceType.fromId(rad.typeId),

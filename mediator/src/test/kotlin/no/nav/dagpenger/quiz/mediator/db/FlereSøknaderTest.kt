@@ -12,20 +12,20 @@ internal class FlereSøknaderTest {
     @Test
     fun `takler flere søknader samtidig`() {
         Postgres.withMigratedDb {
-            FaktumTable(SøknadEksempel1.prototypeFakta1, SøknadEksempel1.versjonId)
-            FaktumTable(SøknadEksempel.prototypeSøknad1, SøknadEksempel.versjonId)
+            FaktumTable(SøknadEksempel1.prototypeFakta1, SøknadEksempel1.prosessVersjon)
+            FaktumTable(SøknadEksempel.prototypeSøknad1, SøknadEksempel.prosessVersjon)
 
             val søknadRecord = SøknadRecord()
 
             val søknad1 = søknadRecord.ny(
                 Identer.Builder().folkeregisterIdent("10987654321").build(),
                 Versjon.UserInterfaceType.Web,
-                888
+                SøknadEksempel1.prosessVersjon
             )
             val søknad2 = søknadRecord.ny(
                 Identer.Builder().folkeregisterIdent("12345678910").build(),
                 Versjon.UserInterfaceType.Web,
-                666
+                SøknadEksempel.prosessVersjon
             )
 
             søknad1.boolsk(10).besvar(true)

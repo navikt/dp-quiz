@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Identer
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
@@ -34,10 +35,10 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig faktum reset`() {
-        val versjonId = 634
+        val prosessVersjon = ProsessVersjon("test", 634)
         Postgres.withMigratedDb {
             val prototypeFakta = Søknad(
-                versjonId,
+                prosessVersjon,
                 boolsk faktum "f1" id 19 avhengerAv 2 og 13,
                 dato faktum "f2" id 2,
                 dato faktum "f3" id 13,
@@ -56,9 +57,9 @@ internal class AvhengigeFaktaTest {
                     )
                 )
             ).registrer()
-            FaktumTable(prototypeFakta, versjonId)
+            FaktumTable(prototypeFakta, prosessVersjon)
             søknadRecord = SøknadRecord()
-            originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, versjonId)
+            originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
 
             originalSøknadprosess.dato(2).besvar(2.januar)
             originalSøknadprosess.dato(13).besvar(13.januar)
@@ -75,10 +76,11 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig faktum rehydreres`() {
-        val versjonId = 635
+        val prosessVersjon = ProsessVersjon("test", 635)
+
         Postgres.withMigratedDb {
             val prototypeFakta = Søknad(
-                versjonId,
+                prosessVersjon,
                 boolsk faktum "f1" id 1 avhengerAv 4,
                 boolsk faktum "f2" id 2,
                 boolsk faktum "f3" id 3 avhengerAv 1,
@@ -98,10 +100,10 @@ internal class AvhengigeFaktaTest {
                     )
                 )
             ).registrer()
-            FaktumTable(prototypeFakta, versjonId)
+            FaktumTable(prototypeFakta, prosessVersjon)
 
             søknadRecord = SøknadRecord()
-            originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, versjonId)
+            originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
 
             originalSøknadprosess.boolsk(2).besvar(true)
             originalSøknadprosess.boolsk(5).besvar(true)
@@ -119,10 +121,11 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig av utledet faktum rehydreres`() {
-        val versjonId = 636
+        val prosessVersjon = ProsessVersjon("test", 636)
+
         Postgres.withMigratedDb {
             val prototypeFakta = Søknad(
-                versjonId,
+                prosessVersjon,
                 boolsk faktum "f1" id 1 avhengerAv 4,
                 dato faktum "f2" id 2,
                 dato faktum "f3" id 3,
@@ -142,10 +145,10 @@ internal class AvhengigeFaktaTest {
                     )
                 )
             ).registrer()
-            FaktumTable(prototypeFakta, versjonId)
+            FaktumTable(prototypeFakta, prosessVersjon)
 
             søknadRecord = SøknadRecord()
-            originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, versjonId)
+            originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
 
             originalSøknadprosess.dato(2).besvar(1.januar)
             originalSøknadprosess.dato(3).besvar(10.januar)

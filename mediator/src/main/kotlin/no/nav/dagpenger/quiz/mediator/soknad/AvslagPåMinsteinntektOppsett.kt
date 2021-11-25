@@ -20,7 +20,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    private val VERSJON_ID = ProsessVersjon("AvslagPåMinsteinntekt", 26)
+    val VERSJON_ID = ProsessVersjon("AvslagPåMinsteinntekt", 26)
 
     fun registrer(registrer: (søknad: Søknad, prosessVersjon: ProsessVersjon) -> Unit) {
         registrer(søknad, VERSJON_ID)

@@ -21,7 +21,7 @@ import java.util.UUID
 
 class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) : SøknadVisitor {
     private var søknadId = 0
-    private var versjonId = 0
+    private var internVersjonId = 0
     private var rootId = 0
     private var indeks = 0
     private val faktumList = mutableListOf<Faktum<*>>()
@@ -35,14 +35,26 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         personId = uuid
     }
 
+    private fun hentInternId(prosessVersjon: ProsessVersjon): Int {
+        val query = queryOf(//language=PostgreSQL
+            "SELECT id FROM V1_PROSESSVERSJON WHERE navn = :navn AND versjon_id = :versjon_id",
+            mapOf("navn" to prosessVersjon.navn, "versjon_id" to prosessVersjon.versjon)
+        )
+        return using(sessionOf(dataSource)) { session ->
+            session.run(
+                query.map { it.intOrNull("id") }.asSingle
+            ) ?: throw IllegalStateException("Fant ikke internid for prosessversjon $prosessVersjon")
+        }
+    }
+
     override fun preVisit(søknad: Søknad, prosessVersjon: ProsessVersjon, uuid: UUID) {
-        this.versjonId = prosessVersjon
+        this.internVersjonId = hentInternId(prosessVersjon)
         søknadId = using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
                     "INSERT INTO soknad(uuid, versjon_id, person_id, sesjon_type_id) VALUES (?, ?, ?, ?) returning id",
                     uuid,
-                    prosessVersjon,
+                    internVersjonId,
                     personId,
                     type.id
                 ).map { it.int(1) }.asSingle
@@ -114,7 +126,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
                                     (SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?))""".trimMargin(),
                     søknadId,
                     indeks,
-                    versjonId,
+                    internVersjonId,
                     rootId
                 ).asExecute
             )

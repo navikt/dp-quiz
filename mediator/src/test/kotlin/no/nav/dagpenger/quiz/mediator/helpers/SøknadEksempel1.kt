@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
@@ -15,9 +16,9 @@ import no.nav.dagpenger.model.seksjon.Versjon
 
 internal object SøknadEksempel1 {
 
-    val versjonId = 888
+    val prosessVersjon = ProsessVersjon("test", 888)
     internal val prototypeFakta1 = Søknad(
-        888,
+        prosessVersjon,
         boolsk faktum "f1" id 1 avhengerAv 11,
         dato faktum "f2" id 2,
         dato faktum "f3" id 3,

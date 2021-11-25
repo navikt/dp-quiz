@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Identer
+import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger
@@ -14,7 +15,7 @@ import java.util.UUID
 internal class DagpengerService(
     private val søknadPersistence: SøknadRecord,
     rapidsConnection: RapidsConnection,
-    private val versjonId: Int = Dagpenger.VERSJON_ID
+    private val prosessVersjon: ProsessVersjon = Dagpenger.VERSJON_ID
 ) : River.PacketListener {
 
     private companion object {
@@ -42,7 +43,7 @@ internal class DagpengerService(
 
         val søknadUuid = packet["søknad_uuid"].asText().let { søknadUuid -> UUID.fromString(søknadUuid) }
         val faktagrupperType = Versjon.UserInterfaceType.Web
-        søknadPersistence.ny(identer, faktagrupperType, versjonId, søknadUuid).also { søknadsprosess ->
+        søknadPersistence.ny(identer, faktagrupperType, prosessVersjon, søknadUuid).also { søknadsprosess ->
             søknadPersistence.lagre(søknadsprosess.søknad)
             log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid} på grunn av ønsket rettighetsavklaring" }
             søknadsprosess.nesteSeksjoner()
