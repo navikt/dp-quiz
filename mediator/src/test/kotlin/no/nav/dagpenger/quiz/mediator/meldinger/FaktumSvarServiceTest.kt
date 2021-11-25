@@ -5,7 +5,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
@@ -16,6 +16,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -23,7 +24,7 @@ import kotlin.test.assertTrue
 
 internal class FaktumSvarServiceTest {
 
-    private val prosessVersjon = ProsessVersjon("test", 1458)
+    private val prosessVersjon = Prosessversjon(Testprosess.Test, 1458)
     val prototypeFakta = Søknad(
         prosessVersjon,
         heltall faktum "generator" id 10 genererer 11 og 12,

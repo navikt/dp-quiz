@@ -9,10 +9,10 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.daglig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknadprosess
+import no.nav.dagpenger.model.helpers.testversjon
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -22,8 +22,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class BaseFaktumFactoryTest {
-
-    private val testversjon = ProsessVersjon("test", 0)
 
     @Test
     fun boolean() {

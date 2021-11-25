@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.dokumenteresAv
@@ -30,7 +30,7 @@ import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.uansett
 
 private val prototypeSøknad1 = Søknad(
-    ProsessVersjon("prototypeSøknad", 0),
+    Prosessversjon(Testprosess.PrototypeSøknad, 0),
     boolsk faktum "f1" id 1,
     dato faktum "f2" id 2,
     dato faktum "f3" id 3,

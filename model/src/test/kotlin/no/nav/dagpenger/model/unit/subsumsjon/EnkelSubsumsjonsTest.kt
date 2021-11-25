@@ -2,10 +2,10 @@ package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.faktum.Faktum
-import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknadprosess
+import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -23,7 +23,7 @@ internal class EnkelSubsumsjonsTest {
     @BeforeEach
     fun setup() {
         søknadprosess = Søknad(
-            ProsessVersjon("test", 0),
+            testversjon,
             dato faktum "Datoen du fyller 67" id 1,
             dato faktum "Datoen du søker om dagpenger" id 2
         ).testSøknadprosess()

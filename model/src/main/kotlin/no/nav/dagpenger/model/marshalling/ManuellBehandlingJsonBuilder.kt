@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -37,7 +37,7 @@ class ManuellBehandlingJsonBuilder(søknadprosess: Søknadprosess, private val s
 
     fun resultat() = root
 
-    override fun preVisit(søknad: Søknad, prosessVersjon: ProsessVersjon, uuid: UUID) {
+    override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
         root.put("@event_name", "manuell_behandling")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")

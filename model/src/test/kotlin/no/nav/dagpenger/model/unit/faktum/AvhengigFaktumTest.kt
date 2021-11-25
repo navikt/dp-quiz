@@ -1,8 +1,8 @@
 package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
-import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.testversjon
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -12,7 +12,7 @@ internal class AvhengigFaktumTest {
     @Test
     fun `Resetter avhengige faktum`() {
         val søknad = Søknad(
-            ProsessVersjon("test", 0),
+            testversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1,
             boolsk faktum "f3" id 3 avhengerAv 2

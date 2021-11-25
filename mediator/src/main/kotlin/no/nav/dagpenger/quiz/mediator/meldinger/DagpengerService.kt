@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger
@@ -15,7 +15,7 @@ import java.util.UUID
 internal class DagpengerService(
     private val søknadPersistence: SøknadRecord,
     rapidsConnection: RapidsConnection,
-    private val prosessVersjon: ProsessVersjon = Dagpenger.VERSJON_ID
+    private val prosessVersjon: Prosessversjon = Dagpenger.VERSJON_ID
 ) : River.PacketListener {
 
     private companion object {

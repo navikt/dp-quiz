@@ -7,11 +7,11 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
-import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -21,8 +21,6 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 class SøknadTest {
-
-    private val testversjon = ProsessVersjon("test", 10)
 
     @Test
     fun `søknad med ett faktum`() {

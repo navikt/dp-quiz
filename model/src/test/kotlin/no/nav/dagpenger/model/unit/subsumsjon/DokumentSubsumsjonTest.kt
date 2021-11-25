@@ -4,10 +4,10 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
-import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknadprosess
+import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -20,12 +20,10 @@ internal class DokumentSubsumsjonTest {
     private lateinit var dokumentGodkjenning: Faktum<Boolean>
     private lateinit var subsumsjon: Subsumsjon
 
-    private var versjonId = ProsessVersjon("test", 300)
-
     @BeforeEach
     fun setUp() {
         val søknadprosess = Søknad(
-            versjonId,
+            testversjon,
             dokument faktum "dokument" id 1,
             boolsk faktum "saksbehandler godkjenner" id 2 avhengerAv 1
         ).testSøknadprosess()

@@ -6,7 +6,8 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessnavn
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
@@ -14,9 +15,13 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 
+enum class Testprosess(override val id: String) : Prosessnavn {
+    Test("test")
+}
+
 internal object SøknadEksempel1 {
 
-    val prosessVersjon = ProsessVersjon("test", 888)
+    val prosessVersjon = Prosessversjon(Testprosess.Test, 888)
     internal val prototypeFakta1 = Søknad(
         prosessVersjon,
         boolsk faktum "f1" id 1 avhengerAv 11,

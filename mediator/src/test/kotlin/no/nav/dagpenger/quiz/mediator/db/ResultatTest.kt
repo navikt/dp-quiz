@@ -5,7 +5,7 @@ import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
@@ -15,6 +15,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
+import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -27,7 +28,7 @@ internal class ResultatTest {
     private lateinit var søknadRecord: SøknadRecord
     private lateinit var resultatRecord: ResultatRecord
 
-    private fun setup(prosessVersjon: ProsessVersjon) {
+    private fun setup(prosessVersjon: Prosessversjon) {
         val prototypeFakta = Søknad(
             prosessVersjon,
             boolsk faktum "f1" id 19
@@ -62,7 +63,7 @@ internal class ResultatTest {
 
     @Test
     fun `Lagre resultat`() {
-        setup(ProsessVersjon("test", 935))
+        setup(Prosessversjon(Testprosess.Test, 935))
         søknadprosess.boolsk(19).besvar(false)
 
         val resultat = søknadprosess.resultat()
@@ -79,7 +80,7 @@ internal class ResultatTest {
 
     @Test
     fun `Lagrer sendt til manuell behandling`() {
-        setup(ProsessVersjon("test", 936))
+        setup(Prosessversjon(Testprosess.Test, 936))
         val seksjonsnavn = "manuell seksjon"
         resultatRecord.lagreManuellBehandling(søknadprosess.søknad.uuid, seksjonsnavn)
 

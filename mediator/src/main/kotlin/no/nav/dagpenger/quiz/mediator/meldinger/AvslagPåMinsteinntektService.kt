@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 internal class AvslagPåMinsteinntektService(
     private val søknadPersistence: SøknadPersistence,
     rapidsConnection: RapidsConnection,
-    private val prosessVersjon: ProsessVersjon = AvslagPåMinsteinntektOppsett.VERSJON_ID
+    private val prosessVersjon: Prosessversjon = AvslagPåMinsteinntektOppsett.VERSJON_ID
 ) : River.PacketListener {
 
     private companion object {

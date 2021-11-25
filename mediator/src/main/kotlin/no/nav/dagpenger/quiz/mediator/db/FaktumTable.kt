@@ -17,7 +17,7 @@ import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -50,15 +50,15 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
 
         fun ikkeEksisterer() = !eksisterer
 
-        override fun preVisit(søknad: Søknad, prosessVersjon: ProsessVersjon, uuid: UUID) {
+        override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
             eksisterer = exists(prosessVersjon)
         }
 
         private companion object {
-            private fun exists(prosessVersjon: ProsessVersjon): Boolean {
+            private fun exists(prosessVersjon: Prosessversjon): Boolean {
                 val query = queryOf( //language=PostgreSQL
                     "SELECT id FROM V1_PROSESSVERSJON WHERE navn = :navn AND versjon_id = :versjon_id",
-                    mapOf("navn" to prosessVersjon.navn, "versjon_id" to prosessVersjon.versjon)
+                    mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon)
                 )
                 return using(sessionOf(dataSource)) { session ->
                     session.run(
@@ -69,10 +69,10 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         }
     }
 
-    override fun preVisit(søknad: Søknad, prosessVersjon: ProsessVersjon, uuid: UUID) {
+    override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
         val query = queryOf( //language=PostgreSQL
             "INSERT INTO V1_PROSESSVERSJON (navn, versjon_id) VALUES (:navn, :versjon_id) RETURNING id",
-            mapOf("navn" to prosessVersjon.navn, "versjon_id" to prosessVersjon.versjon)
+            mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon)
         )
         prosessVersjonId = using(sessionOf(dataSource)) { session ->
             session.run(
@@ -140,7 +140,7 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         avhengigheter[faktum] = avhengigeFakta
     }
 
-    override fun postVisit(søknad: Søknad, prosessVersjon: ProsessVersjon, uuid: UUID) {
+    override fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
         avhengigheter.forEach { (parent, children) -> faktumFaktum(dbIder[parent]!!, children, "avhengig_faktum") }
     }
 

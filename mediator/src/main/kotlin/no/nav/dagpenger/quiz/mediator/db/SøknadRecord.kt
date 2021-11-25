@@ -12,11 +12,13 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Identer.Ident
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessnavn
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
+import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -25,7 +27,7 @@ import java.util.UUID
 class SøknadRecord : SøknadPersistence {
     private val personRecord = PersonRecord()
 
-    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, prosessVersjon: ProsessVersjon, uuid: UUID): Søknadprosess {
+    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, prosessVersjon: Prosessversjon, uuid: UUID): Søknadprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
         return Versjon.id(prosessVersjon).søknadprosess(person, type, uuid).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
@@ -34,6 +36,7 @@ class SøknadRecord : SøknadPersistence {
 
     override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?): Søknadprosess {
         data class SoknadRad(val personId: UUID, val navn: String, val versjonId: Int, var typeId: Int)
+        data class Prosess(override val id: String) : Prosessnavn
 
         val rad = using(sessionOf(dataSource)) { session ->
             if (type != null) {
@@ -52,7 +55,7 @@ class SøknadRecord : SøknadPersistence {
             )
         } ?: throw IllegalArgumentException("Søknad finnes ikke, uuid: $uuid")
 
-        return Versjon.id(ProsessVersjon(rad.navn, rad.versjonId))
+        return Versjon.id(Prosessversjon(Prosess(rad.navn), rad.versjonId))
             .søknadprosess(
                 person = personRecord.hentPerson(rad.personId),
                 type = Versjon.UserInterfaceType.fromId(rad.typeId),

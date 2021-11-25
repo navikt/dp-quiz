@@ -6,9 +6,9 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.multiplikas
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
+import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,7 +24,7 @@ internal class MultiplikasjonFaktumTest {
     @BeforeEach
     fun setup() {
         søknadprosess = Søknad(
-            ProsessVersjon("test", 0),
+            testversjon,
             desimaltall faktum "faktor" id 1,
             inntekt faktum "g" id 2,
             multiplikasjon inntekt "multiplikasjon" av 1 ganger 2 id 3

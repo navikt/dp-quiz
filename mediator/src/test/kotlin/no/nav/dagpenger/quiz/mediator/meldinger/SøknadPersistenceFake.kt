@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -18,7 +18,7 @@ internal class SøknadPersistenceFake : SøknadPersistence {
     override fun ny(
         identer: Identer,
         type: Versjon.UserInterfaceType,
-        prosessVersjon: ProsessVersjon,
+        prosessVersjon: Prosessversjon,
         uuid: UUID
     ): Søknadprosess =
         Versjon.id(SøknadEksempel.prosessVersjon).søknadprosess(Person(identer), type)

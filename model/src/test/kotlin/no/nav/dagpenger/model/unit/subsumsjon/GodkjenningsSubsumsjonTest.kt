@@ -2,9 +2,9 @@ package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Faktum
-import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.ikkeOppfyltGodkjentAv
@@ -21,8 +21,6 @@ internal class GodkjenningsSubsumsjonTest {
     private lateinit var godkjenningsSubsumsjon: Subsumsjon
     private lateinit var faktum: Faktum<Boolean>
     private lateinit var godkjenning: Faktum<Boolean>
-
-    private val testversjon = ProsessVersjon("test", 0)
 
     @Test
     fun `Godkjenning uansett resultat av child`() {

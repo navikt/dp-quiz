@@ -8,16 +8,16 @@ import java.util.UUID
 
 class Søknad private constructor(
     private val person: Person,
-    internal val prosessVersjon: ProsessVersjon,
+    internal val prosessVersjon: Prosessversjon,
     val uuid: UUID,
     private val faktaMap: MutableMap<FaktumId, Faktum<*>>
 ) : TypedFaktum, Iterable<Faktum<*>> {
 
     internal val size get() = faktaMap.size
 
-    constructor(prosessVersjon: ProsessVersjon, vararg factories: FaktumFactory<*>) : this(Person.prototype, prosessVersjon, UUID.randomUUID(), factories.toList())
+    constructor(prosessVersjon: Prosessversjon, vararg factories: FaktumFactory<*>) : this(Person.prototype, prosessVersjon, UUID.randomUUID(), factories.toList())
 
-    constructor(person: Person, prosessVersjon: ProsessVersjon, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
+    constructor(person: Person, prosessVersjon: Prosessversjon, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
         person,
         prosessVersjon,
         uuid,
@@ -113,7 +113,7 @@ class Søknad private constructor(
     override infix fun generator(id: String) = generator(FaktumId(id))
     internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
 
-    fun bygg(person: Person, prosessVersjon: ProsessVersjon, uuid: UUID = UUID.randomUUID()): Søknad {
+    fun bygg(person: Person, prosessVersjon: Prosessversjon, uuid: UUID = UUID.randomUUID()): Søknad {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktaMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
         return Søknad(person, prosessVersjon, uuid, mapOfFakta)

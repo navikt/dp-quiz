@@ -6,13 +6,14 @@ import kotliquery.using
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
+import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import no.nav.dagpenger.quiz.mediator.helpers.assertDeepEquals
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -38,7 +39,7 @@ internal class SøknadRecordTest {
 
             assertRecordCount(1, "soknad")
             assertRecordCount(expectedFaktaCount, "faktum_verdi")
-            SøknadRecord().ny(UNG_PERSON_FNR_2018, Web, ProsessVersjon("test", 888))
+            SøknadRecord().ny(UNG_PERSON_FNR_2018, Web, Prosessversjon(Testprosess.Test, 888))
             assertRecordCount(2, "soknad")
             assertRecordCount(expectedFaktaCount * 2, "faktum_verdi")
             hentFørsteSøknad()
@@ -160,7 +161,7 @@ internal class SøknadRecordTest {
     private fun byggOriginalSøknadprosess() {
         FaktumTable(SøknadEksempel1.prototypeFakta1)
         søknadRecord = SøknadRecord()
-        originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, ProsessVersjon("test", 888))
+        originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.seksjon
 
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TypedFaktum
 import no.nav.dagpenger.model.seksjon.Seksjon.Companion.saksbehandlerSeksjoner
@@ -18,7 +18,7 @@ class Søknadprosess private constructor(
     private val seksjoner: MutableList<Seksjon>
 ) : TypedFaktum by søknad, MutableList<Seksjon> by seksjoner {
     constructor(vararg seksjoner: Seksjon) : this(
-        Søknad(ProsessVersjon.prototypeversjon),
+        Søknad(Prosessversjon.prototypeversjon),
         TomSubsumsjon,
         UUID.randomUUID(),
         seksjoner.toMutableList()

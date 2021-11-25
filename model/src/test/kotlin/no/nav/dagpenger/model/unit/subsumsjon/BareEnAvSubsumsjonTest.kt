@@ -1,9 +1,9 @@
 package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
-import no.nav.dagpenger.model.faktum.ProsessVersjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
+import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.subsumsjon.bareEnAv
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 class BareEnAvSubsumsjonTest {
 
     private val søknad = Søknad(
-        ProsessVersjon("test", 0),
+        testversjon,
         boolsk faktum "neida" id 1,
         boolsk faktum "joda" id 2,
         boolsk faktum "ja" id 3

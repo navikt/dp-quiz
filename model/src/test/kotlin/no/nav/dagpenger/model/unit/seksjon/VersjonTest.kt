@@ -3,10 +3,11 @@ package no.nav.dagpenger.model.unit.seksjon
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.helpers.Testprosess
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -20,9 +21,9 @@ import kotlin.test.assertEquals
 internal class VersjonTest {
     private lateinit var søknadprosess: Søknadprosess
 
-    companion object {
+    private companion object {
         val prototypeSøknad = Søknad(
-            ProsessVersjon("test", 1),
+            Prosessversjon(Testprosess.Test, 1),
             heltall faktum "f15" id 15 genererer 16 og 17 og 18,
             heltall faktum "f16" id 16,
             boolsk faktum "f17" id 17,

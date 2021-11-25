@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
@@ -17,6 +17,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
+import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import no.nav.dagpenger.quiz.mediator.helpers.assertDeepEquals
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import org.junit.jupiter.api.Test
@@ -35,7 +36,7 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig faktum reset`() {
-        val prosessVersjon = ProsessVersjon("test", 634)
+        val prosessVersjon = Prosessversjon(Testprosess.Test, 634)
         Postgres.withMigratedDb {
             val prototypeFakta = Søknad(
                 prosessVersjon,
@@ -76,7 +77,7 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig faktum rehydreres`() {
-        val prosessVersjon = ProsessVersjon("test", 635)
+        val prosessVersjon = Prosessversjon(Testprosess.Test, 635)
 
         Postgres.withMigratedDb {
             val prototypeFakta = Søknad(
@@ -121,7 +122,7 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig av utledet faktum rehydreres`() {
-        val prosessVersjon = ProsessVersjon("test", 636)
+        val prosessVersjon = Prosessversjon(Testprosess.Test, 636)
 
         Postgres.withMigratedDb {
             val prototypeFakta = Søknad(

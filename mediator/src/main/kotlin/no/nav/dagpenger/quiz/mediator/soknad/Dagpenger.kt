@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.soknad
 import mu.KotlinLogging
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
-import no.nav.dagpenger.model.faktum.ProsessVersjon
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.dokumenteresAv
@@ -21,7 +21,7 @@ internal object Dagpenger {
 
     private val logger = KotlinLogging.logger { }
 
-    val VERSJON_ID = ProsessVersjon("Dagpenger", 101)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 101)
 
     const val `Har du hatt dagpenger i løpet av de siste 52 ukene` = 1
     const val `Villig til å ta hel og deltidsjobb` = 2
@@ -90,7 +90,11 @@ internal object Dagpenger {
             (boolsk(`Villig til å ta hel og deltidsjobb`) er true).hvisIkkeOppfylt {
                 "svare på".minstEnAv(
                     (boolsk(`Redusert helse, fysisk eller psykisk`) er true).hvisOppfylt {
-                        boolsk(`Redusert helse, fysisk eller psykisk`).dokumenteresAv(dokument(`Bekreftelse fra relevant fagpersonell`))
+                        boolsk(`Redusert helse, fysisk eller psykisk`).dokumenteresAv(
+                            dokument(
+                                `Bekreftelse fra relevant fagpersonell`
+                            )
+                        )
                     }
                 )
             }
