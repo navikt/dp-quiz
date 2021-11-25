@@ -22,8 +22,8 @@ internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
     val VERSJON_ID = ProsessVersjon("AvslagPåMinsteinntekt", 26)
 
-    fun registrer(registrer: (søknad: Søknad, prosessVersjon: ProsessVersjon) -> Unit) {
-        registrer(søknad, VERSJON_ID)
+    fun registrer(registrer: (søknad: Søknad) -> Unit) {
+        registrer(søknad)
     }
 
     const val ønsketDato = 1

@@ -53,7 +53,7 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
     @BeforeEach
     fun setup() {
         Postgres.withMigratedDb {
-            AvslagPåMinsteinntektOppsett.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
+            AvslagPåMinsteinntektOppsett.registrer { søknad -> FaktumTable(søknad) }
             val søknadPersistence = SøknadRecord()
             val resultatPersistence = ResultatRecord()
             testRapid = TestRapid().also {

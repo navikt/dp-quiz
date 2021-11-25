@@ -12,8 +12,8 @@ internal class FlereSøknaderTest {
     @Test
     fun `takler flere søknader samtidig`() {
         Postgres.withMigratedDb {
-            FaktumTable(SøknadEksempel1.prototypeFakta1, SøknadEksempel1.prosessVersjon)
-            FaktumTable(SøknadEksempel.prototypeSøknad1, SøknadEksempel.prosessVersjon)
+            FaktumTable(SøknadEksempel1.prototypeFakta1)
+            FaktumTable(SøknadEksempel.prototypeSøknad1)
 
             val søknadRecord = SøknadRecord()
 

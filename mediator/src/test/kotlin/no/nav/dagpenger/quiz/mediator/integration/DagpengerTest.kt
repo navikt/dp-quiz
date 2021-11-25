@@ -25,7 +25,7 @@ class DagpengerTest : SøknadBesvarer() {
     @BeforeEach
     fun setup() {
         Postgres.withMigratedDb {
-            Dagpenger.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
+            Dagpenger.registrer { søknad -> FaktumTable(søknad) }
             val søknadPersistence = SøknadRecord()
             val resultatPersistence = ResultatRecord()
             testRapid = TestRapid().also {

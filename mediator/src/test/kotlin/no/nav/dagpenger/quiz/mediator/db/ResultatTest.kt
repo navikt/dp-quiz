@@ -48,7 +48,7 @@ internal class ResultatTest {
         ).registrer()
 
         Postgres.withMigratedDb {
-            FaktumTable(prototypeFakta, prosessVersjon)
+            FaktumTable(prototypeFakta)
             søknadRecord = SøknadRecord()
             resultatRecord = ResultatRecord()
 
@@ -62,7 +62,7 @@ internal class ResultatTest {
 
     @Test
     fun `Lagre resultat`() {
-        setup(ProsessVersjon("test",935))
+        setup(ProsessVersjon("test", 935))
         søknadprosess.boolsk(19).besvar(false)
 
         val resultat = søknadprosess.resultat()
@@ -79,7 +79,7 @@ internal class ResultatTest {
 
     @Test
     fun `Lagrer sendt til manuell behandling`() {
-        setup(ProsessVersjon("test",936))
+        setup(ProsessVersjon("test", 936))
         val seksjonsnavn = "manuell seksjon"
         resultatRecord.lagreManuellBehandling(søknadprosess.søknad.uuid, seksjonsnavn)
 

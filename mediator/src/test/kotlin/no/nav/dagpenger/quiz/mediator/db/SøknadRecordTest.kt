@@ -158,7 +158,7 @@ internal class SøknadRecordTest {
     }
 
     private fun byggOriginalSøknadprosess() {
-        FaktumTable(SøknadEksempel1.prototypeFakta1, SøknadEksempel1.prosessVersjon)
+        FaktumTable(SøknadEksempel1.prototypeFakta1)
         søknadRecord = SøknadRecord()
         originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, ProsessVersjon("test", 888))
     }

@@ -36,7 +36,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
     }
 
     private fun hentInternId(prosessVersjon: ProsessVersjon): Int {
-        val query = queryOf(//language=PostgreSQL
+        val query = queryOf( //language=PostgreSQL
             "SELECT id FROM V1_PROSESSVERSJON WHERE navn = :navn AND versjon_id = :versjon_id",
             mapOf("navn" to prosessVersjon.navn, "versjon_id" to prosessVersjon.versjon)
         )

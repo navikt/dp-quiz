@@ -35,9 +35,9 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
             .also {
                 val søknadRecord = SøknadRecord()
                 val resultatRecord = ResultatRecord()
-                AvslagPåMinsteinntektOppsett.registrer { søknad, versjonId -> FaktumTable(søknad, versjonId) }
+                AvslagPåMinsteinntektOppsett.registrer { søknad -> FaktumTable(søknad) }
                 AvslagPåMinsteinntektService(søknadRecord, rapidsConnection)
-                Dagpenger.registrer { søknad, prosessVersjon -> FaktumTable(søknad) }
+                Dagpenger.registrer { søknad -> FaktumTable(søknad) }
                 DagpengerService(søknadRecord, rapidsConnection)
                 FaktumSvarService(søknadRecord, resultatRecord, rapidsConnection)
                 BehandlingsdatoService(rapidsConnection)

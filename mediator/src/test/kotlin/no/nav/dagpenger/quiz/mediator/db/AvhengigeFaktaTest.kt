@@ -57,7 +57,7 @@ internal class AvhengigeFaktaTest {
                     )
                 )
             ).registrer()
-            FaktumTable(prototypeFakta, prosessVersjon)
+            FaktumTable(prototypeFakta)
             søknadRecord = SøknadRecord()
             originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
 
@@ -100,7 +100,7 @@ internal class AvhengigeFaktaTest {
                     )
                 )
             ).registrer()
-            FaktumTable(prototypeFakta, prosessVersjon)
+            FaktumTable(prototypeFakta)
 
             søknadRecord = SøknadRecord()
             originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
@@ -145,7 +145,7 @@ internal class AvhengigeFaktaTest {
                     )
                 )
             ).registrer()
-            FaktumTable(prototypeFakta, prosessVersjon)
+            FaktumTable(prototypeFakta)
 
             søknadRecord = SøknadRecord()
             originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)

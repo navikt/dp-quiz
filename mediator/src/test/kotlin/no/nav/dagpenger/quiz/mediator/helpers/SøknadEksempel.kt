@@ -19,7 +19,7 @@ import no.nav.dagpenger.model.subsumsjon.alle
 
 internal object SøknadEksempel {
 
-    val prosessVersjon = ProsessVersjon("test",666)
+    val prosessVersjon = ProsessVersjon("test", 666)
 
     val prototypeSøknad1 = Søknad(
         prosessVersjon,

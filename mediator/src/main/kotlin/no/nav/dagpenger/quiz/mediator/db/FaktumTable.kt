@@ -37,32 +37,47 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
     private var prosessVersjonId = 0
 
     init {
-        if (!exists(prosessVersjon)) søknad.accept(this)
+        if (Versjonsjekker(søknad).ikkeEksisterer()) søknad.accept(this)
     }
 
-    companion object {
-        private fun exists(prosessVersjon: ProsessVersjon): Boolean {
-            val query = queryOf(//language=PostgreSQL
-                "SELECT id FROM V1_PROSESSVERSJON WHERE navn = :navn AND versjon_id = :versjon_id",
-                mapOf("navn" to prosessVersjon.navn, "versjon_id" to prosessVersjon.versjon)
-            )
-            return using(sessionOf(dataSource)) { session ->
-                session.run(
-                    query.map { true }.asSingle
-                ) ?: false
+    private class Versjonsjekker(søknad: Søknad) : SøknadVisitor {
+
+        init {
+            søknad.accept(this)
+        }
+
+        private var eksisterer = false
+
+        fun ikkeEksisterer() = !eksisterer
+
+        override fun preVisit(søknad: Søknad, prosessVersjon: ProsessVersjon, uuid: UUID) {
+            eksisterer = exists(prosessVersjon)
+        }
+
+        private companion object {
+            private fun exists(prosessVersjon: ProsessVersjon): Boolean {
+                val query = queryOf( //language=PostgreSQL
+                    "SELECT id FROM V1_PROSESSVERSJON WHERE navn = :navn AND versjon_id = :versjon_id",
+                    mapOf("navn" to prosessVersjon.navn, "versjon_id" to prosessVersjon.versjon)
+                )
+                return using(sessionOf(dataSource)) { session ->
+                    session.run(
+                        query.map { true }.asSingle
+                    ) ?: false
+                }
             }
         }
     }
 
     override fun preVisit(søknad: Søknad, prosessVersjon: ProsessVersjon, uuid: UUID) {
-        val query = queryOf(//language=PostgreSQL
+        val query = queryOf( //language=PostgreSQL
             "INSERT INTO V1_PROSESSVERSJON (navn, versjon_id) VALUES (:navn, :versjon_id) RETURNING id",
             mapOf("navn" to prosessVersjon.navn, "versjon_id" to prosessVersjon.versjon)
         )
         prosessVersjonId = using(sessionOf(dataSource)) { session ->
             session.run(
-                query.map { rad ->  rad.int("id") }.asSingle
-            )?: throw IllegalStateException("Klarte ikke å opprette prosessversjon, $prosessVersjon")
+                query.map { rad -> rad.int("id") }.asSingle
+            ) ?: throw IllegalStateException("Klarte ikke å opprette prosessversjon, $prosessVersjon")
         }
     }
 

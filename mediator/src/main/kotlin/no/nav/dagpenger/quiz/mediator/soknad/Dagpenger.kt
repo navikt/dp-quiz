@@ -33,7 +33,7 @@ internal object Dagpenger {
     const val `Bekreftelse fra relevant fagpersonell` = 8
 
     fun registrer(registrer: (søknad: Søknad) -> Unit) {
-        registrer(søknad, VERSJON_ID)
+        registrer(søknad)
     }
 
     internal val søknad: Søknad
