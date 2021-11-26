@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.faktum.Prosessversjon
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class ProsessversjonTest {
 
@@ -21,5 +22,10 @@ internal class ProsessversjonTest {
         assertNotEquals(Prosessversjon(Navn("A"), 1).hashCode(), Prosessversjon(Navn("B"), 1).hashCode())
         assertNotEquals(Prosessversjon(Navn("A"), 1), Prosessversjon(Navn("A"), 2))
         assertNotEquals(Prosessversjon(Navn("A"), 1).hashCode(), Prosessversjon(Navn("A"), 2).hashCode())
+    }
+
+    @Test
+    fun `Kan ikke ha blankt prosessnavn`() {
+        assertThrows<IllegalArgumentException> { Prosessversjon(Navn(""), 1) }
     }
 }
