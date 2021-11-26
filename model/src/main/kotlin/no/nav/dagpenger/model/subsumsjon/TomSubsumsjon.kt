@@ -20,7 +20,7 @@ internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
 
     override fun nesteFakta(): Set<GrunnleggendeFaktum<*>> = emptySet()
 
-    override fun lokaltResultat() = throw IllegalStateException()
+    override fun lokaltResultat() = throw IllegalStateException("${this.navn} har ikke resultat")
 
     override operator fun get(indeks: Int) = throw IllegalArgumentException()
 
