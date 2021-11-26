@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger
+import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -15,7 +16,7 @@ import java.util.UUID
 internal class DagpengerService(
     private val søknadPersistence: SøknadRecord,
     rapidsConnection: RapidsConnection,
-    private val prosessVersjon: Prosessversjon = Dagpenger.VERSJON_ID
+    private val prosessVersjon: Prosessversjon = Versjon.siste(Prosess.Dagpenger)
 ) : River.PacketListener {
 
     private companion object {
