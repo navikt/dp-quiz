@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -53,28 +54,29 @@ internal object Dagpenger {
         val gjenopptak = with(søknad) {
             Seksjon("Gjenopptak", Rolle.søker, dato(`Har du hatt dagpenger i løpet av de siste 52 ukene`))
         }
-        val reellArbeidsøker = with(søknad) {
-            Seksjon(
-                "Er reell arbeidssøker",
-                Rolle.søker,
-                boolsk(`Villig til å ta hel og deltidsjobb`),
-                boolsk(`Villig til å ta arbeid i hele Norge`),
-                boolsk(`Villig til å ta alle typer arbeid`),
-                boolsk(`Villig til å ta ethvert arbeid`)
-            )
-        }
+        val reellArbeidsøker = søknad.seksjon(
+            "Er reell arbeidssøker",
+            Rolle.søker,
+            `Villig til å ta hel og deltidsjobb`,
+            `Villig til å ta arbeid i hele Norge`,
+            `Villig til å ta alle typer arbeid`,
+            `Villig til å ta ethvert arbeid`,
+        )
 
-        val unntakReellArbeidsøker = with(søknad) {
-            Seksjon(
-                "Reell arbeidssøker unntak",
+        val unntakReellArbeidsøker = søknad.seksjon(
+
+            "Reell arbeidssøker unntak",
+            Rolle.søker,
+            `Redusert helse, fysisk eller psykisk`,
+            `Bekreftelse fra relevant fagpersonell`,
+        )
+
+        val verneplikt = søknad
+            .seksjon(
+                "Har avtjent verneplikt",
                 Rolle.søker,
-                boolsk(`Redusert helse, fysisk eller psykisk`),
-                dokument(`Bekreftelse fra relevant fagpersonell`),
+                `Avtjent militærtjeneste minst 3 av siste 6 mnd`
             )
-        }
-        val verneplikt = with(søknad) {
-            Seksjon("Har avtjent verneplikt", Rolle.søker, boolsk(`Avtjent militærtjeneste minst 3 av siste 6 mnd`))
-        }
     }
 
     internal val søknadsprosess: Søknadprosess =

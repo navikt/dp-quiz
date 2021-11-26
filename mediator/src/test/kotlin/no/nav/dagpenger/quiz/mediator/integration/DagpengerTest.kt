@@ -34,7 +34,7 @@ class DagpengerTest : SøknadBesvarer() {
                     resultatPersistence = resultatPersistence,
                     rapidsConnection = it
                 )
-                DagpengerService(søknadPersistence, it, Dagpenger.VERSJON_ID)
+                DagpengerService(søknadPersistence, it)
             }
         }
     }

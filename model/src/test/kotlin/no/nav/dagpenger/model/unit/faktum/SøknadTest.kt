@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testversjon
@@ -114,6 +115,22 @@ class SøknadTest {
                 dokument faktum "whoops" id 11,
             )
         }
+    }
+
+    @Test
+    fun `Skal kunne opprette seksjoner`() {
+        val søknad = Søknad(
+            testversjon,
+            dato faktum "f3" id 3,
+            dato faktum "f4" id 4,
+            dato faktum "f5" id 5,
+            maks dato "maksdato" av 3 og 4 og 5 id 345
+        )
+
+        val seksjon1 = søknad.seksjon("f3f4", Rolle.søker, 3, 4)
+        val seksjon2 = søknad.seksjon("f3f4", Rolle.søker, 345, 5)
+        assertEquals("3,4", seksjon1.joinToString(separator = ",") { it.id })
+        assertEquals("5,345", seksjon2.joinToString(separator = ",") { it.id })
     }
 
     private fun assertIder(søknad: Søknad, vararg ider: Int) {

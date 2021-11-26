@@ -1,10 +1,8 @@
 package no.nav.dagpenger.model.unit.seksjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
-import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.helpers.Testprosess
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
@@ -42,7 +40,7 @@ class NesteSeksjonTest {
     @Test
     fun ` bug-fiks read-only fakta i seksjonen`() {
         val prototypesøknad = Søknad(
-            Prosessversjon(Testprosess.Test, 401),
+            testversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1
         )
