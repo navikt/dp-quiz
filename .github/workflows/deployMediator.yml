@@ -29,12 +29,12 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build with Gradle
-        run: ./gradlew :mediator:build --info
+        run: ./gradlew build --info
 
-      - name: Publish test results
-        uses: scacap/action-surefire-report@v1
+      - name: Publish results (unit test)
+        uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          report_paths: '**/build/test-results/test/TEST-*.xml'
+          files: "**/build/test-results/test/TEST-*.xml"
 
       - name: Set up Docker Buildx
         id: buildx
