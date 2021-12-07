@@ -8,6 +8,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.faktum.Valg
 import java.time.LocalDate
 
 class BaseFaktumFactory<T : Comparable<T>> internal constructor(
@@ -43,7 +44,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
         }
 
         object flervalg {
-            infix fun faktum(navn: String) = BaseFaktumFactory(String::class.java, navn)
+            infix fun faktum(navn: String) = BaseFaktumFactory(Valg::class.java, navn)
         }
     }
 
@@ -53,7 +54,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
         return if (alleFlervalg.isEmpty()) {
             GrunnleggendeFaktum(faktumId, navn, clazz)
         } else {
-            FlervalgFaktum(faktumId = faktumId, navn = navn, valg = alleFlervalg)
+            FlervalgFaktum(faktumId = faktumId, navn = navn, gyldigeValg = Valg(alleFlervalg)) as Faktum<T>
         }
     }
 
