@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.factory
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
+import no.nav.dagpenger.model.faktum.FlervalgFaktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
@@ -14,6 +15,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     private val navn: String
 ) : FaktumFactory<T>() {
     private val templateIder = mutableListOf<Int>()
+    private val alleFlervalg = mutableListOf<String>()
 
     companion object {
         object boolsk {
@@ -39,11 +41,21 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
         object dato {
             infix fun faktum(navn: String) = BaseFaktumFactory(LocalDate::class.java, navn)
         }
+
+        object flervalg {
+            infix fun faktum(navn: String) = BaseFaktumFactory(String::class.java, navn)
+        }
     }
 
     infix fun id(rootId: Int) = this.apply { this.rootId = rootId }
 
-    override fun faktum() = GrunnleggendeFaktum(faktumId, navn, clazz)
+    override fun faktum(): Faktum<T> {
+        return if (alleFlervalg.isEmpty()) {
+            GrunnleggendeFaktum(faktumId, navn, clazz)
+        } else {
+            FlervalgFaktum(faktumId = faktumId, navn = navn, valg = alleFlervalg)
+        }
+    }
 
     fun faktum(vararg templates: TemplateFaktum<*>) = GeneratorFaktum(faktumId, navn, templates.asList())
 
@@ -64,6 +76,11 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
         }
         GeneratorFaktum(faktumId, navn, templateIder.map { otherId -> faktumMap[FaktumId(otherId)] as TemplateFaktum<*> })
             .also { generatorfaktum -> faktumMap[faktumId] = generatorfaktum }
+    }
+
+    infix fun med(t: String): BaseFaktumFactory<T> {
+        alleFlervalg.add(t)
+        return this
     }
 
     private val faktumId get() = FaktumId(rootId).also { require(rootId > 0) { "Root id må være positiv" } }
