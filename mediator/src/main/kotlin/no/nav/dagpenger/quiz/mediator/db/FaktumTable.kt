@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.valg
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.faktum.Dokument
@@ -22,6 +23,8 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
+import no.nav.dagpenger.model.faktum.Valg
+import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.time.LocalDate
@@ -140,6 +143,32 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         avhengigheter[faktum] = avhengigeFakta
     }
 
+    override fun <R : Comparable<R>> visit(
+        faktum: ValgFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        gyldigeValg: Valg,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {
+        valgFaktum(skrivFaktum(faktum, clazz), gyldigeValg)
+    }
+
+    private fun valgFaktum(faktumId: Int, gyldigeValg: Valg) {
+        gyldigeValg.forEach { valg ->
+            using(sessionOf(dataSource)) { session ->
+                session.run(
+                    queryOf(
+                        "INSERT INTO faktum_valg (faktum_id, valg) VALUES (?, ?)".trimMargin(),
+                        faktumId,
+                        valg
+                    ).asExecute
+                )
+            }
+        }
+    }
+
     override fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
         avhengigheter.forEach { (parent, children) -> faktumFaktum(dbIder[parent]!!, children, "avhengig_faktum") }
     }
@@ -194,6 +223,7 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
                 byggMap(Dokument::class.java, 4) { navn, rootId -> dokument faktum navn id rootId }
                 byggMap(Inntekt::class.java, 5) { navn, rootId -> inntekt faktum navn id rootId }
                 byggMap(Double::class.java, 6) { navn, rootId -> desimaltall faktum navn id rootId }
+                byggMap(Valg::class.java, 7) { navn, rootId -> valg faktum navn id rootId }
             }
 
             operator fun get(clazz: Class<*>) = kodeMap[clazz] ?: throw NoSuchElementException("Ukjent klasse $clazz")

@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.valg
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.faktum.Prosessversjon
@@ -43,6 +44,7 @@ internal object SøknadEksempel1 {
         boolsk faktum "f17" id 17,
         boolsk faktum "f18" id 18,
         boolsk faktum "f19" id 19 avhengerAv 2 og 13,
+        valg faktum "f20" id 20 med "valg1" med "valg2",
         maks dato "345" av 3 og 4 og 5 id 345,
         maks dato "345213" av 345 og 2 og 13 id 345213
     )

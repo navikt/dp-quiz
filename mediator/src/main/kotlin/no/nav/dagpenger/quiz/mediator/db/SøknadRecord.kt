@@ -15,6 +15,8 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Valg
+import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
@@ -27,7 +29,12 @@ import java.util.UUID
 class SøknadRecord : SøknadPersistence {
     private val personRecord = PersonRecord()
 
-    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, prosessVersjon: Prosessversjon, uuid: UUID): Søknadprosess {
+    override fun ny(
+        identer: Identer,
+        type: Versjon.UserInterfaceType,
+        prosessVersjon: Prosessversjon,
+        uuid: UUID
+    ): Søknadprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
         return Versjon.id(prosessVersjon).søknadprosess(person, type, uuid).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
@@ -81,6 +88,7 @@ class SøknadRecord : SøknadPersistence {
             ),
             row.besvartAv
         )
+        if (row.valg != null) (faktum as ValgFaktum).rehydrer(row.valg, row.besvartAv)
     }
 
     private fun svarList(uuid: UUID): List<FaktumVerdiRow> {
@@ -100,11 +108,13 @@ class SøknadRecord : SøknadPersistence {
                                 faktum_verdi.aarlig_inntekt AS aarlig_inntekt, 
                                 besvarer.identifikator AS besvartAv,
                                 dokument.url AS url, 
-                                dokument.opplastet AS opplastet
+                                dokument.opplastet AS opplastet,
+                                valg.verdier AS valgverdier
                             FROM faktum_verdi
                             JOIN soknad_faktum ON faktum_verdi.soknad_id = soknad_faktum.soknad_id 
                                 AND faktum_verdi.faktum_id = soknad_faktum.faktum_id
                             LEFT JOIN dokument ON faktum_verdi.dokument_id = dokument.id
+                            LEFT JOIN valg ON faktum_verdi.valg_id = valg.id
                             LEFT JOIN besvarer ON faktum_verdi.besvart_av = besvarer.id
                             ORDER BY indeks""",
                     uuid
@@ -119,7 +129,8 @@ class SøknadRecord : SøknadPersistence {
                         it.stringOrNull("url"),
                         it.localDateTimeOrNull("opplastet"),
                         it.stringOrNull("besvartAv"),
-                        it.doubleOrNull("desimaltall")
+                        it.doubleOrNull("desimaltall"),
+                        it.arrayOrNull<String>("valgverdier")?.let { verdier -> Valg(*verdier) }
                     )
                 }.asList
             )
@@ -137,28 +148,27 @@ class SøknadRecord : SøknadPersistence {
         val opplastet: LocalDateTime?,
         val besvartAv: String?,
         val desimaltall: Double?,
+        val valg: Valg?,
         val id: FaktumId = if (indeks == 0) FaktumId(root_id) else FaktumId(root_id).medIndeks(indeks)
     )
 
     override fun lagre(søknad: Søknad): Boolean {
         val nyeSvar = svarMap(søknad)
         val originalSvar = svarMap(hent(søknad.uuid).søknad)
-
         slettDødeFakta(søknad, nyeSvar, originalSvar)
-        originalSvar.filterNot { (id, faktum) -> nyeSvar[id]?.svar() == faktum?.svar() }.forEach { (id, _) ->
-            val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
+        using(sessionOf(dataSource)) { session ->
+            session.transaction { transactionalSession ->
+                originalSvar.filterNot { (id, faktum) -> nyeSvar[id]?.svar() == faktum?.svar() }.forEach { (id, _) ->
+                    val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
+                    transactionalSession.run(arkiverFaktum(søknad, rootId, indeks))
+                    transactionalSession.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId))
+                }
 
-            using(sessionOf(dataSource)) { session ->
-                session.run(arkiverFaktum(søknad, rootId, indeks))
-                session.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId))
-            }
-        }
-
-        nyeSvar.filterNot { (id, _) -> originalSvar.containsKey(id) }.forEach { (id, svar) ->
-            val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
-            using(sessionOf(dataSource)) { session ->
-                session.run(opprettTemplateFaktum(indeks, søknad, rootId))
-                if (svar != null) session.run(oppdaterFaktum(svar, søknad, indeks, rootId))
+                nyeSvar.filterNot { (id, _) -> originalSvar.containsKey(id) }.forEach { (id, svar) ->
+                    val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
+                    transactionalSession.run(opprettTemplateFaktum(indeks, søknad, rootId))
+                    if (svar != null) session.run(oppdaterFaktum(svar, søknad, indeks, rootId))
+                }
             }
         }
         // TODO: burde ikke alltid returnere true?? hva hvis noe går galt som ikke kræsjer? hvorfor boolean?
@@ -169,7 +179,11 @@ class SøknadRecord : SøknadPersistence {
         faktum.id to (if (faktum.erBesvart()) faktum else null)
     }.toMap().toMutableMap()
 
-    private fun slettDødeFakta(søknad: Søknad, nyeSvar: Map<String, Faktum<*>?>, originalSvar: MutableMap<String, Faktum<*>?>) {
+    private fun slettDødeFakta(
+        søknad: Søknad,
+        nyeSvar: Map<String, Faktum<*>?>,
+        originalSvar: MutableMap<String, Faktum<*>?>
+    ) {
         originalSvar.keys.toSet()
             .subtract(nyeSvar.keys.toSet())
             .map { FaktumId(it).reflection { rootId, indeks -> Triple(rootId, indeks, it) } }
@@ -205,14 +219,40 @@ class SøknadRecord : SøknadPersistence {
 
     private fun sqlToInsert(svar: Any?, besvartAv: String?): String {
         return when (svar) {
+            //language=PostgreSQL
             null -> """UPDATE faktum_verdi  SET boolsk = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
+            //language=PostgreSQL
             is Boolean -> """UPDATE faktum_verdi  SET boolsk = $svar , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
-            is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
-            is LocalDate -> """UPDATE faktum_verdi  SET dato = '${tilPostgresDato(svar)}' , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
+            //language=PostgreSQL
+            is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , besvart_av = ${
+            besvart(
+                besvartAv
+            )
+            } , opprettet=NOW() AT TIME ZONE 'utc' """
+            //language=PostgreSQL
+            is LocalDate -> """UPDATE faktum_verdi  SET dato = '${tilPostgresDato(svar)}' , besvart_av = ${
+            besvart(
+                besvartAv
+            )
+            } , opprettet=NOW() AT TIME ZONE 'utc' """
+            //language=PostgreSQL
             is Int -> """UPDATE faktum_verdi  SET heltall = $svar, besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
+            //language=PostgreSQL
             is Double -> """UPDATE faktum_verdi  SET desimaltall = $svar, besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
-            is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
-|                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id) , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
+            //language=PostgreSQL
+            is Dokument -> """WITH dokument_inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
+|                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM dokument_inserted_id) , besvart_av = ${
+            besvart(
+                besvartAv
+            )
+            } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
+            //language=PostgreSQL
+            is Valg -> """WITH valg_inserted_id AS (INSERT INTO valg (verdier) VALUES ('{${svar.joinToString { """"$it"""" }}}') returning id) 
+|                               UPDATE faktum_verdi SET valg_id = (SELECT id FROM valg_inserted_id) , besvart_av = ${
+            besvart(
+                besvartAv
+            )
+            } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
             else -> throw IllegalArgumentException("Ugyldig type: ${svar.javaClass}")
         } + """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, soknad, faktum
             WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id AND soknad.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
@@ -243,13 +283,14 @@ class SøknadRecord : SøknadPersistence {
 
     private fun arkiverFaktum(søknad: Søknad, rootId: Int, indeks: Int): ExecuteQueryAction =
         queryOf( //language=PostgreSQL
-            """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, boolsk, aarlig_inntekt, dokument_id, dato, heltall, opprettet, besvart_av)
+            """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, boolsk, aarlig_inntekt, dokument_id, valg_id, dato, heltall, opprettet, besvart_av)
             SELECT soknad_id,
                    faktum_verdi.faktum_id,
                    faktum_verdi.indeks,
                    faktum_verdi.boolsk,
                    faktum_verdi.aarlig_inntekt,
                    faktum_verdi.dokument_id,
+                   faktum_verdi.valg_id,
                    faktum_verdi.dato,
                    faktum_verdi.heltall,
                    faktum_verdi.opprettet,

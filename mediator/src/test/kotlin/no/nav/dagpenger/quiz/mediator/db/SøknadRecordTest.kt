@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.Valg
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
@@ -56,6 +57,9 @@ internal class SøknadRecordTest {
             originalSøknadprosess.inntekt(6).besvar(10000.årlig)
             originalSøknadprosess.heltall(16).besvar(123)
             originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()))
+
+            originalSøknadprosess.valg(20).besvar(Valg("valg1"))
+            originalSøknadprosess.desimaltall(21).besvar(200.0)
 
             hentFørsteSøknad()
         }
@@ -113,6 +117,16 @@ internal class SøknadRecordTest {
     }
 
     @Test
+    fun `valg faktum med verdi`() {
+        Postgres.withMigratedDb {
+            byggOriginalSøknadprosess()
+            originalSøknadprosess.valg(20).besvar(Valg("valg1", "valg2"))
+            hentFørsteSøknad()
+            assertEquals(Valg("valg1", "valg2"), rehydrertSøknadprosess.valg(20).svar())
+        }
+    }
+
+    @Test
     fun `Maks dato`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
@@ -134,6 +148,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.heltall(16).besvar(123, ident)
             originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()), ident)
             originalSøknadprosess.boolsk(1).besvar(true, ident)
+            originalSøknadprosess.valg(20).besvar(Valg("valg1"), ident)
 
             hentFørsteSøknad()
         }
