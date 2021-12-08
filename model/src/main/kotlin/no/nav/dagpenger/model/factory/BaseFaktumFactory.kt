@@ -17,7 +17,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     private val erValgFaktum: Boolean = false
 ) : FaktumFactory<T>() {
     private val templateIder = mutableListOf<Int>()
-    private val gyldigeValg = mutableListOf<String>()
+    private val gyldigeValg = mutableSetOf<String>()
 
     companion object {
         object boolsk {

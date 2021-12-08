@@ -22,7 +22,7 @@ class ValgFaktum internal constructor(
         }
         ) {
             super.besvar(valg, besvarer)
-        } else throw IllegalArgumentException("Valg $valg er ikke gyldig")
+        } else throw IllegalArgumentException("Valg $valg er et ikke gyldig valg")
     }
 
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): ValgFaktum {

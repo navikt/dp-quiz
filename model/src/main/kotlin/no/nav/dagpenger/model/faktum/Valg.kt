@@ -1,8 +1,8 @@
 package no.nav.dagpenger.model.faktum
 
-class Valg internal constructor(private val verdier: List<String> = mutableListOf()) : Comparable<Valg>, List<String> by verdier {
+class Valg internal constructor(private val verdier: Set<String>) : Comparable<Valg>, Set<String> by verdier {
 
-    constructor(vararg verdier: String) : this(verdier.toList())
+    constructor(vararg verdier: String) : this(verdier.toSet())
 
     override fun compareTo(other: Valg): Int {
         return verdier.size.compareTo(other.verdier.size)
