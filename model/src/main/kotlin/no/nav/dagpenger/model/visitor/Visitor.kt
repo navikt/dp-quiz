@@ -12,6 +12,8 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
+import no.nav.dagpenger.model.faktum.Valg
+import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -82,6 +84,29 @@ interface FaktumVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R
+    ) {
+    }
+
+    fun <R : Comparable<R>> visit(
+        faktum: ValgFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        gyldigeValg: Valg,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {
+    }
+
+    fun <R : Comparable<R>> visit(
+        faktum: ValgFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        gyldigeValg: Valg,
+        roller: Set<Rolle>,
+        clazz: Class<R>,
+        svar: Valg
     ) {
     }
 
