@@ -7,11 +7,12 @@ import kotlin.test.assertNotEquals
 
 class ValgTest {
     @Test
-    fun `sjekke likhet`(){
-        val valg1 = Valg(listOf("valg1", "valg2"))
-        val valg2 = Valg(listOf("valg3", "valg4"))
+    fun `sjekke likhet`() {
+        val valg1 = Valg("valg1", "valg2")
+        val valg2 = Valg("valg3", "valg4")
 
         assertEquals(valg1, valg1)
+        assertEquals(Valg("valg1", "valg2"), Valg("valg2", "valg1"))
         assertNotEquals(valg1, Any())
         assertNotEquals(valg1, valg2)
         assertEquals(valg1.hashCode(), valg1.hashCode())

@@ -111,6 +111,11 @@ class Søknad private constructor(
 
     override infix fun generator(rootId: Int) = generator(FaktumId(rootId))
     override infix fun generator(id: String) = generator(FaktumId(id))
+    override fun valg(rootId: Int) = flervalg(FaktumId(rootId))
+
+    override fun valg(id: String) = flervalg(FaktumId(id))
+    private infix fun flervalg(faktumId: FaktumId) = id(faktumId) as ValgFaktum
+
     internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
 
     fun bygg(person: Person, prosessVersjon: Prosessversjon, uuid: UUID = UUID.randomUUID()): Søknad {

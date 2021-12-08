@@ -36,6 +36,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
         private val prioritet = listOf(
             GrunnleggendeFaktum::class.java,
+            ValgFaktum::class.java,
             TemplateFaktum::class.java,
             GeneratorFaktum::class.java,
             UtledetFaktum::class.java
