@@ -25,7 +25,7 @@ import java.time.LocalDate
 internal class SøknadRecordTest {
     companion object {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
-        private const val expectedFaktaCount = 21
+        private const val expectedFaktaCount = 23
     }
 
     private lateinit var originalSøknadprosess: Søknadprosess
@@ -57,7 +57,6 @@ internal class SøknadRecordTest {
             originalSøknadprosess.inntekt(6).besvar(10000.årlig)
             originalSøknadprosess.heltall(16).besvar(123)
             originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()))
-
             originalSøknadprosess.valg(20).besvar(Valg("valg1"))
             originalSøknadprosess.desimaltall(21).besvar(200.0)
 

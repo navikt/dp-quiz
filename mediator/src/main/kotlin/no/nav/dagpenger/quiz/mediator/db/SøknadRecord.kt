@@ -167,7 +167,7 @@ class SøknadRecord : SøknadPersistence {
                 nyeSvar.filterNot { (id, _) -> originalSvar.containsKey(id) }.forEach { (id, svar) ->
                     val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
                     transactionalSession.run(opprettTemplateFaktum(indeks, søknad, rootId))
-                    if (svar != null) session.run(oppdaterFaktum(svar, søknad, indeks, rootId))
+                    if (svar != null) transactionalSession.run(oppdaterFaktum(svar, søknad, indeks, rootId))
                 }
             }
         }

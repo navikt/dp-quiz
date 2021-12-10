@@ -18,7 +18,7 @@ import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
-import no.nav.dagpenger.quiz.mediator.helpers.assertDeepEquals
+import no.nav.dagpenger.quiz.mediator.helpers.assertJsonEquals
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -168,7 +168,7 @@ internal class AvhengigeFaktaTest {
         søknadRecord.lagre(originalSøknadprosess.søknad)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         rehydrertSøknadprosess = søknadRecord.hent(uuid, userInterfaceType)
-        assertDeepEquals(originalSøknadprosess, rehydrertSøknadprosess)
+        assertJsonEquals(originalSøknadprosess, rehydrertSøknadprosess)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {
