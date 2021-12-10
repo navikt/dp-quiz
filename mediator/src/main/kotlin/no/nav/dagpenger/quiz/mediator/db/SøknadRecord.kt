@@ -224,35 +224,39 @@ class SøknadRecord : SøknadPersistence {
             //language=PostgreSQL
             is Boolean -> """UPDATE faktum_verdi  SET boolsk = $svar , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
             //language=PostgreSQL
-            is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , besvart_av = ${
-            besvart(
-                besvartAv
-            )
-            } , opprettet=NOW() AT TIME ZONE 'utc' """
+            is Inntekt ->
+                """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , besvart_av = ${
+                besvart(
+                    besvartAv
+                )
+                } , opprettet=NOW() AT TIME ZONE 'utc' """
             //language=PostgreSQL
-            is LocalDate -> """UPDATE faktum_verdi  SET dato = '${tilPostgresDato(svar)}' , besvart_av = ${
-            besvart(
-                besvartAv
-            )
-            } , opprettet=NOW() AT TIME ZONE 'utc' """
+            is LocalDate ->
+                """UPDATE faktum_verdi  SET dato = '${tilPostgresDato(svar)}' , besvart_av = ${
+                besvart(
+                    besvartAv
+                )
+                } , opprettet=NOW() AT TIME ZONE 'utc' """
             //language=PostgreSQL
             is Int -> """UPDATE faktum_verdi  SET heltall = $svar, besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
             //language=PostgreSQL
             is Double -> """UPDATE faktum_verdi  SET desimaltall = $svar, besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
             //language=PostgreSQL
-            is Dokument -> """WITH dokument_inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
+            is Dokument ->
+                """WITH dokument_inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
 |                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM dokument_inserted_id) , besvart_av = ${
-            besvart(
-                besvartAv
-            )
-            } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
+                besvart(
+                    besvartAv
+                )
+                } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
             //language=PostgreSQL
-            is Valg -> """WITH valg_inserted_id AS (INSERT INTO valg (verdier) VALUES ('{${svar.joinToString { """"$it"""" }}}') returning id) 
+            is Valg ->
+                """WITH valg_inserted_id AS (INSERT INTO valg (verdier) VALUES ('{${svar.joinToString { """"$it"""" }}}') returning id) 
 |                               UPDATE faktum_verdi SET valg_id = (SELECT id FROM valg_inserted_id) , besvart_av = ${
-            besvart(
-                besvartAv
-            )
-            } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
+                besvart(
+                    besvartAv
+                )
+                } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
             else -> throw IllegalArgumentException("Ugyldig type: ${svar.javaClass}")
         } + """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, soknad, faktum
             WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id AND soknad.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""

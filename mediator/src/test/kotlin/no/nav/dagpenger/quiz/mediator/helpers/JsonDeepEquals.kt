@@ -121,12 +121,14 @@ private class GrunnleggendeFaktumVisitor(
 private val module = SimpleModule()
     .also {
         it.addSerializer(
-            FaktaRegel::class.java, FaktaRegelSerializer()
+            FaktaRegel::class.java,
+            FaktaRegelSerializer()
         )
     }
     .also {
         it.addSerializer(
-            GrunnleggendeFaktum::class.java, GrunnleggendeFaktumSerializer()
+            GrunnleggendeFaktum::class.java,
+            GrunnleggendeFaktumSerializer()
         )
     }
 
