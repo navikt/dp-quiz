@@ -18,7 +18,6 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -201,7 +200,9 @@ class SøknadRecord : SøknadPersistence {
     ).asExecute
 
     private fun oppdaterFaktum(faktum: Faktum<*>?, søknad: Søknad, indeks: Int, rootId: Int): UpdateQueryAction =
-        queryOf(sqlToInsert(faktum?.svar(), faktum?.besvartAv()), søknad.uuid, indeks, rootId).asUpdate
+        queryOf(sqlToInsert(faktum?.svar(), faktum?.besvartAv()), søknad.uuid, indeks, rootId).asUpdate.also {
+            println(it.query)
+        }
 
     private fun sqlToInsert(svar: Any?, besvartAv: String?): String {
         return when (svar) {

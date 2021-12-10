@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.helpers
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
@@ -44,7 +45,8 @@ internal object SøknadEksempel1 {
         boolsk faktum "f18" id 18,
         boolsk faktum "f19" id 19 avhengerAv 2 og 13,
         maks dato "345" av 3 og 4 og 5 id 345,
-        maks dato "345213" av 345 og 2 og 13 id 345213
+        maks dato "345213" av 345 og 2 og 13 id 345213,
+        desimaltall faktum "f20" id 20
     )
 
     private val webPrototypeSøknad = Søknadprosess(
