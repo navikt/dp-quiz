@@ -14,7 +14,7 @@ import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
-import no.nav.dagpenger.quiz.mediator.helpers.assertJsonEquals
+import no.nav.dagpenger.quiz.mediator.helpers.assertDeepEquals
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -24,7 +24,7 @@ import java.time.LocalDate
 internal class SøknadRecordTest {
     companion object {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
-        private const val expectedFaktaCount = 22
+        private const val expectedFaktaCount = 21
     }
 
     private lateinit var originalSøknadprosess: Søknadprosess
@@ -51,12 +51,11 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
-            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()))
-            originalSøknadprosess.boolsk(1).besvar(true)
+            originalSøknadprosess.boolsk("1").besvar(true)
             originalSøknadprosess.dato(2).besvar(LocalDate.now())
             originalSøknadprosess.inntekt(6).besvar(10000.årlig)
             originalSøknadprosess.heltall(16).besvar(123)
-            originalSøknadprosess.desimaltall(20).besvar(200.0)
+            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()))
 
             hentFørsteSøknad()
         }
@@ -156,7 +155,7 @@ internal class SøknadRecordTest {
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         søknadRecord = SøknadRecord()
         rehydrertSøknadprosess = søknadRecord.hent(uuid, userInterfaceType)
-        assertJsonEquals(originalSøknadprosess, rehydrertSøknadprosess)
+        assertDeepEquals(originalSøknadprosess, rehydrertSøknadprosess)
     }
 
     private fun byggOriginalSøknadprosess() {
