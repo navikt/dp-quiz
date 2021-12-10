@@ -10,9 +10,12 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.dagpenger.model.factory.FaktaRegel
+import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.visitor.FaktumVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
 
 @JsonIgnoreProperties("avhengigeFakta", "avhengerAvFakta")
@@ -34,7 +37,98 @@ private class FaktaRegelSerializer : JsonSerializer<FaktaRegel<*>?>() {
     }
 }
 
-private val module = SimpleModule().also { it.addSerializer(FaktaRegel::class.java, FaktaRegelSerializer()) }
+private class GrunnleggendeFaktumSerializer : JsonSerializer<GrunnleggendeFaktum<*>>() {
+    override fun serialize(
+        faktum: GrunnleggendeFaktum<*>,
+        jsonGenerator: com.fasterxml.jackson.core.JsonGenerator,
+        serializers: SerializerProvider?
+    ) {
+        GrunnleggendeFaktumVisitor(faktum, jsonGenerator)
+    }
+}
+
+private class GrunnleggendeFaktumVisitor(
+    val faktum: GrunnleggendeFaktum<*>,
+    private val jsonGenerator: com.fasterxml.jackson.core.JsonGenerator
+) : FaktumVisitor {
+
+    init {
+        faktum.accept(this)
+    }
+
+    override fun <R : Comparable<R>> visit(
+        faktum: GrunnleggendeFaktum<R>,
+        tilstand: Faktum.FaktumTilstand,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {
+        jsonGenerator.writeStartObject()
+        skrivStandardFelt(id, tilstand, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
+        jsonGenerator.writeEndObject()
+    }
+
+    override fun <R : Comparable<R>> visit(
+        faktum: GrunnleggendeFaktum<R>,
+        tilstand: Faktum.FaktumTilstand,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>,
+        svar: R,
+        besvartAv: String?
+    ) {
+        jsonGenerator.writeStartObject()
+        skrivStandardFelt(id, tilstand, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
+
+        jsonGenerator.writeStringField("gjeldendeSvar", svar.toString())
+        jsonGenerator.writeEndObject()
+    }
+
+    private fun <R : Comparable<R>> skrivStandardFelt(
+        id: String,
+        tilstand: Faktum.FaktumTilstand,
+        clazz: Class<R>,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
+        roller: Set<Rolle>
+    ) {
+        jsonGenerator.writeStringField("id", id)
+        jsonGenerator.writeStringField("tilstand", tilstand.name)
+        jsonGenerator.writeStringField("clazz", clazz.toString())
+        jsonGenerator.writeArrayFieldStart("avhengigeFakta")
+        avhengigeFakta.forEach { jsonGenerator.writeString(it.id) }
+        jsonGenerator.writeEndArray()
+        jsonGenerator.writeArrayFieldStart("avhengerAvFakta")
+        avhengerAvFakta.forEach { jsonGenerator.writeString(it.id) }
+        jsonGenerator.writeEndArray()
+        jsonGenerator.writeArrayFieldStart("godkjenner")
+        godkjenner.forEach { jsonGenerator.writeString(it.id) }
+        jsonGenerator.writeEndArray()
+
+        jsonGenerator.writeArrayFieldStart("roller")
+        roller.forEach { jsonGenerator.writeString(it.typeNavn) }
+        jsonGenerator.writeEndArray()
+    }
+}
+
+private val module = SimpleModule()
+    .also {
+        it.addSerializer(
+            FaktaRegel::class.java, FaktaRegelSerializer()
+        )
+    }
+    .also {
+        it.addSerializer(
+            GrunnleggendeFaktum::class.java, GrunnleggendeFaktumSerializer()
+        )
+    }
 
 private val objectMapper = jacksonObjectMapper()
     .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY)

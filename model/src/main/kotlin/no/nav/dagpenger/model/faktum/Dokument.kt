@@ -20,4 +20,8 @@ class Dokument(private val lastOppTidsstempel: LocalDateTime, private val url: S
     override fun equals(other: Any?) = other is Dokument && this.equals(other)
 
     private fun equals(other: Dokument) = lastOppTidsstempel == other.lastOppTidsstempel && url == other.url
+
+    override fun toString(): String {
+        return "Dokument(lastOppTidsstempel=$lastOppTidsstempel, url='$url')"
+    }
 }
