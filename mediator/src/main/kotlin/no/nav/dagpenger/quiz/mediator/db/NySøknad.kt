@@ -122,6 +122,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
         gyldigeValg: Valg,
         roller: Set<Rolle>,
         clazz: Class<R>

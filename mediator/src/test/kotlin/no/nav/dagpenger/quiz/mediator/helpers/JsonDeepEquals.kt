@@ -3,6 +3,7 @@ package no.nav.dagpenger.quiz.mediator.helpers
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.PropertyAccessor
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.SerializerProvider
@@ -15,6 +16,8 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.faktum.Valg
+import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
 
@@ -30,30 +33,71 @@ private class GeneratorFaktumMixin
 private class FaktaRegelSerializer : JsonSerializer<FaktaRegel<*>?>() {
     override fun serialize(
         regel: FaktaRegel<*>?,
-        jsonGenerator: com.fasterxml.jackson.core.JsonGenerator,
+        jsonGenerator: JsonGenerator,
         serializers: SerializerProvider?
     ) {
         regel?.let { jsonGenerator.writeString(it.navn) }
     }
 }
 
-private class GrunnleggendeFaktumSerializer : JsonSerializer<GrunnleggendeFaktum<*>>() {
+private class FaktumSerializer : JsonSerializer<Faktum<*>>() {
     override fun serialize(
-        faktum: GrunnleggendeFaktum<*>,
-        jsonGenerator: com.fasterxml.jackson.core.JsonGenerator,
+        faktum: Faktum<*>,
+        jsonGenerator: JsonGenerator,
         serializers: SerializerProvider?
     ) {
-        GrunnleggendeFaktumVisitor(faktum, jsonGenerator)
+        FaktumVisitor(faktum, jsonGenerator)
     }
 }
 
-private class GrunnleggendeFaktumVisitor(
-    val faktum: GrunnleggendeFaktum<*>,
-    private val jsonGenerator: com.fasterxml.jackson.core.JsonGenerator
+private class FaktumVisitor(
+    val faktum: Faktum<*>,
+    private val jsonGenerator: JsonGenerator
 ) : FaktumVisitor {
 
     init {
         faktum.accept(this)
+    }
+
+    override fun <R : Comparable<R>> visit(
+        faktum: ValgFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
+        gyldigeValg: Valg,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {
+        jsonGenerator.writeStartObject()
+        jsonGenerator.skrivStandardFelt(id, Faktum.FaktumTilstand.Ukjent, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
+        jsonGenerator.writeArrayFieldStart("gyldigeValg")
+        gyldigeValg.forEach { jsonGenerator.writeString(it) }
+        jsonGenerator.writeEndArray()
+        jsonGenerator.writeEndObject()
+    }
+
+    override fun <R : Comparable<R>> visit(
+        faktum: ValgFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
+        gyldigeValg: Valg,
+        roller: Set<Rolle>,
+        clazz: Class<R>,
+        svar: Valg
+    ) {
+        jsonGenerator.writeStartObject()
+        jsonGenerator.skrivStandardFelt(id, Faktum.FaktumTilstand.Kjent, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
+        jsonGenerator.writeArrayFieldStart("gyldigeValg")
+        gyldigeValg.forEach { jsonGenerator.writeString(it) }
+        jsonGenerator.writeEndArray()
+        jsonGenerator.writeArrayFieldStart("gjeldendeSvar")
+        svar.forEach { jsonGenerator.writeString(it) }
+        jsonGenerator.writeEndArray()
+
+        jsonGenerator.writeEndObject()
     }
 
     override fun <R : Comparable<R>> visit(
@@ -67,7 +111,7 @@ private class GrunnleggendeFaktumVisitor(
         clazz: Class<R>
     ) {
         jsonGenerator.writeStartObject()
-        skrivStandardFelt(id, tilstand, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
+        jsonGenerator.skrivStandardFelt(id, tilstand, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
         jsonGenerator.writeEndObject()
     }
 
@@ -84,16 +128,15 @@ private class GrunnleggendeFaktumVisitor(
         besvartAv: String?
     ) {
         jsonGenerator.writeStartObject()
-        skrivStandardFelt(id, tilstand, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
-
+        jsonGenerator.skrivStandardFelt(id, tilstand, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
         jsonGenerator.writeStringField("gjeldendeSvar", svar.toString())
         jsonGenerator.writeEndObject()
     }
 
-    private fun <R : Comparable<R>> skrivStandardFelt(
+    private fun JsonGenerator.skrivStandardFelt(
         id: String,
         tilstand: Faktum.FaktumTilstand,
-        clazz: Class<R>,
+        clazz: Class<*>,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
         godkjenner: Set<Faktum<*>>,
@@ -127,8 +170,8 @@ private val module = SimpleModule()
     }
     .also {
         it.addSerializer(
-            GrunnleggendeFaktum::class.java,
-            GrunnleggendeFaktumSerializer()
+            Faktum::class.java,
+            FaktumSerializer()
         )
     }
 

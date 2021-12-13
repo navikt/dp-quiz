@@ -45,10 +45,10 @@ class ValgFaktum internal constructor(
     }
 
     override fun acceptUtenSvar(visitor: FaktumVisitor) {
-        visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, gyldigeValg, roller, clazz())
+        visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, godkjenner, gyldigeValg, roller, clazz())
     }
 
     override fun acceptMedSvar(visitor: FaktumVisitor) {
-        visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, gyldigeValg, roller, clazz(), gjeldendeSvar)
+        visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, godkjenner, gyldigeValg, roller, clazz(), gjeldendeSvar)
     }
 }
