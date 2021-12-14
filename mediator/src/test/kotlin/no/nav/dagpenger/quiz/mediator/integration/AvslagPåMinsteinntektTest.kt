@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
+import io.getunleash.FakeUnleash
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
@@ -52,6 +53,9 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
 
     @BeforeEach
     fun setup() {
+        val unleash = FakeUnleash().also {
+            it.enableAll()
+        }
         Postgres.withMigratedDb {
             AvslagPåMinsteinntektOppsett.registrer { søknad -> FaktumTable(søknad) }
             val søknadPersistence = SøknadRecord()
@@ -62,7 +66,7 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
                     resultatPersistence = resultatPersistence,
                     rapidsConnection = it
                 )
-                AvslagPåMinsteinntektService(søknadPersistence, it, AvslagPåMinsteinntektOppsett.VERSJON_ID)
+                AvslagPåMinsteinntektService(søknadPersistence, it, unleash, AvslagPåMinsteinntektOppsett.VERSJON_ID)
             }
         }
     }

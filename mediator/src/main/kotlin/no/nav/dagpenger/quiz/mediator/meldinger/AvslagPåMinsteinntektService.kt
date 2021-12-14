@@ -46,7 +46,7 @@ internal class AvslagPåMinsteinntektService(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        if (unleash.isEnabled(FEATURE_MOTTA_SØKNAD)) {
+        if (!unleash.isEnabled(FEATURE_MOTTA_SØKNAD)) {
             log.info { "Behandler ikke id ${packet["søknadsData.brukerBehandlingId"].asText()}, toggle $FEATURE_MOTTA_SØKNAD er av " }
             return
         }
