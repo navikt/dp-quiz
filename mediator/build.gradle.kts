@@ -18,7 +18,7 @@ dependencies {
     implementation(Kotlin.Logging.kotlinLogging)
 
     // unleash
-    implementation("no.finn.unleash:unleash-client-java:4.2.1") {
+    implementation("io.getunleash:unleash-client-java:5.0.2") {
         exclude("org.apache.logging.log4j")
     }
 

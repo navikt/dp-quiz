@@ -33,6 +33,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
     override fun onStartup(rapidsConnection: RapidsConnection) {
         runMigration()
             .also {
+                val unleash = setupUnleash(Configuration.config["unleash.url"]!!)
                 val søknadRecord = SøknadRecord()
                 val resultatRecord = ResultatRecord()
                 AvslagPåMinsteinntektOppsett.registrer { søknad -> FaktumTable(søknad) }
