@@ -15,7 +15,17 @@ object MinstearbeidsinntektFaktorStrategi {
             19.februar(2021),
             30.september(2021),
             Faktor(0.75, 2.25)
+        ),
+        MinstearbeidsinntektTerskel(
+            19.februar(2021),
+            30.september(2021),
+            Faktor(0.75, 2.25)
         ), // Forskrift § 2-2.Midlertidig krav til minsteinntekt – unntak fra folketrygdloven § 4-4
+        MinstearbeidsinntektTerskel(
+            22.desember(2021), // TODO: Sjekke at datoen er riktig
+            28.februar(2022),
+            Faktor(0.75, 2.25)
+        ),
         MinstearbeidsinntektTerskel(
             LocalDate.MIN,
             LocalDate.MAX,
