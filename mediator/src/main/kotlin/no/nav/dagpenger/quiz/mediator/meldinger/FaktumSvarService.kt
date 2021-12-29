@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
+import jdk.internal.org.jline.utils.Colors.s
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
@@ -51,6 +52,10 @@ internal class FaktumSvarService(
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
+        if(søknadUuid == UUID.fromString("a4338941-7b73-45c0-863f-a83c0f5f702c")) {
+            log.warn { "Skipper søknad $søknadUuid"  }
+            return
+        }
         val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
         if (fakta.isEmpty()) return
 
