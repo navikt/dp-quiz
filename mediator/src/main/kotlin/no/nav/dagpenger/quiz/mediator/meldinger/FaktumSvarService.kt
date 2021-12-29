@@ -54,23 +54,28 @@ internal class FaktumSvarService(
         val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
         if (fakta.isEmpty()) return
 
-        withMDC(
-            mapOf(
-                "behovId" to UUID.fromString(packet["@id"].asText()).toString(),
-                "soknadUuid" to søknadUuid.toString()
-            )
-        ) {
-            log.info { "Mottok ny(e) fakta (${fakta.joinToString(",") { it["id"].asText() }}) for $søknadUuid" }
-            sikkerlogg.info { packet.toJson() }
+        try {
+            withMDC(
+                mapOf(
+                    "behovId" to UUID.fromString(packet["@id"].asText()).toString(),
+                    "soknadUuid" to søknadUuid.toString()
+                )
+            ) {
+                log.info { "Mottok ny(e) fakta (${fakta.joinToString(",") { it["id"].asText() }}) for $søknadUuid" }
+                sikkerlogg.info { packet.toJson() }
 
-            val søknadprosess = søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web)
-            besvarFakta(fakta, søknadprosess)
+                val søknadprosess = søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web)
+                besvarFakta(fakta, søknadprosess)
 
-            if (søknadprosess.erFerdig()) {
-                sendResultat(søknadprosess, context)
-            } else {
-                sendNesteSeksjon(søknadprosess, context)
+                if (søknadprosess.erFerdig()) {
+                    sendResultat(søknadprosess, context)
+                } else {
+                    sendNesteSeksjon(søknadprosess, context)
+                }
             }
+        } catch (e: Exception) {
+            log.error(e) { "Kunne ikke lagre faktum for søknad $søknadUuid" }
+            throw e
         }
     }
 
