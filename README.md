@@ -47,3 +47,38 @@ Spørsmål knyttet til koden eller prosjektet kan rettes mot:
 ## For NAV-ansatte
 
 Interne henvendelser kan sendes via Slack i kanalen #dagpenger.
+
+
+# HOWTOS
+
+## Hente faktumverdier gitt en søknad
+
+```postgresql
+
+WITH soknad_faktum AS (SELECT faktum.id as faktum_id, faktum.root_id AS root_id, soknad.id AS soknad_id
+                       FROM soknad,
+                            faktum
+                       WHERE faktum.versjon_id = soknad.versjon_id
+                         AND faktum.regel IS NULL
+                         AND soknad.uuid = '<søknad_uuid>'::uuid)
+SELECT soknad_faktum.root_id       as root_id,
+       faktum_verdi.faktum_id      as faktum_id,
+       n.navn                      as navn,
+       faktum_verdi.indeks         as indeks,
+       faktum_verdi.heltall        AS heltall,
+       faktum_verdi.desimaltall    AS desimaltall,
+       faktum_verdi.boolsk         AS boolsk,
+       faktum_verdi.dato           AS dato,
+       faktum_verdi.aarlig_inntekt AS aarlig_inntekt,
+       besvarer.identifikator      AS besvartAv,
+       dokument.url                AS url,
+       dokument.opplastet          AS opplastet
+FROM faktum_verdi
+         JOIN soknad_faktum ON faktum_verdi.soknad_id = soknad_faktum.soknad_id
+    AND faktum_verdi.faktum_id = soknad_faktum.faktum_id
+         LEFT JOIN dokument ON faktum_verdi.dokument_id = dokument.id
+
+         LEFT JOIN besvarer ON faktum_verdi.besvart_av = besvarer.id
+         LEFT JOIN navn n on faktum_verdi.faktum_id = n.id
+ORDER BY indeks;
+```
