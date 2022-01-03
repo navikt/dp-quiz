@@ -13,23 +13,39 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class ValgFaktumTest {
+    val søknad = Søknad(
+        testversjon,
+        valg faktum "valg" id 1 med "valg1" med "valg2",
+    ).testSøknadprosess()
 
     @Test
-    fun `FlervalgFaktum - Støtter å ta i mot predefinerte svarternativer`() {
-        val søknad = Søknad(
-            testversjon,
-            valg faktum "valg" id 1 med "valg1" med "valg2",
-        ).testSøknadprosess()
+    fun `Skal kun være lov å svare med gyldige valg`(){
         val valgFaktum = søknad valg 1
 
-        assertFalse { valgFaktum.erBesvart() }
         assertThrows<IllegalArgumentException> { valgFaktum.besvar(Valg("bla")) }
         assertDoesNotThrow { valgFaktum.besvar(Valg("valg1")) }
         assertDoesNotThrow { valgFaktum.besvar(Valg("valg2")) }
-        assertTrue { valgFaktum.erBesvart() }
-        assertEquals(Valg("valg2"), valgFaktum.svar())
+    }
+
+    @Test
+    fun `Skal kunne besvare valgFaktum med flere valg`() {
+        val valgFaktum = søknad valg 1
+
+        assertFalse { valgFaktum.erBesvart() }
         valgFaktum.besvar(Valg("valg2", "valg1"))
         assertEquals(Valg("valg1", "valg2"), valgFaktum.svar())
+        assertTrue { valgFaktum.erBesvart() }
+    }
+
+    @Test
+    fun `Besvare et valgFaktum med bare ett svar`(){
+        val valgFaktum = søknad valg 1
+        val valg = Valg("valg1")
+
+        assertFalse { valgFaktum.erBesvart() }
+        assertDoesNotThrow { valgFaktum.besvar(valg) }
+        assertEquals(valg, valgFaktum.svar())
+        assertTrue { valgFaktum.erBesvart() }
     }
 
     @Test
