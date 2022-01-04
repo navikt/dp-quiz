@@ -10,18 +10,18 @@ import kotlin.test.assertEquals
 
 internal class JsonNodeExtensionsKtTest {
 
-    private val jsonMedEnListe = """
+    private val jsonMedSvarliste = """
 {
-  "liste": [
+  "svar": [
       "valg1",
       "valg2"
   ]
 }
     """.trimIndent()
 
-    private val jsonMedTomListe = """
+    private val jsonMedTomSvarliste = """
 {
-  "liste": []
+  "svar": []
 }
     """.trimIndent()
 
@@ -30,20 +30,20 @@ internal class JsonNodeExtensionsKtTest {
     @Test
     fun `Skal kunne konvertere en JsonNode til et Valg`() {
         val expectedValg = Valg("valg1", "valg2")
-        val jsonNodeMedListe = objectMapper.readValue<JsonNode>(jsonMedEnListe)
+        val faktumNodeMedSvarliste = objectMapper.readValue<JsonNode>(jsonMedSvarliste)
 
-        val jsonListe = jsonNodeMedListe["liste"]
-        val valg = jsonListe.asValg()
+        val svarNode = faktumNodeMedSvarliste["svar"]
+        val valg = svarNode.asValg()
 
         assertEquals(expectedValg, valg)
     }
 
     @Test
     fun `Skal ikke kunne opprette Valg uten svaralternativer`() {
-        val jsonNodeUtenInnhold = objectMapper.readValue<JsonNode>(jsonMedTomListe)
+        val faktumNodeMedTomSvarliste = objectMapper.readValue<JsonNode>(jsonMedTomSvarliste)
 
-        val tomJsonListe = jsonNodeUtenInnhold["liste"]
+        val svarMedTomListe = faktumNodeMedTomSvarliste["svar"]
 
-        assertThrows<IllegalArgumentException> { tomJsonListe.asValg() }
+        assertThrows<IllegalArgumentException> { svarMedTomListe.asValg() }
     }
 }

@@ -19,7 +19,7 @@ internal class ValgFaktumTest {
     ).testSøknadprosess()
 
     @Test
-    fun `Skal kun være lov å svare med gyldige valg`(){
+    fun `Skal kun være lov å svare med gyldige valg`() {
         val valgFaktum = søknad valg 1
 
         assertThrows<IllegalArgumentException> { valgFaktum.besvar(Valg("bla")) }
@@ -38,7 +38,7 @@ internal class ValgFaktumTest {
     }
 
     @Test
-    fun `Besvare et valgFaktum med bare ett svar`(){
+    fun `Besvare et valgFaktum med bare ett svar`() {
         val valgFaktum = søknad valg 1
         val valg = Valg("valg1")
 
