@@ -132,6 +132,7 @@ internal class FaktumSvarService(
             "double" -> søknadprosess.desimaltall(faktumId).besvar(svar.asDouble(), besvartAv)
             "localdate" -> søknadprosess.dato(faktumId).besvar(svar.asLocalDate(), besvartAv)
             "inntekt" -> søknadprosess.inntekt(faktumId).besvar(svar.asDouble().årlig, besvartAv)
+            "valg" -> søknadprosess.valg(faktumId).besvar(svar.asValg(), besvartAv)
             "dokument" ->
                 søknadprosess.dokument(faktumId)
                     .besvar(Dokument(svar["lastOppTidsstempel"].asLocalDateTime(), svar["url"].asText()), besvartAv)

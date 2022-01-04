@@ -11,4 +11,8 @@ class Valg internal constructor(private val verdier: Set<String>) : Comparable<V
     override fun equals(other: Any?): Boolean {
         return other is Valg && this.verdier.containsAll(other.verdier)
     }
+
+    override fun toString(): String {
+        return "Valg(verdier=$verdier)"
+    }
 }
