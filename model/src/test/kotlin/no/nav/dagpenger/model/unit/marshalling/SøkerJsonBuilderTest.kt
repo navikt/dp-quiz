@@ -1,6 +1,5 @@
 package no.nav.dagpenger.model.unit.marshalling
 
-import io.mockk.clearStaticMockk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
@@ -17,12 +16,11 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
-import org.junit.jupiter.api.AfterEach
+import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.LocalDateTime
-import java.util.ResourceBundle
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -54,10 +52,6 @@ class SøkerJsonBuilderTest {
         )
     }
 
-    @AfterEach
-    fun clean() {
-        clearStaticMockk(ResourceBundle::class)
-    }
 
     @Test
     fun `SøkerJsonBuilder inneholder riktig eventnavn og metadata`() {
@@ -72,9 +66,10 @@ class SøkerJsonBuilderTest {
         assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
         assertDoesNotThrow { søkerJson["søknad_uuid"].asText().also { UUID.fromString(it) } }
         assertEquals("søker", søkerJson["seksjon_navn"].asText())
-        assertEquals(2, søkerJson["fakta"].size())
+        assertEquals(3, søkerJson["fakta"].size())
         assertEquals("1", søkerJson["fakta"][0]["id"].asText())
         assertEquals("3", søkerJson["fakta"][1]["id"].asText())
+        assertEquals("4", søkerJson["fakta"][2]["id"].asText())
         assertNotNull(søkerJson["identer"])
         assertEquals("12020052345", søkerJson["identer"][0]["id"].asText())
         assertEquals("folkeregisterident", søkerJson["identer"][0]["type"].asText())
@@ -102,7 +97,9 @@ class SøkerJsonBuilderTest {
     private fun søkerSubsumsjon() = "regel" deltre {
         "alle".alle(
             prototypeSøknad.boolsk(1) er true,
-            prototypeSøknad.boolsk(3) er true
+            (prototypeSøknad.boolsk(3) er true).hvisIkkeOppfylt {
+                prototypeSøknad.boolsk(4) er true
+            }
         )
     }
 
@@ -114,6 +111,7 @@ class SøkerJsonBuilderTest {
                 Rolle.søker,
                 prototypeSøknad.boolsk(1),
                 prototypeSøknad.boolsk(3),
+                prototypeSøknad.boolsk(4),
                 prototypeSøknad.boolsk(5),
                 prototypeSøknad.boolsk(6),
                 prototypeSøknad.boolsk(7)
