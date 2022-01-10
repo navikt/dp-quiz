@@ -69,7 +69,7 @@ class SøkerJsonBuilderTest {
         assertEquals(3, søkerJson["fakta"].size())
         assertEquals("1", søkerJson["fakta"][0]["id"].asText())
         assertEquals("3", søkerJson["fakta"][1]["id"].asText())
-        assertEquals("4", søkerJson["fakta"][2]["id"].asText())
+        assertEquals("5", søkerJson["fakta"][2]["id"].asText())
         assertNotNull(søkerJson["identer"])
         assertEquals("12020052345", søkerJson["identer"][0]["id"].asText())
         assertEquals("folkeregisterident", søkerJson["identer"][0]["type"].asText())
@@ -98,7 +98,7 @@ class SøkerJsonBuilderTest {
         "alle".alle(
             prototypeSøknad.boolsk(1) er true,
             (prototypeSøknad.boolsk(3) er true).hvisIkkeOppfylt {
-                prototypeSøknad.boolsk(4) er true
+                prototypeSøknad.boolsk(5) er true
             }
         )
     }
