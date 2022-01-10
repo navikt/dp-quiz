@@ -12,7 +12,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Valg
 import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -37,47 +36,6 @@ private class FaktumVisitor(
     }
 
     override fun <R : Comparable<R>> visit(
-        faktum: ValgFaktum,
-        id: String,
-        avhengigeFakta: Set<Faktum<*>>,
-        avhengerAvFakta: Set<Faktum<*>>,
-        godkjenner: Set<Faktum<*>>,
-        gyldigeValg: Valg,
-        roller: Set<Rolle>,
-        clazz: Class<R>
-    ) {
-        jsonGenerator.writeStartObject()
-        jsonGenerator.skrivStandardFelt(id, Faktum.FaktumTilstand.Ukjent, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
-        jsonGenerator.writeArrayFieldStart("gyldigeValg")
-        gyldigeValg.forEach { jsonGenerator.writeString(it) }
-        jsonGenerator.writeEndArray()
-        jsonGenerator.writeEndObject()
-    }
-
-    override fun <R : Comparable<R>> visit(
-        faktum: ValgFaktum,
-        id: String,
-        avhengigeFakta: Set<Faktum<*>>,
-        avhengerAvFakta: Set<Faktum<*>>,
-        godkjenner: Set<Faktum<*>>,
-        gyldigeValg: Valg,
-        roller: Set<Rolle>,
-        clazz: Class<R>,
-        svar: Valg
-    ) {
-        jsonGenerator.writeStartObject()
-        jsonGenerator.skrivStandardFelt(id, Faktum.FaktumTilstand.Kjent, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
-        jsonGenerator.writeArrayFieldStart("gyldigeValg")
-        gyldigeValg.forEach { jsonGenerator.writeString(it) }
-        jsonGenerator.writeEndArray()
-        jsonGenerator.writeArrayFieldStart("gjeldendeSvar")
-        svar.forEach { jsonGenerator.writeString(it) }
-        jsonGenerator.writeEndArray()
-
-        jsonGenerator.writeEndObject()
-    }
-
-    override fun <R : Comparable<R>> visit(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,
@@ -89,6 +47,11 @@ private class FaktumVisitor(
     ) {
         jsonGenerator.writeStartObject()
         jsonGenerator.skrivStandardFelt(id, tilstand, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
+        if (faktum is ValgFaktum) {
+            jsonGenerator.writeArrayFieldStart("gyldigeValg")
+            faktum.gyldigeValg.forEach { jsonGenerator.writeString(it) }
+            jsonGenerator.writeEndArray()
+        }
         jsonGenerator.writeEndObject()
     }
 

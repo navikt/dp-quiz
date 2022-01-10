@@ -99,7 +99,10 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
-        skrivFaktum(faktum, clazz)
+        val faktumId = skrivFaktum(faktum, clazz)
+        if (faktum is ValgFaktum) {
+            valgFaktum(faktumId, faktum.gyldigeValg)
+        }
         avhengigheter[faktum] = avhengigeFakta
     }
 
@@ -141,19 +144,6 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         if (dbIder.containsKey(faktum)) return
         faktumFaktum(skrivFaktum(faktum, clazz, regel), children, "utledet_faktum")
         avhengigheter[faktum] = avhengigeFakta
-    }
-
-    override fun <R : Comparable<R>> visit(
-        faktum: ValgFaktum,
-        id: String,
-        avhengigeFakta: Set<Faktum<*>>,
-        avhengerAvFakta: Set<Faktum<*>>,
-        godkjenner: Set<Faktum<*>>,
-        gyldigeValg: Valg,
-        roller: Set<Rolle>,
-        clazz: Class<R>
-    ) {
-        valgFaktum(skrivFaktum(faktum, clazz), gyldigeValg)
     }
 
     private fun valgFaktum(faktumId: Int, gyldigeValg: Valg) {

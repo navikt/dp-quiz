@@ -14,8 +14,6 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.faktum.Valg
-import no.nav.dagpenger.model.faktum.ValgFaktum
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
@@ -113,19 +111,6 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         regel: FaktaRegel<R>
-    ) {
-        skrivFaktumVerdi(faktum)
-    }
-
-    override fun <R : Comparable<R>> visit(
-        faktum: ValgFaktum,
-        id: String,
-        avhengigeFakta: Set<Faktum<*>>,
-        avhengerAvFakta: Set<Faktum<*>>,
-        godkjenner: Set<Faktum<*>>,
-        gyldigeValg: Valg,
-        roller: Set<Rolle>,
-        clazz: Class<R>
     ) {
         skrivFaktumVerdi(faktum)
     }

@@ -1,11 +1,9 @@
 package no.nav.dagpenger.model.faktum
 
-import no.nav.dagpenger.model.visitor.FaktumVisitor
-
 class ValgFaktum internal constructor(
     faktumId: FaktumId,
     navn: String,
-    private val gyldigeValg: Valg,
+    val gyldigeValg: Valg,
     avhengigeFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     avhengerAvFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     roller: MutableSet<Rolle> = mutableSetOf(),
@@ -42,13 +40,5 @@ class ValgFaktum internal constructor(
             this.avhengerAvFakta.forEach { nyttFaktum.avhengerAvFakta.add(it.bygg(byggetFakta)) }
             this.godkjenner.forEach { nyttFaktum.godkjenner.add(it.bygg(byggetFakta)) }
         }
-    }
-
-    override fun acceptUtenSvar(visitor: FaktumVisitor) {
-        visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, godkjenner, gyldigeValg, roller, clazz())
-    }
-
-    override fun acceptMedSvar(visitor: FaktumVisitor) {
-        visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, godkjenner, gyldigeValg, roller, clazz(), gjeldendeSvar)
     }
 }
