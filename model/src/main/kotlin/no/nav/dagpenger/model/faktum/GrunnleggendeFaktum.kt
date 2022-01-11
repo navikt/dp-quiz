@@ -9,7 +9,8 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     avhengigeFakta: MutableSet<Faktum<*>>,
     avhengerAvFakta: MutableSet<Faktum<*>>,
     protected val godkjenner: MutableSet<Faktum<*>>,
-    roller: MutableSet<Rolle>
+    roller: MutableSet<Rolle>,
+    private val gyldigevalg: Valg? = null
 ) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private var tilstand: Tilstand = Ukjent
     protected lateinit var gjeldendeSvar: R
@@ -17,14 +18,15 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     private data class Besvarer(val ident: String)
 
-    internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>) : this(
-        faktumId,
-        navn,
-        clazz,
-        mutableSetOf(),
-        mutableSetOf(),
-        mutableSetOf(),
-        mutableSetOf()
+    internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>, gyldigevalg: Valg? = null) : this(
+        faktumId = faktumId,
+        navn = navn,
+        clazz = clazz,
+        avhengigeFakta = mutableSetOf(),
+        avhengerAvFakta = mutableSetOf(),
+        godkjenner = mutableSetOf(),
+        roller = mutableSetOf(),
+        gyldigevalg = gyldigevalg
     )
 
     internal fun godkjenner(fakta: List<Faktum<*>>) = godkjenner.addAll(fakta)
@@ -32,6 +34,9 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     override fun clazz() = clazz
 
     override fun besvar(r: R, besvarer: String?) = this.apply {
+        if(r is Valg) {
+            r.sjekk(requireNotNull(gyldigevalg) {"Et valg faktum uten gyldigevalg?"})
+        }
         super.besvar(r, besvarer)
         gjeldendeSvar = r
         tilstand = Kjent
@@ -48,7 +53,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
 
-        return GrunnleggendeFaktum(faktumId, navn, clazz, mutableSetOf(), mutableSetOf(), mutableSetOf(), roller)
+        return GrunnleggendeFaktum(faktumId, navn, clazz, mutableSetOf(), mutableSetOf(), mutableSetOf(), roller, gyldigevalg)
             .also { nyttFaktum ->
                 byggetFakta[faktumId] = nyttFaktum
                 this.avhengigeFakta.forEach { nyttFaktum.avhengigeFakta.add(it.bygg(byggetFakta)) }

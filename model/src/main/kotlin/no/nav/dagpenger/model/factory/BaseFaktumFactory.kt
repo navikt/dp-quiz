@@ -7,13 +7,16 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.faktum.Valg
 import java.time.LocalDate
 
 class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     private val clazz: Class<T>,
-    private val navn: String
+    private val navn: String,
+    private val erValgFaktum: Boolean = false
 ) : FaktumFactory<T>() {
     private val templateIder = mutableListOf<Int>()
+    private val gyldigevalg = mutableSetOf<String>()
 
     companion object {
         object boolsk {
@@ -39,11 +42,24 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
         object dato {
             infix fun faktum(navn: String) = BaseFaktumFactory(LocalDate::class.java, navn)
         }
+
+        object flervalg {
+            infix fun faktum(navn: String) = BaseFaktumFactory(Valg::class.java, navn, erValgFaktum = true)
+        }
     }
 
     infix fun id(rootId: Int) = this.apply { this.rootId = rootId }
 
-    override fun faktum() = GrunnleggendeFaktum(faktumId, navn, clazz)
+    infix fun med(valg: String) = this.apply { gyldigevalg.add(valg) }
+
+    override fun faktum(): Faktum<T> {
+        return if(erValgFaktum) {
+            require(gyldigevalg.isNotEmpty()) { "Et valgfaktum uten predefinerte valg?" }
+            GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz, gyldigevalg = Valg(gyldigevalg))
+        } else {
+            GrunnleggendeFaktum(faktumId, navn, clazz)
+        }
+    }
 
     fun faktum(vararg templates: TemplateFaktum<*>) = GeneratorFaktum(faktumId, navn, templates.asList())
 
