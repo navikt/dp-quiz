@@ -53,8 +53,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     infix fun med(valg: String) = this.apply { gyldigevalg.add(valg) }
 
     override fun faktum(): Faktum<T> {
-        return if(erValgFaktum) {
-            require(gyldigevalg.isNotEmpty()) { "Et valgfaktum uten predefinerte valg?" }
+        return if (erValgFaktum) {
             GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz, gyldigevalg = Valg(gyldigevalg))
         } else {
             GrunnleggendeFaktum(faktumId, navn, clazz)

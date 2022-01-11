@@ -1,9 +1,14 @@
 package no.nav.dagpenger.model.faktum
 
-
-class Valg internal constructor(private val valgteverdier: Set<String>) : Comparable<Valg>, Set<String> by valgteverdier {
+class Valg internal constructor(private val valgteverdier: Set<String>) :
+    Comparable<Valg>,
+    Set<String> by valgteverdier {
 
     constructor(vararg verdier: String) : this(verdier.toSet())
+
+    init {
+        require(isNotEmpty()) { "Minst en verdi må være valgt" }
+    }
 
     override fun compareTo(other: Valg): Int {
         return valgteverdier.size.compareTo(other.valgteverdier.size)
@@ -18,9 +23,6 @@ class Valg internal constructor(private val valgteverdier: Set<String>) : Compar
     }
 
     fun sjekk(gyldigeValg: Valg) {
-        if(isNotEmpty() && all { it in gyldigeValg }) {
-            throw IllegalArgumentException("Valg $this er ikke et gyldig valg. Gyldige valg er $gyldigeValg")
-        }
+        require(all { it in gyldigeValg }) { "Valg $this er ikke et gyldig valg. Gyldige valg er $gyldigeValg" }
     }
-
 }

@@ -14,7 +14,7 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class ValgFaktumTest {
+class FlervalgFaktumTest {
 
     val prototypeSøknad = Søknad(
         testversjon,
@@ -24,24 +24,32 @@ class ValgFaktumTest {
     lateinit var søknad: Søknadprosess
 
     @BeforeEach
-    fun setup(){
+    fun setup() {
         søknad = prototypeSøknad.testSøknadprosess(TomSubsumsjon)
     }
 
-
     @Test
     fun `Skal kunne være lov å svare med gyldige valg`() {
-        val flervalg = søknad.faktum<Valg>(1)
+        val flervalg = søknad.valg(1)
         assertDoesNotThrow { flervalg.besvar(Valg("valg1", "valg2")) }
         assertTrue(flervalg.erBesvart())
         assertEquals(Valg("valg1", "valg2"), flervalg.svar())
     }
 
     @Test
-    fun `Skal kaste feil hvis en svarer med ugyldige valg`() {
-        val flervalg = søknad.faktum<Valg>(1)
-        assertThrows<IllegalArgumentException> { flervalg.besvar(Valg("ugyldig-valg"))  }
+    fun `Skal ikke kunne opprette et tomt Valg`() {
+        assertThrows<IllegalArgumentException> { Valg() }
+        assertThrows<IllegalArgumentException> {
+            Søknad(
+                testversjon,
+                flervalg faktum "flervalg" id 1
+            ).testSøknadprosess(TomSubsumsjon)
+        }
     }
 
-
+    @Test
+    fun `Skal kaste feil hvis en svarer med ugyldige valg`() {
+        val flervalg = søknad.valg(1)
+        assertThrows<IllegalArgumentException> { flervalg.besvar(Valg("ugyldig-valg")) }
+    }
 }
