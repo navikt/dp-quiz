@@ -1,22 +1,28 @@
 package no.nav.dagpenger.model.factory
 
 import no.nav.dagpenger.model.faktum.Dokument
+import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
+import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.TemplateFaktum
-import no.nav.dagpenger.model.faktum.Valg
 import java.time.LocalDate
 
 class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     private val clazz: Class<T>,
     private val navn: String,
-    private val erValgFaktum: Boolean = false
+    private val valgfaktumtype: Valgfaktumtype? = null
 ) : FaktumFactory<T>() {
     private val templateIder = mutableListOf<Int>()
     private val gyldigevalg = mutableSetOf<String>()
+
+    internal enum class Valgfaktumtype {
+        FLERVALG,
+        ENVALG
+    }
 
     companion object {
         object boolsk {
@@ -43,8 +49,12 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
             infix fun faktum(navn: String) = BaseFaktumFactory(LocalDate::class.java, navn)
         }
 
+        object valg {
+            infix fun faktum(navn: String) = BaseFaktumFactory(Envalg::class.java, navn, Valgfaktumtype.ENVALG)
+        }
+
         object flervalg {
-            infix fun faktum(navn: String) = BaseFaktumFactory(Valg::class.java, navn, erValgFaktum = true)
+            infix fun faktum(navn: String) = BaseFaktumFactory(Flervalg::class.java, navn, Valgfaktumtype.FLERVALG)
         }
     }
 
@@ -53,10 +63,10 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     infix fun med(valg: String) = this.apply { gyldigevalg.add(valg) }
 
     override fun faktum(): Faktum<T> {
-        return if (erValgFaktum) {
-            GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz, gyldigevalg = Valg(gyldigevalg))
-        } else {
-            GrunnleggendeFaktum(faktumId, navn, clazz)
+        return when (valgfaktumtype) {
+            Valgfaktumtype.ENVALG -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz, gyldigevalg = Envalg(gyldigevalg))
+            Valgfaktumtype.FLERVALG -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz, gyldigevalg = Flervalg(gyldigevalg))
+            else -> GrunnleggendeFaktum(faktumId, navn, clazz)
         }
     }
 
