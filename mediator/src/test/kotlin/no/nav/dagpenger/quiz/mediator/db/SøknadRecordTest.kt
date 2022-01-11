@@ -15,6 +15,7 @@ import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import no.nav.dagpenger.quiz.mediator.helpers.assertDeepEquals
+import no.nav.dagpenger.quiz.mediator.helpers.assertJsonEquals
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -156,6 +157,7 @@ internal class SøknadRecordTest {
         søknadRecord = SøknadRecord()
         rehydrertSøknadprosess = søknadRecord.hent(uuid, userInterfaceType)
         assertDeepEquals(originalSøknadprosess, rehydrertSøknadprosess)
+        assertJsonEquals(originalSøknadprosess, rehydrertSøknadprosess)
     }
 
     private fun byggOriginalSøknadprosess() {
