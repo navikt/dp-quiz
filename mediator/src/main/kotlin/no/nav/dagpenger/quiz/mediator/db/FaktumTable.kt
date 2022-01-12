@@ -3,7 +3,6 @@ package no.nav.dagpenger.quiz.mediator.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
@@ -21,6 +20,7 @@ import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
@@ -29,6 +29,7 @@ import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
+import org.postgresql.util.PGobject
 import java.time.LocalDate
 import java.util.UUID
 
@@ -99,9 +100,13 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
+        gyldigeValg: GyldigeValg?
     ) {
-        skrivFaktum(faktum, clazz)
+        val dbId = skrivFaktum(faktum, clazz)
+        gyldigeValg?.let {
+            valgFaktum(dbId, it)
+        }
         avhengigheter[faktum] = avhengigeFakta
     }
 
@@ -147,6 +152,21 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
 
     override fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
         avhengigheter.forEach { (parent, children) -> faktumFaktum(dbIder[parent]!!, children, "avhengig_faktum") }
+    }
+
+    private fun valgFaktum(faktumId: Int, gyldigeValg: GyldigeValg) {
+        using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf(
+                    "INSERT INTO faktum_gyldige_valg (faktum_id, verdier) VALUES (?, ?)".trimMargin(),
+                    faktumId,
+                    PGobject().apply {
+                        type = "TEXT[]"
+                        value = "{${gyldigeValg.joinToString { """"$it"""" }}}"
+                    }
+                ).asExecute
+            )
+        }
     }
 
     private fun faktumFaktum(parentId: Int, children: Collection<Faktum<*>>, table: String) {

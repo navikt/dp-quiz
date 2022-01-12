@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.faktum
 
-abstract class Valg internal constructor(private val valgteverdier: Set<String>) :
+abstract class Valg internal constructor(protected val valgteverdier: Set<String>) :
     Comparable<Valg>,
     Set<String> by valgteverdier {
 
@@ -10,14 +10,6 @@ abstract class Valg internal constructor(private val valgteverdier: Set<String>)
 
     override fun compareTo(other: Valg): Int {
         return valgteverdier.size.compareTo(other.valgteverdier.size)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        return other is Valg && this.valgteverdier.containsAll(other.valgteverdier)
-    }
-
-    override fun hashCode(): Int {
-        return valgteverdier.hashCode()
     }
 
     override fun toString(): String {

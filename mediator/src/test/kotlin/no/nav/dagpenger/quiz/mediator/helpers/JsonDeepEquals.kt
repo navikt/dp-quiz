@@ -11,6 +11,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -42,10 +43,12 @@ private class FaktumVisitor(
         avhengerAvFakta: Set<Faktum<*>>,
         godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
+        gyldigeValg: GyldigeValg?
     ) {
         jsonGenerator.writeStartObject()
         jsonGenerator.skrivStandardFelt(id, tilstand, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
+        skrivGyldigeValg(gyldigeValg)
         jsonGenerator.writeEndObject()
     }
 
@@ -59,12 +62,22 @@ private class FaktumVisitor(
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R,
-        besvartAv: String?
+        besvartAv: String?,
+        gyldigeValg: GyldigeValg?
     ) {
         jsonGenerator.writeStartObject()
         jsonGenerator.skrivStandardFelt(id, tilstand, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
+        skrivGyldigeValg(gyldigeValg)
         jsonGenerator.writeObjectField("gjeldendeSvar", svar)
         jsonGenerator.writeEndObject()
+    }
+
+    private fun skrivGyldigeValg(gyldigeValg: GyldigeValg?) {
+        gyldigeValg?.let { valg ->
+            jsonGenerator.writeArrayFieldStart("gyldigeValg")
+            valg.forEach { jsonGenerator.writeString(it) }
+            jsonGenerator.writeEndArray()
+        }
     }
 
     private fun JsonGenerator.skrivStandardFelt(

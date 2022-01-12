@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.util.UUID
-
+@Suppress("UNCHECKED_CAST")
 class Søknad private constructor(
     private val person: Person,
     internal val prosessVersjon: Prosessversjon,

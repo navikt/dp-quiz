@@ -27,7 +27,7 @@ import java.time.LocalDate
 internal class SøknadRecordTest {
     companion object {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
-        private const val expectedFaktaCount = 21
+        private const val expectedFaktaCount = 24
     }
 
     private lateinit var originalSøknadprosess: Søknadprosess
@@ -45,7 +45,7 @@ internal class SøknadRecordTest {
             SøknadRecord().ny(UNG_PERSON_FNR_2018, Web, Prosessversjon(Testprosess.Test, 888))
             assertRecordCount(2, "soknad")
             assertRecordCount(expectedFaktaCount * 2, "faktum_verdi")
-            hentFørsteSøknad()
+            lagreHentOgSammenlign()
         }
     }
 
@@ -62,7 +62,38 @@ internal class SøknadRecordTest {
             originalSøknadprosess.envalg(20).besvar(Envalg("envalg1"))
             originalSøknadprosess.flervalg(21).besvar(Flervalg("flervalg1"))
 
-            hentFørsteSøknad()
+            lagreHentOgSammenlign()
+        }
+    }
+
+    @Test
+    fun `Ny svar i fakta burde gjenspeiles i gammel_faktum_verdi`() {
+        Postgres.withMigratedDb {
+            byggOriginalSøknadprosess()
+
+            originalSøknadprosess.dato(2).besvar(LocalDate.now())
+            originalSøknadprosess.inntekt(6).besvar(10000.årlig)
+            originalSøknadprosess.boolsk(10).besvar(true)
+            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()))
+            originalSøknadprosess.envalg(20).besvar(Envalg("envalg1"))
+            originalSøknadprosess.flervalg(21).besvar(Flervalg("flervalg1"))
+            originalSøknadprosess.heltall(22).besvar(123)
+
+            lagreHentOgSammenlign()
+
+            assertRecordCount(7, "gammel_faktum_verdi")
+
+            originalSøknadprosess.dato(2).besvar(LocalDate.now().minusDays(3))
+            originalSøknadprosess.inntekt(6).besvar(19999.årlig)
+            originalSøknadprosess.boolsk(10).besvar(false)
+            originalSøknadprosess.dokument(11).besvar(Dokument(2.januar.atStartOfDay()))
+            originalSøknadprosess.envalg(20).besvar(Envalg("envalg2"))
+            originalSøknadprosess.flervalg(21).besvar(Flervalg("flervalg2"))
+            originalSøknadprosess.heltall(22).besvar(456)
+
+            lagreHentOgSammenlign()
+
+            assertRecordCount(14, "gammel_faktum_verdi")
         }
     }
 
@@ -71,14 +102,14 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
             assertEquals(expectedFaktaCount, originalSøknadprosess.søknad.map { it }.size)
-            hentFørsteSøknad()
+            lagreHentOgSammenlign()
             originalSøknadprosess = rehydrertSøknadprosess
 
             originalSøknadprosess.heltall(15).besvar(3)
             originalSøknadprosess.heltall("16.1").besvar(5)
             assertEquals(expectedFaktaCount + 9, originalSøknadprosess.søknad.map { it }.size)
 
-            hentFørsteSøknad()
+            lagreHentOgSammenlign()
             assertEquals(expectedFaktaCount + 9, rehydrertSøknadprosess.søknad.map { it }.size)
         }
     }
@@ -88,18 +119,18 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
             assertEquals(expectedFaktaCount, originalSøknadprosess.søknad.map { it }.size)
-            hentFørsteSøknad()
+            lagreHentOgSammenlign()
             originalSøknadprosess = rehydrertSøknadprosess
 
             originalSøknadprosess.heltall(15).besvar(3)
             originalSøknadprosess.heltall("16.2").besvar(162)
             originalSøknadprosess.heltall("16.3").besvar(163)
-            hentFørsteSøknad()
+            lagreHentOgSammenlign()
             originalSøknadprosess = rehydrertSøknadprosess
             originalSøknadprosess.heltall(15).besvar(2)
             originalSøknadprosess.heltall("16.1").besvar(161)
             originalSøknadprosess.heltall("16.2").besvar(1622)
-            hentFørsteSøknad()
+            lagreHentOgSammenlign()
             assertThrows<IllegalArgumentException> { rehydrertSøknadprosess.heltall("16.3") }
         }
     }
@@ -112,7 +143,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.dato(3).besvar(3.januar)
             originalSøknadprosess.dato(4).besvar(4.januar)
             originalSøknadprosess.dato(5).besvar(5.januar)
-            hentFørsteSøknad()
+            lagreHentOgSammenlign()
             assertEquals(5.januar, rehydrertSøknadprosess.dato(345).svar())
         }
     }
@@ -123,7 +154,7 @@ internal class SøknadRecordTest {
             byggOriginalSøknadprosess()
 
             originalSøknadprosess.dato(3).besvar(LocalDate.MAX)
-            hentFørsteSøknad()
+            lagreHentOgSammenlign()
             assertEquals(LocalDate.MAX, rehydrertSøknadprosess.dato(3).svar())
         }
     }
@@ -140,7 +171,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()), ident)
             originalSøknadprosess.boolsk(1).besvar(true, ident)
 
-            hentFørsteSøknad()
+            lagreHentOgSammenlign()
         }
     }
 
@@ -149,19 +180,19 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
             originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()))
-            hentFørsteSøknad()
-            hentFørsteSøknad()
+            lagreHentOgSammenlign()
+            lagreHentOgSammenlign()
             assertRecordCount(1, "gammel_faktum_verdi")
         }
     }
 
-    private fun hentFørsteSøknad(userInterfaceType: Versjon.UserInterfaceType = Web) {
+    private fun lagreHentOgSammenlign(userInterfaceType: Versjon.UserInterfaceType = Web) {
         søknadRecord.lagre(originalSøknadprosess.søknad)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         søknadRecord = SøknadRecord()
         rehydrertSøknadprosess = søknadRecord.hent(uuid, userInterfaceType)
-        assertDeepEquals(originalSøknadprosess, rehydrertSøknadprosess)
         assertJsonEquals(originalSøknadprosess, rehydrertSøknadprosess)
+        assertDeepEquals(originalSøknadprosess, rehydrertSøknadprosess)
     }
 
     private fun byggOriginalSøknadprosess() {
