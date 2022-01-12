@@ -132,7 +132,7 @@ internal class FaktumSvarService(
             "double" -> søknadprosess.desimaltall(faktumId).besvar(svar.asDouble(), besvartAv)
             "localdate" -> søknadprosess.dato(faktumId).besvar(svar.asLocalDate(), besvartAv)
             "inntekt" -> søknadprosess.inntekt(faktumId).besvar(svar.asDouble().årlig, besvartAv)
-            "envalg" -> søknadprosess.valg(faktumId).besvar(svar.asEnvalg(), besvartAv)
+            "envalg" -> søknadprosess.envalg(faktumId).besvar(svar.asEnvalg(), besvartAv)
             "flervalg" -> søknadprosess.flervalg(faktumId).besvar(svar.asFlervalg(), besvartAv)
             "dokument" ->
                 søknadprosess.dokument(faktumId)

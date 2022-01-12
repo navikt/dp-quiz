@@ -30,7 +30,7 @@ class ValgFaktumTest {
 
     @Test
     fun `Skal kunne være lov å svare med et gyldig valg`() {
-        val envalg = søknad.valg(1)
+        val envalg = søknad.envalg(1)
         assertDoesNotThrow { envalg.besvar(Envalg("valg1")) }
         assertTrue(envalg.erBesvart())
         assertEquals(Envalg("valg1"), envalg.svar())
@@ -51,13 +51,13 @@ class ValgFaktumTest {
 
     @Test
     fun `Skal kaste feil hvis en svarer med ugyldige valg`() {
-        val envalg = søknad.valg(1)
+        val envalg = søknad.envalg(1)
         assertThrows<IllegalArgumentException> { envalg.besvar(Envalg("ugyldig-valg")) }
     }
 
     @Test
     fun `Skal kaste feil hvis flere gyldige alternativer velges`() {
-        val envalg = søknad.valg(1)
+        val envalg = søknad.envalg(1)
         assertThrows<IllegalArgumentException> { envalg.besvar(Envalg("valg1", "valg2")) }
     }
 }

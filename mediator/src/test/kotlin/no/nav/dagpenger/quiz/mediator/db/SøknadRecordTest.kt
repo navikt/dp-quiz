@@ -4,6 +4,8 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.faktum.Dokument
+import no.nav.dagpenger.model.faktum.Envalg
+import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Prosessversjon
@@ -57,6 +59,8 @@ internal class SøknadRecordTest {
             originalSøknadprosess.inntekt(6).besvar(10000.årlig)
             originalSøknadprosess.heltall(16).besvar(123)
             originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()))
+            originalSøknadprosess.envalg(20).besvar(Envalg("envalg1"))
+            originalSøknadprosess.flervalg(21).besvar(Flervalg("flervalg1"))
 
             hentFørsteSøknad()
         }
