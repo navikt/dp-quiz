@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -22,7 +23,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
     private val faktaNode = mapper.createArrayNode()
     private var rootId = 0
     private val faktumIder = mutableSetOf<String>()
-
+    protected val identerNode = mapper.createArrayNode()
 
     init {
         søknadprosess.søknad.accept(this)
@@ -31,11 +32,25 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
     fun resultat() = root
 
     override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
-        root.put("@event_name", "faktum_svar")
+        root.put("@event_name", "NySøknad")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("søknad_uuid", "$uuid")
+        root.put(
+            "fødselsnummer",
+            identerNode.first {
+                it.get("type").asText().equals("folkeregisterident")
+            }.get("id").asText()
+        )
         root.set("fakta", faktaNode)
+    }
+
+    override fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {
+        identerNode.addObject().also { identNode ->
+            identNode.put("id", id)
+            identNode.put("type", type.name.lowercase())
+            identNode.put("historisk", historisk)
+        }
     }
 
     override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
@@ -51,7 +66,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         clazz: Class<R>
     ) {
         if (id in faktumIder) return
-        lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn)
+        lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller)
     }
 
     override fun <R : Comparable<R>> visit(
@@ -74,8 +89,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
                 it.put("clazz", template.clazz().simpleName.lowercase())
             }
         }
-        lagFaktumNode(id, "generator", null, jsonTemplates)
-
+        lagFaktumNode(id, "generator", null, roller, jsonTemplates)
     }
 
     override fun <R : Comparable<R>> visit(
@@ -89,15 +103,26 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         clazz: Class<R>
     ) {
         if (id in faktumIder) return
-        lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn)
+        lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller)
     }
 
-    private fun lagFaktumNode(id: String, clazz: String, navn: String? = null, templates: ArrayNode? = null) {
+    private fun lagFaktumNode(
+        id: String,
+        clazz: String,
+        navn: String? = null,
+        roller: Set<Rolle>,
+        templates: ArrayNode? = null
+    ) {
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("id", id)
             faktumNode.put("clazz", clazz)
             faktumNode.put("navn", navn)
+            faktumNode.putArray("roller").also { arrayNode ->
+                roller.forEach { rolle ->
+                    arrayNode.add(rolle.typeNavn)
+                }
+            }
             if (templates != null) faktumNode["templates"] = templates
         }
         faktumIder.add(id)

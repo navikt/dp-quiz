@@ -47,13 +47,7 @@ internal class DagpengerService(
         søknadPersistence.ny(identer, faktagrupperType, prosessVersjon, søknadUuid).also { søknadsprosess ->
             søknadPersistence.lagre(søknadsprosess.søknad)
             log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid}" }
-            val faktaJsonBuilder = FaktaJsonBuilder(søknadsprosess).resultat().toString()
-            context.publish(faktaJsonBuilder)
-            /*søknadsprosess.nesteSeksjoner()
-                .forEach { seksjon ->
-                    context.publish(seksjon.somSpørsmål().also { sikkerlogg.debug { it } })
-                    log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadsprosess.søknad.uuid}" }*/
-                }
+            context.publish(FaktaJsonBuilder(søknadsprosess).resultat().toString())
         }
     }
-
+}
