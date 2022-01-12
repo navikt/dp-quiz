@@ -41,7 +41,7 @@ class DagpengerTest : SøknadBesvarer() {
 
     @Test
     fun ` Reell arbeidssøker og verneplikt glad sti `() {
-        withSøknad(ønskerRettighetsavklaring) { besvar ->
+        withSøknad(nySøknad) { besvar ->
             val firstMessage = testRapid.inspektør.message(0)
             assertEquals(søknadUUID, firstMessage["søknad_uuid"].asText().let { soknadId -> UUID.fromString(soknadId) })
             assertGjeldendeSeksjon("Er reell arbeidssøker")
@@ -58,10 +58,10 @@ class DagpengerTest : SøknadBesvarer() {
     private val søknadUUID = UUID.randomUUID()
 
     //language=JSON
-    private val ønskerRettighetsavklaring =
+    private val nySøknad =
         """
         {
-          "@event_name": "ønsker_rettighetsavklaring",
+          "@event_name": "NySøknad",
           "@opprettet": "${LocalDateTime.now()}",
           "@id": "${UUID.randomUUID()}",
           "søknad_uuid": "$søknadUUID",
