@@ -7,22 +7,17 @@ import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import java.time.LocalDate
 
 class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     private val clazz: Class<T>,
-    private val navn: String,
-    private val valgfaktumtype: Valgfaktumtype? = null
+    private val navn: String
 ) : FaktumFactory<T>() {
     private val templateIder = mutableListOf<Int>()
     private val gyldigevalg = mutableSetOf<String>()
-
-    internal enum class Valgfaktumtype {
-        FLERVALG,
-        ENVALG
-    }
 
     companion object {
         object boolsk {
@@ -49,12 +44,12 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
             infix fun faktum(navn: String) = BaseFaktumFactory(LocalDate::class.java, navn)
         }
 
-        object valg {
-            infix fun faktum(navn: String) = BaseFaktumFactory(Envalg::class.java, navn, Valgfaktumtype.ENVALG)
+        object envalg {
+            infix fun faktum(navn: String) = BaseFaktumFactory(Envalg::class.java, navn)
         }
 
         object flervalg {
-            infix fun faktum(navn: String) = BaseFaktumFactory(Flervalg::class.java, navn, Valgfaktumtype.FLERVALG)
+            infix fun faktum(navn: String) = BaseFaktumFactory(Flervalg::class.java, navn)
         }
     }
 
@@ -63,9 +58,9 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     infix fun med(valg: String) = this.apply { gyldigevalg.add(valg) }
 
     override fun faktum(): Faktum<T> {
-        return when (valgfaktumtype) {
-            Valgfaktumtype.ENVALG -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz, gyldigevalg = Envalg(gyldigevalg))
-            Valgfaktumtype.FLERVALG -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz, gyldigevalg = Flervalg(gyldigevalg))
+        return when (clazz) {
+            Envalg::class.java -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz, gyldigevalg = GyldigeValg(gyldigevalg)) as Faktum<T>
+            Flervalg::class.java -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz, gyldigevalg = GyldigeValg(gyldigevalg)) as Faktum<T>
             else -> GrunnleggendeFaktum(faktumId, navn, clazz)
         }
     }

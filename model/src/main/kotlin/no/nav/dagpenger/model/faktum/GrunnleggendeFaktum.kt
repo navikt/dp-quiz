@@ -10,7 +10,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     avhengerAvFakta: MutableSet<Faktum<*>>,
     protected val godkjenner: MutableSet<Faktum<*>>,
     roller: MutableSet<Rolle>,
-    private val gyldigevalg: Valg? = null
+    private val gyldigevalg: GyldigeValg? = null
 ) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private var tilstand: Tilstand = Ukjent
     protected lateinit var gjeldendeSvar: R
@@ -18,7 +18,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     private data class Besvarer(val ident: String)
 
-    internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>, gyldigevalg: Valg? = null) : this(
+    internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>, gyldigevalg: GyldigeValg? = null) : this(
         faktumId = faktumId,
         navn = navn,
         clazz = clazz,
@@ -35,7 +35,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     override fun besvar(r: R, besvarer: String?) = this.apply {
         if (r is Valg) {
-            r.sjekk(requireNotNull(gyldigevalg) { "Et valg faktum uten gyldigevalg?" })
+            requireNotNull(gyldigevalg) { "Et valg faktum uten gyldigevalg?" }.sjekk(r)
         }
         super.besvar(r, besvarer)
         gjeldendeSvar = r

@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.unit.faktum
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.valg
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
@@ -18,7 +18,7 @@ class ValgFaktumTest {
 
     val prototypeSøknad = Søknad(
         testversjon,
-        valg faktum "envalg" med "valg1" med "valg2" id 1
+        envalg faktum "envalg" med "valg1" med "valg2" id 1
     )
 
     lateinit var søknad: Søknadprosess
@@ -44,7 +44,7 @@ class ValgFaktumTest {
         assertThrows<IllegalArgumentException> {
             Søknad(
                 testversjon,
-                valg faktum "envalg" id 1
+                envalg faktum "envalg" id 1
             ).testSøknadprosess(TomSubsumsjon)
         }
     }
