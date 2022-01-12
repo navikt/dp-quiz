@@ -23,6 +23,8 @@ abstract class Valg internal constructor(private val valgteverdier: Set<String>)
     override fun toString(): String {
         return "Valg(verdier=$valgteverdier)"
     }
+}
 
-    abstract fun sjekk(gyldigeValg: Valg)
+interface ValgteVerdier {
+    fun sjekkMot(gyldigeValg: GyldigeValg)
 }

@@ -34,8 +34,8 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     override fun clazz() = clazz
 
     override fun besvar(r: R, besvarer: String?) = this.apply {
-        if (r is Valg) {
-            requireNotNull(gyldigevalg) { "Et valg faktum uten gyldigevalg?" }.sjekk(r)
+        when (r) {
+            is ValgteVerdier -> requireNotNull(gyldigevalg) { "Et valg faktum uten gyldigevalg?" }.sjekk(r)
         }
         super.besvar(r, besvarer)
         gjeldendeSvar = r
