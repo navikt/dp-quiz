@@ -3,6 +3,9 @@ package no.nav.dagpenger.quiz.mediator.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.model.faktum.Envalg
+import no.nav.dagpenger.model.faktum.Flervalg
+import no.nav.dagpenger.model.faktum.Valg
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
@@ -11,7 +14,7 @@ import kotlin.test.assertEquals
 
 internal class FaktumTableTest {
     companion object {
-        const val expectedFaktumRecordCount = 21
+        const val expectedFaktumRecordCount = 24
     }
 
     @Test
@@ -22,9 +25,28 @@ internal class FaktumTableTest {
             assertRecordCount(6, "utledet_faktum")
             assertRecordCount(3, "template_faktum")
             assertRecordCount(5, "avhengig_faktum")
+            assertRecordCount(2, "faktum_gyldige_valg")
+            assertGyldigeValg(Envalg("envalg1", "envalg2"), 20)
+            assertGyldigeValg(Flervalg("flervalg1", "flervalg2", "flervalg3"), 21)
             FaktumTable(SøknadEksempel1.prototypeFakta1)
             assertRecordCount(expectedFaktumRecordCount, "faktum")
         }
+    }
+
+    private fun assertGyldigeValg(valg: Valg, faktumRootId: Int) {
+        val verdier: Array<String>? = using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf( //language=PostgreSQL
+                    "SELECT verdier FROM faktum_gyldige_valg LEFT JOIN faktum ON faktum.id = faktum_gyldige_valg.faktum_id WHERE faktum.root_id = ?",
+                    faktumRootId
+                ).map { it.array<String>(1) }.asSingle
+            )
+        }
+        assertEquals(
+            valg.joinToString { it },
+            verdier?.joinToString { it },
+            "forventet $valg men var $verdier "
+        )
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

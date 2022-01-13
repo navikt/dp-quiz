@@ -8,6 +8,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer.Ident.Type
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Prosessversjon
@@ -109,7 +110,8 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
         avhengerAvFakta: Set<Faktum<*>>,
         godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
+        gyldigeValg: GyldigeValg?
     ) {
         if (ignore) return
         if (id in faktumIder) return

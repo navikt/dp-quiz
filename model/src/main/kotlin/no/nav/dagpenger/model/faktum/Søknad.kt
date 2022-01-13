@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.util.UUID
-
+@Suppress("UNCHECKED_CAST")
 class Søknad private constructor(
     private val person: Person,
     internal val prosessVersjon: Prosessversjon,
@@ -111,6 +111,15 @@ class Søknad private constructor(
 
     override infix fun generator(rootId: Int) = generator(FaktumId(rootId))
     override infix fun generator(id: String) = generator(FaktumId(id))
+
+    override fun envalg(rootId: Int) = valg(FaktumId(rootId))
+    override fun envalg(id: String): Faktum<Envalg> = valg(FaktumId(id))
+    private infix fun valg(faktumId: FaktumId) = id(faktumId) as Faktum<Envalg>
+
+    override fun flervalg(rootId: Int) = flervalg(FaktumId(rootId))
+    override fun flervalg(id: String): Faktum<Flervalg> = flervalg(FaktumId(id))
+    private infix fun flervalg(faktumId: FaktumId) = id(faktumId) as Faktum<Flervalg>
+
     internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
 
     fun bygg(person: Person, prosessVersjon: Prosessversjon, uuid: UUID = UUID.randomUUID()): Søknad {

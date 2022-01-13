@@ -19,4 +19,8 @@ interface TypedFaktum {
     infix fun desimaltall(id: String): Faktum<Double>
     infix fun generator(rootId: Int): Faktum<Int>
     infix fun generator(id: String): Faktum<Int>
+    infix fun envalg(rootId: Int): Faktum<Envalg>
+    infix fun envalg(id: String): Faktum<Envalg>
+    infix fun flervalg(rootId: Int): Faktum<Flervalg>
+    infix fun flervalg(id: String): Faktum<Flervalg>
 }
