@@ -3,23 +3,12 @@ package no.nav.dagpenger.quiz.mediator.helpers
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.containers.PostgreSQLContainer.POSTGRESQL_PORT
-import java.sql.DriverManager
-import java.sql.SQLException
 
 internal object Postgres {
 
     val instance by lazy {
         PostgreSQLContainer<Nothing>("postgres:12.8").apply {
             start()
-        }.also { container ->
-            repeat(5) {
-                try {
-                    DriverManager.getConnection(container.jdbcUrl, container.username, container.password)
-                    return@repeat
-                } catch (e: SQLException) {
-                    Thread.sleep(1000)
-                }
-            }
         }
     }
 
