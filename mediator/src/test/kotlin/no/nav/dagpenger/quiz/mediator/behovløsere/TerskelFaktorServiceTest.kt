@@ -11,7 +11,17 @@ class TerskelFaktorServiceTest {
 
     @Test
     fun `at vi får løsning på tersklene`() {
-
+        //language=JSON
+        rapid.sendTestMessage(
+            """{
+          "@behov": [
+            "ØvreTerskelFaktor",
+            "NedreTerskelFaktor"
+          ],
+          "Virkningstidspunkt": "2020-12-01"
+        }
+            """.trimIndent()
+        )
 
         with(rapid.inspektør) {
             Assertions.assertNotNull(field(0, "@løsning"))

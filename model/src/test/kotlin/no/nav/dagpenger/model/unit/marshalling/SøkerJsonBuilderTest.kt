@@ -52,7 +52,6 @@ class SøkerJsonBuilderTest {
         )
     }
 
-
     @Test
     fun `SøkerJsonBuilder inneholder riktig eventnavn og metadata`() {
 

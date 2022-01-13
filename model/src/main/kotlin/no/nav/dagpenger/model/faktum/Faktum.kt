@@ -50,7 +50,6 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     open fun besvar(r: R, besvarer: String? = null): Faktum<R> = this.also { avhengigeFakta.forEach { it.tilUbesvart() } }
 
-
     open fun rehydrer(r: R, besvarer: String?): Faktum<R> = this
 
     protected open fun tilUbesvart() {
