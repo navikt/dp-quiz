@@ -124,7 +124,7 @@ internal class FaktaJsonBuilderTest {
         expectedNavn: String,
         expectedRoller: List<String>,
         expectedGyldigeValg: List<String>
-    ){
+    ) {
         this.assertFaktaAsJson(expectedId, expectedClass, expectedNavn, expectedRoller)
         val actual: List<String> = this.get("gyldigeValg").toSet().map { it.asText() }
         assertTrue(expectedGyldigeValg.containsAll<String>(actual))

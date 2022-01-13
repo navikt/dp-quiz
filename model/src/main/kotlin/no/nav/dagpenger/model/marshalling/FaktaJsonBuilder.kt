@@ -105,7 +105,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         gyldigeValg: GyldigeValg?
     ) {
         if (id in faktumIder) return
-        lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller,null, gyldigeValg)
+        lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigeValg)
     }
 
     private fun lagFaktumNode(
