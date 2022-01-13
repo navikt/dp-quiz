@@ -36,6 +36,8 @@ internal class FaktaJsonBuilderTest {
             BaseFaktumFactory.Companion.dokument faktum "dokument4" id 4,
             BaseFaktumFactory.Companion.inntekt faktum "inntekt5" id 5,
             BaseFaktumFactory.Companion.dato faktum "dato6" id 6,
+            BaseFaktumFactory.Companion.flervalg faktum "flervalg7" med "valg1" med "valg2" med "valg3" id 7,
+            BaseFaktumFactory.Companion.envalg faktum "envalg8" med "valg1" med "valg2" id 8
         )
     }
 
@@ -48,6 +50,9 @@ internal class FaktaJsonBuilderTest {
                 prototypeSøknad.boolsk(1),
                 prototypeSøknad.heltall(2),
                 prototypeSøknad.desimaltall(3),
+                prototypeSøknad.flervalg(7),
+                prototypeSøknad.envalg(8),
+
             ),
             Seksjon(
                 "nav", Rolle.nav,
@@ -85,13 +90,15 @@ internal class FaktaJsonBuilderTest {
         assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
         assertDoesNotThrow { søkerJson["søknad_uuid"].asText().also { UUID.fromString(it) } }
         assertEquals("12020052345", søkerJson["fødselsnummer"].asText())
-        assertEquals(6, søkerJson["fakta"].size())
+        assertEquals(8, søkerJson["fakta"].size())
         søkerJson["fakta"][0].assertFaktaAsJson(1, "boolean", "boolsk1", listOf("søker"))
         søkerJson["fakta"][1].assertFaktaAsJson(2, "int", "heltall2", listOf("søker"))
         søkerJson["fakta"][2].assertFaktaAsJson(3, "double", "desimaltall3", listOf("søker"))
         søkerJson["fakta"][3].assertFaktaAsJson(4, "dokument", "dokument4", listOf("nav"))
         søkerJson["fakta"][4].assertFaktaAsJson(5, "inntekt", "inntekt5", listOf("nav"))
         søkerJson["fakta"][5].assertFaktaAsJson(6, "localdate", "dato6", listOf("nav"))
+        søkerJson["fakta"][6].assertValgFaktaAsJson(7, "flervalg", "flervalg7", listOf("søker"), listOf("valg1", "valg2", "valg3"))
+        søkerJson["fakta"][7].assertValgFaktaAsJson(8, "envalg", "envalg8", listOf("søker"), listOf("valg1", "valg2"))
         assertEquals("1", søkerJson["fakta"][0]["id"].asText())
         assertEquals("2", søkerJson["fakta"][1]["id"].asText())
         assertEquals("3", søkerJson["fakta"][2]["id"].asText())
@@ -109,5 +116,17 @@ internal class FaktaJsonBuilderTest {
         val actual: List<String> = this.get("roller").toSet().map { it.asText() }
         assertEquals(expectedRoller.size, actual.size)
         assertTrue(expectedRoller.containsAll<String>(actual))
+    }
+
+    private fun JsonNode.assertValgFaktaAsJson(
+        expectedId: Int,
+        expectedClass: String,
+        expectedNavn: String,
+        expectedRoller: List<String>,
+        expectedGyldigeValg: List<String>
+    ){
+        this.assertFaktaAsJson(expectedId, expectedClass, expectedNavn, expectedRoller)
+        val actual: List<String> = this.get("gyldigeValg").toSet().map { it.asText() }
+        assertTrue(expectedGyldigeValg.containsAll<String>(actual))
     }
 }

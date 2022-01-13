@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
@@ -100,10 +101,11 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
+        gyldigeValg: GyldigeValg?
     ) {
         if (id in faktumIder) return
-        lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller)
+        lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller,null, gyldigeValg)
     }
 
     private fun lagFaktumNode(
@@ -111,7 +113,8 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         clazz: String,
         navn: String? = null,
         roller: Set<Rolle>,
-        templates: ArrayNode? = null
+        templates: ArrayNode? = null,
+        gyldigeValg: GyldigeValg? = null
     ) {
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
@@ -121,6 +124,13 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
             faktumNode.putArray("roller").also { arrayNode ->
                 roller.forEach { rolle ->
                     arrayNode.add(rolle.typeNavn)
+                }
+            }
+            gyldigeValg?.let { gv ->
+                faktumNode.putArray("gyldigeValg").also { arrayNode ->
+                    gv.forEach {
+                        arrayNode.add(it)
+                    }
                 }
             }
             if (templates != null) faktumNode["templates"] = templates
