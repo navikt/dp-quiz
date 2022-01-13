@@ -65,12 +65,12 @@ internal class AvhengigeFaktaTest {
             originalSøknadprosess.dato(2).besvar(2.januar)
             originalSøknadprosess.dato(13).besvar(13.januar)
             originalSøknadprosess.boolsk(19).besvar(true)
-            hentFørsteSøknad()
-            assertRecordCount(3, "gammel_faktum_verdi")
+            lagreHentOgSammenlign()
+            assertRecordCount(0, "gammel_faktum_verdi")
             assertTrue(rehydrertSøknadprosess.boolsk(19).svar())
             originalSøknadprosess.dato(2).besvar(22.januar)
-            hentFørsteSøknad()
-            assertRecordCount(5, "gammel_faktum_verdi")
+            lagreHentOgSammenlign()
+            assertRecordCount(2, "gammel_faktum_verdi")
             assertFalse(rehydrertSøknadprosess.boolsk(19).erBesvart())
         }
     }
@@ -164,7 +164,7 @@ internal class AvhengigeFaktaTest {
         }
     }
 
-    private fun hentFørsteSøknad(userInterfaceType: Versjon.UserInterfaceType = Web) {
+    private fun lagreHentOgSammenlign(userInterfaceType: Versjon.UserInterfaceType = Web) {
         søknadRecord.lagre(originalSøknadprosess.søknad)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         rehydrertSøknadprosess = søknadRecord.hent(uuid, userInterfaceType)

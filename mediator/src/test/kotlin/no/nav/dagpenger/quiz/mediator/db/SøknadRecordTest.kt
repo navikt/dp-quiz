@@ -179,10 +179,14 @@ internal class SøknadRecordTest {
     }
 
     @Test
-    fun `BUG - dokument lagret flere ganger selvom det ikke er endringer `() {
+    fun `BUGFIX - dokument lagret flere ganger selvom det ikke er endringer `() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
             originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()))
+            lagreHentOgSammenlign()
+            lagreHentOgSammenlign()
+            assertRecordCount(0, "gammel_faktum_verdi")
+            originalSøknadprosess.dokument(11).besvar(Dokument(2.januar.atStartOfDay()))
             lagreHentOgSammenlign()
             lagreHentOgSammenlign()
             assertRecordCount(1, "gammel_faktum_verdi")
