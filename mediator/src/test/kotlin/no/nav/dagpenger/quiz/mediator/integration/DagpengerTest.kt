@@ -34,15 +34,34 @@ class DagpengerTest : SøknadBesvarer() {
     }
 
     @Test
-    fun ` Reell arbeidssøker og verneplikt glad sti `() {
-        withSøknad(nySøknad) { besvar ->
-            val firstMessage = testRapid.inspektør.message(0)
-            assertEquals(søknadUUID, firstMessage["søknad_uuid"].asText().let { soknadId -> UUID.fromString(soknadId) })
-            assertEquals(8, firstMessage["fakta"].size())
-        }
+    fun `Hent alle fakta happy path`() {
+        testRapid.sendTestMessage(nySøknad)
+        val firstMessage = testRapid.inspektør.message(0)
+        assertEquals(søknadUUID, firstMessage["søknad_uuid"].asText().let { soknadId -> UUID.fromString(soknadId) })
+        assertEquals(8, firstMessage["fakta"].size())
+    }
+
+    @Test
+    fun `Ignore nysøknad med fakta`() {
+        testRapid.sendTestMessage(ferdigSøknad)
+        assertEquals(0, testRapid.inspektør.size)
     }
 
     private val søknadUUID = UUID.randomUUID()
+
+    //language=JSON
+    private val ferdigSøknad =
+        """
+        {
+          "@event_name": "NySøknad",
+          "@opprettet": "${LocalDateTime.now()}",
+          "@id": "${UUID.randomUUID()}",
+          "søknad_uuid": "$søknadUUID",
+          "fødselsnummer": "123456789",
+          "fakta": []
+        }
+        
+        """.trimIndent()
 
     //language=JSON
     private val nySøknad =

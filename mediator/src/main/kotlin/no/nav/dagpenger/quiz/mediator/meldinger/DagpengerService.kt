@@ -31,6 +31,7 @@ internal class DagpengerService(
                 it.requireKey("@id", "@opprettet")
                 it.requireKey("søknad_uuid")
                 it.requireKey("fødselsnummer")
+                it.forbid("fakta")
             }
         }.register(this)
     }
