@@ -48,7 +48,11 @@ internal class DagpengerService(
         søknadPersistence.ny(identer, faktagrupperType, prosessVersjon, søknadUuid).also { søknadsprosess ->
             søknadPersistence.lagre(søknadsprosess.søknad)
             log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid}" }
-            context.publish(FaktaJsonBuilder(søknadsprosess).resultat().toString())
+            context.publish(
+                FaktaJsonBuilder(søknadsprosess).resultat().toString().also {
+                    sikkerlogg.info { "Fakta sendt: $it" }
+                }
+            )
         }
     }
 }
