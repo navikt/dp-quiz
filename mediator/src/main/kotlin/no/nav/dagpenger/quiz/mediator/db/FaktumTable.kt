@@ -7,15 +7,20 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.faktum.Dokument
+import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
+import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
+import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
@@ -24,6 +29,7 @@ import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
+import org.postgresql.util.PGobject
 import java.time.LocalDate
 import java.util.UUID
 
@@ -94,9 +100,13 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
+        gyldigeValg: GyldigeValg?
     ) {
-        skrivFaktum(faktum, clazz)
+        val dbId = skrivFaktum(faktum, clazz)
+        gyldigeValg?.let {
+            valgFaktum(dbId, it)
+        }
         avhengigheter[faktum] = avhengigeFakta
     }
 
@@ -142,6 +152,21 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
 
     override fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
         avhengigheter.forEach { (parent, children) -> faktumFaktum(dbIder[parent]!!, children, "avhengig_faktum") }
+    }
+
+    private fun valgFaktum(faktumId: Int, gyldigeValg: GyldigeValg) {
+        using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf(
+                    "INSERT INTO faktum_gyldige_valg (faktum_id, verdier) VALUES (?, ?)".trimMargin(),
+                    faktumId,
+                    PGobject().apply {
+                        type = "TEXT[]"
+                        value = "{${gyldigeValg.joinToString { """"$it"""" }}}"
+                    }
+                ).asExecute
+            )
+        }
     }
 
     private fun faktumFaktum(parentId: Int, children: Collection<Faktum<*>>, table: String) {
@@ -194,6 +219,8 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
                 byggMap(Dokument::class.java, 4) { navn, rootId -> dokument faktum navn id rootId }
                 byggMap(Inntekt::class.java, 5) { navn, rootId -> inntekt faktum navn id rootId }
                 byggMap(Double::class.java, 6) { navn, rootId -> desimaltall faktum navn id rootId }
+                byggMap(Envalg::class.java, 7) { navn, rootId -> envalg faktum navn id rootId }
+                byggMap(Flervalg::class.java, 8) { navn, rootId -> flervalg faktum navn id rootId }
             }
 
             operator fun get(clazz: Class<*>) = kodeMap[clazz] ?: throw NoSuchElementException("Ukjent klasse $clazz")
