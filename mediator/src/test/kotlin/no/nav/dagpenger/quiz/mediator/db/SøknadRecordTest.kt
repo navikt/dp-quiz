@@ -81,7 +81,7 @@ internal class SøknadRecordTest {
 
             lagreHentOgSammenlign()
 
-            assertRecordCount(7, "gammel_faktum_verdi")
+            assertRecordCount(0, "gammel_faktum_verdi")
 
             originalSøknadprosess.dato(2).besvar(LocalDate.now().minusDays(3))
             originalSøknadprosess.inntekt(6).besvar(19999.årlig)
@@ -93,7 +93,7 @@ internal class SøknadRecordTest {
 
             lagreHentOgSammenlign()
 
-            assertRecordCount(14, "gammel_faktum_verdi")
+            assertRecordCount(7, "gammel_faktum_verdi")
         }
     }
 
@@ -120,17 +120,20 @@ internal class SøknadRecordTest {
             byggOriginalSøknadprosess()
             assertEquals(expectedFaktaCount, originalSøknadprosess.søknad.map { it }.size)
             lagreHentOgSammenlign()
+            assertRecordCount(0, "gammel_faktum_verdi")
             originalSøknadprosess = rehydrertSøknadprosess
 
             originalSøknadprosess.heltall(15).besvar(3)
             originalSøknadprosess.heltall("16.2").besvar(162)
             originalSøknadprosess.heltall("16.3").besvar(163)
             lagreHentOgSammenlign()
+            assertRecordCount(0, "gammel_faktum_verdi")
             originalSøknadprosess = rehydrertSøknadprosess
             originalSøknadprosess.heltall(15).besvar(2)
             originalSøknadprosess.heltall("16.1").besvar(161)
             originalSøknadprosess.heltall("16.2").besvar(1622)
             lagreHentOgSammenlign()
+            assertRecordCount(3, "gammel_faktum_verdi")
             assertThrows<IllegalArgumentException> { rehydrertSøknadprosess.heltall("16.3") }
         }
     }

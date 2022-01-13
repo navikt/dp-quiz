@@ -172,14 +172,16 @@ class SøknadRecord : SøknadPersistence {
         val nyeSvar: MutableMap<String, Faktum<*>?> = svarMap(søknad)
         val originalSvar: MutableMap<String, Faktum<*>?> = svarMap(hent(søknad.uuid).søknad)
 
-        slettDødeFakta(søknad, nyeSvar, originalSvar)
+        slettDødeTemplatefakta(søknad, nyeSvar, originalSvar)
 
         originalSvar
-            .filterNot { (id, faktum) -> nyeSvar[id]?.svar() == faktum?.svar() }.forEach { (id, _) ->
+            .filterNot { (id, faktum) -> nyeSvar[id]?.svar() == faktum?.svar() }.forEach { (id, originaltFaktum) ->
                 val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
 
                 using(sessionOf(dataSource)) { session ->
-                    session.run(arkiverFaktum(søknad, rootId, indeks))
+                    if (originaltFaktum?.svar() != null) {
+                        session.run(arkiverFaktum(søknad, rootId, indeks))
+                    }
                     session.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId))
                 }
             }
@@ -199,13 +201,16 @@ class SøknadRecord : SøknadPersistence {
         faktum.id to (if (faktum.erBesvart()) faktum else null)
     }.toMap().toMutableMap()
 
-    private fun slettDødeFakta(søknad: Søknad, nyeSvar: Map<String, Faktum<*>?>, originalSvar: MutableMap<String, Faktum<*>?>) {
+    private fun slettDødeTemplatefakta(søknad: Søknad, nyeSvar: Map<String, Faktum<*>?>, originalSvar: MutableMap<String, Faktum<*>?>) {
         originalSvar.keys.toSet()
             .subtract(nyeSvar.keys.toSet())
             .map { FaktumId(it).reflection { rootId, indeks -> Triple(rootId, indeks, it) } }
             .forEach { (rootId, indeks, id) ->
                 using(sessionOf(dataSource)) { session ->
-                    session.run(arkiverFaktum(søknad = søknad, rootId = rootId, indeks = indeks))
+                    val originaltFaktum = originalSvar[id]?.svar()
+                    if (originaltFaktum != null) {
+                        session.run(arkiverFaktum(søknad = søknad, rootId = rootId, indeks = indeks))
+                    }
                     session.run(slettDødeFaktum(søknad = søknad, rootId, indeks))
                     originalSvar.remove(id)
                 }
