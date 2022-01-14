@@ -14,7 +14,7 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class ValgFaktumTest {
+class EnvalgFaktumTest {
 
     val prototypeSøknad = Søknad(
         testversjon,
