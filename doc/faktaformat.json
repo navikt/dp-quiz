@@ -4,7 +4,7 @@
       "id": "1",
       "clazz": "boolean",
       "navn": "boolsk1",
-      "svar": true | false,
+      "svar": true,
       "roller": [
         "søker"
       ]
@@ -13,7 +13,7 @@
       "id": "2",
       "clazz": "int",
       "navn": "heltall2",
-      "svar": 1,
+      "svar": 2,
       "roller": [
         "søker"
       ]
@@ -22,7 +22,7 @@
       "id": "3",
       "clazz": "double",
       "navn": "desimaltall3",
-      "svar": 1.0,
+      "svar": 3.0,
       "roller": [
         "søker"
       ]
@@ -35,7 +35,6 @@
         "urn": "fillager:10000", //Referanse til en filtjeneste og unik id på fil
         "opplastningsTidspunkt": "ISO8601(LocalDateTime)"
       },
-
       "roller": [
         "nav"
       ]
@@ -67,13 +66,13 @@
         "søker"
       ],
       "svar": [
-        "valg1",
-        "valg2"
+        "flervalg1",
+        "flervalg2"
       ],
       "gyldigeValg": [
-        "valg1",
-        "valg2",
-        "valg3"
+        "flervalg1",
+        "flervalg2",
+        "flervalg3"
       ]
     },
     {
@@ -83,10 +82,10 @@
       "roller": [
         "søker"
       ],
-      "svar": "valg1",
+      "svar": "envalg1",
       "gyldigeValg": [
-        "valg1",
-        "valg2"
+        "envalg1",
+        "envalg2"
       ]
     },
     {
@@ -103,7 +102,10 @@
       "id": "10",
       "clazz": "periode",
       "navn": "periode10",
-      "svar": {"fom": "ISO8601(LocalDateTime)","tom": "ISO8601(LocalDateTime)"},
+      "svar": {
+        "fom": "ISO8601(LocalDateTime)",
+        "tom": "ISO8601(LocalDateTime)"
+      },
       "roller": [
         "søker"
       ]
@@ -112,50 +114,42 @@
       "id": "10",
       "clazz": "periode",
       "navn": "periode10",
-      "svar": {"fom": "ISO8601(LocalDateTime)","tom": "ISO8601(LocalDateTime)"},
+      "svar": {
+        "fom": "ISO8601(LocalDateTime)",
+        "tom": "ISO8601(LocalDateTime)"
+      },
       "roller": [
         "søker"
       ]
     },
     {
-      "id": "11",
+      "id": "10",
+      "behov": "Registreringsperioder",
       "clazz": "generator",
-      "navn": "generator11",
-      "template": [
+      "templates": [
         {
-          "id": "12",
-          "clazz": "number",
-          "navn": "generator11"
+          "id": "11",
+          "navn": "fom",
+          "clazz": "localdate"
         },
         {
-          "id": "13",
-          "clazz": "localdate",
-          "navn": "generator13"
+          "id": "12",
+          "navn": "tom",
+          "clazz": "localdate"
         }
       ],
-      "svar": [
-        {
-        {
-          "id": "12",
-          "svar": 1
-        },
-        {
-          "id": "12",
-          "svar": 2
-        }
-        },
-        {
-
-        {
-          "id": "13",
-          "svar": "ISO8601(LocalDateTime)"
-        },
-        {
-          "id": "13",
-          "svar": "ISO8601(LocalDateTime)"
-        }
-        }
-      ],
+      "svar": {
+        "Registreringsperioder": [
+          {
+            "fom": "2020-01-01",
+            "tom": "2020-01-08"
+          },
+          {
+            "fom": "2020-01-09",
+            "tom": "2020-01-16"
+          }
+        ]
+      },
       "roller": [
         "søker"
       ]
