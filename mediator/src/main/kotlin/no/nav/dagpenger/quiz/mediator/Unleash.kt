@@ -21,7 +21,7 @@ class ByClusterStrategy(private val currentCluster: Cluster) : Strategy {
     override fun getName(): String = "byCluster"
 
     override fun isEnabled(parameters: MutableMap<String, String>): Boolean {
-        val clustersParameter = parameters?.get("cluster") ?: return false
+        val clustersParameter = parameters["cluster"] ?: return false
         val alleClustere = clustersParameter.split(",").map { it.trim() }.map { it.lowercase() }.toList()
         return alleClustere.contains(currentCluster.asString())
     }

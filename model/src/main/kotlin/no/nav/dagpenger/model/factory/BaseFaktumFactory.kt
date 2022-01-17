@@ -57,6 +57,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 
     infix fun med(valg: String) = this.apply { gyldigevalg.add(valg) }
 
+    @Suppress("UNCHECKED_CAST")
     override fun faktum(): Faktum<T> {
         return when (clazz) {
             Envalg::class.java -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz, gyldigevalg = GyldigeValg(gyldigevalg)) as Faktum<T>
@@ -67,10 +68,12 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 
     fun faktum(vararg templates: TemplateFaktum<*>) = GeneratorFaktum(faktumId, navn, templates.asList())
 
+    @Suppress("UNCHECKED_CAST")
     override fun og(otherId: Int): FaktumFactory<T> =
         if (templateIder.isEmpty()) super.og(otherId)
         else genererer(otherId) as FaktumFactory<T>
 
+    @Suppress("UNCHECKED_CAST")
     override infix fun genererer(otherId: Int): BaseFaktumFactory<Int> = (this as BaseFaktumFactory<Int>)
         .also { templateIder.add(otherId) }
 

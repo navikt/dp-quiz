@@ -41,8 +41,10 @@ class Søknadprosess private constructor(
 
     internal infix fun idOrNull(faktumId: FaktumId) = søknad.idOrNull(faktumId)
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Comparable<T>> faktum(id: String): Faktum<T> = (søknad.id(id) as Faktum<T>)
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Comparable<T>> faktum(id: Int): Faktum<T> = (søknad.id(id) as Faktum<T>)
 
     fun nesteSeksjoner(): List<Seksjon> =
