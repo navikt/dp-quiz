@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.marshalling.FaktaJsonBuilder
+import no.nav.dagpenger.model.marshalling.NavJsonBuilder
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
@@ -48,6 +49,11 @@ internal class DagpengerService(
         søknadPersistence.ny(identer, faktagrupperType, prosessVersjon, søknadUuid).also { søknadsprosess ->
             søknadPersistence.lagre(søknadsprosess.søknad)
             log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid}" }
+
+            NavJsonBuilder(søknadsprosess, "navseksjon").also {
+                context.publish(it.resultat().toString())
+                sikkerlogg.info { "Behov sendt: $it" }
+            }
             context.publish(
                 FaktaJsonBuilder(søknadsprosess).resultat().toString().also {
                     sikkerlogg.info { "Fakta sendt: $it" }

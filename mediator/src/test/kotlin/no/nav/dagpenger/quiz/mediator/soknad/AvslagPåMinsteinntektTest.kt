@@ -59,7 +59,7 @@ import org.junit.jupiter.params.provider.ValueSource
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class RegeltreTest {
+internal class AvslagPåMinsteinntektTest {
     private lateinit var manglerInntekt: Søknadprosess
 
     @BeforeEach

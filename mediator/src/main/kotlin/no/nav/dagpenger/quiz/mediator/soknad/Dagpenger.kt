@@ -2,20 +2,17 @@ package no.nav.dagpenger.quiz.mediator.soknad
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
-import no.nav.dagpenger.model.regel.dokumenteresAv
-import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
+import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.subsumsjon.alle
-import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
-import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
-import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.Subsumsjoner.regeltre
 
 internal object Dagpenger {
@@ -32,6 +29,9 @@ internal object Dagpenger {
     const val `Avtjent militærtjeneste minst 3 av siste 6 mnd` = 6
     const val `Redusert helse, fysisk eller psykisk` = 7
     const val `Bekreftelse fra relevant fagpersonell` = 8
+    const val arbeidsforhold = 9
+    const val `arbeidsforhold fra og med` = 10
+    const val `arbeidsforhold til og med` = 11
 
     fun registrer(registrer: (søknad: Søknad) -> Unit) {
         registrer(søknad)
@@ -47,76 +47,56 @@ internal object Dagpenger {
             boolsk faktum "Som hovedregel må du være villig til å ta ethvert arbeid du er kvalifisert for. Dette gjelder også innenfor yrker du ikke er utdannet til eller har arbeidserfaring fra. Du må også være villig til å gå ned i lønn." id `Villig til å ta ethvert arbeid`,
             boolsk faktum "Du kan ha rett til dagpenger etter særlige regler hvis du har avtjent militærtjeneste eller obligatorisk sivilforsvarstjeneste i minst tre av de siste tolv månedene" id `Avtjent militærtjeneste minst 3 av siste 6 mnd`,
             boolsk faktum "Redusert helse, fysisk eller psykisk" id `Redusert helse, fysisk eller psykisk` avhengerAv `Villig til å ta hel og deltidsjobb`,
-            dokument faktum "Bekreftelse fra relevant fagpersonell" id `Bekreftelse fra relevant fagpersonell` avhengerAv `Redusert helse, fysisk eller psykisk`
+            dokument faktum "Bekreftelse fra relevant fagpersonell" id `Bekreftelse fra relevant fagpersonell` avhengerAv `Redusert helse, fysisk eller psykisk`,
+            heltall faktum "faktum.arbeidsforhold" id arbeidsforhold genererer `arbeidsforhold fra og med` og `arbeidsforhold til og med`,
+            dato faktum "faktum.arbeidsforhold.fom" id `arbeidsforhold fra og med`,
+            dato faktum "faktum.arbeidsforhold.tom" id `arbeidsforhold til og med`
+
         )
 
     private object Seksjoner {
-        val gjenopptak = with(søknad) {
-            Seksjon("Gjenopptak", Rolle.søker, dato(`Har du hatt dagpenger i løpet av de siste 52 ukene`))
-        }
-        val reellArbeidsøker = søknad.seksjon(
-            "Er reell arbeidssøker",
+
+        val søkerSeksjon = søknad.seksjon(
+            "søkerseksjon",
             Rolle.søker,
             `Villig til å ta hel og deltidsjobb`,
             `Villig til å ta arbeid i hele Norge`,
             `Villig til å ta alle typer arbeid`,
             `Villig til å ta ethvert arbeid`,
-        )
-
-        val unntakReellArbeidsøker = søknad.seksjon(
-
-            "Reell arbeidssøker unntak",
-            Rolle.søker,
             `Redusert helse, fysisk eller psykisk`,
             `Bekreftelse fra relevant fagpersonell`,
+            `Avtjent militærtjeneste minst 3 av siste 6 mnd`
         )
 
-        val verneplikt = søknad
-            .seksjon(
-                "Har avtjent verneplikt",
-                Rolle.søker,
-                `Avtjent militærtjeneste minst 3 av siste 6 mnd`
-            )
+        val navSeksjon = søknad.seksjon(
+            "navseksjon",
+            Rolle.nav,
+            arbeidsforhold,
+            `arbeidsforhold fra og med`,
+            `arbeidsforhold til og med`
+
+        )
     }
 
     internal val søknadsprosess: Søknadprosess =
         Søknadprosess(
-            Seksjoner.gjenopptak,
-            Seksjoner.reellArbeidsøker,
-            Seksjoner.unntakReellArbeidsøker,
-            Seksjoner.verneplikt,
+            Seksjoner.søkerSeksjon,
+            Seksjoner.navSeksjon
         )
 
     object Subsumsjoner {
-        val villigTilHeltidOgDeltid = with(søknad) {
-            (boolsk(`Villig til å ta hel og deltidsjobb`) er true).hvisIkkeOppfylt {
-                "svare på".minstEnAv(
-                    (boolsk(`Redusert helse, fysisk eller psykisk`) er true).hvisOppfylt {
-                        boolsk(`Redusert helse, fysisk eller psykisk`).dokumenteresAv(
-                            dokument(
-                                `Bekreftelse fra relevant fagpersonell`
-                            )
-                        )
-                    }
-                )
-            }
-        }
-
-        val reellArbeidsøker = with(søknad) {
-            "er reell arbeidssøker hvis".alle(
-                villigTilHeltidOgDeltid,
-                boolsk(`Villig til å ta arbeid i hele Norge`) er true,
-                boolsk(`Villig til å ta alle typer arbeid`) er true,
-                boolsk(`Villig til å ta ethvert arbeid`) er true
-            )
-        }
 
         val regeltre = with(søknad) {
-            reellArbeidsøker.hvisOppfylt {
-                boolsk(`Avtjent militærtjeneste minst 3 av siste 6 mnd`) er true
-            }
+            heltall(arbeidsforhold) minst (0)
         }
     }
+
+    private val faktumNavBehov =
+        FaktumNavBehov(
+            mapOf(
+                arbeidsforhold to "Arbeidsforhold",
+            )
+        )
 
     private val versjon = Versjon.Bygger(
         prototypeSøknad = søknad,
@@ -124,7 +104,7 @@ internal object Dagpenger {
         prototypeUserInterfaces = mapOf(
             Versjon.UserInterfaceType.Web to søknadsprosess
         ),
-        faktumNavBehov = null
+        faktumNavBehov = faktumNavBehov
     ).registrer().also {
         logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
     }

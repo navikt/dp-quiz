@@ -36,9 +36,17 @@ class DagpengerTest : SøknadBesvarer() {
     @Test
     fun `Hent alle fakta happy path`() {
         testRapid.sendTestMessage(nySøknad)
-        val firstMessage = testRapid.inspektør.message(0)
-        assertEquals(søknadUUID, firstMessage["søknad_uuid"].asText().let { soknadId -> UUID.fromString(soknadId) })
-        assertEquals(8, firstMessage["fakta"].size())
+        assertEquals(2, testRapid.inspektør.size)
+
+        val behov = testRapid.inspektør.message(0)
+        assertEquals(listOf("Arbeidsforhold"), behov["@behov"].map { it.asText() })
+        val fakta = testRapid.inspektør.message(1)
+        assertEquals(søknadUUID, fakta["søknad_uuid"].asText().let { soknadId -> UUID.fromString(soknadId) })
+        assertEquals(11, fakta["fakta"].size())
+
+        // besvar arbeidsforhold
+
+        //
     }
 
     @Test
