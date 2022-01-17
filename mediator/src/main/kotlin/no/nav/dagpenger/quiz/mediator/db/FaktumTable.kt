@@ -11,6 +11,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.faktum.Dokument
@@ -25,6 +26,7 @@ import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.visitor.SøknadVisitor
@@ -221,6 +223,7 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
                 byggMap(Double::class.java, 6) { navn, rootId -> desimaltall faktum navn id rootId }
                 byggMap(Envalg::class.java, 7) { navn, rootId -> envalg faktum navn id rootId }
                 byggMap(Flervalg::class.java, 8) { navn, rootId -> flervalg faktum navn id rootId }
+                byggMap(Tekst::class.java, 9) { navn, rootId -> tekst faktum navn id rootId }
             }
 
             operator fun get(clazz: Class<*>) = kodeMap[clazz] ?: throw NoSuchElementException("Ukjent klasse $clazz")

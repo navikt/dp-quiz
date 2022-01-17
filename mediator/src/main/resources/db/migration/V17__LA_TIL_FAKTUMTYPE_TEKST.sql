@@ -1,0 +1,3 @@
+
+ALTER TABLE faktum_verdi ADD COLUMN IF NOT EXISTS tekst TEXT NULL;
+ALTER TABLE gammel_faktum_verdi ADD COLUMN IF NOT EXISTS tekst TEXT NULL;

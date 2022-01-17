@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
@@ -27,7 +28,7 @@ import java.time.LocalDate
 internal class SøknadRecordTest {
     companion object {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
-        private const val expectedFaktaCount = 24
+        private const val expectedFaktaCount = 25
     }
 
     private lateinit var originalSøknadprosess: Søknadprosess
@@ -61,6 +62,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()))
             originalSøknadprosess.envalg(20).besvar(Envalg("envalg1"))
             originalSøknadprosess.flervalg(21).besvar(Flervalg("flervalg1"))
+            originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
 
             lagreHentOgSammenlign()
         }
@@ -78,6 +80,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.envalg(20).besvar(Envalg("envalg1"))
             originalSøknadprosess.flervalg(21).besvar(Flervalg("flervalg1"))
             originalSøknadprosess.heltall(22).besvar(123)
+            originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
 
             lagreHentOgSammenlign()
 
@@ -90,10 +93,11 @@ internal class SøknadRecordTest {
             originalSøknadprosess.envalg(20).besvar(Envalg("envalg2"))
             originalSøknadprosess.flervalg(21).besvar(Flervalg("flervalg2"))
             originalSøknadprosess.heltall(22).besvar(456)
+            originalSøknadprosess.tekst(23).besvar(Tekst("tekst2"))
 
             lagreHentOgSammenlign()
 
-            assertRecordCount(7, "gammel_faktum_verdi")
+            assertRecordCount(8, "gammel_faktum_verdi")
         }
     }
 

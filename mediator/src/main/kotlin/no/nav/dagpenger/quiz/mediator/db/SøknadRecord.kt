@@ -17,6 +17,7 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
@@ -86,6 +87,9 @@ class SøknadRecord : SøknadPersistence {
         if (row.desimaltall != null) {
             (faktum as Faktum<Double>).rehydrer(row.desimaltall, row.besvartAv)
         }
+        if (row.tekst != null) {
+            (faktum as Faktum<Tekst>).rehydrer(row.tekst, row.besvartAv)
+        }
         if (row.opplastet != null && row.url != null) {
             (faktum as Faktum<Dokument>).rehydrer(
                 Dokument(
@@ -122,7 +126,8 @@ class SøknadRecord : SøknadPersistence {
                                 dokument.url AS url, 
                                 dokument.opplastet AS opplastet,
                                 envalg.verdier AS envalgVerdier,
-                                flervalg.verdier AS flervalgVerdier
+                                flervalg.verdier AS flervalgVerdier,
+                                faktum_verdi.tekst AS tekst
                             FROM faktum_verdi
                             JOIN soknad_faktum ON faktum_verdi.soknad_id = soknad_faktum.soknad_id 
                                 AND faktum_verdi.faktum_id = soknad_faktum.faktum_id
@@ -146,6 +151,7 @@ class SøknadRecord : SøknadPersistence {
                         it.doubleOrNull("desimaltall"),
                         it.arrayOrNull<String>("envalgVerdier")?.let { verdier -> Envalg(*verdier) },
                         it.arrayOrNull<String>("flervalgVerdier")?.let { verdier -> Flervalg(*verdier) },
+                        it.stringOrNull("tekst")?.let { verdi -> Tekst(verdi) }
                     )
                 }.asList
             )
@@ -165,6 +171,7 @@ class SøknadRecord : SøknadPersistence {
         val desimaltall: Double?,
         val envalg: Envalg?,
         val flervalg: Flervalg?,
+        val tekst: Tekst?,
         val id: FaktumId = if (indeks == 0) FaktumId(root_id) else FaktumId(root_id).medIndeks(indeks)
     )
 
@@ -252,6 +259,8 @@ class SøknadRecord : SøknadPersistence {
             is Int -> """UPDATE faktum_verdi  SET heltall = $svar, besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
             //language=PostgreSQL
             is Double -> """UPDATE faktum_verdi  SET desimaltall = $svar, besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
+            //language=PostgreSQL
+            is Tekst -> """UPDATE faktum_verdi  SET tekst = '${svar.verdi}', besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
             //language=PostgreSQL
             is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
 |                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id) , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()

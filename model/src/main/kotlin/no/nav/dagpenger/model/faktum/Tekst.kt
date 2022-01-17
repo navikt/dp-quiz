@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.faktum
 
-class Tekst(private val verdi: String) : Comparable<Tekst> {
+class Tekst(val verdi: String) : Comparable<Tekst> {
 
     override fun equals(other: Any?): Boolean = other is Tekst && this.verdi == other.verdi
 
