@@ -111,6 +111,7 @@ class Søknad private constructor(
 
     override infix fun generator(rootId: Int) = generator(FaktumId(rootId))
     override infix fun generator(id: String) = generator(FaktumId(id))
+    internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
 
     override fun envalg(rootId: Int) = envalg(FaktumId(rootId))
     override fun envalg(id: String): Faktum<Envalg> = envalg(FaktumId(id))
@@ -120,7 +121,9 @@ class Søknad private constructor(
     override fun flervalg(id: String): Faktum<Flervalg> = flervalg(FaktumId(id))
     private infix fun flervalg(faktumId: FaktumId) = id(faktumId) as Faktum<Flervalg>
 
-    internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
+    override fun tekst(rootId: Int): Faktum<Tekst> = tekst(FaktumId(rootId))
+    override fun tekst(id: String): Faktum<Tekst> = tekst(FaktumId(id))
+    private infix fun tekst(faktumId: FaktumId) = id(faktumId) as Faktum<Tekst>
 
     fun bygg(person: Person, prosessVersjon: Prosessversjon, uuid: UUID = UUID.randomUUID()): Søknad {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
