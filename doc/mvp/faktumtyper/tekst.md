@@ -7,9 +7,9 @@ På lengre sikt kommer denne typen ikke til å være aktuell i Quiz.
 ```
 {
   "id": "9",
-  "clazz": "tekst",
+  "type": "tekst",
   "lengdeMax": 500,
-  "navn": "tekst9",
+  "beskrivendeId": "tekst9",
   "svar": "Dette er en tekst som kan inneholde linjeskift",
   "roller": [
     "søker"

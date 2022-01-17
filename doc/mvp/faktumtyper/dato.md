@@ -6,8 +6,8 @@ Dato som følger standarden `ISO8601` (LocalDateTime).
 ```
 {
   "id": "6",
-  "clazz": "localdate",
-  "navn": "dato6",
+  "type": "localdate",
+  "beskrivendeId": "dato6",
   "svar": "2022-01-14T13:39Z",
   "roller": [
     "nav"

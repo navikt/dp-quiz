@@ -71,6 +71,7 @@ internal class FaktumSvarService(
                 val søknadprosess = søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web)
                 besvarFakta(fakta, søknadprosess)
 
+                // @todo: Handler per prosessversjon?
                 if (søknadprosess.erFerdig()) {
                     sendResultat(søknadprosess, context)
                 } else {

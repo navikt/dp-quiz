@@ -6,8 +6,8 @@ Typisk brukt for opplasting av vedlegg.
 ```
 {
   "id": "4",
-  "clazz": "dokument",
-  "navn": "dokument4",
+  "type": "dokument",
+  "beskrivendeId": "dokument4",
   "svar": {
     "urn": "fillager:10000",
     "opplastningsTidspunkt": "2021-08-05T13:39Z"

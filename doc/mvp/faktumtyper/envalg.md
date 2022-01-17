@@ -6,8 +6,8 @@ Typisk brukt for radioknapper eller nedtrekkslister.
 ```
 {
   "id": "8",
-  "clazz": "envalg",
-  "navn": "envalg8",
+  "type": "envalg",
+  "beskrivendeId": "envalg8",
   "roller": [
     "søker"
   ],

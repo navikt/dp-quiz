@@ -107,12 +107,12 @@ internal class FaktaJsonBuilderTest {
     private fun JsonNode.assertFaktaAsJson(
         expectedId: Int,
         expectedClass: String,
-        expectedNavn: String,
+        expectedBeskrivendeId: String,
         expectedRoller: List<String>
     ) {
         assertEquals(expectedId, this.get("id").asInt())
-        assertEquals(expectedClass, this.get("clazz").asText())
-        assertEquals(expectedNavn, this.get("navn").asText())
+        assertEquals(expectedClass, this.get("type").asText())
+        assertEquals(expectedBeskrivendeId, this.get("beskrivendeId").asText())
         val actual: List<String> = this.get("roller").toSet().map { it.asText() }
         assertEquals(expectedRoller.size, actual.size)
         assertTrue(expectedRoller.containsAll<String>(actual))

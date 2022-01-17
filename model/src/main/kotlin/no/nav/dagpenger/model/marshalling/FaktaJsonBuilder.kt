@@ -119,8 +119,8 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("id", id)
-            faktumNode.put("clazz", clazz)
-            faktumNode.put("navn", navn)
+            faktumNode.put("type", clazz)
+            faktumNode.put("beskrivendeId", navn)
             faktumNode.putArray("roller").also { arrayNode ->
                 roller.forEach { rolle ->
                     arrayNode.add(rolle.typeNavn)

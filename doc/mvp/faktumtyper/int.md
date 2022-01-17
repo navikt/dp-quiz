@@ -6,8 +6,8 @@ Et heltall.
 ```
 {
   "id": "2",
-  "clazz": "int",
-  "navn": "heltall2",
+  "type": "int",
+  "beskrivendeId": "heltall2",
   "svar": 2,
   "roller": [
     "søker"

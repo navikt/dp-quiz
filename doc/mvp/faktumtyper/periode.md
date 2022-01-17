@@ -6,8 +6,8 @@ Type som inneholder en startdato og en sluttdato, fra-og-med og til-og-med.
 ```
 {
   "id": "14",
-  "clazz": "periode",
-  "navn": "periode10",
+  "type": "periode",
+  "beskrivendeId": "periode10",
   "svar": {
     "fom": "2021-01-14T10:39Z",
     "tom": "2021-03-12T15:45Z"

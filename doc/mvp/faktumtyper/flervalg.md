@@ -6,8 +6,8 @@ Typisk brukt for sjekkbokser (multiple choice).
 ```
     {
       "id": "7",
-      "clazz": "flervalg",
-      "navn": "flervalg7",
+      "type": "flervalg",
+      "beskrivendeId": "flervalg7",
       "roller": [
         "søker"
       ],

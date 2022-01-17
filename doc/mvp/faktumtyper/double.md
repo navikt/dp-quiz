@@ -6,8 +6,8 @@ Et desimaltall.
 ```
 {
   "id": "3",
-  "clazz": "double",
-  "navn": "desimaltall3",
+  "type": "double",
+  "beskrivendeId": "desimaltall3",
   "svar": 3.0,
   "roller": [
     "søker"

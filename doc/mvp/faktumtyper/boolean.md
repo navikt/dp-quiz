@@ -6,9 +6,9 @@ Mappes om i frontend-delen til ja/nei avhengig av språk.
 ```
 {
   "id": "1",
-  "clazz": "boolean", // type?
-  "navn": "boolsk1",  // beskrivende id ? 
-  "svar": true,  
+  "type": "boolean",
+  "beskrivendeId": "boolsk1",
+  "svar": true,
   "roller": [
     "søker"
   ]

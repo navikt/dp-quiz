@@ -9,18 +9,18 @@ mer detaljer.
 ```
 {
   "id": "10",
-  "clazz": "generator",
-  "navn": "antallBarn",
+  "type": "generator",
+  "beskrivendeId": "antallBarn",
   "templates": [
     {
       "id": "11",
-      "navn": "navn",
-      "clazz": "tekst"
+      "beskrivendeId": "navn",
+      "type": "tekst"
     },
     {
       "id": "12",
-      "navn": "fødselsnummer",
-      "clazz": "tekst"
+      "beskrivendeId": "fødselsnummer",
+      "type": "tekst"
     }
   ],
   "svar": [
