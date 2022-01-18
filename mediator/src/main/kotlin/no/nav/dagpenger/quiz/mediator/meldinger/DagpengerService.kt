@@ -7,9 +7,11 @@ import no.nav.dagpenger.model.marshalling.FaktaJsonBuilder
 import no.nav.dagpenger.model.marshalling.NavJsonBuilder
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
+import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.søknadsprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
+import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import java.util.UUID
@@ -50,15 +52,22 @@ internal class DagpengerService(
             søknadPersistence.lagre(søknadsprosess.søknad)
             log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid}" }
 
-            NavJsonBuilder(søknadsprosess, "navseksjon").also {
-                context.publish(it.resultat().toString())
-                sikkerlogg.info { "Behov sendt: $it" }
-            }
+
+            context.publish(
+                NavJsonBuilder(søknadsprosess, "navseksjon").resultat().toString().also {
+                    sikkerlogg.info { "Behov sendt: $it" }
+                }
+
+            )
             context.publish(
                 FaktaJsonBuilder(søknadsprosess).resultat().toString().also {
                     sikkerlogg.info { "Fakta sendt: $it" }
                 }
             )
         }
+    }
+
+    override fun onError(problems: MessageProblems, context: MessageContext) {
+        log.info { "Kunne ikke lese ${problems.toExtendedReport()}" }
     }
 }

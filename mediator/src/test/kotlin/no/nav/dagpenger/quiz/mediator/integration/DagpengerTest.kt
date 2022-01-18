@@ -8,13 +8,15 @@ import no.nav.dagpenger.quiz.mediator.meldinger.DagpengerService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.test.assertEquals
 
-class DagpengerTest : SøknadBesvarer() {
+internal class DagpengerTest : SøknadBesvarer() {
 
     @BeforeEach
     fun setup() {
@@ -33,10 +35,28 @@ class DagpengerTest : SøknadBesvarer() {
         }
     }
 
+    @AfterEach
+    fun reset() {
+        testRapid.reset()
+    }
+
     @Test
     fun `Hent alle fakta happy path`() {
-        testRapid.sendTestMessage(nySøknad)
-        assertEquals(2, testRapid.inspektør.size)
+
+
+        withSøknad(nySøknad) { besvar ->
+            besvar(Dagpenger.arbeidsforhold,
+                listOf(
+                    listOf(
+                        "${Dagpenger.`arbeidsforhold fra og med`}.1" to LocalDate.now().minusYears(5),
+                        "${Dagpenger.`arbeidsforhold til og med`}.1" to LocalDate.now().minusMonths(1),
+                    )
+                ))
+
+        }
+
+
+        assertEquals(3, testRapid.inspektør.size)
 
         val behov = testRapid.inspektør.message(0)
         assertEquals(listOf("Arbeidsforhold"), behov["@behov"].map { it.asText() })
@@ -44,7 +64,10 @@ class DagpengerTest : SøknadBesvarer() {
         assertEquals(søknadUUID, fakta["søknad_uuid"].asText().let { soknadId -> UUID.fromString(soknadId) })
         assertEquals(11, fakta["fakta"].size())
 
-        // besvar arbeidsforhold
+
+        val besvartFakta = testRapid.inspektør.message(2)
+        assertEquals(søknadUUID, besvartFakta["søknad_uuid"].asText().let { soknadId -> UUID.fromString(soknadId) })
+        assertEquals(11, besvartFakta["fakta"].size())
 
         //
     }
@@ -64,7 +87,7 @@ class DagpengerTest : SøknadBesvarer() {
           "@event_name": "NySøknad",
           "@opprettet": "${LocalDateTime.now()}",
           "@id": "${UUID.randomUUID()}",
-          "søknad_uuid": "$søknadUUID",
+          "søknad_uuid": "${UUID.randomUUID()}",
           "fødselsnummer": "123456789",
           "fakta": []
         }
