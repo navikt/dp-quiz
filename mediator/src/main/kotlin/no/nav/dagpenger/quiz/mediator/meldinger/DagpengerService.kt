@@ -52,7 +52,6 @@ internal class DagpengerService(
             søknadPersistence.lagre(søknadsprosess.søknad)
             log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid}" }
 
-
             context.publish(
                 NavJsonBuilder(søknadsprosess, "navseksjon").resultat().toString().also {
                     sikkerlogg.info { "Behov sendt: $it" }

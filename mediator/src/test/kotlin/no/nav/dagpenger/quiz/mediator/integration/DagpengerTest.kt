@@ -43,18 +43,17 @@ internal class DagpengerTest : SøknadBesvarer() {
     @Test
     fun `Hent alle fakta happy path`() {
 
-
         withSøknad(nySøknad) { besvar ->
-            besvar(Dagpenger.arbeidsforhold,
+            besvar(
+                Dagpenger.arbeidsforhold,
                 listOf(
                     listOf(
                         "${Dagpenger.`arbeidsforhold fra og med`}.1" to LocalDate.now().minusYears(5),
                         "${Dagpenger.`arbeidsforhold til og med`}.1" to LocalDate.now().minusMonths(1),
                     )
-                ))
-
+                )
+            )
         }
-
 
         assertEquals(3, testRapid.inspektør.size)
 
@@ -63,7 +62,6 @@ internal class DagpengerTest : SøknadBesvarer() {
         val fakta = testRapid.inspektør.message(1)
         assertEquals(søknadUUID, fakta["søknad_uuid"].asText().let { soknadId -> UUID.fromString(soknadId) })
         assertEquals(11, fakta["fakta"].size())
-
 
         val besvartFakta = testRapid.inspektør.message(2)
         assertEquals(11, besvartFakta["fakta"].size())

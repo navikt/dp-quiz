@@ -52,7 +52,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         this.internVersjonId = hentInternId(prosessVersjon)
         søknadId = using(sessionOf(dataSource)) { session ->
             session.run(
-                queryOf(//language=PostgreSQL
+                queryOf( //language=PostgreSQL
                     "INSERT INTO soknad(uuid, versjon_id, person_id, sesjon_type_id) VALUES (?, ?, ?, ?) returning id",
                     uuid,
                     internVersjonId,

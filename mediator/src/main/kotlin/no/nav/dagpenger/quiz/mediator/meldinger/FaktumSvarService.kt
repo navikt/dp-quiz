@@ -90,7 +90,6 @@ internal class FaktumSvarService(
                             sendNesteSeksjon(søknadprosess, context)
                         }
                     }
-
                 }
             }
         } catch (e: Exception) {
@@ -173,7 +172,6 @@ internal class FaktumSvarService(
         }
     }
 
-
     private class ProsessVersjonVisitor(private val søknadprosess: Søknadprosess) : SøknadprosessVisitor {
 
         lateinit var prosessnavn: Prosessnavn
@@ -185,5 +183,4 @@ internal class FaktumSvarService(
             prosessnavn = prosessVersjon.prosessnavn
         }
     }
-
 }
