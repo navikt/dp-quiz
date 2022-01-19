@@ -112,9 +112,9 @@ class Søknad private constructor(
     override infix fun generator(rootId: Int) = generator(FaktumId(rootId))
     override infix fun generator(id: String) = generator(FaktumId(id))
 
-    override fun envalg(rootId: Int) = valg(FaktumId(rootId))
-    override fun envalg(id: String): Faktum<Envalg> = valg(FaktumId(id))
-    private infix fun valg(faktumId: FaktumId) = id(faktumId) as Faktum<Envalg>
+    override fun envalg(rootId: Int) = envalg(FaktumId(rootId))
+    override fun envalg(id: String): Faktum<Envalg> = envalg(FaktumId(id))
+    private infix fun envalg(faktumId: FaktumId) = id(faktumId) as Faktum<Envalg>
 
     override fun flervalg(rootId: Int) = flervalg(FaktumId(rootId))
     override fun flervalg(id: String): Faktum<Flervalg> = flervalg(FaktumId(id))
@@ -153,8 +153,6 @@ class Søknad private constructor(
             if (templates.any { faktumId.generertFra(it.faktumId) }) faktaMap.remove(faktumId)
         }
     }
-
-    // internal fun søknadprosess(type: Versjon.UserInterfaceType) = Versjon.id(versjonId).søknadprosess(this, type)
 
     fun accept(visitor: SøknadVisitor) {
         person.accept(visitor)
