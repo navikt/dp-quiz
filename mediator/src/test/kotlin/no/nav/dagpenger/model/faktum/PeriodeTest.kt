@@ -1,46 +1,42 @@
 package no.nav.dagpenger.model.faktum
 
+import no.nav.dagpenger.quiz.mediator.helpers.januar
+import no.nav.dagpenger.quiz.mediator.helpers.mars
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class PeriodeTest {
 
-    private val første = LocalDate.of(2020, 10, 10)
-    private val siste = LocalDate.of(2022, 1, 1)
-
     @Test
     fun `Skal kunne opprette en gyldig periode`() {
-        val gyldigPeriode = Periode(første, siste)
-        assertDoesNotThrow { gyldigPeriode }
-        assertFalse(gyldigPeriode.erPågående())
+        val periodeMedSluttdato = assertDoesNotThrow { Periode(1.januar(), 15.mars()) }
+        assertFalse(periodeMedSluttdato.erPågående())
     }
 
     @Test
     fun `Fom kan ikke være etter tom`() {
-        assertThrows<IllegalArgumentException> { Periode(siste, første) }
-        assertDoesNotThrow { Periode(første, første) }
+        assertThrows<IllegalArgumentException> { Periode(15.mars(), 1.januar()) }
+        assertDoesNotThrow { Periode(1.januar(), 1.januar()) }
     }
 
     @Test
     fun `Skal kunne opprette en pågående periode`() {
-        assertDoesNotThrow { Periode(LocalDate.now().minusMonths(2)) }
-        val pågåendePeriode = Periode(LocalDate.now().minusMonths(5))
-        assertTrue(pågåendePeriode.erPågående())
+        val periodeUtenSluttdato = assertDoesNotThrow { Periode(19.januar()) }
+        assertTrue(periodeUtenSluttdato.erPågående())
     }
 
     @Test
-    fun `skal teste likhet`() {
-        val gyldigPeriode = Periode(første, siste)
+    fun `Skal teste likhet`() {
+        val gyldigPeriode = Periode(1.januar(), 15.mars())
         assertEquals(gyldigPeriode, gyldigPeriode)
 
-        val gyldigPeriodeInstans2 = Periode(LocalDate.of(2020, 10, 10), LocalDate.of(2022, 1, 1))
-        assertEquals(gyldigPeriode, gyldigPeriodeInstans2)
+        val gyldigPeriodeNyInstans = Periode(1.januar(), 15.mars())
+        assertEquals(gyldigPeriode, gyldigPeriodeNyInstans)
 
-        assertEquals(gyldigPeriode.hashCode(), gyldigPeriodeInstans2.hashCode())
+        assertEquals(gyldigPeriode.hashCode(), gyldigPeriodeNyInstans.hashCode())
     }
 }
