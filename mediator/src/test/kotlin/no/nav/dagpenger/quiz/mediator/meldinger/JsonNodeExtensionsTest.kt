@@ -27,6 +27,12 @@ internal class JsonNodeExtensionsTest {
 }
     """.trimIndent()
 
+    private val jsonMedSvartekst = """
+{
+  "svar": "Dette er et tekstsvar"
+}
+    """.trimIndent()
+
     private val objectMapper = jacksonObjectMapper()
 
     @Test
@@ -49,5 +55,15 @@ internal class JsonNodeExtensionsTest {
         val valg = svarNode.asFlervalg()
 
         assertEquals(forventedeValg, valg)
+    }
+
+    @Test
+    fun `Skal konvertere et svar til en Tekst`() {
+        val faktumNode = objectMapper.readValue<JsonNode>(jsonMedSvartekst)
+        val svarnode = faktumNode["svar"]
+
+        val tekstsvaret = svarnode.asTekst()
+
+        assertEquals("Dette er et tekstsvar", tekstsvaret.verdi)
     }
 }

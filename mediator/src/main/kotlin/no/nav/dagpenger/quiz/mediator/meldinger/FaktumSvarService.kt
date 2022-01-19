@@ -135,6 +135,7 @@ internal class FaktumSvarService(
             "inntekt" -> søknadprosess.inntekt(faktumId).besvar(svar.asDouble().årlig, besvartAv)
             "envalg" -> søknadprosess.envalg(faktumId).besvar(svar.asEnvalg(), besvartAv)
             "flervalg" -> søknadprosess.flervalg(faktumId).besvar(svar.asFlervalg(), besvartAv)
+            "tekst" -> søknadprosess.tekst(faktumId).besvar(svar.asTekst(), besvartAv)
             "dokument" ->
                 søknadprosess.dokument(faktumId)
                     .besvar(Dokument(svar["lastOppTidsstempel"].asLocalDateTime(), svar["url"].asText()), besvartAv)

@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.faktum
 class Tekst(val verdi: String) : Comparable<Tekst> {
 
     companion object {
-        private const val lengdeBegrensning = 2000
+        const val lengdeBegrensning = 2000
     }
 
     init {
@@ -17,4 +17,8 @@ class Tekst(val verdi: String) : Comparable<Tekst> {
     override fun hashCode(): Int = verdi.hashCode()
 
     override fun compareTo(other: Tekst): Int = this.verdi.compareTo(other.verdi)
+
+    override fun toString(): String {
+        return "Tekst(verdi='$verdi')"
+    }
 }
