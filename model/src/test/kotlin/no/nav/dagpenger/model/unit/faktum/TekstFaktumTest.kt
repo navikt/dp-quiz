@@ -29,11 +29,15 @@ class TekstFaktumTest {
 
     @Test
     fun `Skal kunne besvare et tekstfaktum`() {
-        val tekst = Tekst("tekst1")
+        val svartekst1 = Tekst("første svar")
         val tekstFaktum = søknad.tekst(1)
-        assertDoesNotThrow { tekstFaktum.besvar(tekst) }
+        assertDoesNotThrow { tekstFaktum.besvar(svartekst1) }
         assertTrue { tekstFaktum.erBesvart() }
-        assertEquals(tekst, tekstFaktum.svar())
-        assertEquals(Tekst("tekst1"), tekst)
+        assertEquals(svartekst1, tekstFaktum.svar())
+
+        val svartekst2 = Tekst("nytt svar")
+        tekstFaktum.besvar(svartekst2)
+        assertTrue { tekstFaktum.erBesvart() }
+        assertEquals(svartekst2, tekstFaktum.svar())
     }
 }
