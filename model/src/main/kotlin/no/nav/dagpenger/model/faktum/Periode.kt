@@ -15,9 +15,21 @@ class Periode(
         }
     }
 
+    fun erPågående() = tom == null
+
     override fun compareTo(other: Periode): Int {
-        TODO("Not yet implemented")
+        return when {
+            fom != other.fom -> fom.compareTo(other.fom)
+            tom != other.tom -> tom?.compareTo(other.tom) ?: -1
+            else -> 0
+        }
     }
 
-    fun erPågående() = tom == null
+    override fun equals(other: Any?): Boolean = other is Periode && fom == other.fom && tom == other.tom
+
+    override fun hashCode(): Int = fom.hashCode() * 37 + tom.hashCode()
+
+    override fun toString(): String {
+        return "Periode(fom=$fom, tom=$tom)"
+    }
 }

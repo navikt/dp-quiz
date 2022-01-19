@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -30,5 +31,16 @@ internal class PeriodeTest {
         assertDoesNotThrow { Periode(LocalDate.now().minusMonths(2)) }
         val pågåendePeriode = Periode(LocalDate.now().minusMonths(5))
         assertTrue(pågåendePeriode.erPågående())
+    }
+
+    @Test
+    fun `skal teste likhet`() {
+        val gyldigPeriode = Periode(første, siste)
+        assertEquals(gyldigPeriode, gyldigPeriode)
+
+        val gyldigPeriodeInstans2 = Periode(LocalDate.of(2020, 10, 10), LocalDate.of(2022, 1, 1))
+        assertEquals(gyldigPeriode, gyldigPeriodeInstans2)
+
+        assertEquals(gyldigPeriode.hashCode(), gyldigPeriodeInstans2.hashCode())
     }
 }
