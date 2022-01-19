@@ -5,11 +5,18 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.Prosessnavn
+import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.marshalling.FaktaJsonBuilder
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.søknadsprosess
+import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -51,10 +58,6 @@ internal class FaktumSvarService(
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
-        if (søknadUuid == UUID.fromString("a4338941-7b73-45c0-863f-a83c0f5f702c")) {
-            log.warn { "Skipper søknad $søknadUuid" }
-            return
-        }
         val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
         if (fakta.isEmpty()) return
 
@@ -71,11 +74,23 @@ internal class FaktumSvarService(
                 val søknadprosess = søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web)
                 besvarFakta(fakta, søknadprosess)
 
-                // @todo: Handler per prosessversjon?
-                if (søknadprosess.erFerdig()) {
-                    sendResultat(søknadprosess, context)
-                } else {
-                    sendNesteSeksjon(søknadprosess, context)
+                when (ProsessVersjonVisitor(søknadprosess).prosessnavn) {
+                    Prosess.Dagpenger -> {
+                        context.publish(
+                            FaktaJsonBuilder(søknadsprosess).resultat().toString().also {
+                                sikkerlogg.info { "Fakta sendt: $it" }
+                                log.info { "Fakta sendt: $it" }
+                            }
+                        )
+                    }
+                    else -> {
+                        if (søknadprosess.erFerdig()) {
+                            sendResultat(søknadprosess, context)
+                        } else {
+                            sendNesteSeksjon(søknadprosess, context)
+                        }
+                    }
+
                 }
             }
         } catch (e: Exception) {
@@ -157,4 +172,18 @@ internal class FaktumSvarService(
             else -> throw IllegalArgumentException("Ukjent svar-type: $clazz")
         }
     }
+
+
+    private class ProsessVersjonVisitor(private val søknadprosess: Søknadprosess) : SøknadprosessVisitor {
+
+        lateinit var prosessnavn: Prosessnavn
+        init {
+            søknadprosess.accept(this)
+        }
+
+        override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+            prosessnavn = prosessVersjon.prosessnavn
+        }
+    }
+
 }

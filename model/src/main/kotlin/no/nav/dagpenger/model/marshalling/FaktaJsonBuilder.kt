@@ -28,6 +28,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
 
     init {
         søknadprosess.søknad.accept(this)
+        søknadprosess.forEach { it.accept(this) }
     }
 
     fun resultat() = root
