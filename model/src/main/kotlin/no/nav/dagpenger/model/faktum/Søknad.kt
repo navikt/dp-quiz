@@ -125,6 +125,10 @@ class Søknad private constructor(
     override fun tekst(id: String): Faktum<Tekst> = tekst(FaktumId(id))
     private infix fun tekst(faktumId: FaktumId) = id(faktumId) as Faktum<Tekst>
 
+    override fun periode(rootId: Int): Faktum<Periode> = periode(FaktumId(rootId))
+    override fun periode(id: String): Faktum<Periode> = periode(FaktumId(id))
+    private infix fun periode(faktumId: FaktumId) = id(faktumId) as Faktum<Periode>
+
     fun bygg(person: Person, prosessVersjon: Prosessversjon, uuid: UUID = UUID.randomUUID()): Søknad {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktaMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()

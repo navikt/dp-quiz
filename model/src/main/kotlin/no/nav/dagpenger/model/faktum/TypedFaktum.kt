@@ -25,4 +25,6 @@ interface TypedFaktum {
     infix fun flervalg(id: String): Faktum<Flervalg>
     infix fun tekst(rootId: Int): Faktum<Tekst>
     infix fun tekst(id: String): Faktum<Tekst>
+    infix fun periode(rootId: Int): Faktum<Periode>
+    infix fun periode(id: String): Faktum<Periode>
 }

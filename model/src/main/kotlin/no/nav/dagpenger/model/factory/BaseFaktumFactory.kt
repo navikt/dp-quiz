@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Inntekt
+import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import java.time.LocalDate
@@ -55,6 +56,10 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 
         object tekst {
             infix fun faktum(navn: String) = BaseFaktumFactory(Tekst::class.java, navn)
+        }
+
+        object periode {
+            infix fun faktum(navn: String) = BaseFaktumFactory(Periode::class.java, navn)
         }
     }
 
