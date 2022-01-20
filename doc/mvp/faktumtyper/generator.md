@@ -23,6 +23,15 @@ mer detaljer.
       "type": "tekst"
     }
   ],
+  //          "id": "5",
+//    "type": "inntekt",
+//    "beskrivendeId": "inntekt5",
+//    "svar": 0.0,
+//    "roller": [
+//      "nav"
+//    ]
+
+  
   "svar": [
       {
         "navn": "Ola Nordmann",

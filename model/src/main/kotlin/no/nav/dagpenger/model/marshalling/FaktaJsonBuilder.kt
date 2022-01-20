@@ -35,7 +35,6 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
     private var rootId = 0
     private val faktumIder = mutableSetOf<String>()
     private val identerNode = mapper.createArrayNode()
-    private val faktumTemplates = mutableMapOf<Faktum<*>, MutableList<Faktum<*>>>()
     private val erGenerertFraTemplate = mutableListOf<Faktum<*>>()
 
     init {
@@ -71,7 +70,6 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         this.rootId = rootId
     }
 
-
     override fun <R : Comparable<R>> visit(
         faktum: GeneratorFaktum,
         id: String,
@@ -100,9 +98,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         val genererte = erGenerertFraTemplate.filter { generertFaktum ->
             templates.any { generertFaktum.faktumId.generertFra(it.faktumId) }
         }
-
-        addFaktum(faktum, id)
-
+        addFaktum(faktum, id, genererte)
     }
 
     override fun <R : Comparable<R>> visit(
@@ -117,7 +113,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         gyldigeValg: GyldigeValg?
     ) {
         if (id in faktumIder) return
-        if(faktum.faktumId.harIndeks()) {
+        if (faktum.faktumId.harIndeks()) {
             erGenerertFraTemplate.add(faktum)
             return
         }
@@ -138,7 +134,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         gyldigeValg: GyldigeValg?
     ) {
         if (id in faktumIder) return
-        if(faktum.faktumId.harIndeks()) {
+        if (faktum.faktumId.harIndeks()) {
             erGenerertFraTemplate.add(faktum)
             return
         }
@@ -146,11 +142,20 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
     }
 
     private fun <R : Comparable<R>> addFaktum(faktum: Faktum<R>, id: String) {
-        faktaNode.add(SøknadFaktumVisitor(faktum).root)
+        faktaNode.add(SøknadFaktumVisitor(faktum, emptyList()).root)
         faktumIder.add(id)
     }
 
-    private class SøknadFaktumVisitor(faktum: Faktum<*>) : FaktumVisitor {
+    private fun <R : Comparable<R>> addFaktum(faktum: Faktum<R>, id: String, generatorFaktum: List<Faktum<*>>) {
+        faktaNode.add(SøknadFaktumVisitor(faktum, generatorFaktum).root)
+        faktumIder.add(id)
+    }
+
+    private class SøknadFaktumVisitor(
+        faktum: Faktum<*>,
+        private val genererteFaktum: List<Faktum<*>> = emptyList()
+    ) :
+        FaktumVisitor {
 
         val root: ObjectNode = mapper.createObjectNode()
 
@@ -200,7 +205,24 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
             templates.forEach { template ->
                 jsonTemplates.add(SøknadFaktumVisitor(template).root)
             }
-            lagFaktumNode<R>(id, "generator", faktum.navn, roller, jsonTemplates, svar = svar)
+            lagFaktumNode(id, "generator", faktum.navn, roller, jsonTemplates, svar = svar)
+            val formatertSvar = mapper.createArrayNode()
+            (1..faktum.svar()).forEach { _ ->
+                genererteFaktum.filter { faktum ->
+                    faktum.faktumId.reflection { _, indeks ->
+                        indeks == 1
+                    }
+                }.fold(
+                    initial = mapper.createObjectNode()
+
+                ) { node, faktum ->
+                    node.putR(faktum.navn, faktum.svar())
+                    node
+                }.also {
+                    formatertSvar.add(it)
+                }
+            }
+            this.root["svar"] = formatertSvar
         }
 
         override fun <R : Comparable<R>> visit(
@@ -248,7 +270,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
                 faktumNode.put("id", id)
                 faktumNode.put("type", clazz)
                 faktumNode.put("beskrivendeId", navn)
-                svar?.also { faktumNode.putR(it) }
+                svar?.also { faktumNode.putR("svar", it) }
                 besvartAv?.also { faktumNode.put("besvartAv", it) }
                 faktumNode.putArray("roller").also { arrayNode ->
                     roller.forEach { rolle ->
@@ -266,15 +288,15 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
             }
         }
 
-        private fun <R : Comparable<R>> ObjectNode.putR(svar: R) {
+        private fun <R> ObjectNode.putR(beskrivendeId: String = "svar", svar: R) {
             when (svar) {
-                is Boolean -> this.put("svar", svar)
-                is Int -> this.put("svar", svar)
-                is Double -> this.put("svar", svar)
-                is String -> this.put("svar", svar)
-                is LocalDate -> this.put("svar", svar.toString())
+                is Boolean -> this.put(beskrivendeId, svar)
+                is Int -> this.put(beskrivendeId, svar)
+                is Double -> this.put(beskrivendeId, svar)
+                is String -> this.put(beskrivendeId, svar)
+                is LocalDate -> this.put(beskrivendeId, svar.toString())
                 is Dokument -> this.set(
-                    "svar",
+                    beskrivendeId,
                     svar.reflection { lastOppTidsstempel, url ->
                         mapper.createObjectNode().also {
                             it.put("lastOppTidsstempel", lastOppTidsstempel.toString())
@@ -286,13 +308,13 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
                 is Flervalg -> {
                     val flervalg = mapper.createArrayNode()
                     svar.forEach { flervalg.add(it) }
-                    this.set("svar", flervalg)
+                    this.set(beskrivendeId, flervalg)
                 }
                 is Envalg -> {
-                    this.put("svar", svar.first())
+                    this.put(beskrivendeId, svar.first())
                 }
-                is Inntekt -> this.put("svar", svar.reflection { årlig, _, _, _ -> årlig })
-                else -> throw IllegalArgumentException("Ukjent datatype ${svar::class.simpleName}")
+                is Inntekt -> this.put(beskrivendeId, svar.reflection { årlig, _, _, _ -> årlig })
+                else -> throw IllegalArgumentException("Ukjent datatype ${svar!!::class.simpleName}")
             }
         }
     }

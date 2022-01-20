@@ -115,7 +115,13 @@ internal class FaktaJsonBuilderTest {
         søkerJson["fakta"][3].assertFaktaAsJson("4", "dokument", "dokument4", listOf("nav"))
         søkerJson["fakta"][4].assertFaktaAsJson("5", "inntekt", "inntekt5", listOf("nav"))
         søkerJson["fakta"][5].assertFaktaAsJson("6", "localdate", "dato6", listOf("nav"))
-        søkerJson["fakta"][6].assertValgFaktaAsJson("7", "flervalg", "flervalg7", listOf("søker"), listOf("valg1", "valg2", "valg3"))
+        søkerJson["fakta"][6].assertValgFaktaAsJson(
+            "7",
+            "flervalg",
+            "flervalg7",
+            listOf("søker"),
+            listOf("valg1", "valg2", "valg3")
+        )
         søkerJson["fakta"][7].assertValgFaktaAsJson("8", "envalg", "envalg8", listOf("søker"), listOf("valg1", "valg2"))
         søkerJson["fakta"][8].assertFaktaAsJson("9", "localdate", "dato9", listOf("søker"))
         søkerJson["fakta"][9].assertFaktaAsJson("10", "inntekt", "inntekt10", listOf("søker"))
@@ -175,10 +181,22 @@ internal class FaktaJsonBuilderTest {
         søkerJson["fakta"][5].assertFaktaAsJson("6", "localdate", "dato6", listOf("nav")) {
             assertEquals(idag, it.asText().let { LocalDate.parse(it) })
         }
-        søkerJson["fakta"][6].assertValgFaktaAsJson("7", "flervalg", "flervalg7", listOf("søker"), listOf("valg1", "valg2", "valg3")) {
+        søkerJson["fakta"][6].assertValgFaktaAsJson(
+            "7",
+            "flervalg",
+            "flervalg7",
+            listOf("søker"),
+            listOf("valg1", "valg2", "valg3")
+        ) {
             assertEquals(Flervalg("valg1"), Flervalg(it.map { it.asText() }.toSet()))
         }
-        søkerJson["fakta"][7].assertValgFaktaAsJson("8", "envalg", "envalg8", listOf("søker"), listOf("valg1", "valg2")) {
+        søkerJson["fakta"][7].assertValgFaktaAsJson(
+            "8",
+            "envalg",
+            "envalg8",
+            listOf("søker"),
+            listOf("valg1", "valg2")
+        ) {
             assertEquals(Envalg("valg1"), Envalg(it.asText()))
         }
         søkerJson["fakta"][8].assertGeneratorFaktaAsJson(
@@ -186,7 +204,9 @@ internal class FaktaJsonBuilderTest {
             assertTemplates = listOf(
                 { it.assertFaktaAsJson("9", "localdate", "dato9", listOf("søker")) },
                 { it.assertFaktaAsJson("10", "inntekt", "inntekt10", listOf("søker")) }
-            )
+            ) {  svar ->
+            }
+
         )
     }
 
@@ -207,14 +227,16 @@ internal class FaktaJsonBuilderTest {
         }
         assertSvar?.let { assert -> assert(this.get("svar")) }
     }
+
     private fun JsonNode.assertGeneratorFaktaAsJson(
         expectedId: String,
         expectedType: String,
         expectedBeskrivendeId: String,
         expectedRoller: List<String>,
-        assertTemplates: List<(JsonNode) -> Unit>
+        assertTemplates: List<(JsonNode) -> Unit>,
+        assertSvar: ((JsonNode) -> Unit)? = null
     ) {
-        this.assertFaktaAsJson(expectedId, expectedType, expectedBeskrivendeId, expectedRoller)
+        this.assertFaktaAsJson(expectedId, expectedType, expectedBeskrivendeId, expectedRoller, assertSvar)
         assertTemplates.forEachIndexed { index: Int, test: (JsonNode) -> Unit ->
             test(this.get("templates")[index])
         }
