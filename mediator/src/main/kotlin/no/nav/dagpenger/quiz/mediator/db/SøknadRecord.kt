@@ -106,13 +106,14 @@ class SøknadRecord : SøknadPersistence {
         if (row.flervalg != null) {
             (faktum as Faktum<Flervalg>).rehydrer(row.flervalg, row.besvartAv)
         }
-        if (row.fom != null){
+        if (row.fom != null) {
             (faktum as Faktum<Periode>).rehydrer(
                 Periode(
                     row.fom,
                     row.tom
                 ),
-                row.besvartAv)
+                row.besvartAv
+            )
         }
     }
 
