@@ -5,6 +5,9 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
+import no.nav.dagpenger.model.faktum.Periode
+import no.nav.dagpenger.quiz.mediator.helpers.februar
+import no.nav.dagpenger.quiz.mediator.helpers.januar
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -30,6 +33,24 @@ internal class JsonNodeExtensionsTest {
     private val jsonMedSvartekst = """
 {
   "svar": "Dette er et tekstsvar"
+}
+    """.trimIndent()
+
+    private val jsonMedPeriodeISvaret = """
+{
+  "svar": {
+      "fom": "2018-01-01",
+      "tom": "2018-01-20"
+  }
+}
+    """.trimIndent()
+
+    private val jsonMedÅpenPeriodeISvaret = """
+{
+  "svar": {
+      "fom": "2018-02-01",
+      "tom": null
+  }
 }
     """.trimIndent()
 
@@ -65,5 +86,27 @@ internal class JsonNodeExtensionsTest {
         val tekstsvaret = svarnode.asTekst()
 
         assertEquals("Dette er et tekstsvar", tekstsvaret.verdi)
+    }
+
+    @Test
+    fun `Skal konvertere et svar til en Periode`() {
+        val faktumNode = objectMapper.readValue<JsonNode>(jsonMedPeriodeISvaret)
+        val svarnode = faktumNode["svar"]
+
+        val periode = svarnode.asPeriode()
+
+        val forventetPeriode = Periode(1.januar(), 20.januar())
+        assertEquals(forventetPeriode, periode)
+    }
+
+    @Test
+    fun `Skal konvertere et svar til en Periode selv om tom ikke er sat`() {
+        val faktumNode = objectMapper.readValue<JsonNode>(jsonMedÅpenPeriodeISvaret)
+        val svarnode = faktumNode["svar"]
+
+        val periode = svarnode.asPeriode()
+
+        val forventetPeriode = Periode(1.februar())
+        assertEquals(forventetPeriode, periode)
     }
 }
