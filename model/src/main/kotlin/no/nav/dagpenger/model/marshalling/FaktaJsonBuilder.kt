@@ -35,6 +35,8 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
     private var rootId = 0
     private val faktumIder = mutableSetOf<String>()
     private val identerNode = mapper.createArrayNode()
+    private val faktumTemplates = mutableMapOf<Faktum<*>, MutableList<Faktum<*>>>()
+    private val erGenerertFraTemplate = mutableListOf<Faktum<*>>()
 
     init {
         søknadprosess.søknad.accept(this)
@@ -69,17 +71,6 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         this.rootId = rootId
     }
 
-    override fun <R : Comparable<R>> visit(
-        faktum: TemplateFaktum<R>,
-        id: String,
-        avhengigeFakta: Set<Faktum<*>>,
-        avhengerAvFakta: Set<Faktum<*>>,
-        roller: Set<Rolle>,
-        clazz: Class<R>
-    ) {
-        if (id in faktumIder) return
-        addFaktum(faktum, id)
-    }
 
     override fun <R : Comparable<R>> visit(
         faktum: GeneratorFaktum,
@@ -106,7 +97,12 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         svar: R
     ) {
         if (id in faktumIder) return
+        val genererte = erGenerertFraTemplate.filter { generertFaktum ->
+            templates.any { generertFaktum.faktumId.generertFra(it.faktumId) }
+        }
+
         addFaktum(faktum, id)
+
     }
 
     override fun <R : Comparable<R>> visit(
@@ -121,6 +117,10 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         gyldigeValg: GyldigeValg?
     ) {
         if (id in faktumIder) return
+        if(faktum.faktumId.harIndeks()) {
+            erGenerertFraTemplate.add(faktum)
+            return
+        }
         addFaktum(faktum, id)
     }
 
@@ -138,6 +138,10 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         gyldigeValg: GyldigeValg?
     ) {
         if (id in faktumIder) return
+        if(faktum.faktumId.harIndeks()) {
+            erGenerertFraTemplate.add(faktum)
+            return
+        }
         addFaktum(faktum, id)
     }
 

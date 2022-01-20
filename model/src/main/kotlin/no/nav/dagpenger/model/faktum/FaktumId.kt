@@ -43,6 +43,8 @@ class FaktumId private constructor(private val rootId: Int, private val indeks: 
         }
         return this.indeks.compareTo(other.indeks)
     }
+
+    fun harIndeks(): Boolean = this.indeks != 0
 }
 
 private fun String.rootId() = "\\d+".toRegex().find(this)?.value?.toInt()
