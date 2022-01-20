@@ -330,7 +330,7 @@ class SøknadRecord : SøknadPersistence {
 
     private fun arkiverFaktum(søknad: Søknad, rootId: Int, indeks: Int): ExecuteQueryAction =
         queryOf( //language=PostgreSQL
-            """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, boolsk, aarlig_inntekt, dokument_id, dato, heltall, envalg_id, flervalg_id, opprettet, besvart_av)
+            """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, boolsk, aarlig_inntekt, dokument_id, dato, heltall, envalg_id, flervalg_id, tekst, periode_id, opprettet, besvart_av)
             SELECT soknad_id,
                    faktum_verdi.faktum_id,
                    faktum_verdi.indeks,
@@ -341,6 +341,8 @@ class SøknadRecord : SøknadPersistence {
                    faktum_verdi.heltall,
                    faktum_verdi.envalg_id,
                    faktum_verdi.flervalg_id,
+                   faktum_verdi.tekst,
+                   faktum_verdi.periode_id,
                    faktum_verdi.opprettet,
                    faktum_verdi.besvart_av
             FROM faktum_verdi,

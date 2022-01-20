@@ -25,9 +25,11 @@ import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.helpers.mars
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
+import kotlin.test.assertNotNull
 
 internal class SøknadRecordTest {
     companion object {
@@ -74,7 +76,8 @@ internal class SøknadRecordTest {
     }
 
     @Test
-    fun `Ny svar i fakta burde gjenspeiles i gammel_faktum_verdi`() {
+    fun `Nytt svar i fakta burde gjenspeiles i gammel_faktum_verdi`() {
+        val forventetFørsteTekstverdi = "tekst1"
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
@@ -85,12 +88,20 @@ internal class SøknadRecordTest {
             originalSøknadprosess.envalg(20).besvar(Envalg("envalg1"))
             originalSøknadprosess.flervalg(21).besvar(Flervalg("flervalg1"))
             originalSøknadprosess.heltall(22).besvar(123)
-            originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
+            originalSøknadprosess.tekst(23).besvar(Tekst(forventetFørsteTekstverdi))
             originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
 
             lagreHentOgSammenlign()
 
-            assertRecordCount(0, "gammel_faktum_verdi")
+            assertNull(gammelVerdiForKolonnen("dato"))
+            assertNull(gammelVerdiForKolonnen("aarlig_inntekt"))
+            assertNull(gammelVerdiForKolonnen("boolsk"))
+            assertNull(gammelVerdiForKolonnen("dokument_id"))
+            assertNull(gammelVerdiForKolonnen("envalg_id"))
+            assertNull(gammelVerdiForKolonnen("flervalg_id"))
+            assertNull(gammelVerdiForKolonnen("heltall"))
+            assertNull(gammelVerdiForKolonnen("tekst"))
+            assertNull(gammelVerdiForKolonnen("periode_id"))
 
             originalSøknadprosess.dato(2).besvar(LocalDate.now().minusDays(3))
             originalSøknadprosess.inntekt(6).besvar(19999.årlig)
@@ -102,10 +113,17 @@ internal class SøknadRecordTest {
             originalSøknadprosess.tekst(23).besvar(Tekst("tekst2"))
             originalSøknadprosess.periode(24).besvar(Periode(1.mars(), 1.april()))
 
-
             lagreHentOgSammenlign()
 
-            assertRecordCount(8, "gammel_faktum_verdi")
+            assertNotNull(gammelVerdiForKolonnen("dato"))
+            assertNotNull(gammelVerdiForKolonnen("aarlig_inntekt"))
+            assertNotNull(gammelVerdiForKolonnen("dokument_id"))
+            assertNotNull(gammelVerdiForKolonnen("boolsk"))
+            assertNotNull(gammelVerdiForKolonnen("envalg_id"))
+            assertNotNull(gammelVerdiForKolonnen("flervalg_id"))
+            assertNotNull(gammelVerdiForKolonnen("heltall"))
+            assertNotNull(gammelVerdiForKolonnen("tekst"))
+            assertNotNull(gammelVerdiForKolonnen("periode_id"))
         }
     }
 
@@ -231,6 +249,18 @@ internal class SøknadRecordTest {
                 )
             }
         )
+    }
+
+    private fun gammelVerdiForKolonnen(kolonnenavn: String): Any? {
+        return using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf( //language=PostgreSQL
+                    """SELECT $kolonnenavn FROM gammel_faktum_verdi WHERE $kolonnenavn IS NOT NULL"""
+                ).map {
+                    it.string(kolonnenavn)
+                }.asSingle
+            )
+        }
     }
 
     private fun assertSesjonType(sesjonType: Versjon.UserInterfaceType) {
