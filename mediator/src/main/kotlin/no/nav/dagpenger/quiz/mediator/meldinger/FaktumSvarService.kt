@@ -15,7 +15,6 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
-import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.søknadsprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -77,9 +76,8 @@ internal class FaktumSvarService(
                 when (ProsessVersjonVisitor(søknadprosess).prosessnavn) {
                     Prosess.Dagpenger -> {
                         context.publish(
-                            FaktaJsonBuilder(søknadsprosess).resultat().toString().also {
+                            FaktaJsonBuilder(søknadprosess).resultat().toString().also {
                                 sikkerlogg.info { "Fakta sendt: $it" }
-                                log.info { "Fakta sendt: $it" }
                             }
                         )
                     }

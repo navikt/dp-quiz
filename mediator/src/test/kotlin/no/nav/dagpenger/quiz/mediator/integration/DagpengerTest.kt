@@ -61,10 +61,10 @@ internal class DagpengerTest : SøknadBesvarer() {
         assertEquals(listOf("Arbeidsforhold"), behov["@behov"].map { it.asText() })
         val fakta = testRapid.inspektør.message(1)
         assertEquals(søknadUUID, fakta["søknad_uuid"].asText().let { soknadId -> UUID.fromString(soknadId) })
-        assertEquals(11, fakta["fakta"].size())
+        assertEquals(9, fakta["fakta"].size())
 
         val besvartFakta = testRapid.inspektør.message(2)
-        assertEquals(11, besvartFakta["fakta"].size())
+        assertEquals(9, besvartFakta["fakta"].size())
         assertEquals(søknadUUID, besvartFakta["søknad_uuid"].asText().let { soknadId -> UUID.fromString(soknadId) })
     }
 

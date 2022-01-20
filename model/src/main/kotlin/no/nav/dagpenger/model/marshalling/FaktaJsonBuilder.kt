@@ -207,10 +207,10 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
             }
             lagFaktumNode(id, "generator", faktum.navn, roller, jsonTemplates, svar = svar)
             val formatertSvar = mapper.createArrayNode()
-            (1..faktum.svar()).forEach { _ ->
+            (1..faktum.svar()).forEach { i ->
                 genererteFaktum.filter { faktum ->
                     faktum.faktumId.reflection { _, indeks ->
-                        indeks == 1
+                        indeks == i
                     }
                 }.fold(
                     initial = mapper.createObjectNode()
