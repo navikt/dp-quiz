@@ -17,6 +17,11 @@ class Periode(
 
     fun erPågående() = tom == null
 
+    fun <R> reflection(block: (LocalDate, LocalDate?) -> R) = block(
+        fom,
+        tom
+    )
+
     override fun compareTo(other: Periode): Int {
         return when {
             fom != other.fom -> fom.compareTo(other.fom)

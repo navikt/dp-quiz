@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Identer.Ident
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
@@ -105,6 +106,14 @@ class SøknadRecord : SøknadPersistence {
         if (row.flervalg != null) {
             (faktum as Faktum<Flervalg>).rehydrer(row.flervalg, row.besvartAv)
         }
+        if (row.fom != null){
+            (faktum as Faktum<Periode>).rehydrer(
+                Periode(
+                    row.fom,
+                    row.tom
+                ),
+                row.besvartAv)
+        }
     }
 
     private fun svarList(uuid: UUID): List<FaktumVerdiRow> {
@@ -127,11 +136,14 @@ class SøknadRecord : SøknadPersistence {
                                 dokument.opplastet AS opplastet,
                                 envalg.verdier AS envalgVerdier,
                                 flervalg.verdier AS flervalgVerdier,
-                                faktum_verdi.tekst AS tekst
+                                faktum_verdi.tekst AS tekst,
+                                periode.fom AS fom,
+                                periode.tom AS tom
                             FROM faktum_verdi
                             JOIN soknad_faktum ON faktum_verdi.soknad_id = soknad_faktum.soknad_id 
                                 AND faktum_verdi.faktum_id = soknad_faktum.faktum_id
                             LEFT JOIN dokument ON faktum_verdi.dokument_id = dokument.id
+                            LEFT JOIN periode ON faktum_verdi.periode_id = periode.id
                             LEFT JOIN valgte_verdier envalg ON faktum_verdi.envalg_id = envalg.id
                             LEFT JOIN valgte_verdier flervalg ON faktum_verdi.flervalg_id = flervalg.id
                             LEFT JOIN besvarer ON faktum_verdi.besvart_av = besvarer.id
@@ -151,7 +163,9 @@ class SøknadRecord : SøknadPersistence {
                         it.doubleOrNull("desimaltall"),
                         it.arrayOrNull<String>("envalgVerdier")?.let { verdier -> Envalg(*verdier) },
                         it.arrayOrNull<String>("flervalgVerdier")?.let { verdier -> Flervalg(*verdier) },
-                        it.stringOrNull("tekst")?.let { verdi -> Tekst(verdi) }
+                        it.stringOrNull("tekst")?.let { verdi -> Tekst(verdi) },
+                        it.localDateOrNull("fom"),
+                        it.localDateOrNull("tom")
                     )
                 }.asList
             )
@@ -172,6 +186,8 @@ class SøknadRecord : SøknadPersistence {
         val envalg: Envalg?,
         val flervalg: Flervalg?,
         val tekst: Tekst?,
+        val fom: LocalDate?,
+        val tom: LocalDate?,
         val id: FaktumId = if (indeks == 0) FaktumId(root_id) else FaktumId(root_id).medIndeks(indeks)
     )
 
@@ -264,6 +280,9 @@ class SøknadRecord : SøknadPersistence {
             //language=PostgreSQL
             is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
 |                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id) , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
+            //language=PostgreSQL
+            is Periode -> """WITH inserted_id AS (INSERT INTO periode (fom, tom) VALUES (${svar.reflection { fom, tom -> "'$fom', '$tom'" }}) returning id) 
+|                               UPDATE faktum_verdi SET periode_id = (SELECT id FROM inserted_id) , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
             //language=PostgreSQL
             is Envalg ->
                 """WITH valg_inserted_id AS (INSERT INTO valgte_verdier (verdier) VALUES ('{${svar.joinToString { """"$it"""" }}}') returning id) 

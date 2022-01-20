@@ -8,6 +8,7 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -17,9 +18,12 @@ import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
+import no.nav.dagpenger.quiz.mediator.helpers.april
 import no.nav.dagpenger.quiz.mediator.helpers.assertDeepEquals
 import no.nav.dagpenger.quiz.mediator.helpers.assertJsonEquals
+import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
+import no.nav.dagpenger.quiz.mediator.helpers.mars
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -63,6 +67,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.envalg(20).besvar(Envalg("envalg1"))
             originalSøknadprosess.flervalg(21).besvar(Flervalg("flervalg1"))
             originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
+            originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
 
             lagreHentOgSammenlign()
         }
@@ -81,6 +86,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.flervalg(21).besvar(Flervalg("flervalg1"))
             originalSøknadprosess.heltall(22).besvar(123)
             originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
+            originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
 
             lagreHentOgSammenlign()
 
@@ -94,6 +100,8 @@ internal class SøknadRecordTest {
             originalSøknadprosess.flervalg(21).besvar(Flervalg("flervalg2"))
             originalSøknadprosess.heltall(22).besvar(456)
             originalSøknadprosess.tekst(23).besvar(Tekst("tekst2"))
+            originalSøknadprosess.periode(24).besvar(Periode(1.mars(), 1.april()))
+
 
             lagreHentOgSammenlign()
 
