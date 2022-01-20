@@ -85,7 +85,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         if (tilstand.kode == kode) fakta.add(this)
     }
 
-    override fun tilTemplate() = TemplateFaktum(faktumId, navn, clazz)
+    override fun tilTemplate() = TemplateFaktum(faktumId, navn, clazz, gyldigevalg = gyldigevalg)
 
     protected open fun acceptUtenSvar(visitor: FaktumVisitor) {
         visitor.visit(this, Ukjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz, gyldigevalg)
