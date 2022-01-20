@@ -1,6 +1,8 @@
 package no.nav.dagpenger.model.unit.faktum
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
@@ -18,7 +20,11 @@ class FlervalgFaktumTest {
 
     val prototypeSøknad = Søknad(
         testversjon,
-        flervalg faktum "flervalg" med "valg1" med "valg2" med "valg3" id 1
+        flervalg faktum "flervalg1" med "valg1" med "valg2" med "valg3" id 1,
+        flervalg faktum "flervalg2" med "valg1" med "valg2" med "valg3" id 2,
+        dato faktum "dato" id 3,
+        heltall faktum "generator" id 4 genererer 2 og 3
+
     )
 
     lateinit var søknad: Søknadprosess
@@ -45,6 +51,15 @@ class FlervalgFaktumTest {
                 flervalg faktum "flervalg" id 1
             ).testSøknadprosess(TomSubsumsjon)
         }
+    }
+
+    @Test
+    fun `flervalg kan være template faktum`() {
+        søknad.generator(4).besvar(1)
+        val flervalg = søknad.flervalg("2.1")
+        flervalg.besvar(Flervalg("valg3"))
+        assertTrue(flervalg.erBesvart())
+        assertEquals(Flervalg("valg3"), flervalg.svar())
     }
 
     @Test
