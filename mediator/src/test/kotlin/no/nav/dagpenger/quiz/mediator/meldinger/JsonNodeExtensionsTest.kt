@@ -45,7 +45,7 @@ internal class JsonNodeExtensionsTest {
 }
     """.trimIndent()
 
-    private val jsonMedÅpenPeriodeISvaret = """
+    private val jsonMedPågåendePeriodeISvaret = """
 {
   "svar": {
       "fom": "2018-02-01",
@@ -93,20 +93,20 @@ internal class JsonNodeExtensionsTest {
         val faktumNode = objectMapper.readValue<JsonNode>(jsonMedPeriodeISvaret)
         val svarnode = faktumNode["svar"]
 
-        val periode = svarnode.asPeriode()
+        val avsluttetPeriode = svarnode.asPeriode()
 
         val forventetPeriode = Periode(1.januar(), 20.januar())
-        assertEquals(forventetPeriode, periode)
+        assertEquals(forventetPeriode, avsluttetPeriode)
     }
 
     @Test
-    fun `Skal konvertere et svar til en Periode selv om tom ikke er sat`() {
-        val faktumNode = objectMapper.readValue<JsonNode>(jsonMedÅpenPeriodeISvaret)
+    fun `Skal konvertere et svar til en pågående Periode`() {
+        val faktumNode = objectMapper.readValue<JsonNode>(jsonMedPågåendePeriodeISvaret)
         val svarnode = faktumNode["svar"]
 
-        val periode = svarnode.asPeriode()
+        val pågåendePeriode = svarnode.asPeriode()
 
         val forventetPeriode = Periode(1.februar())
-        assertEquals(forventetPeriode, periode)
+        assertEquals(forventetPeriode, pågåendePeriode)
     }
 }

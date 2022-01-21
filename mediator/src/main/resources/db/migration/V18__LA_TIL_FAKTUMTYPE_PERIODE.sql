@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS periode
 (
     id  BIGSERIAL NOT NULL,
