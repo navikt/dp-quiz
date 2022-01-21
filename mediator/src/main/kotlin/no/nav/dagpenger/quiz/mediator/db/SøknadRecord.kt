@@ -282,7 +282,7 @@ class SøknadRecord : SøknadPersistence {
             is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
 |                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id) , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
             //language=PostgreSQL
-            is Periode -> """WITH inserted_id AS (INSERT INTO periode (fom, tom) VALUES (${svar.reflection { fom, tom -> "'$fom', '$tom'" }}) returning id) 
+            is Periode -> """WITH inserted_id AS (INSERT INTO periode (fom, tom) VALUES (${svar.reflection { fom, tom -> "'$fom', ${tom?.let { "'$tom'" } ?: "NULL"}" }}) returning id) 
 |                               UPDATE faktum_verdi SET periode_id = (SELECT id FROM inserted_id) , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
             //language=PostgreSQL
             is Envalg ->

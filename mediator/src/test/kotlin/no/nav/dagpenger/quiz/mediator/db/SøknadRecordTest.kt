@@ -23,6 +23,7 @@ import no.nav.dagpenger.quiz.mediator.helpers.assertDeepEquals
 import no.nav.dagpenger.quiz.mediator.helpers.assertJsonEquals
 import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
+import no.nav.dagpenger.quiz.mediator.helpers.mai
 import no.nav.dagpenger.quiz.mediator.helpers.mars
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -203,6 +204,18 @@ internal class SøknadRecordTest {
             originalSøknadprosess.heltall(16).besvar(123, ident)
             originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()), ident)
             originalSøknadprosess.boolsk(1).besvar(true, ident)
+
+            lagreHentOgSammenlign()
+        }
+    }
+
+    @Test
+    fun `Skal kunne lagre åpne perioder, mao sette feltet fom til NULL`() {
+        Postgres.withMigratedDb {
+            byggOriginalSøknadprosess()
+
+            val åpenPeriode = Periode(17.mai())
+            originalSøknadprosess.periode(24).besvar(åpenPeriode)
 
             lagreHentOgSammenlign()
         }
