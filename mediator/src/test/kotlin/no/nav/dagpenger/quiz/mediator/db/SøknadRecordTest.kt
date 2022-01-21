@@ -78,7 +78,6 @@ internal class SøknadRecordTest {
 
     @Test
     fun `Nytt svar i fakta burde gjenspeiles i gammel_faktum_verdi`() {
-        val forventetFørsteTekstverdi = "tekst1"
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
@@ -89,7 +88,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.envalg(20).besvar(Envalg("envalg1"))
             originalSøknadprosess.flervalg(21).besvar(Flervalg("flervalg1"))
             originalSøknadprosess.heltall(22).besvar(123)
-            originalSøknadprosess.tekst(23).besvar(Tekst(forventetFørsteTekstverdi))
+            originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
             originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
 
             lagreHentOgSammenlign()
