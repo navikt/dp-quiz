@@ -16,6 +16,7 @@ import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.FaktumVisitor
@@ -295,6 +296,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
                 is Double -> this.put(beskrivendeId, svar)
                 is String -> this.put(beskrivendeId, svar)
                 is LocalDate -> this.put(beskrivendeId, svar.toString())
+                is Tekst -> this.put(beskrivendeId, svar.verdi)
                 is Dokument -> this.set(
                     beskrivendeId,
                     svar.reflection { lastOppTidsstempel, url ->

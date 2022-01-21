@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
@@ -16,6 +17,7 @@ import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.FaktaJsonBuilder
@@ -56,7 +58,8 @@ internal class FaktaJsonBuilderTest {
             envalg faktum "envalg11" med "valg1" med "valg2" id 11,
             dato faktum "dato12" id 12,
             inntekt faktum "inntekt13" id 13,
-            heltall faktum "generator14" id 14 genererer 12 og 13
+            heltall faktum "generator14" id 14 genererer 12 og 13,
+            tekst faktum "tekst15" id 15
         )
     }
 
@@ -76,7 +79,8 @@ internal class FaktaJsonBuilderTest {
                 prototypeSøknad.envalg(11),
                 prototypeSøknad.dato(12),
                 prototypeSøknad.inntekt(13),
-                prototypeSøknad.generator(14)
+                prototypeSøknad.generator(14),
+                prototypeSøknad.tekst(15)
             ),
             Seksjon(
                 "nav", Rolle.nav,
@@ -114,7 +118,7 @@ internal class FaktaJsonBuilderTest {
         assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
         assertDoesNotThrow { søkerJson["søknad_uuid"].asText().also { UUID.fromString(it) } }
         assertEquals("12020052345", søkerJson["fødselsnummer"].asText())
-        assertEquals(10, søkerJson["fakta"].size())
+        assertEquals(11, søkerJson["fakta"].size())
         søkerJson["fakta"][0].assertFaktaAsJson("1", "boolean", "boolsk1", listOf("søker"))
         søkerJson["fakta"][1].assertFaktaAsJson("2", "int", "heltall2", listOf("søker"))
         søkerJson["fakta"][2].assertFaktaAsJson("6", "double", "desimaltall6", listOf("søker"))
@@ -129,8 +133,9 @@ internal class FaktaJsonBuilderTest {
             listOf("valg1", "valg2", "valg3")
         )
         søkerJson["fakta"][7].assertValgFaktaAsJson("11", "envalg", "envalg11", listOf("søker"), listOf("valg1", "valg2"))
+        søkerJson["fakta"][8].assertFaktaAsJson("15", "tekst", "tekst15", listOf("søker"))
 
-        søkerJson["fakta"][8].assertGeneratorFaktaAsJson(
+        søkerJson["fakta"][9].assertGeneratorFaktaAsJson(
             "5", "generator", "generator5", listOf("søker"),
             assertTemplates = listOf(
                 { it.assertFaktaAsJson("3", "int", "heltall3", listOf("søker")) },
@@ -138,7 +143,7 @@ internal class FaktaJsonBuilderTest {
             )
         )
 
-        søkerJson["fakta"][9].assertGeneratorFaktaAsJson(
+        søkerJson["fakta"][10].assertGeneratorFaktaAsJson(
             "14", "generator", "generator14", listOf("søker"),
             assertTemplates = listOf(
                 { it.assertFaktaAsJson("12", "localdate", "dato12", listOf("søker")) },
@@ -174,6 +179,7 @@ internal class FaktaJsonBuilderTest {
         søknadprosess.generator(14).besvar(1)
         søknadprosess.dato("12.1").besvar(idag)
         søknadprosess.inntekt("13.1").besvar(300.årlig)
+        søknadprosess.tekst(15).besvar(Tekst("svartekst15"))
 
         val søkerJson = FaktaJsonBuilder(søknadprosess).resultat()
 
@@ -183,7 +189,7 @@ internal class FaktaJsonBuilderTest {
         assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
         assertDoesNotThrow { søkerJson["søknad_uuid"].asText().also { UUID.fromString(it) } }
         assertEquals("12020052345", søkerJson["fødselsnummer"].asText())
-        assertEquals(10, søkerJson["fakta"].size())
+        assertEquals(11, søkerJson["fakta"].size())
 
         søkerJson["fakta"][0].assertFaktaAsJson("1", "boolean", "boolsk1", listOf("søker")) {
             assertEquals(true, it.asBoolean())
@@ -217,7 +223,11 @@ internal class FaktaJsonBuilderTest {
             assertEquals(Envalg("valg1"), Envalg(it.asText()))
         }
 
-        søkerJson["fakta"][8].assertGeneratorFaktaAsJson(
+        søkerJson["fakta"][8].assertFaktaAsJson("15", "tekst", "tekst15", listOf("søker")) {
+            assertEquals("svartekst15", it.asText())
+        }
+
+        søkerJson["fakta"][9].assertGeneratorFaktaAsJson(
             "5", "generator", "generator5", listOf("søker"),
             assertTemplates = listOf(
                 { it.assertFaktaAsJson("3", "int", "heltall3", listOf("søker")) },
@@ -232,7 +242,7 @@ internal class FaktaJsonBuilderTest {
             assertEquals(idag.plusDays(3), svar[1]["dato4"].asText().let { LocalDate.parse(it) })
         }
 
-        søkerJson["fakta"][9].assertGeneratorFaktaAsJson(
+        søkerJson["fakta"][10].assertGeneratorFaktaAsJson(
             "14", "generator", "generator14", listOf("søker"),
             assertTemplates = listOf(
                 { it.assertFaktaAsJson("12", "localdate", "dato12", listOf("søker")) },
