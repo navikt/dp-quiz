@@ -75,7 +75,3 @@ internal class DagpengerService(
         log.info { "Kunne ikke lese ${problems.toExtendedReport()}" }
     }
 }
-
-fun main() {
-    println()
-}
