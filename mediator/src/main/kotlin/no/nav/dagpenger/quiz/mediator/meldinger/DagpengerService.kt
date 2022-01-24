@@ -46,11 +46,6 @@ internal class DagpengerService(
             .build()
 
         val søknadUuid = packet["søknad_uuid"].asText().let { søknadUuid -> UUID.fromString(søknadUuid) }
-        val id = packet["@id"].asText()
-        if (id.equals("79fcfed0-0933-41a5-89ee-de09313ac33e")) {
-            log.info { "Skipping $id" }
-            return
-        }
 
         val faktagrupperType = Versjon.UserInterfaceType.Web
         søknadPersistence.ny(identer, faktagrupperType, prosessVersjon, søknadUuid).also { søknadsprosess ->
