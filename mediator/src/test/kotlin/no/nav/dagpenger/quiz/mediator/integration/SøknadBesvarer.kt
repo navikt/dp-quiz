@@ -2,6 +2,8 @@ package no.nav.dagpenger.quiz.mediator.integration
 
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt
+import no.nav.dagpenger.model.faktum.Periode
+import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions
 import java.time.LocalDateTime
@@ -35,6 +37,8 @@ abstract class SøknadBesvarer {
             val _faktumId = faktumId.toString()
             when (svar) {
                 is Inntekt -> besvarInntekt(søknadsId, _faktumId, svar)
+                is Periode -> besvarPeriode(søknadsId, _faktumId, svar)
+                is Tekst -> besvarTekst(søknadsId, _faktumId, svar)
                 is Dokument -> besvarDokument(søknadsId, _faktumId, svar)
                 is List<*> -> besvarGenerator(søknadsId, _faktumId, svar as List<List<Pair<String, Any>>>)
                 else -> besvar(søknadsId, _faktumId, svar)
@@ -67,14 +71,53 @@ abstract class SøknadBesvarer {
 
     protected fun besvar(søknadsId: String, faktumId: String, svar: Any) {
         //language=JSON
-        testRapid.sendTestMessage(
-            """{
+        val message = """{
               "søknad_uuid": "$søknadsId",
               "@event_name": "faktum_svar",
               "fakta": [{
                 "id": "$faktumId",
                 "svar": "$svar",
                 "clazz": "${svar::class.java.simpleName.lowercase()}"
+            }
+              ],
+              "@opprettet": "${LocalDateTime.now()}",
+              "@id": "${UUID.randomUUID()}"
+            }
+        """.trimIndent()
+        testRapid.sendTestMessage(
+            message
+        )
+    }
+
+    protected fun besvarTekst(søknadsId: String, faktumId: String, svar: Tekst) {
+        //language=JSON
+        testRapid.sendTestMessage(
+            """{
+              "søknad_uuid": "$søknadsId",
+              "@event_name": "faktum_svar",
+              "fakta": [{
+                "id": "$faktumId",
+                "svar": "${svar.verdi}",
+                "clazz": "tekst"
+            }
+              ],
+              "@opprettet": "${LocalDateTime.now()}",
+              "@id": "${UUID.randomUUID()}"
+            }
+            """.trimIndent()
+        )
+    }
+
+    protected fun besvarPeriode(søknadsId: String, faktumId: String, svar: Periode) {
+        //language=JSON
+        testRapid.sendTestMessage(
+            """{
+              "søknad_uuid": "$søknadsId",
+              "@event_name": "faktum_svar",
+              "fakta": [{
+                "id": "$faktumId",
+                "svar": { "fom": "${svar.fom}", "tom": "${svar.tom}"  },
+                "clazz": "periode"
             }
               ],
               "@opprettet": "${LocalDateTime.now()}",

@@ -5,6 +5,8 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -32,6 +34,9 @@ internal object Dagpenger {
     const val arbeidsforhold = 9
     const val `arbeidsforhold fra og med` = 10
     const val `arbeidsforhold til og med` = 11
+    const val `personalia alder` = 12
+    const val `personalia navn` = 13
+    const val `en eller annen period` = 14
 
     fun registrer(registrer: (søknad: Søknad) -> Unit) {
         registrer(søknad)
@@ -50,7 +55,10 @@ internal object Dagpenger {
             dokument faktum "Bekreftelse fra relevant fagpersonell" id `Bekreftelse fra relevant fagpersonell` avhengerAv `Redusert helse, fysisk eller psykisk`,
             heltall faktum "faktum.arbeidsforhold" id arbeidsforhold genererer `arbeidsforhold fra og med` og `arbeidsforhold til og med`,
             dato faktum "faktum.arbeidsforhold.fom" id `arbeidsforhold fra og med`,
-            dato faktum "faktum.arbeidsforhold.tom" id `arbeidsforhold til og med`
+            dato faktum "faktum.arbeidsforhold.tom" id `arbeidsforhold til og med`,
+            heltall faktum "faktum.personalia.alder" id `personalia alder`,
+            tekst faktum "faktum.person.navn" id `personalia navn`,
+            periode faktum "faktum.test.periode" id `en eller annen period`
 
         )
 
@@ -73,8 +81,10 @@ internal object Dagpenger {
             Rolle.nav,
             arbeidsforhold,
             `arbeidsforhold fra og med`,
-            `arbeidsforhold til og med`
-
+            `arbeidsforhold til og med`,
+            `personalia alder`,
+            `personalia navn`,
+            `en eller annen period`,
         )
     }
 
@@ -88,6 +98,7 @@ internal object Dagpenger {
 
         val regeltre = with(søknad) {
             heltall(arbeidsforhold) minst (0)
+            heltall(`personalia alder`) minst (0)
         }
     }
 
@@ -95,6 +106,9 @@ internal object Dagpenger {
         FaktumNavBehov(
             mapOf(
                 arbeidsforhold to "Arbeidsforhold",
+                `personalia alder` to "PersonaliaAlder",
+                `personalia navn` to "PersonaliaNavn",
+                `en eller annen period` to "enEllerAnnenPeriod"
             )
         )
 

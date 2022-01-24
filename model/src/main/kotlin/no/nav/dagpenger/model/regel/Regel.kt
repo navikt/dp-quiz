@@ -86,6 +86,7 @@ infix fun Faktum<LocalDate>.førEllerLik(senesteDato: Faktum<LocalDate>) = Enkel
     this,
     senesteDato
 )
+
 infix fun Faktum<LocalDate>.etterEllerLik(senesteDato: Faktum<LocalDate>) = EnkelSubsumsjon(
     object : Regel {
         override val typeNavn = "etter eller lik"
