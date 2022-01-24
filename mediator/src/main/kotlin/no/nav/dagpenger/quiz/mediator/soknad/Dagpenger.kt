@@ -21,7 +21,7 @@ internal object Dagpenger {
 
     private val logger = KotlinLogging.logger { }
 
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 101)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 201)
 
     const val `Har du hatt dagpenger i løpet av de siste 52 ukene` = 1
     const val `Villig til å ta hel og deltidsjobb` = 2
