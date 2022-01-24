@@ -13,6 +13,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt
+import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -305,7 +306,15 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
                             it.put("url", url)
                         }
                     }
-
+                )
+                is Periode -> this.set(
+                    beskrivendeId,
+                    svar.reflection { fom, tom ->
+                        mapper.createObjectNode().also {
+                            it.put("fom", fom.toString())
+                            it.put("tom", tom?.toString())
+                        }
+                    }
                 )
                 is Flervalg -> {
                     val flervalg = mapper.createArrayNode()
