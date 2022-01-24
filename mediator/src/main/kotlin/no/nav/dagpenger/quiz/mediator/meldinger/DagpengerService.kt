@@ -67,6 +67,7 @@ internal class DagpengerService(
     }
 
     override fun onError(problems: MessageProblems, context: MessageContext) {
-        log.info { "Kunne ikke lese ${problems.toExtendedReport()}" }
+        log.error { problems.toString() }
+        sikkerlogg.error { problems.toExtendedReport() }
     }
 }
