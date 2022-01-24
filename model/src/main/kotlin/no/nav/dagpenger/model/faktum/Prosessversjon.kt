@@ -22,4 +22,8 @@ class Prosessversjon(val prosessnavn: Prosessnavn, val versjon: Int) {
     override fun equals(other: Any?): Boolean = other is Prosessversjon && other.prosessnavn.id == this.prosessnavn.id && other.versjon == this.versjon
 
     override fun hashCode(): Int = prosessnavn.id.hashCode() * 37 + versjon.hashCode()
+
+    override fun toString(): String {
+        return "Prosessversjon(prosessnavn=$prosessnavn, versjon=$versjon)"
+    }
 }

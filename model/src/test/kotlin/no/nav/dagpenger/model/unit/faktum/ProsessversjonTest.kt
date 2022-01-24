@@ -6,10 +6,15 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertContains
 
 internal class ProsessversjonTest {
 
-    private class Navn(override val id: String) : Prosessnavn
+    private class Navn(override val id: String) : Prosessnavn {
+        override fun toString(): String {
+            return "Navn{id=$id}"
+        }
+    }
 
     @Test
     fun `prosess med likt navn og versjon`() {
@@ -27,5 +32,16 @@ internal class ProsessversjonTest {
     @Test
     fun `Kan ikke ha blankt prosessnavn`() {
         assertThrows<IllegalArgumentException> { Prosessversjon(Navn(""), 1) }
+    }
+
+    @Test
+    fun `Skal skrive ut relevant info i toString-metoden`() {
+        val forventetProsessnavn = "Prosessnavnet"
+        val forventetVersjon = 2
+
+        val prosessversjon = Prosessversjon(Navn(forventetProsessnavn), forventetVersjon)
+
+        assertContains(prosessversjon.toString(), forventetProsessnavn)
+        assertContains(prosessversjon.toString(), "$forventetVersjon")
     }
 }
