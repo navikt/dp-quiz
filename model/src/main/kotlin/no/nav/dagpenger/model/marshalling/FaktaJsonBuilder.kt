@@ -298,35 +298,37 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
                 is String -> this.put(beskrivendeId, svar)
                 is LocalDate -> this.put(beskrivendeId, svar.toString())
                 is Tekst -> this.put(beskrivendeId, svar.verdi)
-                is Dokument -> this.set(
-                    beskrivendeId,
-                    svar.reflection { lastOppTidsstempel, url ->
-                        mapper.createObjectNode().also {
-                            it.put("lastOppTidsstempel", lastOppTidsstempel.toString())
-                            it.put("url", url)
-                        }
-                    }
-                )
-                is Periode -> this.set(
-                    beskrivendeId,
-                    svar.reflection { fom, tom ->
-                        mapper.createObjectNode().also {
-                            it.put("fom", fom.toString())
-                            it.put("tom", tom?.toString())
-                        }
-                    }
-                )
-                is Flervalg -> {
-                    val flervalg = mapper.createArrayNode()
-                    svar.forEach { flervalg.add(it) }
-                    this.set(beskrivendeId, flervalg)
-                }
-                is Envalg -> {
-                    this.put(beskrivendeId, svar.first())
-                }
-                is Inntekt -> this.put(beskrivendeId, svar.reflection { årlig, _, _, _ -> årlig })
+                is Dokument -> this.set(beskrivendeId, svar.asJsonNode())
+                is Periode -> this.set(beskrivendeId, svar.asJsonNode())
+                is Flervalg -> this.set(beskrivendeId, svar.asJsonNode())
+                is Envalg -> this.put(beskrivendeId, svar.first())
+                is Inntekt -> this.put(beskrivendeId, svar.asJsonNode())
                 else -> throw IllegalArgumentException("Ukjent datatype ${svar!!::class.simpleName}")
             }
         }
+
+        private fun Dokument.asJsonNode() =
+            reflection { lastOppTidsstempel, url ->
+                mapper.createObjectNode().also {
+                    it.put("lastOppTidsstempel", lastOppTidsstempel.toString())
+                    it.put("url", url)
+                }
+            }
+
+        private fun Periode.asJsonNode() =
+            reflection { fom, tom ->
+                mapper.createObjectNode().also {
+                    it.put("fom", fom.toString())
+                    it.put("tom", tom?.toString())
+                }
+            }
+
+        private fun Flervalg.asJsonNode(): ArrayNode? {
+            val flervalg = mapper.createArrayNode()
+            forEach { flervalg.add(it) }
+            return flervalg
+        }
+
+        private fun Inntekt.asJsonNode() = reflection { årlig, _, _, _ -> årlig }
     }
 }
