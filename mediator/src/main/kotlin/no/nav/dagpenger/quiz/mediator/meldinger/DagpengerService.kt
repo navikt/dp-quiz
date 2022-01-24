@@ -7,7 +7,6 @@ import no.nav.dagpenger.model.marshalling.FaktaJsonBuilder
 import no.nav.dagpenger.model.marshalling.NavJsonBuilder
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
-import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.søknadsprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -47,8 +46,10 @@ internal class DagpengerService(
             .build()
 
         val søknadUuid = packet["søknad_uuid"].asText().let { søknadUuid -> UUID.fromString(søknadUuid) }
-        if (søknadUuid.equals(UUID.fromString("79fcfed0-0933-41a5-89ee-de09313ac33e"))) {
-            log.info { "Skipping $søknadUuid" }
+        val id = packet["@id"].asText()
+        if (id.equals("79fcfed0-0933-41a5-89ee-de09313ac33e")) {
+            log.info { "Skipping $id" }
+            return
         }
 
         val faktagrupperType = Versjon.UserInterfaceType.Web
@@ -73,4 +74,8 @@ internal class DagpengerService(
     override fun onError(problems: MessageProblems, context: MessageContext) {
         log.info { "Kunne ikke lese ${problems.toExtendedReport()}" }
     }
+}
+
+fun main() {
+    println()
 }
