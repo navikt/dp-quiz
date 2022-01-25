@@ -8,7 +8,9 @@ import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
+import no.nav.dagpenger.quiz.mediator.helpers.mars
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 import kotlin.test.assertEquals
 
 internal class JsonNodeExtensionsTest {
@@ -54,10 +56,19 @@ internal class JsonNodeExtensionsTest {
 }
     """.trimIndent()
 
+    private val jsonMedDokumentsvar = """
+{
+  "svar": {
+      "lastOppTidsstempel": "2018-03-01T12:00",
+      "url": "https://dokumnetlager/dokumentId"
+  }
+}
+    """.trimIndent()
+
     private val objectMapper = jacksonObjectMapper()
 
     @Test
-    fun `Skal kunne konvertere en JsonNode til et Envalg`() {
+    fun `Skal kunne konvertere et svar til et Envalg`() {
         val forventedeValg = Envalg("valg2")
         val faktumNodeMedSvarliste = objectMapper.readValue<JsonNode>(jsonMedSvarlisteMedEtValg)
 
@@ -68,7 +79,7 @@ internal class JsonNodeExtensionsTest {
     }
 
     @Test
-    fun `Skal kunne konvertere en JsonNode til et Flervalg`() {
+    fun `Skal kunne konvertere et svar til et Flervalg`() {
         val forventedeValg = Flervalg("valg1", "valg2")
         val faktumNodeMedSvarliste = objectMapper.readValue<JsonNode>(jsonMedSvarlisteMedFlereValg)
 
@@ -108,5 +119,18 @@ internal class JsonNodeExtensionsTest {
 
         val forventetPeriode = Periode(1.februar())
         assertEquals(forventetPeriode, pågåendePeriode)
+    }
+
+    @Test
+    fun `Skal konvertere et svar til et Dokument`() {
+        val faktumNode = objectMapper.readValue<JsonNode>(jsonMedDokumentsvar)
+        val svarnode = faktumNode["svar"]
+
+        val dokument = svarnode.asDokument()
+
+        dokument.reflection { lastOppTidsstempel: LocalDateTime, url: String ->
+            assertEquals(1.mars().atTime(12, 0), lastOppTidsstempel)
+            assertEquals("https://dokumnetlager/dokumentId", url)
+        }
     }
 }

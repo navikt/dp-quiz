@@ -2,11 +2,13 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
+import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.helse.rapids_rivers.asLocalDate
+import no.nav.helse.rapids_rivers.asLocalDateTime
 import no.nav.helse.rapids_rivers.asOptionalLocalDate
 
 fun JsonNode.asEnvalg(): Envalg {
@@ -27,4 +29,10 @@ fun JsonNode.asPeriode(): Periode {
     val fom = this["fom"].asLocalDate()
     val tom = this["tom"].asOptionalLocalDate()
     return Periode(fom, tom)
+}
+
+fun JsonNode.asDokument(): Dokument {
+    val lastOppTidsstempel = this["lastOppTidsstempel"].asLocalDateTime()
+    val url = this["url"].asText()
+    return Dokument(lastOppTidsstempel, url)
 }

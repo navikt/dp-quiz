@@ -3,7 +3,6 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import mu.KotlinLogging
-import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.faktum.Prosessversjon
@@ -151,9 +150,7 @@ internal class FaktumSvarService(
             "flervalg" -> søknadprosess.flervalg(faktumId).besvar(svar.asFlervalg(), besvartAv)
             "tekst" -> søknadprosess.tekst(faktumId).besvar(svar.asTekst(), besvartAv)
             "periode" -> søknadprosess.periode(faktumId).besvar(svar.asPeriode(), besvartAv)
-            "dokument" ->
-                søknadprosess.dokument(faktumId)
-                    .besvar(Dokument(svar["lastOppTidsstempel"].asLocalDateTime(), svar["url"].asText()), besvartAv)
+            "dokument" -> søknadprosess.dokument(faktumId).besvar(svar.asDokument(), besvartAv)
             "generator" -> {
                 val svarene = svar as ArrayNode
                 søknadprosess.generator(faktumId).besvar(svarene.size(), besvartAv)
