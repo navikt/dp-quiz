@@ -27,26 +27,25 @@ abstract class SøknadBesvarer {
 
     @Suppress("UNCHECKED_CAST")
     protected fun withSøknad(
-        event: String,
+        førsteEvent: String,
         block: (
             besvar: (faktumId: Int, svar: Any) -> Unit,
         ) -> Unit
     ) {
-        val søknadsId = søknad(event)
+        val søknadsId = triggNySøknadsprosess(førsteEvent)
         block { faktumId: Int, svar: Any ->
-            val _faktumId = faktumId.toString()
             when (svar) {
-                is Inntekt -> besvarInntekt(søknadsId, _faktumId, svar)
-                is Periode -> besvarPeriode(søknadsId, _faktumId, svar)
-                is Tekst -> besvarTekst(søknadsId, _faktumId, svar)
-                is Dokument -> besvarDokument(søknadsId, _faktumId, svar)
-                is List<*> -> besvarGenerator(søknadsId, _faktumId, svar as List<List<Pair<String, Any>>>)
-                else -> besvar(søknadsId, _faktumId, svar)
+                is Inntekt -> besvarInntekt(søknadsId, faktumId, svar)
+                is Periode -> besvarPeriode(søknadsId, faktumId, svar)
+                is Tekst -> besvarTekst(søknadsId, faktumId, svar)
+                is Dokument -> besvarDokument(søknadsId, faktumId, svar)
+                is List<*> -> besvarGenerator(søknadsId, faktumId, svar as List<List<Pair<String, Any>>>)
+                else -> besvar(søknadsId, faktumId, svar)
             }
         }
     }
 
-    protected fun besvarDokument(søknadsId: String, faktumId: String, svar: Dokument) {
+    protected fun besvarDokument(søknadsId: String, faktumId: Int, svar: Dokument) {
         val (lastOppTidsstempel, url) = svar.reflection { localDateTime, url -> Pair(localDateTime, url) }
         //language=JSON
         testRapid.sendTestMessage(
@@ -69,7 +68,7 @@ abstract class SøknadBesvarer {
         )
     }
 
-    protected fun besvar(søknadsId: String, faktumId: String, svar: Any) {
+    protected fun besvar(søknadsId: String, faktumId: Int, svar: Any) {
         //language=JSON
         val message = """{
               "søknad_uuid": "$søknadsId",
@@ -89,7 +88,7 @@ abstract class SøknadBesvarer {
         )
     }
 
-    protected fun besvarTekst(søknadsId: String, faktumId: String, svar: Tekst) {
+    protected fun besvarTekst(søknadsId: String, faktumId: Int, svar: Tekst) {
         //language=JSON
         testRapid.sendTestMessage(
             """{
@@ -108,7 +107,7 @@ abstract class SøknadBesvarer {
         )
     }
 
-    protected fun besvarPeriode(søknadsId: String, faktumId: String, svar: Periode) {
+    protected fun besvarPeriode(søknadsId: String, faktumId: Int, svar: Periode) {
         //language=JSON
         testRapid.sendTestMessage(
             """{
@@ -127,7 +126,7 @@ abstract class SøknadBesvarer {
         )
     }
 
-    protected fun besvarInntekt(søknadsId: String, faktumId: String, svar: Inntekt) {
+    protected fun besvarInntekt(søknadsId: String, faktumId: Int, svar: Inntekt) {
         val årligInntekt: Double = svar.reflection { årlig, _, _, _ -> return@reflection årlig }
         //language=JSON
         testRapid.sendTestMessage(
@@ -147,7 +146,7 @@ abstract class SøknadBesvarer {
         )
     }
 
-    protected fun besvarGenerator(søknadsId: String, faktumId: String, svar: List<List<Pair<String, Any>>>) {
+    protected fun besvarGenerator(søknadsId: String, faktumId: Int, svar: List<List<Pair<String, Any>>>) {
         val noe = svar.map { it.map { lagSvar(it.first, it.second) } }
         val fakta = mutableListOf("""{"id": "$faktumId", "svar": $noe, "clazz": "generator"}""")
         //language=JSON
@@ -166,7 +165,7 @@ abstract class SøknadBesvarer {
     protected fun lagSvar(faktumId: String, svar: Any) =
         """{"id": "$faktumId", "svar": "$svar", "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
 
-    protected fun søknad(
+    protected fun triggNySøknadsprosess(
         event: String
     ): String {
         testRapid.sendTestMessage(event)
