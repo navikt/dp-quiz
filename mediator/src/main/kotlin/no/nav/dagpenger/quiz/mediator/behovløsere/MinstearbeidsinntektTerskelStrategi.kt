@@ -23,7 +23,7 @@ object MinstearbeidsinntektFaktorStrategi {
         ), // Forskrift § 2-2.Midlertidig krav til minsteinntekt – unntak fra folketrygdloven § 4-4
         MinstearbeidsinntektTerskel(
             15.desember(2021),
-            28.februar(2022),
+            31.mars(2022),
             Faktor(0.75, 2.25)
         ),
         MinstearbeidsinntektTerskel(
