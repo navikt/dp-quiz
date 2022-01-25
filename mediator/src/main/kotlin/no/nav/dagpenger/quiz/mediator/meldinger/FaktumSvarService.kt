@@ -74,6 +74,7 @@ internal class FaktumSvarService(
                 besvarFakta(fakta, søknadprosess)
 
                 when (ProsessVersjonVisitor(søknadprosess).prosessnavn) {
+
                     Prosess.Dagpenger -> {
                         context.publish(
                             FaktaJsonBuilder(søknadprosess).resultat().toString().also {
@@ -141,7 +142,8 @@ internal class FaktumSvarService(
     ) {
         when (clazz) {
             "boolean" -> søknadprosess.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)
-            "int" -> søknadprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv)
+            "int" -> søknadprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv) // todo: remove?
+            "integer" -> søknadprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv)
             "double" -> søknadprosess.desimaltall(faktumId).besvar(svar.asDouble(), besvartAv)
             "localdate" -> søknadprosess.dato(faktumId).besvar(svar.asLocalDate(), besvartAv)
             "inntekt" -> søknadprosess.inntekt(faktumId).besvar(svar.asDouble().årlig, besvartAv)
@@ -174,6 +176,7 @@ internal class FaktumSvarService(
     private class ProsessVersjonVisitor(private val søknadprosess: Søknadprosess) : SøknadprosessVisitor {
 
         lateinit var prosessnavn: Prosessnavn
+
         init {
             søknadprosess.accept(this)
         }

@@ -20,6 +20,7 @@ import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
@@ -55,7 +56,7 @@ class NavJsonBuilderTest {
         val periodeSubsumsjon = f8Faktum har "periode".deltre {
             f7Faktum mellom f9Faktum og f10Faktum
         }
-        val prototypeSubsumsjon =
+        val prototypeSubsumsjon: Subsumsjon =
             f1Faktum er true hvisOppfylt {
                 "alle".alle(
                     f2Faktum er true,

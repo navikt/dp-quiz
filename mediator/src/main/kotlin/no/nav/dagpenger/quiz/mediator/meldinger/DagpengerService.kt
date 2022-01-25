@@ -58,6 +58,7 @@ internal class DagpengerService(
                 }
 
             )
+
             context.publish(
                 FaktaJsonBuilder(søknadsprosess).resultat().toString().also {
                     sikkerlogg.info { "Fakta sendt: $it" }

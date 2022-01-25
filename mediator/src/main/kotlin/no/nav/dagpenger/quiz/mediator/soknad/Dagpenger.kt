@@ -13,8 +13,11 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.minst
+import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.Subsumsjoner.regeltre
 
 internal object Dagpenger {
@@ -96,9 +99,13 @@ internal object Dagpenger {
 
     object Subsumsjoner {
 
-        val regeltre = with(søknad) {
-            heltall(arbeidsforhold) minst (0)
-            heltall(`personalia alder`) minst (0)
+        val regeltre: Subsumsjon = with(søknad) {
+            "alle".alle(
+                heltall(arbeidsforhold) minst (0),
+                heltall(`personalia alder`) minst (0),
+                tekst(`personalia navn`).utfylt(),
+                periode(`en eller annen period`).utfylt()
+            )
         }
     }
 
