@@ -3,7 +3,9 @@ package no.nav.dagpenger.quiz.mediator.soknad
 import mu.KotlinLogging
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
@@ -12,8 +14,6 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.regel.minst
-import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -24,70 +24,89 @@ internal object Dagpenger {
 
     private val logger = KotlinLogging.logger { }
 
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 201)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 202)
 
-    const val `Har du hatt dagpenger i løpet av de siste 52 ukene` = 1
-    const val `Villig til å ta hel og deltidsjobb` = 2
-    const val `Villig til å ta arbeid i hele Norge` = 3
-    const val `Villig til å ta alle typer arbeid` = 4
-    const val `Villig til å ta ethvert arbeid` = 5
-    const val `Avtjent militærtjeneste minst 3 av siste 6 mnd` = 6
-    const val `Redusert helse, fysisk eller psykisk` = 7
-    const val `Bekreftelse fra relevant fagpersonell` = 8
-    const val arbeidsforhold = 9
-    const val `arbeidsforhold fra og med` = 10
-    const val `arbeidsforhold til og med` = 11
-    const val `personalia alder` = 12
-    const val `personalia navn` = 13
-    const val `en eller annen period` = 14
+    const val `for dummy-boolean` = 1
+    const val `for dummy-envalg` = 2
+    const val `for dummy-tekst med avhengighet` = 3
+    const val `for dummy-flervalg` = 4
+    const val `for dummy-heltall` = 5
+    const val `for dummy-desimaltall` = 6
+    const val `for dummy-tekst` = 7
+    const val `for dummy-dato` = 8
+    const val `for dummy-periode` = 9
+    const val `for dummy-generator` = 10
+    const val `for generator dummy-boolean` = 11
+    const val `for generator dummy-envalg` = 12
+    const val `for generator dummy-tekst med avhengighet` = 13
+    const val `for generator dummy-flervalg` = 14
+    const val `for generator dummy-heltall` = 15
+    const val `for generator dummy-desimaltall` = 16
+    const val `for generator dummy-tekst` = 17
+    const val `for generator dummy-dato` = 18
+    const val `for generator dummy-periode` = 19
+
 
     fun registrer(registrer: (søknad: Søknad) -> Unit) {
         registrer(søknad)
     }
 
     internal val søknad: Søknad
-        get() = Søknad(
-            VERSJON_ID,
-            boolsk faktum "Har du hatt dagpenger siste 52 uker" id `Har du hatt dagpenger i løpet av de siste 52 ukene`,
-            boolsk faktum "Som hovedregel må du være villig til å ta både hel- og deltidsjobb for å ha rett til dagpenger" id `Villig til å ta hel og deltidsjobb`,
-            boolsk faktum "Som hovedregel må du være villig til å ta arbeid i hele Norge for å ha rett til dagpenger" id `Villig til å ta arbeid i hele Norge`,
-            boolsk faktum "Som hovedregel må du kunne ta alle typer arbeid for å ha rett til dagpenger" id `Villig til å ta alle typer arbeid`,
-            boolsk faktum "Som hovedregel må du være villig til å ta ethvert arbeid du er kvalifisert for. Dette gjelder også innenfor yrker du ikke er utdannet til eller har arbeidserfaring fra. Du må også være villig til å gå ned i lønn." id `Villig til å ta ethvert arbeid`,
-            boolsk faktum "Du kan ha rett til dagpenger etter særlige regler hvis du har avtjent militærtjeneste eller obligatorisk sivilforsvarstjeneste i minst tre av de siste tolv månedene" id `Avtjent militærtjeneste minst 3 av siste 6 mnd`,
-            boolsk faktum "Redusert helse, fysisk eller psykisk" id `Redusert helse, fysisk eller psykisk` avhengerAv `Villig til å ta hel og deltidsjobb`,
-            dokument faktum "Bekreftelse fra relevant fagpersonell" id `Bekreftelse fra relevant fagpersonell` avhengerAv `Redusert helse, fysisk eller psykisk`,
-            heltall faktum "faktum.arbeidsforhold" id arbeidsforhold genererer `arbeidsforhold fra og med` og `arbeidsforhold til og med`,
-            dato faktum "faktum.arbeidsforhold.fom" id `arbeidsforhold fra og med`,
-            dato faktum "faktum.arbeidsforhold.tom" id `arbeidsforhold til og med`,
-            heltall faktum "faktum.personalia.alder" id `personalia alder`,
-            tekst faktum "faktum.person.navn" id `personalia navn`,
-            periode faktum "faktum.test.periode" id `en eller annen period`
-
-        )
+        get() {
+            val søknad1 = Søknad(
+                VERSJON_ID,
+                boolsk faktum "faktum.dummy-boolean" id `for dummy-boolean`,
+                envalg faktum "faktum.dummy-valg" med "svar.ja" med "svar.nei" med "svar.vetikke" id `for dummy-envalg`,
+                tekst faktum "faktum.dummy-tekst" id `for dummy-tekst med avhengighet` avhengerAv `for dummy-envalg`,
+                flervalg faktum "faktum.dummy-flervalg" id `for dummy-flervalg`,
+                heltall faktum "faktum.dummy-int" id `for dummy-heltall`,
+                desimaltall faktum "faktum.dummy-desimaltall" id `for dummy-desimaltall`,
+                tekst faktum "faktum.dummy-tekst" id `for dummy-tekst`,
+                dato faktum "faktum.dummy-localdate" id `for dummy-dato`,
+                periode faktum "faktum.dummy-periode" id `for dummy-periode`,
+                heltall faktum "faktum.dummy-generator" id `for dummy-generator`
+                        genererer `for generator dummy-boolean`
+                        og `for generator dummy-envalg`
+                        og `for generator dummy-tekst med avhengighet`
+                        og `for generator dummy-flervalg`
+                        og `for generator dummy-heltall`
+                        og `for generator dummy-desimaltall`
+                        og `for generator dummy-tekst`
+                        og `for generator dummy-dato`
+                        og `for generator dummy-periode`,
+                boolsk faktum "faktum.generator-dummy-boolean" id `for generator dummy-boolean`,
+                envalg faktum "faktum.generator-dummy-valg" med "svar.ja" med "svar.nei" med "svar.vetikke" id `for generator dummy-envalg`,
+                tekst faktum "faktum.generator-dummy-tekst" id `for generator dummy-tekst med avhengighet` avhengerAv `for generator dummy-envalg`,
+                flervalg faktum "faktum.generator-dummy-flervalg" id `for generator dummy-flervalg`,
+                heltall faktum "faktum.generator-dummy-int" id `for generator dummy-heltall`,
+                desimaltall faktum "faktum.generator-dummy-desimaltall" id `for generator dummy-desimaltall`,
+                tekst faktum "faktum.generator-dummy-tekst" id `for generator dummy-tekst`,
+                dato faktum "faktum.generator-dummy-localdate" id `for generator dummy-dato`,
+                periode faktum "faktum.generator-dummy-periode" id `for generator dummy-periode`
+            )
+            return søknad1
+        }
 
     private object Seksjoner {
 
         val søkerSeksjon = søknad.seksjon(
             "søkerseksjon",
             Rolle.søker,
-            `Villig til å ta hel og deltidsjobb`,
-            `Villig til å ta arbeid i hele Norge`,
-            `Villig til å ta alle typer arbeid`,
-            `Villig til å ta ethvert arbeid`,
-            `Redusert helse, fysisk eller psykisk`,
-            `Bekreftelse fra relevant fagpersonell`,
-            `Avtjent militærtjeneste minst 3 av siste 6 mnd`
+            `for dummy-boolean`,
+            `for dummy-envalg`,
+            `for dummy-tekst med avhengighet`,
+            `for dummy-flervalg`,
+            `for dummy-heltall`,
+            `for dummy-desimaltall`,
+            `for dummy-tekst`,
+            `for dummy-dato`,
+            `for dummy-periode`,
+            `for dummy-generator`
         )
 
         val navSeksjon = søknad.seksjon(
             "navseksjon",
             Rolle.nav,
-            arbeidsforhold,
-            `arbeidsforhold fra og med`,
-            `arbeidsforhold til og med`,
-            `personalia alder`,
-            `personalia navn`,
-            `en eller annen period`,
         )
     }
 
@@ -101,10 +120,10 @@ internal object Dagpenger {
 
         val regeltre: Subsumsjon = with(søknad) {
             "alle".alle(
-                heltall(arbeidsforhold) minst (0),
-                heltall(`personalia alder`) minst (0),
-                tekst(`personalia navn`).utfylt(),
-                periode(`en eller annen period`).utfylt()
+//                heltall(arbeidsforhold) minst (0),
+//                heltall(`personalia alder`) minst (0),
+//                tekst(`personalia navn`).utfylt(),
+//                periode(`en eller annen period`).utfylt()
             )
         }
     }
@@ -112,10 +131,10 @@ internal object Dagpenger {
     private val faktumNavBehov =
         FaktumNavBehov(
             mapOf(
-                arbeidsforhold to "Arbeidsforhold",
-                `personalia alder` to "PersonaliaAlder",
-                `personalia navn` to "PersonaliaNavn",
-                `en eller annen period` to "enEllerAnnenPeriod"
+//                arbeidsforhold to "Arbeidsforhold",
+//                `personalia alder` to "PersonaliaAlder",
+//                `personalia navn` to "PersonaliaNavn",
+//                `en eller annen period` to "enEllerAnnenPeriod"
             )
         )
 
