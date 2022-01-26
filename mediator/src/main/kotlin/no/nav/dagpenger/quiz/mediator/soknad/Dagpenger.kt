@@ -14,10 +14,11 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
+import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.subsumsjon.alle
+import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.Subsumsjoner.regeltre
 
 internal object Dagpenger {
@@ -46,7 +47,6 @@ internal object Dagpenger {
     const val `for generator dummy-dato` = 18
     const val `for generator dummy-periode` = 19
 
-
     fun registrer(registrer: (søknad: Søknad) -> Unit) {
         registrer(søknad)
     }
@@ -56,28 +56,40 @@ internal object Dagpenger {
             val søknad1 = Søknad(
                 VERSJON_ID,
                 boolsk faktum "faktum.dummy-boolean" id `for dummy-boolean`,
-                envalg faktum "faktum.dummy-valg" med "svar.ja" med "svar.nei" med "svar.vetikke" id `for dummy-envalg`,
+                envalg faktum "faktum.dummy-valg"
+                    med "faktum.dummy-valg.svar.ja"
+                    med "faktum.dummy-valg.svar.nei"
+                    med "faktum.dummy-valg.svar.vetikke" id `for dummy-envalg`,
                 tekst faktum "faktum.dummy-tekst" id `for dummy-tekst med avhengighet` avhengerAv `for dummy-envalg`,
-                flervalg faktum "faktum.dummy-flervalg" id `for dummy-flervalg`,
+                flervalg faktum "faktum.dummy-flervalg"
+                    med "faktum.dummy-flervalgsvar.1"
+                    med "faktum.dummy-flervalgsvar.2"
+                    med "faktum.dummy-flervalgsvar.3" id `for dummy-flervalg`,
                 heltall faktum "faktum.dummy-int" id `for dummy-heltall`,
                 desimaltall faktum "faktum.dummy-desimaltall" id `for dummy-desimaltall`,
                 tekst faktum "faktum.dummy-tekst" id `for dummy-tekst`,
                 dato faktum "faktum.dummy-localdate" id `for dummy-dato`,
                 periode faktum "faktum.dummy-periode" id `for dummy-periode`,
                 heltall faktum "faktum.dummy-generator" id `for dummy-generator`
-                        genererer `for generator dummy-boolean`
-                        og `for generator dummy-envalg`
-                        og `for generator dummy-tekst med avhengighet`
-                        og `for generator dummy-flervalg`
-                        og `for generator dummy-heltall`
-                        og `for generator dummy-desimaltall`
-                        og `for generator dummy-tekst`
-                        og `for generator dummy-dato`
-                        og `for generator dummy-periode`,
+                    genererer `for generator dummy-boolean`
+                    og `for generator dummy-envalg`
+                    og `for generator dummy-tekst med avhengighet`
+                    og `for generator dummy-flervalg`
+                    og `for generator dummy-heltall`
+                    og `for generator dummy-desimaltall`
+                    og `for generator dummy-tekst`
+                    og `for generator dummy-dato`
+                    og `for generator dummy-periode`,
                 boolsk faktum "faktum.generator-dummy-boolean" id `for generator dummy-boolean`,
-                envalg faktum "faktum.generator-dummy-valg" med "svar.ja" med "svar.nei" med "svar.vetikke" id `for generator dummy-envalg`,
+                envalg faktum "faktum.generator-dummy-valg"
+                    med "faktum.generator-dummy-valg.svar.ja"
+                    med "faktum.generator-dummy-valg.svar.nei"
+                    med "faktum.generator-dummy-valg.svar.vetikke" id `for generator dummy-envalg`,
                 tekst faktum "faktum.generator-dummy-tekst" id `for generator dummy-tekst med avhengighet` avhengerAv `for generator dummy-envalg`,
-                flervalg faktum "faktum.generator-dummy-flervalg" id `for generator dummy-flervalg`,
+                flervalg faktum "faktum.generator-dummy-flervalg"
+                    med "faktum.dummy-flervalgsvar.1"
+                    med "faktum.dummy-flervalgsvar.2"
+                    med "faktum.dummy-flervalgsvar.3" id `for generator dummy-flervalg`,
                 heltall faktum "faktum.generator-dummy-int" id `for generator dummy-heltall`,
                 desimaltall faktum "faktum.generator-dummy-desimaltall" id `for generator dummy-desimaltall`,
                 tekst faktum "faktum.generator-dummy-tekst" id `for generator dummy-tekst`,
@@ -119,8 +131,8 @@ internal object Dagpenger {
     object Subsumsjoner {
 
         val regeltre: Subsumsjon = with(søknad) {
-            "alle".alle(
-//                heltall(arbeidsforhold) minst (0),
+            "alle".minstEnAv(
+                heltall(`for dummy-heltall`) minst (0)
 //                heltall(`personalia alder`) minst (0),
 //                tekst(`personalia navn`).utfylt(),
 //                periode(`en eller annen period`).utfylt()
@@ -131,7 +143,7 @@ internal object Dagpenger {
     private val faktumNavBehov =
         FaktumNavBehov(
             mapOf(
-//                arbeidsforhold to "Arbeidsforhold",
+                `for dummy-heltall` to "trengerEtHeltall",
 //                `personalia alder` to "PersonaliaAlder",
 //                `personalia navn` to "PersonaliaNavn",
 //                `en eller annen period` to "enEllerAnnenPeriod"

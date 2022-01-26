@@ -1,8 +1,9 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
 import com.fasterxml.jackson.databind.JsonNode
-import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.Tekst
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
@@ -10,7 +11,6 @@ import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.meldinger.DagpengerService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger
-import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -24,7 +24,6 @@ import kotlin.test.assertNotNull
 internal class DagpengerTest : SøknadBesvarer() {
 
     private val today = LocalDate.now()
-    private val tomorrow = today.plusDays(1)
 
     @BeforeEach
     fun setup() {
@@ -57,6 +56,8 @@ internal class DagpengerTest : SøknadBesvarer() {
         }
     }
 
+    val objectMapper = jacksonObjectMapper().configure(SerializationFeature.INDENT_OUTPUT, true)
+
     @Test
     fun `Hent alle fakta happy path`() {
 
@@ -64,60 +65,34 @@ internal class DagpengerTest : SøknadBesvarer() {
             testRapid.inspektør.message(0).let {
                 assertEquals("faktum_svar", it["@event_name"].asText())
                 assertEquals(
-                    listOf("PersonaliaAlder", "PersonaliaNavn", "enEllerAnnenPeriod", "Arbeidsforhold"),
+                    emptyList(),
                     it["@behov"].map { it.asText() }
                 )
             }
 
             testRapid.inspektør.message(1).let {
-                assertEquals("NySøknad", it["@event_name"].asText())
-                assertNotNull(it["fakta"])
-                assertEquals(0, it["fakta"].filter { it["svar"] != null }.size)
+                val prettyPrint = objectMapper.writeValueAsString(it)
+                println("### Alle fakta, uten svar \n$prettyPrint")
             }
 
             besvar(
-                Dagpenger.`personalia alder`,
-                20
+                Dagpenger.`for dummy-boolean`,
+                true
             )
             testRapid.inspektør.message(2).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
-                assertEquals(20, it.hentSvar(Dagpenger.`personalia alder`).asInt())
+                assertEquals(true, it.hentSvar(Dagpenger.`for dummy-boolean`).asBoolean())
             }
 
             besvar(
-                Dagpenger.arbeidsforhold,
-                listOf(
-                    listOf(
-                        "${Dagpenger.`arbeidsforhold fra og med`}.1" to today,
-                        "${Dagpenger.`arbeidsforhold til og med`}.1" to tomorrow,
-                    )
-                )
+                Dagpenger.`for dummy-envalg`,
+                Envalg("faktum.dummy-valg.svar.ja")
             )
             testRapid.inspektør.message(3).let {
+                val prettyPrint = objectMapper.writeValueAsString(it)
+                println("### Index 3 \n$prettyPrint")
                 assertEquals("NySøknad", it["@event_name"].asText())
-                val svarList = it.hentSvar(Dagpenger.arbeidsforhold).get(0).toList()
-                assertEquals(svarList[0].asLocalDate(), today)
-                assertEquals(svarList[1].asLocalDate(), tomorrow)
-            }
-
-            besvar(
-                Dagpenger.`personalia navn`,
-                Tekst("et navn")
-            )
-            testRapid.inspektør.message(4).let {
-                assertEquals("NySøknad", it["@event_name"].asText())
-                assertEquals("et navn", it.hentSvar(Dagpenger.`personalia navn`).asText())
-            }
-
-            besvar(
-                Dagpenger.`en eller annen period`,
-                Periode(today, tomorrow)
-            )
-            testRapid.inspektør.message(5).let {
-                assertEquals("NySøknad", it["@event_name"].asText())
-                val svar = it.hentSvar(Dagpenger.`en eller annen period`)
-                assertEquals(svar["fom"].asLocalDate(), today)
-                assertEquals(svar["tom"].asLocalDate(), tomorrow)
+                assertEquals("faktum.dummy-valg.svar.ja", it.hentSvar(Dagpenger.`for dummy-envalg`).asText())
             }
         }
     }
