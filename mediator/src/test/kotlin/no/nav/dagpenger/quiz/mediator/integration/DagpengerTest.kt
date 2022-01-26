@@ -2,28 +2,34 @@ package no.nav.dagpenger.quiz.mediator.integration
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.dagpenger.model.faktum.Envalg
+import no.nav.dagpenger.model.faktum.Flervalg
+import no.nav.dagpenger.model.faktum.Periode
+import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
+import no.nav.dagpenger.quiz.mediator.helpers.februar
+import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.meldinger.DagpengerService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger
+import no.nav.helse.rapids_rivers.asLocalDate
+import no.nav.helse.rapids_rivers.asOptionalLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 internal class DagpengerTest : SøknadBesvarer() {
-
-    private val today = LocalDate.now()
 
     @BeforeEach
     fun setup() {
@@ -65,14 +71,13 @@ internal class DagpengerTest : SøknadBesvarer() {
             testRapid.inspektør.message(0).let {
                 assertEquals("faktum_svar", it["@event_name"].asText())
                 assertEquals(
-                    emptyList(),
+                    emptyList<String>(),
                     it["@behov"].map { it.asText() }
                 )
             }
 
             testRapid.inspektør.message(1).let {
-                val prettyPrint = objectMapper.writeValueAsString(it)
-                println("### Alle fakta, uten svar \n$prettyPrint")
+                assertFalse { it.toString().contains(""""svar":""") }
             }
 
             besvar(
@@ -89,10 +94,68 @@ internal class DagpengerTest : SøknadBesvarer() {
                 Envalg("faktum.dummy-valg.svar.ja")
             )
             testRapid.inspektør.message(3).let {
-                val prettyPrint = objectMapper.writeValueAsString(it)
-                println("### Index 3 \n$prettyPrint")
                 assertEquals("NySøknad", it["@event_name"].asText())
                 assertEquals("faktum.dummy-valg.svar.ja", it.hentSvar(Dagpenger.`for dummy-envalg`).asText())
+            }
+
+            // TODO: Sjekke subfaktum med tekst
+
+            besvar(
+                Dagpenger.`for dummy-flervalg`,
+                Flervalg("faktum.dummy-flervalgsvar.1", "faktum.dummy-flervalgsvar.2")
+            )
+            testRapid.inspektør.message(4).let {
+                assertEquals("NySøknad", it["@event_name"].asText())
+
+                val svar = it.hentSvar(Dagpenger.`for dummy-flervalg`)
+                svar is ArrayNode
+                assertEquals(svar[0].asText(), "faktum.dummy-flervalgsvar.1")
+                assertEquals(svar[1].asText(), "faktum.dummy-flervalgsvar.2")
+            }
+
+            besvar(
+                Dagpenger.`for dummy-heltall`,
+                1
+            )
+            testRapid.inspektør.message(5).let {
+                assertEquals("NySøknad", it["@event_name"].asText())
+
+                assertEquals(1, it.hentSvar(Dagpenger.`for dummy-heltall`).asInt())
+            }
+
+            besvar(
+                Dagpenger.`for dummy-desimaltall`,
+                1.5
+            )
+            testRapid.inspektør.message(6).let {
+                assertEquals("NySøknad", it["@event_name"].asText())
+
+                assertEquals(1.5, it.hentSvar(Dagpenger.`for dummy-desimaltall`).asDouble())
+            }
+
+            besvar(
+                Dagpenger.`for dummy-tekst`,
+                Tekst("tekstsvar")
+            )
+            testRapid.inspektør.message(7).let {
+                assertEquals("NySøknad", it["@event_name"].asText())
+
+                assertEquals("tekstsvar", it.hentSvar(Dagpenger.`for dummy-tekst`).asText())
+            }
+
+            besvar(
+                Dagpenger.`for dummy-periode`,
+                Periode(1.januar(), 1.februar())
+            )
+            testRapid.inspektør.message(8).let {
+
+                val prettyPrint = objectMapper.writeValueAsString(it)
+                println("### Index 8 \n$prettyPrint")
+                assertEquals("NySøknad", it["@event_name"].asText())
+
+                val svarene = it.hentSvar(Dagpenger.`for dummy-periode`)
+                assertEquals(1.januar(), svarene["fom"].asLocalDate())
+                assertEquals(1.februar(), svarene["tom"].asOptionalLocalDate())
             }
         }
     }
