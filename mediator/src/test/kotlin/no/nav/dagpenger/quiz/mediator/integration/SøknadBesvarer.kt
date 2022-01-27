@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.model.faktum.Valg
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions
 import java.time.LocalDateTime
@@ -40,8 +41,7 @@ abstract class SøknadBesvarer {
                 is Inntekt -> besvarInntekt(søknadsId, faktumId, svar)
                 is Periode -> besvarPeriode(søknadsId, faktumId, svar)
                 is Tekst -> besvarTekst(søknadsId, faktumId, svar)
-                is Envalg -> besvarEnvalg(søknadsId, faktumId, svar)
-                is Flervalg -> besvarFlervalg(søknadsId, faktumId, svar)
+                is Envalg, is Flervalg -> besvarValg(søknadsId, faktumId, svar as Valg)
                 is Dokument -> besvarDokument(søknadsId, faktumId, svar)
                 is List<*> -> besvarGenerator(søknadsId, faktumId, svar as List<List<Pair<String, Any>>>)
                 else -> besvar(søknadsId, faktumId, svar)
@@ -111,27 +111,7 @@ abstract class SøknadBesvarer {
         )
     }
 
-    protected fun besvarEnvalg(søknadsId: String, faktumId: Int, svar: Envalg) {
-        //language=JSON
-        val message = """{
-              "søknad_uuid": "$søknadsId",
-              "@event_name": "faktum_svar",
-              "fakta": [{
-                "id": "$faktumId",
-                "svar": ["${svar.iterator().next()}"],
-                "clazz": "envalg"
-            }
-              ],
-              "@opprettet": "${LocalDateTime.now()}",
-              "@id": "${UUID.randomUUID()}"
-            }
-        """.trimIndent()
-        testRapid.sendTestMessage(
-            message
-        )
-    }
-
-    protected fun besvarFlervalg(søknadsId: String, faktumId: Int, svar: Flervalg) {
+    protected fun besvarValg(søknadsId: String, faktumId: Int, svar: Valg) {
 
         //language=JSON
         val message = """{
@@ -140,7 +120,7 @@ abstract class SøknadBesvarer {
               "fakta": [{
                 "id": "$faktumId",
                 "svar": ["${svar.joinToString("""","""")}"],
-                "clazz": "flervalg"
+                "clazz": "${svar::class.java.simpleName.lowercase()}"
             }
               ],
               "@opprettet": "${LocalDateTime.now()}",

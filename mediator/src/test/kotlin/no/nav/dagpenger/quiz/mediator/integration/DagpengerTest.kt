@@ -80,19 +80,13 @@ internal class DagpengerTest : SøknadBesvarer() {
                 assertFalse { it.toString().contains(""""svar":""") }
             }
 
-            besvar(
-                Dagpenger.`for dummy-boolean`,
-                true
-            )
+            besvar(Dagpenger.`for dummy-boolean`, true)
             testRapid.inspektør.message(2).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
                 assertEquals(true, it.hentSvar(Dagpenger.`for dummy-boolean`).asBoolean())
             }
 
-            besvar(
-                Dagpenger.`for dummy-envalg`,
-                Envalg("faktum.dummy-valg.svar.ja")
-            )
+            besvar(Dagpenger.`for dummy-envalg`, Envalg("faktum.dummy-valg.svar.ja"))
             testRapid.inspektør.message(3).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
                 assertEquals("faktum.dummy-valg.svar.ja", it.hentSvar(Dagpenger.`for dummy-envalg`).asText())
@@ -100,10 +94,7 @@ internal class DagpengerTest : SøknadBesvarer() {
 
             // TODO: Sjekke subfaktum med tekst
 
-            besvar(
-                Dagpenger.`for dummy-flervalg`,
-                Flervalg("faktum.dummy-flervalgsvar.1", "faktum.dummy-flervalgsvar.2")
-            )
+            besvar(Dagpenger.`for dummy-flervalg`, Flervalg("faktum.dummy-flervalgsvar.1", "faktum.dummy-flervalgsvar.2"))
             testRapid.inspektør.message(4).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
@@ -113,40 +104,28 @@ internal class DagpengerTest : SøknadBesvarer() {
                 assertEquals(svar[1].asText(), "faktum.dummy-flervalgsvar.2")
             }
 
-            besvar(
-                Dagpenger.`for dummy-heltall`,
-                1
-            )
+            besvar(Dagpenger.`for dummy-heltall`, 1)
             testRapid.inspektør.message(5).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 assertEquals(1, it.hentSvar(Dagpenger.`for dummy-heltall`).asInt())
             }
 
-            besvar(
-                Dagpenger.`for dummy-desimaltall`,
-                1.5
-            )
+            besvar(Dagpenger.`for dummy-desimaltall`, 1.5)
             testRapid.inspektør.message(6).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 assertEquals(1.5, it.hentSvar(Dagpenger.`for dummy-desimaltall`).asDouble())
             }
 
-            besvar(
-                Dagpenger.`for dummy-tekst`,
-                Tekst("tekstsvar")
-            )
+            besvar(Dagpenger.`for dummy-tekst`, Tekst("tekstsvar"))
             testRapid.inspektør.message(7).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 assertEquals("tekstsvar", it.hentSvar(Dagpenger.`for dummy-tekst`).asText())
             }
 
-            besvar(
-                Dagpenger.`for dummy-periode`,
-                Periode(1.januar(), 1.februar())
-            )
+            besvar(Dagpenger.`for dummy-periode`, Periode(1.januar(), 1.februar()))
             testRapid.inspektør.message(8).let {
 
                 val prettyPrint = objectMapper.writeValueAsString(it)
