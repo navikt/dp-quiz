@@ -127,15 +127,32 @@ internal class DagpengerTest : SøknadBesvarer() {
 
             besvar(Dagpenger.`for dummy-periode`, Periode(1.januar(), 1.februar()))
             testRapid.inspektør.message(8).let {
-
-                val prettyPrint = objectMapper.writeValueAsString(it)
-                println("### Index 8 \n$prettyPrint")
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 val svarene = it.hentSvar(Dagpenger.`for dummy-periode`)
                 assertEquals(1.januar(), svarene["fom"].asLocalDate())
                 assertEquals(1.februar(), svarene["tom"].asOptionalLocalDate())
             }
+
+            //TODO: Fortsette på dette
+//            besvar(
+//                Dagpenger.`for dummy-generator`,
+//                listOf(
+//                    listOf(
+//                        "${Dagpenger.`for generator dummy-boolean`}" to true,
+//                        "${Dagpenger.`for generator dummy-heltall`}" to 3,
+//                    )
+//                )
+//            )
+//
+//            testRapid.inspektør.message(9).let {
+//
+//                val prettyPrint = objectMapper.writeValueAsString(it)
+//                println("### Index 9 \n$prettyPrint")
+//                assertEquals("NySøknad", it["@event_name"].asText())
+//            }
+
+
         }
     }
 

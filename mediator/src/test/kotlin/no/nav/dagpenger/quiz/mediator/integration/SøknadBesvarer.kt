@@ -175,8 +175,7 @@ abstract class SøknadBesvarer {
         val noe = svar.map { it.map { lagSvar(it.first, it.second) } }
         val fakta = mutableListOf("""{"id": "$faktumId", "svar": $noe, "clazz": "generator"}""")
         //language=JSON
-        testRapid.sendTestMessage(
-            """{
+        val message = """{
               "søknad_uuid": "$søknadsId",
               "@event_name": "faktum_svar",
               "fakta": $fakta,
@@ -184,6 +183,9 @@ abstract class SøknadBesvarer {
               "@id": "${UUID.randomUUID()}"
             }
             """.trimIndent()
+        println("###" + message)
+        testRapid.sendTestMessage(
+            message
         )
     }
 
