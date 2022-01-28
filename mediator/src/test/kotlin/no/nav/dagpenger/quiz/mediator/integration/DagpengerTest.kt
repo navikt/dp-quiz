@@ -15,6 +15,8 @@ import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.april
 import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
+import no.nav.dagpenger.quiz.mediator.helpers.juni
+import no.nav.dagpenger.quiz.mediator.helpers.mai
 import no.nav.dagpenger.quiz.mediator.meldinger.DagpengerService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.asTekst
@@ -141,14 +143,14 @@ internal class DagpengerTest : SøknadBesvarer() {
                 listOf(
                     listOf(
                         "${Dagpenger.`for generator dummy-boolean`}" to true,
-                        // "${Dagpenger.`for generator dummy-envalg`}" to Envalg("faktum.generator-dummy-valg.svar.ja"),
+                         "${Dagpenger.`for generator dummy-envalg`}" to Envalg("faktum.generator-dummy-valg.svar.ja"),
                         // "${Dagpenger.`for generator dummy-tekst med avhengighet`}" to "et svar",
                         // "${Dagpenger.`for generator dummy-flervalg`}" to Flervalg(),
                         "${Dagpenger.`for generator dummy-heltall`}" to 4,
                         "${Dagpenger.`for generator dummy-desimaltall`}" to 2.5,
                         "${Dagpenger.`for generator dummy-tekst`}" to Tekst("svartekst"),
                         "${Dagpenger.`for generator dummy-dato`}" to 1.april(),
-                        // "${Dagpenger.`for generator dummy-periode`}" to Periode(1.mai(), 1.juni()),
+                         "${Dagpenger.`for generator dummy-periode`}" to Periode(1.mai(), 1.juni()),
                     )
                 )
             )
@@ -166,6 +168,7 @@ internal class DagpengerTest : SøknadBesvarer() {
                 assertEquals(2.5, førsteSvarelement["faktum.generator-dummy-desimaltall"].asDouble())
                 assertEquals(1.april(), førsteSvarelement["faktum.generator-dummy-localdate"].asLocalDate())
                 assertEquals(Tekst("svartekst"), førsteSvarelement["faktum.generator-dummy-tekst"].asTekst())
+                assertEquals("faktum.generator-dummy-valg.svar.ja", førsteSvarelement["faktum.generator-dummy-valg"].asText())
             }
         }
     }

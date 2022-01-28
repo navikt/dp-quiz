@@ -72,14 +72,14 @@ internal object Dagpenger {
                 periode faktum "faktum.dummy-periode" id `for dummy-periode`,
                 heltall faktum "faktum.dummy-generator" id `for dummy-generator`
                     genererer `for generator dummy-boolean`
-                    // og `for generator dummy-envalg`
+                     og `for generator dummy-envalg`
                     // og `for generator dummy-tekst med avhengighet`
                     // og `for generator dummy-flervalg`
                     og `for generator dummy-heltall`
                     og `for generator dummy-desimaltall`
                     og `for generator dummy-tekst`
-                    og `for generator dummy-dato`,
-                // og `for generator dummy-periode`,
+                    og `for generator dummy-dato`
+                    og `for generator dummy-periode`,
                 boolsk faktum "faktum.generator-dummy-boolean" id `for generator dummy-boolean`,
                 envalg faktum "faktum.generator-dummy-valg"
                     med "faktum.generator-dummy-valg.svar.ja"
