@@ -182,15 +182,31 @@ abstract class SøknadBesvarer {
               "@opprettet": "${LocalDateTime.now()}",
               "@id": "${UUID.randomUUID()}"
             }
-            """.trimIndent()
+        """.trimIndent()
         println("###" + message)
         testRapid.sendTestMessage(
             message
         )
     }
 
-    protected fun lagSvar(faktumId: String, svar: Any) =
-        """{"id": "$faktumId", "svar": "$svar", "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
+    protected fun lagSvar(faktumId: String, svar: Any): String {
+        return when (svar) {
+            is Periode -> lagPeriodeGeneratorSvar(svar, faktumId)
+            is Tekst -> """{"id": "$faktumId", "svar": "${svar.verdi}", "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
+            else -> """{"id": "$faktumId", "svar": "$svar", "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
+        }
+    }
+
+    private fun lagPeriodeGeneratorSvar(svar: Periode, faktumId: String): String {
+        val perioden = svar.reflection { fom, tom ->
+            """{
+                "fom": "$fom",
+                "tom": "$tom",          
+                }
+            """.trimIndent()
+        }
+        return """{"id": "$faktumId", "svar": $perioden, "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
+    }
 
     protected fun triggNySøknadsprosess(
         event: String

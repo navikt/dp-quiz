@@ -12,10 +12,12 @@ import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
+import no.nav.dagpenger.quiz.mediator.helpers.april
 import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.meldinger.DagpengerService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
+import no.nav.dagpenger.quiz.mediator.meldinger.asTekst
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asOptionalLocalDate
@@ -134,25 +136,37 @@ internal class DagpengerTest : SøknadBesvarer() {
                 assertEquals(1.februar(), svarene["tom"].asOptionalLocalDate())
             }
 
-            //TODO: Fortsette på dette
-//            besvar(
-//                Dagpenger.`for dummy-generator`,
-//                listOf(
-//                    listOf(
-//                        "${Dagpenger.`for generator dummy-boolean`}" to true,
-//                        "${Dagpenger.`for generator dummy-heltall`}" to 3,
-//                    )
-//                )
-//            )
-//
-//            testRapid.inspektør.message(9).let {
-//
-//                val prettyPrint = objectMapper.writeValueAsString(it)
-//                println("### Index 9 \n$prettyPrint")
-//                assertEquals("NySøknad", it["@event_name"].asText())
-//            }
+            besvar(
+                Dagpenger.`for dummy-generator`,
+                listOf(
+                    listOf(
+                        "${Dagpenger.`for generator dummy-boolean`}" to true,
+                        // "${Dagpenger.`for generator dummy-envalg`}" to Envalg("faktum.generator-dummy-valg.svar.ja"),
+                        // "${Dagpenger.`for generator dummy-tekst med avhengighet`}" to "et svar",
+                        // "${Dagpenger.`for generator dummy-flervalg`}" to Flervalg(),
+                        "${Dagpenger.`for generator dummy-heltall`}" to 4,
+                        "${Dagpenger.`for generator dummy-desimaltall`}" to 2.5,
+                        "${Dagpenger.`for generator dummy-tekst`}" to Tekst("svartekst"),
+                        "${Dagpenger.`for generator dummy-dato`}" to 1.april(),
+                        // "${Dagpenger.`for generator dummy-periode`}" to Periode(1.mai(), 1.juni()),
+                    )
+                )
+            )
 
+            testRapid.inspektør.message(9).let {
+                assertEquals("NySøknad", it["@event_name"].asText())
 
+                val prettyPrint = objectMapper.writeValueAsString(it)
+                println("### Index 9 \n$prettyPrint")
+
+                val svarliste = it.hentSvar(Dagpenger.`for dummy-generator`)
+                val førsteSvarelement = svarliste[0]
+                assertEquals(true, førsteSvarelement["faktum.generator-dummy-boolean"].asBoolean())
+                assertEquals(4, førsteSvarelement["faktum.generator-dummy-int"].asInt())
+                assertEquals(2.5, førsteSvarelement["faktum.generator-dummy-desimaltall"].asDouble())
+                assertEquals(1.april(), førsteSvarelement["faktum.generator-dummy-localdate"].asLocalDate())
+                assertEquals(Tekst("svartekst"), førsteSvarelement["faktum.generator-dummy-tekst"].asTekst())
+            }
         }
     }
 
