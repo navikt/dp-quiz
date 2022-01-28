@@ -202,15 +202,15 @@ private class Under(private val maksAlder: Int) : Regel {
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er under $maksAlder"
 }
 
-fun Faktum<*>.utfylt(): Subsumsjon {
+fun Faktum<*>.besvart(): Subsumsjon {
     return EnkelSubsumsjon(
-        Utfylt(),
+        ErBesvart(),
         this
     )
 }
 
-private class Utfylt : Regel {
-    override val typeNavn = "utfylt"
+private class ErBesvart : Regel {
+    override val typeNavn = "besvart"
     override fun resultat(fakta: List<Faktum<*>>) =
         fakta[0].erBesvart()
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er besvart"

@@ -64,7 +64,7 @@ internal class DagpengerTest : SøknadBesvarer() {
             testRapid.inspektør.message(0).let {
                 assertEquals("faktum_svar", it["@event_name"].asText())
                 assertEquals(
-                    listOf("PersonaliaAlder", "PersonaliaNavn", "enEllerAnnenPeriod", "Arbeidsforhold"),
+                    listOf("PersonaliaAlder", "PersonaliaNavn", "enEllerAnnenPeriod", "PersonEpost", "PersonTelefonnummer", "Arbeidsforhold"),
                     it["@behov"].map { it.asText() }
                 )
             }

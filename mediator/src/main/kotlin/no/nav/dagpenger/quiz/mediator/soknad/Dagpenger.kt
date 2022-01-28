@@ -12,8 +12,8 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
+import no.nav.dagpenger.model.regel.besvart
 import no.nav.dagpenger.model.regel.minst
-import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -40,6 +40,8 @@ internal object Dagpenger {
     const val `personalia alder` = 12
     const val `personalia navn` = 13
     const val `en eller annen period` = 14
+    const val `person epost` = 15
+    const val `person telefonnummer` = 16
 
     fun registrer(registrer: (søknad: Søknad) -> Unit) {
         registrer(søknad)
@@ -61,7 +63,9 @@ internal object Dagpenger {
             dato faktum "faktum.arbeidsforhold.tom" id `arbeidsforhold til og med`,
             heltall faktum "faktum.personalia.alder" id `personalia alder`,
             tekst faktum "faktum.person.navn" id `personalia navn`,
-            periode faktum "faktum.test.periode" id `en eller annen period`
+            periode faktum "faktum.test.periode" id `en eller annen period`,
+            tekst faktum "faktum.person.epost" id `person epost`,
+            tekst faktum "faktum.person.telefonnummer" id `person telefonnummer`,
 
         )
 
@@ -88,6 +92,8 @@ internal object Dagpenger {
             `personalia alder`,
             `personalia navn`,
             `en eller annen period`,
+            `person telefonnummer`,
+            `person epost`
         )
     }
 
@@ -103,8 +109,11 @@ internal object Dagpenger {
             "alle".alle(
                 heltall(arbeidsforhold) minst (0),
                 heltall(`personalia alder`) minst (0),
-                tekst(`personalia navn`).utfylt(),
-                periode(`en eller annen period`).utfylt()
+                tekst(`personalia navn`).besvart(),
+                periode(`en eller annen period`).besvart(),
+                tekst(`person epost`).besvart(),
+                tekst(`person telefonnummer`).besvart(),
+
             )
         }
     }
@@ -115,7 +124,9 @@ internal object Dagpenger {
                 arbeidsforhold to "Arbeidsforhold",
                 `personalia alder` to "PersonaliaAlder",
                 `personalia navn` to "PersonaliaNavn",
-                `en eller annen period` to "enEllerAnnenPeriod"
+                `en eller annen period` to "enEllerAnnenPeriod",
+                `person telefonnummer` to "PersonTelefonnummer",
+                `person epost` to "PersonEpost"
             )
         )
 
