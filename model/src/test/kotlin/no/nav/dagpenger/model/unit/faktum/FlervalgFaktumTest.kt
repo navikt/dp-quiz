@@ -37,9 +37,9 @@ class FlervalgFaktumTest {
     @Test
     fun `Skal kunne være lov å svare med gyldige valg`() {
         val flervalg = søknad.flervalg(1)
-        assertDoesNotThrow { flervalg.besvar(Flervalg("valg1", "valg2")) }
+        assertDoesNotThrow { flervalg.besvar(Flervalg("flervalg1.valg1", "flervalg1.valg2")) }
         assertTrue(flervalg.erBesvart())
-        assertEquals(Flervalg("valg1", "valg2"), flervalg.svar())
+        assertEquals(Flervalg("flervalg1.valg1", "flervalg1.valg2"), flervalg.svar())
     }
 
     @Test
@@ -57,9 +57,9 @@ class FlervalgFaktumTest {
     fun `flervalg kan være template faktum`() {
         søknad.generator(4).besvar(1)
         val flervalg = søknad.flervalg("2.1")
-        flervalg.besvar(Flervalg("valg3"))
+        flervalg.besvar(Flervalg("flervalg2.valg3"))
         assertTrue(flervalg.erBesvart())
-        assertEquals(Flervalg("valg3"), flervalg.svar())
+        assertEquals(Flervalg("flervalg2.valg3"), flervalg.svar())
     }
 
     @Test

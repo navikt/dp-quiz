@@ -186,8 +186,8 @@ internal class FaktaJsonBuilderTest {
 
         søknadprosess.inntekt(8).besvar(Inntekt.INGEN)
         søknadprosess.dato(9).besvar(idag)
-        søknadprosess.flervalg(10).besvar(Flervalg("valg1"))
-        søknadprosess.envalg(11).besvar(Envalg("valg1"))
+        søknadprosess.flervalg(10).besvar(Flervalg("flervalg10.valg1"))
+        søknadprosess.envalg(11).besvar(Envalg("envalg11.valg1"))
         søknadprosess.generator(14).besvar(1)
         søknadprosess.dato("12.1").besvar(idag)
         søknadprosess.inntekt("13.1").besvar(300.årlig)
@@ -219,7 +219,7 @@ internal class FaktaJsonBuilderTest {
             assertEquals(nå, it["lastOppTidsstempel"].asText().let { LocalDateTime.parse(it) })
         }
         søkerJson["fakta"][4].assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav")) {
-            assertEquals(Inntekt.INGEN, it.asDouble().let { it.årlig })
+            assertEquals(Inntekt.INGEN, it.asDouble().årlig)
         }
         søkerJson["fakta"][5].assertFaktaAsJson("9", "localdate", "dato9", listOf("nav")) {
             assertEquals(idag, it.asText().let { LocalDate.parse(it) })
@@ -231,10 +231,10 @@ internal class FaktaJsonBuilderTest {
             listOf("søker"),
             listOf("valg1", "valg2", "valg3")
         ) {
-            assertEquals(Flervalg("valg1"), Flervalg(it.map { it.asText() }.toSet()))
+            assertEquals(Flervalg("flervalg10.valg1"), Flervalg(it.map { it.asText() }.toSet()))
         }
         søkerJson["fakta"][7].assertValgFaktaAsJson("11", "envalg", "envalg11", listOf("søker"), listOf("valg1", "valg2")) {
-            assertEquals(Envalg("valg1"), Envalg(it.asText()))
+            assertEquals(Envalg("envalg11.valg1"), Envalg(it.asText()))
         }
 
         søkerJson["fakta"][8].assertFaktaAsJson("15", "tekst", "tekst15", listOf("søker")) {
@@ -320,7 +320,8 @@ internal class FaktaJsonBuilderTest {
         assertSvar: ((JsonNode) -> Unit)? = null
     ) {
         this.assertFaktaAsJson(expectedId, expectedClass, expectedNavn, expectedRoller, assertSvar)
+        val expectedGyldigeValgMedPrefix = expectedGyldigeValg.map { "$expectedNavn.$it" }
         val actual: List<String> = this.get("gyldigeValg").toSet().map { it.asText() }
-        assertTrue(expectedGyldigeValg.containsAll<String>(actual))
+        assertTrue(expectedGyldigeValgMedPrefix.containsAll<String>(actual))
     }
 }

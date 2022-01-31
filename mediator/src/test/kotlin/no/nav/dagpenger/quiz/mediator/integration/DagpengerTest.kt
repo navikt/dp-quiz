@@ -141,7 +141,7 @@ internal class DagpengerTest : SøknadBesvarer() {
                         "${Dagpenger.`generator dummy-boolean`}" to true,
                         "${Dagpenger.`generator dummy-envalg`}" to Envalg("faktum.generator-dummy-valg.svar.ja"),
                         // "${Dagpenger.`generator dummy-tekst med avhengighet`}" to "et svar",
-                        "${Dagpenger.`generator dummy-flervalg`}" to Flervalg("faktum.dummy-flervalg.svar.1", "faktum.dummy-flervalg.svar.2"),
+                        "${Dagpenger.`generator dummy-flervalg`}" to Flervalg("faktum.generator-dummy-flervalg.svar.1", "faktum.generator-dummy-flervalg.svar.2"),
                         "${Dagpenger.`generator dummy-heltall`}" to 4,
                         "${Dagpenger.`generator dummy-desimaltall`}" to 2.5,
                         "${Dagpenger.`generator dummy-tekst`}" to Tekst("svartekst"),
@@ -164,8 +164,8 @@ internal class DagpengerTest : SøknadBesvarer() {
                 assertEquals("faktum.generator-dummy-valg.svar.ja", førsteSvarelement["faktum.generator-dummy-valg"].asText())
 
                 val flervalgSvar = førsteSvarelement["faktum.generator-dummy-flervalg"]
-                assertEquals("faktum.dummy-flervalg.svar.1", flervalgSvar[0].asText())
-                assertEquals("faktum.dummy-flervalg.svar.2", flervalgSvar[1].asText())
+                assertEquals("faktum.generator-dummy-flervalg.svar.1", flervalgSvar[0].asText())
+                assertEquals("faktum.generator-dummy-flervalg.svar.2", flervalgSvar[1].asText())
             }
         }
     }

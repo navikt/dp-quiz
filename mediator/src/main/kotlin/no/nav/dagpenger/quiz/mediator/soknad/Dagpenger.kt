@@ -57,14 +57,14 @@ internal object Dagpenger {
                 VERSJON_ID,
                 boolsk faktum "faktum.dummy-boolean" id `dummy-boolean`,
                 envalg faktum "faktum.dummy-valg"
-                    med "faktum.dummy-valg.svar.ja"
-                    med "faktum.dummy-valg.svar.nei"
-                    med "faktum.dummy-valg.svar.vetikke" id `dummy-envalg`,
+                    med "svar.ja"
+                    med "svar.nei"
+                    med "svar.vetikke" id `dummy-envalg`,
                 tekst faktum "faktum.dummy-tekst" id `dummy-tekst med avhengighet` avhengerAv `dummy-envalg`,
                 flervalg faktum "faktum.dummy-flervalg"
-                    med "faktum.dummy-flervalg.svar.1"
-                    med "faktum.dummy-flervalg.svar.2"
-                    med "faktum.dummy-flervalg.svar.3" id `dummy-flervalg`,
+                    med "svar.1"
+                    med "svar.2"
+                    med "svar.3" id `dummy-flervalg`,
                 heltall faktum "faktum.dummy-int" id `dummy-heltall`,
                 desimaltall faktum "faktum.dummy-desimaltall" id `dummy-desimaltall`,
                 tekst faktum "faktum.dummy-tekst" id `dummy-tekst`,
@@ -82,14 +82,14 @@ internal object Dagpenger {
                     og `generator dummy-periode`,
                 boolsk faktum "faktum.generator-dummy-boolean" id `generator dummy-boolean`,
                 envalg faktum "faktum.generator-dummy-valg"
-                    med "faktum.generator-dummy-valg.svar.ja"
-                    med "faktum.generator-dummy-valg.svar.nei"
-                    med "faktum.generator-dummy-valg.svar.vetikke" id `generator dummy-envalg`,
+                    med "svar.ja"
+                    med "svar.nei"
+                    med "svar.vetikke" id `generator dummy-envalg`,
                 tekst faktum "faktum.generator-dummy-tekst" id `generator dummy-tekst med avhengighet`, // avhengerAv `generator dummy-envalg`,
                 flervalg faktum "faktum.generator-dummy-flervalg"
-                    med "faktum.dummy-flervalg.svar.1"
-                    med "faktum.dummy-flervalg.svar.2"
-                    med "faktum.dummy-flervalg.svar.3" id `generator dummy-flervalg`,
+                    med "svar.1"
+                    med "svar.2"
+                    med "svar.3" id `generator dummy-flervalg`,
                 heltall faktum "faktum.generator-dummy-int" id `generator dummy-heltall`,
                 desimaltall faktum "faktum.generator-dummy-desimaltall" id `generator dummy-desimaltall`,
                 tekst faktum "faktum.generator-dummy-tekst" id `generator dummy-tekst`,

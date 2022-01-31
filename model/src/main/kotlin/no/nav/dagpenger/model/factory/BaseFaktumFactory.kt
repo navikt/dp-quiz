@@ -65,7 +65,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 
     infix fun id(rootId: Int) = this.apply { this.rootId = rootId }
 
-    infix fun med(valg: String) = this.apply { gyldigevalg.add(valg) }
+    infix fun med(valg: String) = this.apply { gyldigevalg.add("$navn.$valg") }
 
     @Suppress("UNCHECKED_CAST")
     override fun faktum(): Faktum<T> {

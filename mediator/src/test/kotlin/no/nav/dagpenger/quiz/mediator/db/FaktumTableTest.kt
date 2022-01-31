@@ -26,8 +26,8 @@ internal class FaktumTableTest {
             assertRecordCount(3, "template_faktum")
             assertRecordCount(5, "avhengig_faktum")
             assertRecordCount(2, "faktum_gyldige_valg")
-            assertGyldigeValg(Envalg("envalg1", "envalg2"), 20)
-            assertGyldigeValg(Flervalg("flervalg1", "flervalg2", "flervalg3"), 21)
+            assertGyldigeValg(Envalg("f20.envalg1", "f20.envalg2"), 20)
+            assertGyldigeValg(Flervalg("f21.flervalg1", "f21.flervalg2", "f21.flervalg3"), 21)
             FaktumTable(SøknadEksempel1.prototypeFakta1)
             assertRecordCount(expectedFaktumRecordCount, "faktum")
         }

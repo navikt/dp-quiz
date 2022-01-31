@@ -21,7 +21,7 @@ class EnvalgFaktumTest {
     val prototypeSøknad = Søknad(
         testversjon,
         envalg faktum "envalg" med "valg1" med "valg2" id 1,
-        envalg faktum "flervalg2" med "valg1" med "valg2" med "valg3" id 2,
+        envalg faktum "envalg2" med "valg1" med "valg2" med "valg3" id 2,
         dato faktum "dato" id 3,
         heltall faktum "generator" id 4 genererer 2 og 3
     )
@@ -36,11 +36,11 @@ class EnvalgFaktumTest {
     @Test
     fun `Skal kunne være lov å svare med et gyldig valg`() {
         val envalg = søknad.envalg(1)
-        assertDoesNotThrow { envalg.besvar(Envalg("valg1")) }
+        assertDoesNotThrow { envalg.besvar(Envalg("envalg.valg1")) }
         assertTrue(envalg.erBesvart())
-        assertEquals(Envalg("valg1"), envalg.svar())
-        assertDoesNotThrow { envalg.besvar(Envalg("valg2")) }
-        assertEquals(Envalg("valg2"), envalg.svar())
+        assertEquals(Envalg("envalg.valg1"), envalg.svar())
+        assertDoesNotThrow { envalg.besvar(Envalg("envalg.valg2")) }
+        assertEquals(Envalg("envalg.valg2"), envalg.svar())
     }
 
     @Test
@@ -58,9 +58,9 @@ class EnvalgFaktumTest {
     fun `envalg kan være template faktum`() {
         søknad.generator(4).besvar(1)
         val envalg = søknad.envalg("2.1")
-        envalg.besvar(Envalg("valg3"))
+        envalg.besvar(Envalg("envalg2.valg3"))
         assertTrue(envalg.erBesvart())
-        assertEquals(Envalg("valg3"), envalg.svar())
+        assertEquals(Envalg("envalg2.valg3"), envalg.svar())
     }
 
     @Test
