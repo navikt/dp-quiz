@@ -50,9 +50,8 @@ abstract class SøknadBesvarer {
     }
 
     protected fun besvarDokument(søknadsId: String, faktumId: Int, svar: Dokument) {
-        val (lastOppTidsstempel, url) = svar.reflection { localDateTime, url -> Pair(localDateTime, url) }
         //language=JSON
-        testRapid.sendTestMessage(
+        val message = svar.reflection { lastOppTidsstempel, url ->
             """{
               "søknad_uuid": "$søknadsId",
               "@event_name": "faktum_svar",
@@ -69,7 +68,8 @@ abstract class SøknadBesvarer {
               "@id": "${UUID.randomUUID()}"
             }
             """.trimIndent()
-        )
+        }
+        testRapid.sendTestMessage(message)
     }
 
     protected fun besvar(søknadsId: String, faktumId: Int, svar: Any) {
@@ -87,15 +87,12 @@ abstract class SøknadBesvarer {
               "@id": "${UUID.randomUUID()}"
             }
         """.trimIndent()
-        testRapid.sendTestMessage(
-            message
-        )
+        testRapid.sendTestMessage(message)
     }
 
     protected fun besvarTekst(søknadsId: String, faktumId: Int, svar: Tekst) {
         //language=JSON
-        testRapid.sendTestMessage(
-            """{
+        val message = """{
               "søknad_uuid": "$søknadsId",
               "@event_name": "faktum_svar",
               "fakta": [{
@@ -107,12 +104,11 @@ abstract class SøknadBesvarer {
               "@opprettet": "${LocalDateTime.now()}",
               "@id": "${UUID.randomUUID()}"
             }
-            """.trimIndent()
-        )
+        """.trimIndent()
+        testRapid.sendTestMessage(message)
     }
 
     protected fun besvarValg(søknadsId: String, faktumId: Int, svar: Valg) {
-
         //language=JSON
         val message = """{
               "søknad_uuid": "$søknadsId",
@@ -127,15 +123,12 @@ abstract class SøknadBesvarer {
               "@id": "${UUID.randomUUID()}"
             }
         """.trimIndent()
-        testRapid.sendTestMessage(
-            message
-        )
+        testRapid.sendTestMessage(message)
     }
 
     protected fun besvarPeriode(søknadsId: String, faktumId: Int, svar: Periode) {
         //language=JSON
-        testRapid.sendTestMessage(
-            """{
+        val message = """{
               "søknad_uuid": "$søknadsId",
               "@event_name": "faktum_svar",
               "fakta": [{
@@ -147,15 +140,14 @@ abstract class SøknadBesvarer {
               "@opprettet": "${LocalDateTime.now()}",
               "@id": "${UUID.randomUUID()}"
             }
-            """.trimIndent()
-        )
+        """.trimIndent()
+        testRapid.sendTestMessage(message)
     }
 
     protected fun besvarInntekt(søknadsId: String, faktumId: Int, svar: Inntekt) {
         val årligInntekt: Double = svar.reflection { årlig, _, _, _ -> return@reflection årlig }
         //language=JSON
-        testRapid.sendTestMessage(
-            """{
+        val message = """{
               "søknad_uuid": "$søknadsId",
               "@event_name": "faktum_svar",
               "fakta": [{
@@ -167,8 +159,8 @@ abstract class SøknadBesvarer {
               "@opprettet": "${LocalDateTime.now()}",
               "@id": "${UUID.randomUUID()}"
             }
-            """.trimIndent()
-        )
+        """.trimIndent()
+        testRapid.sendTestMessage(message)
     }
 
     protected fun besvarGenerator(søknadsId: String, faktumId: Int, svar: List<List<Pair<String, Any>>>) {
@@ -183,10 +175,7 @@ abstract class SøknadBesvarer {
               "@id": "${UUID.randomUUID()}"
             }
         """.trimIndent()
-        println("###" + message)
-        testRapid.sendTestMessage(
-            message
-        )
+        testRapid.sendTestMessage(message)
     }
 
     protected fun lagSvar(faktumId: String, svar: Any): String {
