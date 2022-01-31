@@ -1,9 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Periode
@@ -66,8 +64,6 @@ internal class DagpengerTest : SøknadBesvarer() {
         }
     }
 
-    val objectMapper = jacksonObjectMapper().configure(SerializationFeature.INDENT_OUTPUT, true)
-
     @Test
     fun `Hent alle fakta happy path`() {
 
@@ -84,73 +80,73 @@ internal class DagpengerTest : SøknadBesvarer() {
                 assertFalse { it.toString().contains(""""svar":""") }
             }
 
-            besvar(Dagpenger.`for dummy-boolean`, true)
+            besvar(Dagpenger.`dummy-boolean`, true)
             testRapid.inspektør.message(2).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
-                assertEquals(true, it.hentSvar(Dagpenger.`for dummy-boolean`).asBoolean())
+                assertEquals(true, it.hentSvar(Dagpenger.`dummy-boolean`).asBoolean())
             }
 
-            besvar(Dagpenger.`for dummy-envalg`, Envalg("faktum.dummy-valg.svar.ja"))
+            besvar(Dagpenger.`dummy-envalg`, Envalg("faktum.dummy-valg.svar.ja"))
             testRapid.inspektør.message(3).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
-                assertEquals("faktum.dummy-valg.svar.ja", it.hentSvar(Dagpenger.`for dummy-envalg`).asText())
+                assertEquals("faktum.dummy-valg.svar.ja", it.hentSvar(Dagpenger.`dummy-envalg`).asText())
             }
 
             // TODO: Sjekke subfaktum med tekst
 
-            besvar(Dagpenger.`for dummy-flervalg`, Flervalg("faktum.dummy-flervalgsvar.1", "faktum.dummy-flervalgsvar.2"))
+            besvar(Dagpenger.`dummy-flervalg`, Flervalg("faktum.dummy-flervalg.svar.1", "faktum.dummy-flervalg.svar.2"))
             testRapid.inspektør.message(4).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
-                val svar = it.hentSvar(Dagpenger.`for dummy-flervalg`)
+                val svar = it.hentSvar(Dagpenger.`dummy-flervalg`)
                 svar is ArrayNode
-                assertEquals(svar[0].asText(), "faktum.dummy-flervalgsvar.1")
-                assertEquals(svar[1].asText(), "faktum.dummy-flervalgsvar.2")
+                assertEquals(svar[0].asText(), "faktum.dummy-flervalg.svar.1")
+                assertEquals(svar[1].asText(), "faktum.dummy-flervalg.svar.2")
             }
 
-            besvar(Dagpenger.`for dummy-heltall`, 1)
+            besvar(Dagpenger.`dummy-heltall`, 1)
             testRapid.inspektør.message(5).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
-                assertEquals(1, it.hentSvar(Dagpenger.`for dummy-heltall`).asInt())
+                assertEquals(1, it.hentSvar(Dagpenger.`dummy-heltall`).asInt())
             }
 
-            besvar(Dagpenger.`for dummy-desimaltall`, 1.5)
+            besvar(Dagpenger.`dummy-desimaltall`, 1.5)
             testRapid.inspektør.message(6).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
-                assertEquals(1.5, it.hentSvar(Dagpenger.`for dummy-desimaltall`).asDouble())
+                assertEquals(1.5, it.hentSvar(Dagpenger.`dummy-desimaltall`).asDouble())
             }
 
-            besvar(Dagpenger.`for dummy-tekst`, Tekst("tekstsvar"))
+            besvar(Dagpenger.`dummy-tekst`, Tekst("tekstsvar"))
             testRapid.inspektør.message(7).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
-                assertEquals("tekstsvar", it.hentSvar(Dagpenger.`for dummy-tekst`).asText())
+                assertEquals("tekstsvar", it.hentSvar(Dagpenger.`dummy-tekst`).asText())
             }
 
-            besvar(Dagpenger.`for dummy-periode`, Periode(1.januar(), 1.februar()))
+            besvar(Dagpenger.`dummy-periode`, Periode(1.januar(), 1.februar()))
             testRapid.inspektør.message(8).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
-                val svarene = it.hentSvar(Dagpenger.`for dummy-periode`)
+                val svarene = it.hentSvar(Dagpenger.`dummy-periode`)
                 assertEquals(1.januar(), svarene["fom"].asLocalDate())
                 assertEquals(1.februar(), svarene["tom"].asOptionalLocalDate())
             }
 
             besvar(
-                Dagpenger.`for dummy-generator`,
+                Dagpenger.`dummy-generator`,
                 listOf(
                     listOf(
-                        "${Dagpenger.`for generator dummy-boolean`}" to true,
-                         "${Dagpenger.`for generator dummy-envalg`}" to Envalg("faktum.generator-dummy-valg.svar.ja"),
-                        // "${Dagpenger.`for generator dummy-tekst med avhengighet`}" to "et svar",
-                        // "${Dagpenger.`for generator dummy-flervalg`}" to Flervalg(),
-                        "${Dagpenger.`for generator dummy-heltall`}" to 4,
-                        "${Dagpenger.`for generator dummy-desimaltall`}" to 2.5,
-                        "${Dagpenger.`for generator dummy-tekst`}" to Tekst("svartekst"),
-                        "${Dagpenger.`for generator dummy-dato`}" to 1.april(),
-                         "${Dagpenger.`for generator dummy-periode`}" to Periode(1.mai(), 1.juni()),
+                        "${Dagpenger.`generator dummy-boolean`}" to true,
+                        "${Dagpenger.`generator dummy-envalg`}" to Envalg("faktum.generator-dummy-valg.svar.ja"),
+                        // "${Dagpenger.`generator dummy-tekst med avhengighet`}" to "et svar",
+                        "${Dagpenger.`generator dummy-flervalg`}" to Flervalg("faktum.dummy-flervalg.svar.1", "faktum.dummy-flervalg.svar.2"),
+                        "${Dagpenger.`generator dummy-heltall`}" to 4,
+                        "${Dagpenger.`generator dummy-desimaltall`}" to 2.5,
+                        "${Dagpenger.`generator dummy-tekst`}" to Tekst("svartekst"),
+                        "${Dagpenger.`generator dummy-dato`}" to 1.april(),
+                        "${Dagpenger.`generator dummy-periode`}" to Periode(1.mai(), 1.juni()),
                     )
                 )
             )
@@ -158,10 +154,7 @@ internal class DagpengerTest : SøknadBesvarer() {
             testRapid.inspektør.message(9).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
-                val prettyPrint = objectMapper.writeValueAsString(it)
-                println("### Index 9 \n$prettyPrint")
-
-                val svarliste = it.hentSvar(Dagpenger.`for dummy-generator`)
+                val svarliste = it.hentSvar(Dagpenger.`dummy-generator`)
                 val førsteSvarelement = svarliste[0]
                 assertEquals(true, førsteSvarelement["faktum.generator-dummy-boolean"].asBoolean())
                 assertEquals(4, førsteSvarelement["faktum.generator-dummy-int"].asInt())
@@ -169,6 +162,10 @@ internal class DagpengerTest : SøknadBesvarer() {
                 assertEquals(1.april(), førsteSvarelement["faktum.generator-dummy-localdate"].asLocalDate())
                 assertEquals(Tekst("svartekst"), førsteSvarelement["faktum.generator-dummy-tekst"].asTekst())
                 assertEquals("faktum.generator-dummy-valg.svar.ja", førsteSvarelement["faktum.generator-dummy-valg"].asText())
+
+                val flervalgSvar = førsteSvarelement["faktum.generator-dummy-flervalg"]
+                assertEquals("faktum.dummy-flervalg.svar.1", flervalgSvar[0].asText())
+                assertEquals("faktum.dummy-flervalg.svar.2", flervalgSvar[1].asText())
             }
         }
     }

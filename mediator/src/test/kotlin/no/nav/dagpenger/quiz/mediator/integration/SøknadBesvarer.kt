@@ -193,15 +193,14 @@ abstract class SøknadBesvarer {
         return when (svar) {
             is Periode -> lagPeriodeGeneratorSvar(svar, faktumId)
             is Tekst -> """{"id": "$faktumId", "svar": "${svar.verdi}", "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
-            is Envalg -> lagEnvalgGeneratorSvar(svar, faktumId)
+            is Envalg, is Flervalg -> lagValgGeneratorSvar(svar as Valg, faktumId)
             else -> """{"id": "$faktumId", "svar": "$svar", "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
         }
     }
 
-    private fun lagEnvalgGeneratorSvar(svar: Envalg, faktumId: String): String {
+    private fun lagValgGeneratorSvar(svar: Valg, faktumId: String): String {
         val valgene = """["${svar.joinToString("""","""")}"]"""
-        val x = """{"id": "$faktumId", "svar": $valgene, "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
-        return x
+        return """{"id": "$faktumId", "svar": $valgene, "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
     }
 
     private fun lagPeriodeGeneratorSvar(svar: Periode, faktumId: String): String {
