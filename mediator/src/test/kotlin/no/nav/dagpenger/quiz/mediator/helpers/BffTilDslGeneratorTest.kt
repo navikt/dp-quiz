@@ -1,50 +1,13 @@
 package no.nav.dagpenger.quiz.mediator.helpers
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.Test
 
 class BffTilDslGeneratorTest {
-    val objectmapper = jacksonObjectMapper()
-    var dslResultat = ""
 
     @Test
-    fun `test`() {
-        val dummySeksjonJsonNode = objectmapper.readValue<JsonNode>(dummySeksjonJSON)
-        dummySeksjonJsonNode["faktum"].forEach { faktum ->
-            val beskrivendeId = faktum["id"].asText()
-            val type = faktum["type"].asText()
-            lagDSLFaktum(beskrivendeId, type, faktum)
-        }
-        println(dslResultat)
-    }
-
-    private fun lagDSLFaktum(beskrivendeId: String, type: String, faktum: JsonNode) {
-        when (type) {
-            "boolean" -> lagBooleanDslFaktum(beskrivendeId)
-            "valg" -> lagEnvalgDslFaktum(beskrivendeId, faktum)
-        }
-    }
-
-    private fun lagBooleanDslFaktum(beskrivendeId: String) {
-        val databaseId = beskrivendeId.replace("faktum.", "") // + " databaseId"
-        dslResultat += """boolsk faktum "$beskrivendeId" id `$databaseId`,
-            |
-        """.trimMargin()
-    }
-
-    private fun lagEnvalgDslFaktum(beskrivendeId: String, faktum: JsonNode) {
-        val databaseId = beskrivendeId.replace("faktum.", "") // + " databaseId"
-        val valgAlternativer = faktum["answerOptions"].map { faktumNode ->
-            faktumNode["id"].asText().replace("$beskrivendeId.", "")
-        }
-
-        val valgSomDsl = "med \"" + valgAlternativer.joinToString("\"\n med \"") + "\""
-
-        dslResultat += """envalg faktum "$beskrivendeId"
-            | $valgSomDsl id `$databaseId`,
-        """.trimMargin()
+    fun `Skal kunne konvertere fra BFF-json-seksjoner til Quiz-DSL`() {
+        val generator = BffTilDslGenerator(dummySeksjonJSON)
+        println(generator)
     }
 }
 
