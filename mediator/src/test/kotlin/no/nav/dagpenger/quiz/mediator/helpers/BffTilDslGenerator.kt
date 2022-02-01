@@ -32,7 +32,7 @@ class BffTilDslGenerator(bffJson: String) {
         when (type) {
             "valg", "dropdown" -> lagEnvalgFaktum(beskrivendeId, faktum)
             "flervalg" -> lagFlervalgFaktum(beskrivendeId, faktum)
-            "periode", "generator" -> dslResultat.append("$type: TODO").append("\n")
+            "generator" -> dslResultat.append("$type: TODO").append("\n")
             else -> lagFaktum(type, beskrivendeId)
         }
     }
@@ -53,6 +53,7 @@ class BffTilDslGenerator(bffJson: String) {
         "double" -> "desimaltall"
         "boolean" -> "boolsk"
         "localdate" -> "dato"
+        "periode" -> "periode"
         else -> throw IllegalArgumentException("Ukjent faktumtype $type")
     }
 
