@@ -20,7 +20,8 @@ class BffTilDslGenerator(bffJson: String) {
         fakta.forEach { faktum ->
             val beskrivendeId = faktum["id"].asText()
             val type = faktum["type"].asText()
-            lagDSLFaktum(beskrivendeId, type, faktum)
+            val dslFaktum = lagDSLFaktum(beskrivendeId, type, faktum)
+            dslResultat.append(dslFaktum).append(",\n")
         }
     }
 
@@ -28,23 +29,20 @@ class BffTilDslGenerator(bffJson: String) {
         return dslResultat.toString()
     }
 
-    private fun lagDSLFaktum(beskrivendeId: String, type: String, faktum: JsonNode) {
-        when (type) {
+    private fun lagDSLFaktum(beskrivendeId: String, type: String, faktum: JsonNode): String {
+        return when (type) {
             "valg", "dropdown" -> lagEnvalgFaktum(beskrivendeId, faktum)
             "flervalg" -> lagFlervalgFaktum(beskrivendeId, faktum)
-            "generator" -> dslResultat.append("$type: TODO").append("\n")
+            "generator" -> lagGeneratorFaktum(beskrivendeId, faktum)
             else -> lagFaktum(type, beskrivendeId)
         }
     }
 
-    private fun lagFaktum(type: String, beskrivendeId: String) {
+    private fun lagFaktum(type: String, beskrivendeId: String): String {
         val faktumtype = oversettTilDslType(type)
         val databaseId = lagDatabaseId(beskrivendeId)
-        dslResultat.append(
-            """$faktumtype faktum "$beskrivendeId" id `$databaseId`,
-            |
-            """.trimMargin()
-        )
+
+        return """$faktumtype faktum "$beskrivendeId" id `$databaseId`"""
     }
 
     private fun oversettTilDslType(type: String): String = when (type) {
@@ -59,26 +57,20 @@ class BffTilDslGenerator(bffJson: String) {
 
     private fun lagDatabaseId(beskrivendeId: String) = beskrivendeId.replace("faktum.", "") // + " databaseId"
 
-    private fun lagEnvalgFaktum(beskrivendeId: String, faktum: JsonNode) {
+    private fun lagEnvalgFaktum(beskrivendeId: String, faktum: JsonNode): String {
         val databaseId = lagDatabaseId(beskrivendeId)
         val valgSomDsl = lagValgalternativer(faktum, beskrivendeId)
-        dslResultat.append(
-            """envalg faktum "$beskrivendeId"
-            | $valgSomDsl id `$databaseId`,
-            |
-            """.trimMargin()
-        )
+
+        return """envalg faktum "$beskrivendeId"
+            | $valgSomDsl id `$databaseId`""".trimMargin()
     }
 
-    private fun lagFlervalgFaktum(beskrivendeId: String, faktum: JsonNode) {
+    private fun lagFlervalgFaktum(beskrivendeId: String, faktum: JsonNode): String {
         val databaseId = lagDatabaseId(beskrivendeId)
         val valgSomDsl = lagValgalternativer(faktum, beskrivendeId)
-        dslResultat.append(
-            """flervalg faktum "$beskrivendeId"
-            | $valgSomDsl id `$databaseId`,
-            |
-            """.trimMargin()
-        )
+
+        return """flervalg faktum "$beskrivendeId"
+            | $valgSomDsl id `$databaseId`""".trimMargin()
     }
 
     private fun lagValgalternativer(faktum: JsonNode, beskrivendeId: String): String {
@@ -86,5 +78,38 @@ class BffTilDslGenerator(bffJson: String) {
             faktumNode["id"].asText().replace("$beskrivendeId.", "")
         }
         return " med \"" + valgAlternativer.joinToString("\"\n  med \"") + "\""
+    }
+
+    private fun lagGeneratorFaktum(beskrivendeId: String, generatorGrunnfaktum: JsonNode): String {
+        val generatorGrunnfaktumDSL = lagDSLFaktum(beskrivendeId, "int", generatorGrunnfaktum)
+        val templates = generatorGrunnfaktum["faktum"]
+
+        val generatorIdOversikt = byggGeneratoridOversikt(templates)
+        val generatorFakta = byggGeneratorFakta(templates)
+
+        return """$generatorGrunnfaktumDSL
+                  |  genererer $generatorIdOversikt,
+                  |$generatorFakta""".trimMargin()
+    }
+
+    private fun byggGeneratoridOversikt(templates: JsonNode): String {
+        val templateIder = templates.map { faktum ->
+            val beskrivendeId = faktum["id"].asText()
+            "`${lagDatabaseId(beskrivendeId)}`"
+        }
+
+        return templateIder.joinToString("\n  og ")
+    }
+
+    private fun byggGeneratorFakta(templates: JsonNode): StringBuilder {
+        val generatorFakta = StringBuilder()
+        templates.forEach { faktum ->
+            val beskrivendeId = faktum["id"].asText()
+            val type = faktum["type"].asText()
+            generatorFakta.append(
+                lagDSLFaktum(beskrivendeId, type, faktum)
+            ).append(",\n")
+        }
+        return generatorFakta
     }
 }
