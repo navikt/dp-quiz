@@ -25,7 +25,7 @@ internal object Dagpenger {
 
     private val logger = KotlinLogging.logger { }
 
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 202)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 203)
 
     const val `dummy-boolean` = 1
     const val `dummy-envalg` = 2
