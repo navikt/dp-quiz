@@ -25,11 +25,10 @@ internal object Dagpenger {
 
     private val logger = KotlinLogging.logger { }
 
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 203)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 204)
 
     const val `dummy-boolean` = 1
     const val `dummy-envalg` = 2
-    const val `dummy-tekst med avhengighet` = 3
     const val `dummy-flervalg` = 4
     const val `dummy-heltall` = 5
     const val `dummy-desimaltall` = 6
@@ -39,7 +38,6 @@ internal object Dagpenger {
     const val `dummy-generator` = 10
     const val `generator dummy-boolean` = 11
     const val `generator dummy-envalg` = 12
-    const val `generator dummy-tekst med avhengighet` = 13
     const val `generator dummy-flervalg` = 14
     const val `generator dummy-heltall` = 15
     const val `generator dummy-desimaltall` = 16
@@ -60,7 +58,6 @@ internal object Dagpenger {
                     med "svar.ja"
                     med "svar.nei"
                     med "svar.vetikke" id `dummy-envalg`,
-                tekst faktum "faktum.dummy-tekst" id `dummy-tekst med avhengighet` avhengerAv `dummy-envalg`,
                 flervalg faktum "faktum.dummy-flervalg"
                     med "svar.1"
                     med "svar.2"
@@ -73,7 +70,6 @@ internal object Dagpenger {
                 heltall faktum "faktum.dummy-generator" id `dummy-generator`
                     genererer `generator dummy-boolean`
                     og `generator dummy-envalg`
-                    // og `generator dummy-tekst med avhengighet`
                     og `generator dummy-flervalg`
                     og `generator dummy-heltall`
                     og `generator dummy-desimaltall`
@@ -85,7 +81,6 @@ internal object Dagpenger {
                     med "svar.ja"
                     med "svar.nei"
                     med "svar.vetikke" id `generator dummy-envalg`,
-                tekst faktum "faktum.generator-dummy-tekst" id `generator dummy-tekst med avhengighet`, // avhengerAv `generator dummy-envalg`,
                 flervalg faktum "faktum.generator-dummy-flervalg"
                     med "svar.1"
                     med "svar.2"
@@ -106,7 +101,6 @@ internal object Dagpenger {
             Rolle.søker,
             `dummy-boolean`,
             `dummy-envalg`,
-            `dummy-tekst med avhengighet`,
             `dummy-flervalg`,
             `dummy-heltall`,
             `dummy-desimaltall`,
@@ -116,7 +110,6 @@ internal object Dagpenger {
             `dummy-generator`,
             `generator dummy-boolean`,
             `generator dummy-envalg`,
-            `generator dummy-tekst med avhengighet`,
             `generator dummy-flervalg`,
             `generator dummy-heltall`,
             `generator dummy-desimaltall`,

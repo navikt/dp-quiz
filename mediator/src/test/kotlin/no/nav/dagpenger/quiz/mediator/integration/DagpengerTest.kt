@@ -92,8 +92,6 @@ internal class DagpengerTest : SøknadBesvarer() {
                 assertEquals("faktum.dummy-valg.svar.ja", it.hentSvar(Dagpenger.`dummy-envalg`).asText())
             }
 
-            // TODO: Sjekke subfaktum med tekst
-
             besvar(Dagpenger.`dummy-flervalg`, Flervalg("faktum.dummy-flervalg.svar.1", "faktum.dummy-flervalg.svar.2"))
             testRapid.inspektør.message(4).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
@@ -140,7 +138,6 @@ internal class DagpengerTest : SøknadBesvarer() {
                     listOf(
                         "${Dagpenger.`generator dummy-boolean`}" to true,
                         "${Dagpenger.`generator dummy-envalg`}" to Envalg("faktum.generator-dummy-valg.svar.ja"),
-                        // "${Dagpenger.`generator dummy-tekst med avhengighet`}" to "et svar",
                         "${Dagpenger.`generator dummy-flervalg`}" to Flervalg("faktum.generator-dummy-flervalg.svar.1", "faktum.generator-dummy-flervalg.svar.2"),
                         "${Dagpenger.`generator dummy-heltall`}" to 4,
                         "${Dagpenger.`generator dummy-desimaltall`}" to 2.5,
