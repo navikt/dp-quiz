@@ -44,7 +44,7 @@ class BffTilDslGenerator(bffJson: String) {
         val faktumtype = oversettTilDslType(type)
         val databaseId = lagDatabaseId(beskrivendeId)
 
-        return """$faktumtype faktum "$beskrivendeId" id `$databaseId`"""
+        return """$faktumtype faktum "$beskrivendeId" id $databaseId"""
     }
 
     private fun oversettTilDslType(bffType: String): String = when (bffType) {
@@ -57,14 +57,17 @@ class BffTilDslGenerator(bffJson: String) {
         else -> throw IllegalArgumentException("Ukjent faktumtype $bffType")
     }
 
-    private fun lagDatabaseId(beskrivendeId: String) = beskrivendeId.replace("faktum.", "") // + " databaseId"
+    private fun lagDatabaseId(beskrivendeId: String): String {
+        val idUtenPrefix = beskrivendeId.replace("faktum.", "") // + " databaseId"
+        return "`$idUtenPrefix`"
+    }
 
     private fun lagEnvalgFaktum(beskrivendeId: String, faktum: JsonNode): String {
         val databaseId = lagDatabaseId(beskrivendeId)
         val valgSomDsl = lagValgalternativer(faktum, beskrivendeId)
 
         return """envalg faktum "$beskrivendeId"
-            | $valgSomDsl id `$databaseId`""".trimMargin()
+            | $valgSomDsl id $databaseId""".trimMargin()
     }
 
     private fun lagFlervalgFaktum(beskrivendeId: String, faktum: JsonNode): String {
@@ -72,7 +75,7 @@ class BffTilDslGenerator(bffJson: String) {
         val valgSomDsl = lagValgalternativer(faktum, beskrivendeId)
 
         return """flervalg faktum "$beskrivendeId"
-            | $valgSomDsl id `$databaseId`""".trimMargin()
+            | $valgSomDsl id $databaseId""".trimMargin()
     }
 
     private fun lagValgalternativer(faktum: JsonNode, beskrivendeId: String): String {
@@ -95,7 +98,7 @@ class BffTilDslGenerator(bffJson: String) {
     private fun byggIdlisteOverFaktaSomSkalGenereres(faktaSomSkalGenereres: JsonNode): String {
         val iderForFaktaSomSkalGenereres = faktaSomSkalGenereres.map { faktum ->
             val beskrivendeId = faktum["id"].asText()
-            "`${lagDatabaseId(beskrivendeId)}`"
+            lagDatabaseId(beskrivendeId)
         }
 
         return iderForFaktaSomSkalGenereres.joinToString("\n  og ")
