@@ -30,13 +30,14 @@ class BffTilDslGenerator(bffJson: String) {
 
     private fun lagDSLFaktum(beskrivendeId: String, type: String, faktum: JsonNode) {
         when (type) {
-            "boolean" -> lagBooleanDslFaktum(beskrivendeId)
-            "valg" -> lagEnvalgDslFaktum(beskrivendeId, faktum)
+            "boolean" -> lagBooleanFaktum(beskrivendeId)
+            "valg" -> lagEnvalgFaktum(beskrivendeId, faktum)
+            "flervalg" -> lagFlervalgFaktum(beskrivendeId, faktum)
         }
     }
 
-    private fun lagBooleanDslFaktum(beskrivendeId: String) {
-        val databaseId = beskrivendeId.replace("faktum.", "") // + " databaseId"
+    private fun lagBooleanFaktum(beskrivendeId: String) {
+        val databaseId = lagDatabaseId(beskrivendeId)
         dslResultat.append(
             """boolsk faktum "$beskrivendeId" id `$databaseId`,
             |
@@ -44,18 +45,34 @@ class BffTilDslGenerator(bffJson: String) {
         )
     }
 
-    private fun lagEnvalgDslFaktum(beskrivendeId: String, faktum: JsonNode) {
-        val databaseId = beskrivendeId.replace("faktum.", "") // + " databaseId"
-        val valgAlternativer = faktum["answerOptions"].map { faktumNode ->
-            faktumNode["id"].asText().replace("$beskrivendeId.", "")
-        }
+    private fun lagDatabaseId(beskrivendeId: String) = beskrivendeId.replace("faktum.", "") // + " databaseId"
 
-        val valgSomDsl = "med \"" + valgAlternativer.joinToString("\"\n med \"") + "\""
-
+    private fun lagEnvalgFaktum(beskrivendeId: String, faktum: JsonNode) {
+        val databaseId = lagDatabaseId(beskrivendeId)
+        val valgSomDsl = lagValgalternativer(faktum, beskrivendeId)
         dslResultat.append(
             """envalg faktum "$beskrivendeId"
             | $valgSomDsl id `$databaseId`,
+            |
             """.trimMargin()
         )
+    }
+
+    private fun lagFlervalgFaktum(beskrivendeId: String, faktum: JsonNode) {
+        val databaseId = lagDatabaseId(beskrivendeId)
+        val valgSomDsl = lagValgalternativer(faktum, beskrivendeId)
+        dslResultat.append(
+            """flervalg faktum "$beskrivendeId"
+            | $valgSomDsl id `$databaseId`,
+            |
+            """.trimMargin()
+        )
+    }
+
+    private fun lagValgalternativer(faktum: JsonNode, beskrivendeId: String): String {
+        val valgAlternativer = faktum["answerOptions"].map { faktumNode ->
+            faktumNode["id"].asText().replace("$beskrivendeId.", "")
+        }
+        return " med \"" + valgAlternativer.joinToString("\"\n  med \"") + "\""
     }
 }
