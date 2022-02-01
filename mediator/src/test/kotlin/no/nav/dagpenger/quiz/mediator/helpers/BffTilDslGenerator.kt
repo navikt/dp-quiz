@@ -30,19 +30,30 @@ class BffTilDslGenerator(bffJson: String) {
 
     private fun lagDSLFaktum(beskrivendeId: String, type: String, faktum: JsonNode) {
         when (type) {
-            "boolean" -> lagBooleanFaktum(beskrivendeId)
-            "valg" -> lagEnvalgFaktum(beskrivendeId, faktum)
+            "valg", "dropdown" -> lagEnvalgFaktum(beskrivendeId, faktum)
             "flervalg" -> lagFlervalgFaktum(beskrivendeId, faktum)
+            "periode", "generator" -> dslResultat.append("$type: TODO").append("\n")
+            else -> lagFaktum(type, beskrivendeId)
         }
     }
 
-    private fun lagBooleanFaktum(beskrivendeId: String) {
+    private fun lagFaktum(type: String, beskrivendeId: String) {
+        val faktumtype = oversettTilDslType(type)
         val databaseId = lagDatabaseId(beskrivendeId)
         dslResultat.append(
-            """boolsk faktum "$beskrivendeId" id `$databaseId`,
+            """$faktumtype faktum "$beskrivendeId" id `$databaseId`,
             |
             """.trimMargin()
         )
+    }
+
+    private fun oversettTilDslType(type: String): String = when (type) {
+        "int" -> "heltall"
+        "tekst" -> "tekst"
+        "double" -> "desimaltall"
+        "boolean" -> "boolsk"
+        "localdate" -> "dato"
+        else -> throw IllegalArgumentException("Ukjent faktumtype $type")
     }
 
     private fun lagDatabaseId(beskrivendeId: String) = beskrivendeId.replace("faktum.", "") // + " databaseId"
