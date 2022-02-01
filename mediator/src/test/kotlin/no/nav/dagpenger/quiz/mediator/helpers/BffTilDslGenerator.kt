@@ -6,8 +6,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 
 class BffTilDslGenerator(bffJson: String) {
 
-    private val objectmapper = jacksonObjectMapper()
-    private val seksjonJsonNode = objectmapper.readValue<JsonNode>(bffJson)
+    private val seksjonJsonNode = jacksonObjectMapper().readValue<JsonNode>(bffJson)
     private val fakta = seksjonJsonNode["faktum"]
 
     private val dslResultat = StringBuilder()
@@ -17,11 +16,14 @@ class BffTilDslGenerator(bffJson: String) {
     }
 
     private fun generer() {
-        fakta.forEach { faktum ->
-            val beskrivendeId = faktum["id"].asText()
+        val antallFakta = fakta.size()
+        fakta.forEachIndexed { index, faktum ->
             val type = faktum["type"].asText()
+            val beskrivendeId = faktum["id"].asText()
             val dslFaktum = lagDSLFaktum(beskrivendeId, type, faktum)
-            dslResultat.append(dslFaktum).append(",\n")
+
+            dslResultat.append(dslFaktum)
+                .append(skilletegnHvisFlereElementer(index, antallFakta))
         }
     }
 
@@ -45,14 +47,14 @@ class BffTilDslGenerator(bffJson: String) {
         return """$faktumtype faktum "$beskrivendeId" id `$databaseId`"""
     }
 
-    private fun oversettTilDslType(type: String): String = when (type) {
+    private fun oversettTilDslType(bffType: String): String = when (bffType) {
         "int" -> "heltall"
         "tekst" -> "tekst"
         "double" -> "desimaltall"
+        "periode" -> "periode"
         "boolean" -> "boolsk"
         "localdate" -> "dato"
-        "periode" -> "periode"
-        else -> throw IllegalArgumentException("Ukjent faktumtype $type")
+        else -> throw IllegalArgumentException("Ukjent faktumtype $bffType")
     }
 
     private fun lagDatabaseId(beskrivendeId: String) = beskrivendeId.replace("faktum.", "") // + " databaseId"
@@ -103,13 +105,17 @@ class BffTilDslGenerator(bffJson: String) {
 
     private fun byggGeneratorFakta(templates: JsonNode): StringBuilder {
         val generatorFakta = StringBuilder()
-        templates.forEach { faktum ->
-            val beskrivendeId = faktum["id"].asText()
+        val antallFakta = templates.size()
+        templates.forEachIndexed { index, faktum ->
             val type = faktum["type"].asText()
+            val beskrivendeId = faktum["id"].asText()
             generatorFakta.append(
                 lagDSLFaktum(beskrivendeId, type, faktum)
-            ).append(",\n")
+            ).append(skilletegnHvisFlereElementer(index, antallFakta))
         }
         return generatorFakta
     }
+
+    private fun skilletegnHvisFlereElementer(index: Int, antallFakta: Int, skilletegn: String = ",\n") =
+        if (index == antallFakta - 1) "" else skilletegn
 }
