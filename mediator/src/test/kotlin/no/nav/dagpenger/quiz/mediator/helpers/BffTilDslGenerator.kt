@@ -82,38 +82,36 @@ class BffTilDslGenerator(bffJson: String) {
         return " med \"" + valgAlternativer.joinToString("\"\n  med \"") + "\""
     }
 
-    private fun lagGeneratorFaktum(beskrivendeId: String, generatorGrunnfaktum: JsonNode): String {
-        val generatorGrunnfaktumDSL = lagDSLFaktum(beskrivendeId, "int", generatorGrunnfaktum)
-        val templates = generatorGrunnfaktum["faktum"]
-
-        val generatorIdOversikt = byggGeneratoridOversikt(templates)
-        val generatorFakta = byggGeneratorFakta(templates)
-
+    private fun lagGeneratorFaktum(beskrivendeId: String, generatorFaktumNode: JsonNode): String {
+        val generatorGrunnfaktumDSL = lagDSLFaktum(beskrivendeId, "int", generatorFaktumNode)
+        val faktaSomSkalGenereres = generatorFaktumNode["faktum"]
+        val iderTilGenererteFakta = byggIdlisteOverFaktaSomSkalGenereres(faktaSomSkalGenereres)
+        val genererteFakta = byggFaktaSomSkalGenereres(faktaSomSkalGenereres)
         return """$generatorGrunnfaktumDSL
-                  |  genererer $generatorIdOversikt,
-                  |$generatorFakta""".trimMargin()
+                  |  genererer $iderTilGenererteFakta,
+                  |$genererteFakta""".trimMargin()
     }
 
-    private fun byggGeneratoridOversikt(templates: JsonNode): String {
-        val templateIder = templates.map { faktum ->
+    private fun byggIdlisteOverFaktaSomSkalGenereres(faktaSomSkalGenereres: JsonNode): String {
+        val iderForFaktaSomSkalGenereres = faktaSomSkalGenereres.map { faktum ->
             val beskrivendeId = faktum["id"].asText()
             "`${lagDatabaseId(beskrivendeId)}`"
         }
 
-        return templateIder.joinToString("\n  og ")
+        return iderForFaktaSomSkalGenereres.joinToString("\n  og ")
     }
 
-    private fun byggGeneratorFakta(templates: JsonNode): StringBuilder {
-        val generatorFakta = StringBuilder()
-        val antallFakta = templates.size()
-        templates.forEachIndexed { index, faktum ->
+    private fun byggFaktaSomSkalGenereres(faktaSomSkalGenereres: JsonNode): StringBuilder {
+        val faktaDsl = StringBuilder()
+        val antallFakta = faktaSomSkalGenereres.size()
+        faktaSomSkalGenereres.forEachIndexed { index, faktum ->
             val type = faktum["type"].asText()
             val beskrivendeId = faktum["id"].asText()
-            generatorFakta.append(
+            faktaDsl.append(
                 lagDSLFaktum(beskrivendeId, type, faktum)
             ).append(skilletegnHvisFlereElementer(index, antallFakta))
         }
-        return generatorFakta
+        return faktaDsl
     }
 
     private fun skilletegnHvisFlereElementer(index: Int, antallFakta: Int, skilletegn: String = ",\n") =
