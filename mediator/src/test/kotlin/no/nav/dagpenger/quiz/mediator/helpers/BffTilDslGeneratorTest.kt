@@ -15,27 +15,27 @@ class BffTilDslGeneratorTest {
         dummySeksjonJsonNode["faktum"].forEach { faktum ->
             val beskrivendeId = faktum["id"].asText()
             val type = faktum["type"].asText()
-            lagDSLFaktum(beskrivendeId, type, faktum )
+            lagDSLFaktum(beskrivendeId, type, faktum)
         }
         println(dslResultat)
     }
 
     private fun lagDSLFaktum(beskrivendeId: String, type: String, faktum: JsonNode) {
         when (type) {
-            "boolean" -> lagBooleanDslFaktum(beskrivendeId, type)
-            "valg" -> lagEnvalgDslFaktum(beskrivendeId, type, faktum)
+            "boolean" -> lagBooleanDslFaktum(beskrivendeId)
+            "valg" -> lagEnvalgDslFaktum(beskrivendeId, faktum)
         }
     }
 
-    private fun lagBooleanDslFaktum(beskrivendeId: String, type: String) {
-        val databaseId = beskrivendeId.replace("faktum.", "") //+ " databaseId"
+    private fun lagBooleanDslFaktum(beskrivendeId: String) {
+        val databaseId = beskrivendeId.replace("faktum.", "") // + " databaseId"
         dslResultat += """boolsk faktum "$beskrivendeId" id `$databaseId`,
             |
         """.trimMargin()
     }
 
-    private fun lagEnvalgDslFaktum(beskrivendeId: String, type: String, faktum: JsonNode) {
-        val databaseId = beskrivendeId.replace("faktum.", "") //+ " databaseId"
+    private fun lagEnvalgDslFaktum(beskrivendeId: String, faktum: JsonNode) {
+        val databaseId = beskrivendeId.replace("faktum.", "") // + " databaseId"
         val valgAlternativer = faktum["answerOptions"].map { faktumNode ->
             faktumNode["id"].asText().replace("$beskrivendeId.", "")
         }
