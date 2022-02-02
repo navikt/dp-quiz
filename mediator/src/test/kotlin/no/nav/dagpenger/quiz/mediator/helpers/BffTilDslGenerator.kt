@@ -14,7 +14,9 @@ class BffTilDslGenerator(bffJson: String) {
     private var idTeller = 1
     private val databaseIder = mutableMapOf<String, Int>()
 
-    private val komplettDslResultat = StringBuilder()
+    private val alleFaktaSomDSL = mutableListOf<String>()
+
+    private val dslResultat = StringBuilder()
     private var variabler = ""
 
     init {
@@ -27,13 +29,12 @@ class BffTilDslGenerator(bffJson: String) {
     }
 
     private fun genererAlleFakta() {
-        val antallFakta = faktaNode.size()
-        faktaNode.forEachIndexed { index, faktumNode ->
-            val dslFaktum = faktumNode.genererDslFaktum()
-            komplettDslResultat
-                .append(dslFaktum)
-                .append(skilletegnHvisFlereElementer(index, antallFakta))
+        faktaNode.forEach { faktumNode ->
+            alleFaktaSomDSL.add(faktumNode.genererDslFaktum())
+            alleFaktaSomDSL.addAll(faktumNode.lagFaktaForSubfaktum())
         }
+
+        dslResultat.append(alleFaktaSomDSL.joinToString(",\n"))
     }
 
     private fun genererVariabelseksjon() {
@@ -48,6 +49,18 @@ class BffTilDslGenerator(bffJson: String) {
             "flervalg" -> lagFlervalgFaktum()
             "generator" -> lagGeneratorFaktum()
             else -> lagBasisFaktum()
+        }
+    }
+
+    private fun JsonNode.lagFaktaForSubfaktum(): List<String> {
+        val subfakta = this["subFaktum"]
+        return if (subfakta != null) {
+            val genererteSubfakta = subfakta.map { subfaktum ->
+                subfaktum.genererDslFaktum()
+            }
+            genererteSubfakta
+        } else {
+            emptyList()
         }
     }
 
@@ -104,16 +117,15 @@ class BffTilDslGenerator(bffJson: String) {
                   |$genererteFakta""".trimMargin()
     }
 
-    private fun JsonNode.byggGeneratorFakta(): StringBuilder {
+    private fun JsonNode.byggGeneratorFakta(): String {
+        val generatorFakta = mutableListOf<String>()
         val nodensFakta = this["faktum"]
-        val antallFakta = nodensFakta.size()
-        val genererteFaktaDsl = StringBuilder()
-        nodensFakta.forEachIndexed { index, faktum ->
-            genererteFaktaDsl
-                .append(faktum.genererDslFaktum())
-                .append(skilletegnHvisFlereElementer(index, antallFakta))
+        nodensFakta.forEach { faktumNode ->
+            generatorFakta.add(faktumNode.genererDslFaktum())
+            generatorFakta.addAll(faktumNode.lagFaktaForSubfaktum())
         }
-        return genererteFaktaDsl
+
+        return generatorFakta.joinToString(",\n")
     }
 
     private fun JsonNode.byggListeOverDatabaseIder(): String {
@@ -124,16 +136,13 @@ class BffTilDslGenerator(bffJson: String) {
         return alleDatabaseIder.joinToString("\n  og ")
     }
 
-    private fun skilletegnHvisFlereElementer(index: Int, antallFakta: Int, skilletegn: String = ",\n") =
-        if (index == antallFakta - 1) "" else skilletegn
-
-    internal fun dslResultat() = komplettDslResultat.toString()
+    internal fun dslResultat() = dslResultat.toString()
     internal fun variabler() = variabler
 
     override fun toString(): String {
         return """$variabler
                  |
-                 |$komplettDslResultat""".trimMargin()
+                 |$dslResultat""".trimMargin()
     }
 
     private fun configureLiberalObjectMapper() = jacksonMapperBuilder()

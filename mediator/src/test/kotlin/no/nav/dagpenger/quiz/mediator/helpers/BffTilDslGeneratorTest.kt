@@ -20,23 +20,25 @@ private val forventedeVariabler =
     """
         const val `dummy-boolean` = 1
         const val `dummy-valg` = 2
-        const val `dummy-flervalg` = 3
-        const val `dummy-dropdown` = 4
-        const val `dummy-int` = 5
-        const val `dummy-double` = 6
-        const val `dummy-tekst` = 7
-        const val `dummy-localdate` = 8
-        const val `dummy-periode` = 9
-        const val `dummy-generator` = 10
-        const val `generator-dummy-boolean` = 11
-        const val `generator-dummy-valg` = 12
-        const val `generator-dummy-flervalg` = 13
-        const val `generator-dummy-dropdown` = 14
-        const val `generator-dummy-int` = 15
-        const val `generator-dummy-double` = 16
-        const val `generator-dummy-tekst` = 17
-        const val `generator-dummy-localdate` = 18
-        const val `generator-dummy-periode` = 19
+        const val `dummy-subfaktum-tekst` = 3
+        const val `dummy-flervalg` = 4
+        const val `dummy-dropdown` = 5
+        const val `dummy-int` = 6
+        const val `dummy-double` = 7
+        const val `dummy-tekst` = 8
+        const val `dummy-localdate` = 9
+        const val `dummy-periode` = 10
+        const val `dummy-generator` = 11
+        const val `generator-dummy-boolean` = 12
+        const val `generator-dummy-valg` = 13
+        const val `generator-dummy-subfaktum-tekst` = 14
+        const val `generator-dummy-flervalg` = 15
+        const val `generator-dummy-dropdown` = 16
+        const val `generator-dummy-int` = 17
+        const val `generator-dummy-double` = 18
+        const val `generator-dummy-tekst` = 19
+        const val `generator-dummy-localdate` = 20
+        const val `generator-dummy-periode` = 21
     """.trimIndent()
 
 private val forventetDsl =
@@ -46,6 +48,7 @@ envalg faktum "faktum.dummy-valg"
   med "svar.ja"
   med "svar.nei"
   med "svar.vetikke" id `dummy-valg`,
+tekst faktum "faktum.dummy-subfaktum-tekst" id `dummy-subfaktum-tekst`,
 flervalg faktum "faktum.dummy-flervalg"
   med "svar.1"
   med "svar.2"
@@ -74,6 +77,7 @@ envalg faktum "faktum.generator-dummy-valg"
   med "svar.ja"
   med "svar.nei"
   med "svar.vetikke" id `generator-dummy-valg`,
+tekst faktum "faktum.generator-dummy-subfaktum-tekst" id `generator-dummy-subfaktum-tekst`,
 flervalg faktum "faktum.generator-dummy-flervalg"
   med "svar.1"
   med "svar.2"
