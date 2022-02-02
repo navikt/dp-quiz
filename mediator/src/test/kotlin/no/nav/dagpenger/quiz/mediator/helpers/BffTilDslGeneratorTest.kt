@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.helpers
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -9,9 +10,10 @@ class BffTilDslGeneratorTest {
     private val quizshowPath = "$homeDirectory/dev/code/dagpenger/dp-quizshow"
     private val faktaPath = "$quizshowPath/src/soknad-fakta"
 
+    @Disabled
     @Test
     fun `Skal kunne konvertere fra BFF-json-seksjoner til Quiz-DSL`() {
-        val faktaFiles = File(faktaPath).listFiles{ file -> !file.name.contains("soknad.ts") }
+        val faktaFiles = File(faktaPath).listFiles { file -> !file.name.contains("soknad.ts") }
 
         faktaFiles?.forEach { file ->
             println("Fil: $file")

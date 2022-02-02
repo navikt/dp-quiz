@@ -128,5 +128,4 @@ class BffTilDslGenerator(bffJson: String) {
         .enable(JsonReadFeature.ALLOW_TRAILING_COMMA)
         .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES)
         .build()
-
 }
