@@ -11,14 +11,22 @@ class BffTilDslGenerator(bffJson: String) {
     private val objectMapper = configureLiberalObjectMapper()
     private val seksjonJsonNode = objectMapper.readValue<JsonNode>(bffJson)
     private val faktaNode = seksjonJsonNode["faktum"]
+    private var idTeller = 1
+    private val databaseIder = mutableMapOf<String, Int>()
 
     private val komplettDslResultat = StringBuilder()
+    private var variabler = ""
 
     init {
         generer()
     }
 
     private fun generer() {
+        genererAlleFakta()
+        genererVariabelseksjon()
+    }
+
+    private fun genererAlleFakta() {
         val antallFakta = faktaNode.size()
         faktaNode.forEachIndexed { index, faktumNode ->
             val dslFaktum = faktumNode.genererDslFaktum()
@@ -28,8 +36,10 @@ class BffTilDslGenerator(bffJson: String) {
         }
     }
 
-    override fun toString(): String {
-        return komplettDslResultat.toString()
+    private fun genererVariabelseksjon() {
+        variabler = databaseIder.map { databaseId ->
+            "const val ${databaseId.key} = ${databaseId.value}"
+        }.joinToString("\n")
     }
 
     private fun JsonNode.genererDslFaktum(): String {
@@ -62,7 +72,10 @@ class BffTilDslGenerator(bffJson: String) {
 
     private fun JsonNode.lagDatabaseId(): String {
         val idUtenPrefix = beskrivendeId().replace("faktum.", "")
-        return "`$idUtenPrefix`"
+        val idMedPrefix = "`$idUtenPrefix`"
+
+        databaseIder.computeIfAbsent(idMedPrefix) { idTeller++ }
+        return idMedPrefix
     }
 
     private fun JsonNode.lagEnvalgFaktum(): String =
@@ -113,6 +126,15 @@ class BffTilDslGenerator(bffJson: String) {
 
     private fun skilletegnHvisFlereElementer(index: Int, antallFakta: Int, skilletegn: String = ",\n") =
         if (index == antallFakta - 1) "" else skilletegn
+
+    internal fun dslResultat() = komplettDslResultat.toString()
+    internal fun variabler() = variabler
+
+    override fun toString(): String {
+        return """$variabler
+                 |
+                 |$komplettDslResultat""".trimMargin()
+    }
 
     private fun configureLiberalObjectMapper() = jacksonMapperBuilder()
         .enable(JsonParser.Feature.ALLOW_COMMENTS)

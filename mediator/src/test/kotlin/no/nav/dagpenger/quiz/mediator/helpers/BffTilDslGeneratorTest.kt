@@ -11,11 +11,35 @@ class BffTilDslGeneratorTest {
 
         val dsl = BffTilDslGenerator(fileAsJson)
 
-        assertEquals(forventetResultat, dsl.toString())
+        assertEquals(forventetDsl, dsl.dslResultat())
+        assertEquals(forventedeVariabler, dsl.variabler())
     }
 }
 
-private val forventetResultat =
+private val forventedeVariabler =
+    """
+        const val `dummy-boolean` = 1
+        const val `dummy-valg` = 2
+        const val `dummy-flervalg` = 3
+        const val `dummy-dropdown` = 4
+        const val `dummy-int` = 5
+        const val `dummy-double` = 6
+        const val `dummy-tekst` = 7
+        const val `dummy-localdate` = 8
+        const val `dummy-periode` = 9
+        const val `dummy-generator` = 10
+        const val `generator-dummy-boolean` = 11
+        const val `generator-dummy-valg` = 12
+        const val `generator-dummy-flervalg` = 13
+        const val `generator-dummy-dropdown` = 14
+        const val `generator-dummy-int` = 15
+        const val `generator-dummy-double` = 16
+        const val `generator-dummy-tekst` = 17
+        const val `generator-dummy-localdate` = 18
+        const val `generator-dummy-periode` = 19
+    """.trimIndent()
+
+private val forventetDsl =
     """
 boolsk faktum "faktum.dummy-boolean" id `dummy-boolean`,
 envalg faktum "faktum.dummy-valg"
