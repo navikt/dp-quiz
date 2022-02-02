@@ -129,3 +129,7 @@ class BffTilDslGenerator(bffJson: String) {
         .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES)
         .build()
 }
+
+fun String.fjernTypescriptSyntax(): String =
+    replace(Regex("import .*"), "")
+        .replace(Regex("export .*"), "{")
