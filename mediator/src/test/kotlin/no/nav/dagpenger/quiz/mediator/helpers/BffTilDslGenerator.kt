@@ -1,12 +1,15 @@
 package no.nav.dagpenger.quiz.mediator.helpers
 
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.json.JsonReadFeature
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
 import com.fasterxml.jackson.module.kotlin.readValue
 
 class BffTilDslGenerator(bffJson: String) {
 
-    private val seksjonJsonNode = jacksonObjectMapper().readValue<JsonNode>(bffJson)
+    private val objectMapper = configureLiberalObjectMapper()
+    private val seksjonJsonNode = objectMapper.readValue<JsonNode>(bffJson)
     private val fakta = seksjonJsonNode["faktum"]
 
     private val dslResultat = StringBuilder()
@@ -119,4 +122,11 @@ class BffTilDslGenerator(bffJson: String) {
 
     private fun skilletegnHvisFlereElementer(index: Int, antallFakta: Int, skilletegn: String = ",\n") =
         if (index == antallFakta - 1) "" else skilletegn
+
+    private fun configureLiberalObjectMapper() = jacksonMapperBuilder()
+        .enable(JsonParser.Feature.ALLOW_COMMENTS)
+        .enable(JsonReadFeature.ALLOW_TRAILING_COMMA)
+        .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES)
+        .build()
+
 }
