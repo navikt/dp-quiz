@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.helpers
 import java.io.File
 
 private val homeDirectory = System.getProperty("user.home")
-private val quizshowPath = "$homeDirectory/path-til-dp-soknad"
+private val quizshowPath = "$homeDirectory/IdeaProjects/dp-quizshow"
 private val faktaPath = "$quizshowPath/src/soknad-fakta"
 
 fun main() {
@@ -35,4 +35,4 @@ private fun verifiserAtMappaEksisterer(path: File) {
 }
 
 private fun filterBortUnødvendigeSeksjoner(file: File) =
-    !(file.name.contains("soknad.ts") || file.name.contains("dummy-seksjon.ts"))
+    file.name.contains("dummy-seksjon.ts")
