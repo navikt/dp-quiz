@@ -31,14 +31,13 @@ private val forventedeVariabler =
         const val `dummy-generator` = 11
         const val `generator-dummy-boolean` = 12
         const val `generator-dummy-valg` = 13
-        const val `generator-dummy-subfaktum-tekst` = 14
-        const val `generator-dummy-flervalg` = 15
-        const val `generator-dummy-dropdown` = 16
-        const val `generator-dummy-int` = 17
-        const val `generator-dummy-double` = 18
-        const val `generator-dummy-tekst` = 19
-        const val `generator-dummy-localdate` = 20
-        const val `generator-dummy-periode` = 21
+        const val `generator-dummy-flervalg` = 14
+        const val `generator-dummy-dropdown` = 15
+        const val `generator-dummy-int` = 16
+        const val `generator-dummy-double` = 17
+        const val `generator-dummy-tekst` = 18
+        const val `generator-dummy-localdate` = 19
+        const val `generator-dummy-periode` = 20
     """.trimIndent()
 
 private val forventetDsl =
@@ -77,7 +76,6 @@ envalg faktum "faktum.generator-dummy-valg"
   med "svar.ja"
   med "svar.nei"
   med "svar.vetikke" id `generator-dummy-valg`,
-tekst faktum "faktum.generator-dummy-subfaktum-tekst" id `generator-dummy-subfaktum-tekst`,
 flervalg faktum "faktum.generator-dummy-flervalg"
   med "svar.1"
   med "svar.2"

@@ -153,15 +153,13 @@ internal class DagpengerTest : SøknadBesvarer() {
                 assertEquals(1.februar(), svarene["tom"].asOptionalLocalDate())
             }
 
-
-
             besvar(
                 DummySeksjon.`dummy-generator`,
                 listOf(
                     listOf(
                         "${DummySeksjon.`generator-dummy-boolean`}" to true,
                         "${DummySeksjon.`generator-dummy-valg`}" to Envalg("faktum.generator-dummy-valg.svar.ja"),
-                        //"${DummySeksjon.`generator-dummy-subfaktum-tekst`}" to Tekst("subfaktumSvartekst"),
+                        // "${DummySeksjon.`generator-dummy-subfaktum-tekst`}" to Tekst("subfaktumSvartekst"),
                         "${DummySeksjon.`generator-dummy-flervalg`}" to Flervalg("faktum.generator-dummy-flervalg.svar.1", "faktum.generator-dummy-flervalg.svar.2"),
                         "${DummySeksjon.`generator-dummy-dropdown`}" to Envalg("faktum.generator-dummy-dropdown.svar.1"),
                         "${DummySeksjon.`generator-dummy-int`}" to 4,

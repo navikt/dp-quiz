@@ -124,10 +124,20 @@ class BffTilDslGenerator(
         val nodensFakta = this["faktum"]
         nodensFakta.forEach { faktumNode ->
             generatorFakta.add(faktumNode.genererDslFaktum())
-            generatorFakta.addAll(faktumNode.lagFaktaForSubfaktum())
+            faktumNode.loggFeilHvisSubFaktaErDefinert()
         }
 
         return generatorFakta.joinToString(",\n")
+    }
+
+    private fun JsonNode.loggFeilHvisSubFaktaErDefinert() {
+        val subfakta = this["subFaktum"]
+        if (subfakta != null && !subfakta.isEmpty) {
+            System.err.println("""Det er ikke mulig å ha subfaktum som en del av en generator. ${this["id"]} har ${subfakta.size()} subfakta.""")
+            subfakta.forEach { subfaktum ->
+                subfaktum.loggFeilHvisSubFaktaErDefinert()
+            }
+        }
     }
 
     private fun JsonNode.byggListeOverDatabaseIder(): String {
