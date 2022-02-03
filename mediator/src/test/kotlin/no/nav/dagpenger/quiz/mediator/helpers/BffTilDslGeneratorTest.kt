@@ -11,8 +11,8 @@ class BffTilDslGeneratorTest {
 
         val dsl = BffTilDslGenerator(fileAsJson)
 
-        assertEquals(forventetDsl, dsl.dslResultat())
-        assertEquals(forventedeVariabler, dsl.variabler())
+        assertEquals(forventetDsl, dsl.dslseksjon())
+        assertEquals(forventedeVariabler, dsl.variabelseksjon())
     }
 }
 

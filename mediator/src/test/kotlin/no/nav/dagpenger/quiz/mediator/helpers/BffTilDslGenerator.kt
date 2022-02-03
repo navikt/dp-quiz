@@ -18,7 +18,7 @@ class BffTilDslGenerator(
     private val databaseIder = mutableMapOf<String, Int>()
     private val alleFaktaSomDSL = mutableListOf<String>()
 
-    private val dslResultat = StringBuilder()
+    private var dsl = ""
     private var variabler = ""
 
     init {
@@ -36,7 +36,7 @@ class BffTilDslGenerator(
             alleFaktaSomDSL.addAll(faktumNode.lagFaktaForSubfaktum())
         }
 
-        dslResultat.append(alleFaktaSomDSL.joinToString(",\n"))
+        dsl = alleFaktaSomDSL.joinToString(",\n")
     }
 
     private fun genererVariabelseksjon() {
@@ -138,13 +138,13 @@ class BffTilDslGenerator(
         return alleDatabaseIder.joinToString("\n  og ")
     }
 
-    internal fun dslResultat() = dslResultat.toString()
-    internal fun variabler() = variabler
+    internal fun dslseksjon() = dsl
+    internal fun variabelseksjon() = variabler
 
     override fun toString(): String {
         return """$variabler
                  |
-                 |$dslResultat""".trimMargin()
+                 |$dsl""".trimMargin()
     }
 
     private fun configureLiberalObjectMapper() = jacksonMapperBuilder()
