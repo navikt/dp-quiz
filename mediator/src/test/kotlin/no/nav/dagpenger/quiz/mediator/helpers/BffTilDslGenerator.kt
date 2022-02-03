@@ -6,14 +6,16 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
 import com.fasterxml.jackson.module.kotlin.readValue
 
-class BffTilDslGenerator(bffJson: String) {
+class BffTilDslGenerator(
+    bffJson: String,
+    private var idTeller: Int = 1
+) {
 
     private val objectMapper = configureLiberalObjectMapper()
     private val seksjonJsonNode = objectMapper.readValue<JsonNode>(bffJson)
     private val faktaNode = seksjonJsonNode["faktum"]
-    private var idTeller = 1
-    private val databaseIder = mutableMapOf<String, Int>()
 
+    private val databaseIder = mutableMapOf<String, Int>()
     private val alleFaktaSomDSL = mutableListOf<String>()
 
     private val dslResultat = StringBuilder()

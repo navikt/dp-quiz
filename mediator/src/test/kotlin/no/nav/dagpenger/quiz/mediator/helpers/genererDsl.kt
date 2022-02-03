@@ -9,11 +9,12 @@ private val faktaPath = "$quizshowPath/src/soknad-fakta"
 fun main() {
     val faktaseksjoner = lesInnFaktaseksjoner()
 
-    faktaseksjoner?.forEach { seksjonsfil ->
+    faktaseksjoner?.forEachIndexed { index, seksjonsfil ->
         println("Fil: $seksjonsfil")
         val fileAsString = seksjonsfil.readText(Charsets.UTF_8)
         val fileAsJson = fileAsString.fjernTypescriptSyntax()
-        val quizDsl = BffTilDslGenerator(fileAsJson)
+        val startpunktForDatabaseIdTeller = (index * 1000) + 1
+        val quizDsl = BffTilDslGenerator(fileAsJson, startpunktForDatabaseIdTeller)
         println("$quizDsl\n")
     }
 }
