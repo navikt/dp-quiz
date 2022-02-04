@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.helpers
 import java.io.File
 
 private val homeDirectory = System.getProperty("user.home")
-private val quizshowPath = "$homeDirectory/path-to/dp-soknad"
+private val quizshowPath = "$homeDirectory/path-to/dp-soknsdialog"
 private val faktaPath = "$quizshowPath/src/soknad-fakta"
 
 fun main() {

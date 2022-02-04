@@ -14,7 +14,110 @@ class BffTilDslGeneratorTest {
         assertEquals(forventetDsl, dsl.dslseksjon())
         assertEquals(forventedeVariabler, dsl.variabelseksjon())
     }
+
+    @Test
+    fun `Skal støtte dypt nøstede subfakta og lagre de som vanlige fakta`() {
+        val dsl = BffTilDslGenerator(jsonMedNøstedeSubfakta)
+
+        assertEquals(forventetDslForNøstedeFakta, dsl.dslseksjon())
+        assertEquals(forventedeVariablerForNøstedeFakta, dsl.variabelseksjon())
+    }
 }
+
+//language=JSON
+val jsonMedNøstedeSubfakta =
+    """
+{
+  "id": "mangeNøstedeSubfakta",
+  "faktum": [
+    {
+      "id": "faktum.faktumFraGrunnNivå",
+      "type": "tekst",
+      "subFaktum": [
+        {
+          "id": "faktum.subfaktumFørstenivå",
+          "type": "tekst",
+          "subFaktum": [
+            {
+              "id": "faktum.subfaktumAndrenivå",
+              "type": "tekst",
+              "subFaktum": [
+                {
+                  "id": "faktum.subfaktumTredjenivå",
+                  "type": "tekst",
+                  "subFaktum": [
+                    {
+                      "id": "faktum.subfaktumFjerdenivå",
+                      "type": "tekst"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "faktum.generatorfaktumFraGrunnNivå",
+      "type": "generator",
+      "faktum": [
+        {
+          "id": "faktum.generatorfaktum",
+          "type": "tekst",
+          "subFaktum": [
+            {
+              "id": "faktum.subfaktumDefinertIGeneratorFørstenivå",
+              "type": "tekst",
+              "subFaktum": [
+                {
+                  "id": "faktum.subfaktumDefinertIGeneratorAndrenivå",
+                  "type": "tekst",
+                  "subFaktum": [
+                    {
+                      "id": "faktum.subfaktumDefinertIGeneratorTredjenivå",
+                      "type": "tekst"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+    """.trimIndent()
+
+private val forventetDslForNøstedeFakta =
+    """
+tekst faktum "faktum.faktumFraGrunnNivå" id `faktumFraGrunnNivå`,
+tekst faktum "faktum.subfaktumFørstenivå" id `subfaktumFørstenivå`,
+tekst faktum "faktum.subfaktumAndrenivå" id `subfaktumAndrenivå`,
+tekst faktum "faktum.subfaktumTredjenivå" id `subfaktumTredjenivå`,
+tekst faktum "faktum.subfaktumFjerdenivå" id `subfaktumFjerdenivå`,
+tekst faktum "faktum.subfaktumDefinertIGeneratorFørstenivå" id `subfaktumDefinertIGeneratorFørstenivå`,
+tekst faktum "faktum.subfaktumDefinertIGeneratorAndrenivå" id `subfaktumDefinertIGeneratorAndrenivå`,
+tekst faktum "faktum.subfaktumDefinertIGeneratorTredjenivå" id `subfaktumDefinertIGeneratorTredjenivå`,
+heltall faktum "faktum.generatorfaktumFraGrunnNivå" id `generatorfaktumFraGrunnNivå`
+  genererer `generatorfaktum`,
+tekst faktum "faktum.generatorfaktum" id `generatorfaktum`
+    """.trimIndent()
+
+private val forventedeVariablerForNøstedeFakta =
+    """
+const val `faktumFraGrunnNivå` = 1
+const val `subfaktumFørstenivå` = 2
+const val `subfaktumAndrenivå` = 3
+const val `subfaktumTredjenivå` = 4
+const val `subfaktumFjerdenivå` = 5
+const val `generatorfaktumFraGrunnNivå` = 6
+const val `generatorfaktum` = 7
+const val `subfaktumDefinertIGeneratorFørstenivå` = 8
+const val `subfaktumDefinertIGeneratorAndrenivå` = 9
+const val `subfaktumDefinertIGeneratorTredjenivå` = 10
+    """.trimIndent()
 
 private val forventedeVariabler =
     """
@@ -38,6 +141,7 @@ private val forventedeVariabler =
         const val `generator-dummy-tekst` = 18
         const val `generator-dummy-localdate` = 19
         const val `generator-dummy-periode` = 20
+        const val `generator-dummy-subfaktum-tekst` = 21
     """.trimIndent()
 
 private val forventetDsl =
@@ -61,6 +165,7 @@ desimaltall faktum "faktum.dummy-double" id `dummy-double`,
 tekst faktum "faktum.dummy-tekst" id `dummy-tekst`,
 dato faktum "faktum.dummy-localdate" id `dummy-localdate`,
 periode faktum "faktum.dummy-periode" id `dummy-periode`,
+tekst faktum "faktum.generator-dummy-subfaktum-tekst" id `generator-dummy-subfaktum-tekst`,
 heltall faktum "faktum.dummy-generator" id `dummy-generator`
   genererer `generator-dummy-boolean`
   og `generator-dummy-valg`

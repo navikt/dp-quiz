@@ -33,7 +33,7 @@ class BffTilDslGenerator(
     private fun genererAlleFakta() {
         faktaNode.forEach { faktumNode ->
             alleFaktaSomDSL.add(faktumNode.genererDslFaktum())
-            alleFaktaSomDSL.addAll(faktumNode.lagFaktaForSubfaktum())
+            faktumNode.lagFaktaForSubfaktum()
         }
 
         dsl = alleFaktaSomDSL.joinToString(",\n")
@@ -54,15 +54,11 @@ class BffTilDslGenerator(
         }
     }
 
-    private fun JsonNode.lagFaktaForSubfaktum(): List<String> {
+    private fun JsonNode.lagFaktaForSubfaktum() {
         val subfakta = this["subFaktum"]
-        return if (subfakta != null) {
-            val genererteSubfakta = subfakta.map { subfaktum ->
-                subfaktum.genererDslFaktum()
-            }
-            genererteSubfakta
-        } else {
-            emptyList()
+        subfakta?.forEach { subfaktum ->
+            alleFaktaSomDSL.add(subfaktum.genererDslFaktum())
+            subfaktum.lagFaktaForSubfaktum()
         }
     }
 
@@ -114,6 +110,7 @@ class BffTilDslGenerator(
         val generatorGrunnfaktum = lagBasisFaktum()
         val genererteFakta = byggGeneratorFakta()
         val iderTilGenererteFakta = byggListeOverDatabaseIder()
+        byggSubfaktaTilRotnivå()
         return """$generatorGrunnfaktum
                   |  genererer $iderTilGenererteFakta,
                   |$genererteFakta""".trimMargin()
@@ -124,19 +121,15 @@ class BffTilDslGenerator(
         val nodensFakta = this["faktum"]
         nodensFakta.forEach { faktumNode ->
             generatorFakta.add(faktumNode.genererDslFaktum())
-            faktumNode.loggFeilHvisSubFaktaErDefinert()
         }
 
         return generatorFakta.joinToString(",\n")
     }
 
-    private fun JsonNode.loggFeilHvisSubFaktaErDefinert() {
-        val subfakta = this["subFaktum"]
-        if (subfakta != null) {
-            System.err.println("""Det er ikke mulig å ha subfaktum som en del av en generator. ${this["id"]} har ${subfakta.size()} subfakta.""")
-            subfakta.forEach { subfaktum ->
-                subfaktum.loggFeilHvisSubFaktaErDefinert()
-            }
+    private fun JsonNode.byggSubfaktaTilRotnivå() {
+        val nodensFakta = this["faktum"]
+        nodensFakta.forEach { faktumNode ->
+            faktumNode.lagFaktaForSubfaktum()
         }
     }
 
