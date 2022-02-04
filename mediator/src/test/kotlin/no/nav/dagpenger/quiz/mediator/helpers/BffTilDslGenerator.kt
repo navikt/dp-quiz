@@ -132,7 +132,7 @@ class BffTilDslGenerator(
 
     private fun JsonNode.loggFeilHvisSubFaktaErDefinert() {
         val subfakta = this["subFaktum"]
-        if (subfakta != null && !subfakta.isEmpty) {
+        if (subfakta != null) {
             System.err.println("""Det er ikke mulig å ha subfaktum som en del av en generator. ${this["id"]} har ${subfakta.size()} subfakta.""")
             subfakta.forEach { subfaktum ->
                 subfaktum.loggFeilHvisSubFaktaErDefinert()
