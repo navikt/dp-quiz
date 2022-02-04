@@ -34,7 +34,7 @@ object DummySeksjon {
     const val `generator dummy periode` = 20
     const val `generator dummy subfaktum tekst` = 21
 
-    private val faktaMap = listOf<FaktumFactory<*>>(
+    private val fakta = listOf<FaktumFactory<*>>(
         boolsk faktum "faktum.dummy-boolean" id `dummy boolean`,
         envalg faktum "faktum.dummy-valg"
             med "svar.ja"
@@ -109,7 +109,7 @@ object DummySeksjon {
         `generator dummy subfaktum tekst`
     )
 
-    fun fakta(): Array<FaktumFactory<*>> = faktaMap.toTypedArray()
+    fun fakta(): Array<FaktumFactory<*>> = fakta.toTypedArray()
 
     fun variabler(): IntArray = alleVariabler.toIntArray()
 }
