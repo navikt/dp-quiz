@@ -82,11 +82,11 @@ class BffTilDslGenerator(
     }
 
     private fun JsonNode.lagDatabaseId(): String {
-        val idUtenPrefix = beskrivendeId().replace("faktum.", "")
-        val idMedPrefix = "`$idUtenPrefix`"
+        val vasketId = beskrivendeId().replace("faktum.", "").replace("-", " ")
+        val idMedBackticks = "`$vasketId`"
 
-        databaseIder.computeIfAbsent(idMedPrefix) { idTeller++ }
-        return idMedPrefix
+        databaseIder.computeIfAbsent(idMedBackticks) { idTeller++ }
+        return idMedBackticks
     }
 
     private fun JsonNode.lagEnvalgFaktum(): String =
