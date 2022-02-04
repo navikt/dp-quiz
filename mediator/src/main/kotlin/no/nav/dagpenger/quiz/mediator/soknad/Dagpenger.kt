@@ -28,8 +28,7 @@ internal object Dagpenger {
         get() {
             val søknad1 = Søknad(
                 VERSJON_ID,
-                *(DummySeksjon.faktaMap.toTypedArray()),
-                *(DummySeksjon.faktaMapGenerator.toTypedArray()),
+                *DummySeksjon.fakta(),
             )
             return søknad1
         }
@@ -39,8 +38,7 @@ internal object Dagpenger {
         val søkerSeksjon = søknad.seksjon(
             "søkerseksjon",
             Rolle.søker,
-            *(DummySeksjon.alleVariablerISeksjonen.toTypedArray()).toIntArray(),
-            *(DummySeksjon.alleGeneratorVariabler.toTypedArray()).toIntArray()
+            *DummySeksjon.variabler(),
         )
 
         val navSeksjon = søknad.seksjon(

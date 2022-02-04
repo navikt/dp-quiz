@@ -99,7 +99,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         val kode: FaktumTilstand
         fun <R : Comparable<R>> accept(faktum: GrunnleggendeFaktum<R>, visitor: FaktumVisitor)
         fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>): R =
-            throw IllegalStateException("Faktumet er ikke kjent enda")
+            throw IllegalStateException("Faktumet '$faktum' er ikke kjent enda")
 
         fun <R : Comparable<R>> besvartAv(grunnleggendeFaktum: GrunnleggendeFaktum<R>): String? = throw IllegalStateException("Faktumet er ikke kjent enda")
     }

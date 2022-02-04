@@ -18,6 +18,8 @@ import no.nav.dagpenger.quiz.mediator.helpers.juni
 import no.nav.dagpenger.quiz.mediator.helpers.mai
 import no.nav.dagpenger.quiz.mediator.meldinger.DagpengerService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
+import no.nav.dagpenger.quiz.mediator.meldinger.asPeriode
+import no.nav.dagpenger.quiz.mediator.meldinger.asTekst
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DummySeksjon
 import no.nav.helse.rapids_rivers.asLocalDate
@@ -159,7 +161,6 @@ internal class DagpengerTest : SøknadBesvarer() {
                     listOf(
                         "${DummySeksjon.`generator-dummy-boolean`}" to true,
                         "${DummySeksjon.`generator-dummy-valg`}" to Envalg("faktum.generator-dummy-valg.svar.ja"),
-                        // "${DummySeksjon.`generator-dummy-subfaktum-tekst`}" to Tekst("subfaktumSvartekst"),
                         "${DummySeksjon.`generator-dummy-flervalg`}" to Flervalg("faktum.generator-dummy-flervalg.svar.1", "faktum.generator-dummy-flervalg.svar.2"),
                         "${DummySeksjon.`generator-dummy-dropdown`}" to Envalg("faktum.generator-dummy-dropdown.svar.1"),
                         "${DummySeksjon.`generator-dummy-int`}" to 4,
@@ -170,23 +171,27 @@ internal class DagpengerTest : SøknadBesvarer() {
                     )
                 )
             )
-//
-//            testRapid.inspektør.message(9).let {
-//                assertEquals("NySøknad", it["@event_name"].asText())
-//
-//                val svarliste = it.hentSvar(DummySeksjon.`dummy-generator`)
-//                val førsteSvarelement = svarliste[0]
-//                assertEquals(true, førsteSvarelement["faktum.generator-dummy-boolean"].asBoolean())
-//                assertEquals(4, førsteSvarelement["faktum.generator-dummy-int"].asInt())
-//                assertEquals(2.5, førsteSvarelement["faktum.generator-dummy-double"].asDouble())
-//                assertEquals(1.april(), førsteSvarelement["faktum.generator-dummy-localdate"].asLocalDate())
-//                assertEquals(Tekst("svartekst"), førsteSvarelement["faktum.generator-dummy-tekst"].asTekst())
-//                assertEquals("faktum.generator-dummy-valg.svar.ja", førsteSvarelement["faktum.generator-dummy-valg"].asText())
-//
-//                val flervalgSvar = førsteSvarelement["faktum.generator-dummy-flervalg"]
-//                assertEquals("faktum.generator-dummy-flervalg.svar.1", flervalgSvar[0].asText())
-//                assertEquals("faktum.generator-dummy-flervalg.svar.2", flervalgSvar[1].asText())
-//            }
+
+            testRapid.inspektør.message(12).let {
+                assertEquals("NySøknad", it["@event_name"].asText())
+
+                val svarliste = it.hentSvar(DummySeksjon.`dummy-generator`)
+                val førsteSvarelement = svarliste[0]
+
+                assertEquals(true, førsteSvarelement["faktum.generator-dummy-boolean"].asBoolean())
+                assertEquals("faktum.generator-dummy-valg.svar.ja", førsteSvarelement["faktum.generator-dummy-valg"].asText())
+
+                val flervalgSvar = førsteSvarelement["faktum.generator-dummy-flervalg"]
+                assertEquals("faktum.generator-dummy-flervalg.svar.1", flervalgSvar[0].asText())
+                assertEquals("faktum.generator-dummy-flervalg.svar.2", flervalgSvar[1].asText())
+
+                assertEquals("faktum.generator-dummy-dropdown.svar.1", førsteSvarelement["faktum.generator-dummy-dropdown"].asText())
+                assertEquals(4, førsteSvarelement["faktum.generator-dummy-int"].asInt())
+                assertEquals(2.5, førsteSvarelement["faktum.generator-dummy-double"].asDouble())
+                assertEquals(Tekst("svartekst"), førsteSvarelement["faktum.generator-dummy-tekst"].asTekst())
+                assertEquals(1.april(), førsteSvarelement["faktum.generator-dummy-localdate"].asLocalDate())
+                assertEquals(Periode(1.mai(), 1.juni()), førsteSvarelement["faktum.generator-dummy-periode"].asPeriode())
+            }
         }
     }
 
