@@ -54,7 +54,7 @@ internal object Dagpenger {
 
         val regeltre: Subsumsjon = with(søknad) {
             "alle".minstEnAv(
-                heltall(DummySeksjon.`dummy-int`) minst (0)
+                heltall(DummySeksjon.`dummy int`) minst (0)
             )
         }
     }
@@ -62,7 +62,7 @@ internal object Dagpenger {
     private val faktumNavBehov =
         FaktumNavBehov(
             mapOf(
-                DummySeksjon.`dummy-int` to "trengerEtHeltall",
+                DummySeksjon.`dummy int` to "trengerEtHeltall",
             )
         )
 
