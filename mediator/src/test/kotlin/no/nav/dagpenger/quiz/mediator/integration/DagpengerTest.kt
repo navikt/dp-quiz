@@ -155,6 +155,13 @@ internal class DagpengerTest : SøknadBesvarer() {
                 assertEquals(1.februar(), svarene["tom"].asOptionalLocalDate())
             }
 
+            besvar(DummySeksjon.`generator dummy subfaktum tekst`, Tekst("subfaktumDefinertIGeneratorsvar"))
+            testRapid.inspektør.message(12).let {
+                assertEquals("NySøknad", it["@event_name"].asText())
+
+                assertEquals("subfaktumDefinertIGeneratorsvar", it.hentSvar(DummySeksjon.`generator dummy subfaktum tekst`).asText())
+            }
+
             besvar(
                 DummySeksjon.`dummy generator`,
                 listOf(
@@ -172,7 +179,7 @@ internal class DagpengerTest : SøknadBesvarer() {
                 )
             )
 
-            testRapid.inspektør.message(12).let {
+            testRapid.inspektør.message(13).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 val svarliste = it.hentSvar(DummySeksjon.`dummy generator`)
