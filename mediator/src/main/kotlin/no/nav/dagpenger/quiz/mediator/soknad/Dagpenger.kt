@@ -25,13 +25,10 @@ internal object Dagpenger {
     }
 
     internal val søknad: Søknad
-        get() {
-            val søknad1 = Søknad(
-                VERSJON_ID,
-                *DummySeksjon.fakta(),
-            )
-            return søknad1
-        }
+        get() = Søknad(
+            VERSJON_ID,
+            *DummySeksjon.fakta(),
+        )
 
     private object Seksjoner {
 
