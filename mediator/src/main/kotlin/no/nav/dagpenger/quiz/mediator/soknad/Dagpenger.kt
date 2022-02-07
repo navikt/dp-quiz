@@ -12,13 +12,23 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.Subsumsjoner.regeltre
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DummySeksjon
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Arbeidsforhold
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Bostedsland
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EgenNæring
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.KoronaFortsattRett
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Tilleggsopplysninger
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Utdanning
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Verneplikt
 
 internal object Dagpenger {
 
     private val logger = KotlinLogging.logger { }
 
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 205)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 206)
 
     fun registrer(registrer: (søknad: Søknad) -> Unit) {
         registrer(søknad)
@@ -27,7 +37,17 @@ internal object Dagpenger {
     internal val søknad: Søknad
         get() = Søknad(
             VERSJON_ID,
-            *DummySeksjon.fakta(),
+            *AndreYtelser.fakta(),
+            *Arbeidsforhold.fakta(),
+            *Barnetillegg.fakta(),
+            *Bostedsland.fakta(),
+            *EgenNæring.fakta(),
+            *EøsArbeidsforhold.fakta(),
+            *KoronaFortsattRett.fakta(),
+            *ReellArbeidssoker.fakta(),
+            *Tilleggsopplysninger.fakta(),
+            *Utdanning.fakta(),
+            *Verneplikt.fakta()
         )
 
     private object Seksjoner {
@@ -35,7 +55,17 @@ internal object Dagpenger {
         val søkerSeksjon = søknad.seksjon(
             "søkerseksjon",
             Rolle.søker,
-            *DummySeksjon.variabler(),
+            *AndreYtelser.variabler(),
+            *Arbeidsforhold.variabler(),
+            *Barnetillegg.variabler(),
+            *Bostedsland.variabler(),
+            *EgenNæring.variabler(),
+            *EøsArbeidsforhold.variabler(),
+            *KoronaFortsattRett.variabler(),
+            *ReellArbeidssoker.variabler(),
+            *Tilleggsopplysninger.variabler(),
+            *Utdanning.variabler(),
+            *Verneplikt.variabler()
         )
 
         val navSeksjon = søknad.seksjon(
@@ -54,7 +84,7 @@ internal object Dagpenger {
 
         val regeltre: Subsumsjon = with(søknad) {
             "alle".minstEnAv(
-                heltall(DummySeksjon.`dummy int`) minst (0)
+                heltall(Barnetillegg.`barn liste`) minst (1)
             )
         }
     }
@@ -62,7 +92,7 @@ internal object Dagpenger {
     private val faktumNavBehov =
         FaktumNavBehov(
             mapOf(
-                DummySeksjon.`dummy int` to "trengerEtHeltall",
+                Barnetillegg.`barn liste` to "Barn",
             )
         )
 
