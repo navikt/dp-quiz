@@ -214,15 +214,16 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
                     faktum.faktumId.reflection { _, indeks ->
                         indeks == i
                     }
-                }.fold(
-                    initial = mapper.createObjectNode()
+                }.filter { it.erBesvart() }
+                    .fold(
+                        initial = mapper.createObjectNode()
 
-                ) { node, faktum ->
-                    node.putR(faktum.navn, faktum.svar())
-                    node
-                }.also {
-                    formatertSvar.add(it)
-                }
+                    ) { node, faktum ->
+                        node.putR(faktum.navn, faktum.svar())
+                        node
+                    }.also {
+                        formatertSvar.add(it)
+                    }
             }
             this.root["svar"] = formatertSvar
         }

@@ -279,6 +279,29 @@ internal class FaktaJsonBuilderTest {
         }
     }
 
+    @Test
+    fun `serialisering av delvis besvarte genererte fakta til json`() {
+        val idag = LocalDate.now()
+        val regel = søkerSubsumsjon()
+        val søknadprosess = søknadprosess(regel)
+        søknadprosess.generator(14).besvar(1)
+        søknadprosess.dato("12.1").besvar(idag)
+        val søkerJson = FaktaJsonBuilder(søknadprosess).resultat()
+        assertEquals(13, søkerJson["fakta"].size())
+
+        søkerJson["fakta"][12].assertGeneratorFaktaAsJson(
+            "14", "generator", "generator14", listOf("søker"),
+            assertTemplates = listOf(
+                { it.assertFaktaAsJson("12", "localdate", "dato12", listOf("søker")) },
+                { it.assertFaktaAsJson("13", "inntekt", "inntekt13", listOf("søker")) }
+            )
+        ) { svar ->
+            assertEquals(1, svar.size())
+            assertEquals(idag, svar[0]["dato12"].asText().let { LocalDate.parse(it) })
+            assertEquals(false, svar[0].has("inntekt13"))
+        }
+    }
+
     private fun JsonNode.assertFaktaAsJson(
         expectedId: String,
         expectedType: String,
