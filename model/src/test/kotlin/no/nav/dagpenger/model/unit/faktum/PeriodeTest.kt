@@ -1,7 +1,9 @@
-package no.nav.dagpenger.model.faktum
+package no.nav.dagpenger.model.unit.faktum
 
-import no.nav.dagpenger.quiz.mediator.helpers.januar
-import no.nav.dagpenger.quiz.mediator.helpers.mars
+import no.nav.dagpenger.model.faktum.Periode
+import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.helpers.mars
+
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
