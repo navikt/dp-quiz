@@ -12,7 +12,7 @@ object Barnetillegg {
     const val `barn fornavn mellomnavn` = 1002
     const val `barn etternavn` = 1003
     const val `barn foedselsdato` = 1004
-    const val `barn bostedsland` = 1005
+    const val `barn statsborgerskap` = 1005
     const val `forsoerger du barnet` = 1006
     const val `barn aarsinntekt over 1g` = 1007
     const val `barn inntekt` = 1008
@@ -24,13 +24,13 @@ object Barnetillegg {
             genererer `barn fornavn mellomnavn`
             og `barn etternavn`
             og `barn foedselsdato`
-            og `barn bostedsland`
+            og `barn statsborgerskap`
             og `forsoerger du barnet`,
         tekst faktum "faktum.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn`,
         tekst faktum "faktum.barn-etternavn" id `barn etternavn`,
         dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato`,
-        envalg faktum "faktum.barn-bostedsland"
-            med "" id `barn bostedsland`,
+        envalg faktum "faktum.barn-statsborgerskap"
+            med "" id `barn statsborgerskap`,
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`
     )
 
@@ -39,7 +39,7 @@ object Barnetillegg {
         `barn fornavn mellomnavn`,
         `barn etternavn`,
         `barn foedselsdato`,
-        `barn bostedsland`,
+        `barn statsborgerskap`,
         `forsoerger du barnet`,
         `barn aarsinntekt over 1g`,
         `barn inntekt`,
