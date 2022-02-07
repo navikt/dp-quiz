@@ -56,7 +56,7 @@ internal class FaktumSvarService(
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
-        val fakta = packet["fakta"].filter { faktumNode -> faktumNode.has("svar") }
+        val fakta = packet["fakta"].filter(harSvar())
         if (fakta.isEmpty()) return
 
         try {
@@ -155,7 +155,7 @@ internal class FaktumSvarService(
                 val svarene = svar as ArrayNode
                 søknadprosess.generator(faktumId).besvar(svarene.size(), besvartAv)
                 svarene.forEachIndexed { index, genererteSvar ->
-                    genererteSvar.forEach {
+                    genererteSvar.filter(harSvar()).forEach {
                         besvar(
                             søknadprosess,
                             "${it["id"].asText()}.${index + 1}}",
@@ -169,6 +169,8 @@ internal class FaktumSvarService(
             else -> throw IllegalArgumentException("Ukjent svar-type: $clazz")
         }
     }
+
+    private fun harSvar() = { faktumNode: JsonNode -> faktumNode.has("svar") }
 
     private class ProsessVersjonVisitor(private val søknadprosess: Søknadprosess) : SøknadprosessVisitor {
 

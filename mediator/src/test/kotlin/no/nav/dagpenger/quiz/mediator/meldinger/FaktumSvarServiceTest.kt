@@ -1,5 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -18,34 +20,43 @@ import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class FaktumSvarServiceTest {
 
-    private val prosessVersjon = Prosessversjon(Testprosess.Test, 1458)
-    val prototypeFakta = Søknad(
-        prosessVersjon,
-        heltall faktum "generator" id 10 genererer 11 og 12,
-        dato faktum "fom" id 11,
-        dato faktum "tom" id 12,
+    @AfterEach
+    fun resetSvar() {
+        prototypeFakta.generator(10).besvar(0)
+    }
 
-    )
+    companion object {
 
-    val versjon = Versjon.Bygger(
-        prototypeFakta,
-        prototypeFakta heltall 10 er 1 hvisOppfylt { prototypeFakta dato 11 etter (prototypeFakta dato 12) },
-        mapOf(
-            Versjon.UserInterfaceType.Web to Søknadprosess(
-                Seksjon(
-                    "seksjon",
-                    Rolle.nav,
-                    *(prototypeFakta.map { it }.toTypedArray())
+        private val prosessVersjon = Prosessversjon(Testprosess.Test, -3000)
+        val prototypeFakta = Søknad(
+            prosessVersjon,
+            heltall faktum "generator" id 10 genererer 11 og 12,
+            dato faktum "fom" id 11,
+            dato faktum "tom" id 12,
+
+        )
+        val versjon = Versjon.Bygger(
+            prototypeFakta,
+            prototypeFakta heltall 10 er 1 hvisOppfylt { prototypeFakta dato 11 etter (prototypeFakta dato 12) },
+            mapOf(
+                Versjon.UserInterfaceType.Web to Søknadprosess(
+                    Seksjon(
+                        "seksjon",
+                        Rolle.nav,
+                        *(prototypeFakta.map { it }.toTypedArray())
+                    )
                 )
             )
-        )
-    ).registrer()
+        ).registrer()
+    }
 
     val søknadPersistence = mockk<SøknadPersistence>().also {
         every { it.hent(any(), any()) } returns Versjon.id(prosessVersjon)
@@ -81,6 +92,14 @@ internal class FaktumSvarServiceTest {
         verify(exactly = 1) { søknadPersistence.hent(any(), any()) }
         verify(exactly = 1) { søknadPersistence.lagre(any() as Søknad) }
         verify(exactly = 1) { resultatPersistence.lagreResultat(any(), any(), any()) }
+    }
+
+    @Test
+    fun `skal ta imot liste med svar i generator faktum selvom ikke alle templates har svar`() {
+        val json = jacksonObjectMapper().readTree(faktumSvarMedGeneratorFaktum)
+        (json["fakta"][0]["svar"][1][1] as ObjectNode).remove("svar")
+        testRapid.sendTestMessage(json.toString())
+        assertFalse(prototypeFakta.dato("12.2").erBesvart())
     }
 
     //language=json
