@@ -12,8 +12,13 @@ import no.nav.helse.rapids_rivers.asLocalDateTime
 import no.nav.helse.rapids_rivers.asOptionalLocalDate
 
 fun JsonNode.asEnvalg(): Envalg {
-    val svarene = this as ArrayNode
-    val valgteSvaralternativer = svarene.map { it.asText() }
+    val svarene: List<String> = if (this.isArray) {
+        val array = this as ArrayNode
+        array.map { it.asText() }
+    } else {
+        listOf(this.asText())
+    }
+    val valgteSvaralternativer = svarene.map { it }
     return Envalg(*valgteSvaralternativer.toTypedArray())
 }
 
