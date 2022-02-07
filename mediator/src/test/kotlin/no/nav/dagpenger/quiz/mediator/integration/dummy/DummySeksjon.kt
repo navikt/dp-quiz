@@ -1,4 +1,4 @@
-package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
+package no.nav.dagpenger.quiz.mediator.integration.dummy
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.FaktumFactory
-
+// @todo: Vurdere om denne skal inkluderes i SøknadEksempel1.kt i stedet
 object DummySeksjon {
 
     const val `dummy boolean` = 1

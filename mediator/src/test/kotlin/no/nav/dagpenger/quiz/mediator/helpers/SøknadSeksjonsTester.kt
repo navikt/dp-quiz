@@ -11,8 +11,8 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
+import no.nav.dagpenger.quiz.mediator.integration.dummy.DummySeksjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DummySeksjon
 
 internal object SøknadSeksjonsTester {
 

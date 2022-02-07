@@ -1,4 +1,4 @@
-package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
+package no.nav.dagpenger.quiz.mediator.integration.dummy
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
