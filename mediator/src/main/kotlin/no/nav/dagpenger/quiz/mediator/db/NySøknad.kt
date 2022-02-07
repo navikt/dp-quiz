@@ -29,7 +29,9 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
     private var personId: UUID? = null
 
     init {
-        søknad.accept(this)
+        if (SøknadUuid(søknad).ikkeEksisterer()) {
+            søknad.accept(this)
+        }
     }
 
     override fun preVisit(person: Person, uuid: UUID) {
@@ -53,11 +55,17 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         søknadId = using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL
-                    "INSERT INTO soknad(uuid, versjon_id, person_id, sesjon_type_id) VALUES (?, ?, ?, ?) returning id",
-                    uuid,
-                    internVersjonId,
-                    personId,
-                    type.id
+                    """
+                        INSERT INTO soknad(uuid, versjon_id, person_id, sesjon_type_id) 
+                        VALUES (:uuid, :versjon_id, :person_id, :sesjon_type_id) 
+                        RETURNING id
+                    """.trimIndent(),
+                    mapOf(
+                        "uuid" to uuid,
+                        "versjon_id" to internVersjonId,
+                        "person_id" to personId,
+                        "sesjon_type_id" to type.id
+                    )
                 ).map { it.int(1) }.asSingle
             ) ?: throw IllegalArgumentException("failed to find søknadId")
         }
@@ -132,6 +140,35 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
                     rootId
                 ).asExecute
             )
+        }
+    }
+
+    private class SøknadUuid(søknad: Søknad) : SøknadVisitor {
+
+        init {
+            søknad.accept(this)
+        }
+
+        private var eksisterer = false
+
+        fun ikkeEksisterer() = !eksisterer
+
+        override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+            eksisterer = eksisterer(uuid)
+        }
+
+        private companion object {
+            private fun eksisterer(uuid: UUID): Boolean {
+                val query = queryOf( //language=PostgreSQL
+                    "SELECT id FROM soknad WHERE uuid = :uuid",
+                    mapOf("uuid" to uuid)
+                )
+                return using(sessionOf(dataSource)) { session ->
+                    session.run(
+                        query.map { true }.asSingle
+                    ) ?: false
+                }
+            }
         }
     }
 }

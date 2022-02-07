@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
+import java.util.UUID
 import kotlin.test.assertNotNull
 
 internal class SøknadRecordTest {
@@ -232,6 +233,21 @@ internal class SøknadRecordTest {
             lagreHentOgSammenlign()
             lagreHentOgSammenlign()
             assertRecordCount(1, "gammel_faktum_verdi")
+        }
+    }
+
+    @Test
+    fun `Skal ikke kunne lagre en søknad med samme uuid flere ganger`() {
+        Postgres.withMigratedDb {
+            val søknadUUId = UUID.randomUUID()
+            FaktumTable(SøknadEksempel1.prototypeFakta1)
+            søknadRecord = SøknadRecord()
+            originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon, søknadUUId)
+            originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon, søknadUUId)
+
+            originalSøknadprosess.dato(2).besvar(LocalDate.now())
+
+            lagreHentOgSammenlign()
         }
     }
 
