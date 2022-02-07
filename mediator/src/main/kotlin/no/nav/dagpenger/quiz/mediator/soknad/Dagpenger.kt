@@ -10,7 +10,6 @@ import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.Subsumsjoner.regeltre
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Arbeidsforhold
@@ -71,6 +70,7 @@ internal object Dagpenger {
         val navSeksjon = søknad.seksjon(
             "navseksjon",
             Rolle.nav,
+            *Barnetillegg.variabler(),
         )
     }
 
@@ -81,11 +81,8 @@ internal object Dagpenger {
         )
 
     object Subsumsjoner {
-
         val regeltre: Subsumsjon = with(søknad) {
-            "alle".minstEnAv(
-                heltall(Barnetillegg.`barn liste`) minst (1)
-            )
+            heltall(Barnetillegg.`barn liste`) minst (0)
         }
     }
 
