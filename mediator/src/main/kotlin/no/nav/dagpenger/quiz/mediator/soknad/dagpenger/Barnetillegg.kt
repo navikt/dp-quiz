@@ -30,7 +30,7 @@ object Barnetillegg {
         tekst faktum "faktum.barn-etternavn" id `barn etternavn`,
         dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato`,
         envalg faktum "faktum.barn-statsborgerskap"
-            med "" id `barn statsborgerskap`,
+            med "NOR" id `barn statsborgerskap`,
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`
     )
 
