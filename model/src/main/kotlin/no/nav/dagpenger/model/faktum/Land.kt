@@ -3,7 +3,10 @@ package no.nav.dagpenger.model.faktum
 import no.nav.pam.geography.CountryDAO
 
 class Land(alpha3Code: String) : Comparable<Land> {
-    private val countryDAO = CountryDAO()
+    companion object {
+        private val countryDAO = CountryDAO()
+    }
+
     val alpha3Code: String
 
     init {
