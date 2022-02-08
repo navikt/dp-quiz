@@ -135,10 +135,22 @@ class BffTilDslGenerator(
 
     private fun JsonNode.byggListeOverDatabaseIder(): String {
         val nodensFakta = this["faktum"]
-        val alleDatabaseIder = nodensFakta.map { faktum ->
-            faktum.lagDatabaseId()
+        val alleDatabaseIder = mutableListOf<String>()
+        nodensFakta?.forEach { faktum ->
+            alleDatabaseIder.add(faktum.lagDatabaseId())
+            alleDatabaseIder.addAll(faktum.lagDatabaseidForAlleSubfakta())
         }
         return alleDatabaseIder.joinToString("\n  og ")
+    }
+
+    private fun JsonNode.lagDatabaseidForAlleSubfakta(): List<String> {
+        val subfakta = this["subFaktum"]
+        val databaseIder = mutableListOf<String>()
+        subfakta?.forEach { subfaktum ->
+            databaseIder.add(subfaktum.lagDatabaseId())
+            databaseIder.addAll(subfaktum.lagDatabaseidForAlleSubfakta())
+        }
+        return databaseIder
     }
 
     internal fun dslseksjon() = dsl

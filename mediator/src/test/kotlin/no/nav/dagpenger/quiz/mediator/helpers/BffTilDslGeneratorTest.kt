@@ -101,7 +101,10 @@ tekst faktum "faktum.subfaktumDefinertIGeneratorFørstenivå" id `subfaktumDefin
 tekst faktum "faktum.subfaktumDefinertIGeneratorAndrenivå" id `subfaktumDefinertIGeneratorAndrenivå`,
 tekst faktum "faktum.subfaktumDefinertIGeneratorTredjenivå" id `subfaktumDefinertIGeneratorTredjenivå`,
 heltall faktum "faktum.generatorfaktumFraGrunnNivå" id `generatorfaktumFraGrunnNivå`
-  genererer `generatorfaktum`,
+  genererer `generatorfaktum`
+  og `subfaktumDefinertIGeneratorFørstenivå`
+  og `subfaktumDefinertIGeneratorAndrenivå`
+  og `subfaktumDefinertIGeneratorTredjenivå`,
 tekst faktum "faktum.generatorfaktum" id `generatorfaktum`
     """.trimIndent()
 
@@ -169,6 +172,7 @@ tekst faktum "faktum.generator-dummy-subfaktum-tekst" id `generator dummy subfak
 heltall faktum "faktum.dummy-generator" id `dummy generator`
   genererer `generator dummy boolean`
   og `generator dummy valg`
+  og `generator dummy subfaktum tekst`
   og `generator dummy flervalg`
   og `generator dummy dropdown`
   og `generator dummy int`
