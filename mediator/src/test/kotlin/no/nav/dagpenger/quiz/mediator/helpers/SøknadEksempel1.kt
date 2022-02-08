@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
@@ -53,7 +54,9 @@ internal object SøknadEksempel1 {
         flervalg faktum "f21" med "flervalg1" med "flervalg2" med "flervalg3" id 21,
         heltall faktum "f22" id 22,
         tekst faktum "f23" id 23,
-        periode faktum "f24" id 24
+        periode faktum "f24" id 24,
+        land faktum "f25" id 25
+
     )
 
     private val webPrototypeSøknad = Søknadprosess(

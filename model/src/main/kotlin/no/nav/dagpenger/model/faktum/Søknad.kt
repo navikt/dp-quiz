@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import java.time.LocalDate
 import java.util.UUID
+
 @Suppress("UNCHECKED_CAST")
 class Søknad private constructor(
     private val person: Person,
@@ -15,7 +16,12 @@ class Søknad private constructor(
 
     internal val size get() = faktaMap.size
 
-    constructor(prosessVersjon: Prosessversjon, vararg factories: FaktumFactory<*>) : this(Person.prototype, prosessVersjon, UUID.randomUUID(), factories.toList())
+    constructor(prosessVersjon: Prosessversjon, vararg factories: FaktumFactory<*>) : this(
+        Person.prototype,
+        prosessVersjon,
+        UUID.randomUUID(),
+        factories.toList()
+    )
 
     constructor(person: Person, prosessVersjon: Prosessversjon, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
         person,
@@ -124,6 +130,10 @@ class Søknad private constructor(
     override fun tekst(rootId: Int): Faktum<Tekst> = tekst(FaktumId(rootId))
     override fun tekst(id: String): Faktum<Tekst> = tekst(FaktumId(id))
     private infix fun tekst(faktumId: FaktumId) = id(faktumId) as Faktum<Tekst>
+
+    override fun land(rootId: Int): Faktum<Land> = land(FaktumId(rootId))
+    override fun land(id: String): Faktum<Land> = land(FaktumId(id))
+    private fun land(faktumId: FaktumId) = id(faktumId) as Faktum<Land>
 
     override fun periode(rootId: Int): Faktum<Periode> = periode(FaktumId(rootId))
     override fun periode(id: String): Faktum<Periode> = periode(FaktumId(id))

@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Inntekt
+import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -61,6 +62,10 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
         object periode {
             infix fun faktum(navn: String) = BaseFaktumFactory(Periode::class.java, navn)
         }
+
+        object land {
+            infix fun faktum(navn: String) = BaseFaktumFactory(Land::class.java, navn)
+        }
     }
 
     infix fun id(rootId: Int) = this.apply { this.rootId = rootId }
@@ -70,8 +75,18 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     @Suppress("UNCHECKED_CAST")
     override fun faktum(): Faktum<T> {
         return when (clazz) {
-            Envalg::class.java -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz, gyldigevalg = GyldigeValg(gyldigevalg)) as Faktum<T>
-            Flervalg::class.java -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz, gyldigevalg = GyldigeValg(gyldigevalg)) as Faktum<T>
+            Envalg::class.java -> GrunnleggendeFaktum(
+                faktumId = faktumId,
+                navn = navn,
+                clazz = clazz,
+                gyldigevalg = GyldigeValg(gyldigevalg)
+            ) as Faktum<T>
+            Flervalg::class.java -> GrunnleggendeFaktum(
+                faktumId = faktumId,
+                navn = navn,
+                clazz = clazz,
+                gyldigevalg = GyldigeValg(gyldigevalg)
+            ) as Faktum<T>
             else -> GrunnleggendeFaktum(faktumId, navn, clazz)
         }
     }
@@ -95,7 +110,11 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
                 ?.also { template -> faktumMap[FaktumId(otherId)] = template }
                 ?: throw IllegalArgumentException("Faktum $otherId finnes ikke")
         }
-        GeneratorFaktum(faktumId, navn, templateIder.map { otherId -> faktumMap[FaktumId(otherId)] as TemplateFaktum<*> })
+        GeneratorFaktum(
+            faktumId,
+            navn,
+            templateIder.map { otherId -> faktumMap[FaktumId(otherId)] as TemplateFaktum<*> }
+        )
             .also { generatorfaktum -> faktumMap[faktumId] = generatorfaktum }
     }
 

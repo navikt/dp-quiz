@@ -11,6 +11,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.FaktaRegel
@@ -24,6 +25,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Inntekt
+import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
@@ -227,6 +229,7 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
                 byggMap(Flervalg::class.java, 8) { navn, rootId -> flervalg faktum navn id rootId }
                 byggMap(Tekst::class.java, 9) { navn, rootId -> tekst faktum navn id rootId }
                 byggMap(Periode::class.java, 10) { navn, rootId -> periode faktum navn id rootId }
+                byggMap(Land::class.java, 11) { navn, rootId -> land faktum navn id rootId }
             }
 
             operator fun get(clazz: Class<*>) = kodeMap[clazz] ?: throw NoSuchElementException("Ukjent klasse $clazz")

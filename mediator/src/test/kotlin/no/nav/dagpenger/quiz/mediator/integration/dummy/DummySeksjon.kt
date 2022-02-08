@@ -6,9 +6,11 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.FaktumFactory
+
 // @todo: Vurdere om denne skal inkluderes i SøknadEksempel1.kt i stedet
 object DummySeksjon {
 
@@ -33,6 +35,7 @@ object DummySeksjon {
     const val `generator dummy localdate` = 19
     const val `generator dummy periode` = 20
     const val `generator dummy subfaktum tekst` = 21
+    const val `dummy land` = 22
 
     private val fakta = listOf<FaktumFactory<*>>(
         boolsk faktum "faktum.dummy-boolean" id `dummy boolean`,
@@ -82,7 +85,8 @@ object DummySeksjon {
         desimaltall faktum "faktum.generator-dummy-double" id `generator dummy double`,
         tekst faktum "faktum.generator-dummy-tekst" id `generator dummy tekst`,
         dato faktum "faktum.generator-dummy-localdate" id `generator dummy localdate`,
-        periode faktum "faktum.generator-dummy-periode" id `generator dummy periode`
+        periode faktum "faktum.generator-dummy-periode" id `generator dummy periode`,
+        land faktum "faktum.dummy-land" id `dummy land`
     )
 
     private val alleVariabler = listOf(
@@ -97,6 +101,7 @@ object DummySeksjon {
         `dummy localdate`,
         `dummy periode`,
         `dummy generator`,
+        `dummy land`,
         `generator dummy boolean`,
         `generator dummy valg`,
         `generator dummy flervalg`,

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
+import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
@@ -199,6 +200,12 @@ internal class DummySeksjonTest : SøknadBesvarer() {
                 assertEquals(Tekst("svartekst"), førsteSvarelement["faktum.generator-dummy-tekst"].asTekst())
                 assertEquals(1.april(), førsteSvarelement["faktum.generator-dummy-localdate"].asLocalDate())
                 assertEquals(Periode(1.mai(), 1.juni()), førsteSvarelement["faktum.generator-dummy-periode"].asPeriode())
+            }
+
+            besvar(DummySeksjon.`dummy land`, Land("NOR"))
+            testRapid.inspektør.message(14).let {
+                assertEquals("NySøknad", it["@event_name"].asText())
+                assertEquals("NOR", it.hentSvar(DummySeksjon.`dummy land`).asText())
             }
         }
     }
