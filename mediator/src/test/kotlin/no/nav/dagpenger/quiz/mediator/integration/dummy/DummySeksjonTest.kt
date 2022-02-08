@@ -29,6 +29,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -165,18 +166,16 @@ internal class DummySeksjonTest : SøknadBesvarer() {
 
             besvar(
                 DummySeksjon.`dummy generator`,
-                listOf(
-                    listOf(
-                        "${DummySeksjon.`generator dummy boolean`}" to true,
-                        "${DummySeksjon.`generator dummy valg`}" to Envalg("faktum.generator-dummy-valg.svar.ja"),
-                        "${DummySeksjon.`generator dummy flervalg`}" to Flervalg("faktum.generator-dummy-flervalg.svar.1", "faktum.generator-dummy-flervalg.svar.2"),
-                        "${DummySeksjon.`generator dummy dropdown`}" to Envalg("faktum.generator-dummy-dropdown.svar.1"),
-                        "${DummySeksjon.`generator dummy int`}" to 4,
-                        "${DummySeksjon.`generator dummy double`}" to 2.5,
-                        "${DummySeksjon.`generator dummy tekst`}" to Tekst("svartekst"),
-                        "${DummySeksjon.`generator dummy localdate`}" to 1.april(),
-                        "${DummySeksjon.`generator dummy periode`}" to Periode(1.mai(), 1.juni()),
-                    )
+                generatorsvar(
+                    "${DummySeksjon.`generator dummy boolean`}" to true,
+                    "${DummySeksjon.`generator dummy valg`}" to Envalg("faktum.generator-dummy-valg.svar.ja"),
+                    "${DummySeksjon.`generator dummy flervalg`}" to Flervalg("faktum.generator-dummy-flervalg.svar.1", "faktum.generator-dummy-flervalg.svar.2"),
+                    "${DummySeksjon.`generator dummy dropdown`}" to Envalg("faktum.generator-dummy-dropdown.svar.1"),
+                    "${DummySeksjon.`generator dummy int`}" to 4,
+                    "${DummySeksjon.`generator dummy double`}" to 2.5,
+                    "${DummySeksjon.`generator dummy tekst`}" to Tekst("svartekst"),
+                    "${DummySeksjon.`generator dummy localdate`}" to 1.april(),
+                    "${DummySeksjon.`generator dummy periode`}" to Periode(1.mai(), 1.juni()),
                 )
             )
 
@@ -203,21 +202,95 @@ internal class DummySeksjonTest : SøknadBesvarer() {
         }
     }
 
-    private val søknadUUID = UUID.randomUUID()
+    @Test
+    fun `Skal kunne svare på et subset av fakta i et generatorfaktum, og senere svare på flere subset, uten å miste data`() {
+        withSøknad(nySøknad) { besvar ->
+            besvar(
+                DummySeksjon.`dummy generator`,
+                generatorsvar(
+                    "${DummySeksjon.`generator dummy boolean`}" to true,
+                    "${DummySeksjon.`generator dummy valg`}" to Envalg("faktum.generator-dummy-valg.svar.ja"),
+                    "${DummySeksjon.`generator dummy flervalg`}" to Flervalg(
+                        "faktum.generator-dummy-flervalg.svar.1",
+                        "faktum.generator-dummy-flervalg.svar.2"
+                    ),
+                )
+            )
 
-    //language=JSON
-    private val ferdigSøknad =
-        """
-        {
-          "@event_name": "NySøknad",
-          "@opprettet": "${LocalDateTime.now()}",
-          "@id": "${UUID.randomUUID()}",
-          "søknad_uuid": "${UUID.randomUUID()}",
-          "fødselsnummer": "123456789",
-          "fakta": []
+            testRapid.inspektør.message(2).let {
+                assertEquals("NySøknad", it["@event_name"].asText())
+
+                val svarliste = it.hentSvar(DummySeksjon.`dummy generator`)
+                val førsteSvarelement = svarliste[0]
+
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-boolean"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-boolean"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-valg"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-flervalg"))
+            }
+
+            besvar(
+                DummySeksjon.`dummy generator`,
+                generatorsvar(
+                    "${DummySeksjon.`generator dummy dropdown`}" to Envalg("faktum.generator-dummy-dropdown.svar.1"),
+                    "${DummySeksjon.`generator dummy int`}" to 4,
+                    "${DummySeksjon.`generator dummy double`}" to 2.5,
+                )
+            )
+
+            testRapid.inspektør.message(3).let {
+                assertEquals("NySøknad", it["@event_name"].asText())
+
+                val svarliste = it.hentSvar(DummySeksjon.`dummy generator`)
+                val førsteSvarelement = svarliste[0]
+
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-boolean"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-boolean"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-valg"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-flervalg"))
+
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-dropdown"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-int"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-double"))
+            }
+
+            besvar(
+                DummySeksjon.`dummy generator`,
+                generatorsvar(
+                    "${DummySeksjon.`generator dummy tekst`}" to Tekst("svartekst"),
+                    "${DummySeksjon.`generator dummy localdate`}" to 1.april(),
+                    "${DummySeksjon.`generator dummy periode`}" to Periode(1.mai(), 1.juni()),
+                )
+            )
+
+            testRapid.inspektør.message(4).let {
+                assertEquals("NySøknad", it["@event_name"].asText())
+
+                val svarliste = it.hentSvar(DummySeksjon.`dummy generator`)
+                val førsteSvarelement = svarliste[0]
+
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-boolean"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-boolean"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-valg"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-flervalg"))
+
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-dropdown"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-int"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-double"))
+
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-tekst"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-localdate"))
+                assertTrue(førsteSvarelement.has("faktum.generator-dummy-periode"))
+            }
         }
-        
-        """.trimIndent()
+    }
+
+    fun generatorsvar(vararg pairs: Pair<String, Any>): List<List<Pair<String, Any>>> =
+        listOf(
+            pairs.toList()
+        )
+
+    private val søknadUUID = UUID.randomUUID()
 
     //language=JSON
     private val nySøknad =
