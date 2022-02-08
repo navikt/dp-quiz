@@ -8,6 +8,7 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Tekst
@@ -35,7 +36,7 @@ import kotlin.test.assertNotNull
 internal class SøknadRecordTest {
     companion object {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
-        private const val expectedFaktaCount = 26
+        private const val expectedFaktaCount = 27
     }
 
     private lateinit var originalSøknadprosess: Søknadprosess
@@ -71,6 +72,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.flervalg(21).besvar(Flervalg("f21.flervalg1"))
             originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
             originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
+            originalSøknadprosess.land(25).besvar(Land("NOR"))
 
             lagreHentOgSammenlign()
         }
@@ -90,6 +92,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.heltall(22).besvar(123)
             originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
             originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
+            originalSøknadprosess.land(25).besvar(Land("SWE"))
 
             lagreHentOgSammenlign()
 
@@ -102,6 +105,7 @@ internal class SøknadRecordTest {
             assertNull(gammelVerdiForKolonnen("heltall"))
             assertNull(gammelVerdiForKolonnen("tekst"))
             assertNull(gammelVerdiForKolonnen("periode_id"))
+            assertNull(gammelVerdiForKolonnen("land"))
 
             originalSøknadprosess.dato(2).besvar(LocalDate.now().minusDays(3))
             originalSøknadprosess.inntekt(6).besvar(19999.årlig)
@@ -112,6 +116,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.heltall(22).besvar(456)
             originalSøknadprosess.tekst(23).besvar(Tekst("tekst2"))
             originalSøknadprosess.periode(24).besvar(Periode(1.mars(), 1.april()))
+            originalSøknadprosess.land(25).besvar(Land("NOR"))
 
             lagreHentOgSammenlign()
 
@@ -124,6 +129,7 @@ internal class SøknadRecordTest {
             assertNotNull(gammelVerdiForKolonnen("heltall"))
             assertNotNull(gammelVerdiForKolonnen("tekst"))
             assertNotNull(gammelVerdiForKolonnen("periode_id"))
+            assertNotNull(gammelVerdiForKolonnen("land"))
         }
     }
 

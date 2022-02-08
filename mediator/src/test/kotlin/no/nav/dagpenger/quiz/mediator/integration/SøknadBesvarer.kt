@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Inntekt
+import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.faktum.Valg
@@ -44,6 +45,7 @@ abstract class SøknadBesvarer {
                 is Envalg, is Flervalg -> besvarValg(søknadsId, faktumId, svar as Valg)
                 is Dokument -> besvarDokument(søknadsId, faktumId, svar)
                 is List<*> -> besvarGenerator(søknadsId, faktumId, svar as List<List<Pair<String, Any>>>)
+                is Land -> besvarLand(søknadsId, faktumId, svar)
                 else -> besvar(søknadsId, faktumId, svar)
             }
         }
@@ -81,6 +83,24 @@ abstract class SøknadBesvarer {
                 "id": "$faktumId",
                 "svar": "$svar",
                 "clazz": "${svar::class.java.simpleName.lowercase()}"
+            }
+              ],
+              "@opprettet": "${LocalDateTime.now()}",
+              "@id": "${UUID.randomUUID()}"
+            }
+        """.trimIndent()
+        testRapid.sendTestMessage(message)
+    }
+
+    protected fun besvarLand(søknadsId: String, faktumId: Int, svar: Land) {
+        //language=JSON
+        val message = """{
+              "søknad_uuid": "$søknadsId",
+              "@event_name": "faktum_svar",
+              "fakta": [{
+                "id": "$faktumId",
+                "svar": "${svar.alpha3Code}",
+                "clazz": "land"
             }
               ],
               "@opprettet": "${LocalDateTime.now()}",

@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Identer.Ident
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.faktum.Prosessversjon
@@ -30,7 +31,12 @@ import java.util.UUID
 class SøknadRecord : SøknadPersistence {
     private val personRecord = PersonRecord()
 
-    override fun ny(identer: Identer, type: Versjon.UserInterfaceType, prosessVersjon: Prosessversjon, uuid: UUID): Søknadprosess {
+    override fun ny(
+        identer: Identer,
+        type: Versjon.UserInterfaceType,
+        prosessVersjon: Prosessversjon,
+        uuid: UUID
+    ): Søknadprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
         return Versjon.id(prosessVersjon).søknadprosess(person, type, uuid).also { søknadprosess ->
             NySøknad(søknadprosess.søknad, type)
@@ -91,6 +97,11 @@ class SøknadRecord : SøknadPersistence {
         if (row.tekst != null) {
             (faktum as Faktum<Tekst>).rehydrer(row.tekst, row.besvartAv)
         }
+
+        if (row.land != null) {
+            (faktum as Faktum<Land>).rehydrer(row.land, row.besvartAv)
+        }
+
         if (row.opplastet != null && row.url != null) {
             (faktum as Faktum<Dokument>).rehydrer(
                 Dokument(
@@ -138,6 +149,7 @@ class SøknadRecord : SøknadPersistence {
                                 envalg.verdier AS envalgVerdier,
                                 flervalg.verdier AS flervalgVerdier,
                                 faktum_verdi.tekst AS tekst,
+                                faktum_verdi.land as land,
                                 periode.fom AS fom,
                                 periode.tom AS tom
                             FROM faktum_verdi
@@ -165,6 +177,7 @@ class SøknadRecord : SøknadPersistence {
                         it.arrayOrNull<String>("envalgVerdier")?.let { verdier -> Envalg(*verdier) },
                         it.arrayOrNull<String>("flervalgVerdier")?.let { verdier -> Flervalg(*verdier) },
                         it.stringOrNull("tekst")?.let { verdi -> Tekst(verdi) },
+                        it.stringOrNull("land")?.let { verdi -> Land(verdi) },
                         it.localDateOrNull("fom"),
                         it.localDateOrNull("tom")
                     )
@@ -187,6 +200,7 @@ class SøknadRecord : SøknadPersistence {
         val envalg: Envalg?,
         val flervalg: Flervalg?,
         val tekst: Tekst?,
+        val land: Land?,
         val fom: LocalDate?,
         val tom: LocalDate?,
         val id: FaktumId = if (indeks == 0) FaktumId(root_id) else FaktumId(root_id).medIndeks(indeks)
@@ -225,7 +239,11 @@ class SøknadRecord : SøknadPersistence {
         faktum.id to (if (faktum.erBesvart()) faktum else null)
     }.toMap().toMutableMap()
 
-    private fun slettDødeTemplatefakta(søknad: Søknad, nyeSvar: Map<String, Faktum<*>?>, originalSvar: MutableMap<String, Faktum<*>?>) {
+    private fun slettDødeTemplatefakta(
+        søknad: Søknad,
+        nyeSvar: Map<String, Faktum<*>?>,
+        originalSvar: MutableMap<String, Faktum<*>?>
+    ) {
         originalSvar.keys.toSet()
             .subtract(nyeSvar.keys.toSet())
             .map { FaktumId(it).reflection { rootId, indeks -> Triple(rootId, indeks, it) } }
@@ -269,9 +287,17 @@ class SøknadRecord : SøknadPersistence {
             //language=PostgreSQL
             is Boolean -> """UPDATE faktum_verdi  SET boolsk = $svar , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
             //language=PostgreSQL
-            is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
+            is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , besvart_av = ${
+            besvart(
+                besvartAv
+            )
+            } , opprettet=NOW() AT TIME ZONE 'utc' """
             //language=PostgreSQL
-            is LocalDate -> """UPDATE faktum_verdi  SET dato = '${tilPostgresDato(svar)}' , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
+            is LocalDate -> """UPDATE faktum_verdi  SET dato = '${tilPostgresDato(svar)}' , besvart_av = ${
+            besvart(
+                besvartAv
+            )
+            } , opprettet=NOW() AT TIME ZONE 'utc' """
             //language=PostgreSQL
             is Int -> """UPDATE faktum_verdi  SET heltall = $svar, besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
             //language=PostgreSQL
@@ -279,11 +305,21 @@ class SøknadRecord : SøknadPersistence {
             //language=PostgreSQL
             is Tekst -> """UPDATE faktum_verdi  SET tekst = '${svar.verdi}', besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
             //language=PostgreSQL
+            is Land -> """UPDATE faktum_verdi  SET land = '${svar.alpha3Code}', besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
+            //language=PostgreSQL
             is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
-|                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id) , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
+|                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id) , besvart_av = ${
+            besvart(
+                besvartAv
+            )
+            } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
             //language=PostgreSQL
             is Periode -> """WITH inserted_id AS (INSERT INTO periode (fom, tom) VALUES (${svar.reflection { fom, tom -> "'$fom', ${tom?.let { "'$tom'" } ?: "NULL"}" }}) returning id) 
-|                               UPDATE faktum_verdi SET periode_id = (SELECT id FROM inserted_id) , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
+|                               UPDATE faktum_verdi SET periode_id = (SELECT id FROM inserted_id) , besvart_av = ${
+            besvart(
+                besvartAv
+            )
+            } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
             //language=PostgreSQL
             is Envalg ->
                 """WITH valg_inserted_id AS (INSERT INTO valgte_verdier (verdier) VALUES ('{${svar.joinToString { """"$it"""" }}}') returning id) 
@@ -331,7 +367,7 @@ class SøknadRecord : SøknadPersistence {
 
     private fun arkiverFaktum(søknad: Søknad, rootId: Int, indeks: Int): ExecuteQueryAction =
         queryOf( //language=PostgreSQL
-            """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, boolsk, aarlig_inntekt, dokument_id, dato, heltall, envalg_id, flervalg_id, tekst, periode_id, opprettet, besvart_av)
+            """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, boolsk, aarlig_inntekt, dokument_id, dato, heltall, envalg_id, flervalg_id, tekst,land, periode_id, opprettet, besvart_av)
             SELECT soknad_id,
                    faktum_verdi.faktum_id,
                    faktum_verdi.indeks,
@@ -343,6 +379,7 @@ class SøknadRecord : SøknadPersistence {
                    faktum_verdi.envalg_id,
                    faktum_verdi.flervalg_id,
                    faktum_verdi.tekst,
+                   faktum_verdi.land,
                    faktum_verdi.periode_id,
                    faktum_verdi.opprettet,
                    faktum_verdi.besvart_av

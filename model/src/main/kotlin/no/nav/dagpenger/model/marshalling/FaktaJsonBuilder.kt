@@ -13,6 +13,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt
+import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
@@ -303,6 +304,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
                 is Periode -> this.set(beskrivendeId, svar.asJsonNode())
                 is Flervalg -> this.set(beskrivendeId, svar.asJsonNode())
                 is Envalg -> this.put(beskrivendeId, svar.first())
+                is Land -> this.put(beskrivendeId, svar.alpha3Code)
                 is Inntekt -> this.put(beskrivendeId, svar.asJsonNode())
                 else -> throw IllegalArgumentException("Ukjent datatype ${svar!!::class.simpleName}")
             }

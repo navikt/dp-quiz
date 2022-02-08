@@ -140,6 +140,7 @@ internal class FaktumSvarService(
         besvartAv: String?
     ) {
         when (clazz) {
+            "land" -> søknadprosess.land(faktumId).besvar(svar.asLand(), besvartAv)
             "boolean" -> søknadprosess.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)
             "int" -> søknadprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv) // todo: remove?
             "integer" -> søknadprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv)

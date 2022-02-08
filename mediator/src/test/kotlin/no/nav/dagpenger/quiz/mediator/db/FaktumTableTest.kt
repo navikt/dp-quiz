@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 
 internal class FaktumTableTest {
     companion object {
-        const val expectedFaktumRecordCount = 26
+        const val expectedFaktumRecordCount = 27
     }
 
     @Test

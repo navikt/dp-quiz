@@ -1,0 +1,4 @@
+ALTER TABLE faktum_verdi
+    ADD COLUMN IF NOT EXISTS land CHAR (3) NULL;
+ALTER TABLE gammel_faktum_verdi
+    ADD COLUMN IF NOT EXISTS land CHAR (3) NULL;
