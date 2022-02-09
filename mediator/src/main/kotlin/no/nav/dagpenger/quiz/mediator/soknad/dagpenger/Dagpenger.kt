@@ -17,26 +17,33 @@ internal object Dagpenger {
 
     private val logger = KotlinLogging.logger { }
 
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 208)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 209)
 
     fun registrer(registrer: (søknad: Søknad) -> Unit) {
         registrer(søknad)
     }
 
+    private val faktaseksjoner = listOf(
+        AndreYtelser,
+        Arbeidsforhold,
+        Barnetillegg,
+        Bostedsland,
+        EgenNæring,
+        EøsArbeidsforhold,
+        KoronaFortsattRett,
+        ReellArbeidssoker,
+        Tilleggsopplysninger,
+        Utdanning,
+        Verneplikt
+    )
+
+    private val alleFakta = flatMapAlleFakta()
+    private val alleDatabaseIder = flatMapAlleDatabaseIder()
+
     internal val søknad: Søknad
         get() = Søknad(
             VERSJON_ID,
-            *AndreYtelser.fakta(),
-            *Arbeidsforhold.fakta(),
-            *Barnetillegg.fakta(),
-            *Bostedsland.fakta(),
-            *EgenNæring.fakta(),
-            *EøsArbeidsforhold.fakta(),
-            *KoronaFortsattRett.fakta(),
-            *ReellArbeidssoker.fakta(),
-            *Tilleggsopplysninger.fakta(),
-            *Utdanning.fakta(),
-            *Verneplikt.fakta()
+            *alleFakta
         )
 
     private object Seksjoner {
@@ -44,17 +51,7 @@ internal object Dagpenger {
         val søkerSeksjon = søknad.seksjon(
             "søkerseksjon",
             Rolle.søker,
-            *AndreYtelser.databaseIder(),
-            *Arbeidsforhold.databaseIder(),
-            *Barnetillegg.databaseIder(),
-            *Bostedsland.databaseIder(),
-            *EgenNæring.databaseIder(),
-            *EøsArbeidsforhold.databaseIder(),
-            *KoronaFortsattRett.databaseIder(),
-            *ReellArbeidssoker.databaseIder(),
-            *Tilleggsopplysninger.databaseIder(),
-            *Utdanning.databaseIder(),
-            *Verneplikt.databaseIder()
+            *alleDatabaseIder
         )
 
         val navSeksjon = søknad.seksjon(
@@ -93,4 +90,12 @@ internal object Dagpenger {
     ).registrer().also {
         logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
     }
+
+    private fun flatMapAlleFakta() = faktaseksjoner.flatMap { seksjon ->
+        seksjon.fakta().toList()
+    }.toTypedArray()
+
+    private fun flatMapAlleDatabaseIder() = faktaseksjoner.flatMap { seksjon ->
+        seksjon.databaseIder().toList()
+    }.toIntArray()
 }
