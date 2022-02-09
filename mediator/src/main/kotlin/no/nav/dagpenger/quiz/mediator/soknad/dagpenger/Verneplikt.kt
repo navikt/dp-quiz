@@ -9,8 +9,4 @@ object Verneplikt : DslFaktaseksjon {
     override val fakta = listOf(
         boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd" id `avtjent militaer sivilforsvar tjeneste siste 12 mnd`
     )
-
-    override val alleVariabler = listOf(
-        `avtjent militaer sivilforsvar tjeneste siste 12 mnd`
-    )
 }

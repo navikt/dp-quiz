@@ -10,8 +10,4 @@ object Bostedsland : DslFaktaseksjon {
         envalg faktum "faktum.hvilket-land-bor-du-i"
             med "" id `hvilket land bor du i`
     )
-
-    override val alleVariabler = listOf(
-        `hvilket land bor du i`
-    )
 }

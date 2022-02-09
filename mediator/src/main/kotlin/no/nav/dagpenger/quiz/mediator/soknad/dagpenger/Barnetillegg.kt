@@ -33,15 +33,4 @@ object Barnetillegg : DslFaktaseksjon {
             med "NOR" id `barn statsborgerskap`,
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`
     )
-
-    override val alleVariabler = listOf(
-        `barn liste`,
-        `barn fornavn mellomnavn`,
-        `barn etternavn`,
-        `barn foedselsdato`,
-        `barn statsborgerskap`,
-        `forsoerger du barnet`,
-        `barn aarsinntekt over 1g`,
-        `barn inntekt`,
-    )
 }

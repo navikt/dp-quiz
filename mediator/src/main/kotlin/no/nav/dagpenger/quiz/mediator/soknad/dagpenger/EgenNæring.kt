@@ -48,18 +48,4 @@ object EgenNæring : DslFaktaseksjon {
             med "svar.2018" id `faktum eget gaardsbruk arbeidsaar`,
         tekst faktum "faktum-eget-gaardsbruk-arbeidstimer-beregning" id `faktum eget gaardsbruk arbeidstimer beregning`
     )
-
-    override val alleVariabler = listOf(
-        `driver du egen naering`,
-        `egen naering organisasjonsnummer liste`,
-        `egen naering organisasjonsnummer`,
-        `egen naering arbeidstimer`,
-        `driver du eget gaardsbruk`,
-        `faktum eget gaardsbruk organisasjonsnummer`,
-        `faktum eget gaardsbruk type gaardsbruk`,
-        `faktum eget gaardsbruk hvem eier`,
-        `faktum eget gaardsbruk arbeidstimer`,
-        `faktum eget gaardsbruk arbeidsaar`,
-        `faktum eget gaardsbruk arbeidstimer beregning`,
-    )
 }

@@ -9,8 +9,4 @@ object Tilleggsopplysninger : DslFaktaseksjon {
     override val fakta = listOf(
         tekst faktum "faktum.tilleggsopplysninger" id tilleggsopplysninger
     )
-
-    override val alleVariabler = listOf(
-        tilleggsopplysninger
-    )
 }

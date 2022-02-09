@@ -38,15 +38,4 @@ object ReellArbeidssoker : DslFaktaseksjon {
         tekst faktum "faktum.ikke-denne-type-arbeid" id `ikke denne type arbeid`,
         boolsk faktum "faktum.ethvert-arbeid" id `ethvert arbeid`
     )
-
-    override val alleVariabler = listOf(
-        `hel deltid`,
-        `kun deltid aarsak`,
-        `kun deltid aarsak antall timer`,
-        `hele norge`,
-        `ikke hele norge`,
-        `alle typer arbeid`,
-        `ikke denne type arbeid`,
-        `ethvert arbeid`,
-    )
 }

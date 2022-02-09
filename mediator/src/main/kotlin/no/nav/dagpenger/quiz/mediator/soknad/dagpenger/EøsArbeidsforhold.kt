@@ -28,13 +28,4 @@ object EøsArbeidsforhold : DslFaktaseksjon {
         tekst faktum "faktum.eos-arbeidsforhold-personnummer" id `eos arbeidsforhold personnummer`,
         periode faktum "faktum.eos-arbeidsforhold-varighet" id `eos arbeidsforhold varighet`
     )
-
-    override val alleVariabler = listOf(
-        `eos arbeid siste 36 mnd`,
-        `eos arbeidsforhold`,
-        `eos arbeidsforhold arbeidsgivernavn`,
-        `eos arbeidsforhold land`,
-        `eos arbeidsforhold personnummer`,
-        `eos arbeidsforhold varighet`,
-    )
 }

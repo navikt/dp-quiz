@@ -88,29 +88,4 @@ object DummySeksjon : DslFaktaseksjon {
         periode faktum "faktum.generator-dummy-periode" id `generator dummy periode`,
         land faktum "faktum.dummy-land" id `dummy land`
     )
-
-    override val alleVariabler = listOf(
-        `dummy boolean`,
-        `dummy valg`,
-        `dummy subfaktum tekst`,
-        `dummy flervalg`,
-        `dummy dropdown`,
-        `dummy int`,
-        `dummy double`,
-        `dummy tekst`,
-        `dummy localdate`,
-        `dummy periode`,
-        `dummy generator`,
-        `dummy land`,
-        `generator dummy boolean`,
-        `generator dummy valg`,
-        `generator dummy flervalg`,
-        `generator dummy dropdown`,
-        `generator dummy int`,
-        `generator dummy double`,
-        `generator dummy tekst`,
-        `generator dummy localdate`,
-        `generator dummy periode`,
-        `generator dummy subfaktum tekst`
-    )
 }

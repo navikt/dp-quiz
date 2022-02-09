@@ -120,42 +120,4 @@ object Arbeidsforhold : DslFaktaseksjon {
             med "svar.avskjediget"
             med "svar.ikke-endret" id `arbeidsforhold aarsak`
     )
-
-    override val alleVariabler = listOf(
-        `dagpenger soknadsdato`,
-        `fast arbeidstid`,
-        arbeidsforhold,
-        `navn bedrift`,
-        `arbeidsforhold land`,
-        `arbeidsforhold aarsak`,
-        `arbeidsforhold varighet`,
-        `arbeidsforhold ekstra opplysninger laerlig`,
-        `arbeidsforhold ekstra opplysninger fiskeindustri`,
-        `arbeidsforhold ekstra opplysninger flere arbeidsforhold`,
-        `arbeidsforhold arbeidstid timer i uken alle forhold`,
-        `arbeidsforhold arbeidstid timer i uken`,
-        `arbeidsforhold aarsak til oppsigelse fra arbeidsgiver`,
-        `arbeidsforhold aarsak til avskjedigelse fra arbeidsgiver`,
-        `tilbud annen stilling annet sted samme arbeidsgiver`,
-        `tilbud forsette samme arbeidsgiver`,
-        `arbeids skift turnus rotasjon`,
-        `arbeidsforhold rotasjon antall arbeidsdager`,
-        `arbeidsforhold rotasjon antall fridager`,
-        `midlertidig arbeidsforhold med sluttdato`,
-        `midlertidig arbeidsforhold sluttdato`,
-        `arbeidsforhold permitert`,
-        `arbeidsforhold permitteringsperiode`,
-        `arbeidsforhold permitteringgrad`,
-        `arbeidsforhold lonnsplinkt arbeidsgiver`,
-        `aarsak til sagt opp selv`,
-        `arbeidsforhold arbeidsgiver konkurs navn bostyrer`,
-        `arbeidsforhold dagpenger og forskudd lonnsgarantimidler`,
-        `arbeidsforhold godta nav trekk direkte lonnsgaranti`,
-        `arbeidsforhold sok lonnsgarantimidler`,
-        `arbeidsforhold lonnsgaranti dekker krav`,
-        `arbeidsforhold godta trekk direkte konkursbo`,
-        `arbeidsforhold utbetalt lonn etter konkurs`,
-        `faktum arbeidsforhold konkurs siste dag lonn`,
-        `arbeidsforhold tillegsinformasjon`,
-    )
 }

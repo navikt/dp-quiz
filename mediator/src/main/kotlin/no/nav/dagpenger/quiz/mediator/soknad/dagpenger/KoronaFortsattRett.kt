@@ -11,9 +11,4 @@ object KoronaFortsattRett : DslFaktaseksjon {
         boolsk faktum "faktum.oppbrukt-dagpengeperiode" id `oppbrukt dagpengeperiode`,
         boolsk faktum "faktum.onsker-fortsette-avsluttet-periode" id `onsker fortsette avsluttet periode`
     )
-
-    override val alleVariabler = listOf(
-        `oppbrukt dagpengeperiode`,
-        `onsker fortsette avsluttet periode`
-    )
 }

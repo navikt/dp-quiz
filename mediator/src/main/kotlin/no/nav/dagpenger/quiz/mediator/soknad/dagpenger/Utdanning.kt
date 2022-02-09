@@ -12,8 +12,4 @@ object Utdanning : DslFaktaseksjon {
             med "svar.nei-men-siste-6-mnd"
             med "svar.ja" id utdanning
     )
-
-    override val alleVariabler = listOf(
-        utdanning
-    )
 }

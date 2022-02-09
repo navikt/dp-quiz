@@ -41,18 +41,4 @@ object AndreYtelser : DslFaktaseksjon {
         boolsk faktum "faktum.utbetaling-okonomisk-gode-tidligere-arbeidsgiver" id `utbetaling okonomisk gode tidligere arbeidsgiver`,
         tekst faktum "faktum.okonomisk-gode-tidligere-arbeidsgiver-hva-omfatter-avtalen" id `okonomisk gode tidligere arbeidsgiver hva omfatter avtalen`
     )
-
-    override val alleVariabler = listOf(
-        `andre ytelser`,
-        `tjenestepensjon hvem utbetaler hvilken periode`,
-        `arbeidsloshet garantikassen for fiskere periode`,
-        `garantilott garantikassen for fiskere periode`,
-        `etterlonn hvem utbetaler hvilken periode`,
-        `vartpenger hvem utbetaler hvilken periode`,
-        `dagpenger annet eos land`,
-        `annen ytelse hvilken`,
-        `annen ytelse hvem utebetaler hvilken periode`,
-        `utbetaling okonomisk gode tidligere arbeidsgiver`,
-        `okonomisk gode tidligere arbeidsgiver hva omfatter avtalen`,
-    )
 }
