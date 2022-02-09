@@ -11,8 +11,9 @@
 - [generator](generator.md)
 - [inntekt (IKKE I BRUK I MVP 1)](inntekt.md)
 - [int](int.md)
-- [periode (WIP)](periode.md)
-- [tekst (WIP)](tekst.md)
+- [periode](periode.md)
+- [tekst](tekst.md)
+- [land](land.md)
 
 
 
