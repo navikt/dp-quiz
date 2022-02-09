@@ -1,8 +1,8 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
@@ -34,8 +34,7 @@ object AndreYtelser : DslFaktaseksjon {
         tekst faktum "faktum.garantilott-garantikassen-for-fiskere-periode" id `garantilott garantikassen for fiskere periode`,
         tekst faktum "faktum.etterlonn-hvem-utbetaler-hvilken-periode" id `etterlonn hvem utbetaler hvilken periode`,
         tekst faktum "faktum.vartpenger-hvem-utbetaler-hvilken-periode" id `vartpenger hvem utbetaler hvilken periode`,
-        envalg faktum "faktum.dagpenger-annet-eos-land"
-            med "" id `dagpenger annet eos land`,
+        land faktum "faktum.dagpenger-annet-eos-land" id `dagpenger annet eos land`,
         tekst faktum "faktum.annen-ytelse-hvilken" id `annen ytelse hvilken`,
         tekst faktum "faktum.annen-ytelse-hvem-utebetaler-hvilken-periode" id `annen ytelse hvem utebetaler hvilken periode`,
         boolsk faktum "faktum.utbetaling-okonomisk-gode-tidligere-arbeidsgiver" id `utbetaling okonomisk gode tidligere arbeidsgiver`,

@@ -39,7 +39,6 @@ object EgenNæring : DslFaktaseksjon {
             med "faktum.eget-gaardsbruk-hvem-eier.svar.ektefelle-samboer"
             med "faktum.eget-gaardsbruk-hvem-eier.svar.andre" id `faktum eget gaardsbruk hvem eier`,
         desimaltall faktum "faktum-eget-gaardsbruk-arbeidstimer" id `faktum eget gaardsbruk arbeidstimer`,
-
         envalg faktum "faktum-eget-gaardsbruk-arbeidsaar"
             med "svar.2022"
             med "svar.2021"

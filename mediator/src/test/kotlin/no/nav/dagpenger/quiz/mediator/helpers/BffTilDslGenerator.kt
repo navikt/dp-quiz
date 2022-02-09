@@ -79,7 +79,7 @@ class BffTilDslGenerator(
         "periode" -> "periode"
         "boolean" -> "boolsk"
         "localdate" -> "dato"
-         else -> throw IllegalArgumentException("Ukjent faktumtype $bffType")
+        else -> throw IllegalArgumentException("Ukjent faktumtype $bffType")
     }
 
     private fun JsonNode.lagDatabaseId(): String {

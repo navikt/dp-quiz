@@ -2,8 +2,8 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
@@ -25,12 +25,13 @@ object Barnetillegg : DslFaktaseksjon {
             og `barn etternavn`
             og `barn foedselsdato`
             og `barn statsborgerskap`
-            og `forsoerger du barnet`,
+            og `forsoerger du barnet`
+            og `barn aarsinntekt over 1g`
+            og `barn inntekt`,
         tekst faktum "faktum.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn`,
         tekst faktum "faktum.barn-etternavn" id `barn etternavn`,
         dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato`,
-        envalg faktum "faktum.barn-statsborgerskap"
-            med "NOR" id `barn statsborgerskap`,
+        land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap`,
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`
     )
 }

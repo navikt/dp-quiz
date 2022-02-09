@@ -1,8 +1,8 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
@@ -23,8 +23,7 @@ object EøsArbeidsforhold : DslFaktaseksjon {
             og `eos arbeidsforhold personnummer`
             og `eos arbeidsforhold varighet`,
         tekst faktum "faktum.eos-arbeidsforhold-arbeidsgivernavn" id `eos arbeidsforhold arbeidsgivernavn`,
-        envalg faktum "faktum.eos-arbeidsforhold-land"
-            med "" id `eos arbeidsforhold land`,
+        land faktum "faktum.eos-arbeidsforhold-land" id `eos arbeidsforhold land`,
         tekst faktum "faktum.eos-arbeidsforhold-personnummer" id `eos arbeidsforhold personnummer`,
         periode faktum "faktum.eos-arbeidsforhold-varighet" id `eos arbeidsforhold varighet`
     )
