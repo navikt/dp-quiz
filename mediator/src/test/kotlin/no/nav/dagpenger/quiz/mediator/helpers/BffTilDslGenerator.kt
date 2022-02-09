@@ -73,12 +73,13 @@ class BffTilDslGenerator(
 
     private fun oversettTilDslType(bffType: String): String = when (bffType) {
         "int", "generator" -> "heltall"
+        "land" -> "land"
         "tekst" -> "tekst"
         "double" -> "desimaltall"
         "periode" -> "periode"
         "boolean" -> "boolsk"
         "localdate" -> "dato"
-        else -> throw IllegalArgumentException("Ukjent faktumtype $bffType")
+         else -> throw IllegalArgumentException("Ukjent faktumtype $bffType")
     }
 
     private fun JsonNode.lagDatabaseId(): String {

@@ -134,17 +134,19 @@ const val `dummy double` = 7
 const val `dummy tekst` = 8
 const val `dummy localdate` = 9
 const val `dummy periode` = 10
-const val `dummy generator` = 11
-const val `generator dummy boolean` = 12
-const val `generator dummy valg` = 13
-const val `generator dummy flervalg` = 14
-const val `generator dummy dropdown` = 15
-const val `generator dummy int` = 16
-const val `generator dummy double` = 17
-const val `generator dummy tekst` = 18
-const val `generator dummy localdate` = 19
-const val `generator dummy periode` = 20
-const val `generator dummy subfaktum tekst` = 21
+const val `dummy land` = 11
+const val `dummy generator` = 12
+const val `generator dummy boolean` = 13
+const val `generator dummy valg` = 14
+const val `generator dummy flervalg` = 15
+const val `generator dummy dropdown` = 16
+const val `generator dummy int` = 17
+const val `generator dummy double` = 18
+const val `generator dummy tekst` = 19
+const val `generator dummy localdate` = 20
+const val `generator dummy periode` = 21
+const val `generator dummy land` = 22
+const val `generator dummy subfaktum tekst` = 23
     """.trimIndent()
 
 private val forventetDsl =
@@ -168,6 +170,7 @@ desimaltall faktum "faktum.dummy-double" id `dummy double`,
 tekst faktum "faktum.dummy-tekst" id `dummy tekst`,
 dato faktum "faktum.dummy-localdate" id `dummy localdate`,
 periode faktum "faktum.dummy-periode" id `dummy periode`,
+land faktum "faktum.dummy-land" id `dummy land`,
 tekst faktum "faktum.generator-dummy-subfaktum-tekst" id `generator dummy subfaktum tekst`,
 heltall faktum "faktum.dummy-generator" id `dummy generator`
   genererer `generator dummy boolean`
@@ -179,7 +182,8 @@ heltall faktum "faktum.dummy-generator" id `dummy generator`
   og `generator dummy double`
   og `generator dummy tekst`
   og `generator dummy localdate`
-  og `generator dummy periode`,
+  og `generator dummy periode`
+  og `generator dummy land`,
 boolsk faktum "faktum.generator-dummy-boolean" id `generator dummy boolean`,
 envalg faktum "faktum.generator-dummy-valg"
   med "svar.ja"
@@ -197,7 +201,8 @@ heltall faktum "faktum.generator-dummy-int" id `generator dummy int`,
 desimaltall faktum "faktum.generator-dummy-double" id `generator dummy double`,
 tekst faktum "faktum.generator-dummy-tekst" id `generator dummy tekst`,
 dato faktum "faktum.generator-dummy-localdate" id `generator dummy localdate`,
-periode faktum "faktum.generator-dummy-periode" id `generator dummy periode`
+periode faktum "faktum.generator-dummy-periode" id `generator dummy periode`,
+land faktum "faktum.generator-dummy-land" id `generator dummy land`
 """.trim()
 
 private const val `dummy-seksjon-ts` =
@@ -270,6 +275,10 @@ export const dummySeksjon: MockDataSeksjon = {
       type: "periode",
     },
     {
+      id: "faktum.dummy-land",
+      type: "land",
+    },
+    {
       id: "faktum.dummy-generator",
       type: "generator",
       faktum: [
@@ -334,6 +343,10 @@ export const dummySeksjon: MockDataSeksjon = {
         {
           id: "faktum.generator-dummy-periode",
           type: "periode",
+        },
+        {
+          id: "faktum.generator-dummy-land",
+          type: "land",
         },
       ],
     },
