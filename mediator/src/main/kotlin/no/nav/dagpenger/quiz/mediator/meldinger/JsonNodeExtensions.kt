@@ -18,7 +18,7 @@ fun JsonNode.asEnvalg(): Envalg {
         array.map { it.asText() }
     } else {
         val valg = this.asText()
-        listOf(valg)
+        listOf("faktum.barn-statsborgerskap.$valg")
     }
     val valgteSvaralternativer = svarene.map { it }
     return Envalg(*valgteSvaralternativer.toTypedArray())
