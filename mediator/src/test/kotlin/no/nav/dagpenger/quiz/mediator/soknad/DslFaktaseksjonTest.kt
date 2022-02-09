@@ -1,8 +1,10 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
 internal class DslFaktaseksjonTest {
 
@@ -11,14 +13,14 @@ internal class DslFaktaseksjonTest {
         const val id2 = 2
         const val id3 = 3
         override val fakta = listOf(
-            tekst faktum "faktum 1" id id1,
+            dato faktum "faktum 1" id id1,
             tekst faktum "faktum 2" id id2,
-            tekst faktum "faktum 3" id id3,
+            heltall faktum "faktum 3" id id3,
         )
     }
 
     @Test
-    fun `Skal kunne lese ut verdien av alle heltall som er definert i klassen som bruker interface-et`() {
+    fun `Skal kunne lese ut verdien av alle heltall som er definert i en klasse som bruker interface-et`() {
         val databaseIder = Testseksjon.databaseIder()
 
         assertEquals(3, databaseIder.size)
@@ -26,6 +28,24 @@ internal class DslFaktaseksjonTest {
             val forventetId = index + 1
             assertEquals(forventetId, variabel)
         }
-        assertEquals(1 + 2 + 3, databaseIder.sum())
     }
+
+    @Test
+    fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
+        Testseksjon.verifiserFeltsammensetting(3, 1 + 2 + 3)
+    }
+}
+
+fun DslFaktaseksjon.verifiserFeltsammensetting(forventetAntallDatabaseIder: Int, forventetSumAvAlleDatabaseIder: Int) {
+    val databaseIder = databaseIder()
+    assertEquals(
+        forventetAntallDatabaseIder,
+        databaseIder.size,
+        "Antall felter har endret seg, har du oppdatert versjonsnummeret for søknader som bruker denne seksjonen?"
+    )
+    assertEquals(
+        forventetSumAvAlleDatabaseIder,
+        databaseIder.sum(),
+        "Det ser ut som at feltsammensettingen har endret seg, har du oppdatert versjonsnummeret for søknader som bruker denne seksjonen?"
+    )
 }
