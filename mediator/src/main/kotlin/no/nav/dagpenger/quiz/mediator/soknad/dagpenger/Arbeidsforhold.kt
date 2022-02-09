@@ -8,9 +8,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
-import no.nav.dagpenger.model.factory.FaktumFactory
+import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
-object Arbeidsforhold {
+object Arbeidsforhold : DslFaktaseksjon {
     const val `dagpenger soknadsdato` = 8001
     const val `fast arbeidstid` = 8002
     const val arbeidsforhold = 8003
@@ -47,7 +47,7 @@ object Arbeidsforhold {
     const val `faktum arbeidsforhold konkurs siste dag lonn` = 8034
     const val `arbeidsforhold tillegsinformasjon` = 8035
 
-    private val fakta = listOf<FaktumFactory<*>>(
+    override val fakta = listOf(
         dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger soknadsdato`,
         envalg faktum "faktum.fast-arbeidstid"
             med "svar.ja-fast"
@@ -121,7 +121,7 @@ object Arbeidsforhold {
             med "svar.ikke-endret" id `arbeidsforhold aarsak`
     )
 
-    private val alleVariabler = listOf(
+    override val alleVariabler = listOf(
         `dagpenger soknadsdato`,
         `fast arbeidstid`,
         arbeidsforhold,
@@ -158,7 +158,4 @@ object Arbeidsforhold {
         `faktum arbeidsforhold konkurs siste dag lonn`,
         `arbeidsforhold tillegsinformasjon`,
     )
-
-    fun fakta(): Array<FaktumFactory<*>> = fakta.toTypedArray()
-    fun variabler(): IntArray = alleVariabler.toIntArray()
 }

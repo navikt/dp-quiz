@@ -9,10 +9,10 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
-import no.nav.dagpenger.model.factory.FaktumFactory
+import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 // @todo: Vurdere om denne skal inkluderes i SøknadEksempel1.kt i stedet
-object DummySeksjon {
+object DummySeksjon : DslFaktaseksjon {
 
     const val `dummy boolean` = 1
     const val `dummy valg` = 2
@@ -37,7 +37,7 @@ object DummySeksjon {
     const val `generator dummy subfaktum tekst` = 21
     const val `dummy land` = 22
 
-    private val fakta = listOf<FaktumFactory<*>>(
+    override val fakta = listOf(
         boolsk faktum "faktum.dummy-boolean" id `dummy boolean`,
         envalg faktum "faktum.dummy-valg"
             med "svar.ja"
@@ -89,7 +89,7 @@ object DummySeksjon {
         land faktum "faktum.dummy-land" id `dummy land`
     )
 
-    private val alleVariabler = listOf(
+    override val alleVariabler = listOf(
         `dummy boolean`,
         `dummy valg`,
         `dummy subfaktum tekst`,
@@ -113,8 +113,4 @@ object DummySeksjon {
         `generator dummy periode`,
         `generator dummy subfaktum tekst`
     )
-
-    fun fakta(): Array<FaktumFactory<*>> = fakta.toTypedArray()
-
-    fun variabler(): IntArray = alleVariabler.toIntArray()
 }

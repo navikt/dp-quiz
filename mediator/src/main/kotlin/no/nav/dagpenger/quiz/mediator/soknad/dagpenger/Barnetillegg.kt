@@ -5,9 +5,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
-import no.nav.dagpenger.model.factory.FaktumFactory
+import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
-object Barnetillegg {
+object Barnetillegg : DslFaktaseksjon {
     const val `barn liste` = 1001
     const val `barn fornavn mellomnavn` = 1002
     const val `barn etternavn` = 1003
@@ -17,7 +17,7 @@ object Barnetillegg {
     const val `barn aarsinntekt over 1g` = 1007
     const val `barn inntekt` = 1008
 
-    private val fakta = listOf<FaktumFactory<*>>(
+    override val fakta = listOf(
         boolsk faktum "faktum.barn-aarsinntekt-over-1g" id `barn aarsinntekt over 1g`,
         heltall faktum "faktum.barn-inntekt" id `barn inntekt`,
         heltall faktum "faktum.barn-liste" id `barn liste`
@@ -34,7 +34,7 @@ object Barnetillegg {
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`
     )
 
-    private val alleVariabler = listOf(
+    override val alleVariabler = listOf(
         `barn liste`,
         `barn fornavn mellomnavn`,
         `barn etternavn`,
@@ -44,7 +44,4 @@ object Barnetillegg {
         `barn aarsinntekt over 1g`,
         `barn inntekt`,
     )
-
-    fun fakta(): Array<FaktumFactory<*>> = fakta.toTypedArray()
-    fun variabler(): IntArray = alleVariabler.toIntArray()
 }

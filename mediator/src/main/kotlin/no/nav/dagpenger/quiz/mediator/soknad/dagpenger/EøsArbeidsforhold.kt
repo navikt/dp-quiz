@@ -5,9 +5,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
-import no.nav.dagpenger.model.factory.FaktumFactory
+import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
-object EøsArbeidsforhold {
+object EøsArbeidsforhold : DslFaktaseksjon {
     const val `eos arbeid siste 36 mnd` = 9001
     const val `eos arbeidsforhold` = 9002
     const val `eos arbeidsforhold arbeidsgivernavn` = 9003
@@ -15,7 +15,7 @@ object EøsArbeidsforhold {
     const val `eos arbeidsforhold personnummer` = 9005
     const val `eos arbeidsforhold varighet` = 9006
 
-    private val fakta = listOf<FaktumFactory<*>>(
+    override val fakta = listOf(
         boolsk faktum "faktum.eos-arbeid-siste-36-mnd" id `eos arbeid siste 36 mnd`,
         heltall faktum "faktum.eos-arbeidsforhold" id `eos arbeidsforhold`
             genererer `eos arbeidsforhold arbeidsgivernavn`
@@ -29,7 +29,7 @@ object EøsArbeidsforhold {
         periode faktum "faktum.eos-arbeidsforhold-varighet" id `eos arbeidsforhold varighet`
     )
 
-    private val alleVariabler = listOf(
+    override val alleVariabler = listOf(
         `eos arbeid siste 36 mnd`,
         `eos arbeidsforhold`,
         `eos arbeidsforhold arbeidsgivernavn`,
@@ -37,7 +37,4 @@ object EøsArbeidsforhold {
         `eos arbeidsforhold personnummer`,
         `eos arbeidsforhold varighet`,
     )
-
-    fun fakta(): Array<FaktumFactory<*>> = fakta.toTypedArray()
-    fun variabler(): IntArray = alleVariabler.toIntArray()
 }

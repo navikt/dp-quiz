@@ -6,9 +6,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
-import no.nav.dagpenger.model.factory.FaktumFactory
+import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
-object EgenNæring {
+object EgenNæring : DslFaktaseksjon {
     const val `driver du egen naering` = 3001
     const val `egen naering organisasjonsnummer liste` = 3002
     const val `egen naering organisasjonsnummer` = 3003
@@ -21,7 +21,7 @@ object EgenNæring {
     const val `faktum eget gaardsbruk arbeidsaar` = 3010
     const val `faktum eget gaardsbruk arbeidstimer beregning` = 3011
 
-    private val fakta = listOf<FaktumFactory<*>>(
+    override val fakta = listOf(
         boolsk faktum "faktum.driver-du-egen-naering" id `driver du egen naering`,
         heltall faktum "faktum.egen-naering-organisasjonsnummer-liste" id `egen naering organisasjonsnummer liste`
             genererer `egen naering organisasjonsnummer`,
@@ -49,7 +49,7 @@ object EgenNæring {
         tekst faktum "faktum-eget-gaardsbruk-arbeidstimer-beregning" id `faktum eget gaardsbruk arbeidstimer beregning`
     )
 
-    private val alleVariabler = listOf(
+    override val alleVariabler = listOf(
         `driver du egen naering`,
         `egen naering organisasjonsnummer liste`,
         `egen naering organisasjonsnummer`,
@@ -62,7 +62,4 @@ object EgenNæring {
         `faktum eget gaardsbruk arbeidsaar`,
         `faktum eget gaardsbruk arbeidstimer beregning`,
     )
-
-    fun fakta(): Array<FaktumFactory<*>> = fakta.toTypedArray()
-    fun variabler(): IntArray = alleVariabler.toIntArray()
 }

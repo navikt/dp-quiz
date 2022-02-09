@@ -4,9 +4,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
-import no.nav.dagpenger.model.factory.FaktumFactory
+import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
-object AndreYtelser {
+object AndreYtelser : DslFaktaseksjon {
     const val `andre ytelser` = 5001
     const val `tjenestepensjon hvem utbetaler hvilken periode` = 5002
     const val `arbeidsloshet garantikassen for fiskere periode` = 5003
@@ -19,7 +19,7 @@ object AndreYtelser {
     const val `utbetaling okonomisk gode tidligere arbeidsgiver` = 5010
     const val `okonomisk gode tidligere arbeidsgiver hva omfatter avtalen` = 5011
 
-    private val fakta = listOf<FaktumFactory<*>>(
+    override var fakta = listOf(
         flervalg faktum "faktum.andre-ytelser"
             med "svar.pensjon-offentlig-tjenestepensjon"
             med "svar.arbeidsloshet-garantikassen-for-fiskere"
@@ -42,7 +42,7 @@ object AndreYtelser {
         tekst faktum "faktum.okonomisk-gode-tidligere-arbeidsgiver-hva-omfatter-avtalen" id `okonomisk gode tidligere arbeidsgiver hva omfatter avtalen`
     )
 
-    private val alleVariabler = listOf(
+    override val alleVariabler = listOf(
         `andre ytelser`,
         `tjenestepensjon hvem utbetaler hvilken periode`,
         `arbeidsloshet garantikassen for fiskere periode`,
@@ -55,7 +55,4 @@ object AndreYtelser {
         `utbetaling okonomisk gode tidligere arbeidsgiver`,
         `okonomisk gode tidligere arbeidsgiver hva omfatter avtalen`,
     )
-
-    fun fakta(): Array<FaktumFactory<*>> = fakta.toTypedArray()
-    fun variabler(): IntArray = alleVariabler.toIntArray()
 }

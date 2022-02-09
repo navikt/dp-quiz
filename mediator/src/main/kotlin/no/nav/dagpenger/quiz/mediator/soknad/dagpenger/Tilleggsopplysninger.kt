@@ -1,19 +1,16 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
-import no.nav.dagpenger.model.factory.FaktumFactory
+import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
-object Tilleggsopplysninger {
+object Tilleggsopplysninger : DslFaktaseksjon {
     const val tilleggsopplysninger = 4001
 
-    private val fakta = listOf<FaktumFactory<*>>(
+    override val fakta = listOf(
         tekst faktum "faktum.tilleggsopplysninger" id tilleggsopplysninger
     )
 
-    private val alleVariabler = listOf(
+    override val alleVariabler = listOf(
         tilleggsopplysninger
     )
-
-    fun fakta(): Array<FaktumFactory<*>> = fakta.toTypedArray()
-    fun variabler(): IntArray = alleVariabler.toIntArray()
 }

@@ -4,9 +4,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
-import no.nav.dagpenger.model.factory.FaktumFactory
+import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
-object ReellArbeidssoker {
+object ReellArbeidssoker : DslFaktaseksjon {
     const val `hel deltid` = 1
     const val `kun deltid aarsak` = 2
     const val `kun deltid aarsak antall timer` = 3
@@ -16,7 +16,7 @@ object ReellArbeidssoker {
     const val `ikke denne type arbeid` = 7
     const val `ethvert arbeid` = 8
 
-    private val fakta = listOf<FaktumFactory<*>>(
+    override val fakta = listOf(
         boolsk faktum "faktum.hel-deltid" id `hel deltid`,
         flervalg faktum "faktum.kun-deltid-aarsak"
             med "svar.redusert-helse"
@@ -39,7 +39,7 @@ object ReellArbeidssoker {
         boolsk faktum "faktum.ethvert-arbeid" id `ethvert arbeid`
     )
 
-    private val alleVariabler = listOf(
+    override val alleVariabler = listOf(
         `hel deltid`,
         `kun deltid aarsak`,
         `kun deltid aarsak antall timer`,
@@ -49,7 +49,4 @@ object ReellArbeidssoker {
         `ikke denne type arbeid`,
         `ethvert arbeid`,
     )
-
-    fun fakta(): Array<FaktumFactory<*>> = fakta.toTypedArray()
-    fun variabler(): IntArray = alleVariabler.toIntArray()
 }
