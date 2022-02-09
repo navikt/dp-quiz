@@ -19,13 +19,13 @@ internal class DslFaktaseksjonTest {
 
     @Test
     fun `Skal kunne lese ut verdien av alle heltall som er definert i klassen som bruker interface-et`() {
-        val variablene = Testseksjon.variabler()
+        val databaseIder = Testseksjon.databaseIder()
 
-        assertEquals(3, variablene.size)
-        variablene.forEachIndexed { index, variabel ->
+        assertEquals(3, databaseIder.size)
+        databaseIder.forEachIndexed { index, variabel ->
             val forventetId = index + 1
             assertEquals(forventetId, variabel)
         }
-        assertEquals(1 + 2 + 3, variablene.sum())
+        assertEquals(1 + 2 + 3, databaseIder.sum())
     }
 }

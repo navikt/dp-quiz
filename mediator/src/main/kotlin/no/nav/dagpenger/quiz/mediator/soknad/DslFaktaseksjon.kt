@@ -10,7 +10,7 @@ interface DslFaktaseksjon {
 
     fun fakta(): Array<FaktumFactory<*>> = fakta.toTypedArray()
 
-    fun variabler(): IntArray = this::class.declaredMemberProperties
+    fun databaseIder(): IntArray = this::class.declaredMemberProperties
         .filter { felter ->
             felter.returnType == Int::class.createType()
         }

@@ -34,7 +34,7 @@ internal object SøknadSeksjonsTester {
         val søkerSeksjon = søknad.seksjon(
             "søkerseksjon",
             Rolle.søker,
-            *DummySeksjon.variabler(),
+            *DummySeksjon.databaseIder(),
         )
 
         val navSeksjon = søknad.seksjon(

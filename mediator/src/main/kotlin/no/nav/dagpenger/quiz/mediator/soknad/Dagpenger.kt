@@ -54,23 +54,23 @@ internal object Dagpenger {
         val søkerSeksjon = søknad.seksjon(
             "søkerseksjon",
             Rolle.søker,
-            *AndreYtelser.variabler(),
-            *Arbeidsforhold.variabler(),
-            *Barnetillegg.variabler(),
-            *Bostedsland.variabler(),
-            *EgenNæring.variabler(),
-            *EøsArbeidsforhold.variabler(),
-            *KoronaFortsattRett.variabler(),
-            *ReellArbeidssoker.variabler(),
-            *Tilleggsopplysninger.variabler(),
-            *Utdanning.variabler(),
-            *Verneplikt.variabler()
+            *AndreYtelser.databaseIder(),
+            *Arbeidsforhold.databaseIder(),
+            *Barnetillegg.databaseIder(),
+            *Bostedsland.databaseIder(),
+            *EgenNæring.databaseIder(),
+            *EøsArbeidsforhold.databaseIder(),
+            *KoronaFortsattRett.databaseIder(),
+            *ReellArbeidssoker.databaseIder(),
+            *Tilleggsopplysninger.databaseIder(),
+            *Utdanning.databaseIder(),
+            *Verneplikt.databaseIder()
         )
 
         val navSeksjon = søknad.seksjon(
             "navseksjon",
             Rolle.nav,
-            *Barnetillegg.variabler(),
+            *Barnetillegg.databaseIder(),
         )
     }
 
