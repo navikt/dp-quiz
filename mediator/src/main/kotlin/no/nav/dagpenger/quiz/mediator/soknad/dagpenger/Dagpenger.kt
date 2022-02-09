@@ -1,4 +1,4 @@
-package no.nav.dagpenger.quiz.mediator.soknad
+package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Prosessversjon
@@ -10,18 +10,8 @@ import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger.Subsumsjoner.regeltre
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Arbeidsforhold
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Bostedsland
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EgenNæring
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.KoronaFortsattRett
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Tilleggsopplysninger
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Utdanning
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Verneplikt
+import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger.Subsumsjoner.regeltre
 
 internal object Dagpenger {
 

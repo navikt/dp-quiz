@@ -24,9 +24,9 @@ import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfyltManuell
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
-import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.Seksjoner
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.UUID

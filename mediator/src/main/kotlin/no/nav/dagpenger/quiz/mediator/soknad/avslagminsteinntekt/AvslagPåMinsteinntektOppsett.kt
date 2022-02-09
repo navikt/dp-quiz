@@ -1,4 +1,4 @@
-package no.nav.dagpenger.quiz.mediator.soknad
+package no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
@@ -14,8 +14,9 @@ import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntekt.regeltre
-import no.nav.dagpenger.quiz.mediator.soknad.Seksjoner.søknadprosess
+import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt.regeltre
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.Seksjoner.søknadprosess
 
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {

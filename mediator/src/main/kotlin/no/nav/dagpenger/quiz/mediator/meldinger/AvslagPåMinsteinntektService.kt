@@ -8,9 +8,9 @@ import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.FEATURE_MOTTA_SØKNAD
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.arenaFagsakId
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett.innsendtSøknadsId
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.arenaFagsakId
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.innsendtSøknadsId
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems

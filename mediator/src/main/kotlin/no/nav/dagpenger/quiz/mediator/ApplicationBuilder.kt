@@ -11,8 +11,8 @@ import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
 import no.nav.dagpenger.quiz.mediator.meldinger.DagpengerService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.ManuellBehandlingSink
-import no.nav.dagpenger.quiz.mediator.soknad.AvslagPåMinsteinntektOppsett
-import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 

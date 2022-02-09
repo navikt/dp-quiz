@@ -7,7 +7,7 @@ import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.meldinger.DagpengerService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
-import no.nav.dagpenger.quiz.mediator.soknad.Dagpenger
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals

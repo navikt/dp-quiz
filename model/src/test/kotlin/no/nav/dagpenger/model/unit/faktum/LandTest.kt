@@ -1,5 +1,6 @@
-package no.nav.dagpenger.model.faktum
+package no.nav.dagpenger.model.unit.faktum
 
+import no.nav.dagpenger.model.faktum.Land
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
