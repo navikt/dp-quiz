@@ -25,7 +25,7 @@ internal class NySøknadTest {
         }
 
         init {
-            AvslagPåMinsteinntektService(søknadPersistance, testRapid, unleash, SøknadEksempel.prosessVersjon)
+            AvslagPåMinsteinntektService(søknadPersistance, testRapid, SøknadEksempel.prosessVersjon)
         }
     }
 

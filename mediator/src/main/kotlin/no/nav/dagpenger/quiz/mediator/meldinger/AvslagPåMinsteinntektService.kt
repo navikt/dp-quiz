@@ -1,12 +1,10 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
-import io.getunleash.Unleash
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.FEATURE_MOTTA_SØKNAD
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.arenaFagsakId
@@ -22,7 +20,6 @@ import java.time.LocalDateTime
 internal class AvslagPåMinsteinntektService(
     private val søknadPersistence: SøknadPersistence,
     rapidsConnection: RapidsConnection,
-    private val unleash: Unleash,
     private val prosessVersjon: Prosessversjon = Versjon.siste(Prosess.AvslagPåMinsteinntekt)
 ) : River.PacketListener {
 
@@ -46,11 +43,6 @@ internal class AvslagPåMinsteinntektService(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        if (!unleash.isEnabled(FEATURE_MOTTA_SØKNAD)) {
-            log.info { "Behandler ikke id ${packet["søknadsData.brukerBehandlingId"].asText()}, toggle $FEATURE_MOTTA_SØKNAD er av " }
-            return
-        }
-
         log.info { "Mottok søknad med id ${packet["søknadsData.brukerBehandlingId"].asText()}" }
         val identer = Identer.Builder()
             .folkeregisterIdent(packet["fødselsnummer"].asText())

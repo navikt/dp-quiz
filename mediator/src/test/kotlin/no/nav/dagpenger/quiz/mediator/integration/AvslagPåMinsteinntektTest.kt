@@ -1,16 +1,8 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
-import io.getunleash.FakeUnleash
-import io.getunleash.Unleash
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.desember
@@ -57,9 +49,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
-    val unleash = FakeUnleash().also {
-        it.enableAll()
-    }
 
     @BeforeEach
     fun setup() {
@@ -73,7 +62,7 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
                     resultatPersistence = resultatPersistence,
                     rapidsConnection = it
                 )
-                AvslagPåMinsteinntektService(søknadPersistence, it, unleash)
+                AvslagPåMinsteinntektService(søknadPersistence, it)
             }
         }
     }
@@ -183,20 +172,6 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
 
             assertFalse(gjeldendeFakta("27.1")!!)
         }
-    }
-
-    @Test
-    fun `skal ikke behandle hvis toggle er av`() = runBlocking {
-        val persistenceMock = mockk<SøknadPersistence>()
-        val mockUnleash = mockk<Unleash>().also {
-            every { it.isEnabled("dp-quiz-mediator.motta.soknad") } returns false
-        }
-        val testRapid = TestRapid()
-        AvslagPåMinsteinntektService(persistenceMock, testRapid, mockUnleash)
-        testRapid.sendTestMessage(søknadFraInnsending)
-        delay(500)
-        verify(exactly = 1) { mockUnleash.isEnabled("dp-quiz-mediator.motta.soknad") }
-        verify(exactly = 0) { persistenceMock.ny(any(), any(), any(), any()) }
     }
 
     //language=JSON

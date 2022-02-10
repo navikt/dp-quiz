@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
-import io.getunleash.FakeUnleash
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
@@ -30,11 +29,9 @@ internal class MediatorTest {
         private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
 
         init {
-            val unleash = FakeUnleash().also { it.enableAll() }
             AvslagPåMinsteinntektService(
                 grupperer,
                 testRapid,
-                unleash,
                 SøknadEksempel.prosessVersjon
             )
             FaktumSvarService(grupperer, resultatPersistence, testRapid)
