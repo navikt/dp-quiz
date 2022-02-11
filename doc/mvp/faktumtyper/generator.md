@@ -5,7 +5,10 @@ at det må svares på flere fakta. F.eks. hvis man har flere barn enn det som ko
 genererte fakta for å svare på info om det barnet som manglet. Se på [dette eksempelet](#forklaring-av-eksempelet) for 
 mer detaljer.
 
-#### JSON-eksempel med svar
+### Eksempel på svarflyt for generatorfaktum
+
+#### 1. Generatorfaktum uten svar
+Etter at frontend har spurt Quiz om hvilke fakta som skal besvares, vil det se slik ut for et generatorfaktum:
 ```
 {
   "id": "10",
@@ -20,7 +23,77 @@ mer detaljer.
     {
       "id": "12",
       "beskrivendeId": "fødselsnummer",
+      "type": "dato"
+    }
+  ],
+  "svar": [],
+  "roller": [
+    "søker"
+  ]
+}
+```
+
+#### 2. Besvarelse på generatorfaktum
+Dette er formatet frontenden svarer på et generatorfaktum:
+ 
+NB!
+Legg merke til svarformatet: Svarliste med et innslag per barn
+For hvert barn er det en liste med faktumsvar som matcher generatorfaktumet sin template og ider.
+
+```
+{
+  "fakta": [
+    {
+      "id": "10",
+      "svar": [
+        [
+          {
+            "id": "11",
+            "svar": "Ola Nordmann",
+            "clazz": "tekst"
+          },
+          {
+            "id": "12",
+            "svar": "2010-01-08",
+            "clazz": "dato"
+          },
+        ],
+        [
+          {
+            "id": "11",
+            "svar": "Kari Nordmann",
+            "clazz": "tekst"
+          },
+          {
+            "id": "12",
+            "svar": "2015-04-16",
+            "clazz": "dato"
+          },
+        ]
+      ],
+      "clazz": "generator"
+    }
+  ]
+}
+```
+
+#### 3. Generatorfaktum med svar
+Etter at Quiz har prossesert besvarelsen vil den pånytt sende ut generatorfaktumet, men nå med svar.
+```
+{
+  "id": "10",
+  "type": "generator",
+  "beskrivendeId": "antallBarn",
+  "templates": [
+    {
+      "id": "11",
+      "beskrivendeId": "navn",
       "type": "tekst"
+    },
+    {
+      "id": "12",
+      "beskrivendeId": "fødselsnummer",
+      "type": "dato"
     }
   ],
   "svar": [
@@ -32,9 +105,6 @@ mer detaljer.
         "navn": "Kari Nordmann",
         "fødselsnummer": "2015-04-16"
       }
-  ],
-  "roller": [
-    "søker"
   ]
 }
 ```
