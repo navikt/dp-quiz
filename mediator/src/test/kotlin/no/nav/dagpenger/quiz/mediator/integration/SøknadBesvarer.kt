@@ -184,8 +184,14 @@ abstract class SøknadBesvarer {
     }
 
     protected fun besvarGenerator(søknadsId: String, faktumId: Int, svar: List<List<Pair<String, Any>>>) {
-        val noe = svar.map { it.map { lagSvar(it.first, it.second) } }
-        val fakta = mutableListOf("""{"id": "$faktumId", "svar": $noe, "clazz": "generator"}""")
+        val alleSvar = svar.map { faktum ->
+            faktum.map { besvarelse ->
+                val templateId = besvarelse.first
+                val svarverdi = besvarelse.second
+                lagSvar(templateId, svarverdi)
+            }
+        }
+        val fakta = mutableListOf("""{"id": "$faktumId", "svar": $alleSvar, "clazz": "generator"}""")
         //language=JSON
         val message = """{
               "søknad_uuid": "$søknadsId",
