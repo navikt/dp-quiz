@@ -1,4 +1,4 @@
-# Envalg
+# Valg
 
 Typisk brukt for radioknapper eller nedtrekkslister.
 
@@ -6,15 +6,15 @@ Typisk brukt for radioknapper eller nedtrekkslister.
 ```
 {
   "id": "8",
-  "type": "envalg",
+  "type": "valg",
   "beskrivendeId": "envalg8",
   "roller": [
     "søker"
   ],
-  "svar": "envalg1",
+  "svar": "valg1",
   "gyldigeValg": [
-    "envalg1",
-    "envalg2"
+    "valg1",
+    "valg2"
   ]
 }
 ```

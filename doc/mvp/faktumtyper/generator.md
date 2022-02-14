@@ -50,28 +50,28 @@ For hvert barn er det en liste med faktumsvar som matcher generatorfaktumet sin 
           {
             "id": "11",
             "svar": "Ola Nordmann",
-            "clazz": "tekst"
+            "type": "tekst"
           },
           {
             "id": "12",
             "svar": "2010-01-08",
-            "clazz": "dato"
+            "type": "dato"
           },
         ],
         [
           {
             "id": "11",
             "svar": "Kari Nordmann",
-            "clazz": "tekst"
+            "type": "tekst"
           },
           {
             "id": "12",
             "svar": "2015-04-16",
-            "clazz": "dato"
+            "type": "dato"
           },
         ]
       ],
-      "clazz": "generator"
+      "type": "generator"
     }
   ]
 }
