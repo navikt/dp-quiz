@@ -23,7 +23,7 @@ Etter at frontend har spurt Quiz om hvilke fakta som skal besvares, vil det se s
     {
       "id": "12",
       "beskrivendeId": "fødselsnummer",
-      "type": "dato"
+      "type": "localdate"
     }
   ],
   "svar": [],
@@ -55,7 +55,7 @@ For hvert barn er det en liste med faktumsvar som matcher generatorfaktumet sin 
           {
             "id": "12",
             "svar": "2010-01-08",
-            "type": "dato"
+            "type": "localdate"
           },
         ],
         [
@@ -67,7 +67,7 @@ For hvert barn er det en liste med faktumsvar som matcher generatorfaktumet sin 
           {
             "id": "12",
             "svar": "2015-04-16",
-            "type": "dato"
+            "type": "localdate"
           },
         ]
       ],
@@ -93,7 +93,7 @@ Etter at Quiz har prossesert besvarelsen vil den pånytt sende ut generatorfaktu
     {
       "id": "12",
       "beskrivendeId": "fødselsnummer",
-      "type": "dato"
+      "type": "localdate"
     }
   ],
   "svar": [
