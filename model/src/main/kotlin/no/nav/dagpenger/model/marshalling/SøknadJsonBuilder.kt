@@ -93,7 +93,7 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         clazz: Class<R>,
         regel: FaktaRegel<R>
     ) {
-        lagFaktumNode(id, faktum.navn, clazz = clazz)
+        lagFaktumNode(id, faktum.navn, type = clazz)
     }
 
     override fun <R : Comparable<R>> preVisit(
@@ -106,7 +106,7 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         regel: FaktaRegel<R>,
         svar: R
     ) {
-        lagFaktumNode(id, faktum.navn, clazz = clazz, svar = svar)
+        lagFaktumNode(id, faktum.navn, type = clazz, svar = svar)
     }
 
     override fun <R : Comparable<R>> visit(
@@ -119,7 +119,7 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         clazz: Class<R>,
         svar: R
     ) {
-        lagFaktumNode(id, faktum.navn, clazz = clazz, svar = svar)
+        lagFaktumNode(id, faktum.navn, type = clazz, svar = svar)
     }
 
     override fun preVisit(
@@ -250,7 +250,7 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         navn: String,
         roller: Set<Rolle> = emptySet(),
         godkjenner: Set<Faktum<*>> = emptySet(),
-        clazz: Class<R>,
+        type: Class<R>,
         svar: R? = null,
         besvartAv: String? = null
     ) {
@@ -260,7 +260,7 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
             faktumNode.put("navn", navn)
             faktumNode.put("id", id)
             faktumNode.set("roller", mapper.valueToTree(roller.map { it.typeNavn }))
-            faktumNode.put("type", clazz.simpleName.lowercase())
+            faktumNode.put("type", type.simpleName.lowercase())
             faktumNode.set("godkjenner", mapper.valueToTree(godkjenner.map { it.id }))
             svar?.also { faktumNode.putR(it) }
             besvartAv?.also { faktumNode.put("besvartAv", it) }

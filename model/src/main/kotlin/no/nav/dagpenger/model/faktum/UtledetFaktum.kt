@@ -15,7 +15,7 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     internal fun multiplikasjon(): Inntekt = underordnede.first().svar() as Number * underordnede.last().svar() as Inntekt
     internal fun alle(): Boolean = underordnede.all { it.svar() as Boolean }
 
-    override fun clazz() = underordnede.toList().first().clazz()
+    override fun type() = underordnede.toList().first().type()
 
     override fun besvar(r: R, identer: String?): Faktum<R> {
         throw IllegalArgumentException("Kan ikke besvare sammensatte faktum")
@@ -61,13 +61,13 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
             avhengigeFakta,
             avhengerAvFakta,
             underordnede,
-            clazz(),
+            type(),
             regel,
             svar()
         )
-        else visitor.preVisit(this, id, avhengigeFakta, avhengerAvFakta, underordnede, clazz(), regel)
+        else visitor.preVisit(this, id, avhengigeFakta, avhengerAvFakta, underordnede, type(), regel)
         underordnede.forEach { it.accept(visitor) }
-        visitor.postVisit(this, id, underordnede, clazz())
+        visitor.postVisit(this, id, underordnede, type())
     }
 
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): UtledetFaktum<R> {

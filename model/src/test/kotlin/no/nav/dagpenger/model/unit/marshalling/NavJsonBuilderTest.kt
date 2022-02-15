@@ -139,7 +139,7 @@ class NavJsonBuilderTest {
                 avhengigeBehov = emptyList()
             )
             assertEquals(
-                """[{"id":"9","navn":"fom","clazz":"localdate"},{"id":"10","navn":"tom","clazz":"localdate"}]""",
+                """[{"id":"9","navn":"fom","clazz":"localdate","type":"localdate"},{"id":"10","navn":"tom","clazz":"localdate","type":"localdate"}]""",
                 it["fakta"][0]["templates"].toString()
             )
         }

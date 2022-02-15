@@ -31,7 +31,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     internal fun godkjenner(fakta: List<Faktum<*>>) = godkjenner.addAll(fakta)
 
-    override fun clazz() = clazz
+    override fun type() = clazz
 
     override fun besvar(r: R, besvarer: String?) = this.apply {
         when (r) {

@@ -114,17 +114,17 @@ internal class FaktumSvarServiceTest {
     {
       "id": "10",
       "behov": "Registreringsperioder",
-      "clazz": "generator",
+      "type": "generator",
       "templates": [
         {
           "id": "11",
           "navn": "fom",
-          "clazz": "localdate"
+          "type": "localdate"
         },
         {
           "id": "12",
           "navn": "tom",
-          "clazz": "localdate"
+          "type": "localdate"
         }
       ],
       "svar": [
@@ -132,14 +132,14 @@ internal class FaktumSvarServiceTest {
           {
             "id": "11",
             "navn": "fom",
-            "clazz": "localdate",
+            "type": "localdate",
             "svar": "2020-01-01",
             "besvartAv": "A123456"
           },
           {
             "id": "12",
             "navn": "tom",
-            "clazz": "localdate",
+            "type": "localdate",
             "svar": "2020-01-08"
           }
         ],
@@ -147,13 +147,13 @@ internal class FaktumSvarServiceTest {
           {
             "id": "11",
             "navn": "fom",
-            "clazz": "localdate",
+            "type": "localdate",
             "svar": "2020-01-09"
           },
           {
             "id": "12",
             "navn": "tom",
-            "clazz": "localdate",
+            "type": "localdate",
             "svar": "2020-01-16"
           }
         ]

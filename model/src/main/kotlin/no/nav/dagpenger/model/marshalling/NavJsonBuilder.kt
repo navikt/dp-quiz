@@ -92,7 +92,9 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
                 jsonTemplates.addObject().also {
                     it.put("id", template.id)
                     it.put("navn", template.navn)
-                    it.put("clazz", template.clazz().simpleName.lowercase())
+                    // deprekert - bruk "type"
+                    it.put("clazz", template.type().simpleName.lowercase())
+                    it.put("type", template.type().simpleName.lowercase())
                 }
             }
             lagFaktumNode(id, "generator", jsonTemplates)
@@ -124,13 +126,15 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
         }
     }
 
-    private fun lagFaktumNode(id: String, clazz: String, templates: ArrayNode? = null) {
+    private fun lagFaktumNode(id: String, type: String, templates: ArrayNode? = null) {
         if (ignore) return
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("id", id)
             faktumNode.put("behov", faktumNavBehov[rootId])
-            faktumNode.put("clazz", clazz)
+            // deprekeert - bruk "type"
+            faktumNode.put("clazz", type)
+            faktumNode.put("type", type)
             if (templates != null) faktumNode["templates"] = templates
         }
         faktumIder.add(id)

@@ -63,7 +63,7 @@ abstract class SøknadBesvarer {
                     "lastOppTidsstempel": "$lastOppTidsstempel",
                     "ur": "$url"
                 },
-                "clazz": "inntekt"
+                "type": "inntekt"
             }
               ],
               "@opprettet": "${LocalDateTime.now()}",
@@ -82,7 +82,7 @@ abstract class SøknadBesvarer {
               "fakta": [{
                 "id": "$faktumId",
                 "svar": "$svar",
-                "clazz": "${svar::class.java.simpleName.lowercase()}"
+                "type": "${svar::class.java.simpleName.lowercase()}"
             }
               ],
               "@opprettet": "${LocalDateTime.now()}",
@@ -100,7 +100,7 @@ abstract class SøknadBesvarer {
               "fakta": [{
                 "id": "$faktumId",
                 "svar": "${svar.alpha3Code}",
-                "clazz": "land"
+                "type": "land"
             }
               ],
               "@opprettet": "${LocalDateTime.now()}",
@@ -118,7 +118,7 @@ abstract class SøknadBesvarer {
               "fakta": [{
                 "id": "$faktumId",
                 "svar": "${svar.verdi}",
-                "clazz": "tekst"
+                "type": "tekst"
             }
               ],
               "@opprettet": "${LocalDateTime.now()}",
@@ -136,7 +136,7 @@ abstract class SøknadBesvarer {
               "fakta": [{
                 "id": "$faktumId",
                 "svar": ["${svar.joinToString("""","""")}"],
-                "clazz": "${svar::class.java.simpleName.lowercase()}"
+                "type": "${svar::class.java.simpleName.lowercase()}"
             }
               ],
               "@opprettet": "${LocalDateTime.now()}",
@@ -154,7 +154,7 @@ abstract class SøknadBesvarer {
               "fakta": [{
                 "id": "$faktumId",
                 "svar": { "fom": "${svar.fom}", "tom": "${svar.tom}"  },
-                "clazz": "periode"
+                "type": "periode"
             }
               ],
               "@opprettet": "${LocalDateTime.now()}",
@@ -173,7 +173,7 @@ abstract class SøknadBesvarer {
               "fakta": [{
                 "id": "$faktumId",
                 "svar": "$årligInntekt",
-                "clazz": "inntekt"
+                "type": "inntekt"
             }
               ],
               "@opprettet": "${LocalDateTime.now()}",
@@ -191,7 +191,7 @@ abstract class SøknadBesvarer {
                 lagSvar(templateId, svarverdi)
             }
         }
-        val fakta = mutableListOf("""{"id": "$faktumId", "svar": $alleSvar, "clazz": "generator"}""")
+        val fakta = mutableListOf("""{"id": "$faktumId", "svar": $alleSvar, "type": "generator"}""")
         //language=JSON
         val message = """{
               "søknad_uuid": "$søknadsId",
@@ -207,15 +207,15 @@ abstract class SøknadBesvarer {
     protected fun lagSvar(faktumId: String, svar: Any): String {
         return when (svar) {
             is Periode -> lagPeriodeGeneratorSvar(svar, faktumId)
-            is Tekst -> """{"id": "$faktumId", "svar": "${svar.verdi}", "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
+            is Tekst -> """{"id": "$faktumId", "svar": "${svar.verdi}", "type": "${svar::class.java.simpleName.lowercase()}"}"""
             is Envalg, is Flervalg -> lagValgGeneratorSvar(svar as Valg, faktumId)
-            else -> """{"id": "$faktumId", "svar": "$svar", "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
+            else -> """{"id": "$faktumId", "svar": "$svar", "type": "${svar::class.java.simpleName.lowercase()}"}"""
         }
     }
 
     private fun lagValgGeneratorSvar(svar: Valg, faktumId: String): String {
         val valgene = """["${svar.joinToString("""","""")}"]"""
-        return """{"id": "$faktumId", "svar": $valgene, "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
+        return """{"id": "$faktumId", "svar": $valgene, "type": "${svar::class.java.simpleName.lowercase()}"}"""
     }
 
     private fun lagPeriodeGeneratorSvar(svar: Periode, faktumId: String): String {
@@ -226,7 +226,7 @@ abstract class SøknadBesvarer {
                 }
             """.trimIndent()
         }
-        return """{"id": "$faktumId", "svar": $perioden, "clazz": "${svar::class.java.simpleName.lowercase()}"}"""
+        return """{"id": "$faktumId", "svar": $perioden, "type": "${svar::class.java.simpleName.lowercase()}"}"""
     }
 
     protected fun triggNySøknadsprosess(

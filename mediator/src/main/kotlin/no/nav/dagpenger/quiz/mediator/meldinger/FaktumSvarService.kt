@@ -48,7 +48,8 @@ internal class FaktumSvarService(
                 message.require("@id") { UUID.fromString(it.asText()) }
                 message.requireArray("fakta") {
                     requireKey("id")
-                    requireKey("clazz")
+                    interestedIn("clazz")
+                    interestedIn("type")
                 }
             }
         }.register(this)
@@ -100,10 +101,10 @@ internal class FaktumSvarService(
         fakta.forEach { faktumNode ->
             val faktumId = faktumNode["id"].asText()
             val svar = faktumNode["svar"]
-            val clazz = faktumNode["clazz"].asText()
+            val type = faktumNode["clazz"]?.asText() ?: faktumNode["type"].asText()
             val besvartAv = faktumNode["besvartAv"]?.asText()
 
-            besvar(søknadprosess, faktumId, svar, clazz, besvartAv)
+            besvar(søknadprosess, faktumId, svar, type, besvartAv)
         }
         søknadPersistence.lagre(søknadprosess.søknad)
     }
@@ -136,10 +137,10 @@ internal class FaktumSvarService(
         søknadprosess: Søknadprosess,
         faktumId: String,
         svar: JsonNode,
-        clazz: String,
+        type: String,
         besvartAv: String?
     ) {
-        when (clazz) {
+        when (type) {
             "land" -> søknadprosess.land(faktumId).besvar(svar.asLand(), besvartAv)
             "boolean" -> søknadprosess.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)
             "int" -> søknadprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv) // todo: remove?
@@ -161,13 +162,13 @@ internal class FaktumSvarService(
                             søknadprosess,
                             "${it["id"].asText()}.${index + 1}}",
                             it["svar"],
-                            it["clazz"].asText(),
+                            it["clazz"]?.asText() ?: it["type"].asText(),
                             it["besvartAv"]?.asText()
                         )
                     }
                 }
             }
-            else -> throw IllegalArgumentException("Ukjent svar-type: $clazz")
+            else -> throw IllegalArgumentException("Ukjent svar-type: $type")
         }
     }
 

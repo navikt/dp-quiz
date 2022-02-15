@@ -14,7 +14,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
 ) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private val seksjoner = mutableListOf<Seksjon>()
 
-    override fun clazz() = clazz
+    override fun type() = clazz
 
     override fun tilUbesvart() {
         // Ignorert

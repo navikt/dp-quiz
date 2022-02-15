@@ -83,7 +83,7 @@ private class FaktumVisitor(
     private fun JsonGenerator.skrivStandardFelt(
         id: String,
         tilstand: Faktum.FaktumTilstand,
-        clazz: Class<*>,
+        type: Class<*>,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
         godkjenner: Set<Faktum<*>>,
@@ -91,7 +91,7 @@ private class FaktumVisitor(
     ) {
         jsonGenerator.writeStringField("id", id)
         jsonGenerator.writeStringField("tilstand", tilstand.name)
-        jsonGenerator.writeStringField("clazz", clazz.name)
+        jsonGenerator.writeStringField("type", type.name)
         jsonGenerator.writeArrayFieldStart("avhengigeFakta")
         avhengigeFakta.forEach { jsonGenerator.writeString(it.id) }
         jsonGenerator.writeEndArray()
