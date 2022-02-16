@@ -151,10 +151,10 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
                         mapOf(
                             "svar" to when (faktumSvar.svar) {
                                 is String -> faktumSvar.svar
-                                is Dokument -> faktumSvar.svar.reflection { lastOppTidsstempel, url ->
+                                is Dokument -> faktumSvar.svar.reflection { lastOppTidsstempel, urn ->
                                     mapOf(
                                         "lastOppTidsstempel" to lastOppTidsstempel,
-                                        "url" to url
+                                        "urn" to urn
                                     )
                                 }
                                 else -> throw IllegalArgumentException("Ustøtta svar-type")

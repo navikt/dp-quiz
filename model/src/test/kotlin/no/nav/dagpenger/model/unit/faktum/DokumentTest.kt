@@ -9,15 +9,15 @@ import java.time.LocalDateTime
 class DokumentTest {
 
     private val nå = LocalDateTime.now()
-    private val url = "https://localhost"
-    private val document = Dokument(nå, url)
+    private val urn = "urn:sid:sse"
+    private val document = Dokument(nå, urn)
 
     @Test
     fun `equality test`() {
         assertEquals(document, document)
-        assertEquals(document, Dokument(nå, url))
-        assertEquals(Dokument(nå, url), document)
-        assertNotEquals(document, Dokument(LocalDateTime.now(), url.plus("/foo")))
+        assertEquals(document, Dokument(nå, urn))
+        assertEquals(Dokument(nå, urn), document)
+        assertNotEquals(document, Dokument(LocalDateTime.now(), "urn:sid:sse1"))
         assertNotEquals(document, Any())
         assertNotEquals(document, null)
     }

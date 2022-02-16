@@ -42,6 +42,6 @@ fun JsonNode.asPeriode(): Periode {
 
 fun JsonNode.asDokument(): Dokument {
     val lastOppTidsstempel = this["lastOppTidsstempel"].asLocalDateTime()
-    val url = this["url"].asText()
-    return Dokument(lastOppTidsstempel, url)
+    val urn = this["urn"].asText()
+    return Dokument(lastOppTidsstempel, urn)
 }

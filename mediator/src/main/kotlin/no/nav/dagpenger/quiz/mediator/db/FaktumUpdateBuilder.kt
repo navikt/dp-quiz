@@ -164,26 +164,26 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
 
     private class DokumentBuilder(svar: Dokument, private val besvartAv: Int?) : UpdateClauseBuilder {
         private lateinit var opplastet: LocalDateTime
-        private lateinit var url: String
+        private lateinit var urn: String
 
         init {
             svar.reflection { l, u ->
                 opplastet = l
-                url = u
+                urn = u
             }
         }
 
         @Language("PostgreSQL")
         override fun updateClause() =
             """
-        WITH inserted_id AS (INSERT INTO dokument (opplastet, url) VALUES (:opplastet, :url) returning id)
+        WITH inserted_id AS (INSERT INTO dokument (opplastet, urn) VALUES (:opplastet, :urn) returning id)
         UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id) , besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc' 
            """
 
         override fun paramMap(): Map<String, Any?> {
             return mapOf(
                 "opplastet" to Parameter(opplastet, LocalDateTime::class.java),
-                "url" to Parameter(url, String::class.java),
+                "urn" to Parameter(urn, String::class.java),
             )
         }
     }

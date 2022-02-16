@@ -102,11 +102,11 @@ class SøknadRecord : SøknadPersistence {
             (faktum as Faktum<Land>).rehydrer(row.land, row.besvartAv)
         }
 
-        if (row.opplastet != null && row.url != null) {
+        if (row.opplastet != null && row.urn != null) {
             (faktum as Faktum<Dokument>).rehydrer(
                 Dokument(
                     row.opplastet,
-                    row.url
+                    row.urn
                 ),
                 row.besvartAv
             )
@@ -144,7 +144,7 @@ class SøknadRecord : SøknadPersistence {
                                 faktum_verdi.dato AS dato, 
                                 faktum_verdi.aarlig_inntekt AS aarlig_inntekt, 
                                 besvarer.identifikator AS besvartAv,
-                                dokument.url AS url, 
+                                dokument.urn AS urn, 
                                 dokument.opplastet AS opplastet,
                                 envalg.verdier AS envalgVerdier,
                                 flervalg.verdier AS flervalgVerdier,
@@ -170,7 +170,7 @@ class SøknadRecord : SøknadPersistence {
                         it.anyOrNull("boolsk") as Boolean?,
                         it.underlying.getObject("dato", LocalDate::class.java),
                         it.doubleOrNull("aarlig_inntekt")?.årlig,
-                        it.stringOrNull("url"),
+                        it.stringOrNull("urn"),
                         it.localDateTimeOrNull("opplastet"),
                         it.stringOrNull("besvartAv"),
                         it.doubleOrNull("desimaltall"),
@@ -193,7 +193,7 @@ class SøknadRecord : SøknadPersistence {
         val boolsk: Boolean?,
         val dato: LocalDate?,
         val inntekt: Inntekt?,
-        val url: String?,
+        val urn: String?,
         val opplastet: LocalDateTime?,
         val besvartAv: String?,
         val desimaltall: Double?,

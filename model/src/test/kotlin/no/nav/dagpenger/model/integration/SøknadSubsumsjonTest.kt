@@ -67,7 +67,7 @@ internal class SøknadSubsumsjonTest {
         assertEquals(søknadprosess[4], søknadprosess.nesteSeksjoner().first())
         assertEquals(2, søknadprosess[4].fakta().size)
         assertIder(søknadprosess[4].fakta(), 10, 11)
-        søknadprosess.dokument(11).besvar(Dokument(4.januar))
+        søknadprosess.dokument(11).besvar(Dokument(4.januar, "urn:nid:sse"))
 
         søknadprosess.nesteFakta().also { fakta ->
             assertEquals(2, fakta.size)
@@ -123,7 +123,10 @@ internal class SøknadSubsumsjonTest {
 
         assertEquals(søknadprosess[9], søknadprosess.nesteSeksjoner().first())
         assertEquals(7, søknadprosess[9].fakta().size)
-        assertEquals(listOf("6", "7", "12", "14", "16.1", "16.2", "19").sorted(), søknadprosess[9].fakta().map { it.id }.sorted())
+        assertEquals(
+            listOf("6", "7", "12", "14", "16.1", "16.2", "19").sorted(),
+            søknadprosess[9].fakta().map { it.id }.sorted()
+        )
         søknadprosess.boolsk(14).besvar(true)
         søknadprosess.nesteFakta().also { fakta ->
             assertEquals(0, fakta.size)
@@ -145,7 +148,7 @@ internal class SøknadSubsumsjonTest {
         }
 
         søknadprosess.boolsk(10).besvar(false)
-        søknadprosess.dokument(11).besvar(Dokument(1.januar))
+        søknadprosess.dokument(11).besvar(Dokument(1.januar, "urn:nid:sse"))
         søknadprosess.boolsk(12).besvar(false)
 
         assertEquals(null, søknadprosess.resultat())

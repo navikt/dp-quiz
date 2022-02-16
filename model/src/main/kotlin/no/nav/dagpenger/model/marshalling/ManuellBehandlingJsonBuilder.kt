@@ -138,10 +138,10 @@ class ManuellBehandlingJsonBuilder(søknadprosess: Søknadprosess, private val s
             is LocalDate -> this.put(key, svar.toString())
             is Dokument -> this.set(
                 key,
-                svar.reflection { lastOppTidsstempel, url ->
+                svar.reflection { lastOppTidsstempel, urn ->
                     mapper.createObjectNode().also {
                         it.put("lastOppTidsstempel", lastOppTidsstempel.toString())
-                        it.put("url", url)
+                        it.put("urn", urn)
                     }
                 }
             )

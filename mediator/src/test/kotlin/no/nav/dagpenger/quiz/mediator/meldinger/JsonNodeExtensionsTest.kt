@@ -60,7 +60,7 @@ internal class JsonNodeExtensionsTest {
 {
   "svar": {
       "lastOppTidsstempel": "2018-03-01T12:00",
-      "url": "https://dokumnetlager/dokumentId"
+      "urn": "urn:dokumnetlager:dokumentId"
   }
 }
     """.trimIndent()
@@ -128,9 +128,9 @@ internal class JsonNodeExtensionsTest {
 
         val dokument = svarnode.asDokument()
 
-        dokument.reflection { lastOppTidsstempel: LocalDateTime, url: String ->
+        dokument.reflection { lastOppTidsstempel: LocalDateTime, urn: String ->
             assertEquals(1.mars().atTime(12, 0), lastOppTidsstempel)
-            assertEquals("https://dokumnetlager/dokumentId", url)
+            assertEquals("urn:dokumnetlager:dokumentId", urn)
         }
     }
 }

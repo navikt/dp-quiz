@@ -32,7 +32,7 @@ internal class DokumentSubsumsjonTest {
         dokumentGodkjenning = søknadprosess boolsk 2
         subsumsjon = dokumentGodkjenning dokumenteresAv dokumentFaktum
         assertEquals(null, subsumsjon.resultat())
-        dokumentFaktum.besvar(Dokument(1.januar))
+        dokumentFaktum.besvar(Dokument(1.januar, "urn:sid:sse"))
     }
 
     @Test
@@ -58,7 +58,7 @@ internal class DokumentSubsumsjonTest {
         dokumentGodkjenning.besvar(false)
         assertEquals(null, subsumsjon.resultat())
 
-        dokumentFaktum.besvar(Dokument(2.januar))
+        dokumentFaktum.besvar(Dokument(2.januar, "urn:sid:sse"))
         assertFalse(dokumentGodkjenning.erBesvart())
         assertEquals(true, subsumsjon.resultat())
 

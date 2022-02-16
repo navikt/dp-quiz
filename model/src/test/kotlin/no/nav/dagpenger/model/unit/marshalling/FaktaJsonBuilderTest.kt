@@ -182,7 +182,7 @@ internal class FaktaJsonBuilderTest {
 
         søknadprosess.desimaltall(6).besvar(37.5)
 
-        søknadprosess.dokument(7).besvar(Dokument(url = "urn:dp:dokument", lastOppTidsstempel = nå))
+        søknadprosess.dokument(7).besvar(Dokument(urn = "urn:dp:dokument", lastOppTidsstempel = nå))
 
         søknadprosess.inntekt(8).besvar(Inntekt.INGEN)
         søknadprosess.dato(9).besvar(idag)
@@ -215,7 +215,7 @@ internal class FaktaJsonBuilderTest {
             assertEquals(37.5, it.asDouble())
         }
         søkerJson["fakta"][3].assertFaktaAsJson("7", "dokument", "dokument7", listOf("nav")) {
-            assertEquals("urn:dp:dokument", it["url"].asText())
+            assertEquals("urn:dp:dokument", it["urn"].asText())
             assertEquals(nå, it["lastOppTidsstempel"].asText().let { LocalDateTime.parse(it) })
         }
         søkerJson["fakta"][4].assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav")) {

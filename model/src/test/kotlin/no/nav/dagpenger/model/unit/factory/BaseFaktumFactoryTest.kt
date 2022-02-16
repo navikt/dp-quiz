@@ -93,7 +93,7 @@ internal class BaseFaktumFactoryTest {
         val faktum = søknadprosess dokument 3
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
-        Dokument(1.januar).also {
+        Dokument(1.januar, "urn:nid:sse").also {
             faktum.besvar(it)
             assertTrue(faktum.erBesvart())
             assertEquals(it, faktum.svar())

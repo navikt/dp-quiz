@@ -311,10 +311,10 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         }
 
         private fun Dokument.asJsonNode() =
-            reflection { lastOppTidsstempel, url ->
+            reflection { lastOppTidsstempel, urn ->
                 mapper.createObjectNode().also {
                     it.put("lastOppTidsstempel", lastOppTidsstempel.toString())
-                    it.put("url", url)
+                    it.put("urn", urn)
                 }
             }
 

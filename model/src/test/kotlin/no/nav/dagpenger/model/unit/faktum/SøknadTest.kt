@@ -42,11 +42,11 @@ class SøknadTest {
 
         Søknadprosess(Seksjon("seksjon", Rolle.søker, søknad id 11, søknad id 12))
         assertEquals(2, søknad.size)
-        søknad.dokument(11).besvar(Dokument(1.januar))
+        søknad.dokument(11).besvar(Dokument(1.januar, "urn:nid:sse"))
         søknad.boolsk(12).besvar(true)
 
         assertTrue(søknad.boolsk(12).erBesvart())
-        søknad.dokument(11).besvar(Dokument(2.januar))
+        søknad.dokument(11).besvar(Dokument(2.januar, "urn:nid:sse"))
         assertFalse(søknad.boolsk(12).erBesvart())
     }
 
