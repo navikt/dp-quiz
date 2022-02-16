@@ -37,7 +37,7 @@ import kotlin.test.assertNotNull
 internal class SøknadRecordTest {
     companion object {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
-        private const val expectedFaktaCount = 27
+        private const val expectedFaktaCount = 28
     }
 
     private lateinit var originalSøknadprosess: Søknadprosess
@@ -59,8 +59,17 @@ internal class SøknadRecordTest {
         }
     }
 
-    @Test
-    fun `lagring og henting av fakta`() {
+    @Test fun `Lagring og henting av fakta med kotliquery spesial tegn`() {
+        Postgres.withMigratedDb {
+            byggOriginalSøknadprosess()
+            originalSøknadprosess.tekst(23).besvar(Tekst("? tekst1 asdfas?"))
+            originalSøknadprosess.tekst(23).besvar(Tekst(":tekst1"))
+            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sse:ssi"))
+            lagreHentOgSammenlign()
+        }
+    }
+
+    @Test fun `lagring og henting av fakta`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
@@ -74,6 +83,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
             originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
             originalSøknadprosess.land(25).besvar(Land("NOR"))
+            originalSøknadprosess.desimaltall(26).besvar(1.5)
 
             lagreHentOgSammenlign()
         }
@@ -94,6 +104,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
             originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
             originalSøknadprosess.land(25).besvar(Land("SWE"))
+            originalSøknadprosess.desimaltall(26).besvar(2.5)
 
             lagreHentOgSammenlign()
 
@@ -107,6 +118,7 @@ internal class SøknadRecordTest {
             assertNull(gammelVerdiForKolonnen("tekst"))
             assertNull(gammelVerdiForKolonnen("periode_id"))
             assertNull(gammelVerdiForKolonnen("land"))
+            assertNull(gammelVerdiForKolonnen("desimaltall"))
 
             originalSøknadprosess.dato(2).besvar(LocalDate.now().minusDays(3))
             originalSøknadprosess.inntekt(6).besvar(19999.årlig)
@@ -118,6 +130,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.tekst(23).besvar(Tekst("tekst2"))
             originalSøknadprosess.periode(24).besvar(Periode(1.mars(), 1.april()))
             originalSøknadprosess.land(25).besvar(Land("NOR"))
+            originalSøknadprosess.desimaltall(26).besvar(1.5)
 
             lagreHentOgSammenlign()
 
@@ -131,6 +144,7 @@ internal class SøknadRecordTest {
             assertNotNull(gammelVerdiForKolonnen("tekst"))
             assertNotNull(gammelVerdiForKolonnen("periode_id"))
             assertNotNull(gammelVerdiForKolonnen("land"))
+            assertNotNull(gammelVerdiForKolonnen("desimaltall"))
         }
     }
 

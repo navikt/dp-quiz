@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.helpers
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
@@ -55,7 +56,8 @@ internal object SøknadEksempel1 {
         heltall faktum "f22" id 22,
         tekst faktum "f23" id 23,
         periode faktum "f24" id 24,
-        land faktum "f25" id 25
+        land faktum "f25" id 25,
+        desimaltall faktum "f26" id 26
 
     )
 
