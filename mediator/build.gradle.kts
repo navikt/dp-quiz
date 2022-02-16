@@ -16,6 +16,7 @@ dependencies {
     implementation(Database.Kotlinquery)
     implementation(Konfig.konfig)
     implementation(Kotlin.Logging.kotlinLogging)
+    implementation("de.slub-dresden:urnlib:2.0.1")
 
     // unleash
     implementation("io.getunleash:unleash-client-java:5.0.2") {

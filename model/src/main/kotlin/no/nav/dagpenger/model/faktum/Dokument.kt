@@ -1,21 +1,55 @@
 package no.nav.dagpenger.model.faktum
 
+import de.slub.urn.RFC
+import de.slub.urn.URN
+import de.slub.urn.URNSyntaxError
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class Dokument(private val lastOppTidsstempel: LocalDateTime, private val urn: String) : Comparable<Dokument> {
-    override fun compareTo(other: Dokument): Int {
-        return this.lastOppTidsstempel.compareTo(other.lastOppTidsstempel)
+class Dokument : Comparable<Dokument> {
+    private val lastOppTidsstempel: LocalDateTime
+    private val urn: URN
+
+    constructor(lastOppTidsstempel: LocalDateTime, urn: URN) {
+        require(urn.supports(RFC.RFC_8141)) {
+            "Must support ${RFC.RFC_8141}. See ${RFC.RFC_8141.url()}"
+        }
+        this.lastOppTidsstempel = lastOppTidsstempel
+        this.urn = urn
     }
 
-    internal constructor(opplastingsdato: LocalDate, urn: String) : this(opplastingsdato.atStartOfDay(), urn)
+    constructor(lastOppTidsstempel: LocalDateTime, urn: String) {
+        this.lastOppTidsstempel = lastOppTidsstempel
+        this.urn = try {
+            URN.rfc8141().parse(urn)
+        } catch (e: URNSyntaxError) {
+            throw IllegalArgumentException(e.message)
+        }
+    }
 
-    fun <R> reflection(block: (LocalDateTime, String) -> R) = block(
+    constructor(lastOppTidsstempel: LocalDate, urn: String) : this(lastOppTidsstempel.atStartOfDay(), urn)
+
+    @JvmName("reflectionUrn")
+    fun <R> reflection(block: (LocalDateTime, URN) -> R) = block(
         lastOppTidsstempel,
         urn
     )
 
-    override fun equals(other: Any?) = other is Dokument && this.equals(other)
+    fun <R> reflection(block: (LocalDateTime, String) -> R) = block(
+        lastOppTidsstempel,
+        urn.toString()
+    )
 
-    private fun equals(other: Dokument) = lastOppTidsstempel == other.lastOppTidsstempel && urn == other.urn
+    override fun compareTo(other: Dokument): Int {
+        return this.lastOppTidsstempel.compareTo(other.lastOppTidsstempel)
+    }
+
+    override fun equals(other: Any?) = other is Dokument &&
+        this.lastOppTidsstempel == other.lastOppTidsstempel && this.urn == other.urn
+
+    override fun hashCode(): Int {
+        var result = lastOppTidsstempel.hashCode()
+        result = 31 * result + urn.hashCode()
+        return result
+    }
 }

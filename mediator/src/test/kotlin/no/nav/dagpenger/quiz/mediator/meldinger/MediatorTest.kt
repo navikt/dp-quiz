@@ -69,7 +69,7 @@ internal class MediatorTest {
                 FaktumSvar(
                     7,
                     "dokument",
-                    Dokument(1.januar.atStartOfDay(), "https://nav.no")
+                    Dokument(1.januar.atStartOfDay(), "urn:nav:somethingg")
                 )
             )
         )
@@ -151,7 +151,7 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
                         mapOf(
                             "svar" to when (faktumSvar.svar) {
                                 is String -> faktumSvar.svar
-                                is Dokument -> faktumSvar.svar.reflection { lastOppTidsstempel, urn ->
+                                is Dokument -> faktumSvar.svar.reflection { lastOppTidsstempel, urn: String ->
                                     mapOf(
                                         "lastOppTidsstempel" to lastOppTidsstempel,
                                         "urn" to urn
