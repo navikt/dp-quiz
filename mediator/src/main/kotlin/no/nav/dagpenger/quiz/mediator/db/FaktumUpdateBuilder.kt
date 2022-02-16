@@ -30,7 +30,7 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
 
     fun build(svar: Any?, besvartAv: Int?): UpdateQueryAction {
         return when (svar) {
-            null -> build(NullFaktumBuilder())
+            null -> build(NullFaktumBuilder)
             is Boolean -> build(BooleanBuilder(svar, besvartAv))
             is LocalDate -> build(LocalDateBuilder(svar, besvartAv))
             is Inntekt -> build(InntektBuilder(svar, besvartAv))
@@ -188,9 +188,22 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
         }
     }
 
-    private class NullFaktumBuilder : UpdateClauseBuilder {
+    private object NullFaktumBuilder : UpdateClauseBuilder {
 
+        @Language("PostgreSQL")
         override fun updateClause() =
-            """UPDATE faktum_verdi  SET boolsk = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
+            """UPDATE faktum_verdi
+SET boolsk         = NULL,
+    dato           = NULL,
+    aarlig_inntekt = NULL,
+    heltall        = NULL,
+    desimaltall    = NULL,
+    envalg_id      = NULL,
+    flervalg_id    = NULL,
+    periode_id     = NULL,
+    land           = NULL,
+    tekst          = NULL,
+    dokument_id    = NULL,
+    opprettet=NOW() AT TIME ZONE 'utc' """
     }
 }
