@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.db
 
-import kotliquery.Parameter
 import kotliquery.action.ExecuteQueryAction
 import kotliquery.action.UpdateQueryAction
 import kotliquery.queryOf
@@ -281,161 +280,6 @@ class SøknadRecord : SøknadPersistence {
     private fun oppdaterFaktum(faktum: Faktum<*>?, søknad: Søknad, indeks: Int, rootId: Int): UpdateQueryAction =
         FaktumUpdateBuilder(søknad, indeks, rootId).build(faktum?.svar(), besvart(faktum?.besvartAv()))
 
-    private fun sqlToUpdateAction(svar: Any?, besvartAv: String?, vararg params: Any?): UpdateQueryAction {
-        val s = """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, soknad, faktum
-            WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id AND soknad.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
-        val query = when (svar) {
-            // //language=PostgreSQL
-            // null -> """UPDATE faktum_verdi  SET boolsk = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
-            // //language=PostgreSQL
-            // is Boolean -> """UPDATE faktum_verdi  SET boolsk = $svar , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
-            // //language=PostgreSQL
-            // is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , besvart_av = ${
-            //     besvart(
-            //         besvartAv
-            //     )
-            // } , opprettet=NOW() AT TIME ZONE 'utc' """
-            // //language=PostgreSQL
-            // is LocalDate -> """UPDATE faktum_verdi  SET dato = '${tilPostgresDato(svar)}' , besvart_av = ${
-            //     besvart(
-            //         besvartAv
-            //     )
-            // } , opprettet=NOW() AT TIME ZONE 'utc' """
-            // //language=PostgreSQL
-            // is Int -> """UPDATE faktum_verdi  SET heltall = $svar, besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
-            // //language=PostgreSQL
-            // is Double -> """UPDATE faktum_verdi  SET desimaltall = $svar, besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
-            // //language=PostgreSQL
-            is Tekst -> {
-                queryOf(
-                    """UPDATE faktum_verdi  SET tekst = ? , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """ + s,
-                    *(listOf(svar.verdi) + params.toMutableList()).toTypedArray()
-                )
-            }
-//             //language=PostgreSQL
-//             is Land -> """UPDATE faktum_verdi  SET land = '${svar.alpha3Code}', besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
-//             //language=PostgreSQL
-            is Dokument -> {
-                val noe = (svar as Dokument).reflection { localDateTime: LocalDateTime, urn: String ->
-                    listOf(
-                        Parameter(
-                            localDateTime,
-                            LocalDateTime::class.java
-                        ), Parameter(urn, String::class.java)
-                    )
-                }
-                queryOf(
-                    """WITH inserted_id AS (INSERT INTO dokument (opplastet, url) VALUES (?, ?) returning id)
-                                           UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id) , besvart_av = ${
-                        besvart(
-                            besvartAv
-                        )
-                    } , opprettet=NOW() AT TIME ZONE 'utc' """ + s,
-                    *(noe + params.asList()).toTypedArray()
-                )
-            }
-
-//             //language=PostgreSQL
-//             is Periode -> """WITH inserted_id AS (INSERT INTO periode (fom, tom) VALUES (${svar.reflection { fom, tom -> "'$fom', ${tom?.let { "'$tom'" } ?: "NULL"}" }}) returning id)
-// |                               UPDATE faktum_verdi SET periode_id = (SELECT id FROM inserted_id) , besvart_av = ${
-//                 besvart(
-//                     besvartAv
-//
-//                 )
-//             } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
-            //language=PostgreSQL
-            is Envalg -> {
-                queryOf(
-                    """WITH valg_inserted_id AS (INSERT INTO valgte_verdier (verdier) VALUES ('{${svar.joinToString { """"$it"""" }}}') returning id) 
-                                           UPDATE faktum_verdi SET envalg_id = (SELECT id FROM valg_inserted_id) , besvart_av = ${
-                        besvart(
-                            besvartAv
-                        )
-                    } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin() + s,
-                    *params.asList().toTypedArray()
-                )
-            }
-
-//             //language=PostgreSQL
-//             is Flervalg ->
-//                 """WITH valg_inserted_id AS (INSERT INTO valgte_verdier (verdier) VALUES ('{${svar.joinToString { """"$it"""" }}}') returning id)
-// |                               UPDATE faktum_verdi SET flervalg_id = (SELECT id FROM valg_inserted_id) , besvart_av = ${
-//                     besvart(
-//                         besvartAv
-//                     )
-//                 } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
-            else -> throw IllegalArgumentException("Ugyldig type: ${svar?.javaClass}")
-        }
-        return query.asUpdate
-    }
-
-    private fun sqlToInsert(svar: Any?, besvartAv: String?): String {
-        val s = when (svar) {
-            //language=PostgreSQL
-            null -> """UPDATE faktum_verdi  SET boolsk = NULL , aarlig_inntekt = NULL, dokument_id = NULL, dato = NULL, heltall = NULL, opprettet=NOW() AT TIME ZONE 'utc' """
-            //language=PostgreSQL
-            is Boolean -> """UPDATE faktum_verdi  SET boolsk = $svar , besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
-            //language=PostgreSQL
-            is Inntekt -> """UPDATE faktum_verdi  SET aarlig_inntekt = ${svar.reflection { aarlig, _, _, _ -> aarlig }} , besvart_av = ${
-                besvart(
-                    besvartAv
-                )
-            } , opprettet=NOW() AT TIME ZONE 'utc' """
-            //language=PostgreSQL
-            is LocalDate -> """UPDATE faktum_verdi  SET dato = '${tilPostgresDato(svar)}' , besvart_av = ${
-                besvart(
-                    besvartAv
-                )
-            } , opprettet=NOW() AT TIME ZONE 'utc' """
-            //language=PostgreSQL
-            is Int -> """UPDATE faktum_verdi  SET heltall = $svar, besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
-            //language=PostgreSQL
-            is Double -> """UPDATE faktum_verdi  SET desimaltall = $svar, besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
-            //language=PostgreSQL
-            is Tekst -> """UPDATE faktum_verdi  SET tekst = '${svar.verdi}', besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
-            //language=PostgreSQL
-            is Land -> """UPDATE faktum_verdi  SET land = '${svar.alpha3Code}', besvart_av = ${besvart(besvartAv)} , opprettet=NOW() AT TIME ZONE 'utc' """
-            //language=PostgreSQL
-            is Dokument -> """WITH inserted_id AS (INSERT INTO dokument (url, opplastet) VALUES (${svar.reflection { opplastet, url -> "'$url', '$opplastet'" }}) returning id) 
-|                               UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id) , besvart_av = ${
-                besvart(
-                    besvartAv
-                )
-            } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
-            //language=PostgreSQL
-            is Periode -> """WITH inserted_id AS (INSERT INTO periode (fom, tom) VALUES (${svar.reflection { fom, tom -> "'$fom', ${tom?.let { "'$tom'" } ?: "NULL"}" }}) returning id) 
-|                               UPDATE faktum_verdi SET periode_id = (SELECT id FROM inserted_id) , besvart_av = ${
-                besvart(
-                    besvartAv
-                )
-            } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
-            //language=PostgreSQL
-            is Envalg ->
-                """WITH valg_inserted_id AS (INSERT INTO valgte_verdier (verdier) VALUES ('{${svar.joinToString { """"$it"""" }}}') returning id) 
-|                               UPDATE faktum_verdi SET envalg_id = (SELECT id FROM valg_inserted_id) , besvart_av = ${
-                    besvart(
-                        besvartAv
-                    )
-                } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
-
-            //language=PostgreSQL
-            is Flervalg ->
-                """WITH valg_inserted_id AS (INSERT INTO valgte_verdier (verdier) VALUES ('{${svar.joinToString { """"$it"""" }}}') returning id) 
-|                               UPDATE faktum_verdi SET flervalg_id = (SELECT id FROM valg_inserted_id) , besvart_av = ${
-                    besvart(
-                        besvartAv
-                    )
-                } , opprettet=NOW() AT TIME ZONE 'utc' """.trimMargin()
-            else -> throw IllegalArgumentException("Ugyldig type: ${svar.javaClass}")
-        }
-        val s1 = s + """WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, soknad, faktum
-            WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id AND soknad.uuid = ? AND faktum_verdi.indeks = ? AND faktum.root_id = ?  )"""
-        return s1
-    }
-
-    private fun tilPostgresDato(localDate: LocalDate) =
-        if (localDate == LocalDate.MAX) "infinity" else localDate.toString()
-
     private fun besvart(besvartAv: String?): Int? {
         val besvarer = besvartAv ?: return null
         return using(sessionOf(dataSource)) { session ->
@@ -458,7 +302,7 @@ class SøknadRecord : SøknadPersistence {
 
     private fun arkiverFaktum(søknad: Søknad, rootId: Int, indeks: Int): ExecuteQueryAction =
         queryOf( //language=PostgreSQL
-            """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, boolsk, aarlig_inntekt, dokument_id, dato, heltall, envalg_id, flervalg_id, tekst,land, periode_id, opprettet, besvart_av)
+            """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, boolsk, aarlig_inntekt, dokument_id, dato, heltall, envalg_id, flervalg_id, tekst,land, periode_id, opprettet, besvart_av, desimaltall)
             SELECT soknad_id,
                    faktum_verdi.faktum_id,
                    faktum_verdi.indeks,
@@ -473,7 +317,8 @@ class SøknadRecord : SøknadPersistence {
                    faktum_verdi.land,
                    faktum_verdi.periode_id,
                    faktum_verdi.opprettet,
-                   faktum_verdi.besvart_av
+                   faktum_verdi.besvart_av,
+                   faktum_verdi.desimaltall
             FROM faktum_verdi,
                  faktum,
                  soknad

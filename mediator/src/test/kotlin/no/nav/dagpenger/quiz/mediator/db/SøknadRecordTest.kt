@@ -37,7 +37,7 @@ import kotlin.test.assertNotNull
 internal class SøknadRecordTest {
     companion object {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
-        private const val expectedFaktaCount = 27
+        private const val expectedFaktaCount = 28
     }
 
     private lateinit var originalSøknadprosess: Søknadprosess
@@ -64,7 +64,7 @@ internal class SøknadRecordTest {
             byggOriginalSøknadprosess()
             originalSøknadprosess.tekst(23).besvar(Tekst("? tekst1 asdfas?"))
             originalSøknadprosess.tekst(23).besvar(Tekst(":tekst1"))
-            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay(),"urn:sse:ssi"))
+            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sse:ssi"))
             lagreHentOgSammenlign()
         }
     }
@@ -76,13 +76,14 @@ internal class SøknadRecordTest {
             originalSøknadprosess.boolsk("1").besvar(true)
             originalSøknadprosess.dato(2).besvar(LocalDate.now())
             originalSøknadprosess.inntekt(6).besvar(10000.årlig)
-            // originalSøknadprosess.heltall(16).besvar(123)
-            // originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()))
-            // originalSøknadprosess.envalg(20).besvar(Envalg("f20.envalg1"))
-            // originalSøknadprosess.flervalg(21).besvar(Flervalg("f21.flervalg1"))
-            // originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
-            // originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
-            // originalSøknadprosess.land(25).besvar(Land("NOR"))
+            originalSøknadprosess.heltall(16).besvar(123)
+            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay()))
+            originalSøknadprosess.envalg(20).besvar(Envalg("f20.envalg1"))
+            originalSøknadprosess.flervalg(21).besvar(Flervalg("f21.flervalg1"))
+            originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
+            originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
+            originalSøknadprosess.land(25).besvar(Land("NOR"))
+            originalSøknadprosess.desimaltall(26).besvar(1.5)
 
             lagreHentOgSammenlign()
         }
@@ -103,6 +104,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
             originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
             originalSøknadprosess.land(25).besvar(Land("SWE"))
+            originalSøknadprosess.desimaltall(26).besvar(2.5)
 
             lagreHentOgSammenlign()
 
@@ -116,6 +118,7 @@ internal class SøknadRecordTest {
             assertNull(gammelVerdiForKolonnen("tekst"))
             assertNull(gammelVerdiForKolonnen("periode_id"))
             assertNull(gammelVerdiForKolonnen("land"))
+            assertNull(gammelVerdiForKolonnen("desimaltall"))
 
             originalSøknadprosess.dato(2).besvar(LocalDate.now().minusDays(3))
             originalSøknadprosess.inntekt(6).besvar(19999.årlig)
@@ -127,6 +130,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.tekst(23).besvar(Tekst("tekst2"))
             originalSøknadprosess.periode(24).besvar(Periode(1.mars(), 1.april()))
             originalSøknadprosess.land(25).besvar(Land("NOR"))
+            originalSøknadprosess.desimaltall(26).besvar(1.5)
 
             lagreHentOgSammenlign()
 
@@ -140,6 +144,7 @@ internal class SøknadRecordTest {
             assertNotNull(gammelVerdiForKolonnen("tekst"))
             assertNotNull(gammelVerdiForKolonnen("periode_id"))
             assertNotNull(gammelVerdiForKolonnen("land"))
+            assertNotNull(gammelVerdiForKolonnen("desimaltall"))
         }
     }
 

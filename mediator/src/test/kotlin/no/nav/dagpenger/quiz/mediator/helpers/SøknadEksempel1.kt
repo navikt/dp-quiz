@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.helpers
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
@@ -50,12 +51,13 @@ internal object SøknadEksempel1 {
         boolsk faktum "f19" id 19 avhengerAv 2 og 13,
         maks dato "345" av 3 og 4 og 5 id 345,
         maks dato "345213" av 345 og 2 og 13 id 345213,
-        envalg faktum "f20" med "envalg1" med "en:valg2" id 20,
-        flervalg faktum "f21" med "flervalg1" med "flervalg2" med ":flervalg3" id 21,
+        envalg faktum "f20" med "envalg1" med "envalg2" id 20,
+        flervalg faktum "f21" med "flervalg1" med "flervalg2" med "flervalg3" id 21,
         heltall faktum "f22" id 22,
         tekst faktum "f23" id 23,
         periode faktum "f24" id 24,
-        land faktum "f25" id 25
+        land faktum "f25" id 25,
+        desimaltall faktum "f26" id 26
 
     )
 
