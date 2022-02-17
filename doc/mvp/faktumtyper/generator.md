@@ -9,7 +9,7 @@ mer detaljer.
 
 #### 1. Generatorfaktum uten svar
 Etter at frontend har spurt Quiz om hvilke fakta som skal besvares, vil det se slik ut for et generatorfaktum:
-```
+```json
 {
   "id": "10",
   "type": "generator",
@@ -40,7 +40,7 @@ NB!
 Legg merke til svarformatet: Svarliste med et innslag per barn
 For hvert barn er det en liste med faktumsvar som matcher generatorfaktumet sin template og ider.
 
-```
+```json
 {
   "fakta": [
     {
@@ -79,7 +79,7 @@ For hvert barn er det en liste med faktumsvar som matcher generatorfaktumet sin 
 
 #### 3. Generatorfaktum med svar
 Etter at Quiz har prossesert besvarelsen vil den pånytt sende ut generatorfaktumet, men nå med svar.
-```
+```json
 {
   "id": "10",
   "type": "generator",
@@ -97,14 +97,30 @@ Etter at Quiz har prossesert besvarelsen vil den pånytt sende ut generatorfaktu
     }
   ],
   "svar": [
+    [
       {
-        "navn": "Ola Nordmann",
-        "fødselsnummer": "2010-01-08"
+        "id": "11.1",
+        "svar": "Ola Nordmann",
+        "type": "tekst"
       },
       {
-        "navn": "Kari Nordmann",
-        "fødselsnummer": "2015-04-16"
+        "id": "12.1",
+        "svar": "2010-01-08",
+        "type": "localdate"
       }
+    ],
+    [
+      {
+        "id": "11.2",
+        "svar": "Kari Nordmann",
+        "type": "tekst"
+      },
+      {
+        "id": "12.2",
+        "svar": "2015-04-16",
+        "type": "localdate"
+      }
+    ]
   ]
 }
 ```
