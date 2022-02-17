@@ -68,7 +68,7 @@ internal class AvslagPåMinsteinntektService(
                 søknadprosess.dokument(innsendtSøknadsId).besvar(
                     Dokument(
                         lastOppTidsstempel = LocalDateTime.now(),
-                        urn = "urn:soknadsid:$søknadsId"
+                        urn = "urn:soknadid:$søknadsId"
                     )
                 )
 

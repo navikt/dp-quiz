@@ -72,7 +72,7 @@ internal class AvslagPåMinsteinntektTest {
 
         manglerInntekt.apply {
             dokument(arenaFagsakId).besvar(Dokument(LocalDateTime.now(), "urn:fagsakid:123123"))
-            dokument(innsendtSøknadsId).besvar(Dokument(LocalDateTime.now(), "urn:soknadsid:ABCD123"))
+            dokument(innsendtSøknadsId).besvar(Dokument(LocalDateTime.now(), "urn:soknadid:ABCD123"))
 
             dato(over67årFradato).besvar(1.desember)
 
