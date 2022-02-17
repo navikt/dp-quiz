@@ -145,7 +145,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
             is LocalDate -> this.put(key, svar.toString())
             is Dokument -> this.set(
                 key,
-                svar.reflection { lastOppTidsstempel, urn ->
+                svar.reflection { lastOppTidsstempel, urn: String ->
                     mapper.createObjectNode().also {
                         it.put("lastOppTidsstempel", lastOppTidsstempel.toString())
                         it.put("urn", urn)

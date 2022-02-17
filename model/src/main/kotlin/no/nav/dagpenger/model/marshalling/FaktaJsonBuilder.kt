@@ -307,7 +307,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         }
 
         private fun Dokument.asJsonNode() =
-            reflection { lastOppTidsstempel, urn ->
+            reflection { lastOppTidsstempel, urn: String ->
                 mapper.createObjectNode().also {
                     it.put("lastOppTidsstempel", lastOppTidsstempel.toString())
                     it.put("urn", urn)

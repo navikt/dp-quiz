@@ -53,7 +53,7 @@ abstract class SøknadBesvarer {
 
     protected fun besvarDokument(søknadsId: String, faktumId: Int, svar: Dokument) {
         //language=JSON
-        val message = svar.reflection { lastOppTidsstempel, urn ->
+        val message = svar.reflection { lastOppTidsstempel, urn: String ->
             """{
               "søknad_uuid": "$søknadsId",
               "@event_name": "faktum_svar",

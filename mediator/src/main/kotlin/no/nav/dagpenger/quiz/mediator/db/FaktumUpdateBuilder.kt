@@ -167,7 +167,7 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
         private lateinit var urn: String
 
         init {
-            svar.reflection { l, u ->
+            svar.reflection { l, u: String ->
                 opplastet = l
                 urn = u
             }

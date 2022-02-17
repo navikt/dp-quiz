@@ -277,7 +277,7 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
             is LocalDate -> this.put("svar", svar.toString())
             is Dokument -> this.set(
                 "svar",
-                svar.reflection { lastOppTidsstempel, urn ->
+                svar.reflection { lastOppTidsstempel, urn: String ->
                     mapper.createObjectNode().also {
                         it.put("lastOppTidsstempel", lastOppTidsstempel.toString())
                         it.put("urn", urn)
