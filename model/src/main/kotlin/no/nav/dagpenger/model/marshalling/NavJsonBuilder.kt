@@ -92,8 +92,6 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
                 jsonTemplates.addObject().also {
                     it.put("id", template.id)
                     it.put("navn", template.navn)
-                    // deprekert - bruk "type"
-                    it.put("clazz", template.type().simpleName.lowercase())
                     it.put("type", template.type().simpleName.lowercase())
                 }
             }
@@ -132,8 +130,6 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("id", id)
             faktumNode.put("behov", faktumNavBehov[rootId])
-            // deprekeert - bruk "type"
-            faktumNode.put("clazz", type)
             faktumNode.put("type", type)
             if (templates != null) faktumNode["templates"] = templates
         }

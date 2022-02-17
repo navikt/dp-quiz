@@ -114,7 +114,7 @@ internal class MediatorTest {
     }
 }
 
-private data class FaktumSvar(val faktumId: Int, val clazz: String, val svar: Any?)
+private data class FaktumSvar(val faktumId: Int, val type: String, val svar: Any?)
 
 private class TestMeldingFactory(private val fnr: String, private val aktørId: String) {
     fun nySøknadMelding(): String = nyHendelse(
@@ -145,7 +145,7 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
             "fakta" to faktumSvarListe.asList().map { faktumSvar ->
                 mapOf(
                     "id" to faktumSvar.faktumId,
-                    "clazz" to faktumSvar.clazz
+                    "type" to faktumSvar.type
                 ).let { fakta ->
                     fakta + faktumSvar.svar?.let {
                         mapOf(

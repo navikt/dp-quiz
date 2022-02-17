@@ -86,7 +86,6 @@ class ManuellBehandlingJsonBuilder(søknadprosess: Søknadprosess, private val s
                 jsonTemplates.addObject().also {
                     it.put("id", template.id)
                     it.put("navn", template.navn)
-                    it.put("clazz", template.type().simpleName.lowercase())
                     it.put("type", template.type().simpleName.lowercase())
                 }
             }

@@ -48,8 +48,7 @@ internal class FaktumSvarService(
                 message.require("@id") { UUID.fromString(it.asText()) }
                 message.requireArray("fakta") {
                     requireKey("id")
-                    interestedIn("clazz")
-                    interestedIn("type")
+                    requireKey("type")
                 }
             }
         }.register(this)
@@ -101,7 +100,7 @@ internal class FaktumSvarService(
         fakta.forEach { faktumNode ->
             val faktumId = faktumNode["id"].asText()
             val svar = faktumNode["svar"]
-            val type = faktumNode["clazz"]?.asText() ?: faktumNode["type"].asText()
+            val type = faktumNode["type"].asText()
             val besvartAv = faktumNode["besvartAv"]?.asText()
 
             besvar(søknadprosess, faktumId, svar, type, besvartAv)
@@ -162,7 +161,7 @@ internal class FaktumSvarService(
                             søknadprosess,
                             "${it["id"].asText()}.${index + 1}}",
                             it["svar"],
-                            it["clazz"]?.asText() ?: it["type"].asText(),
+                            it["type"].asText(),
                             it["besvartAv"]?.asText()
                         )
                     }
