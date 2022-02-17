@@ -259,11 +259,21 @@ internal class FaktaJsonBuilderTest {
             )
         ) { svar ->
             assertEquals(2, svar.size())
+            val førsteIndeks = svar[0]
+            førsteIndeks[0].assertFaktaAsJson("3.1", "int", "heltall3", listOf("søker")) {
+                assertEquals(37, it.asInt())
+            }
+            førsteIndeks[1].assertFaktaAsJson("4.1", "localdate", "dato4", listOf("søker")) {
+                assertEquals("$idag", it.asText())
+            }
 
-            assertEquals(37, svar[0]["heltall3"].asInt())
-            assertEquals(idag, svar[0]["dato4"].asText().let { LocalDate.parse(it) })
-            assertEquals(100, svar[1]["heltall3"].asInt())
-            assertEquals(idag.plusDays(3), svar[1]["dato4"].asText().let { LocalDate.parse(it) })
+            val andreIndeks = svar[1]
+            andreIndeks[0].assertFaktaAsJson("3.2", "int", "heltall3", listOf("søker")) {
+                assertEquals(100, it.asInt())
+            }
+            andreIndeks[1].assertFaktaAsJson("4.2", "localdate", "dato4", listOf("søker")) {
+                assertEquals("${idag.plusDays(3)}", it.asText())
+            }
         }
 
         søkerJson["fakta"][12].assertGeneratorFaktaAsJson(
@@ -274,8 +284,14 @@ internal class FaktaJsonBuilderTest {
             )
         ) { svar ->
             assertEquals(1, svar.size())
-            assertEquals(idag, svar[0]["dato12"].asText().let { LocalDate.parse(it) })
-            assertEquals(300.årlig, svar[0]["inntekt13"].asDouble().årlig)
+
+            val førsteIndeks = svar[0]
+            førsteIndeks[0].assertFaktaAsJson("12.1", "localdate", "dato12", listOf("søker")) {
+                assertEquals("$idag", it.asText())
+            }
+            førsteIndeks[1].assertFaktaAsJson("13.1", "inntekt", "inntekt13", listOf("søker")) {
+                assertEquals(300.0, it.asDouble())
+            }
         }
     }
 
@@ -297,8 +313,11 @@ internal class FaktaJsonBuilderTest {
             )
         ) { svar ->
             assertEquals(1, svar.size())
-            assertEquals(idag, svar[0]["dato12"].asText().let { LocalDate.parse(it) })
-            assertEquals(false, svar[0].has("inntekt13"))
+            val førsteIndeks = svar[0]
+            assertEquals(1, førsteIndeks.size())
+            førsteIndeks[0].assertFaktaAsJson("12.1", "localdate", "dato12", listOf("søker")) {
+                assertEquals("$idag", it.asText())
+            }
         }
     }
 

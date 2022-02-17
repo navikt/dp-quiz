@@ -209,24 +209,20 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
                 jsonTemplates.add(SøknadFaktumVisitor(template).root)
             }
             lagFaktumNode(id, "generator", faktum.navn, roller, jsonTemplates, svar = svar)
-            val formatertSvar = mapper.createArrayNode()
+            val svarListe = mapper.createArrayNode()
+
             (1..faktum.svar()).forEach { i ->
+                val indeks = mapper.createArrayNode()
                 genererteFaktum.filter { faktum ->
                     faktum.faktumId.reflection { _, indeks ->
                         indeks == i
                     }
-                }.filter { it.erBesvart() }
-                    .fold(
-                        initial = mapper.createObjectNode()
-
-                    ) { node, faktum ->
-                        node.putR(faktum.navn, faktum.svar())
-                        node
-                    }.also {
-                        formatertSvar.add(it)
-                    }
+                }.filter { it.erBesvart() }.forEach {
+                    indeks.add(SøknadFaktumVisitor(it).root)
+                }
+                svarListe.add(indeks)
             }
-            this.root["svar"] = formatertSvar
+            this.root["svar"] = svarListe
         }
 
         override fun <R : Comparable<R>> visit(

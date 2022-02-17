@@ -30,7 +30,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -59,11 +58,22 @@ internal class DummySeksjonTest : SøknadBesvarer() {
     private fun JsonNode.hentSvar(id: Int): JsonNode {
         return this["fakta"].let { faktaNode ->
             assertNotNull(faktaNode)
-            faktaNode.single { node ->
-                node["id"].asInt() == id
-            }["svar"]
+            faktaNode.hentSvarMedId(id.toString())
         }
     }
+
+    private fun JsonNode.hentGeneratorSvar(id: String): JsonNode {
+        return this.let { faktaNode ->
+            assertNotNull(faktaNode)
+            faktaNode.hentSvarMedId(id)
+        }
+    }
+
+    private fun JsonNode.hentSvarMedId(
+        id: String
+    ) = this.single { node ->
+        node["id"].asText() == id
+    }["svar"]
 
     @AfterEach
     fun reset() {
@@ -105,7 +115,10 @@ internal class DummySeksjonTest : SøknadBesvarer() {
                 assertEquals("subfaktumsvar", it.hentSvar(DummySeksjon.`dummy subfaktum tekst`).asText())
             }
 
-            besvar(DummySeksjon.`dummy flervalg`, Flervalg("faktum.dummy-flervalg.svar.1", "faktum.dummy-flervalg.svar.2"))
+            besvar(
+                DummySeksjon.`dummy flervalg`,
+                Flervalg("faktum.dummy-flervalg.svar.1", "faktum.dummy-flervalg.svar.2")
+            )
             testRapid.inspektør.message(5).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
@@ -162,7 +175,10 @@ internal class DummySeksjonTest : SøknadBesvarer() {
             testRapid.inspektør.message(12).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
-                assertEquals("subfaktumDefinertIGeneratorsvar", it.hentSvar(DummySeksjon.`generator dummy subfaktum tekst`).asText())
+                assertEquals(
+                    "subfaktumDefinertIGeneratorsvar",
+                    it.hentSvar(DummySeksjon.`generator dummy subfaktum tekst`).asText()
+                )
             }
 
             besvar(
@@ -170,7 +186,10 @@ internal class DummySeksjonTest : SøknadBesvarer() {
                 generatorsvar(
                     "${DummySeksjon.`generator dummy boolean`}" to true,
                     "${DummySeksjon.`generator dummy valg`}" to Envalg("faktum.generator-dummy-valg.svar.ja"),
-                    "${DummySeksjon.`generator dummy flervalg`}" to Flervalg("faktum.generator-dummy-flervalg.svar.1", "faktum.generator-dummy-flervalg.svar.2"),
+                    "${DummySeksjon.`generator dummy flervalg`}" to Flervalg(
+                        "faktum.generator-dummy-flervalg.svar.1",
+                        "faktum.generator-dummy-flervalg.svar.2"
+                    ),
                     "${DummySeksjon.`generator dummy dropdown`}" to Envalg("faktum.generator-dummy-dropdown.svar.1"),
                     "${DummySeksjon.`generator dummy int`}" to 4,
                     "${DummySeksjon.`generator dummy double`}" to 2.5,
@@ -186,19 +205,40 @@ internal class DummySeksjonTest : SøknadBesvarer() {
                 val svarliste = it.hentSvar(DummySeksjon.`dummy generator`)
                 val førsteSvarelement = svarliste[0]
 
-                assertEquals(true, førsteSvarelement["faktum.generator-dummy-boolean"].asBoolean())
-                assertEquals("faktum.generator-dummy-valg.svar.ja", førsteSvarelement["faktum.generator-dummy-valg"].asText())
+                assertEquals(
+                    true,
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy boolean`}.1").asBoolean()
+                )
+                assertEquals(
+                    "faktum.generator-dummy-valg.svar.ja",
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy valg`}.1").asText()
+                )
 
-                val flervalgSvar = førsteSvarelement["faktum.generator-dummy-flervalg"]
+                val flervalgSvar = førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy flervalg`}.1")
                 assertEquals("faktum.generator-dummy-flervalg.svar.1", flervalgSvar[0].asText())
                 assertEquals("faktum.generator-dummy-flervalg.svar.2", flervalgSvar[1].asText())
 
-                assertEquals("faktum.generator-dummy-dropdown.svar.1", førsteSvarelement["faktum.generator-dummy-dropdown"].asText())
-                assertEquals(4, førsteSvarelement["faktum.generator-dummy-int"].asInt())
-                assertEquals(2.5, førsteSvarelement["faktum.generator-dummy-double"].asDouble())
-                assertEquals(Tekst("svartekst"), førsteSvarelement["faktum.generator-dummy-tekst"].asTekst())
-                assertEquals(1.april(), førsteSvarelement["faktum.generator-dummy-localdate"].asLocalDate())
-                assertEquals(Periode(1.mai(), 1.juni()), førsteSvarelement["faktum.generator-dummy-periode"].asPeriode())
+                assertEquals(
+                    "faktum.generator-dummy-dropdown.svar.1",
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy dropdown`}.1").asText()
+                )
+                assertEquals(4, førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy int`}.1").asInt())
+                assertEquals(
+                    2.5,
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy double`}.1").asDouble()
+                )
+                assertEquals(
+                    Tekst("svartekst"),
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy tekst`}.1").asTekst()
+                )
+                assertEquals(
+                    1.april(),
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy localdate`}.1").asLocalDate()
+                )
+                assertEquals(
+                    Periode(1.mai(), 1.juni()),
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy periode`}.1").asPeriode()
+                )
             }
 
             besvar(DummySeksjon.`dummy land`, Land("NOR"))
@@ -229,11 +269,19 @@ internal class DummySeksjonTest : SøknadBesvarer() {
 
                 val svarliste = it.hentSvar(DummySeksjon.`dummy generator`)
                 val førsteSvarelement = svarliste[0]
-
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-boolean"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-boolean"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-valg"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-flervalg"))
+                assertEquals(
+                    true,
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy boolean`}.1").asBoolean()
+                )
+                assertEquals(
+                    "faktum.generator-dummy-valg.svar.ja",
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy valg`}.1").asText()
+                )
+                assertEquals(
+                    listOf("faktum.generator-dummy-flervalg.svar.1", "faktum.generator-dummy-flervalg.svar.2"),
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy flervalg`}.1")
+                        .map { verdi -> verdi.asText() }
+                )
             }
 
             besvar(
@@ -251,14 +299,35 @@ internal class DummySeksjonTest : SøknadBesvarer() {
                 val svarliste = it.hentSvar(DummySeksjon.`dummy generator`)
                 val førsteSvarelement = svarliste[0]
 
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-boolean"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-boolean"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-valg"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-flervalg"))
+                assertEquals(
+                    true,
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy boolean`}.1").asBoolean()
+                )
 
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-dropdown"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-int"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-double"))
+                assertEquals(
+                    "faktum.generator-dummy-valg.svar.ja",
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy valg`}.1").asText()
+                )
+                assertEquals(
+                    listOf("faktum.generator-dummy-flervalg.svar.1", "faktum.generator-dummy-flervalg.svar.2"),
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy flervalg`}.1")
+                        .map { verdi -> verdi.asText() }
+                )
+
+                assertEquals(
+                    "faktum.generator-dummy-dropdown.svar.1",
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy dropdown`}.1").asText()
+                )
+
+                assertEquals(
+                    4,
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy int`}.1").asInt()
+                )
+
+                assertEquals(
+                    2.5,
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy double`}.1").asDouble()
+                )
             }
 
             besvar(
@@ -276,18 +345,50 @@ internal class DummySeksjonTest : SøknadBesvarer() {
                 val svarliste = it.hentSvar(DummySeksjon.`dummy generator`)
                 val førsteSvarelement = svarliste[0]
 
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-boolean"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-boolean"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-valg"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-flervalg"))
+                assertEquals(
+                    true,
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy boolean`}.1").asBoolean()
+                )
 
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-dropdown"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-int"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-double"))
+                assertEquals(
+                    "faktum.generator-dummy-valg.svar.ja",
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy valg`}.1").asText()
+                )
+                assertEquals(
+                    listOf("faktum.generator-dummy-flervalg.svar.1", "faktum.generator-dummy-flervalg.svar.2"),
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy flervalg`}.1")
+                        .map { verdi -> verdi.asText() }
+                )
 
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-tekst"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-localdate"))
-                assertTrue(førsteSvarelement.has("faktum.generator-dummy-periode"))
+                assertEquals(
+                    "faktum.generator-dummy-dropdown.svar.1",
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy dropdown`}.1").asText()
+                )
+
+                assertEquals(
+                    4,
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy int`}.1").asInt()
+                )
+
+                assertEquals(
+                    2.5,
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy double`}.1").asDouble()
+                )
+
+                assertEquals(
+                    "svartekst",
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy tekst`}.1").asText()
+                )
+
+                assertEquals(
+                    1.april,
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy localdate`}.1").asLocalDate()
+                )
+
+                assertEquals(
+                    Periode(1.mai(), 1.juni()),
+                    førsteSvarelement.hentGeneratorSvar("${DummySeksjon.`generator dummy periode`}.1").asPeriode()
+                )
             }
         }
     }

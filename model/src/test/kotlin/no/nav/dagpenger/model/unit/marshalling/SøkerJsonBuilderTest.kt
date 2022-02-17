@@ -60,6 +60,7 @@ class SøkerJsonBuilderTest {
 
         val søkerJson = SøkerJsonBuilder(søknadprosess, "søker").resultat()
 
+        println(søkerJson)
         assertEquals("søker_oppgave", søkerJson["@event_name"].asText())
         assertDoesNotThrow { søkerJson["@id"].asText().also { UUID.fromString(it) } }
         assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
