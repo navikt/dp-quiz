@@ -47,7 +47,7 @@ class BffTilDslGenerator(
 
     private fun JsonNode.genererDslFaktum(): String {
         return when (faktumtype()) {
-            "valg", "dropdown" -> lagEnvalgFaktum()
+            "envalg", "dropdown" -> lagEnvalgFaktum()
             "flervalg" -> lagFlervalgFaktum()
             "generator" -> lagGeneratorFaktum()
             else -> lagBasisFaktum()

@@ -125,7 +125,7 @@ const val `subfaktumDefinertIGeneratorTredjenivå` = 10
 private val forventedeVariabler =
     """
 const val `dummy boolean` = 1
-const val `dummy valg` = 2
+const val `dummy envalg` = 2
 const val `dummy subfaktum tekst` = 3
 const val `dummy flervalg` = 4
 const val `dummy dropdown` = 5
@@ -137,7 +137,7 @@ const val `dummy periode` = 10
 const val `dummy land` = 11
 const val `dummy generator` = 12
 const val `generator dummy boolean` = 13
-const val `generator dummy valg` = 14
+const val `generator dummy envalg` = 14
 const val `generator dummy flervalg` = 15
 const val `generator dummy dropdown` = 16
 const val `generator dummy int` = 17
@@ -152,10 +152,10 @@ const val `generator dummy subfaktum tekst` = 23
 private val forventetDsl =
     """
 boolsk faktum "faktum.dummy-boolean" id `dummy boolean`,
-envalg faktum "faktum.dummy-valg"
+envalg faktum "faktum.dummy-envalg"
   med "svar.ja"
   med "svar.nei"
-  med "svar.vetikke" id `dummy valg`,
+  med "svar.vetikke" id `dummy envalg`,
 tekst faktum "faktum.dummy-subfaktum-tekst" id `dummy subfaktum tekst`,
 flervalg faktum "faktum.dummy-flervalg"
   med "svar.1"
@@ -174,7 +174,7 @@ land faktum "faktum.dummy-land" id `dummy land`,
 tekst faktum "faktum.generator-dummy-subfaktum-tekst" id `generator dummy subfaktum tekst`,
 heltall faktum "faktum.dummy-generator" id `dummy generator`
   genererer `generator dummy boolean`
-  og `generator dummy valg`
+  og `generator dummy envalg`
   og `generator dummy subfaktum tekst`
   og `generator dummy flervalg`
   og `generator dummy dropdown`
@@ -185,10 +185,10 @@ heltall faktum "faktum.dummy-generator" id `dummy generator`
   og `generator dummy periode`
   og `generator dummy land`,
 boolsk faktum "faktum.generator-dummy-boolean" id `generator dummy boolean`,
-envalg faktum "faktum.generator-dummy-valg"
+envalg faktum "faktum.generator-dummy-envalg"
   med "svar.ja"
   med "svar.nei"
-  med "svar.vetikke" id `generator dummy valg`,
+  med "svar.vetikke" id `generator dummy envalg`,
 flervalg faktum "faktum.generator-dummy-flervalg"
   med "svar.1"
   med "svar.2"
@@ -203,153 +203,153 @@ tekst faktum "faktum.generator-dummy-tekst" id `generator dummy tekst`,
 dato faktum "faktum.generator-dummy-localdate" id `generator dummy localdate`,
 periode faktum "faktum.generator-dummy-periode" id `generator dummy periode`,
 land faktum "faktum.generator-dummy-land" id `generator dummy land`
-""".trim()
+    """.trimIndent().trim()
 
+// language=JS
 private const val `dummy-seksjon-ts` =
-    """
-import { MockDataSeksjon } from "./soknad";
+    """import { MockDataSeksjon } from "./soknad";
 
 export const dummySeksjon: MockDataSeksjon = {
-  id: "dummy-seksjon-data",
-  faktum: [
-    {
-      id: "faktum.dummy-boolean",
-      type: "boolean",
-      answerOptions: [
-        { id: "faktum.dummy-boolean.svar.ja" },
-        { id: "faktum.dummy-boolean.svar.nei" },
-      ],
-    },
-    {
-      id: "faktum.dummy-valg",
-      type: "valg",
-      answerOptions: [
-        { id: "faktum.dummy-valg.svar.ja" },
-        { id: "faktum.dummy-valg.svar.nei" },
-        { id: "faktum.dummy-valg.svar.vetikke" },
-      ],
-      subFaktum: [
+    id: "dummy-seksjon-data",
+    faktum: [
         {
-          id: "faktum.dummy-subfaktum-tekst",
-          type: "tekst",
-          requiredAnswerIds: ["faktum.dummy-valg.svar.ja"],
-        },
-      ],
-    },
-    {
-      id: "faktum.dummy-flervalg",
-      type: "flervalg",
-      answerOptions: [
-        { id: "faktum.dummy-flervalg.svar.1" },
-        { id: "faktum.dummy-flervalg.svar.2" },
-        { id: "faktum.dummy-flervalg.svar.3" },
-      ],
-    },
-    {
-      id: "faktum.dummy-dropdown",
-      type: "dropdown",
-      answerOptions: [
-        { id: "faktum.dummy-dropdown.svar.1" },
-        { id: "faktum.dummy-dropdown.svar.2" },
-        { id: "faktum.dummy-dropdown.svar.3" },
-      ],
-    },
-    {
-      id: "faktum.dummy-int",
-      type: "int",
-    },
-    {
-      id: "faktum.dummy-double",
-      type: "double",
-    },
-    {
-      id: "faktum.dummy-tekst",
-      type: "tekst",
-    },
-    {
-      id: "faktum.dummy-localdate",
-      type: "localdate",
-    },
-    {
-      id: "faktum.dummy-periode",
-      type: "periode",
-    },
-    {
-      id: "faktum.dummy-land",
-      type: "land",
-    },
-    {
-      id: "faktum.dummy-generator",
-      type: "generator",
-      faktum: [
-        {
-          id: "faktum.generator-dummy-boolean",
-          type: "boolean",
-          answerOptions: [
-            { id: "faktum.generator-dummy-boolean.svar.ja" },
-            { id: "faktum.generator-dummy-boolean.svar.nei" },
-          ],
+            id: "faktum.dummy-boolean",
+            type: "boolean",
+            answerOptions: [
+                { id: "faktum.dummy-boolean.svar.ja" },
+                { id: "faktum.dummy-boolean.svar.nei" },
+            ],
         },
         {
-          id: "faktum.generator-dummy-valg",
-          type: "valg",
-          answerOptions: [
-            { id: "faktum.generator-dummy-valg.svar.ja" },
-            { id: "faktum.generator-dummy-valg.svar.nei" },
-            { id: "faktum.generator-dummy-valg.svar.vetikke" },
-          ],
-          subFaktum: [
-            {
-              id: "faktum.generator-dummy-subfaktum-tekst",
-              type: "tekst",
-              requiredAnswerIds: ["faktum.generator-dummy-valg.svar.ja"],
-            },
-          ],
+            id: "faktum.dummy-envalg",
+            type: "envalg",
+            answerOptions: [
+                { id: "faktum.dummy-envalg.svar.ja" },
+                { id: "faktum.dummy-envalg.svar.nei" },
+                { id: "faktum.dummy-envalg.svar.vetikke" },
+            ],
+            subFaktum: [
+                {
+                    id: "faktum.dummy-subfaktum-tekst",
+                    type: "tekst",
+                    requiredAnswerIds: ["faktum.dummy-envalg.svar.ja"],
+                },
+            ],
         },
         {
-          id: "faktum.generator-dummy-flervalg",
-          type: "flervalg",
-          answerOptions: [
-            { id: "faktum.generator-dummy-flervalg.svar.1" },
-            { id: "faktum.generator-dummy-flervalg.svar.2" },
-            { id: "faktum.generator-dummy-flervalg.svar.3" },
-          ],
+            id: "faktum.dummy-flervalg",
+            type: "flervalg",
+            answerOptions: [
+                { id: "faktum.dummy-flervalg.svar.1" },
+                { id: "faktum.dummy-flervalg.svar.2" },
+                { id: "faktum.dummy-flervalg.svar.3" },
+            ],
         },
         {
-          id: "faktum.generator-dummy-dropdown",
-          type: "dropdown",
-          answerOptions: [
-            { id: "faktum.generator-dummy-dropdown.svar.1" },
-            { id: "faktum.generator-dummy-dropdown.svar.2" },
-            { id: "faktum.generator-dummy-dropdown.svar.3" },
-          ],
+            id: "faktum.dummy-dropdown",
+            type: "dropdown",
+            answerOptions: [
+                { id: "faktum.dummy-dropdown.svar.1" },
+                { id: "faktum.dummy-dropdown.svar.2" },
+                { id: "faktum.dummy-dropdown.svar.3" },
+            ],
         },
         {
-          id: "faktum.generator-dummy-int",
-          type: "int",
+            id: "faktum.dummy-int",
+            type: "int",
         },
         {
-          id: "faktum.generator-dummy-double",
-          type: "double",
+            id: "faktum.dummy-double",
+            type: "double",
         },
         {
-          id: "faktum.generator-dummy-tekst",
-          type: "tekst",
+            id: "faktum.dummy-tekst",
+            type: "tekst",
         },
         {
-          id: "faktum.generator-dummy-localdate",
-          type: "localdate",
+            id: "faktum.dummy-localdate",
+            type: "localdate",
         },
         {
-          id: "faktum.generator-dummy-periode",
-          type: "periode",
+            id: "faktum.dummy-periode",
+            type: "periode",
         },
         {
-          id: "faktum.generator-dummy-land",
-          type: "land",
+            id: "faktum.dummy-land",
+            type: "land",
         },
-      ],
-    },
-  ],
+        {
+            id: "faktum.dummy-generator",
+            type: "generator",
+            faktum: [
+                {
+                    id: "faktum.generator-dummy-boolean",
+                    type: "boolean",
+                    answerOptions: [
+                        { id: "faktum.generator-dummy-boolean.svar.ja" },
+                        { id: "faktum.generator-dummy-boolean.svar.nei" },
+                    ],
+                },
+                {
+                    id: "faktum.generator-dummy-envalg",
+                    type: "envalg",
+                    answerOptions: [
+                        { id: "faktum.generator-dummy-envalg.svar.ja" },
+                        { id: "faktum.generator-dummy-envalg.svar.nei" },
+                        { id: "faktum.generator-dummy-envalg.svar.vetikke" },
+                    ],
+                    subFaktum: [
+                        {
+                            id: "faktum.generator-dummy-subfaktum-tekst",
+                            type: "tekst",
+                            requiredAnswerIds: ["faktum.generator-dummy-envalg.svar.ja"],
+                        },
+                    ],
+                },
+                {
+                    id: "faktum.generator-dummy-flervalg",
+                    type: "flervalg",
+                    answerOptions: [
+                        { id: "faktum.generator-dummy-flervalg.svar.1" },
+                        { id: "faktum.generator-dummy-flervalg.svar.2" },
+                        { id: "faktum.generator-dummy-flervalg.svar.3" },
+                    ],
+                },
+                {
+                    id: "faktum.generator-dummy-dropdown",
+                    type: "dropdown",
+                    answerOptions: [
+                        { id: "faktum.generator-dummy-dropdown.svar.1" },
+                        { id: "faktum.generator-dummy-dropdown.svar.2" },
+                        { id: "faktum.generator-dummy-dropdown.svar.3" },
+                    ],
+                },
+                {
+                    id: "faktum.generator-dummy-int",
+                    type: "int",
+                },
+                {
+                    id: "faktum.generator-dummy-double",
+                    type: "double",
+                },
+                {
+                    id: "faktum.generator-dummy-tekst",
+                    type: "tekst",
+                },
+                {
+                    id: "faktum.generator-dummy-localdate",
+                    type: "localdate",
+                },
+                {
+                    id: "faktum.generator-dummy-periode",
+                    type: "periode",
+                },
+                {
+                    id: "faktum.generator-dummy-land",
+                    type: "land",
+                },
+            ],
+        },
+    ],
 };
 """
