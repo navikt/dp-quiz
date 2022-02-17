@@ -35,4 +35,8 @@ private fun verifiserAtMappaEksisterer(path: File) {
 }
 
 private fun filterBortUnødvendigeSeksjoner(file: File) =
-    !(file.name.contains("soknad.ts") || file.name.contains("dummy-seksjon.ts"))
+    !(
+        file.name.contains("soknad.ts") ||
+            file.name.contains("dummy-seksjon.ts") ||
+            file.name.contains("mock-fakta-response.ts")
+        )
