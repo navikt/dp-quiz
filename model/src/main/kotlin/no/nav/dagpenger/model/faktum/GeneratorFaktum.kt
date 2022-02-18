@@ -31,6 +31,11 @@ class GeneratorFaktum internal constructor(
         templates.forEach { template -> template.generate(r, søknad) }
     }
 
+    override fun tilUbesvart() {
+        tilbakestill()
+        super.tilUbesvart()
+    }
+
     private fun tilbakestill() {
         templates.forEach { template -> template.tilbakestill() }
         søknad.removeAll(templates)

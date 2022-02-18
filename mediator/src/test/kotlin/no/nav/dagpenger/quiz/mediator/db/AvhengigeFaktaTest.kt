@@ -247,7 +247,7 @@ internal class AvhengigeFaktaTest {
 
             originalSøknadprosess.boolsk(1).besvar(false)
             søknadRecord.lagre(originalSøknadprosess.søknad)
-            assertRecordCount(13, "gammel_faktum_verdi")
+            assertRecordCount(15, "gammel_faktum_verdi")
             rehydrertSøknadprosess = søknadRecord.hent(originalSøknadprosess.søknad.uuid)
             assertEquals(1, rehydrertSøknadprosess.søknad.count { it.erBesvart() })
         }
