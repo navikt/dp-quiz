@@ -33,20 +33,19 @@ object Arbeidsforhold : DslFaktaseksjon {
     const val `arbeidsforhold rotasjon antall fridager` = 8019
     const val `midlertidig arbeidsforhold med sluttdato` = 8020
     const val `midlertidig arbeidsforhold sluttdato` = 8021
-    const val `arbeidsforhold permitert` = 8022
-    const val `arbeidsforhold lonnsplinkt arbeidsgiver` = 8023
-    const val `aarsak til sagt opp selv` = 8024
-    const val `arbeidsforhold arbeidsgiver konkurs navn bostyrer` = 8025
-    const val `arbeidsforhold dagpenger og forskudd lonnsgarantimidler` = 8026
-    const val `arbeidsforhold godta nav trekk direkte lonnsgaranti` = 8027
-    const val `arbeidsforhold sok lonnsgarantimidler` = 8028
-    const val `arbeidsforhold lonnsgaranti dekker krav` = 8029
-    const val `arbeidsforhold godta trekk direkte konkursbo` = 8030
-    const val `arbeidsforhold utbetalt lonn etter konkurs` = 8031
-    const val `faktum arbeidsforhold konkurs siste dag lonn` = 8032
-    const val `arbeidsforhold tillegsinformasjon` = 8033
-    const val `arbeidsforhold permitteringsperiode` = 8034
-    const val `arbeidsforhold permitteringgrad` = 8035
+    const val `arbeidsforhold permitteringsperiode` = 8022
+    const val `arbeidsforhold permitteringgrad` = 8023
+    const val `arbeidsforhold lonnsplinkt arbeidsgiver` = 8024
+    const val `aarsak til sagt opp selv` = 8025
+    const val `arbeidsforhold arbeidsgiver konkurs navn bostyrer` = 8026
+    const val `arbeidsforhold dagpenger og forskudd lonnsgarantimidler` = 8027
+    const val `arbeidsforhold godta nav trekk direkte lonnsgaranti` = 8028
+    const val `arbeidsforhold sok lonnsgarantimidler` = 8029
+    const val `arbeidsforhold lonnsgaranti dekker krav` = 8030
+    const val `arbeidsforhold godta trekk direkte konkursbo` = 8031
+    const val `arbeidsforhold utbetalt lonn etter konkurs` = 8032
+    const val `faktum arbeidsforhold konkurs siste dag lonn` = 8033
+    const val `arbeidsforhold tillegsinformasjon` = 8034
 
     override val fakta = listOf(
         dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger soknadsdato`,
@@ -79,9 +78,6 @@ object Arbeidsforhold : DslFaktaseksjon {
             med "svar.ja"
             med "svar.vet-ikke" id `midlertidig arbeidsforhold med sluttdato`,
         dato faktum "faktum.midlertidig-arbeidsforhold-sluttdato" id `midlertidig arbeidsforhold sluttdato`,
-        heltall faktum "faktum.arbeidsforhold-permitert" id `arbeidsforhold permitert`
-            genererer `arbeidsforhold permitteringsperiode`
-            og `arbeidsforhold permitteringgrad`,
         periode faktum "faktum.arbeidsforhold-permitteringsperiode" id `arbeidsforhold permitteringsperiode`,
         heltall faktum "faktum.arbeidsforhold-permitteringgrad" id `arbeidsforhold permitteringgrad`,
         periode faktum "faktum.arbeidsforhold-lonnsplinkt-arbeidsgiver" id `arbeidsforhold lonnsplinkt arbeidsgiver`,
@@ -123,7 +119,8 @@ object Arbeidsforhold : DslFaktaseksjon {
             og `arbeidsforhold rotasjon antall fridager`
             og `midlertidig arbeidsforhold med sluttdato`
             og `midlertidig arbeidsforhold sluttdato`
-            og `arbeidsforhold permitert`
+            og `arbeidsforhold permitteringsperiode`
+            og `arbeidsforhold permitteringgrad`
             og `arbeidsforhold lonnsplinkt arbeidsgiver`
             og `aarsak til sagt opp selv`
             og `arbeidsforhold arbeidsgiver konkurs navn bostyrer`
