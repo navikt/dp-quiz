@@ -92,9 +92,9 @@ internal class GenerertFaktumTest {
         søknadprosess.boolsk(5).besvar(false)
 
         assertFalse("4 skal ikke være besvart") { søknadprosess.boolsk(4).erBesvart() }
-        assertNull(søknadprosess.søknad.find { it.id == "1.1" }, "1.1 skal ikke være besvart" )
-        assertNull(søknadprosess.søknad.find { it.id == "2.1" }, "2.1 skal ikke være besvart" )
-        assertNull(søknadprosess.søknad.find { it.id == "3.1" }, "3.1 skal ikke være besvart" )
+        assertNull(søknadprosess.søknad.find { it.id == "1.1" }, "1.1 skal ikke være besvart")
+        assertNull(søknadprosess.søknad.find { it.id == "2.1" }, "2.1 skal ikke være besvart")
+        assertNull(søknadprosess.søknad.find { it.id == "3.1" }, "3.1 skal ikke være besvart")
     }
 
     @Test
