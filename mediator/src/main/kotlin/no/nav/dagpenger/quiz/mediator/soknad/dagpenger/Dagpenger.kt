@@ -80,6 +80,7 @@ internal object Dagpenger {
             )
         )
 
+    @Suppress("unused")
     private val versjon = Versjon.Bygger(
         prototypeSøknad = søknad,
         prototypeSubsumsjon = regeltre,
