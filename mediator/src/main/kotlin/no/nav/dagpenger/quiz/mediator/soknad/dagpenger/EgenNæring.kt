@@ -2,7 +2,6 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
@@ -18,8 +17,8 @@ object EgenNæring : DslFaktaseksjon {
     const val `faktum eget gaardsbruk type gaardsbruk` = 3007
     const val `faktum eget gaardsbruk hvem eier` = 3008
     const val `faktum eget gaardsbruk arbeidstimer` = 3009
-    const val `faktum eget gaardsbruk arbeidsaar` = 3010
     const val `faktum eget gaardsbruk arbeidstimer beregning` = 3011
+    const val `faktum eget gaardsbruk arbeidsaar` = 3012
 
     override val fakta = listOf(
         boolsk faktum "faktum.driver-du-egen-naering" id `driver du egen naering`,
@@ -39,12 +38,7 @@ object EgenNæring : DslFaktaseksjon {
             med "faktum.eget-gaardsbruk-hvem-eier.svar.ektefelle-samboer"
             med "faktum.eget-gaardsbruk-hvem-eier.svar.andre" id `faktum eget gaardsbruk hvem eier`,
         desimaltall faktum "faktum-eget-gaardsbruk-arbeidstimer" id `faktum eget gaardsbruk arbeidstimer`,
-        envalg faktum "faktum-eget-gaardsbruk-arbeidsaar"
-            med "svar.2022"
-            med "svar.2021"
-            med "svar.2020"
-            med "svar.2019"
-            med "svar.2018" id `faktum eget gaardsbruk arbeidsaar`,
-        tekst faktum "faktum-eget-gaardsbruk-arbeidstimer-beregning" id `faktum eget gaardsbruk arbeidstimer beregning`
+        tekst faktum "faktum-eget-gaardsbruk-arbeidstimer-beregning" id `faktum eget gaardsbruk arbeidstimer beregning`,
+        heltall faktum "faktum-eget-gaardsbruk-arbeidsaar" id `faktum eget gaardsbruk arbeidsaar`
     )
 }
