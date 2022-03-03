@@ -56,6 +56,12 @@ internal class FaktumSvarService(
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
+        if ((søknadUuid == UUID.fromString("472af551-3480-4b9c-bdf2-f83189e329d7")) &&
+            System.getenv()["NAIS_CLUSTER_NAME"] == "dev-gcp"
+        ) {
+            log.info { "Skipper 472af551-3480-4b9c-bdf2-f83189e329d7, poison pill." }
+            return
+        }
         val fakta = packet["fakta"].filter(harSvar())
         if (fakta.isEmpty()) return
 
