@@ -44,7 +44,7 @@ object Arbeidsforhold : DslFaktaseksjon {
     const val `arbeidsforhold lonnsgaranti dekker krav` = 8030
     const val `arbeidsforhold godta trekk direkte konkursbo` = 8031
     const val `arbeidsforhold utbetalt lonn etter konkurs` = 8032
-    const val `faktum arbeidsforhold konkurs siste dag lonn` = 8033
+    const val `arbeidsforhold konkurs siste dag lonn` = 8033
     const val `arbeidsforhold tillegsinformasjon` = 8034
 
     override val fakta = listOf(
@@ -98,7 +98,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             med "svar.vet-ikke" id `arbeidsforhold lonnsgaranti dekker krav`,
         boolsk faktum "faktum.arbeidsforhold-godta-trekk-direkte-konkursbo" id `arbeidsforhold godta trekk direkte konkursbo`,
         boolsk faktum "faktum.arbeidsforhold-utbetalt-lonn-etter-konkurs" id `arbeidsforhold utbetalt lonn etter konkurs`,
-        dato faktum "faktum-arbeidsforhold-konkurs-siste-dag-lonn" id `faktum arbeidsforhold konkurs siste dag lonn`,
+        dato faktum "faktum.arbeidsforhold-konkurs-siste-dag-lonn" id `arbeidsforhold konkurs siste dag lonn`,
         tekst faktum "faktum.arbeidsforhold-tillegsinformasjon" id `arbeidsforhold tillegsinformasjon`,
         heltall faktum "faktum.arbeidsforhold" id `arbeidsforhold`
             genererer `navn bedrift`
@@ -130,7 +130,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             og `arbeidsforhold lonnsgaranti dekker krav`
             og `arbeidsforhold godta trekk direkte konkursbo`
             og `arbeidsforhold utbetalt lonn etter konkurs`
-            og `faktum arbeidsforhold konkurs siste dag lonn`
+            og `arbeidsforhold konkurs siste dag lonn`
             og `arbeidsforhold tillegsinformasjon`,
         tekst faktum "faktum.navn-bedrift" id `navn bedrift`,
         land faktum "faktum.arbeidsforhold-land" id `arbeidsforhold land`,
