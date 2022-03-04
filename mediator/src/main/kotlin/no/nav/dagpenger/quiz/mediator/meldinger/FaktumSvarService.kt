@@ -34,6 +34,8 @@ internal class FaktumSvarService(
     private companion object {
         private val log = KotlinLogging.logger {}
         private val sikkerlogg = KotlinLogging.logger("tjenestekall")
+
+        private val ignorerSøknadUUID = setOf("e4d788fd-272a-4f71-a280-b2e56ea0928a").map { UUID.fromString(it) }
     }
 
     init {
@@ -56,6 +58,12 @@ internal class FaktumSvarService(
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
+        if ((ignorerSøknadUUID.contains(søknadUuid)) &&
+            System.getenv()["NAIS_CLUSTER_NAME"] == "dev-gcp"
+        ) {
+            log.info { "Skipper $søknadUuid, poison pill." }
+            return
+        }
         val fakta = packet["fakta"].filter(harSvar())
         if (fakta.isEmpty()) return
 
