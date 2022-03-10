@@ -51,6 +51,8 @@ spec:
         highAvailability: false
         diskSize: {{ db_size }}
         diskAutoresize: true
+        pointInTimeRecovery: true
+        retainedBackups: {{ point_in_time_recovery_days }}
         autoBackupTime: "03:00"
         databases:
           - name: quiz
