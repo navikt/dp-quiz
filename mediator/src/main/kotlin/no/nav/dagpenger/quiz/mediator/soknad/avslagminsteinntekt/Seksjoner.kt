@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.`avviklingsdato for midlertidig krav til minsteinntekt`
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeidManuell
@@ -52,6 +53,10 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.ønsketDato
 
 internal object Seksjoner {
+
+    private val aviklingMinsteArbeidsinntektSeksjon = with(søknad) {
+        Seksjon("aviklingMinsteArbeidsinntekt", Rolle.nav, dato(`avviklingsdato for midlertidig krav til minsteinntekt`))
+    }
 
     private val behandlingsdatoSeksjon = with(søknad) {
         Seksjon("behandlingsdato", Rolle.nav, dato(behandlingsdato))
@@ -305,6 +310,7 @@ internal object Seksjoner {
     internal val søknadprosess: Søknadprosess =
         Søknadprosess(
             behandlingsdatoSeksjon,
+            aviklingMinsteArbeidsinntektSeksjon,
             senesteMuligeVirkningsdatoSeksjon,
             minsteinntektKonstanter,
             grunnbeløpSeksjon,

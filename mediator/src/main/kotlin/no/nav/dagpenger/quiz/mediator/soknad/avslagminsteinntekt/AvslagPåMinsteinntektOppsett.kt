@@ -21,7 +21,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.Seksjoner.søkn
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    val VERSJON_ID = Prosessversjon(Prosess.AvslagPåMinsteinntekt, 26)
+    val VERSJON_ID = Prosessversjon(Prosess.AvslagPåMinsteinntekt, 27)
 
     fun registrer(registrer: (søknad: Søknad) -> Unit) {
         registrer(søknad)
@@ -79,6 +79,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val jobbetUtenforNorgeManuell = 58
     const val hattLukkedeSakerSiste8Uker = 59
     const val hattLukkedeSakerSiste8UkerManuell = 60
+    const val `avviklingsdato for midlertidig krav til minsteinntekt` = 61
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -134,7 +135,8 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Har jobbet utenfor Norge" id jobbetUtenforNorge avhengerAv innsendtSøknadsId,
             boolsk faktum "Har jobbet utenfor Norge manuell" id jobbetUtenforNorgeManuell avhengerAv jobbetUtenforNorge,
             boolsk faktum "Har hatt lukkede saker siste 8 uker" id hattLukkedeSakerSiste8Uker avhengerAv virkningsdato,
-            boolsk faktum "Har hatt lukkede saker siste 8 uker manuell" id hattLukkedeSakerSiste8UkerManuell avhengerAv hattLukkedeSakerSiste8Uker
+            boolsk faktum "Har hatt lukkede saker siste 8 uker manuell" id hattLukkedeSakerSiste8UkerManuell avhengerAv hattLukkedeSakerSiste8Uker,
+            dato faktum "Dato for avvikling av midlertidig krav til minsteinntekt som følge av covid-19-pandemien" id `avviklingsdato for midlertidig krav til minsteinntekt`
         )
 
     private val faktumNavBehov =
@@ -172,7 +174,8 @@ internal object AvslagPåMinsteinntektOppsett {
                 fortsattRettKorona to "FortsattRettKorona",
                 over67årFradato to "ForGammelGrensedato",
                 jobbetUtenforNorge to "JobbetUtenforNorge",
-                hattLukkedeSakerSiste8Uker to "HarHattLukketSiste8Uker"
+                hattLukkedeSakerSiste8Uker to "HarHattLukketSiste8Uker",
+                `avviklingsdato for midlertidig krav til minsteinntekt` to "AvviklingsdatoKravTilMinsteinntekt",
             )
         )
 
