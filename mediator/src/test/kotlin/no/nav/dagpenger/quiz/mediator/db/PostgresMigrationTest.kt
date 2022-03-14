@@ -11,7 +11,7 @@ internal class PostgresMigrationTest {
     fun `Migration scripts are applied successfully`() {
         withCleanDb {
             val migrations = runMigration()
-            assertEquals(21, migrations)
+            assertEquals(22, migrations)
         }
     }
 }
