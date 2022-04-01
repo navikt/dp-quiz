@@ -41,7 +41,6 @@ internal object AvslagPåMinsteinntektOppsett {
     const val verneplikt = 14
     const val innsendtSøknadsId = 17
     const val registrertArbeidssøkerPerioder = 19
-    const val lærling = 20
     const val registrertArbeidssøkerPeriodeFom = 21
     const val registrertArbeidssøkerPeriodeTom = 22
     const val behandlingsdato = 23
@@ -96,7 +95,6 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Verneplikt" id verneplikt avhengerAv innsendtSøknadsId,
             dokument faktum "Innsendt søknadsId" id innsendtSøknadsId,
             heltall faktum "Antall arbeidsøker registeringsperioder" id registrertArbeidssøkerPerioder genererer registrertArbeidssøkerPeriodeFom og registrertArbeidssøkerPeriodeTom,
-            boolsk faktum "Lærling" id lærling avhengerAv innsendtSøknadsId,
             dato faktum "fom" id registrertArbeidssøkerPeriodeFom,
             dato faktum "tom" id registrertArbeidssøkerPeriodeTom,
             dato faktum "Behandlingsdato" id behandlingsdato,
@@ -150,7 +148,6 @@ internal object AvslagPåMinsteinntektOppsett {
                 verneplikt to "Verneplikt",
                 innsendtSøknadsId to "InnsendtSøknadsId",
                 registrertArbeidssøkerPerioder to "Registreringsperioder",
-                lærling to "Lærling",
                 behandlingsdato to "Behandlingsdato",
                 senesteMuligeVirkningsdato to "SenesteMuligeVirkningstidspunkt",
                 antallEndredeArbeidsforhold to "Rettighetstype",

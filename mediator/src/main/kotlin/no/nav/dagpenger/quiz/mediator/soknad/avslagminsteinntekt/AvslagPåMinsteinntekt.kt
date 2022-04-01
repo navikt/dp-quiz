@@ -22,7 +22,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.inntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.minsteinntektsterskel12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.minsteinntektsterskel36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
@@ -49,7 +48,6 @@ internal object AvslagPåMinsteinntekt {
             inntekt(inntektSiste36mnd) minst inntekt(minsteinntektsterskel36mnd),
             inntekt(inntektSiste12mnd) minst inntekt(minsteinntektsterskel12mnd),
             boolsk(verneplikt) er true,
-            boolsk(lærling) er true
         ) hvisOppfyltManuell (boolsk(oppfyllerMinsteinntektManuell)) hvisIkkeOppfylt {
             sjekkInntektNesteKalendermåned
         }

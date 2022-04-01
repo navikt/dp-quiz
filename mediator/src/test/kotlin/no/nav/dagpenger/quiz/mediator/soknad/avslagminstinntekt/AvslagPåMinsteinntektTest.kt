@@ -28,7 +28,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.jobbetUtenforNorge
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.lønnsgaranti
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.minsteinntektfaktor12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.minsteinntektfaktor36mnd
@@ -107,7 +106,6 @@ internal class AvslagPåMinsteinntektTest {
             desimaltall(minsteinntektfaktor36mnd).besvar(3.0)
 
             boolsk(verneplikt).besvar(false)
-            boolsk(lærling).besvar(false)
 
             inntekt(inntektSiste36mnd).besvar(20000.årlig)
             inntekt(inntektSiste12mnd).besvar(5000.årlig)
@@ -162,12 +160,6 @@ internal class AvslagPåMinsteinntektTest {
     fun `De som oppfyller kravet til minsteinntekt får innvilget dagpenger`() {
         manglerInntekt.inntekt(inntektSiste36mnd).besvar(2000000.årlig)
         manglerInntekt.inntekt(inntektSiste12mnd).besvar(5000000.årlig)
-        assertEquals(true, manglerInntekt.resultat())
-    }
-
-    @Test
-    fun `De som har vært lærling får innvilget dagpenger`() {
-        manglerInntekt.boolsk(lærling).besvar(true)
         assertEquals(true, manglerInntekt.resultat())
     }
 
