@@ -11,7 +11,6 @@ import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.`avviklingsdato for midlertidig krav til minsteinntekt`
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
@@ -123,7 +122,6 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
             besvar(verneplikt, false)
             besvar(ønsketDato, 5.januar)
             besvar(søknadstidspunkt, 2.januar)
-            besvar(`avviklingsdato for midlertidig krav til minsteinntekt`, 1.januar)
             besvar(harInntektNesteKalendermåned, false)
             besvar(kanJobbeDeltid, true)
             besvar(helseTilAlleTyperJobb, true)

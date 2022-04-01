@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator
 
-import no.nav.dagpenger.quiz.mediator.behovløsere.AvviklingsdatoKravTilMinsteinntektService
 import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
@@ -42,7 +41,6 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 Dagpenger.registrer { søknad -> FaktumTable(søknad) }
                 DagpengerService(søknadRecord, rapidsConnection)
                 FaktumSvarService(søknadRecord, resultatRecord, rapidsConnection)
-                AvviklingsdatoKravTilMinsteinntektService(rapidsConnection)
                 BehandlingsdatoService(rapidsConnection)
                 SenesteMuligeVirkningsdatoService(rapidsConnection)
                 TerskelFaktorService(rapidsConnection)
