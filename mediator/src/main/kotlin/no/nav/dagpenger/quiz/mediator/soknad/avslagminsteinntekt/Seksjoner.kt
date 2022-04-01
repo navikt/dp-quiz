@@ -10,8 +10,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeidManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fortsattRettKorona
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fortsattRettKoronaManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
@@ -26,7 +24,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.jobbetUtenforNorgeManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.kanJobbeDeltid
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.kanJobbeHvorSomHelst
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.lærling
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.lønnsgaranti
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.minsteinntektfaktor12mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.minsteinntektfaktor36mnd
@@ -94,13 +91,11 @@ internal object Seksjoner {
             dato(ønsketDato),
             dato(søknadstidspunkt),
             boolsk(verneplikt),
-            boolsk(lærling),
             boolsk(eøsArbeid),
             boolsk(kanJobbeDeltid),
             boolsk(helseTilAlleTyperJobb),
             boolsk(kanJobbeHvorSomHelst),
             boolsk(villigTilÅBytteYrke),
-            boolsk(fortsattRettKorona),
             boolsk(jobbetUtenforNorge)
         )
     }
@@ -275,14 +270,6 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellFortsattRettKorona = with(søknad) {
-        Seksjon(
-            "fortsatt rett korona",
-            Rolle.manuell,
-            boolsk(fortsattRettKoronaManuell)
-        )
-    }
-
     private val manuellOver67år = with(søknad) {
         Seksjon(
             "over 67 år",
@@ -334,7 +321,6 @@ internal object Seksjoner {
             manuellHarInntektNesteKalendermåned,
             manuellErIkkeReellArbeidssøker,
             manuellErIkkeRegistrertArbeidssøker,
-            manuellFortsattRettKorona,
             manuellOver67år,
             manuellJobbetUtenforNorge,
             manuellHattLukkedeSakerSiste8Uker,

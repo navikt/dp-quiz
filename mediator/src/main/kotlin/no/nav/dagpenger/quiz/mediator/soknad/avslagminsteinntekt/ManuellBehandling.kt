@@ -12,8 +12,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeidManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fortsattRettKorona
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fortsattRettKoronaManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.hattLukkedeSakerSiste8Uker
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.hattLukkedeSakerSiste8UkerManuell
@@ -58,10 +56,6 @@ internal object ManuellBehandling {
         boolsk(sykepengerSiste36mnd) er true hvisOppfyltManuell (boolsk(svangerskapsrelaterteSykepengerManuell))
     }
 
-    private val harFortsattRettKorona = with(søknad) {
-        boolsk(fortsattRettKorona) er true hvisOppfyltManuell (boolsk(fortsattRettKoronaManuell))
-    }
-
     private val harHattLukkedeSakerSiste8Uker = with(søknad) {
         boolsk(hattLukkedeSakerSiste8Uker) er true hvisOppfyltManuell (boolsk(hattLukkedeSakerSiste8UkerManuell))
     }
@@ -75,7 +69,6 @@ internal object ManuellBehandling {
 
     internal val `skal behandles av Arena` =
         "manuelt behandles".minstEnAv(
-            harFortsattRettKorona,
             `ønsker etter avviklingsdato for midlertidig krav til minsteinntekt`,
             virkningsdatoEtterNåværendeInntektsrapporteringsperiode,
             harArbeidetEøs,
