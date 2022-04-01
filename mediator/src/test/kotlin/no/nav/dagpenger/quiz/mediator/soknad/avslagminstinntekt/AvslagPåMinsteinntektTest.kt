@@ -16,7 +16,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fortsattRettKorona
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
@@ -118,8 +117,6 @@ internal class AvslagPåMinsteinntektTest {
             boolsk("$permittert.1").besvar(true)
             boolsk("$lønnsgaranti.1").besvar(false)
             boolsk("$permittertFiskeforedling.1").besvar(false)
-
-            boolsk(fortsattRettKorona).besvar(false)
 
             boolsk(oppfyllerMinsteinntektManuell).besvar(true) // Omgå manuell-seksjon
         }
@@ -234,12 +231,6 @@ internal class AvslagPåMinsteinntektTest {
     fun `Aldri registrert arbeidssøker skal manuelt behandles`() {
         manglerInntekt.generator(registrertArbeidssøkerPerioder).besvar(0)
         assertNesteSeksjon("ikke registrert arbeidssøker")
-    }
-
-    @Test
-    fun `Har fortsatt rett til dagpenger under korona skal manuelt behandles`() {
-        manglerInntekt.boolsk(fortsattRettKorona).besvar(true)
-        assertNesteSeksjon("fortsatt rett korona")
     }
 
     @Test

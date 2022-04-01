@@ -10,8 +10,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeidManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fortsattRettKorona
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fortsattRettKoronaManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
@@ -100,7 +98,6 @@ internal object Seksjoner {
             boolsk(helseTilAlleTyperJobb),
             boolsk(kanJobbeHvorSomHelst),
             boolsk(villigTilÅBytteYrke),
-            boolsk(fortsattRettKorona),
             boolsk(jobbetUtenforNorge)
         )
     }
@@ -275,14 +272,6 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellFortsattRettKorona = with(søknad) {
-        Seksjon(
-            "fortsatt rett korona",
-            Rolle.manuell,
-            boolsk(fortsattRettKoronaManuell)
-        )
-    }
-
     private val manuellOver67år = with(søknad) {
         Seksjon(
             "over 67 år",
@@ -334,7 +323,6 @@ internal object Seksjoner {
             manuellHarInntektNesteKalendermåned,
             manuellErIkkeReellArbeidssøker,
             manuellErIkkeRegistrertArbeidssøker,
-            manuellFortsattRettKorona,
             manuellOver67år,
             manuellJobbetUtenforNorge,
             manuellHattLukkedeSakerSiste8Uker,
