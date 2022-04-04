@@ -12,7 +12,6 @@ import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt.regeltre
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.arenaFagsakId
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.`avviklingsdato for midlertidig krav til minsteinntekt`
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
@@ -78,7 +77,6 @@ internal class AvslagPåMinsteinntektTest {
             dato(behandlingsdato).besvar(5.januar)
             dato(ønsketDato).besvar(5.januar)
             dato(søknadstidspunkt).besvar(2.januar)
-            dato(`avviklingsdato for midlertidig krav til minsteinntekt`).besvar(1.januar)
             dato(senesteMuligeVirkningsdato).besvar(19.januar)
             boolsk(harInntektNesteKalendermåned).besvar(false)
 
@@ -223,14 +221,6 @@ internal class AvslagPåMinsteinntektTest {
     fun `Aldri registrert arbeidssøker skal manuelt behandles`() {
         manglerInntekt.generator(registrertArbeidssøkerPerioder).besvar(0)
         assertNesteSeksjon("ikke registrert arbeidssøker")
-    }
-
-    @Test
-    fun `søknadstidspunkt før avviklingsdato og ønsketDato etter avviklingsdato bør gå til manuell`() {
-        manglerInntekt.dato(ønsketDato).besvar(5.januar)
-        manglerInntekt.dato(søknadstidspunkt).besvar(2.januar)
-        manglerInntekt.dato(`avviklingsdato for midlertidig krav til minsteinntekt`).besvar(3.januar)
-        assertNesteSeksjon("virkningstidspunkt vi ikke kan håndtere")
     }
 
     private fun assertNesteSeksjon(navn: String) {
