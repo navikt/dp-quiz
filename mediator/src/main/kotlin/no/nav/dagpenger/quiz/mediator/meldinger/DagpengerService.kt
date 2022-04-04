@@ -13,6 +13,7 @@ import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
+import no.nav.helse.rapids_rivers.withMDC
 import java.util.UUID
 
 internal class DagpengerService(
@@ -26,44 +27,48 @@ internal class DagpengerService(
         private val sikkerlogg = KotlinLogging.logger("tjenestekall")
     }
 
+    private val behovNavn = "NySøknad"
+
     init {
         River(rapidsConnection).apply {
-            validate {
-                it.demandValue("@event_name", "NySøknad")
-                it.requireKey("@id", "@opprettet")
-                it.requireKey("søknad_uuid")
-                it.requireKey("fødselsnummer")
-                it.forbid("fakta")
-            }
+            validate { it.demandValue("@event_name", "behov") }
+            validate { it.requireAllOrAny("@behov", listOf(behovNavn)) }
+            validate { it.requireKey("@id", "@opprettet") }
+            validate { it.requireKey("søknad_uuid") }
+            validate { it.requireKey("ident") }
+            validate { it.forbid("@løsning") }
         }.register(this)
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        log.info { "Mottok ny søknad med id ${packet["@id"].asText()}" }
-        val identer = Identer.Builder()
-            .folkeregisterIdent(packet["fødselsnummer"].asText())
-            // @todo: Aktør id?
-            .build()
-
         val søknadUuid = packet["søknad_uuid"].asText().let { søknadUuid -> UUID.fromString(søknadUuid) }
+        withMDC("søknad_uuid" to søknadUuid.toString()) {
+            log.info { "Mottok $behovNavn behov" }
+            val identer = Identer.Builder()
+                .folkeregisterIdent(packet["ident"].asText())
+                // @todo: Aktør id?
+                .build()
 
-        val faktagrupperType = Versjon.UserInterfaceType.Web
-        søknadPersistence.ny(identer, faktagrupperType, prosessVersjon, søknadUuid).also { søknadsprosess ->
-            søknadPersistence.lagre(søknadsprosess.søknad)
-            log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid}" }
+            val faktagrupperType = Versjon.UserInterfaceType.Web
+            søknadPersistence.ny(identer, faktagrupperType, prosessVersjon, søknadUuid).also { søknadsprosess ->
+                søknadPersistence.lagre(søknadsprosess.søknad)
+                log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid}" }
 
-            context.publish(
-                NavJsonBuilder(søknadsprosess, "navseksjon").resultat().toString().also {
-                    sikkerlogg.info { "Behov sendt: $it" }
-                }
+                context.publish(
+                    NavJsonBuilder(søknadsprosess, "navseksjon").resultat().toString().also {
+                        sikkerlogg.info { "Behov sendt: $it" }
+                    }
+                )
 
-            )
+                packet["@løsning"] = mapOf(behovNavn to søknadUuid)
+                context.publish(packet.toJson())
 
-            context.publish(
-                FaktaJsonBuilder(søknadsprosess).resultat().toString().also {
-                    sikkerlogg.info { "Fakta sendt: $it" }
-                }
-            )
+                context.publish(
+                    FaktaJsonBuilder(søknadsprosess).resultat().toString().also {
+                        sikkerlogg.info { "Fakta sendt: $it" }
+                    }
+                )
+            }
         }
     }
 

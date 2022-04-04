@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
-import com.fasterxml.jackson.databind.JsonNode
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
@@ -12,7 +11,6 @@ import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -42,19 +40,11 @@ internal class DagpengerTest : SøknadBesvarer() {
         testRapid.reset()
     }
 
-    private fun JsonNode.hentSvar(id: Int): JsonNode {
-        return this["fakta"].let { faktaNode ->
-            assertNotNull(faktaNode)
-            faktaNode.single { node ->
-                node["id"].asInt() == id
-            }["svar"]
-        }
-    }
-
     @Test
     fun `Hent alle fakta happy path`() {
 
-        withSøknad(nySøknad) { besvar ->
+        withSøknad(nySøknadBehov) { _ ->
+            assertEquals(3, testRapid.inspektør.size)
             testRapid.inspektør.message(0).let {
                 assertEquals("faktum_svar", it["@event_name"].asText())
                 assertEquals(
@@ -63,7 +53,11 @@ internal class DagpengerTest : SøknadBesvarer() {
                 )
             }
 
-            testRapid.inspektør.message(1).let {
+            testRapid.inspektør.message(1).let { behovLøsning ->
+                assertEquals(søknadUUID.toString(), behovLøsning["@løsning"]["NySøknad"].asText())
+            }
+
+            testRapid.inspektør.message(2).let {
                 assertFalse { it.toString().contains(""""svar":""") }
             }
         }
@@ -71,35 +65,39 @@ internal class DagpengerTest : SøknadBesvarer() {
 
     @Test
     fun `Ignore nysøknad med fakta`() {
-        testRapid.sendTestMessage(ferdigSøknad)
+        testRapid.sendTestMessage(ferdigNySøknadløsning)
         assertEquals(0, testRapid.inspektør.size)
     }
 
     private val søknadUUID = UUID.randomUUID()
 
     //language=JSON
-    private val ferdigSøknad =
+    private val ferdigNySøknadløsning =
         """
         {
-          "@event_name": "NySøknad",
+          "@event_name": "behov",
+          "@behov" : ["NySøknad"],
           "@opprettet": "${LocalDateTime.now()}",
           "@id": "${UUID.randomUUID()}",
-          "søknad_uuid": "${UUID.randomUUID()}",
-          "fødselsnummer": "123456789",
-          "fakta": []
+          "søknad_uuid": "$søknadUUID",
+          "ident": "123456789",
+          "@løsning": {
+              "NySøknad" : "$søknadUUID"
+          }
         }
         
         """.trimIndent()
 
     //language=JSON
-    private val nySøknad =
+    private val nySøknadBehov =
         """
         {
-          "@event_name": "NySøknad",
+          "@event_name": "behov",
+          "@behov" : ["NySøknad"],
           "@opprettet": "${LocalDateTime.now()}",
           "@id": "${UUID.randomUUID()}",
           "søknad_uuid": "$søknadUUID",
-          "fødselsnummer": "123456789"
+          "ident": "123456789"
         }
         
         """.trimIndent()
