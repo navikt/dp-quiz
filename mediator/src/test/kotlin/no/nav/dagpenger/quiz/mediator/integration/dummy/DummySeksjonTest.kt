@@ -19,8 +19,8 @@ import no.nav.dagpenger.quiz.mediator.helpers.juli
 import no.nav.dagpenger.quiz.mediator.helpers.juni
 import no.nav.dagpenger.quiz.mediator.helpers.mai
 import no.nav.dagpenger.quiz.mediator.integration.SøknadBesvarer
-import no.nav.dagpenger.quiz.mediator.meldinger.DagpengerService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
+import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadBehovLøser
 import no.nav.dagpenger.quiz.mediator.meldinger.asPeriode
 import no.nav.dagpenger.quiz.mediator.meldinger.asTekst
 import no.nav.helse.rapids_rivers.asLocalDate
@@ -49,7 +49,7 @@ internal class DummySeksjonTest : SøknadBesvarer() {
                     resultatPersistence = resultatPersistence,
                     rapidsConnection = it
                 )
-                DagpengerService(søknadPersistence, it, SøknadSeksjonsTester.VERSJON_ID)
+                NySøknadBehovLøser(søknadPersistence, it, SøknadSeksjonsTester.VERSJON_ID)
             }
         }
     }

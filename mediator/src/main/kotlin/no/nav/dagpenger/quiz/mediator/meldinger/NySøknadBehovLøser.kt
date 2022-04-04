@@ -16,7 +16,7 @@ import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.withMDC
 import java.util.UUID
 
-internal class DagpengerService(
+internal class NySøknadBehovLøser(
     private val søknadPersistence: SøknadRecord,
     rapidsConnection: RapidsConnection,
     private val prosessVersjon: Prosessversjon = Versjon.siste(Prosess.Dagpenger)

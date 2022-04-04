@@ -4,8 +4,8 @@ import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
-import no.nav.dagpenger.quiz.mediator.meldinger.DagpengerService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
+import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadBehovLøser
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class DagpengerTest : SøknadBesvarer() {
+internal class NySøknadBehovLøserTest : SøknadBesvarer() {
 
     @BeforeEach
     fun setup() {
@@ -30,7 +30,7 @@ internal class DagpengerTest : SøknadBesvarer() {
                     resultatPersistence = resultatPersistence,
                     rapidsConnection = it
                 )
-                DagpengerService(søknadPersistence, it)
+                NySøknadBehovLøser(søknadPersistence, it)
             }
         }
     }
