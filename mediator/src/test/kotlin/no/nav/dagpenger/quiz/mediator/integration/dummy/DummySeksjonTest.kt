@@ -83,7 +83,7 @@ internal class DummySeksjonTest : SøknadBesvarer() {
     fun `Hent alle fakta happy path`() {
 
         withSøknad(nySøknadBehov) { besvar ->
-            testRapid.inspektør.message(0).let {
+            melding(0).let {
                 assertEquals("faktum_svar", it["@event_name"].asText())
                 assertEquals(
                     emptyList<String>(),
@@ -91,28 +91,26 @@ internal class DummySeksjonTest : SøknadBesvarer() {
                 )
             }
 
-            testRapid.inspektør.message(1).let { behovLøsning ->
-                assertEquals(søknadUUID.toString(), behovLøsning["@løsning"]["NySøknad"].asText())
-            }
+            assertEquals(søknadUUID.toString(), melding(1)["@løsning"]["NySøknad"].asText())
 
-            testRapid.inspektør.message(2).let {
+            melding(2).let {
                 assertFalse { it.toString().contains(""""svar":""") }
             }
 
             besvar(DummySeksjon.`dummy boolean`, true)
-            testRapid.inspektør.message(3).let {
+            melding(3).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
                 assertEquals(true, it.hentSvar(DummySeksjon.`dummy boolean`).asBoolean())
             }
 
             besvar(DummySeksjon.`dummy valg`, Envalg("faktum.dummy-valg.svar.ja"))
-            testRapid.inspektør.message(4).let {
+            melding(4).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
                 assertEquals("faktum.dummy-valg.svar.ja", it.hentSvar(DummySeksjon.`dummy valg`).asText())
             }
 
             besvar(DummySeksjon.`dummy subfaktum tekst`, Tekst("subfaktumsvar"))
-            testRapid.inspektør.message(5).let {
+            melding(5).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 assertEquals("subfaktumsvar", it.hentSvar(DummySeksjon.`dummy subfaktum tekst`).asText())
@@ -122,7 +120,7 @@ internal class DummySeksjonTest : SøknadBesvarer() {
                 DummySeksjon.`dummy flervalg`,
                 Flervalg("faktum.dummy-flervalg.svar.1", "faktum.dummy-flervalg.svar.2")
             )
-            testRapid.inspektør.message(6).let {
+            melding(6).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 val svar = it.hentSvar(DummySeksjon.`dummy flervalg`)
@@ -132,41 +130,41 @@ internal class DummySeksjonTest : SøknadBesvarer() {
             }
 
             besvar(DummySeksjon.`dummy dropdown`, Envalg("faktum.dummy-dropdown.svar.1"))
-            testRapid.inspektør.message(7).let {
+            melding(7).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
                 assertEquals("faktum.dummy-dropdown.svar.1", it.hentSvar(DummySeksjon.`dummy dropdown`).asText())
             }
 
             besvar(DummySeksjon.`dummy int`, 1)
-            testRapid.inspektør.message(8).let {
+            melding(8).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 assertEquals(1, it.hentSvar(DummySeksjon.`dummy int`).asInt())
             }
 
             besvar(DummySeksjon.`dummy double`, 1.5)
-            testRapid.inspektør.message(9).let {
+            melding(9).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 assertEquals(1.5, it.hentSvar(DummySeksjon.`dummy double`).asDouble())
             }
 
             besvar(DummySeksjon.`dummy tekst`, Tekst("tekstsvar"))
-            testRapid.inspektør.message(10).let {
+            melding(10).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 assertEquals("tekstsvar", it.hentSvar(DummySeksjon.`dummy tekst`).asText())
             }
 
             besvar(DummySeksjon.`dummy localdate`, 1.juli())
-            testRapid.inspektør.message(11).let {
+            melding(11).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 assertEquals(1.juli(), it.hentSvar(DummySeksjon.`dummy localdate`).asLocalDate())
             }
 
             besvar(DummySeksjon.`dummy periode`, Periode(1.januar(), 1.februar()))
-            testRapid.inspektør.message(12).let {
+            melding(12).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 val svarene = it.hentSvar(DummySeksjon.`dummy periode`)
@@ -175,7 +173,7 @@ internal class DummySeksjonTest : SøknadBesvarer() {
             }
 
             besvar(DummySeksjon.`generator dummy subfaktum tekst`, Tekst("subfaktumDefinertIGeneratorsvar"))
-            testRapid.inspektør.message(13).let {
+            melding(13).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 assertEquals(
@@ -202,7 +200,7 @@ internal class DummySeksjonTest : SøknadBesvarer() {
                 )
             )
 
-            testRapid.inspektør.message(14).let {
+            melding(14).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 val svarliste = it.hentSvar(DummySeksjon.`dummy generator`)
@@ -245,7 +243,7 @@ internal class DummySeksjonTest : SøknadBesvarer() {
             }
 
             besvar(DummySeksjon.`dummy land`, Land("NOR"))
-            testRapid.inspektør.message(15).let {
+            melding(15).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
                 assertEquals("NOR", it.hentSvar(DummySeksjon.`dummy land`).asText())
             }
@@ -267,15 +265,15 @@ internal class DummySeksjonTest : SøknadBesvarer() {
                 )
             )
 
-            testRapid.inspektør.message(1).let { behovLøsning ->
+            melding(1).let { behovLøsning ->
                 assertEquals(søknadUUID.toString(), behovLøsning["@løsning"]["NySøknad"].asText())
             }
 
-            testRapid.inspektør.message(2).let {
+            melding(2).let {
                 assertFalse { it.toString().contains(""""svar":""") }
             }
 
-            testRapid.inspektør.message(3).let {
+            melding(3).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 val svarliste = it.hentSvar(DummySeksjon.`dummy generator`)
@@ -304,7 +302,7 @@ internal class DummySeksjonTest : SøknadBesvarer() {
                 )
             )
 
-            testRapid.inspektør.message(4).let {
+            melding(4).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 val svarliste = it.hentSvar(DummySeksjon.`dummy generator`)
@@ -350,7 +348,7 @@ internal class DummySeksjonTest : SøknadBesvarer() {
                 )
             )
 
-            testRapid.inspektør.message(5).let {
+            melding(5).let {
                 assertEquals("NySøknad", it["@event_name"].asText())
 
                 val svarliste = it.hentSvar(DummySeksjon.`dummy generator`)

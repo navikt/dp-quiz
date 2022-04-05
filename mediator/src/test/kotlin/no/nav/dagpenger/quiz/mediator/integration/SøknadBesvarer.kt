@@ -29,6 +29,8 @@ abstract class SøknadBesvarer {
         testRapid.inspektør.field(testRapid.inspektør.size - 1, "fakta").find { it["id"].asText() == id }?.get("svar")
             ?.asBoolean()
 
+    protected fun melding(indeks: Int) = testRapid.inspektør.message(indeks)
+
     @Suppress("UNCHECKED_CAST")
     protected fun withSøknad(
         førsteEvent: String,
