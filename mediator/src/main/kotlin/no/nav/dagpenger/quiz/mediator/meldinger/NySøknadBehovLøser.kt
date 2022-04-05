@@ -32,7 +32,7 @@ internal class NySøknadBehovLøser(
     init {
         River(rapidsConnection).apply {
             validate { it.demandValue("@event_name", "behov") }
-            validate { it.requireAllOrAny("@behov", listOf(behovNavn)) }
+            validate { it.demandAllOrAny("@behov", listOf(behovNavn)) }
             validate { it.requireKey("@id", "@opprettet") }
             validate { it.requireKey("søknad_uuid") }
             validate { it.requireKey("ident") }
