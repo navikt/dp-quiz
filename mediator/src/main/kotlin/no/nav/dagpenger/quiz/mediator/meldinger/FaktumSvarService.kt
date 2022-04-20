@@ -35,7 +35,7 @@ internal class FaktumSvarService(
         private val log = KotlinLogging.logger {}
         private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
-        private val ignorerSøknadUUID = setOf("e4d788fd-272a-4f71-a280-b2e56ea0928a").map { UUID.fromString(it) }
+        private val ignorerSøknadUUID = setOf("e4d788fd-272a-4f71-a280-b2e56ea0928a", "dcb79dcb-10af-4028-be06-6aa6fe743e5a").map { UUID.fromString(it) }
     }
 
     init {
