@@ -54,6 +54,9 @@ spec:
         pointInTimeRecovery: true
         retainedBackups: {{ point_in_time_recovery_days }}
         autoBackupTime: "03:00"
+        maintenance:
+          day: 1
+          hour: 3
         databases:
           - name: quiz
             envVarPrefix: DB

@@ -33,7 +33,6 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
     override fun onStartup(rapidsConnection: RapidsConnection) {
         runMigration()
             .also {
-
                 val søknadRecord = SøknadRecord()
                 val resultatRecord = ResultatRecord()
                 AvslagPåMinsteinntektOppsett.registrer { søknad -> FaktumTable(søknad) }
