@@ -29,7 +29,7 @@ Av navnet, subsumsjoner som på forskjellige måter delegerer til andre subsumsj
 
 #### AlleSubsumsjon 
 
-En subsumsjonstype der _alle_ subsumsjonene definert må være sanne.
+En subsumsjonstype der _alle_ subsumsjonene definert må være sanne. (Dette er en AND)
 
 Eksempel:
 
@@ -44,7 +44,7 @@ Eksempel:
 
 #### MinstEnAvSubsumsjon 
 
-En subsumsjonstype der _minst en av_ subsumsjonene definert må være sanne.
+En subsumsjonstype der _minst en av_ subsumsjonene definert må være sanne. (Dette er en OR)
 
 Eksempel:
 
@@ -59,20 +59,40 @@ Eksempel:
 
 #### BareEnAvSubsumsjon
 
-En subsumsjonstype der _bare en av_ subsumsjonene definert må være sanne.
+En subsumsjonstype der _bare en av_ subsumsjonene definert må være sanne. (Det er XOR)
 
 ```kotlin
- "Enten joda eller neida".bareEnAv(
+ "Enten joda eller neida eller ja".bareEnAv(
         neida er true,
         joda er true,
-        ja1 er true
-    )
+        ja er true
+    ) 
 ```
+
+Hvis svaret er:
+```kotlin
+neida.besvar(true)
+joda.besvar(true)
+ja.besvar(true)
+```
+
+Vil "bare en av" være false
+
+Hvis svaret er:
+```kotlin
+neida.besvar(false)
+joda.besvar(false)
+ja.besvar(true)
+```
+
+Vil "bare en av" være true
+
+
 
 
 #### DeltreSubsumsjon
 
-En subsumsjonstype som delegerer evalueringen til underliggende subsumsjons-tre
+En subsumsjonstype som delegerer evalueringen til underliggende subsumsjons-tre. 
 
 ```kotlin
 generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
