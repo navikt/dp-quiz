@@ -95,10 +95,10 @@ Vil "bare en av" være true
 En subsumsjonstype som delegerer evalueringen til underliggende subsumsjons-tre. 
 
 ```kotlin
-generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
-            dato(førsteAvVirkningsdatoOgBehandlingsdato) mellom
-                dato(registrertArbeidssøkerPeriodeFom) og dato(registrertArbeidssøkerPeriodeTom)
-        }
+val subsumsjon1 = faktum1 er true
+val subsumsjon2 = faktum2 er true
+val subsumsjon3 = faktum3 er true
+val deltreSubsumsjon = "deltre" deltre { subsumsjon1 hvisOppfylt { subsumsjon3 } hvisIkkeOppfylt { subsumsjon2 } }
 ```
 
 #### GodkjenningsSubsumsjon 
