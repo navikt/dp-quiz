@@ -1,0 +1,18 @@
+@startuml
+
+autonumber
+
+"dp-soknaddialog" -> "dp-soknad": /soknad/mal
+"dp-soknaddialog" -> "dp-soknad": /soknad (start søknad)
+"dp-soknad" --> "dp-soknaddialog": UUID
+
+loop
+"dp-soknaddialog" -> "dp-soknad": /uuid/neste
+note right: Hele state-en, alle seksjonene med svar og neste med ubesvarte
+"dp-soknaddialog" -> "dp-soknad": /uuid/faktum/faktumid
+note right: Må GARANTERE svar til QUIZ
+end
+
+"dp-soknaddialog" -> "dp-soknad": /uuid/fullfor
+
+@enduml
