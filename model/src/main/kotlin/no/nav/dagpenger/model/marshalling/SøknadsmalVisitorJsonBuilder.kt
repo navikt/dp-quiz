@@ -30,7 +30,6 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
     private lateinit var gjeldendeSeksjon: ObjectNode
     private var rootId = 0
     private val faktumIder = mutableSetOf<String>()
-    private val identerNode = mapper.createArrayNode()
     private val erGenerertFraTemplate = mutableListOf<Faktum<*>>()
     private var erISeksjon = false
 
