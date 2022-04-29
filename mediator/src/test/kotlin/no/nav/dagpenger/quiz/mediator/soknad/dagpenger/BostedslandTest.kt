@@ -7,6 +7,6 @@ internal class BostedslandTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        Bostedsland.verifiserFeltsammensetting(1, 6001)
+        Bostedsland.verifiserFeltsammensetting(6, 36021)
     }
 }

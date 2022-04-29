@@ -13,7 +13,7 @@ class BffTilDslGenerator(
 
     private val objectMapper = configureLiberalObjectMapper()
     private val seksjonJsonNode = objectMapper.readValue<JsonNode>(bffJson)
-    private val faktaNode = seksjonJsonNode["faktum"]
+    private val faktaNode = seksjonJsonNode["fakta"]
 
     private val databaseIder = mutableMapOf<String, Int>()
     private val alleFaktaSomDSL = mutableListOf<String>()
@@ -55,7 +55,7 @@ class BffTilDslGenerator(
     }
 
     private fun JsonNode.lagFaktaForSubfaktum() {
-        val subfakta = this["subFaktum"]
+        val subfakta = this["subFakta"]
         subfakta?.forEach { subfaktum ->
             alleFaktaSomDSL.add(subfaktum.genererDslFaktum())
             subfaktum.lagFaktaForSubfaktum()
@@ -119,7 +119,7 @@ class BffTilDslGenerator(
 
     private fun JsonNode.byggGeneratorFakta(): String {
         val generatorFakta = mutableListOf<String>()
-        val nodensFakta = this["faktum"]
+        val nodensFakta = this["fakta"]
         nodensFakta.forEach { faktumNode ->
             generatorFakta.add(faktumNode.genererDslFaktum())
         }
@@ -128,14 +128,14 @@ class BffTilDslGenerator(
     }
 
     private fun JsonNode.byggSubfaktaTilRotnivå() {
-        val nodensFakta = this["faktum"]
+        val nodensFakta = this["fakta"]
         nodensFakta.forEach { faktumNode ->
             faktumNode.lagFaktaForSubfaktum()
         }
     }
 
     private fun JsonNode.byggListeOverDatabaseIder(): String {
-        val nodensFakta = this["faktum"]
+        val nodensFakta = this["fakta"]
         val alleDatabaseIder = mutableListOf<String>()
         nodensFakta?.forEach { faktum ->
             alleDatabaseIder.add(faktum.lagDatabaseId())
@@ -145,7 +145,7 @@ class BffTilDslGenerator(
     }
 
     private fun JsonNode.lagDatabaseidForAlleSubfakta(): List<String> {
-        val subfakta = this["subFaktum"]
+        val subfakta = this["subFakta"]
         val databaseIder = mutableListOf<String>()
         subfakta?.forEach { subfaktum ->
             databaseIder.add(subfaktum.lagDatabaseId())

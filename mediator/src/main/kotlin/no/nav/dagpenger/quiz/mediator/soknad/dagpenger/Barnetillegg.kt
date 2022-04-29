@@ -8,11 +8,12 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Barnetillegg : DslFaktaseksjon {
+
     const val `barn liste` = 1001
     const val `barn fornavn mellomnavn` = 1002
     const val `barn etternavn` = 1003
     const val `barn foedselsdato` = 1004
-    const val `barn statsborgerskap` = 1005
+    const val `barn bostedsland` = 1005
     const val `forsoerger du barnet` = 1006
     const val `barn aarsinntekt over 1g` = 1007
     const val `barn inntekt` = 1008
@@ -24,14 +25,15 @@ object Barnetillegg : DslFaktaseksjon {
             genererer `barn fornavn mellomnavn`
             og `barn etternavn`
             og `barn foedselsdato`
-            og `barn statsborgerskap`
+            og `barn bostedsland`
             og `forsoerger du barnet`
             og `barn aarsinntekt over 1g`
             og `barn inntekt`,
         tekst faktum "faktum.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn`,
         tekst faktum "faktum.barn-etternavn" id `barn etternavn`,
         dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato`,
-        land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap`,
+        land faktum "faktum.barn-bostedsland" id `barn bostedsland`,
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`
+
     )
 }

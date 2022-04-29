@@ -22,9 +22,9 @@ object EøsArbeidsforhold : DslFaktaseksjon {
             og `eos arbeidsforhold land`
             og `eos arbeidsforhold personnummer`
             og `eos arbeidsforhold varighet`,
-        tekst faktum "faktum.eos-arbeidsforhold-arbeidsgivernavn" id `eos arbeidsforhold arbeidsgivernavn`,
-        land faktum "faktum.eos-arbeidsforhold-land" id `eos arbeidsforhold land`,
-        tekst faktum "faktum.eos-arbeidsforhold-personnummer" id `eos arbeidsforhold personnummer`,
-        periode faktum "faktum.eos-arbeidsforhold-varighet" id `eos arbeidsforhold varighet`
+        tekst faktum "faktum.eos-arbeidsforhold.arbeidsgivernavn" id `eos arbeidsforhold arbeidsgivernavn`,
+        land faktum "faktum.eos-arbeidsforhold.land" id `eos arbeidsforhold land`,
+        tekst faktum "faktum.eos-arbeidsforhold.personnummer" id `eos arbeidsforhold personnummer`,
+        periode faktum "faktum.eos-arbeidsforhold.varighet" id `eos arbeidsforhold varighet`
     )
 }

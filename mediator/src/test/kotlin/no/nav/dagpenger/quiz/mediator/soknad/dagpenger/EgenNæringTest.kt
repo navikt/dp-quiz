@@ -7,6 +7,6 @@ internal class EgenNæringTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        EgenNæring.verifiserFeltsammensetting(11, 33066)
+        EgenNæring.verifiserFeltsammensetting(15, 45120)
     }
 }

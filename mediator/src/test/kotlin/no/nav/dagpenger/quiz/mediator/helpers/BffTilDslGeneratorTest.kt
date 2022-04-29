@@ -29,23 +29,23 @@ val jsonMedNøstedeSubfakta =
     """
 {
   "id": "mangeNøstedeSubfakta",
-  "faktum": [
+  "fakta": [
     {
       "id": "faktum.faktumFraGrunnNivå",
       "type": "tekst",
-      "subFaktum": [
+      "subFakta": [
         {
           "id": "faktum.subfaktumFørstenivå",
           "type": "tekst",
-          "subFaktum": [
+          "subFakta": [
             {
               "id": "faktum.subfaktumAndrenivå",
               "type": "tekst",
-              "subFaktum": [
+              "subFakta": [
                 {
                   "id": "faktum.subfaktumTredjenivå",
                   "type": "tekst",
-                  "subFaktum": [
+                  "subFakta": [
                     {
                       "id": "faktum.subfaktumFjerdenivå",
                       "type": "tekst"
@@ -61,19 +61,19 @@ val jsonMedNøstedeSubfakta =
     {
       "id": "faktum.generatorfaktumFraGrunnNivå",
       "type": "generator",
-      "faktum": [
+      "fakta": [
         {
           "id": "faktum.generatorfaktum",
           "type": "tekst",
-          "subFaktum": [
+          "subFakta": [
             {
               "id": "faktum.subfaktumDefinertIGeneratorFørstenivå",
               "type": "tekst",
-              "subFaktum": [
+              "subFakta": [
                 {
                   "id": "faktum.subfaktumDefinertIGeneratorAndrenivå",
                   "type": "tekst",
-                  "subFaktum": [
+                  "subFakta": [
                     {
                       "id": "faktum.subfaktumDefinertIGeneratorTredjenivå",
                       "type": "tekst"
@@ -211,7 +211,7 @@ private const val `dummy-seksjon-ts` =
 
 export const dummySeksjon: MockDataSeksjon = {
     id: "dummy-seksjon-data",
-    faktum: [
+    fakta: [
         {
             id: "faktum.dummy-boolean",
             type: "boolean",
@@ -228,7 +228,7 @@ export const dummySeksjon: MockDataSeksjon = {
                 { id: "faktum.dummy-envalg.svar.nei" },
                 { id: "faktum.dummy-envalg.svar.vetikke" },
             ],
-            subFaktum: [
+            subFakta: [
                 {
                     id: "faktum.dummy-subfaktum-tekst",
                     type: "tekst",
@@ -281,7 +281,7 @@ export const dummySeksjon: MockDataSeksjon = {
         {
             id: "faktum.dummy-generator",
             type: "generator",
-            faktum: [
+            fakta: [
                 {
                     id: "faktum.generator-dummy-boolean",
                     type: "boolean",
@@ -298,7 +298,7 @@ export const dummySeksjon: MockDataSeksjon = {
                         { id: "faktum.generator-dummy-envalg.svar.nei" },
                         { id: "faktum.generator-dummy-envalg.svar.vetikke" },
                     ],
-                    subFaktum: [
+                    subFakta: [
                         {
                             id: "faktum.generator-dummy-subfaktum-tekst",
                             type: "tekst",

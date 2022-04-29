@@ -7,6 +7,6 @@ internal class UtdanningTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        Utdanning.verifiserFeltsammensetting(1, 2001)
+        Utdanning.verifiserFeltsammensetting(3, 6006)
     }
 }

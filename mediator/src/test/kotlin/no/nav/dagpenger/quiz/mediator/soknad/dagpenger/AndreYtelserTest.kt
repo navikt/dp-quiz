@@ -7,6 +7,6 @@ internal class AndreYtelserTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        AndreYtelser.verifiserFeltsammensetting(11, 55066)
+        AndreYtelser.verifiserFeltsammensetting(13, 65091)
     }
 }

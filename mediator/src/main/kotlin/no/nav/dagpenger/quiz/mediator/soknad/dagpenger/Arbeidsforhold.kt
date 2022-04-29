@@ -4,7 +4,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
@@ -13,135 +12,171 @@ import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Arbeidsforhold : DslFaktaseksjon {
     const val `dagpenger soknadsdato` = 8001
-    const val `fast arbeidstid` = 8002
+    const val `type arbeidstid` = 8002
     const val `arbeidsforhold` = 8003
-    const val `navn bedrift` = 8004
+    const val `arbeidsforhold navn bedrift` = 8004
     const val `arbeidsforhold land` = 8005
-    const val `arbeidsforhold aarsak` = 8006
-    const val `arbeidsforhold varighet` = 8007
-    const val `arbeidsforhold ekstra opplysninger laerlig` = 8008
-    const val `arbeidsforhold ekstra opplysninger fiskeindustri` = 8009
-    const val `arbeidsforhold ekstra opplysninger flere arbeidsforhold` = 8010
-    const val `arbeidsforhold arbeidstid timer i uken alle forhold` = 8011
-    const val `arbeidsforhold arbeidstid timer i uken` = 8012
-    const val `arbeidsforhold aarsak til oppsigelse fra arbeidsgiver` = 8013
-    const val `arbeidsforhold aarsak til avskjedigelse fra arbeidsgiver` = 8014
-    const val `tilbud annen stilling annet sted samme arbeidsgiver` = 8015
-    const val `tilbud forsette samme arbeidsgiver` = 8016
-    const val `arbeids skift turnus rotasjon` = 8017
-    const val `arbeidsforhold rotasjon antall arbeidsdager` = 8018
-    const val `arbeidsforhold rotasjon antall fridager` = 8019
-    const val `midlertidig arbeidsforhold med sluttdato` = 8020
-    const val `midlertidig arbeidsforhold sluttdato` = 8021
-    const val `arbeidsforhold permitteringsperiode` = 8022
-    const val `arbeidsforhold permitteringgrad` = 8023
-    const val `arbeidsforhold lonnsplinkt arbeidsgiver` = 8024
-    const val `aarsak til sagt opp selv` = 8025
-    const val `arbeidsforhold arbeidsgiver konkurs navn bostyrer` = 8026
-    const val `arbeidsforhold dagpenger og forskudd lonnsgarantimidler` = 8027
-    const val `arbeidsforhold godta nav trekk direkte lonnsgaranti` = 8028
-    const val `arbeidsforhold sok lonnsgarantimidler` = 8029
-    const val `arbeidsforhold lonnsgaranti dekker krav` = 8030
-    const val `arbeidsforhold godta trekk direkte konkursbo` = 8031
-    const val `arbeidsforhold utbetalt lonn etter konkurs` = 8032
-    const val `arbeidsforhold konkurs siste dag lonn` = 8033
-    const val `arbeidsforhold tillegsinformasjon` = 8034
+    const val `arbeidsforhold endret` = 8006
+    const val `arbeidsforhold kjent antall timer jobbet` = 8007
+    const val `arbeidsforhold antall timer jobbet` = 8008
+    const val `arbeidsforhold tilleggsopplysninger` = 8009
+    const val `arbeidsforhold startdato arbeidsforhold` = 8010
+    const val `arbeidsforhold arbeidstid redusert fra dato` = 8011
+    const val `arbeidsforhold midlertidig med kontraktfestet sluttdato` = 8012
+    const val `arbeidsforhold kontraktfestet sluttdato` = 8013
+    const val `arbeidsforhold midlertidig arbeidsforhold oppstartsdato` = 8014
+    const val `arbeidsforhold permittertert fra fiskeri naering` = 8015
+    const val `arbeidsforhold varighet` = 8016
+    const val `arbeidsforhold vet du antall timer foer mistet jobb` = 8017
+    const val `arbeidsforhold vet du antall timer foer konkurs` = 8018
+    const val `arbeidsforhold vet du antall timer foer kontrakt utgikk` = 8019
+    const val `arbeidsforhold vet du antall timer foer du sa opp` = 8020
+    const val `arbeidsforhold vet du antall timer foer redusert arbeidstid` = 8021
+    const val `arbeidsforhold vet du antall timer foer permittert` = 8022
+    const val `arbeidsforhold antall timer dette arbeidsforhold` = 8023
+    const val `arbeidsforhold permittert periode` = 8024
+    const val `arbeidsforhold permittert prosent` = 8025
+    const val `arbeidsforhold vet du lonnsplikt periode` = 8026
+    const val `arbeidsforhold naar var lonnsplikt periode` = 8027
+    const val `arbeidsforhold aarsak til du sa opp` = 8028
+    const val `arbeidsforhold tilbud om forlengelse eller annen stilling` = 8029
+    const val `arbeidsforhold svar paa forlengelse eller annen stilling` = 8030
+    const val `arbeidsforhold aarsak til ikke akseptert tilbud` = 8031
+    const val `arbeidsforhold soke forskudd lonnsgarantimidler` = 8032
+    const val `arbeidsforhold soke forskudd lonnsgarantimidler i tillegg til dagpenger` = 8033
+    const val `arbeidsforhold godta trekk fra nav av forskudd fra lonnsgarantimidler` = 8034
+    const val `arbeidsforhold har sokt om lonnsgarantimidler` = 8035
+    const val `arbeidsforhold dekker lonnsgarantiordningen lonnskravet ditt` = 8036
+    const val `arbeidsforhold utbetalt lonn etter konkurs` = 8037
+    const val `arbeidsforhold siste dag utbetalt for konkurs` = 8038
+    const val `arbeidsforhold hva er aarsak til avskjediget` = 8039
+    const val `arbeidsforhold vet du aarsak til sagt opp av arbeidsgiver` = 8040
+    const val `arbeidsforhold vet du aarsak til redusert arbeidstid` = 8041
+    const val `arbeidsforhold midlertidig arbeidsforhold med sluttdato` = 8042
+    const val `arbeidsforhold tilbud om annen stilling eller annet sted i norge` = 8043
+    const val `arbeidsforhold skift eller turnus` = 8044
+    const val `arbeidsforhold rotasjon` = 8045
+    const val `arbeidsforhold arbeidsdager siste rotasjon` = 8046
+    const val `arbeidsforhold fridager siste rotasjon` = 8047
 
     override val fakta = listOf(
         dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger soknadsdato`,
-        envalg faktum "faktum.fast-arbeidstid"
-            med "svar.ja-fast"
-            med "svar.nei-varierende"
+        envalg faktum "faktum.type-arbeidstid"
+            med "svar.fast"
+            med "svar.varierende"
             med "svar.kombinasjon"
-            med "svar.ingen-passer" id `fast arbeidstid`,
-        periode faktum "faktum.arbeidsforhold-varighet" id `arbeidsforhold varighet`,
-        flervalg faktum "faktum.arbeidsforhold-ekstra-opplysninger-laerlig"
-            med "faktum.arbeidsforhold-ekstra-opplysninger.svar.laerling" id `arbeidsforhold ekstra opplysninger laerlig`,
-        flervalg faktum "faktum.arbeidsforhold-ekstra-opplysninger-fiskeindustri"
-            med "faktum.arbeidsforhold-ekstra-opplysninger.svar.fiskeindustri" id `arbeidsforhold ekstra opplysninger fiskeindustri`,
-        flervalg faktum "faktum.arbeidsforhold-ekstra-opplysninger-flere-arbeidsforhold"
-            med "faktum.arbeidsforhold-ekstra-opplysninger.svar.flere-arbeidsforhold" id `arbeidsforhold ekstra opplysninger flere arbeidsforhold`,
-        desimaltall faktum "faktum.arbeidsforhold-arbeidstid-timer-i-uken-alle-forhold" id `arbeidsforhold arbeidstid timer i uken alle forhold`,
-        desimaltall faktum "faktum.arbeidsforhold-arbeidstid-timer-i-uken" id `arbeidsforhold arbeidstid timer i uken`,
-        tekst faktum "faktum.arbeidsforhold-aarsak-til-oppsigelse-fra-arbeidsgiver" id `arbeidsforhold aarsak til oppsigelse fra arbeidsgiver`,
-        tekst faktum "faktum.arbeidsforhold-aarsak-til-avskjedigelse-fra-arbeidsgiver" id `arbeidsforhold aarsak til avskjedigelse fra arbeidsgiver`,
-        boolsk faktum "faktum.tilbud-annen-stilling-annet-sted-samme-arbeidsgiver" id `tilbud annen stilling annet sted samme arbeidsgiver`,
-        boolsk faktum "faktum.tilbud-forsette-samme-arbeidsgiver" id `tilbud forsette samme arbeidsgiver`,
-        envalg faktum "faktum.arbeids-skift-turnus-rotasjon"
-            med "svar.nei"
-            med "svar.ja-skift-turnus"
-            med "svar.ja-rotasjon" id `arbeids skift turnus rotasjon`,
-        heltall faktum "faktum.arbeidsforhold-rotasjon-antall-arbeidsdager" id `arbeidsforhold rotasjon antall arbeidsdager`,
-        heltall faktum "faktum.arbeidsforhold-rotasjon-antall-fridager" id `arbeidsforhold rotasjon antall fridager`,
-        envalg faktum "faktum.midlertidig-arbeidsforhold-med-sluttdato"
-            med "svar.nei-fast-arbeid"
+            med "svar.ingen-passer" id `type arbeidstid`,
+        boolsk faktum "faktum.arbeidsforhold.kjent-antall-timer-jobbet" id `arbeidsforhold kjent antall timer jobbet`,
+        desimaltall faktum "faktum.arbeidsforhold.antall-timer-jobbet" id `arbeidsforhold antall timer jobbet`,
+        tekst faktum "faktum.arbeidsforhold.tilleggsopplysninger" id `arbeidsforhold tilleggsopplysninger`,
+        dato faktum "faktum.arbeidsforhold.startdato-arbeidsforhold" id `arbeidsforhold startdato arbeidsforhold`,
+        dato faktum "faktum.arbeidsforhold.arbeidstid-redusert-fra-dato" id `arbeidsforhold arbeidstid redusert fra dato`,
+        envalg faktum "faktum.arbeidsforhold.midlertidig-med-kontraktfestet-sluttdato"
             med "svar.ja"
-            med "svar.vet-ikke" id `midlertidig arbeidsforhold med sluttdato`,
-        dato faktum "faktum.midlertidig-arbeidsforhold-sluttdato" id `midlertidig arbeidsforhold sluttdato`,
-        periode faktum "faktum.arbeidsforhold-permitteringsperiode" id `arbeidsforhold permitteringsperiode`,
-        heltall faktum "faktum.arbeidsforhold-permitteringgrad" id `arbeidsforhold permitteringgrad`,
-        periode faktum "faktum.arbeidsforhold-lonnsplinkt-arbeidsgiver" id `arbeidsforhold lonnsplinkt arbeidsgiver`,
-        tekst faktum "faktum.aarsak-til-sagt-opp-selv" id `aarsak til sagt opp selv`,
-        tekst faktum "faktum.arbeidsforhold-arbeidsgiver-konkurs-navn-bostyrer" id `arbeidsforhold arbeidsgiver konkurs navn bostyrer`,
-        envalg faktum "faktum.arbeidsforhold-dagpenger-og-forskudd-lonnsgarantimidler"
-            med "svar.ja-begge"
-            med "svar.nei-kun-dagpenger"
-            med "svar.nei-kun-forskudd-lonnsgarantimidler" id `arbeidsforhold dagpenger og forskudd lonnsgarantimidler`,
-        boolsk faktum "faktum.arbeidsforhold-godta-nav-trekk-direkte-lonnsgaranti" id `arbeidsforhold godta nav trekk direkte lonnsgaranti`,
-        envalg faktum "faktum.arbeidsforhold-sok-lonnsgarantimidler"
-            med "svar.ja-allerede-sendt"
-            med "svar.ja-skal-sende"
-            med "svar.nei" id `arbeidsforhold sok lonnsgarantimidler`,
-        envalg faktum "faktum.arbeidsforhold-lonnsgaranti-dekker-krav"
             med "svar.nei"
+            med "svar.vet-ikke" id `arbeidsforhold midlertidig med kontraktfestet sluttdato`,
+        dato faktum "faktum.arbeidsforhold.kontraktfestet-sluttdato" id `arbeidsforhold kontraktfestet sluttdato`,
+        dato faktum "faktum.arbeidsforhold.midlertidig-arbeidsforhold-oppstartsdato" id `arbeidsforhold midlertidig arbeidsforhold oppstartsdato`,
+        boolsk faktum "faktum.arbeidsforhold.permittertert-fra-fiskeri-naering" id `arbeidsforhold permittertert fra fiskeri naering`,
+        periode faktum "faktum.arbeidsforhold.varighet" id `arbeidsforhold varighet`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-mistet-jobb" id `arbeidsforhold vet du antall timer foer mistet jobb`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-konkurs" id `arbeidsforhold vet du antall timer foer konkurs`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-kontrakt-utgikk" id `arbeidsforhold vet du antall timer foer kontrakt utgikk`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-du-sa-opp" id `arbeidsforhold vet du antall timer foer du sa opp`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-redusert-arbeidstid" id `arbeidsforhold vet du antall timer foer redusert arbeidstid`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-permittert" id `arbeidsforhold vet du antall timer foer permittert`,
+        desimaltall faktum "faktum.arbeidsforhold.antall-timer-dette-arbeidsforhold" id `arbeidsforhold antall timer dette arbeidsforhold`,
+        periode faktum "faktum.arbeidsforhold.permittert-periode" id `arbeidsforhold permittert periode`,
+        heltall faktum "faktum.arbeidsforhold.permittert-prosent" id `arbeidsforhold permittert prosent`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-lonnsplikt-periode" id `arbeidsforhold vet du lonnsplikt periode`,
+        periode faktum "faktum.arbeidsforhold.naar-var-lonnsplikt-periode" id `arbeidsforhold naar var lonnsplikt periode`,
+        tekst faktum "faktum.arbeidsforhold.aarsak-til-du-sa-opp" id `arbeidsforhold aarsak til du sa opp`,
+        boolsk faktum "faktum.arbeidsforhold.tilbud-om-forlengelse-eller-annen-stilling" id `arbeidsforhold tilbud om forlengelse eller annen stilling`,
+        envalg faktum "faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling"
             med "svar.ja"
-            med "svar.vet-ikke" id `arbeidsforhold lonnsgaranti dekker krav`,
-        boolsk faktum "faktum.arbeidsforhold-godta-trekk-direkte-konkursbo" id `arbeidsforhold godta trekk direkte konkursbo`,
-        boolsk faktum "faktum.arbeidsforhold-utbetalt-lonn-etter-konkurs" id `arbeidsforhold utbetalt lonn etter konkurs`,
-        dato faktum "faktum.arbeidsforhold-konkurs-siste-dag-lonn" id `arbeidsforhold konkurs siste dag lonn`,
-        tekst faktum "faktum.arbeidsforhold-tillegsinformasjon" id `arbeidsforhold tillegsinformasjon`,
+            med "svar.nei"
+            med "svar.ikke-svart" id `arbeidsforhold svar paa forlengelse eller annen stilling`,
+        tekst faktum "faktum.arbeidsforhold.aarsak-til-ikke-akseptert-tilbud" id `arbeidsforhold aarsak til ikke akseptert tilbud`,
+        boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler" id `arbeidsforhold soke forskudd lonnsgarantimidler`,
+        boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler-i-tillegg-til-dagpenger" id `arbeidsforhold soke forskudd lonnsgarantimidler i tillegg til dagpenger`,
+        boolsk faktum "faktum.arbeidsforhold.godta-trekk-fra-nav-av-forskudd-fra-lonnsgarantimidler" id `arbeidsforhold godta trekk fra nav av forskudd fra lonnsgarantimidler`,
+        envalg faktum "faktum.arbeidsforhold.har-sokt-om-lonnsgarantimidler"
+            med "svar.nei"
+            med "svar.nei-men-skal"
+            med "svar.ja" id `arbeidsforhold har sokt om lonnsgarantimidler`,
+        envalg faktum "faktum.arbeidsforhold.dekker-lonnsgarantiordningen-lonnskravet-ditt"
+            med "svar.ja"
+            med "svar.nei"
+            med "svar.vet-ikke" id `arbeidsforhold dekker lonnsgarantiordningen lonnskravet ditt`,
+        boolsk faktum "faktum.arbeidsforhold.utbetalt-lonn-etter-konkurs" id `arbeidsforhold utbetalt lonn etter konkurs`,
+        dato faktum "faktum.arbeidsforhold.siste-dag-utbetalt-for-konkurs" id `arbeidsforhold siste dag utbetalt for konkurs`,
+        tekst faktum "faktum.arbeidsforhold.hva-er-aarsak-til-avskjediget" id `arbeidsforhold hva er aarsak til avskjediget`,
+        tekst faktum "faktum.arbeidsforhold.vet-du-aarsak-til-sagt-opp-av-arbeidsgiver" id `arbeidsforhold vet du aarsak til sagt opp av arbeidsgiver`,
+        tekst faktum "faktum.arbeidsforhold.vet-du-aarsak-til-redusert-arbeidstid" id `arbeidsforhold vet du aarsak til redusert arbeidstid`,
+        envalg faktum "faktum.arbeidsforhold.midlertidig-arbeidsforhold-med-sluttdato"
+            med "svar.ja"
+            med "svar.nei"
+            med "svar.vet-ikke" id `arbeidsforhold midlertidig arbeidsforhold med sluttdato`,
+        boolsk faktum "faktum.arbeidsforhold.tilbud-om-annen-stilling-eller-annet-sted-i-norge" id `arbeidsforhold tilbud om annen stilling eller annet sted i norge`,
+        boolsk faktum "faktum.arbeidsforhold.skift-eller-turnus" id `arbeidsforhold skift eller turnus`,
+        boolsk faktum "faktum.arbeidsforhold.rotasjon" id `arbeidsforhold rotasjon`,
+        heltall faktum "faktum.arbeidsforhold.arbeidsdager-siste-rotasjon" id `arbeidsforhold arbeidsdager siste rotasjon`,
+        heltall faktum "faktum.arbeidsforhold.fridager-siste-rotasjon" id `arbeidsforhold fridager siste rotasjon`,
         heltall faktum "faktum.arbeidsforhold" id `arbeidsforhold`
-            genererer `navn bedrift`
+            genererer `arbeidsforhold navn bedrift`
             og `arbeidsforhold land`
-            og `arbeidsforhold aarsak`
+            og `arbeidsforhold endret`
+            og `arbeidsforhold kjent antall timer jobbet`
+            og `arbeidsforhold antall timer jobbet`
+            og `arbeidsforhold tilleggsopplysninger`
+            og `arbeidsforhold startdato arbeidsforhold`
+            og `arbeidsforhold arbeidstid redusert fra dato`
+            og `arbeidsforhold midlertidig med kontraktfestet sluttdato`
+            og `arbeidsforhold kontraktfestet sluttdato`
+            og `arbeidsforhold midlertidig arbeidsforhold oppstartsdato`
+            og `arbeidsforhold permittertert fra fiskeri naering`
             og `arbeidsforhold varighet`
-            og `arbeidsforhold ekstra opplysninger laerlig`
-            og `arbeidsforhold ekstra opplysninger fiskeindustri`
-            og `arbeidsforhold ekstra opplysninger flere arbeidsforhold`
-            og `arbeidsforhold arbeidstid timer i uken alle forhold`
-            og `arbeidsforhold arbeidstid timer i uken`
-            og `arbeidsforhold aarsak til oppsigelse fra arbeidsgiver`
-            og `arbeidsforhold aarsak til avskjedigelse fra arbeidsgiver`
-            og `tilbud annen stilling annet sted samme arbeidsgiver`
-            og `tilbud forsette samme arbeidsgiver`
-            og `arbeids skift turnus rotasjon`
-            og `arbeidsforhold rotasjon antall arbeidsdager`
-            og `arbeidsforhold rotasjon antall fridager`
-            og `midlertidig arbeidsforhold med sluttdato`
-            og `midlertidig arbeidsforhold sluttdato`
-            og `arbeidsforhold permitteringsperiode`
-            og `arbeidsforhold permitteringgrad`
-            og `arbeidsforhold lonnsplinkt arbeidsgiver`
-            og `aarsak til sagt opp selv`
-            og `arbeidsforhold arbeidsgiver konkurs navn bostyrer`
-            og `arbeidsforhold dagpenger og forskudd lonnsgarantimidler`
-            og `arbeidsforhold godta nav trekk direkte lonnsgaranti`
-            og `arbeidsforhold sok lonnsgarantimidler`
-            og `arbeidsforhold lonnsgaranti dekker krav`
-            og `arbeidsforhold godta trekk direkte konkursbo`
+            og `arbeidsforhold vet du antall timer foer mistet jobb`
+            og `arbeidsforhold vet du antall timer foer konkurs`
+            og `arbeidsforhold vet du antall timer foer kontrakt utgikk`
+            og `arbeidsforhold vet du antall timer foer du sa opp`
+            og `arbeidsforhold vet du antall timer foer redusert arbeidstid`
+            og `arbeidsforhold vet du antall timer foer permittert`
+            og `arbeidsforhold antall timer dette arbeidsforhold`
+            og `arbeidsforhold permittert periode`
+            og `arbeidsforhold permittert prosent`
+            og `arbeidsforhold vet du lonnsplikt periode`
+            og `arbeidsforhold naar var lonnsplikt periode`
+            og `arbeidsforhold aarsak til du sa opp`
+            og `arbeidsforhold tilbud om forlengelse eller annen stilling`
+            og `arbeidsforhold svar paa forlengelse eller annen stilling`
+            og `arbeidsforhold aarsak til ikke akseptert tilbud`
+            og `arbeidsforhold soke forskudd lonnsgarantimidler`
+            og `arbeidsforhold soke forskudd lonnsgarantimidler i tillegg til dagpenger`
+            og `arbeidsforhold godta trekk fra nav av forskudd fra lonnsgarantimidler`
+            og `arbeidsforhold har sokt om lonnsgarantimidler`
+            og `arbeidsforhold dekker lonnsgarantiordningen lonnskravet ditt`
             og `arbeidsforhold utbetalt lonn etter konkurs`
-            og `arbeidsforhold konkurs siste dag lonn`
-            og `arbeidsforhold tillegsinformasjon`,
-        tekst faktum "faktum.navn-bedrift" id `navn bedrift`,
-        land faktum "faktum.arbeidsforhold-land" id `arbeidsforhold land`,
-        envalg faktum "faktum.arbeidsforhold-aarsak"
+            og `arbeidsforhold siste dag utbetalt for konkurs`
+            og `arbeidsforhold hva er aarsak til avskjediget`
+            og `arbeidsforhold vet du aarsak til sagt opp av arbeidsgiver`
+            og `arbeidsforhold vet du aarsak til redusert arbeidstid`
+            og `arbeidsforhold midlertidig arbeidsforhold med sluttdato`
+            og `arbeidsforhold tilbud om annen stilling eller annet sted i norge`
+            og `arbeidsforhold skift eller turnus`
+            og `arbeidsforhold rotasjon`
+            og `arbeidsforhold arbeidsdager siste rotasjon`
+            og `arbeidsforhold fridager siste rotasjon`,
+        tekst faktum "faktum.arbeidsforhold.navn-bedrift" id `arbeidsforhold navn bedrift`,
+        land faktum "faktum.arbeidsforhold.land" id `arbeidsforhold land`,
+        envalg faktum "faktum.arbeidsforhold.endret"
+            med "svar.ikke-endret"
+            med "svar.avskjediget"
             med "svar.sagt-opp-av-arbeidsgiver"
-            med "svar.permittert"
+            med "svar.arbeidsgiver-konkurs"
             med "svar.kontrakt-utgaatt"
             med "svar.sagt-opp-selv"
             med "svar.redusert-arbeidstid"
-            med "svar.konkurs-arbeidsgiver"
-            med "svar.avskjediget"
-            med "svar.ikke-endret" id `arbeidsforhold aarsak`
+            med "svar.permittert" id `arbeidsforhold endret`
     )
 }
