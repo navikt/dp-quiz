@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 // @todo: Vurdere om denne skal inkluderes i SøknadEksempel1.kt i stedet
@@ -88,4 +89,7 @@ object DummySeksjon : DslFaktaseksjon {
         periode faktum "faktum.generator-dummy-periode" id `generator dummy periode`,
         land faktum "faktum.dummy-land" id `dummy land`
     )
+
+    override fun seksjon(søknad: Søknad) =
+        TODO("ikke nødvendig her")
 }

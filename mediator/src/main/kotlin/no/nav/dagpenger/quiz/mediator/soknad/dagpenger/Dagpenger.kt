@@ -2,9 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -37,7 +35,7 @@ internal object Dagpenger {
     )
 
     private val alleFakta = flatMapAlleFakta()
-    private val alleDatabaseIder = flatMapAlleDatabaseIder()
+    private val alleSeksjoner = flatMapAlleSeksjoner()
 
     internal val søknad: Søknad
         get() = Søknad(
@@ -45,26 +43,7 @@ internal object Dagpenger {
             *alleFakta
         )
 
-    private object Seksjoner {
-
-        val søkerSeksjon = søknad.seksjon(
-            "søkerseksjon",
-            Rolle.søker,
-            *alleDatabaseIder
-        )
-
-        val navSeksjon = søknad.seksjon(
-            "navseksjon",
-            Rolle.nav,
-            *Barnetillegg.databaseIder(),
-        )
-    }
-
-    internal val søknadsprosess: Søknadprosess =
-        Søknadprosess(
-            Seksjoner.søkerSeksjon,
-            Seksjoner.navSeksjon
-        )
+    internal val søknadsprosess: Søknadprosess = Søknadprosess(*alleSeksjoner)
 
     object Subsumsjoner {
         val regeltre: Subsumsjon = with(søknad) {
@@ -95,7 +74,7 @@ internal object Dagpenger {
         seksjon.fakta().toList()
     }.toTypedArray()
 
-    private fun flatMapAlleDatabaseIder() = faktaseksjoner.flatMap { seksjon ->
-        seksjon.databaseIder().toList()
-    }.toIntArray()
+    private fun flatMapAlleSeksjoner() = faktaseksjoner.map { faktaSeksjon ->
+        faktaSeksjon.seksjon(søknad)
+    }.flatten().toTypedArray()
 }

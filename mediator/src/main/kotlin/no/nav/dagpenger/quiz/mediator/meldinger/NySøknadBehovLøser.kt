@@ -55,7 +55,8 @@ internal class NySøknadBehovLøser(
                 log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid}" }
 
                 context.publish(
-                    NavJsonBuilder(søknadsprosess, "navseksjon").resultat().toString().also {
+                    // TODO: Burde ikke være avhengige av navn på seksjonen her
+                    NavJsonBuilder(søknadsprosess, "barnetillegg-register").resultat().toString().also {
                         sikkerlogg.info { "Behov sendt: $it" }
                     }
                 )

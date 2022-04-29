@@ -1,6 +1,8 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
 import no.nav.dagpenger.model.factory.FaktumFactory
+import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.seksjon.Seksjon
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberProperties
 
@@ -19,4 +21,6 @@ interface DslFaktaseksjon {
         }
         .sorted()
         .toIntArray()
+
+    fun seksjon(søknad: Søknad): List<Seksjon>
 }

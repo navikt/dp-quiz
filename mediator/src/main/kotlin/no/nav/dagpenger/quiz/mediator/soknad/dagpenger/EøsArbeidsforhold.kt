@@ -5,6 +5,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object EøsArbeidsforhold : DslFaktaseksjon {
@@ -27,4 +30,6 @@ object EøsArbeidsforhold : DslFaktaseksjon {
         tekst faktum "faktum.eos-arbeidsforhold.personnummer" id `eos arbeidsforhold personnummer`,
         periode faktum "faktum.eos-arbeidsforhold.varighet" id `eos arbeidsforhold varighet`
     )
+
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("eos-arbeidsforhold", Rolle.søker, *this.databaseIder()))
 }

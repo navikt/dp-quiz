@@ -4,6 +4,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Bostedsland : DslFaktaseksjon {
@@ -23,4 +26,6 @@ object Bostedsland : DslFaktaseksjon {
         boolsk faktum "faktum.reist-tilbake-en-gang-eller-mer" id `reist tilbake en gang eller mer`,
         boolsk faktum "faktum.reist-i-takt-med-rotasjon" id `reist i takt med rotasjon`
     )
+
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("bostedsland", Rolle.søker, *this.databaseIder()))
 }

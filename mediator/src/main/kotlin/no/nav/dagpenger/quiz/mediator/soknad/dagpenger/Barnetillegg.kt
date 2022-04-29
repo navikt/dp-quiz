@@ -5,6 +5,10 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
+import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Barnetillegg : DslFaktaseksjon {
@@ -36,4 +40,11 @@ object Barnetillegg : DslFaktaseksjon {
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`
 
     )
+
+    override fun seksjon(søknad: Søknad): List<Seksjon> {
+        val barnetilleggSøker = søknad.seksjon("barnetillegg", Rolle.søker, *this.databaseIder())
+        val barnetilleggRegister = søknad.seksjon("barnetillegg-register", Rolle.nav, *this.databaseIder())
+
+        return listOf(barnetilleggSøker, barnetilleggRegister)
+    }
 }

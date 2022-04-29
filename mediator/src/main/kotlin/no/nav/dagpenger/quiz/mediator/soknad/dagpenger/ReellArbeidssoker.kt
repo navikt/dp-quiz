@@ -4,6 +4,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object ReellArbeidssoker : DslFaktaseksjon {
@@ -43,4 +46,6 @@ object ReellArbeidssoker : DslFaktaseksjon {
         boolsk faktum "faktum.alle-typer-arbeid" id `alle typer arbeid`,
         boolsk faktum "faktum.bytte-yrke-ned-i-lonn" id `bytte yrke ned i lonn`
     )
+
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("reell-arbeidssoker", Rolle.søker, *this.databaseIder()))
 }

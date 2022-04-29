@@ -3,6 +3,9 @@ package no.nav.dagpenger.quiz.mediator.soknad
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -17,6 +20,9 @@ internal class DslFaktaseksjonTest {
             tekst faktum "faktum 2" id id2,
             heltall faktum "faktum 3" id id3,
         )
+
+        override fun seksjon(søknad: Søknad) =
+            listOf(søknad.seksjon("dummy-seksjon", Rolle.søker, *this.databaseIder()))
     }
 
     @Test

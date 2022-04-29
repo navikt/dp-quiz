@@ -38,7 +38,7 @@ internal object SøknadSeksjonsTester {
         )
 
         val navSeksjon = søknad.seksjon(
-            "navseksjon",
+            "barnetillegg-register",
             Rolle.nav,
         )
     }
