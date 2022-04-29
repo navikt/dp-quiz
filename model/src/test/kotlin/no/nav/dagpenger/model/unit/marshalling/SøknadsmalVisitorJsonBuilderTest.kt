@@ -1,7 +1,6 @@
 package no.nav.dagpenger.model.unit.marshalling
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.NullNode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
@@ -12,21 +11,10 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
-import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.faktum.Envalg
-import no.nav.dagpenger.model.faktum.Flervalg
-import no.nav.dagpenger.model.faktum.Inntekt
-import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.Tekst
-import no.nav.dagpenger.model.helpers.februar
-import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.helpers.mars
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.marshalling.FaktaJsonBuilder
 import no.nav.dagpenger.model.marshalling.SøknadsmalVisitorJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -35,14 +23,9 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
-import org.junit.jupiter.api.Assertions.assertDoesNotThrow
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.UUID
 import kotlin.test.assertEquals
 
 internal class SøknadsmalVisitorJsonBuilderTest {
@@ -181,198 +164,12 @@ internal class SøknadsmalVisitorJsonBuilderTest {
             )
         )
 
-        // førsteSeksjon["fakta"][4].assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav"))
-        // førsteSeksjon["fakta"][5].assertFaktaAsJson("9", "localdate", "dato9", listOf("nav"))
-        // førsteSeksjon["fakta"][6].assertValgFaktaAsJson(
-        //     "10",
-        //     "flervalg",
-        //     "flervalg10",
-        //     listOf("søker"),
-        //     listOf("valg1", "valg2", "valg3")
-        // )
-//        søkerJson["fakta"][7].assertValgFaktaAsJson("11", "envalg", "envalg11", listOf("søker"), listOf("valg1", "valg2"))
-//        søkerJson["fakta"][8].assertFaktaAsJson("15", "tekst", "tekst15", listOf("søker"))
-//        søkerJson["fakta"][9].assertFaktaAsJson("16", "periode", "periode16", listOf("søker"))
-//        søkerJson["fakta"][10].assertFaktaAsJson("17", "periode", "pågåendePeriode17", listOf("søker"))
-//
-//        søkerJson["fakta"][11].assertGeneratorFaktaAsJson(
-//            "5", "generator", "generator5", listOf("søker"),
-//            assertTemplates = listOf(
-//                { it.assertFaktaAsJson("3", "int", "heltall3", listOf("søker")) },
-//                { it.assertFaktaAsJson("4", "localdate", "dato4", listOf("søker")) }
-//            )
-//        )
-//
-//        søkerJson["fakta"][12].assertGeneratorFaktaAsJson(
-//            "14", "generator", "generator14", listOf("søker"),
-//            assertTemplates = listOf(
-//                { it.assertFaktaAsJson("12", "localdate", "dato12", listOf("søker")) },
-//                { it.assertFaktaAsJson("13", "inntekt", "inntekt13", listOf("søker")) }
-//            )
-//        )
-    }
-
-    @Test
-    fun `serialisering av besvarte fakta til json`() {
-
-        val nå = LocalDateTime.now()
-        val idag = LocalDate.now()
-        val regel = søkerSubsumsjon()
-        val søknadprosess = søknadprosess(regel)
-        søknadprosess.boolsk(1).besvar(true)
-        søknadprosess.heltall(2).besvar(37)
-
-        søknadprosess.generator(5).besvar(2)
-        søknadprosess.heltall("3.1").besvar(37)
-        søknadprosess.heltall("3.2").besvar(100)
-        søknadprosess.dato("4.1").besvar(idag)
-        søknadprosess.dato("4.2").besvar(idag.plusDays(3))
-
-        søknadprosess.desimaltall(6).besvar(37.5)
-
-        søknadprosess.dokument(7).besvar(Dokument(urn = "urn:dp:dokument", lastOppTidsstempel = nå))
-
-        søknadprosess.inntekt(8).besvar(Inntekt.INGEN)
-        søknadprosess.dato(9).besvar(idag)
-        søknadprosess.flervalg(10).besvar(Flervalg("flervalg10.valg1"))
-        søknadprosess.envalg(11).besvar(Envalg("envalg11.valg1"))
-        søknadprosess.generator(14).besvar(1)
-        søknadprosess.dato("12.1").besvar(idag)
-        søknadprosess.inntekt("13.1").besvar(300.årlig)
-        søknadprosess.tekst(15).besvar(Tekst("svartekst15"))
-        søknadprosess.periode(16).besvar(Periode(1.januar(), 1.februar()))
-        søknadprosess.periode(17).besvar(Periode(1.mars()))
-
-        val søkerJson = FaktaJsonBuilder(søknadprosess).resultat()
-
-        assertEquals("NySøknad", søkerJson["@event_name"].asText())
-        assertNull(søkerJson["@løsning"])
-        assertDoesNotThrow { søkerJson["@id"].asText().also { UUID.fromString(it) } }
-        assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
-        assertDoesNotThrow { søkerJson["søknad_uuid"].asText().also { UUID.fromString(it) } }
-        assertEquals("12020052345", søkerJson["fødselsnummer"].asText())
-        assertEquals(13, søkerJson["fakta"].size())
-
-        søkerJson["fakta"][0].assertFaktaAsJson("1", "boolean", "boolsk1", listOf("søker")) {
-            assertEquals(true, it.asBoolean())
-        }
-        søkerJson["fakta"][1].assertFaktaAsJson("2", "int", "heltall2", listOf("søker")) {
-            assertEquals(37, it.asInt())
-        }
-        søkerJson["fakta"][2].assertFaktaAsJson("6", "double", "desimaltall6", listOf("søker")) {
-            assertEquals(37.5, it.asDouble())
-        }
-        søkerJson["fakta"][3].assertFaktaAsJson("7", "dokument", "dokument7", listOf("nav")) {
-            assertEquals("urn:dp:dokument", it["urn"].asText())
-            assertEquals(nå, it["lastOppTidsstempel"].asText().let { LocalDateTime.parse(it) })
-        }
-        søkerJson["fakta"][4].assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav")) {
-            assertEquals(Inntekt.INGEN, it.asDouble().årlig)
-        }
-        søkerJson["fakta"][5].assertFaktaAsJson("9", "localdate", "dato9", listOf("nav")) {
-            assertEquals(idag, it.asText().let { LocalDate.parse(it) })
-        }
-        søkerJson["fakta"][6].assertValgFaktaAsJson(
-            "10",
-            "flervalg",
-            "flervalg10",
-            listOf("søker"),
-            listOf("valg1", "valg2", "valg3")
-        ) {
-            assertEquals(Flervalg("flervalg10.valg1"), Flervalg(it.map { it.asText() }.toSet()))
-        }
-        søkerJson["fakta"][7].assertValgFaktaAsJson(
-            "11",
-            "envalg",
-            "envalg11",
-            listOf("søker"),
-            listOf("valg1", "valg2")
-        ) {
-            assertEquals(Envalg("envalg11.valg1"), Envalg(it.asText()))
-        }
-
-        søkerJson["fakta"][8].assertFaktaAsJson("15", "tekst", "tekst15", listOf("søker")) {
-            assertEquals("svartekst15", it.asText())
-        }
-
-        søkerJson["fakta"][9].assertFaktaAsJson("16", "periode", "periode16", listOf("søker")) {
-            assertEquals("2018-01-01", it["fom"].asText())
-            assertEquals("2018-02-01", it["tom"].asText())
-        }
-
-        søkerJson["fakta"][10].assertFaktaAsJson("17", "periode", "pågåendePeriode17", listOf("søker")) {
-            assertEquals("2018-03-01", it["fom"].asText())
-            assertTrue(it["tom"] is NullNode)
-        }
-
-        søkerJson["fakta"][11].assertGeneratorFaktaAsJson(
-            "5", "generator", "generator5", listOf("søker"),
-            assertTemplates = listOf(
-                { it.assertFaktaAsJson("3", "int", "heltall3", listOf("søker")) },
-                { it.assertFaktaAsJson("4", "localdate", "dato4", listOf("søker")) }
-            )
-        ) { svar ->
-            assertEquals(2, svar.size())
-            val førsteIndeks = svar[0]
-            førsteIndeks[0].assertFaktaAsJson("3.1", "int", "heltall3", listOf("søker")) {
-                assertEquals(37, it.asInt())
-            }
-            førsteIndeks[1].assertFaktaAsJson("4.1", "localdate", "dato4", listOf("søker")) {
-                assertEquals("$idag", it.asText())
-            }
-
-            val andreIndeks = svar[1]
-            andreIndeks[0].assertFaktaAsJson("3.2", "int", "heltall3", listOf("søker")) {
-                assertEquals(100, it.asInt())
-            }
-            andreIndeks[1].assertFaktaAsJson("4.2", "localdate", "dato4", listOf("søker")) {
-                assertEquals("${idag.plusDays(3)}", it.asText())
-            }
-        }
-
-        søkerJson["fakta"][12].assertGeneratorFaktaAsJson(
-            "14", "generator", "generator14", listOf("søker"),
-            assertTemplates = listOf(
-                { it.assertFaktaAsJson("12", "localdate", "dato12", listOf("søker")) },
-                { it.assertFaktaAsJson("13", "inntekt", "inntekt13", listOf("søker")) }
-            )
-        ) { svar ->
-            assertEquals(1, svar.size())
-
-            val førsteIndeks = svar[0]
-            førsteIndeks[0].assertFaktaAsJson("12.1", "localdate", "dato12", listOf("søker")) {
-                assertEquals("$idag", it.asText())
-            }
-            førsteIndeks[1].assertFaktaAsJson("13.1", "inntekt", "inntekt13", listOf("søker")) {
-                assertEquals(300.0, it.asDouble())
-            }
-        }
-    }
-
-    @Test
-    fun `serialisering av delvis besvarte genererte fakta til json`() {
-        val idag = LocalDate.now()
-        val regel = søkerSubsumsjon()
-        val søknadprosess = søknadprosess(regel)
-        søknadprosess.generator(14).besvar(1)
-        søknadprosess.dato("12.1").besvar(idag)
-        val søkerJson = FaktaJsonBuilder(søknadprosess).resultat()
-        assertEquals(13, søkerJson["fakta"].size())
-
-        søkerJson["fakta"][12].assertGeneratorFaktaAsJson(
-            "14", "generator", "generator14", listOf("søker"),
-            assertTemplates = listOf(
-                { it.assertFaktaAsJson("12", "localdate", "dato12", listOf("søker")) },
-                { it.assertFaktaAsJson("13", "inntekt", "inntekt13", listOf("søker")) }
-            )
-        ) { svar ->
-            assertEquals(1, svar.size())
-            val førsteIndeks = svar[0]
-            assertEquals(1, førsteIndeks.size())
-            førsteIndeks[0].assertFaktaAsJson("12.1", "localdate", "dato12", listOf("søker")) {
-                assertEquals("$idag", it.asText())
-            }
-        }
+        val fjerdeSeksjon = malJson["seksjoner"][3]
+        assertEquals("nav", fjerdeSeksjon["beskrivendeId"].asText())
+        assertEquals(3, fjerdeSeksjon["fakta"].size())
+        fjerdeSeksjon["fakta"][0].assertFaktaAsJson("7", "dokument", "dokument7", listOf("nav"))
+        fjerdeSeksjon["fakta"][1].assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav"))
+        fjerdeSeksjon["fakta"][2].assertFaktaAsJson("9", "localdate", "dato9", listOf("nav"))
     }
 
     private fun JsonNode.assertFaktaAsJson(
