@@ -131,30 +131,65 @@ internal class SøknadsmalVisitorJsonBuilderTest {
 
         val malJson = SøknadsmalVisitorJsonBuilder(søknadprosess).resultat()
 
-        assertEquals(0, malJson["versjon"]["id"].asInt())
-        assertEquals("test", malJson["versjon"]["navn"].asText())
+        assertEquals(0, malJson["versjon_id"].asInt())
+        assertEquals("test", malJson["versjon_navn"].asText())
         assertEquals(4, malJson["seksjoner"].size())
 
-//        assertEquals("NySøknad", søkerJson["@event_name"].asText())
-//        assertNull(søkerJson["@løsning"])
-//        assertDoesNotThrow { søkerJson["@id"].asText().also { UUID.fromString(it) } }
-//        assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
-//        assertDoesNotThrow { søkerJson["søknad_uuid"].asText().also { UUID.fromString(it) } }
-//        assertEquals("12020052345", søkerJson["fødselsnummer"].asText())
-//        assertEquals(13, søkerJson["fakta"].size())
-//        søkerJson["fakta"][0].assertFaktaAsJson("1", "boolean", "boolsk1", listOf("søker"))
-//        søkerJson["fakta"][1].assertFaktaAsJson("2", "int", "heltall2", listOf("søker"))
-//        søkerJson["fakta"][2].assertFaktaAsJson("6", "double", "desimaltall6", listOf("søker"))
-//        søkerJson["fakta"][3].assertFaktaAsJson("7", "dokument", "dokument7", listOf("nav"))
-//        søkerJson["fakta"][4].assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav"))
-//        søkerJson["fakta"][5].assertFaktaAsJson("9", "localdate", "dato9", listOf("nav"))
-//        søkerJson["fakta"][6].assertValgFaktaAsJson(
-//            "10",
-//            "flervalg",
-//            "flervalg10",
-//            listOf("søker"),
-//            listOf("valg1", "valg2", "valg3")
-//        )
+        val førsteSeksjon = malJson["seksjoner"][0]
+        assertEquals("seksjon1", førsteSeksjon["beskrivendeId"].asText())
+        assertEquals(5, førsteSeksjon["fakta"].size())
+        førsteSeksjon["fakta"][0].assertFaktaAsJson("1", "boolean", "boolsk1", listOf("søker"))
+        førsteSeksjon["fakta"][1].assertFaktaAsJson("2", "int", "heltall2", listOf("søker"))
+        førsteSeksjon["fakta"][2].assertFaktaAsJson("15", "tekst", "tekst15", listOf("søker"))
+        førsteSeksjon["fakta"][3].assertFaktaAsJson("16", "periode", "periode16", listOf("søker"))
+        førsteSeksjon["fakta"][4].assertFaktaAsJson("17", "periode", "pågåendePeriode17", listOf("søker"))
+
+        val andreSeksjon = malJson["seksjoner"][1]
+        assertEquals("seksjon2", andreSeksjon["beskrivendeId"].asText())
+        assertEquals(2, andreSeksjon["fakta"].size())
+        andreSeksjon["fakta"][0].assertFaktaAsJson("6", "double", "desimaltall6", listOf("søker"))
+        andreSeksjon["fakta"][1].assertGeneratorFaktaAsJson(
+            "5", "generator", "generator5", listOf("søker"),
+            assertTemplates = listOf(
+                { it.assertFaktaAsJson("3", "int", "heltall3", listOf("søker")) },
+                { it.assertFaktaAsJson("4", "localdate", "dato4", listOf("søker")) }
+            )
+        )
+
+        val tredjeSeksjon = malJson["seksjoner"][2]
+        assertEquals("seksjon3", tredjeSeksjon["beskrivendeId"].asText())
+        assertEquals(3, tredjeSeksjon["fakta"].size())
+        tredjeSeksjon["fakta"][0].assertValgFaktaAsJson(
+            "10",
+            "flervalg",
+            "flervalg10",
+            listOf("søker"),
+            listOf("valg1", "valg2", "valg3")
+        )
+        tredjeSeksjon["fakta"][1].assertValgFaktaAsJson(
+            "11",
+            "envalg",
+            "envalg11",
+            listOf("søker"),
+            listOf("valg1", "valg2", "valg3")
+        )
+        tredjeSeksjon["fakta"][2].assertGeneratorFaktaAsJson(
+            "14", "generator", "generator14", listOf("søker"),
+            assertTemplates = listOf(
+                { it.assertFaktaAsJson("12", "localdate", "dato12", listOf("søker")) },
+                { it.assertFaktaAsJson("13", "inntekt", "inntekt13", listOf("søker")) }
+            )
+        )
+
+        // førsteSeksjon["fakta"][4].assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav"))
+        // førsteSeksjon["fakta"][5].assertFaktaAsJson("9", "localdate", "dato9", listOf("nav"))
+        // førsteSeksjon["fakta"][6].assertValgFaktaAsJson(
+        //     "10",
+        //     "flervalg",
+        //     "flervalg10",
+        //     listOf("søker"),
+        //     listOf("valg1", "valg2", "valg3")
+        // )
 //        søkerJson["fakta"][7].assertValgFaktaAsJson("11", "envalg", "envalg11", listOf("søker"), listOf("valg1", "valg2"))
 //        søkerJson["fakta"][8].assertFaktaAsJson("15", "tekst", "tekst15", listOf("søker"))
 //        søkerJson["fakta"][9].assertFaktaAsJson("16", "periode", "periode16", listOf("søker"))
@@ -246,7 +281,13 @@ internal class SøknadsmalVisitorJsonBuilderTest {
         ) {
             assertEquals(Flervalg("flervalg10.valg1"), Flervalg(it.map { it.asText() }.toSet()))
         }
-        søkerJson["fakta"][7].assertValgFaktaAsJson("11", "envalg", "envalg11", listOf("søker"), listOf("valg1", "valg2")) {
+        søkerJson["fakta"][7].assertValgFaktaAsJson(
+            "11",
+            "envalg",
+            "envalg11",
+            listOf("søker"),
+            listOf("valg1", "valg2")
+        ) {
             assertEquals(Envalg("envalg11.valg1"), Envalg(it.asText()))
         }
 
@@ -346,7 +387,11 @@ internal class SøknadsmalVisitorJsonBuilderTest {
         assertEquals(expectedId, this.get("id").asText())
         if (expectedRoller.isNotEmpty()) {
             val actual: List<String> = this.get("roller").toSet().map { it.asText() }
-            assertEquals(expectedRoller.size, actual.size, "$expectedBeskrivendeId har $actual, forventet $expectedRoller ")
+            assertEquals(
+                expectedRoller.size,
+                actual.size,
+                "$expectedBeskrivendeId har $actual, forventet $expectedRoller "
+            )
             assertTrue(expectedRoller.containsAll<String>(actual)) { "$expectedBeskrivendeId har $actual, forventet $expectedRoller " }
         }
         assertSvar?.let { assert -> assert(this.get("svar")) }
