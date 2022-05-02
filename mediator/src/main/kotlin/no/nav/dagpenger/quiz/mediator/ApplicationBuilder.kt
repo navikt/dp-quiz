@@ -1,5 +1,7 @@
 package no.nav.dagpenger.quiz.mediator
 
+import no.nav.dagpenger.model.marshalling.SøknadsmalVisitorJsonBuilder
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
@@ -11,6 +13,7 @@ import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.ManuellBehandlingSink
 import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadBehovLøser
+import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.helse.rapids_rivers.RapidApplication
@@ -37,7 +40,14 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 val resultatRecord = ResultatRecord()
                 AvslagPåMinsteinntektOppsett.registrer { søknad -> FaktumTable(søknad) }
                 AvslagPåMinsteinntektService(søknadRecord, rapidsConnection)
-                Dagpenger.registrer { søknad -> FaktumTable(søknad) }
+                Dagpenger.registrer { søknad ->
+                    FaktumTable(søknad)
+                    val sisteDagpengerVersjon = Versjon.siste(Prosess.Dagpenger)
+                    Versjon.id(sisteDagpengerVersjon).also { versjon ->
+                        val søknadsprosess = versjon.søknadprosess(Dagpenger.søknad, Versjon.UserInterfaceType.Web)
+                        rapidsConnection.publish(SøknadsmalVisitorJsonBuilder(søknadsprosess).resultat().toString())
+                    }
+                }
                 NySøknadBehovLøser(søknadRecord, rapidsConnection)
                 FaktumSvarService(søknadRecord, resultatRecord, rapidsConnection)
                 BehandlingsdatoService(rapidsConnection)
