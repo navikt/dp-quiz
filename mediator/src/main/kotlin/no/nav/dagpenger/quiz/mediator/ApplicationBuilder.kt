@@ -44,7 +44,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                     FaktumTable(søknad)
                     val sisteDagpengerVersjon = Versjon.siste(Prosess.Dagpenger)
                     Versjon.id(sisteDagpengerVersjon).also { versjon ->
-                        val søknadsprosess = versjon.søknadprosess(Dagpenger.søknad, Versjon.UserInterfaceType.Web)
+                        val søknadsprosess = versjon.søknadprosess(søknad, Versjon.UserInterfaceType.Web)
                         rapidsConnection.publish(SøknadsmalVisitorJsonBuilder(søknadsprosess).resultat().toString())
                     }
                 }

@@ -37,7 +37,7 @@ internal object Dagpenger {
     private val alleFakta = flatMapAlleFakta()
     private val alleSeksjoner = flatMapAlleSeksjoner()
 
-    internal val søknad: Søknad
+    private val søknad: Søknad
         get() = Søknad(
             VERSJON_ID,
             *alleFakta
