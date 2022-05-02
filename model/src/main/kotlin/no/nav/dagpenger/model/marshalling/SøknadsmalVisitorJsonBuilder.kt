@@ -30,7 +30,6 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
     private lateinit var gjeldendeSeksjon: ObjectNode
     private var rootId = 0
     private val faktumIder = mutableSetOf<String>()
-    private val erGenerertFraTemplate = mutableListOf<Faktum<*>>()
     private var erISeksjon = false
 
     init {
@@ -42,7 +41,6 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
 
     override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
         root.put("@event_name", "Søknadsmal")
-
         root.put("versjon_id", prosessVersjon.versjon)
         root.put("versjon_navn", prosessVersjon.prosessnavn.id)
     }
@@ -95,10 +93,6 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
     ) {
         if (!erISeksjon) return
         if (id in faktumIder) return
-        if (faktum.faktumId.harIndeks()) {
-            erGenerertFraTemplate.add(faktum)
-            return
-        }
         addFaktum(faktum, id)
     }
 
@@ -126,7 +120,7 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
             roller: Set<Rolle>,
             clazz: Class<R>
         ) {
-            lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller)
+            lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller)
         }
 
         override fun <R : Comparable<R>> visit(
@@ -143,7 +137,7 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
             templates.forEach { template ->
                 jsonTemplates.add(SøknadFaktumVisitor(template).root)
             }
-            lagFaktumNode<R>(id, "generator", faktum.navn, roller, jsonTemplates)
+            lagFaktumNode(id, "generator", faktum.navn, roller, jsonTemplates)
         }
 
         override fun <R : Comparable<R>> visit(
@@ -157,10 +151,10 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
             clazz: Class<R>,
             gyldigeValg: GyldigeValg?
         ) {
-            lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigeValg)
+            lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigeValg)
         }
 
-        private fun <R : Comparable<R>> lagFaktumNode(
+        private fun lagFaktumNode(
             id: String,
             clazz: String,
             navn: String? = null,
