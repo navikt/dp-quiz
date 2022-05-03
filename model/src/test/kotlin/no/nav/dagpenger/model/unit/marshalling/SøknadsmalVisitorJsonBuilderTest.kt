@@ -15,7 +15,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.marshalling.SøknadsmalVisitorJsonBuilder
+import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -112,7 +112,7 @@ internal class SøknadsmalVisitorJsonBuilderTest {
         val regel = søkerSubsumsjon()
         val søknadprosess = søknadprosess(regel)
 
-        val malJson = SøknadsmalVisitorJsonBuilder(søknadprosess).resultat()
+        val malJson = SøkerJsonBuilder(søknadprosess).resultat()
 
         assertEquals(0, malJson["versjon_id"].asInt())
         assertEquals("test", malJson["versjon_navn"].asText())

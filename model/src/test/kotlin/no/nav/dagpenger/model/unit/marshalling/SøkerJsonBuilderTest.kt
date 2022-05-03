@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -57,8 +58,8 @@ class SøkerJsonBuilderTest {
 
         val regel = søkerSubsumsjon()
         val søknadprosess = søknadprosess(regel)
-
-        val søkerJson = SøkerJsonBuilder(søknadprosess, "søker").resultat()
+        søknadprosess.nesteSeksjoner()
+        val søkerJson = SøkerJsonBuilder(søknadprosess).resultat()
 
         assertEquals("søker_oppgave", søkerJson["@event_name"].asText())
         assertDoesNotThrow { søkerJson["@id"].asText().also { UUID.fromString(it) } }
@@ -78,27 +79,15 @@ class SøkerJsonBuilderTest {
         assertEquals(1, søkerJson["subsumsjoner"].size())
     }
 
-    @Test
-    fun `Subsumsjoner inneholder fakta den er avhengige av `() {
-        val regel = søkerSubsumsjon()
-        val søknadprosess = søknadprosess(regel)
-
-        val søkerJson = SøkerJsonBuilder(søknadprosess, "søker").resultat()
-        assertEquals(1, søkerJson["subsumsjoner"].size())
-        søkerJson["subsumsjoner"].also {
-            assertEquals(1, it[0]["subsumsjoner"][0]["subsumsjoner"][0]["fakta"].size())
-            assertEquals("1", it[0]["subsumsjoner"][0]["subsumsjoner"][0]["fakta"][0].asText())
-            assertEquals(1, it[0]["subsumsjoner"][0]["subsumsjoner"][1]["fakta"].size())
-            assertEquals("3", it[0]["subsumsjoner"][0]["subsumsjoner"][1]["fakta"][0].asText())
-        }
-    }
-
     private fun søkerSubsumsjon() = "regel" deltre {
-        "alle".alle(
-            prototypeSøknad.boolsk(1) er true,
+        "alle i første seksjon".alle(
+            (prototypeSøknad.boolsk(1) er true).hvisIkkeOppfylt {
+                prototypeSøknad.boolsk(2).utfylt()
+            },
             (prototypeSøknad.boolsk(3) er true).hvisIkkeOppfylt {
-                prototypeSøknad.boolsk(5) er true
-            }
+                prototypeSøknad.boolsk(4).utfylt()
+            },
+            prototypeSøknad.boolsk(5).utfylt()
         )
     }
 
@@ -106,25 +95,14 @@ class SøkerJsonBuilderTest {
         val prototypeFaktagrupper = Søknadprosess(
             prototypeSøknad,
             Seksjon(
-                "søker",
+                "førsteSeksjon",
                 Rolle.søker,
                 prototypeSøknad.boolsk(1),
+                prototypeSøknad.boolsk(2),
                 prototypeSøknad.boolsk(3),
                 prototypeSøknad.boolsk(4),
                 prototypeSøknad.boolsk(5),
-                prototypeSøknad.boolsk(6),
-                prototypeSøknad.boolsk(7)
             ),
-            Seksjon(
-                "Genereres",
-                Rolle.søker,
-                prototypeSøknad.boolsk(13),
-                prototypeSøknad.boolsk(14)
-            ),
-            Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.boolsk(2)),
-            Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeSøknad.boolsk(4)),
-            Seksjon("saksbehandler5", Rolle.saksbehandler, prototypeSøknad.boolsk(11)),
-            Seksjon("saksbehandler67", Rolle.saksbehandler, prototypeSøknad.boolsk(12)),
             rootSubsumsjon = prototypeSubsumsjon
         )
 

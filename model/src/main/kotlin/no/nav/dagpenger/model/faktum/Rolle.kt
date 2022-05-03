@@ -32,7 +32,7 @@ class Nav internal constructor() : Rolle() {
 class Søker internal constructor() : Rolle() {
     override val typeNavn = this.javaClass.simpleName.lowercase()
     override fun spørsmål(søknadprosess: Søknadprosess, seksjonNavn: String) =
-        SøkerJsonBuilder(søknadprosess, seksjonNavn).resultat().toString()
+        SøkerJsonBuilder(søknadprosess).resultat().toString()
 }
 
 // Forstår hvordan den skal stille spørsmål til saksbehandler
