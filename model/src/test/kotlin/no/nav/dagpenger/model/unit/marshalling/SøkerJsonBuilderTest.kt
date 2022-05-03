@@ -1,5 +1,9 @@
 package no.nav.dagpenger.model.unit.marshalling
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
@@ -20,11 +24,7 @@ import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
-import java.time.LocalDateTime
-import java.util.UUID
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class SøkerJsonBuilderTest {
 
@@ -59,8 +59,23 @@ class SøkerJsonBuilderTest {
         val regel = søkerSubsumsjon()
         val søknadprosess = søknadprosess(regel)
         søknadprosess.nesteSeksjoner()
-        val søkerJson = SøkerJsonBuilder(søknadprosess).resultat()
+        var søkerJson = SøkerJsonBuilder(søknadprosess).resultat()
 
+
+        assertEquals(1, søkerJson["seksjoner"].size())
+        assertEquals(0, søkerJson["seksjoner"][0]["fakta"].size())
+
+        søknadprosess.boolsk(1).besvar(true)
+        søkerJson = SøkerJsonBuilder(søknadprosess).resultat()
+        println(søkerJson.toPrettyJson())
+        val seksjoner = søkerJson["seksjoner"]
+        val gjeldendeSeksjon = seksjoner[0]
+        val gjeldendeFakta = gjeldendeSeksjon["fakta"]
+        assertEquals(1, seksjoner.size())
+        assertEquals(1, gjeldendeFakta.size())
+        assertEquals(true, gjeldendeFakta[0]["svar"].asBoolean())
+
+        /*
         assertEquals("søker_oppgave", søkerJson["@event_name"].asText())
         assertDoesNotThrow { søkerJson["@id"].asText().also { UUID.fromString(it) } }
         assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
@@ -76,8 +91,19 @@ class SøkerJsonBuilderTest {
         assertEquals("aktørId", søkerJson["identer"][1]["id"].asText())
         assertEquals("aktørid", søkerJson["identer"][1]["type"].asText())
         assertNotNull(søkerJson["subsumsjoner"], "Skal ha med subsumsjon")
-        assertEquals(1, søkerJson["subsumsjoner"].size())
+        assertEquals(1, søkerJson["subsumsjoner"].size()) */
     }
+
+    private val objectMapper = jacksonMapperBuilder()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .build()
+
+    private fun String.toPrettyJson(): String? {
+        val jsonNode = objectMapper.readValue<JsonNode>(this)
+        return jsonNode.toPrettyJson()
+    }
+
+    private fun JsonNode.toPrettyJson() = objectMapper.writeValueAsString(this)
 
     private fun søkerSubsumsjon() = "regel" deltre {
         "alle i første seksjon".alle(

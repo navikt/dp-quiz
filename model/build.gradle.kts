@@ -7,4 +7,5 @@ dependencies {
     implementation("guru.nidi:graphviz-kotlin:0.18.1")
     implementation("de.slub-dresden:urnlib:2.0.1")
     testImplementation(Mockk.mockk)
+    testImplementation(Jackson.kotlin)
 }

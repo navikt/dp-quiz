@@ -3,19 +3,27 @@ package no.nav.dagpenger.model.marshalling
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import no.nav.dagpenger.model.faktum.Dokument
+import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
+import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
+import no.nav.dagpenger.model.faktum.Inntekt
+import no.nav.dagpenger.model.faktum.Land
+import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import java.time.LocalDate
 import java.util.UUID
 
 class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
@@ -73,7 +81,8 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         avhengerAvFakta: Set<Faktum<*>>,
         templates: List<Faktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
+        svar: R
     ) {
         if (!erISeksjon) return
         if (id in faktumIder) return
@@ -89,6 +98,8 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
+        svar: R,
+        besvartAv: String?,
         gyldigeValg: GyldigeValg?
     ) {
         if (!erISeksjon) return
@@ -102,7 +113,8 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     }
 
     private class SøknadFaktumVisitor(
-        faktum: Faktum<*>
+        faktum: Faktum<*>,
+        private val genererteFaktum: List<Faktum<*>> = emptyList()
     ) :
         FaktumVisitor {
 
@@ -120,7 +132,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             roller: Set<Rolle>,
             clazz: Class<R>
         ) {
-            lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller)
+            lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller)
         }
 
         override fun <R : Comparable<R>> visit(
@@ -137,7 +149,54 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             templates.forEach { template ->
                 jsonTemplates.add(SøknadFaktumVisitor(template).root)
             }
-            lagFaktumNode(id, "generator", faktum.navn, roller, jsonTemplates)
+            lagFaktumNode<R>(id, "generator", faktum.navn, roller, jsonTemplates)
+        }
+
+        override fun <R : Comparable<R>> visit(
+            faktum: GeneratorFaktum,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            templates: List<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>,
+            svar: R
+        ) {
+            val jsonTemplates = mapper.createArrayNode()
+            templates.forEach { template ->
+                jsonTemplates.add(SøknadFaktumVisitor(template).root)
+            }
+            lagFaktumNode(id, "generator", faktum.navn, roller, jsonTemplates, svar = svar)
+            val svarListe = mapper.createArrayNode()
+
+            (1..faktum.svar()).forEach { i ->
+                val indeks = mapper.createArrayNode()
+                genererteFaktum.filter { faktum ->
+                    faktum.faktumId.reflection { _, indeks ->
+                        indeks == i
+                    }
+                }.filter { it.erBesvart() }.forEach {
+                    indeks.add(SøknadFaktumVisitor(it).root)
+                }
+                svarListe.add(indeks)
+            }
+            this.root["svar"] = svarListe
+        }
+
+        override fun <R : Comparable<R>> visit(
+            faktum: GrunnleggendeFaktum<R>,
+            tilstand: Faktum.FaktumTilstand,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            godkjenner: Set<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>,
+            svar: R,
+            besvartAv: String?,
+            gyldigeValg: GyldigeValg?
+        ) {
+            lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigeValg, svar, besvartAv)
         }
 
         override fun <R : Comparable<R>> visit(
@@ -151,22 +210,26 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             clazz: Class<R>,
             gyldigeValg: GyldigeValg?
         ) {
-            lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigeValg)
+            lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigeValg)
         }
 
-        private fun lagFaktumNode(
+        private fun <R : Comparable<R>> lagFaktumNode(
             id: String,
             clazz: String,
             navn: String? = null,
             roller: Set<Rolle>,
             templates: ArrayNode? = null,
-            gyldigeValg: GyldigeValg? = null
+            gyldigeValg: GyldigeValg? = null,
+            svar: R? = null,
+            besvartAv: String? = null
         ) {
 
             root.also { faktumNode ->
                 faktumNode.put("id", id)
                 faktumNode.put("type", clazz)
                 faktumNode.put("beskrivendeId", navn)
+                svar?.also { faktumNode.putR("svar", it) }
+                besvartAv?.also { faktumNode.put("besvartAv", it) }
                 faktumNode.putArray("roller").also { arrayNode ->
                     roller.forEach { rolle ->
                         arrayNode.add(rolle.typeNavn)
@@ -182,5 +245,47 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                 if (templates != null) faktumNode["templates"] = templates
             }
         }
+
+        private fun <R> ObjectNode.putR(beskrivendeId: String = "svar", svar: R) {
+            when (svar) {
+                is Boolean -> this.put(beskrivendeId, svar)
+                is Int -> this.put(beskrivendeId, svar)
+                is Double -> this.put(beskrivendeId, svar)
+                is String -> this.put(beskrivendeId, svar)
+                is LocalDate -> this.put(beskrivendeId, svar.toString())
+                is Tekst -> this.put(beskrivendeId, svar.verdi)
+                is Dokument -> this.set(beskrivendeId, svar.asJsonNode())
+                is Periode -> this.set(beskrivendeId, svar.asJsonNode())
+                is Flervalg -> this.set(beskrivendeId, svar.asJsonNode())
+                is Envalg -> this.put(beskrivendeId, svar.first())
+                is Land -> this.put(beskrivendeId, svar.alpha3Code)
+                is Inntekt -> this.put(beskrivendeId, svar.asJsonNode())
+                else -> throw IllegalArgumentException("Ukjent datatype ${svar!!::class.simpleName}")
+            }
+        }
+
+        private fun Dokument.asJsonNode() =
+            reflection { lastOppTidsstempel, urn: String ->
+                mapper.createObjectNode().also {
+                    it.put("lastOppTidsstempel", lastOppTidsstempel.toString())
+                    it.put("urn", urn)
+                }
+            }
+
+        private fun Periode.asJsonNode() =
+            reflection { fom, tom ->
+                mapper.createObjectNode().also {
+                    it.put("fom", fom.toString())
+                    it.put("tom", tom?.toString())
+                }
+            }
+
+        private fun Flervalg.asJsonNode(): ArrayNode? {
+            val flervalg = mapper.createArrayNode()
+            forEach { flervalg.add(it) }
+            return flervalg
+        }
+
+        private fun Inntekt.asJsonNode() = reflection { årlig, _, _, _ -> årlig }
     }
 }
