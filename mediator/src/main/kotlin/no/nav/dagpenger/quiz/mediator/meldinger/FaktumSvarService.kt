@@ -88,12 +88,13 @@ internal class FaktumSvarService(
                                 sikkerlogg.info { "Fakta sendt: $it" }
                             }
                         )
+                        søknadprosess.sendNesteSeksjon(context)
                     }
                     else -> {
                         if (søknadprosess.erFerdig()) {
                             sendResultat(søknadprosess, context)
                         } else {
-                            sendNesteSeksjon(søknadprosess, context)
+                            søknadprosess.sendNesteSeksjon(context)
                         }
                     }
                 }
@@ -114,16 +115,6 @@ internal class FaktumSvarService(
             besvar(søknadprosess, faktumId, svar, type, besvartAv)
         }
         søknadPersistence.lagre(søknadprosess.søknad)
-    }
-
-    private fun sendNesteSeksjon(søknadprosess: Søknadprosess, context: MessageContext) {
-        søknadprosess.nesteSeksjoner()
-            .onEach { seksjon ->
-                val json = seksjon.somSpørsmål()
-                context.publish(json)
-                sikkerlogg.info { "Send ut seksjon: $json" }
-                log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
-            }
     }
 
     private fun sendResultat(søknadprosess: Søknadprosess, context: MessageContext) {

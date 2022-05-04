@@ -4,7 +4,6 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.marshalling.FaktaJsonBuilder
-import no.nav.dagpenger.model.marshalling.NavJsonBuilder
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
@@ -54,12 +53,7 @@ internal class NySøknadBehovLøser(
                 søknadPersistence.lagre(søknadsprosess.søknad)
                 log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid}" }
 
-                context.publish(
-                    // TODO: Burde ikke være avhengige av navn på seksjonen her
-                    NavJsonBuilder(søknadsprosess, "barnetillegg-register").resultat().toString().also {
-                        sikkerlogg.info { "Behov sendt: $it" }
-                    }
-                )
+                søknadsprosess.sendNesteSeksjon(context)
 
                 packet["@løsning"] = mapOf(behovNavn to søknadUuid)
                 context.publish(packet.toJson())
