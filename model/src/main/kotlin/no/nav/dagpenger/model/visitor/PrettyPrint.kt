@@ -138,7 +138,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     override fun postVisitIkkeOppfylt(parent: Subsumsjon, child: Subsumsjon) {} // Tom med vilje
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitUtenSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: FaktumTilstand,
         id: String,
@@ -152,7 +152,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         melding("Faktum: $faktum for roller ${roller.joinToString(" og ") { it.typeNavn }} er ubesvart")
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitMedSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: FaktumTilstand,
         id: String,

@@ -98,7 +98,7 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         this.indeks = indeks
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitUtenSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,
@@ -116,7 +116,7 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         avhengigheter[faktum] = avhengigeFakta
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitUtenSvar(
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,

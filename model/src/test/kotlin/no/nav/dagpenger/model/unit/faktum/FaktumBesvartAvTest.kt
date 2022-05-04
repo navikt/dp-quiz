@@ -34,7 +34,7 @@ internal class FaktumBesvartAvTest {
             søknadprosess.søknad.accept(this)
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitMedSvar(
             faktum: GrunnleggendeFaktum<R>,
             tilstand: Faktum.FaktumTilstand,
             id: String,

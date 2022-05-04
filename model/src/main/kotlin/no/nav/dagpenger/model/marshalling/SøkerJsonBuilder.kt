@@ -11,6 +11,7 @@ import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
+import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
@@ -24,6 +25,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
@@ -39,6 +41,8 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     private var rootId = 0
     private val faktumIder = mutableSetOf<String>()
     private var erISeksjon = false
+    private val nesteFakta = søknadprosess.nesteFakta()
+    private val erGenerertFraTemplate = mutableListOf<Faktum<*>>()
 
     init {
         søknadprosess.søknad.accept(this)
@@ -48,9 +52,18 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     fun resultat() = root
 
     override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
-        root.put("@event_name", "Søknadsmal")
+        root.put("@event_name", "Søkeroppgave")
         root.put("versjon_id", prosessVersjon.versjon)
         root.put("versjon_navn", prosessVersjon.prosessnavn.id)
+        root.put("@opprettet", "${LocalDateTime.now()}")
+        root.put("@id", "${UUID.randomUUID()}")
+        root.put("søknad_uuid", "$uuid")
+    }
+
+    override fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {
+        if (type == Identer.Ident.Type.FOLKEREGISTERIDENT) {
+            root.put("fødselsnummer", id)
+        }
     }
 
     override fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
@@ -65,8 +78,10 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     }
 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
-        gjeldendeSeksjon.set("fakta", faktaNode)
-        seksjoner.add(gjeldendeSeksjon)
+        if (faktaNode.size() > 0) {
+            gjeldendeSeksjon.set("fakta", faktaNode)
+            seksjoner.add(gjeldendeSeksjon)
+        }
         erISeksjon = false
     }
 
@@ -74,7 +89,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         this.rootId = rootId
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitMedSvar(
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
@@ -86,10 +101,28 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     ) {
         if (!erISeksjon) return
         if (id in faktumIder) return
+        val genererte = erGenerertFraTemplate.filter { generertFaktum ->
+            templates.any { generertFaktum.faktumId.generertFra(it.faktumId) }
+        }
+        addFaktum(faktum, id, genererte)
+    }
+
+    override fun <R : Comparable<R>> visitUtenSvar(
+        faktum: GeneratorFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        templates: List<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>
+    ) {
+        if (!erISeksjon) return
+        if (id in faktumIder) return
+        if (faktum !in nesteFakta) return
         addFaktum(faktum, id)
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitMedSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,
@@ -104,11 +137,41 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     ) {
         if (!erISeksjon) return
         if (id in faktumIder) return
+        if (faktum.faktumId.harIndeks()) {
+            erGenerertFraTemplate.add(faktum)
+            return
+        }
+        addFaktum(faktum, id)
+    }
+
+    override fun <R : Comparable<R>> visitUtenSvar(
+        faktum: GrunnleggendeFaktum<R>,
+        tilstand: Faktum.FaktumTilstand,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        godkjenner: Set<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>,
+        gyldigeValg: GyldigeValg?
+    ) {
+        if (!erISeksjon) return
+        if (id in faktumIder) return
+        if (faktum !in nesteFakta) return
+        if (faktum.faktumId.harIndeks()) {
+            erGenerertFraTemplate.add(faktum)
+            return
+        }
         addFaktum(faktum, id)
     }
 
     private fun <R : Comparable<R>> addFaktum(faktum: Faktum<R>, id: String) {
         faktaNode.add(SøknadFaktumVisitor(faktum).root)
+        faktumIder.add(id)
+    }
+
+    private fun <R : Comparable<R>> addFaktum(faktum: Faktum<R>, id: String, generatorFaktum: List<Faktum<*>>) {
+        faktaNode.add(SøknadFaktumVisitor(faktum, generatorFaktum).root)
         faktumIder.add(id)
     }
 
@@ -135,7 +198,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller)
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitUtenSvar(
             faktum: GeneratorFaktum,
             id: String,
             avhengigeFakta: Set<Faktum<*>>,
@@ -152,7 +215,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             lagFaktumNode<R>(id, "generator", faktum.navn, roller, jsonTemplates)
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitMedSvar(
             faktum: GeneratorFaktum,
             id: String,
             avhengigeFakta: Set<Faktum<*>>,
@@ -183,7 +246,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             this.root["svar"] = svarListe
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitMedSvar(
             faktum: GrunnleggendeFaktum<R>,
             tilstand: Faktum.FaktumTilstand,
             id: String,
@@ -199,7 +262,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigeValg, svar, besvartAv)
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitUtenSvar(
             faktum: GrunnleggendeFaktum<R>,
             tilstand: Faktum.FaktumTilstand,
             id: String,

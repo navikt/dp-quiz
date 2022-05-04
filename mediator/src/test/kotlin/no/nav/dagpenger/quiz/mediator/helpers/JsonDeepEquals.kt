@@ -35,7 +35,7 @@ private class FaktumVisitor(
         faktum.accept(this)
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitUtenSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,
@@ -52,7 +52,7 @@ private class FaktumVisitor(
         jsonGenerator.writeEndObject()
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitMedSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,

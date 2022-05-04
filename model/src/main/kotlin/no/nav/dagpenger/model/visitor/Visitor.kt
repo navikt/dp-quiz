@@ -27,7 +27,7 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
 
 interface FaktumVisitor {
-    fun <R : Comparable<R>> visit(
+    fun <R : Comparable<R>> visitUtenSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,
@@ -40,7 +40,7 @@ interface FaktumVisitor {
     ) {
     }
 
-    fun <R : Comparable<R>> visit(
+    fun <R : Comparable<R>> visitMedSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,
@@ -65,7 +65,7 @@ interface FaktumVisitor {
     ) {
     }
 
-    fun <R : Comparable<R>> visit(
+    fun <R : Comparable<R>> visitUtenSvar(
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
@@ -76,7 +76,7 @@ interface FaktumVisitor {
     ) {
     }
 
-    fun <R : Comparable<R>> visit(
+    fun <R : Comparable<R>> visitMedSvar(
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,

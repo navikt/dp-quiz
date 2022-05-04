@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.unit.marshalling
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
@@ -14,6 +15,8 @@ import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.med
+import no.nav.dagpenger.model.regel.under
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -22,8 +25,11 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
+import java.util.UUID
 import kotlin.test.assertEquals
 
 class SøkerJsonBuilderTest {
@@ -39,7 +45,7 @@ class SøkerJsonBuilderTest {
             boolsk faktum "f3" id 3,
             boolsk faktum "f4" id 4 avhengerAv 3,
             boolsk faktum "f5" id 5,
-            boolsk faktum "f6" id 6,
+            heltall faktum "f6" id 6,
             boolsk faktum "f7" id 7,
             heltall faktum "f67" id 67 genererer 6 og 7,
             dato faktum "f8" id 8,
@@ -54,44 +60,77 @@ class SøkerJsonBuilderTest {
     }
 
     @Test
-    fun `SøkerJsonBuilder inneholder riktig eventnavn og metadata`() {
+    fun `SøkerJsonBuilder returnerer besvarte fakta og neste ubesvarte faktum`() {
 
         val regel = søkerSubsumsjon()
         val søknadprosess = søknadprosess(regel)
-        søknadprosess.nesteSeksjoner()
-        var søkerJson = SøkerJsonBuilder(søknadprosess).resultat()
 
-
-        assertEquals(1, søkerJson["seksjoner"].size())
-        assertEquals(0, søkerJson["seksjoner"][0]["fakta"].size())
+        SøkerJsonBuilder(søknadprosess).resultat().also {
+            assertMetadata(it)
+            assertAntallSeksjoner(1, it)
+            assertUbesvartFaktum("seksjon1", it)
+        }
 
         søknadprosess.boolsk(1).besvar(true)
-        søkerJson = SøkerJsonBuilder(søknadprosess).resultat()
-        println(søkerJson.toPrettyJson())
-        val seksjoner = søkerJson["seksjoner"]
-        val gjeldendeSeksjon = seksjoner[0]
-        val gjeldendeFakta = gjeldendeSeksjon["fakta"]
-        assertEquals(1, seksjoner.size())
-        assertEquals(1, gjeldendeFakta.size())
-        assertEquals(true, gjeldendeFakta[0]["svar"].asBoolean())
+        SøkerJsonBuilder(søknadprosess).resultat().also {
+            assertAntallSeksjoner(1, it)
+            assertUbesvartFaktum("seksjon1", it)
+            assertBesvarteFakta(1, "seksjon1", it)
+        }
 
-        /*
-        assertEquals("søker_oppgave", søkerJson["@event_name"].asText())
-        assertDoesNotThrow { søkerJson["@id"].asText().also { UUID.fromString(it) } }
-        assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
-        assertDoesNotThrow { søkerJson["søknad_uuid"].asText().also { UUID.fromString(it) } }
-        assertEquals("søker", søkerJson["seksjon_navn"].asText())
-        assertEquals(3, søkerJson["fakta"].size())
-        assertEquals("1", søkerJson["fakta"][0]["id"].asText())
-        assertEquals("3", søkerJson["fakta"][1]["id"].asText())
-        assertEquals("5", søkerJson["fakta"][2]["id"].asText())
-        assertNotNull(søkerJson["identer"])
-        assertEquals("12020052345", søkerJson["identer"][0]["id"].asText())
-        assertEquals("folkeregisterident", søkerJson["identer"][0]["type"].asText())
-        assertEquals("aktørId", søkerJson["identer"][1]["id"].asText())
-        assertEquals("aktørid", søkerJson["identer"][1]["type"].asText())
-        assertNotNull(søkerJson["subsumsjoner"], "Skal ha med subsumsjon")
-        assertEquals(1, søkerJson["subsumsjoner"].size()) */
+        søknadprosess.boolsk(3).besvar(true)
+        SøkerJsonBuilder(søknadprosess).resultat().also {
+            assertAntallSeksjoner(1, it)
+            assertUbesvartFaktum("seksjon1", it)
+            assertBesvarteFakta(2, "seksjon1", it)
+        }
+
+        søknadprosess.boolsk(5).besvar(true)
+        SøkerJsonBuilder(søknadprosess).resultat().also {
+            assertAntallSeksjoner(2, it)
+            assertBesvarteFakta(3, "seksjon1", it)
+            assertUbesvartFaktum("seksjon2", it)
+        }
+
+        søknadprosess.generator(67).besvar(2)
+        søknadprosess.heltall("6.1").besvar(17)
+        søknadprosess.heltall("7.1").besvar(15)
+        SøkerJsonBuilder(søknadprosess).resultat().also {
+            println(it.toPrettyJson())
+            assertAntallSeksjoner(2, it)
+            assertBesvarteFakta(1, "seksjon2", it)
+            assertUbesvartFaktum("seksjon2", it)
+        }
+    }
+
+    private fun assertUbesvartFaktum(seksjon: String, søkerJson: ObjectNode) {
+        assertEquals(
+            1,
+            søkerJson["seksjoner"].find { it["beskrivendeId"].asText() == seksjon }?.get("fakta")?.filterNot {
+                it.has("svar")
+            }?.size
+        )
+    }
+
+    private fun assertBesvarteFakta(forventetAntall: Int, seksjon: String, søkerJson: ObjectNode) {
+        assertEquals(
+            forventetAntall,
+            søkerJson["seksjoner"].find { it["beskrivendeId"].asText() == seksjon }?.get("fakta")?.filter {
+                it.has("svar")
+            }?.size
+        )
+    }
+
+    private fun assertAntallSeksjoner(forventetAntall: Int, søkerJson: ObjectNode) {
+        assertEquals(forventetAntall, søkerJson["seksjoner"].size())
+    }
+
+    private fun assertMetadata(søkerJson: ObjectNode) {
+        assertEquals("Søkeroppgave", søkerJson["@event_name"].asText())
+        Assertions.assertDoesNotThrow { søkerJson["@id"].asText().also { UUID.fromString(it) } }
+        Assertions.assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
+        Assertions.assertDoesNotThrow { søkerJson["søknad_uuid"].asText().also { UUID.fromString(it) } }
+        assertEquals("12020052345", søkerJson["fødselsnummer"].asText())
     }
 
     private val objectMapper = jacksonMapperBuilder()
@@ -105,23 +144,38 @@ class SøkerJsonBuilderTest {
 
     private fun JsonNode.toPrettyJson() = objectMapper.writeValueAsString(this)
 
-    private fun søkerSubsumsjon() = "regel" deltre {
-        "alle i første seksjon".alle(
-            (prototypeSøknad.boolsk(1) er true).hvisIkkeOppfylt {
-                prototypeSøknad.boolsk(2).utfylt()
-            },
-            (prototypeSøknad.boolsk(3) er true).hvisIkkeOppfylt {
-                prototypeSøknad.boolsk(4).utfylt()
-            },
-            prototypeSøknad.boolsk(5).utfylt()
-        )
+    private fun søkerSubsumsjon(): Subsumsjon {
+        val alleBarnMåværeUnder18år = prototypeSøknad.heltall(6) under 18
+        val deltre = "§ 1.2 har kun ikke myndige barn".deltre {
+            alleBarnMåværeUnder18år.hvisIkkeOppfylt {
+                prototypeSøknad.boolsk(7).utfylt()
+            }
+        }
+        val generatorSubsumsjon67 = prototypeSøknad.generator(67) med deltre
+
+        val regeltre = "regel" deltre {
+            "alle i søknaden skal være besvart".alle(
+                "alle i seksjon 1".alle(
+                    (prototypeSøknad.boolsk(1) er true).hvisIkkeOppfylt {
+                        prototypeSøknad.boolsk(2).utfylt()
+                    },
+                    (prototypeSøknad.boolsk(3) er true).hvisIkkeOppfylt {
+                        prototypeSøknad.boolsk(4).utfylt()
+                    },
+                    prototypeSøknad.boolsk(5).utfylt()
+                ),
+                "alle i seksjon 2".alle(
+                    generatorSubsumsjon67
+                )
+            )
+        }
+        return regeltre
     }
 
     private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Søknadprosess {
-        val prototypeFaktagrupper = Søknadprosess(
-            prototypeSøknad,
+        val seksjoner = listOf(
             Seksjon(
-                "førsteSeksjon",
+                "seksjon1",
                 Rolle.søker,
                 prototypeSøknad.boolsk(1),
                 prototypeSøknad.boolsk(2),
@@ -129,6 +183,17 @@ class SøkerJsonBuilderTest {
                 prototypeSøknad.boolsk(4),
                 prototypeSøknad.boolsk(5),
             ),
+            Seksjon(
+                "seksjon2",
+                Rolle.søker,
+                prototypeSøknad.heltall(6),
+                prototypeSøknad.boolsk(7),
+                prototypeSøknad.heltall(67),
+            )
+        )
+        val prototypeFaktagrupper = Søknadprosess(
+            prototypeSøknad,
+            seksjoner = seksjoner.toTypedArray(),
             rootSubsumsjon = prototypeSubsumsjon
         )
 

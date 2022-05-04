@@ -54,7 +54,7 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         ignore = true
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitUtenSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,
@@ -68,7 +68,7 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         lagFaktumNode<R>(id, faktum.navn, roller, godkjenner, clazz, besvartAv = null)
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitMedSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,
@@ -109,7 +109,7 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         lagFaktumNode(id, faktum.navn, type = clazz, svar = svar)
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitMedSvar(
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,

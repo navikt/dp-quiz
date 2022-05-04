@@ -73,7 +73,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         this.rootId = rootId
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitUtenSvar(
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
@@ -87,7 +87,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         addFaktum(faktum, id)
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitMedSvar(
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
@@ -104,7 +104,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         addFaktum(faktum, id, genererte)
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitUtenSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,
@@ -123,7 +123,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
         addFaktum(faktum, id)
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitMedSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,
@@ -177,7 +177,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
             lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller)
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitUtenSvar(
             faktum: GeneratorFaktum,
             id: String,
             avhengigeFakta: Set<Faktum<*>>,
@@ -194,7 +194,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
             lagFaktumNode<R>(id, "generator", faktum.navn, roller, jsonTemplates)
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitMedSvar(
             faktum: GeneratorFaktum,
             id: String,
             avhengigeFakta: Set<Faktum<*>>,
@@ -225,7 +225,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
             this.root["svar"] = svarListe
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitMedSvar(
             faktum: GrunnleggendeFaktum<R>,
             tilstand: Faktum.FaktumTilstand,
             id: String,
@@ -241,7 +241,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
             lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigeValg, svar, besvartAv)
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitUtenSvar(
             faktum: GrunnleggendeFaktum<R>,
             tilstand: Faktum.FaktumTilstand,
             id: String,

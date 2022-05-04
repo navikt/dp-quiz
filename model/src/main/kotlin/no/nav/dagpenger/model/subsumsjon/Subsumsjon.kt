@@ -122,7 +122,7 @@ abstract class Subsumsjon protected constructor(
             ignore = false
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitUtenSvar(
             faktum: GrunnleggendeFaktum<R>,
             tilstand: Faktum.FaktumTilstand,
             id: String,
@@ -138,7 +138,7 @@ abstract class Subsumsjon protected constructor(
             }
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitMedSvar(
             faktum: GrunnleggendeFaktum<R>,
             tilstand: Faktum.FaktumTilstand,
             id: String,
@@ -156,7 +156,7 @@ abstract class Subsumsjon protected constructor(
             }
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitUtenSvar(
             faktum: GeneratorFaktum,
             id: String,
             avhengigeFakta: Set<Faktum<*>>,
@@ -170,7 +170,7 @@ abstract class Subsumsjon protected constructor(
             }
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitMedSvar(
             faktum: GeneratorFaktum,
             id: String,
             avhengigeFakta: Set<Faktum<*>>,

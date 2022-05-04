@@ -73,7 +73,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
         this.rootId = rootId
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitUtenSvar(
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
@@ -102,7 +102,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
         }
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitUtenSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,

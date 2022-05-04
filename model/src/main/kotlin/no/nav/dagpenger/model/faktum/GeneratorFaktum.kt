@@ -42,11 +42,11 @@ class GeneratorFaktum internal constructor(
     }
 
     override fun acceptUtenSvar(visitor: FaktumVisitor) {
-        visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, templates, roller, Int::class.java)
+        visitor.visitUtenSvar(this, id, avhengigeFakta, avhengerAvFakta, templates, roller, Int::class.java)
     }
 
     override fun acceptMedSvar(visitor: FaktumVisitor) {
-        visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, templates, roller, Int::class.java, gjeldendeSvar)
+        visitor.visitMedSvar(this, id, avhengigeFakta, avhengerAvFakta, templates, roller, Int::class.java, gjeldendeSvar)
     }
 
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): GeneratorFaktum {

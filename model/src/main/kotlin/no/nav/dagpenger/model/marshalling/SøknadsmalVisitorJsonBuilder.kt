@@ -66,7 +66,7 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
         this.rootId = rootId
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitUtenSvar(
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
@@ -80,7 +80,7 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
         addFaktum(faktum, id)
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitUtenSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,
@@ -123,7 +123,7 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
             lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller)
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitUtenSvar(
             faktum: GeneratorFaktum,
             id: String,
             avhengigeFakta: Set<Faktum<*>>,
@@ -140,7 +140,7 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
             lagFaktumNode(id, "generator", faktum.navn, roller, jsonTemplates)
         }
 
-        override fun <R : Comparable<R>> visit(
+        override fun <R : Comparable<R>> visitUtenSvar(
             faktum: GrunnleggendeFaktum<R>,
             tilstand: Faktum.FaktumTilstand,
             id: String,

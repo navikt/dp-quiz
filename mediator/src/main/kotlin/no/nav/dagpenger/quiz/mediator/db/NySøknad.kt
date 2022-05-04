@@ -76,7 +76,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         this.indeks = indeks
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitUtenSvar(
         faktum: GrunnleggendeFaktum<R>,
         tilstand: Faktum.FaktumTilstand,
         id: String,
@@ -90,7 +90,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         skrivFaktumVerdi(faktum)
     }
 
-    override fun <R : Comparable<R>> visit(
+    override fun <R : Comparable<R>> visitUtenSvar(
         faktum: GeneratorFaktum,
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
