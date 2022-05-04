@@ -39,25 +39,27 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     private val seksjoner = mapper.createArrayNode()
     private lateinit var gjeldendeSeksjon: ObjectNode
     private var rootId = 0
-    private val faktumIder = mutableSetOf<String>()
+    private val besøkteFaktumIder = mutableSetOf<String>()
     private var erISeksjon = false
-    private val nesteFakta = søknadprosess.nesteFakta()
+    private val nesteUbesvarteFakta = søknadprosess.nesteFakta()
     private val erGenerertFraTemplate = mutableListOf<Faktum<*>>()
+    private val ferdig = søknadprosess.erFerdig()
 
     init {
         søknadprosess.søknad.accept(this)
-        søknadprosess.forEach { it.accept(this) }
+        søknadprosess.forEach { seksjon -> seksjon.accept(this) }
     }
 
     fun resultat() = root
 
     override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
-        root.put("@event_name", "Søkeroppgave")
+        root.put("@event_name", "søker_oppgave")
         root.put("versjon_id", prosessVersjon.versjon)
         root.put("versjon_navn", prosessVersjon.prosessnavn.id)
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("søknad_uuid", "$uuid")
+        root.put("ferdig", ferdig)
     }
 
     override fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {
@@ -67,7 +69,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     }
 
     override fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
-        root.set("seksjoner", seksjoner)
+        root.set<ArrayNode>("seksjoner", seksjoner)
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
@@ -79,7 +81,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
         if (faktaNode.size() > 0) {
-            gjeldendeSeksjon.set("fakta", faktaNode)
+            gjeldendeSeksjon.set<ArrayNode>("fakta", faktaNode)
             seksjoner.add(gjeldendeSeksjon)
         }
         erISeksjon = false
@@ -100,7 +102,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         svar: R
     ) {
         if (!erISeksjon) return
-        if (id in faktumIder) return
+        if (id in besøkteFaktumIder) return
         val genererte = erGenerertFraTemplate.filter { generertFaktum ->
             templates.any { generertFaktum.faktumId.generertFra(it.faktumId) }
         }
@@ -117,8 +119,9 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         clazz: Class<R>
     ) {
         if (!erISeksjon) return
-        if (id in faktumIder) return
-        if (faktum !in nesteFakta) return
+        if (id in besøkteFaktumIder) return
+        if (faktum !in nesteUbesvarteFakta) return
+
         addFaktum(faktum, id)
     }
 
@@ -136,7 +139,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         gyldigeValg: GyldigeValg?
     ) {
         if (!erISeksjon) return
-        if (id in faktumIder) return
+        if (id in besøkteFaktumIder) return
         if (faktum.faktumId.harIndeks()) {
             erGenerertFraTemplate.add(faktum)
             return
@@ -156,8 +159,8 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         gyldigeValg: GyldigeValg?
     ) {
         if (!erISeksjon) return
-        if (id in faktumIder) return
-        if (faktum !in nesteFakta) return
+        if (id in besøkteFaktumIder) return
+        if (faktum !in nesteUbesvarteFakta) return
         if (faktum.faktumId.harIndeks()) {
             erGenerertFraTemplate.add(faktum)
             return
@@ -167,12 +170,12 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
 
     private fun <R : Comparable<R>> addFaktum(faktum: Faktum<R>, id: String) {
         faktaNode.add(SøknadFaktumVisitor(faktum).root)
-        faktumIder.add(id)
+        besøkteFaktumIder.add(id)
     }
 
     private fun <R : Comparable<R>> addFaktum(faktum: Faktum<R>, id: String, generatorFaktum: List<Faktum<*>>) {
         faktaNode.add(SøknadFaktumVisitor(faktum, generatorFaktum).root)
-        faktumIder.add(id)
+        besøkteFaktumIder.add(id)
     }
 
     private class SøknadFaktumVisitor(
@@ -238,12 +241,12 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                     faktum.faktumId.reflection { _, indeks ->
                         indeks == i
                     }
-                }.filter { it.erBesvart() }.forEach {
+                }.forEach {
                     indeks.add(SøknadFaktumVisitor(it).root)
                 }
                 svarListe.add(indeks)
             }
-            this.root["svar"] = svarListe
+            this.root.set<ArrayNode>("svar", svarListe)
         }
 
         override fun <R : Comparable<R>> visitMedSvar(
@@ -305,7 +308,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                         }
                     }
                 }
-                if (templates != null) faktumNode["templates"] = templates
+                if (templates != null) faktumNode.set<ArrayNode>("templates", templates)
             }
         }
 

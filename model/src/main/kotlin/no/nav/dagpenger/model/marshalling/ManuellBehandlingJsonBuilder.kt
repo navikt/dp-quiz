@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
@@ -44,8 +45,8 @@ class ManuellBehandlingJsonBuilder(søknadprosess: Søknadprosess, private val s
         root.put("@id", "${UUID.randomUUID()}")
         root.put("søknad_uuid", "$uuid")
         root.put("seksjon_navn", seksjonNavn)
-        root.set("fakta", faktaNode)
-        root.set("identer", identerNode)
+        root.set<ArrayNode>("fakta", faktaNode)
+        root.set<ArrayNode>("identer", identerNode)
     }
 
     override fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {

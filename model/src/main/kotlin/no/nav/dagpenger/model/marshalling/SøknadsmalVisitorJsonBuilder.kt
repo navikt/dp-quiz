@@ -46,7 +46,7 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
     }
 
     override fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
-        root.set("seksjoner", seksjoner)
+        root.set<ArrayNode>("seksjoner", seksjoner)
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
@@ -57,7 +57,7 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
     }
 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
-        gjeldendeSeksjon.set("fakta", faktaNode)
+        gjeldendeSeksjon.set<ArrayNode>("fakta", faktaNode)
         seksjoner.add(gjeldendeSeksjon)
         erISeksjon = false
     }
@@ -179,7 +179,7 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
                         }
                     }
                 }
-                if (templates != null) faktumNode["templates"] = templates
+                if (templates != null) faktumNode.set<ArrayNode>("templates", templates)
             }
         }
     }

@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.marshalling
 
+import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
@@ -31,8 +32,8 @@ class ResultatJsonBuilder(
         root.put("@id", "${UUID.randomUUID()}")
         root.put("søknad_uuid", "$uuid")
         root.put("resultat", søknadprosess.resultat())
-        root.set("identer", identerNode)
-        root.set("fakta", faktaNode)
-        root.set("subsumsjoner", subsumsjonRoot)
+        root.set<ArrayNode>("identer", identerNode)
+        root.set<ArrayNode>("fakta", faktaNode)
+        root.set<ArrayNode>("subsumsjoner", subsumsjonRoot)
     }
 }

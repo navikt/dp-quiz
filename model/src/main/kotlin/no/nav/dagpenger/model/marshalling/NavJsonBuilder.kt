@@ -46,9 +46,9 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
         root.put("@id", "${UUID.randomUUID()}")
         root.put("søknad_uuid", "$uuid")
         root.put("seksjon_navn", seksjonNavn)
-        root.set("fakta", faktaNode)
-        root.set("@behov", behovNode)
-        root.set("identer", identerNode)
+        root.set<ArrayNode>("fakta", faktaNode)
+        root.set<ArrayNode>("@behov", behovNode)
+        root.set<ArrayNode>("identer", identerNode)
 
         faktumNavBehov = Versjon.id(prosessVersjon).faktumNavBehov ?: throw IllegalArgumentException("Finner ikke oversettelse til navbehov, versjon: $prosessVersjon")
     }
@@ -131,7 +131,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
             faktumNode.put("id", id)
             faktumNode.put("behov", faktumNavBehov[rootId])
             faktumNode.put("type", type)
-            if (templates != null) faktumNode["templates"] = templates
+            if (templates != null) faktumNode.set<ArrayNode>("templates", templates)
         }
         faktumIder.add(id)
     }

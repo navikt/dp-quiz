@@ -58,7 +58,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
                 it.get("type").asText().equals("folkeregisterident")
             }.get("id").asText()
         )
-        root.set("fakta", faktaNode)
+        root.set<ArrayNode>("fakta", faktaNode)
     }
 
     override fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {
@@ -222,7 +222,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
                 }
                 svarListe.add(indeks)
             }
-            this.root["svar"] = svarListe
+            this.root.set<ArrayNode>("svar", svarListe)
         }
 
         override fun <R : Comparable<R>> visitMedSvar(
@@ -284,7 +284,7 @@ class FaktaJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
                         }
                     }
                 }
-                if (templates != null) faktumNode["templates"] = templates
+                if (templates != null) faktumNode.set<ArrayNode>("templates", templates)
             }
         }
 

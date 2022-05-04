@@ -138,7 +138,7 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
             val faktaNode = fakta.fold(subsumsjonNode.arrayNode()) { faktaArrayNode, fakta ->
                 faktaArrayNode.add(fakta.id)
             }
-            subsumsjonNode.set("fakta", faktaNode)
+            subsumsjonNode.set<ArrayNode>("fakta", faktaNode)
         }
     }
 
@@ -241,7 +241,7 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
             subsumsjonNode.put("navn", subsumsjon.navn)
             subsumsjonNode.put("type", type)
             subsumsjonNode.put("forklaring", subsumsjon.saksbehandlerForklaring())
-            subsumsjonNode.set("subsumsjoner", mapper.createArrayNode().also { subsumsjonNoder.add(0, it) })
+            subsumsjonNode.set<ArrayNode>("subsumsjoner", mapper.createArrayNode().also { subsumsjonNoder.add(0, it) })
         }
     }
 
@@ -259,9 +259,9 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("navn", navn)
             faktumNode.put("id", id)
-            faktumNode.set("roller", mapper.valueToTree(roller.map { it.typeNavn }))
+            faktumNode.set<ArrayNode>("roller", mapper.valueToTree(roller.map { it.typeNavn }))
             faktumNode.put("type", type.simpleName.lowercase())
-            faktumNode.set("godkjenner", mapper.valueToTree(godkjenner.map { it.id }))
+            faktumNode.set<ArrayNode>("godkjenner", mapper.valueToTree(godkjenner.map { it.id }))
             svar?.also { faktumNode.putR(it) }
             besvartAv?.also { faktumNode.put("besvartAv", it) }
         }

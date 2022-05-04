@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.marshalling
 
+import com.fasterxml.jackson.databind.node.ArrayNode
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
@@ -39,9 +40,9 @@ class SaksbehandlerJsonBuilder(
         root.put("søknad_uuid", "$uuid")
         root.put("seksjon_navn", seksjonNavn)
         root.put("indeks", indeks)
-        root.set("identer", identerNode)
-        root.set("fakta", faktaNode)
-        root.set("subsumsjoner", subsumsjonRoot)
+        root.set<ArrayNode>("identer", identerNode)
+        root.set<ArrayNode>("fakta", faktaNode)
+        root.set<ArrayNode>("subsumsjoner", subsumsjonRoot)
     }
 
     override fun preVisit(
