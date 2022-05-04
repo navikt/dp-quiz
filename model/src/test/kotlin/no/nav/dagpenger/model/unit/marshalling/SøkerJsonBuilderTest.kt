@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.test.assertEquals
@@ -106,7 +107,6 @@ class SøkerJsonBuilderTest {
             assertBesvarteFakta(1, "seksjon2", it)
             assertUbesvartGeneratorFaktum("f67", "seksjon2", it)
             assertBesvartGeneratorFaktum(3, "f67", "seksjon2", it)
-            assertIkkeFerdig(it)
         }
 
         søknadprosess.boolsk("7.2").besvar(true)
@@ -115,6 +115,12 @@ class SøkerJsonBuilderTest {
             assertBesvarteFakta(1, "seksjon2", it)
             assertUbesvartGeneratorFaktum(forventetAntall = 0, generatorFaktumNavn = "f67", seksjon = "seksjon2", søkerJson = it)
             assertBesvartGeneratorFaktum(4, "f67", "seksjon2", it)
+            assertIkkeFerdig(it)
+        }
+
+        søknadprosess.dato("8").besvar(LocalDate.now())
+        søknadprosess.dato("9").besvar(LocalDate.now())
+        SøkerJsonBuilder(søknadprosess).resultat().also {
             assertFerdig(it)
         }
     }
@@ -199,6 +205,10 @@ class SøkerJsonBuilderTest {
                 ),
                 "alle i seksjon 2".alle(
                     generatorSubsumsjon67
+                ),
+                "NAV-systemer vil svare automatsik på følgende fakta".alle(
+                    prototypeSøknad.dato(8).utfylt(),
+                    prototypeSøknad.dato(9).utfylt(),
                 )
             )
         }
@@ -222,6 +232,12 @@ class SøkerJsonBuilderTest {
                 prototypeSøknad.heltall(6),
                 prototypeSøknad.boolsk(7),
                 prototypeSøknad.heltall(67),
+            ),
+            Seksjon(
+                "navseksjon",
+                Rolle.nav,
+                prototypeSøknad.dato(8),
+                prototypeSøknad.dato(9),
             )
         )
         val prototypeFaktagrupper = Søknadprosess(

@@ -73,11 +73,13 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
-        erISeksjon = true
+        erISeksjon = erSøkerseksjon(rolle)
         gjeldendeSeksjon = mapper.createObjectNode()
         faktaNode = mapper.createArrayNode()
         gjeldendeSeksjon.put("beskrivendeId", seksjon.navn)
     }
+
+    private fun erSøkerseksjon(rolle: Rolle) = rolle == Rolle.søker
 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
         if (faktaNode.size() > 0) {
