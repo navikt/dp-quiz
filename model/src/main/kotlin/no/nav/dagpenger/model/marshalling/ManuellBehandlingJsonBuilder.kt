@@ -3,21 +3,19 @@ package no.nav.dagpenger.model.marshalling
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.marshalling.FaktumsvarTilJson.putR
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -129,24 +127,4 @@ class ManuellBehandlingJsonBuilder(søknadprosess: Søknadprosess, private val s
     }
 
     private fun ObjectNode.putR(key: Int, svar: Any) = putR(key.toString(), svar)
-    private fun ObjectNode.putR(key: String, svar: Any) {
-        when (svar) {
-            is Boolean -> this.put(key, svar)
-            is Int -> this.put(key, svar)
-            is Double -> this.put(key, svar)
-            is String -> this.put(key, svar)
-            is LocalDate -> this.put(key, svar.toString())
-            is Dokument -> this.set(
-                key,
-                svar.reflection { lastOppTidsstempel, urn: String ->
-                    mapper.createObjectNode().also {
-                        it.put("lastOppTidsstempel", lastOppTidsstempel.toString())
-                        it.put("urn", urn)
-                    }
-                }
-            )
-            is Inntekt -> this.put(key, svar.reflection { årlig, _, _, _ -> årlig })
-            else -> throw IllegalArgumentException("Ukjent datatype")
-        }
-    }
 }

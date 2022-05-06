@@ -4,15 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.factory.FaktaRegel
-import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.UtledetFaktum
+import no.nav.dagpenger.model.marshalling.FaktumsvarTilJson.putR
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
@@ -24,7 +23,6 @@ import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
-import java.time.LocalDate
 
 abstract class SøknadJsonBuilder : SøknadprosessVisitor {
     private val mapper = ObjectMapper()
@@ -262,30 +260,9 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
             faktumNode.set<ArrayNode>("roller", mapper.valueToTree(roller.map { it.typeNavn }))
             faktumNode.put("type", type.simpleName.lowercase())
             faktumNode.set<ArrayNode>("godkjenner", mapper.valueToTree(godkjenner.map { it.id }))
-            svar?.also { faktumNode.putR(it) }
+            svar?.also { faktumNode.putR(svar = it) }
             besvartAv?.also { faktumNode.put("besvartAv", it) }
         }
         faktumIder.add(id)
-    }
-
-    private fun <R : Comparable<R>> ObjectNode.putR(svar: R) {
-        when (svar) {
-            is Boolean -> this.put("svar", svar)
-            is Int -> this.put("svar", svar)
-            is Double -> this.put("svar", svar)
-            is String -> this.put("svar", svar)
-            is LocalDate -> this.put("svar", svar.toString())
-            is Dokument -> this.set(
-                "svar",
-                svar.reflection { lastOppTidsstempel, urn: String ->
-                    mapper.createObjectNode().also {
-                        it.put("lastOppTidsstempel", lastOppTidsstempel.toString())
-                        it.put("urn", urn)
-                    }
-                }
-            )
-            is Inntekt -> this.put("svar", svar.reflection { årlig, _, _, _ -> årlig })
-            else -> throw IllegalArgumentException("Ukjent datatype")
-        }
     }
 }

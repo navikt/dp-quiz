@@ -21,7 +21,8 @@ internal class MinimalSøknadsprosess(private val prosessversjon: Prosessversjon
 
     private val logger = KotlinLogging.logger { }
 
-    internal val søknad = Søknad(prosessversjon,
+    internal val søknad = Søknad(
+        prosessversjon,
         boolsk faktum "boolean" id faktumBoolsk,
         heltall faktum "heltall" id faktumHeltall,
         tekst faktum "tekst" id faktumTekst
@@ -36,11 +37,13 @@ internal class MinimalSøknadsprosess(private val prosessversjon: Prosessversjon
             )
         }
 
-    val seksjoner = Seksjon("test",
+    val seksjoner = Seksjon(
+        "test",
         Rolle.søker,
         søknad.boolsk(faktumBoolsk),
         søknad.heltall(faktumHeltall),
-        søknad.tekst(faktumTekst))
+        søknad.tekst(faktumTekst)
+    )
 
     companion object {
         const val faktumBoolsk = 1
