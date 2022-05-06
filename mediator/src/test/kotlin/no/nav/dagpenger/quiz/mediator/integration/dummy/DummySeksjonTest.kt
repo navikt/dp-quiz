@@ -11,7 +11,7 @@ import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
-import no.nav.dagpenger.quiz.mediator.helpers.SøknadSeksjonsTester
+import no.nav.dagpenger.quiz.mediator.helpers.MinimalSøknadsprosess
 import no.nav.dagpenger.quiz.mediator.helpers.april
 import no.nav.dagpenger.quiz.mediator.helpers.februar
 import no.nav.dagpenger.quiz.mediator.helpers.januar
@@ -42,7 +42,7 @@ internal class DummySeksjonTest : SøknadBesvarer() {
     @BeforeEach
     fun setup() {
         Postgres.withMigratedDb {
-            SøknadSeksjonsTester.registrer { søknad -> FaktumTable(søknad) }
+            MinimalSøknadsprosess.registrer { søknad -> FaktumTable(søknad) }
             val søknadPersistence = SøknadRecord()
             val resultatPersistence = ResultatRecord()
             testRapid = TestRapid().also {
@@ -51,7 +51,7 @@ internal class DummySeksjonTest : SøknadBesvarer() {
                     resultatPersistence = resultatPersistence,
                     rapidsConnection = it
                 )
-                NySøknadBehovLøser(søknadPersistence, it, SøknadSeksjonsTester.VERSJON_ID)
+                NySøknadBehovLøser(søknadPersistence, it, MinimalSøknadsprosess.VERSJON_ID)
             }
         }
     }
