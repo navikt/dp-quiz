@@ -2,15 +2,15 @@ package no.nav.dagpenger.quiz.mediator.helpers
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
+import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.subsumsjon.minstEnAv
+import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.quiz.mediator.integration.dummy.DummySeksjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 
@@ -30,29 +30,16 @@ internal object SøknadSeksjonsTester {
             *DummySeksjon.fakta(),
         )
 
-    private object Seksjoner {
-        val søkerSeksjon = søknad.seksjon(
-            "søkerseksjon",
-            Rolle.søker,
-            *DummySeksjon.databaseIder(),
-        )
-
-        val navSeksjon = søknad.seksjon(
-            "barnetillegg-register",
-            Rolle.nav,
-        )
-    }
-
     private val søknadsprosess: Søknadprosess =
         Søknadprosess(
-            Seksjoner.søkerSeksjon,
-            Seksjoner.navSeksjon
+            *DummySeksjon.seksjon(søknad).toTypedArray()
         )
 
     object Subsumsjoner {
         val regeltre: Subsumsjon =
             with(søknad) {
-                "alle".minstEnAv(
+                "alle".alle(
+                    boolsk(DummySeksjon.`dummy boolean`) er true,
                     heltall(DummySeksjon.`dummy int`) minst (0)
                 )
             }

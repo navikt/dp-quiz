@@ -31,10 +31,12 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
 
+@Disabled
 internal class DummySeksjonTest : SøknadBesvarer() {
 
     @BeforeEach
@@ -79,6 +81,54 @@ internal class DummySeksjonTest : SøknadBesvarer() {
         testRapid.reset()
     }
 
+    @Disabled
+    @Test
+    fun `test`() {
+        withSøknad(nySøknadBehov) { besvar ->
+
+            // Opprinnelig behov
+            melding(0).let {
+            }
+
+            // Ber om første faktum som det trengs svar på
+            melding(1).let {
+            }
+
+            besvar(DummySeksjon.`dummy int`, 783)
+            melding(2).let {
+                println(it.toPrettyString())
+            }
+            //
+            // besvar(DummySeksjon.`dummy valg`, Envalg("faktum.dummy-valg.svar.ja"))
+            // melding(4).let {
+            // }
+            //
+            // besvar(DummySeksjon.`dummy subfaktum tekst`, Tekst("subfaktumsvar"))
+            // melding(5).let {
+            // }
+            //
+            // besvar(
+            //     DummySeksjon.`dummy flervalg`,
+            //     Flervalg("faktum.dummy-flervalg.svar.1", "faktum.dummy-flervalg.svar.2")
+            // )
+            // melding(6).let {
+            // }
+            //
+            // besvar(DummySeksjon.`dummy dropdown`, Envalg("faktum.dummy-dropdown.svar.1"))
+            // melding(7).let {
+            // }
+            //
+            // besvar(DummySeksjon.`dummy int`, 1)
+            // melding(8).let {
+            // }
+            //
+            // besvar(DummySeksjon.`dummy double`, 1.5)
+            // melding(9).let {
+            // }
+        }
+    }
+
+    @Disabled
     @Test
     fun `Hent alle fakta happy path`() {
 
@@ -250,6 +300,7 @@ internal class DummySeksjonTest : SøknadBesvarer() {
         }
     }
 
+    @Disabled
     @Test
     fun `Skal kunne svare på et subset av fakta i et generatorfaktum, og senere svare på flere subset, uten å miste data`() {
         withSøknad(nySøknadBehov) { besvar ->
