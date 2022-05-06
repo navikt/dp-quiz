@@ -42,9 +42,9 @@ object Barnetillegg : DslFaktaseksjon {
     )
 
     override fun seksjon(søknad: Søknad): List<Seksjon> {
-        val barnetilleggSøker = søknad.seksjon("barnetillegg", Rolle.søker, *this.databaseIder())
         val barnetilleggRegister = søknad.seksjon("barnetillegg-register", Rolle.nav, *this.databaseIder())
+        val barnetilleggSøker = søknad.seksjon("barnetillegg", Rolle.søker, *this.databaseIder())
 
-        return listOf(barnetilleggSøker, barnetilleggRegister)
+        return listOf(barnetilleggRegister, barnetilleggSøker)
     }
 }
