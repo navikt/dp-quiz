@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktaJsonBuilder
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
+import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
@@ -83,7 +84,8 @@ internal class FaktumSvarService(
                 val søknadprosess = søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web)
                 besvarFakta(fakta, søknadprosess)
 
-                if (ProsessVersjonVisitor(søknadprosess).prosessnavn == Prosess.Dagpenger) {
+                val prosessnavn = ProsessVersjonVisitor(søknadprosess).prosessnavn
+                if (prosessnavn == Prosess.Dagpenger) {
                     context.publish(
                         FaktaJsonBuilder(søknadprosess).resultat().toString().also {
                             sikkerlogg.info { "Fakta sendt: $it" }
@@ -92,7 +94,13 @@ internal class FaktumSvarService(
                 }
 
                 if (søknadprosess.erFerdig()) {
-                    sendResultat(søknadprosess, context)
+                    if (prosessnavn == Prosess.Dagpenger) {
+                        SøkerJsonBuilder(søknadprosess).resultat().also { json ->
+                            context.publish(json.toString())
+                        }
+                    } else {
+                        sendResultat(søknadprosess, context)
+                    }
                 } else {
                     søknadprosess.sendNesteSeksjon(context)
                 }

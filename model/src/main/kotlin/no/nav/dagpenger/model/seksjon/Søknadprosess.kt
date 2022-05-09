@@ -5,7 +5,6 @@ import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TypedFaktum
-import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.seksjon.Seksjon.Companion.saksbehandlerSeksjoner
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
@@ -82,5 +81,4 @@ class Søknadprosess private constructor(
     fun resultat() = rootSubsumsjon.resultat()
 
     fun erFerdig() = nesteSeksjoner().all { fakta -> fakta.all { faktum -> faktum.erBesvart() } }
-    fun somSøkerspørsmål() = SøkerJsonBuilder(this).resultat()
 }

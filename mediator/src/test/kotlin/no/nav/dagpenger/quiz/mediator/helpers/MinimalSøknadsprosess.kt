@@ -17,7 +17,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 
-internal class MinimalSøknadsprosess(private val prosessversjon: Prosessversjon) {
+internal class MinimalSøknadsprosess(private val prosessversjon: Prosessversjon, private val rolle: Rolle) {
 
     private val logger = KotlinLogging.logger { }
 
@@ -39,7 +39,7 @@ internal class MinimalSøknadsprosess(private val prosessversjon: Prosessversjon
 
     val seksjoner = Seksjon(
         "test",
-        Rolle.søker,
+        rolle,
         søknad.boolsk(faktumBoolsk),
         søknad.heltall(faktumHeltall),
         søknad.tekst(faktumTekst)
@@ -57,7 +57,13 @@ internal class MinimalSøknadsprosess(private val prosessversjon: Prosessversjon
 
     private val søknadsprosess: Søknadprosess = Søknadprosess(seksjoner)
 
-    private val faktumNavBehov = FaktumNavBehov(emptyMap())
+    private val faktumNavBehov = FaktumNavBehov(
+        mapOf(
+            faktumBoolsk to "faktumBoolsk",
+            faktumHeltall to "faktumHeltall",
+            faktumTekst to "faktumTekst",
+        )
+    )
 
     private val versjon = Versjon.Bygger(
         prototypeSøknad = søknad,
