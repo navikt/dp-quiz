@@ -17,7 +17,7 @@ internal class BostedTest {
     }
 
     @Test
-    fun `Test regeltreet`() {
+    fun `Bostedsregel for Norge, Svalbard og Jan Mayen`() {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = søknad.testSøknadprosess(
             Bosted.regeltre(søknad)
@@ -33,6 +33,47 @@ internal class BostedTest {
             søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(land)
             assertEquals(true, søknadprosess.resultat())
         }
+    }
+
+    @Test
+    fun `Bostedsregel for EØS og Sveits`() {
+        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
+        val søknadprosess = søknad.testSøknadprosess(
+            Bosted.regeltre(søknad)
+        )
+
+        forventedeEøsLand().forEach { land ->
+            søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(land)
+            assertEquals(true, søknadprosess.resultat())
+        }
+    }
+
+    @Test
+    fun `Bostedsregel for Storbritannia`() {
+        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
+        val søknadprosess = søknad.testSøknadprosess(
+            Bosted.regeltre(søknad)
+        )
+
+        søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("GBR"))
+        assertEquals(true, søknadprosess.resultat())
+
+        søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("JEY"))
+        assertEquals(true, søknadprosess.resultat())
+
+        søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("IMN"))
+        assertEquals(true, søknadprosess.resultat())
+    }
+
+    @Test
+    fun `Bostedsregel for utenfor EØS`() {
+        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
+        val søknadprosess = søknad.testSøknadprosess(
+            Bosted.regeltre(søknad)
+        )
+
+        søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("AUS"))
+        assertEquals(true, søknadprosess.resultat())
     }
 
     private fun forventedeEøsLand() = listOf(

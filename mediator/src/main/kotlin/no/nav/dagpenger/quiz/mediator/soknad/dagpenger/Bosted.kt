@@ -9,8 +9,10 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.erEnDelAv
+import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.bareEnAv
+import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Bosted : DslFaktaseksjon {
@@ -34,14 +36,24 @@ object Bosted : DslFaktaseksjon {
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("bostedsland", Rolle.søker, *this.databaseIder()))
 
     fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
-        val erKongeriketNorge = land(`hvilket land bor du i`) erEnDelAv listOf(Land("NOR"), Land("SJM"))
-        val inneforEØSellerSveits = land(`hvilket land bor du i`) erEnDelAv eøsEllerSveits()
+        val erKongeriketNorge = land(`hvilket land bor du i`) erEnDelAv norge()
+        val innenforEØSellerSveits = land(`hvilket land bor du i`) erEnDelAv eøsEllerSveits()
+        val erStorbritannia = land(`hvilket land bor du i`) erEnDelAv storbritannia()
+        val utenforEøs = land(`hvilket land bor du i`).utfylt()
 
-        "".bareEnAv(
+// TODO: Bruk riktig paragraf istedenfor Bostedsland
+        "Bosted".bareEnAv(
             erKongeriketNorge,
-            inneforEØSellerSveits,
-        )
+            erStorbritannia,
+            innenforEØSellerSveits
+        ).hvisIkkeOppfylt {
+            utenforEøs
+        }
     }
+
+    private fun storbritannia() = listOf(Land("GBR"), Land("JEY"), Land("IMN"))
+
+    private fun norge() = listOf(Land("NOR"), Land("SJM"))
 
     private fun eøsEllerSveits() = listOf(
         "BEL",
