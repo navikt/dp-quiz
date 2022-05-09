@@ -25,7 +25,7 @@ internal object Dagpenger {
         AndreYtelser,
         Arbeidsforhold,
         Barnetillegg,
-        Bostedsland,
+        Bosted,
         EgenNæring,
         EøsArbeidsforhold,
         ReellArbeidssoker,
