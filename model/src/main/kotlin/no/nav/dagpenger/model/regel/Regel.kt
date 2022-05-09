@@ -142,6 +142,19 @@ infix fun Faktum<Land>.erEnDelAv(land: List<Land>) = EnkelSubsumsjon(
     this
 )
 
+infix fun Faktum<Land>.erIkkeEnDelAv(land: List<Land>) = EnkelSubsumsjon(
+    object : Regel {
+        override val typeNavn = "er ikke en del av"
+
+        override fun resultat(fakta: List<Faktum<*>>) =
+            !land.contains((fakta[0] as Faktum<Land>).svar())
+
+        override fun toString(fakta: List<Faktum<*>>) =
+            "Sjekk at '${fakta[0]}' er ikke en del av '$land'"
+    },
+    this
+)
+
 private class Er<T : Comparable<T>>(private val other: T) : Regel {
     override val typeNavn = "er"
     override fun resultat(fakta: List<Faktum<*>>) = fakta[0].svar() == other

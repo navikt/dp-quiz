@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.erEnDelAv
+import no.nav.dagpenger.model.regel.erIkkeEnDelAv
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.bareEnAv
@@ -39,16 +40,15 @@ object Bosted : DslFaktaseksjon {
         val erKongeriketNorge = land(`hvilket land bor du i`) erEnDelAv norge()
         val innenforEØSellerSveits = land(`hvilket land bor du i`) erEnDelAv eøsEllerSveits()
         val erStorbritannia = land(`hvilket land bor du i`) erEnDelAv storbritannia()
-        val utenforEøs = land(`hvilket land bor du i`).utfylt()
+        val utenforEøs = land(`hvilket land bor du i`) erIkkeEnDelAv storbritannia() + eøsEllerSveits() + norge()
 
-// TODO: Bruk riktig paragraf istedenfor Bostedsland
-        "Bosted".bareEnAv(
+        // TODO: Finn ut av bruk av paragrafer i kode?
+        "§ 4-2 Opphold i Norge".bareEnAv(
             erKongeriketNorge,
             erStorbritannia,
+            utenforEøs,
             innenforEØSellerSveits
-        ).hvisIkkeOppfylt {
-            utenforEøs
-        }
+        )
     }
 
     private fun storbritannia() = listOf(Land("GBR"), Land("JEY"), Land("IMN"))
