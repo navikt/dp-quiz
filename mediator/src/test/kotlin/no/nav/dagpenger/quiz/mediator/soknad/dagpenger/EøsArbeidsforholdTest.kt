@@ -5,7 +5,6 @@ import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
-import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eos arbeidsforhold arbeidsgivernavn`
@@ -32,7 +31,7 @@ internal class EøsArbeidsforholdTest {
         )
 
         søknadprosess.boolsk(EøsArbeidsforhold.`eos arbeid siste 36 mnd`).besvar(false)
-        assertEquals(false, søknadprosess.resultat())
+        assertEquals(true, søknadprosess.resultat())
         søknadprosess.boolsk(EøsArbeidsforhold.`eos arbeid siste 36 mnd`).besvar(true)
         assertEquals(null, søknadprosess.resultat())
 

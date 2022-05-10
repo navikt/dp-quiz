@@ -11,11 +11,10 @@ import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.utfylt
-import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
+import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object EøsArbeidsforhold : DslFaktaseksjon {
@@ -40,7 +39,8 @@ object EøsArbeidsforhold : DslFaktaseksjon {
     )
 
     fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
-        "Arbeidsforhold i EØS området".alle(
+        "Arbeidsforhold i EØS området".minstEnAv(
+            boolsk(`eos arbeid siste 36 mnd`) er false,
             boolsk(`eos arbeid siste 36 mnd`) er true hvisOppfylt {
                 generator(`eos arbeidsforhold`) har "En til flere EØS arbeidsforhold".deltre {
                     tekst(`eos arbeidsforhold arbeidsgivernavn`).utfylt() hvisOppfylt {
