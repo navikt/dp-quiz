@@ -1,12 +1,15 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Land
+import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 import kotlin.test.assertEquals
 
 internal class BostedTest {
@@ -28,15 +31,10 @@ internal class BostedTest {
 
         søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("SJM"))
         assertEquals(true, søknadprosess.resultat())
-
-        forventedeEøsLand().forEach { land ->
-            søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(land)
-            assertEquals(true, søknadprosess.resultat())
-        }
     }
 
     @Test
-    fun `Bostedsregel for EØS og Sveits`() {
+    fun `Bostedsregel for EØS og Sveits ikke reist tilbake `() {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = søknad.testSøknadprosess(
             Bosted.regeltre(søknad)
@@ -44,6 +42,45 @@ internal class BostedTest {
 
         forventedeEøsLand().forEach { land ->
             søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(land)
+            søknadprosess.boolsk(Bosted.`reist tilbake etter arbeidsledig`).besvar(false)
+            søknadprosess.boolsk(Bosted.`reist tilbake en gang i uka eller mer`).besvar(true)
+            assertEquals(true, søknadprosess.resultat())
+
+            søknadprosess.boolsk(Bosted.`reist tilbake en gang i uka eller mer`).besvar(false)
+            assertEquals(null, søknadprosess.resultat())
+            søknadprosess.boolsk(Bosted.`reist i takt med rotasjon`).besvar(false)
+            assertEquals(true, søknadprosess.resultat())
+            søknadprosess.boolsk(Bosted.`reist i takt med rotasjon`).besvar(true)
+            assertEquals(true, søknadprosess.resultat())
+        }
+    }
+    @Test
+    fun `Bostedsregel for EØS og Sveits og har reist tilbake til bostedslandet`() {
+        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
+        val søknadprosess = søknad.testSøknadprosess(
+            Bosted.regeltre(søknad)
+        )
+
+        forventedeEøsLand().forEach { land ->
+            søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(land)
+            søknadprosess.boolsk(Bosted.`reist tilbake etter arbeidsledig`).besvar(true)
+            assertEquals(null, søknadprosess.resultat())
+            søknadprosess.periode(Bosted.`reist tilbake periode`).besvar(
+                Periode(
+                    fom = LocalDate.now().minusDays(20),
+                    tom = LocalDate.now()
+                )
+            )
+            assertEquals(null, søknadprosess.resultat())
+            søknadprosess.tekst(Bosted.`reist tilbake aarsak`).besvar(Tekst("Varmt vann og SOL i utlandet"))
+            assertEquals(null, søknadprosess.resultat())
+            søknadprosess.boolsk(Bosted.`reist tilbake en gang i uka eller mer`).besvar(true)
+            assertEquals(true, søknadprosess.resultat())
+            søknadprosess.boolsk(Bosted.`reist tilbake en gang i uka eller mer`).besvar(false)
+            assertEquals(null, søknadprosess.resultat())
+            søknadprosess.boolsk(Bosted.`reist i takt med rotasjon`).besvar(false)
+            assertEquals(true, søknadprosess.resultat())
+            søknadprosess.boolsk(Bosted.`reist i takt med rotasjon`).besvar(true)
             assertEquals(true, søknadprosess.resultat())
         }
     }
