@@ -5,7 +5,6 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
-import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
@@ -126,32 +125,6 @@ infix fun Faktum<Inntekt>.minst(terskel: Faktum<Inntekt>) = EnkelSubsumsjon(
 
 infix fun <T : Comparable<T>> Faktum<T>.er(other: T) = EnkelSubsumsjon(
     Er(other),
-    this
-)
-
-infix fun Faktum<Land>.erEnDelAv(land: List<Land>) = EnkelSubsumsjon(
-    object : Regel {
-        override val typeNavn = "er en del av"
-
-        override fun resultat(fakta: List<Faktum<*>>) =
-            land.contains((fakta[0] as Faktum<Land>).svar())
-
-        override fun toString(fakta: List<Faktum<*>>) =
-            "Sjekk at '${fakta[0]}' er en del av '$land'"
-    },
-    this
-)
-
-infix fun Faktum<Land>.erIkkeEnDelAv(land: List<Land>) = EnkelSubsumsjon(
-    object : Regel {
-        override val typeNavn = "er ikke en del av"
-
-        override fun resultat(fakta: List<Faktum<*>>) =
-            !land.contains((fakta[0] as Faktum<Land>).svar())
-
-        override fun toString(fakta: List<Faktum<*>>) =
-            "Sjekk at '${fakta[0]}' er ikke en del av '$land'"
-    },
     this
 )
 

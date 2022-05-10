@@ -8,12 +8,11 @@ import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
-import no.nav.dagpenger.model.regel.erEnDelAv
-import no.nav.dagpenger.model.regel.erIkkeEnDelAv
-import no.nav.dagpenger.model.regel.utfylt
+import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.erIkke
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.bareEnAv
-import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Bosted : DslFaktaseksjon {
@@ -37,19 +36,39 @@ object Bosted : DslFaktaseksjon {
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("bostedsland", Rolle.søker, *this.databaseIder()))
 
     fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
-        val erKongeriketNorge = land(`hvilket land bor du i`) erEnDelAv norge()
-        val innenforEØSellerSveits = land(`hvilket land bor du i`) erEnDelAv eøsEllerSveits()
-        val erStorbritannia = land(`hvilket land bor du i`) erEnDelAv storbritannia()
-        val utenforEøs = land(`hvilket land bor du i`) erIkkeEnDelAv storbritannia() + eøsEllerSveits() + norge()
 
         // TODO: Finn ut av bruk av paragrafer i kode?
         "§ 4-2 Opphold i Norge".bareEnAv(
-            erKongeriketNorge,
-            erStorbritannia,
-            utenforEøs,
-            innenforEØSellerSveits
+            `innenfor Norge`(),
+            `innenfor Storbritannia`(),
+            `innenfor EØS eller Sveits`(),
+            `utenfor EØS`()
         )
     }
+
+    private fun Søknad.`innenfor Norge`() = "§ 4-2 Opphold i Norge".bareEnAv(
+        *norge().map {
+            land(`hvilket land bor du i`).er(it)
+        }.toTypedArray()
+    )
+
+    private fun Søknad.`innenfor Storbritannia`() = "$ om Storbritannia og brexit ".bareEnAv(
+        *storbritannia().map {
+            land(`hvilket land bor du i`).er(it)
+        }.toTypedArray()
+    )
+
+    private fun Søknad.`innenfor EØS eller Sveits`() = "$  innenfor EØS eller Sveits forskrift".bareEnAv(
+        *eøsEllerSveits().map {
+            land(`hvilket land bor du i`).er(it)
+        }.toTypedArray()
+    )
+
+    private fun Søknad.`utenfor EØS`() = "$ om resten av verden".alle(
+        *(norge() + storbritannia() + eøsEllerSveits()).map { land ->
+            land(`hvilket land bor du i`).erIkke(land)
+        }.toTypedArray()
+    )
 
     private fun storbritannia() = listOf(Land("GBR"), Land("JEY"), Land("IMN"))
 
