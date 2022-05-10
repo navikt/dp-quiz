@@ -12,6 +12,7 @@ import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
@@ -43,13 +44,12 @@ object EøsArbeidsforhold : DslFaktaseksjon {
             boolsk(`eos arbeid siste 36 mnd`) er false,
             boolsk(`eos arbeid siste 36 mnd`) er true hvisOppfylt {
                 generator(`eos arbeidsforhold`) har "En til flere EØS arbeidsforhold".deltre {
-                    tekst(`eos arbeidsforhold arbeidsgivernavn`).utfylt() hvisOppfylt {
-                        land(`eos arbeidsforhold land`).utfylt() hvisOppfylt {
-                            tekst(`eos arbeidsforhold personnummer`).utfylt() hvisOppfylt {
-                                periode(`eos arbeidsforhold varighet`).utfylt()
-                            }
-                        }
-                    }
+                    "alt må være utfylt".alle(
+                        tekst(`eos arbeidsforhold arbeidsgivernavn`).utfylt(),
+                        land(`eos arbeidsforhold land`).utfylt(),
+                        tekst(`eos arbeidsforhold personnummer`).utfylt(),
+                        periode(`eos arbeidsforhold varighet`).utfylt()
+                    )
                 }
             }
         )

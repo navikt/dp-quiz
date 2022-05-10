@@ -35,7 +35,7 @@ internal class EøsArbeidsforholdTest {
         søknadprosess.boolsk(EøsArbeidsforhold.`eos arbeid siste 36 mnd`).besvar(true)
         assertEquals(null, søknadprosess.resultat())
 
-        søknadprosess.generator(EøsArbeidsforhold.`eos arbeidsforhold`).besvar(1)
+        søknadprosess.generator(EøsArbeidsforhold.`eos arbeidsforhold`).besvar(2)
         søknadprosess.tekst("$`eos arbeidsforhold arbeidsgivernavn`.1").besvar(Tekst("CERN"))
         søknadprosess.land("$`eos arbeidsforhold land`.1").besvar(Land("CHE"))
         søknadprosess.tekst("$`eos arbeidsforhold personnummer`.1").besvar(Tekst("12345678901"))
@@ -46,6 +46,17 @@ internal class EøsArbeidsforholdTest {
             )
         )
 
+        assertEquals(null, søknadprosess.resultat())
+
+        søknadprosess.tekst("$`eos arbeidsforhold arbeidsgivernavn`.2").besvar(Tekst("CERN"))
+        søknadprosess.land("$`eos arbeidsforhold land`.2").besvar(Land("CHE"))
+        søknadprosess.tekst("$`eos arbeidsforhold personnummer`.2").besvar(Tekst("12345678901"))
+        søknadprosess.periode("$`eos arbeidsforhold varighet`.2").besvar(
+            Periode(
+                fom = LocalDate.now().minusDays(50),
+                tom = LocalDate.now()
+            )
+        )
         assertEquals(true, søknadprosess.resultat())
     }
 }
