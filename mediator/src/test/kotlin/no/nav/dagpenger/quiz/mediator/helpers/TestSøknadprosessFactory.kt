@@ -18,7 +18,7 @@ internal fun Søknad.testSøknadprosess(subsumsjon: Subsumsjon): Søknadprosess 
                 Seksjon(
                     "seksjon",
                     Rolle.søker,
-                    *(this.map { it }.toTypedArray())
+                    *(this.map { faktum -> faktum }.toTypedArray())
                 )
             )
         )
