@@ -38,5 +38,7 @@ private fun filterBortUnødvendigeSeksjoner(file: File) =
     !(
         file.name.contains("soknad.ts") ||
             file.name.contains("dummy-seksjon.ts") ||
-            file.name.contains("mock-fakta-response.ts")
+            file.name.contains("mock-fakta-response.ts") ||
+            file.name.contains("answer-options.ts") ||
+            file.name.contains("alle-fakta.ts")
         )
