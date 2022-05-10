@@ -65,8 +65,8 @@ object Bosted : DslFaktaseksjon {
     )
 
     private fun Søknad.`utenfor EØS`() = "$ om resten av verden".alle(
-        *(norge() + storbritannia() + eøsEllerSveits()).map { land ->
-            land(`hvilket land bor du i`).erIkke(land)
+        *(norge() + storbritannia() + eøsEllerSveits()).map { `et EØS-land` ->
+            land(`hvilket land bor du i`) erIkke `et EØS-land`
         }.toTypedArray()
     )
 
