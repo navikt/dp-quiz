@@ -9,13 +9,15 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.regel.har
+import no.nav.dagpenger.model.regel.med
+import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
+import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Barnetillegg : DslFaktaseksjon {
@@ -56,31 +58,36 @@ object Barnetillegg : DslFaktaseksjon {
     }
 
     fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
-        "§ x-x Barnetillegg".alle(
-            generator(`barn liste`) har "et eller flere barn".deltre {
-                `info om barnet`().hvisOppfylt {
-                    `forsørger barnet`()
-                }.hvisOppfylt {
-                    `har barnet årsinntekt på over 1 år`().hvisOppfylt {
-                        `barnets inntekt`()
+        "0 eller flere barn".minstEnAv(
+            generator(`barn liste`) minst 0,
+            generator(`barn liste`) minst 1 hvisOppfylt {
+                generator(`barn liste`) med "et eller flere barn".deltre {
+                    `info om barnet`().hvisOppfylt {
+                        "forsørger eller ikke".minstEnAv(
+                            boolsk(`forsoerger du barnet`) er false,
+                            boolsk(`forsoerger du barnet`) er true hvisOppfylt {
+                                harBarnetÅrsinntekt()
+                            }
+                        )
                     }
                 }
             }
         )
     }
 
-    private fun Søknad.`info om barnet`() = "info".alle(
+    private fun Søknad.`info om barnet`() = "navn, dato og bostedsland".alle(
         tekst(`barn fornavn mellomnavn`).utfylt(),
         tekst(`barn etternavn`).utfylt(),
         dato(`barn foedselsdato`).utfylt(),
         land(`barn bostedsland`).utfylt(),
     )
 
-    private fun Søknad.`forsørger barnet`() =
-        boolsk(`forsoerger du barnet`) er true
-
-    private fun Søknad.`har barnet årsinntekt på over 1 år`() =
-        boolsk(`barn aarsinntekt over 1g`) er true
+    private fun Søknad.harBarnetÅrsinntekt() = "inntekt eller ikke".minstEnAv(
+        boolsk(`barn aarsinntekt over 1g`) er false,
+        boolsk(`barn aarsinntekt over 1g`) er true hvisOppfylt {
+            `barnets inntekt`()
+        }
+    )
 
     private fun Søknad.`barnets inntekt`() =
         heltall(`barn inntekt`).utfylt()
