@@ -122,6 +122,7 @@ class SøkerJsonBuilderTest {
         søknadprosess.dato("9").besvar(LocalDate.now())
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertFerdig(it)
+            println(it.toPrettyString())
         }
     }
 
