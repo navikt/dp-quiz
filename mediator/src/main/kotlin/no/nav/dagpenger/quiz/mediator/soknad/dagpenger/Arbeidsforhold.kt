@@ -8,21 +8,31 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
+import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.med
+import no.nav.dagpenger.model.regel.utfylt
+import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.alle
+import no.nav.dagpenger.model.subsumsjon.bareEnAv
+import no.nav.dagpenger.model.subsumsjon.deltre
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
+import no.nav.dagpenger.model.subsumsjon.uansett
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Arbeidsforhold : DslFaktaseksjon {
-    const val `dagpenger soknadsdato` = 8001
-    const val `type arbeidstid` = 8002
-    const val `arbeidsforhold` = 8003
-    const val `arbeidsforhold navn bedrift` = 8004
-    const val `arbeidsforhold land` = 8005
-    const val `arbeidsforhold endret` = 8006
-    const val `arbeidsforhold kjent antall timer jobbet` = 8007
-    const val `arbeidsforhold antall timer jobbet` = 8008
-    const val `arbeidsforhold tilleggsopplysninger` = 8009
+    const val `dagpenger soknadsdato` = 8001//
+    const val `type arbeidstid` = 8002//
+    const val `arbeidsforhold` = 8003//
+    const val `arbeidsforhold navn bedrift` = 8004//
+    const val `arbeidsforhold land` = 8005//
+    const val `arbeidsforhold endret` = 8006//
+    const val `arbeidsforhold kjent antall timer jobbet` = 8007//
+    const val `arbeidsforhold antall timer jobbet` = 8008//
+    const val `arbeidsforhold tilleggsopplysninger` = 8009//
     const val `arbeidsforhold startdato arbeidsforhold` = 8010
     const val `arbeidsforhold arbeidstid redusert fra dato` = 8011
     const val `arbeidsforhold midlertidig med kontraktfestet sluttdato` = 8012
@@ -172,7 +182,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             og `arbeidsforhold fridager siste rotasjon`,
         tekst faktum "faktum.arbeidsforhold.navn-bedrift" id `arbeidsforhold navn bedrift`,
         land faktum "faktum.arbeidsforhold.land" id `arbeidsforhold land`,
-        envalg faktum "faktum.arbeidsforhold.endret"
+        envalg faktum "faktum.arbeidsforhold.endret"//
             med "svar.ikke-endret"
             med "svar.avskjediget"
             med "svar.sagt-opp-av-arbeidsgiver"
@@ -184,4 +194,29 @@ object Arbeidsforhold : DslFaktaseksjon {
     )
 
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *this.databaseIder()))
+
+    fun regeltre(søknad: Søknad): Subsumsjon = with(søknad){
+        "innledende spm".alle(
+            dato(`dagpenger soknadsdato`).utfylt(),
+            envalg(`type arbeidstid`).utfylt(),
+            generator(arbeidsforhold) med "en eller flere arbeidsforhold".deltre {
+                "".alle(
+                    tekst(`arbeidsforhold navn bedrift`).utfylt(),
+                    land(`arbeidsforhold land`).utfylt(),
+                    "hvordan arbeidsforholdet har endret seg".bareEnAv(
+                        `ikke endret`()
+                    )
+                )
+            }
+        )
+    }
+
+    private fun Søknad.`ikke endret`() =
+        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret") hvisOppfylt {
+            boolsk(`arbeidsforhold kjent antall timer jobbet`) er true hvisOppfylt {
+                desimaltall(`arbeidsforhold antall timer jobbet`).utfylt()
+            } uansett {
+                tekst(`arbeidsforhold tilleggsopplysninger`).utfylt()
+            }
+        }
 }
