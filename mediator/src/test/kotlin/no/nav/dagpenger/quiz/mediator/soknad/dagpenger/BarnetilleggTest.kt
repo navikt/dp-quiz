@@ -4,30 +4,39 @@ import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
 internal class BarnetilleggTest {
+    private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Barnetillegg.fakta())
+    private lateinit var søknadprosess: Søknadprosess
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
         Barnetillegg.verifiserFeltsammensetting(8, 8036)
     }
 
-    @Test
-    fun `Regeltre barnetillegg med 1 barn`() {
-        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Barnetillegg.fakta())
-        val søknadprosess = søknad.testSøknadprosess(
+    @BeforeEach
+    fun setup() {
+        søknadprosess = søknad.testSøknadprosess(
             Barnetillegg.regeltre(søknad)
         )
+    }
 
+    @Test
+    fun `Må ikke besvare noe om vi ikke finner noen barn i registeret`() {
         søknadprosess.generator(Barnetillegg.`barn liste`).besvar(0)
         assertEquals(true, søknadprosess.resultat())
+    }
 
+    @Test
+    fun `Regeltre barnetillegg med 1 barn`() {
         søknadprosess.generator(Barnetillegg.`barn liste`).besvar(1)
         assertEquals(null, søknadprosess.resultat())
 

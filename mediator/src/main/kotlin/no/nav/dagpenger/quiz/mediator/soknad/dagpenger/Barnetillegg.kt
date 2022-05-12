@@ -58,15 +58,15 @@ object Barnetillegg : DslFaktaseksjon {
     }
 
     fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
-        "0 eller flere barn".minstEnAv(
-            generator(`barn liste`) minst 0,
+        "barn eller ikke".minstEnAv(
+            generator(`barn liste`) er 0,
             generator(`barn liste`) minst 1 hvisOppfylt {
                 generator(`barn liste`) med "et eller flere barn".deltre {
-                    `info om barnet`().hvisOppfylt {
+                    `barnets navn, fødselsdsto og bostedsland`().hvisOppfylt {
                         "forsørger eller ikke".minstEnAv(
                             boolsk(`forsoerger du barnet`) er false,
                             boolsk(`forsoerger du barnet`) er true hvisOppfylt {
-                                harBarnetÅrsinntektOver1G()
+                                `har barnet årsinntekt over 1G`()
                             }
                         )
                     }
@@ -75,14 +75,14 @@ object Barnetillegg : DslFaktaseksjon {
         )
     }
 
-    private fun Søknad.`info om barnet`() = "navn, dato og bostedsland".alle(
+    private fun Søknad.`barnets navn, fødselsdsto og bostedsland`() = "navn, dato og bostedsland".alle(
         tekst(`barn fornavn mellomnavn`).utfylt(),
         tekst(`barn etternavn`).utfylt(),
         dato(`barn foedselsdato`).utfylt(),
         land(`barn bostedsland`).utfylt(),
     )
 
-    private fun Søknad.harBarnetÅrsinntektOver1G() = "inntekt over 1G eller ikke".minstEnAv(
+    private fun Søknad.`har barnet årsinntekt over 1G`() = "inntekt over 1G eller ikke".minstEnAv(
         boolsk(`barn aarsinntekt over 1g`) er false,
         boolsk(`barn aarsinntekt over 1g`) er true hvisOppfylt {
             `barnets inntekt`()
