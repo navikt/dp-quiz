@@ -66,7 +66,7 @@ object Barnetillegg : DslFaktaseksjon {
                         "forsørger eller ikke".minstEnAv(
                             boolsk(`forsoerger du barnet`) er false,
                             boolsk(`forsoerger du barnet`) er true hvisOppfylt {
-                                harBarnetÅrsinntekt()
+                                harBarnetÅrsinntektOver1G()
                             }
                         )
                     }
@@ -82,7 +82,7 @@ object Barnetillegg : DslFaktaseksjon {
         land(`barn bostedsland`).utfylt(),
     )
 
-    private fun Søknad.harBarnetÅrsinntekt() = "inntekt eller ikke".minstEnAv(
+    private fun Søknad.harBarnetÅrsinntektOver1G() = "inntekt over 1G eller ikke".minstEnAv(
         boolsk(`barn aarsinntekt over 1g`) er false,
         boolsk(`barn aarsinntekt over 1g`) er true hvisOppfylt {
             `barnets inntekt`()
