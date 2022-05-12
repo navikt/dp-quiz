@@ -5,9 +5,18 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
+import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.har
+import no.nav.dagpenger.model.regel.utfylt
+import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.alle
+import no.nav.dagpenger.model.subsumsjon.deltre
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
+import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object EgenNæring : DslFaktaseksjon {
@@ -56,4 +65,69 @@ object EgenNæring : DslFaktaseksjon {
     )
 
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("egen-naering", Rolle.søker, *this.databaseIder()))
+
+    fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
+        "driver egen næring".minstEnAv(
+            boolsk(`driver du egen naering`) er false,
+            boolsk(`driver du egen naering`) er true hvisOppfylt {
+                `næringenes organisasjonsnummer og arbeidstimer`()
+            }
+        ).hvisOppfylt {
+            "driver eget gårdsbruk".minstEnAv(
+                boolsk(`driver du eget gaardsbruk`) er false,
+                boolsk(`driver du eget gaardsbruk`) er true hvisOppfylt {
+                    `informasjon om gårdsbruk`()
+                }
+            )
+        }
+    }
+
+    private fun Søknad.`næringenes organisasjonsnummer og arbeidstimer`() =
+        generator(`egen naering organisasjonsnummer liste`) har "en eller flere organisasjonsnummer".deltre {
+            "organisasjonsnummer for alle næringer".alle(
+                heltall(`egen naering organisasjonsnummer`).utfylt() hvisOppfylt {
+                    `arbeidstimer for næringen før og nå`()
+                }
+            )
+        }
+
+    private fun Søknad.`arbeidstimer for næringen før og nå`() =
+        "arbeidstimer i egen næring før og nå".alle(
+            desimaltall(`egen naering arbeidstimer naa`).utfylt(),
+            desimaltall(`egen naering arbeidstimer for`).utfylt()
+        )
+
+    private fun Søknad.`informasjon om gårdsbruk`() =
+        heltall(`eget gaardsbruk organisasjonsnummer`).utfylt().hvisOppfylt {
+            flervalg(`eget gaardsbruk type gaardsbruk`).utfylt() hvisOppfylt {
+                "hvem eier gårdsbruket".minstEnAv(
+                    `søkeren eier selv`(),
+                    `søkerens ektefelle eller samboer eier`(),
+                    `noen andre eier`(),
+                ).hvisOppfylt {
+                    `informasjon om arbeidstimer`()
+                }
+            }
+        }
+
+    private fun Søknad.`søkeren eier selv`() =
+        flervalg(`eget gaardsbruk hvem eier`) er Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.selv") hvisOppfylt {
+            desimaltall(`eget gaardsbruk jeg andel inntekt`).utfylt()
+        }
+
+    private fun Søknad.`søkerens ektefelle eller samboer eier`() =
+        flervalg(`eget gaardsbruk hvem eier`) er Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.ektefelle-samboer") hvisOppfylt {
+            desimaltall(`eget gaardsbruk ektefelle samboer andel inntekt`).utfylt()
+        }
+
+    private fun Søknad.`noen andre eier`() =
+        flervalg(`eget gaardsbruk hvem eier`) er Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.andre") hvisOppfylt {
+            desimaltall(`eget gaardsbruk andre andel inntekt`).utfylt()
+        }
+
+    private fun Søknad.`informasjon om arbeidstimer`() = "info arbeidstimer".alle(
+        heltall(`eget gaardsbruk arbeidsaar for timer`).utfylt(),
+        desimaltall(`eget gaardsbruk arbeidstimer aar`).utfylt(),
+        tekst(`eget gaardsbruk arbeidstimer beregning`).utfylt()
+    )
 }
