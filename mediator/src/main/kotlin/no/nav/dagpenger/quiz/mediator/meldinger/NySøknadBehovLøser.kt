@@ -3,7 +3,6 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.marshalling.FaktaJsonBuilder
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
@@ -57,12 +56,6 @@ internal class NySøknadBehovLøser(
 
                 packet["@løsning"] = mapOf(behovNavn to søknadUuid)
                 context.publish(packet.toJson())
-
-                context.publish(
-                    FaktaJsonBuilder(søknadsprosess).resultat().toString().also {
-                        sikkerlogg.info { "Fakta sendt: $it" }
-                    }
-                )
             }
         }
     }

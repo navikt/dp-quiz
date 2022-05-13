@@ -44,7 +44,7 @@ internal class NySøknadBehovLøserTest : SøknadBesvarer() {
     fun `Hent alle fakta happy path`() {
 
         withSøknad(nySøknadBehov) { _ ->
-            assertEquals(3, testRapid.inspektør.size)
+            assertEquals(2, testRapid.inspektør.size)
             melding(0).let {
                 assertEquals("faktum_svar", it["@event_name"].asText())
                 assertEquals(
@@ -53,9 +53,7 @@ internal class NySøknadBehovLøserTest : SøknadBesvarer() {
                 )
             }
 
-            assertEquals(søknadUUID.toString(), melding(1)["@løsning"]["NySøknad"].asText())
-
-            melding(2).let {
+            melding(1).let {
                 assertFalse { it.toString().contains(""""svar":""") }
             }
         }
