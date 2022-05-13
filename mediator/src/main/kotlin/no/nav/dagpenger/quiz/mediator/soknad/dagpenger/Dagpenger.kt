@@ -15,7 +15,7 @@ internal object Dagpenger {
 
     private val logger = KotlinLogging.logger { }
 
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 213)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 214)
 
     fun registrer(registrer: (søknad: Søknad) -> Unit) {
         registrer(søknad)
