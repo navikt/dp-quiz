@@ -1,6 +1,6 @@
 package no.nav.dagpenger.quiz.mediator
 
-import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
+import no.nav.dagpenger.model.marshalling.SøknadsmalVisitorJsonBuilder
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningsdatoService
@@ -45,7 +45,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                     val sisteDagpengerVersjon = Versjon.siste(Prosess.Dagpenger)
                     Versjon.id(sisteDagpengerVersjon).also { versjon ->
                         val søknadsprosess = versjon.søknadprosess(søknad, Versjon.UserInterfaceType.Web)
-                        rapidsConnection.publish(SøkerJsonBuilder(søknadsprosess).resultat().toString())
+                        rapidsConnection.publish(SøknadsmalVisitorJsonBuilder(søknadsprosess).resultat().toString())
                     }
                 }
                 NySøknadBehovLøser(søknadRecord, rapidsConnection)
