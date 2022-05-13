@@ -28,7 +28,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     }
 
     private val root: ObjectNode = mapper.createObjectNode()
-    private lateinit var faktaNode: ArrayNode
+    private lateinit var gjeldendeSeksjonFakta: ArrayNode
     private val seksjoner = mapper.createArrayNode()
     private lateinit var gjeldendeSeksjon: ObjectNode
     private var rootId = 0
@@ -36,7 +36,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     private var erISeksjon = false
     private val nesteUbesvarteFakta = søknadprosess.nesteFakta()
     private val erGenerertFraTemplate = mutableListOf<Faktum<*>>()
-    private val ferdig = søknadprosess.erFerdig()
+    private val ferdig = søknadprosess.erFerdigFor(Rolle.søker, Rolle.nav)
 
     init {
         søknadprosess.søknad.accept(this)
@@ -68,15 +68,15 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
         erISeksjon = erSøkerseksjon(rolle)
         gjeldendeSeksjon = mapper.createObjectNode()
-        faktaNode = mapper.createArrayNode()
+        gjeldendeSeksjonFakta = mapper.createArrayNode()
         gjeldendeSeksjon.put("beskrivendeId", seksjon.navn)
     }
 
     private fun erSøkerseksjon(rolle: Rolle) = rolle == Rolle.søker
 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
-        if (faktaNode.size() > 0) {
-            gjeldendeSeksjon.set<ArrayNode>("fakta", faktaNode)
+        if (gjeldendeSeksjonFakta.size() > 0) {
+            gjeldendeSeksjon.set<ArrayNode>("fakta", gjeldendeSeksjonFakta)
             seksjoner.add(gjeldendeSeksjon)
         }
         erISeksjon = false
@@ -164,12 +164,12 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     }
 
     private fun <R : Comparable<R>> addFaktum(faktum: Faktum<R>, id: String) {
-        faktaNode.add(SøknadFaktumVisitor(faktum).root)
+        gjeldendeSeksjonFakta.add(SøknadFaktumVisitor(faktum).root)
         besøkteFaktumIder.add(id)
     }
 
     private fun <R : Comparable<R>> addFaktum(faktum: Faktum<R>, id: String, generatorFaktum: List<Faktum<*>>) {
-        faktaNode.add(SøknadFaktumVisitor(faktum, generatorFaktum).root)
+        gjeldendeSeksjonFakta.add(SøknadFaktumVisitor(faktum, generatorFaktum).root)
         besøkteFaktumIder.add(id)
     }
 

@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.seksjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TypedFaktum
 import no.nav.dagpenger.model.seksjon.Seksjon.Companion.saksbehandlerSeksjoner
@@ -81,4 +82,5 @@ class Søknadprosess private constructor(
     fun resultat() = rootSubsumsjon.resultat()
 
     fun erFerdig() = nesteSeksjoner().all { fakta -> fakta.all { faktum -> faktum.erBesvart() } }
+    fun erFerdigFor(vararg roller: Rolle): Boolean = nesteSeksjoner().any { fakta -> fakta.none { faktum -> roller.any { faktum.harRolle(it) } } }
 }
