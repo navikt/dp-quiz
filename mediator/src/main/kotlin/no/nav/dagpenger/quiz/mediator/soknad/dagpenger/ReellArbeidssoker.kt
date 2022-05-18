@@ -24,8 +24,8 @@ object ReellArbeidssoker : DslFaktaseksjon {
     const val `Kan du jobbe i hele Norge` = 5
     const val `Kan ikke jobbe i hele Norge` = 6
     const val `Kort om hvorfor ikke jobbe hele norge` = 7
-    const val `alle typer arbeid` = 8
-    const val `bytte yrke ned i lonn` = 9
+    const val `Kan ta alle typer arbeid` = 8
+    const val `Kan bytte yrke og eller gå ned i lønn` = 9
 
     override val fakta = listOf(
         boolsk faktum "faktum.jobbe-hel-deltid" id `Kan jobbe heltid`,
@@ -48,22 +48,43 @@ object ReellArbeidssoker : DslFaktaseksjon {
             med "svar.skift-turnus"
             med "svar.har-fylt-60"
             med "svar.annen-situasjon" id `Kan ikke jobbe i hele Norge` avhengerAv `Kan du jobbe i hele Norge`,
-        tekst faktum "faktum.kort-om-hvorfor-ikke-jobbe-hele-norge" id `Kort om hvorfor ikke jobbe hele norge`,
-        boolsk faktum "faktum.alle-typer-arbeid" id `alle typer arbeid`,
-        boolsk faktum "faktum.bytte-yrke-ned-i-lonn" id `bytte yrke ned i lonn`
+        tekst faktum "faktum.kort-om-hvorfor-ikke-jobbe-hele-norge" id `Kort om hvorfor ikke jobbe hele norge` avhengerAv `Kan du jobbe i hele Norge`,
+        boolsk faktum "faktum.alle-typer-arbeid" id `Kan ta alle typer arbeid` avhengerAv `Kan du jobbe i hele Norge` og `Kort om hvorfor ikke jobbe hele norge`, // TODO: Avhenger dette faktumet av 2 fakta?
+        boolsk faktum "faktum.bytte-yrke-ned-i-lonn" id `Kan bytte yrke og eller gå ned i lønn` avhengerAv `Kan ta alle typer arbeid`
     )
 
     fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
         "Er reel arbeidssøker".minstEnAv(
             `Jobbe fulltid`(),
             `Jobbe deltid`()
-        ).hvisOppfylt {
-            "Kan jobbe i hele Norge".minstEnAv(
-                `Kan jobbe i hele Norge`(),
-                `Kan ikke jobbe i hele Norge`()
-            )
+        ) hvisOppfylt {
+            `Kan flytte for arbeid`() hvisOppfylt {
+                `Kan jobbe med hva som helst`() hvisOppfylt {
+                    `Kan bytte yrke og eller gå ned i lønn`()
+                }
+            }
         }
     }
+
+    private fun Søknad.`Kan bytte yrke og eller gå ned i lønn`() =
+        "Bytte yrke og/eller gå ned i lønn".minstEnAv(
+            boolsk(`Kan bytte yrke og eller gå ned i lønn`) er true,
+            boolsk(`Kan bytte yrke og eller gå ned i lønn`) er false
+        )
+
+    private fun Søknad.`Kan jobbe med hva som helst`() = "Jobbe med hva som helst".minstEnAv(
+        `Alle typer jobb`(),
+        `Ikke alle typer jobb`()
+    )
+
+    private fun Søknad.`Kan flytte for arbeid`() = "Kan flytte for arbeid".minstEnAv(
+        `Jobbe i hele Norge`(),
+        `Ikke jobbe i hele Norge`()
+    )
+
+    private fun Søknad.`Ikke alle typer jobb`() = boolsk(`Kan ta alle typer arbeid`) er false
+
+    private fun Søknad.`Alle typer jobb`() = boolsk(`Kan ta alle typer arbeid`) er true
 
     private fun Søknad.`Jobbe fulltid`() = boolsk(`Kan jobbe heltid`) er true
 
@@ -74,15 +95,13 @@ object ReellArbeidssoker : DslFaktaseksjon {
             }
         }
 
-    private fun Søknad.`Kan ikke jobbe i hele Norge`() =
+    private fun Søknad.`Ikke jobbe i hele Norge`() =
         boolsk(`Kan du jobbe i hele Norge`) er false hvisOppfylt {
-            `Årsak kan ikke jobbe i hele Norge`() hvisOppfylt {
-                tekst(`Kort om hvorfor ikke jobbe hele norge`).utfylt()
-            }
+            `Årsak kan ikke jobbe i hele Norge`()
         }
 
-    private fun Søknad.`Kan jobbe i hele Norge`() =
-        boolsk(`Kan du jobbe i hele Norge`) er false
+    private fun Søknad.`Jobbe i hele Norge`() =
+        boolsk(`Kan du jobbe i hele Norge`) er true
 
     private fun Søknad.`Årsak kan ikke jobbe i hele Norge`() =
         flervalg(`Kan ikke jobbe i hele Norge`).utfylt() hvisOppfylt {
@@ -93,7 +112,9 @@ object ReellArbeidssoker : DslFaktaseksjon {
                 flervalg(`Kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-barn-spesielle-behov"),
                 flervalg(`Kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.skift-turnus"),
                 flervalg(`Kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.har-fylt-60"),
-                flervalg(`Kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.annen-situasjon")
+                flervalg(`Kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.annen-situasjon") hvisOppfylt {
+                    tekst(`Kort om hvorfor ikke jobbe hele norge`).utfylt()
+                }
             )
         }
 
