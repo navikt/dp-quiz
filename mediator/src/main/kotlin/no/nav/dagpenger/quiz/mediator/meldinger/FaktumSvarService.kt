@@ -7,7 +7,6 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.marshalling.FaktaJsonBuilder
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -85,14 +84,6 @@ internal class FaktumSvarService(
                 besvarFakta(fakta, søknadprosess)
 
                 val prosessnavn = ProsessVersjonVisitor(søknadprosess).prosessnavn
-                if (prosessnavn == Prosess.Dagpenger) {
-                    context.publish(
-                        FaktaJsonBuilder(søknadprosess).resultat().toString().also {
-                            sikkerlogg.info { "Fakta sendt: $it" }
-                        }
-                    )
-                }
-
                 if (søknadprosess.erFerdig()) {
                     if (prosessnavn == Prosess.Dagpenger) {
                         SøkerJsonBuilder(søknadprosess).resultat().also { json ->
@@ -178,7 +169,7 @@ internal class FaktumSvarService(
 
     private fun harSvar() = { faktumNode: JsonNode -> faktumNode.has("svar") }
 
-    private class ProsessVersjonVisitor(private val søknadprosess: Søknadprosess) : SøknadprosessVisitor {
+    private class ProsessVersjonVisitor(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
 
         lateinit var prosessnavn: Prosessnavn
 
