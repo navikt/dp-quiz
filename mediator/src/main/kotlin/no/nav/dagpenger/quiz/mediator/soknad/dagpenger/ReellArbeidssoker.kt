@@ -23,7 +23,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
     const val `Skriv kort om situasjonen din` = 3
     const val `Antall timer deltid du kan jobbe` = 4
     const val `Kan du jobbe i hele Norge` = 5
-    const val `Kan ikke jobbe i hele Norge` = 6
+    const val `Årsak kan ikke jobbe i hele Norge` = 6
     const val `Kort om hvorfor ikke jobbe hele norge` = 7
     const val `Kan ta alle typer arbeid` = 8
     const val `Kan bytte yrke og eller gå ned i lønn` = 9
@@ -40,7 +40,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
             med "svar.annen-situasjon" id `Årsak til kun deltid` avhengerAv `Kan jobbe heltid`,
         heltall faktum "faktum.kun-deltid-aarsak-antall-timer" id `Antall timer deltid du kan jobbe` avhengerAv `Årsak til kun deltid` og `Skriv kort om situasjonen din`,
         tekst faktum "faktum.kort-om-hvorfor-kun-deltid" id `Skriv kort om situasjonen din` avhengerAv `Årsak til kun deltid`,
-        boolsk faktum "faktum.jobbe-hele-norge" id `Kan du jobbe i hele Norge`,
+        boolsk faktum "faktum.jobbe-hele-norge" id `Kan du jobbe i hele Norge` avhengerAv `Kan jobbe heltid` og `Antall timer deltid du kan jobbe`,
         flervalg faktum "faktum.ikke-jobbe-hele-norge"
             med "svar.redusert-helse"
             med "svar.omsorg-baby"
@@ -48,9 +48,9 @@ object ReellArbeidssoker : DslFaktaseksjon {
             med "svar.omsorg-barn-spesielle-behov"
             med "svar.skift-turnus"
             med "svar.har-fylt-60"
-            med "svar.annen-situasjon" id `Kan ikke jobbe i hele Norge` avhengerAv `Kan du jobbe i hele Norge`,
-        tekst faktum "faktum.kort-om-hvorfor-ikke-jobbe-hele-norge" id `Kort om hvorfor ikke jobbe hele norge` avhengerAv `Kan du jobbe i hele Norge`,
-        boolsk faktum "faktum.alle-typer-arbeid" id `Kan ta alle typer arbeid` avhengerAv `Kan du jobbe i hele Norge` og `Kort om hvorfor ikke jobbe hele norge`,
+            med "svar.annen-situasjon" id `Årsak kan ikke jobbe i hele Norge` avhengerAv `Kan du jobbe i hele Norge`,
+        tekst faktum "faktum.kort-om-hvorfor-ikke-jobbe-hele-norge" id `Kort om hvorfor ikke jobbe hele norge` avhengerAv `Årsak kan ikke jobbe i hele Norge`,
+        boolsk faktum "faktum.alle-typer-arbeid" id `Kan ta alle typer arbeid` avhengerAv `Kan du jobbe i hele Norge` og `Kort om hvorfor ikke jobbe hele norge` og `Årsak kan ikke jobbe i hele Norge`,
         boolsk faktum "faktum.bytte-yrke-ned-i-lonn" id `Kan bytte yrke og eller gå ned i lønn` avhengerAv `Kan ta alle typer arbeid`
     )
 
@@ -106,15 +106,15 @@ object ReellArbeidssoker : DslFaktaseksjon {
         }
 
     private fun Søknad.`Årsak til at man ikke kan jobbe i hele Norge`() =
-        flervalg(`Kan ikke jobbe i hele Norge`).utfylt() hvisOppfylt {
+        flervalg(`Årsak kan ikke jobbe i hele Norge`).utfylt() hvisOppfylt {
             "Årsak til at man ikke kan jobbe i hele Norge".minstEnAv(
-                flervalg(`Kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse"),
-                flervalg(`Kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-baby"),
-                flervalg(`Kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.eneansvar-barn"),
-                flervalg(`Kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-barn-spesielle-behov"),
-                flervalg(`Kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.skift-turnus"),
-                flervalg(`Kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.har-fylt-60"),
-                flervalg(`Kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.annen-situasjon") hvisOppfylt {
+                flervalg(`Årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse"),
+                flervalg(`Årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-baby"),
+                flervalg(`Årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.eneansvar-barn"),
+                flervalg(`Årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-barn-spesielle-behov"),
+                flervalg(`Årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.skift-turnus"),
+                flervalg(`Årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.har-fylt-60"),
+                flervalg(`Årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.annen-situasjon") hvisOppfylt {
                     tekst(`Kort om hvorfor ikke jobbe hele norge`).utfylt()
                 }
             )

@@ -40,7 +40,7 @@ internal class ReellArbeidssokerTest {
         søknadprosess.boolsk(ReellArbeidssoker.`Kan du jobbe i hele Norge`).besvar(false)
         assertEquals(null, søknadprosess.resultat())
 
-        søknadprosess.flervalg(ReellArbeidssoker.`Kan ikke jobbe i hele Norge`).besvar(
+        søknadprosess.flervalg(ReellArbeidssoker.`Årsak kan ikke jobbe i hele Norge`).besvar(
             Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse", "faktum.ikke-jobbe-hele-norge.svar.annen-situasjon")
         )
         assertEquals(null, søknadprosess.resultat())

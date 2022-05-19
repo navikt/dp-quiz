@@ -17,6 +17,8 @@ object Verneplikt : DslFaktaseksjon {
 
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("verneplikt", Rolle.søker, *this.databaseIder()))
 
+    // https://lovdata.no/lov/2016-08-12-77/§6 Vernepliktsalder er 19 til og med 44 år
+    // https://lovdata.no/lov/1997-02-28-19/§4-19
     fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
         boolsk(`avtjent militaer sivilforsvar tjeneste siste 12 mnd`).utfylt()
     }
