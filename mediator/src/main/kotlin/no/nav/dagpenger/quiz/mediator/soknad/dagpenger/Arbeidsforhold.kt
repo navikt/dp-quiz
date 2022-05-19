@@ -8,9 +8,19 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
+import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.med
+import no.nav.dagpenger.model.regel.utfylt
+import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.alle
+import no.nav.dagpenger.model.subsumsjon.bareEnAv
+import no.nav.dagpenger.model.subsumsjon.deltre
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
+import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Arbeidsforhold : DslFaktaseksjon {
@@ -61,6 +71,7 @@ object Arbeidsforhold : DslFaktaseksjon {
     const val `arbeidsforhold rotasjon` = 8045
     const val `arbeidsforhold arbeidsdager siste rotasjon` = 8046
     const val `arbeidsforhold fridager siste rotasjon` = 8047
+    const val `arbeidsforhold har tilleggsopplysninger` = 8048
 
     override val fakta = listOf(
         dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger soknadsdato`,
@@ -71,6 +82,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             med "svar.ingen-passer" id `type arbeidstid`,
         boolsk faktum "faktum.arbeidsforhold.kjent-antall-timer-jobbet" id `arbeidsforhold kjent antall timer jobbet`,
         desimaltall faktum "faktum.arbeidsforhold.antall-timer-jobbet" id `arbeidsforhold antall timer jobbet`,
+        boolsk faktum "faktum.arbeidsforhold.har-tilleggsopplysninger" id `arbeidsforhold har tilleggsopplysninger`,
         tekst faktum "faktum.arbeidsforhold.tilleggsopplysninger" id `arbeidsforhold tilleggsopplysninger`,
         dato faktum "faktum.arbeidsforhold.startdato-arbeidsforhold" id `arbeidsforhold startdato arbeidsforhold`,
         dato faktum "faktum.arbeidsforhold.arbeidstid-redusert-fra-dato" id `arbeidsforhold arbeidstid redusert fra dato`,
@@ -131,6 +143,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             og `arbeidsforhold endret`
             og `arbeidsforhold kjent antall timer jobbet`
             og `arbeidsforhold antall timer jobbet`
+            og `arbeidsforhold har tilleggsopplysninger`
             og `arbeidsforhold tilleggsopplysninger`
             og `arbeidsforhold startdato arbeidsforhold`
             og `arbeidsforhold arbeidstid redusert fra dato`
@@ -184,4 +197,253 @@ object Arbeidsforhold : DslFaktaseksjon {
     )
 
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *this.databaseIder()))
+
+    fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
+        "arbeidsforhold".alle(
+            søknadsdato(),
+            `type arbeidstid`(),
+            `alle arbeidsforhold`()
+        )
+    }
+
+    private fun Søknad.søknadsdato() = dato(`dagpenger soknadsdato`).utfylt()
+
+    private fun Søknad.`type arbeidstid`() = envalg(`type arbeidstid`).utfylt()
+
+    private fun Søknad.`alle arbeidsforhold`() =
+        generator(arbeidsforhold) med "en eller flere arbeidsforhold".deltre {
+            "info om arbeidsforholdet".alle(
+                tekst(`arbeidsforhold navn bedrift`).utfylt(),
+                land(`arbeidsforhold land`).utfylt(),
+                "hvordan arbeidsforholdet har endret seg".bareEnAv(
+                    `ikke endret`(),
+                    avskjediget(),
+                    `sagt opp av arbeidsgiver`(),
+                    `arbeidsgiver er konkurs`(),
+                    `kontrakten er utgått`(),
+                    `sagt opp selv`(),
+                    `redusert arbeidstid`(),
+                    permittert()
+                )
+            )
+        }
+
+    private fun Søknad.`ikke endret`() =
+        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret") hvisOppfylt {
+            "spørsmål om arbeidsforholdet".alle(
+                `antall arbeidstimer ved ikke endret arbeidsforhold`(),
+                "har tilleggsopplysninger eller ikke".minstEnAv(
+                    boolsk(`arbeidsforhold har tilleggsopplysninger`) er false,
+                    boolsk(`arbeidsforhold har tilleggsopplysninger`) er true hvisOppfylt {
+                        tekst(`arbeidsforhold tilleggsopplysninger`).utfylt()
+                    }
+                )
+            )
+        }
+
+    private fun Søknad.`antall arbeidstimer ved ikke endret arbeidsforhold`() =
+        "antall arbeidstimer kjent eller ikke".minstEnAv(
+            boolsk(`arbeidsforhold kjent antall timer jobbet`) er false,
+            boolsk(`arbeidsforhold kjent antall timer jobbet`) er true hvisOppfylt {
+                desimaltall(`arbeidsforhold antall timer jobbet`).utfylt()
+            }
+        )
+
+    private fun Søknad.avskjediget() =
+        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.avskjediget") hvisOppfylt {
+            "spørsmål om arbeidsforholdet".alle(
+                `arbeidstimer før mistet jobb`(),
+                tekst(`arbeidsforhold hva er aarsak til avskjediget`).utfylt()
+            )
+        }
+
+    private fun Søknad.`arbeidstimer før mistet jobb`() =
+        "antall arbeidstimer før mistet jobb kjent eller ikke".minstEnAv(
+            boolsk(`arbeidsforhold vet du antall timer foer mistet jobb`) er false,
+            boolsk(`arbeidsforhold vet du antall timer foer mistet jobb`) er true hvisOppfylt {
+                `antall timer jobbet`()
+            }
+        )
+
+    private fun Søknad.`antall timer jobbet`() =
+        desimaltall(`arbeidsforhold antall timer dette arbeidsforhold`).utfylt()
+
+    private fun Søknad.`sagt opp av arbeidsgiver`() =
+        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver") hvisOppfylt {
+            "spørsmål om arbeidsforholdet".alle(
+                `varighet på arbeidsforholdet`(),
+                `arbeidstimer før mistet jobb`(),
+                tekst(`arbeidsforhold vet du aarsak til sagt opp av arbeidsgiver`).utfylt(),
+                `tilbud om annen stilling eller annet sted i Norge`(),
+                `skift, turnus og rotasjon`()
+            )
+        }
+
+    private fun Søknad.`varighet på arbeidsforholdet`() =
+        periode(`arbeidsforhold varighet`).utfylt()
+
+    private fun Søknad.`tilbud om annen stilling eller annet sted i Norge`() =
+        boolsk(`arbeidsforhold tilbud om annen stilling eller annet sted i norge`).utfylt()
+
+    private fun Søknad.`skift, turnus og rotasjon`() =
+        "spørsmål om skift, turnus og rotasjon".alle(
+            boolsk(`arbeidsforhold skift eller turnus`).utfylt(),
+            "rotasjon eller ikke".minstEnAv(
+                boolsk(`arbeidsforhold rotasjon`) er false,
+                boolsk(`arbeidsforhold rotasjon`) er true hvisOppfylt {
+                    "oppfølgingsspørsmål om rotasjonen".alle(
+                        heltall(`arbeidsforhold arbeidsdager siste rotasjon`).utfylt(),
+                        heltall(`arbeidsforhold fridager siste rotasjon`).utfylt()
+                    )
+                }
+            )
+        )
+
+    private fun Søknad.`arbeidsgiver er konkurs`() =
+        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs") hvisOppfylt {
+            "spørsmål om arbeidsforholdet".alle(
+                `varighet på arbeidsforholdet`(),
+                envalg(`arbeidsforhold midlertidig arbeidsforhold med sluttdato`).utfylt(),
+                `arbeidstimer før konkurs`(),
+                lønnsgarantimidler(),
+                `skift, turnus og rotasjon`()
+            )
+        }
+
+    private fun Søknad.`arbeidstimer før konkurs`() =
+        "antall arbeidstimer før konkurs kjent eller ikke".minstEnAv(
+            boolsk(`arbeidsforhold vet du antall timer foer konkurs`) er false,
+            boolsk(`arbeidsforhold vet du antall timer foer konkurs`) er true hvisOppfylt {
+                `antall timer jobbet`()
+            }
+        )
+
+    private fun Søknad.lønnsgarantimidler() =
+        "ønsker å søke om forskudd på lønnsgarantimidler eller ikke".minstEnAv(
+            boolsk(`arbeidsforhold soke forskudd lonnsgarantimidler`) er false,
+            boolsk(`arbeidsforhold soke forskudd lonnsgarantimidler`) er true hvisOppfylt {
+                `oppfølgingsspørsmål om lønnsgarantimidler`()
+            }
+        )
+
+    private fun Søknad.`oppfølgingsspørsmål om lønnsgarantimidler`() =
+        "spørsmål om lønnsgarantimidler".alle(
+            boolsk(`arbeidsforhold soke forskudd lonnsgarantimidler i tillegg til dagpenger`).utfylt(),
+            boolsk(`arbeidsforhold godta trekk fra nav av forskudd fra lonnsgarantimidler`).utfylt(),
+            envalg(`arbeidsforhold har sokt om lonnsgarantimidler`).utfylt(),
+            envalg(`arbeidsforhold dekker lonnsgarantiordningen lonnskravet ditt`).utfylt(),
+            "fått utbetalt lønn etter konkurs eller ikke".minstEnAv(
+                boolsk(`arbeidsforhold utbetalt lonn etter konkurs`) er false,
+                boolsk(`arbeidsforhold utbetalt lonn etter konkurs`) er true hvisOppfylt {
+                    dato(`arbeidsforhold siste dag utbetalt for konkurs`).utfylt()
+                }
+            )
+        )
+
+    private fun Søknad.`kontrakten er utgått`() =
+        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt") hvisOppfylt {
+            "spørsmål om arbeidsforholdet".alle(
+                `varighet på arbeidsforholdet`(),
+                `arbeidstimer før utgått kontrakt`(),
+                `tilbud om forlengelse eller annen stilling`(),
+                `skift, turnus og rotasjon`()
+            )
+        }
+
+    private fun Søknad.`arbeidstimer før utgått kontrakt`() =
+        "antall arbeidstimer før kontrakten utgikk kjent eller ikke".minstEnAv(
+            boolsk(`arbeidsforhold vet du antall timer foer kontrakt utgikk`) er false,
+            boolsk(`arbeidsforhold vet du antall timer foer kontrakt utgikk`) er true hvisOppfylt {
+                `antall timer jobbet`()
+            }
+        )
+
+    private fun Søknad.`tilbud om forlengelse eller annen stilling`() =
+        "tilbud om forlengelse av kontrakt eller annen stilling eller ikke".minstEnAv(
+            boolsk(`arbeidsforhold tilbud om forlengelse eller annen stilling`) er false,
+            boolsk(`arbeidsforhold tilbud om forlengelse eller annen stilling`) er true hvisOppfylt {
+                "svar på tilbud om forlengelse eller annen stilling".minstEnAv(
+                    envalg(`arbeidsforhold svar paa forlengelse eller annen stilling`) er Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei") hvisOppfylt {
+                        tekst(`arbeidsforhold aarsak til ikke akseptert tilbud`).utfylt()
+                    },
+                    envalg(`arbeidsforhold svar paa forlengelse eller annen stilling`).utfylt()
+                )
+            }
+        )
+
+    private fun Søknad.`sagt opp selv`() =
+        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv") hvisOppfylt {
+            "spørsmål om arbeidsforholdet".alle(
+                `varighet på arbeidsforholdet`(),
+                `arbeidstimer før sagt opp selv`(),
+                tekst(`arbeidsforhold aarsak til du sa opp`).utfylt(),
+                `skift, turnus og rotasjon`()
+            )
+        }
+
+    private fun Søknad.`arbeidstimer før sagt opp selv`() =
+        "antall arbeidstimer før sagt opp selv kjent eller ikke".minstEnAv(
+            boolsk(`arbeidsforhold vet du antall timer foer du sa opp`) er false,
+            boolsk(`arbeidsforhold vet du antall timer foer du sa opp`) er true hvisOppfylt {
+                `antall timer jobbet`()
+            }
+        )
+
+    private fun Søknad.`redusert arbeidstid`() =
+        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid") hvisOppfylt {
+            "spørsmål om arbeidsforholdet".alle(
+                dato(`arbeidsforhold startdato arbeidsforhold`).utfylt(),
+                dato(`arbeidsforhold arbeidstid redusert fra dato`).utfylt(),
+                `arbeidstimer før redusert arbeidstid`(),
+                tekst(`arbeidsforhold vet du aarsak til redusert arbeidstid`).utfylt(),
+                `tilbud om annen stilling eller annet sted i Norge`(),
+                `skift, turnus og rotasjon`()
+            )
+        }
+
+    private fun Søknad.`arbeidstimer før redusert arbeidstid`() =
+        "antall arbeidstimer før arbedstiden ble redusert kjent eller ikke".minstEnAv(
+            boolsk(`arbeidsforhold vet du antall timer foer redusert arbeidstid`) er false,
+            boolsk(`arbeidsforhold vet du antall timer foer redusert arbeidstid`) er true hvisOppfylt {
+                `antall timer jobbet`()
+            }
+        )
+
+    private fun Søknad.permittert() =
+        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.permittert") hvisOppfylt {
+            "spørsmål om arbeidsforholdet".alle(
+                `midlertidig arbeidsforhold med sluttdato`(),
+                dato(`arbeidsforhold midlertidig arbeidsforhold oppstartsdato`).utfylt(),
+                boolsk(`arbeidsforhold permittertert fra fiskeri naering`).utfylt(),
+                `arbeidstimer før permittert`(),
+                periode(`arbeidsforhold permittert periode`).utfylt(),
+                heltall(`arbeidsforhold permittert prosent`).utfylt(),
+                lønnspliktsperiode(),
+                `skift, turnus og rotasjon`()
+            )
+        }
+
+    private fun Søknad.`midlertidig arbeidsforhold med sluttdato`() =
+        "midlertidig arbeidsforhold med sluttdato eller ikke".minstEnAv(
+            envalg(`arbeidsforhold midlertidig med kontraktfestet sluttdato`) er Envalg("faktum.arbeidsforhold.midlertidig-med-kontraktfestet-sluttdato.svar.ja") hvisOppfylt {
+                dato(`arbeidsforhold kontraktfestet sluttdato`).utfylt()
+            },
+            envalg(`arbeidsforhold midlertidig med kontraktfestet sluttdato`).utfylt()
+        )
+
+    private fun Søknad.`arbeidstimer før permittert`() =
+        "antall arbeidstimer før permittert kjent eller ikke".minstEnAv(
+            boolsk(`arbeidsforhold vet du antall timer foer permittert`) er false,
+            boolsk(`arbeidsforhold vet du antall timer foer permittert`) er true hvisOppfylt {
+                `antall timer jobbet`()
+            }
+        )
+
+    private fun Søknad.lønnspliktsperiode() =
+        "vet hva lønnspliktsperioden er eller ikke".minstEnAv(
+            boolsk(`arbeidsforhold vet du lonnsplikt periode`) er false,
+            boolsk(`arbeidsforhold vet du lonnsplikt periode`) er true hvisOppfylt {
+                periode(`arbeidsforhold naar var lonnsplikt periode`).utfylt()
+            }
+        )
 }
