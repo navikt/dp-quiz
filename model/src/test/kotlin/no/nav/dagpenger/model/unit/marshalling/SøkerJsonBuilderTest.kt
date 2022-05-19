@@ -3,13 +3,16 @@ package no.nav.dagpenger.model.unit.marshalling
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
+import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.under
@@ -21,6 +24,7 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -55,6 +59,8 @@ class SøkerJsonBuilderTest {
             heltall faktum "f1314" id 1314 genererer 13 og 14,
             boolsk faktum "f13" id 13,
             boolsk faktum "f14" id 14,
+            dokument faktum "f15" id 15 avhengerAv 5,
+            boolsk faktum "f16" id 16 avhengerAv 15
         )
     }
 
@@ -120,13 +126,106 @@ class SøkerJsonBuilderTest {
 
         søknadprosess.dato("8").besvar(LocalDate.now())
         søknadprosess.dato("9").besvar(LocalDate.now())
+
+        SøkerJsonBuilder(søknadprosess).resultat().also {
+            assertAntallSeksjoner(3, it)
+            assertUbesvartFaktum("dokumentasjon", it)
+        }
+
+        søknadprosess.dokument(15).besvar(Dokument(LocalDate.now(), "urn:nav:1234"))
+
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertFerdig(it)
         }
     }
 
+    private fun søkerSubsumsjon(): Subsumsjon {
+        val alleBarnMåværeUnder18år = prototypeSøknad.heltall(6) under 18
+        val deltre = "§ 1.2 har kun ikke myndige barn".deltre {
+            alleBarnMåværeUnder18år.hvisIkkeOppfylt {
+                prototypeSøknad.boolsk(7).utfylt()
+            }
+        }
+        val generatorSubsumsjon67 = prototypeSøknad.generator(67) med deltre
+
+        val regeltre = "regel" deltre {
+            "alle i søknaden skal være besvart".alle(
+                "alle i seksjon 1".alle(
+                    (prototypeSøknad.boolsk(1) er true).hvisIkkeOppfylt {
+                        prototypeSøknad.boolsk(2).utfylt()
+                    },
+                    (prototypeSøknad.boolsk(3) er true).hvisIkkeOppfylt {
+                        prototypeSøknad.boolsk(4).utfylt()
+                    },
+                    prototypeSøknad.boolsk(5).utfylt()
+                ),
+                "alle i seksjon 2".alle(
+                    generatorSubsumsjon67
+                ),
+                "NAV-systemer vil svare automatsik på følgende fakta".alle(
+                    prototypeSøknad.dato(8).utfylt(),
+                    prototypeSøknad.dato(9).utfylt(),
+                ),
+                "dokumentasjon".alle(
+                    prototypeSøknad.boolsk(5) er true hvisOppfylt {
+                        prototypeSøknad.boolsk(16) dokumenteresAv prototypeSøknad.dokument(15)
+                    }
+                )
+            )
+        }
+        return regeltre
+    }
+
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Søknadprosess {
+        val seksjoner = listOf(
+            Seksjon(
+                "seksjon1",
+                Rolle.søker,
+                prototypeSøknad.boolsk(1),
+                prototypeSøknad.boolsk(2),
+                prototypeSøknad.boolsk(3),
+                prototypeSøknad.boolsk(4),
+                prototypeSøknad.boolsk(5),
+            ),
+            Seksjon(
+                "seksjon2",
+                Rolle.søker,
+                prototypeSøknad.heltall(6),
+                prototypeSøknad.boolsk(7),
+                prototypeSøknad.heltall(67),
+            ),
+            Seksjon(
+                "navseksjon",
+                Rolle.nav,
+                prototypeSøknad.dato(8),
+                prototypeSøknad.dato(9),
+            ),
+            Seksjon(
+                "dokumentasjon",
+                Rolle.søker,
+                prototypeSøknad.dokument(15)
+            ),
+            Seksjon(
+                "saksbehandler godkjenning",
+                Rolle.saksbehandler,
+                prototypeSøknad.boolsk(16)
+            )
+        )
+        val prototypeFaktagrupper = Søknadprosess(
+            prototypeSøknad,
+            seksjoner = seksjoner.toTypedArray(),
+            rootSubsumsjon = prototypeSubsumsjon
+        )
+
+        return Versjon.Bygger(
+            prototypeSøknad,
+            prototypeSubsumsjon,
+            mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
+        ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
+    }
+
     private fun assertFerdig(søkerJson: ObjectNode) {
-        assertTrue(søkerJson["ferdig"].asBoolean())
+        assertTrue(søkerJson["ferdig"].asBoolean(), "Forventer at søknadsprosessen er ferdig og venter på godkjenning")
     }
 
     private fun assertIkkeFerdig(søkerJson: ObjectNode) {
@@ -181,75 +280,5 @@ class SøkerJsonBuilderTest {
         Assertions.assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
         Assertions.assertDoesNotThrow { søkerJson["søknad_uuid"].asText().also { UUID.fromString(it) } }
         assertEquals("12020052345", søkerJson["fødselsnummer"].asText())
-    }
-
-    private fun søkerSubsumsjon(): Subsumsjon {
-        val alleBarnMåværeUnder18år = prototypeSøknad.heltall(6) under 18
-        val deltre = "§ 1.2 har kun ikke myndige barn".deltre {
-            alleBarnMåværeUnder18år.hvisIkkeOppfylt {
-                prototypeSøknad.boolsk(7).utfylt()
-            }
-        }
-        val generatorSubsumsjon67 = prototypeSøknad.generator(67) med deltre
-
-        val regeltre = "regel" deltre {
-            "alle i søknaden skal være besvart".alle(
-                "alle i seksjon 1".alle(
-                    (prototypeSøknad.boolsk(1) er true).hvisIkkeOppfylt {
-                        prototypeSøknad.boolsk(2).utfylt()
-                    },
-                    (prototypeSøknad.boolsk(3) er true).hvisIkkeOppfylt {
-                        prototypeSøknad.boolsk(4).utfylt()
-                    },
-                    prototypeSøknad.boolsk(5).utfylt()
-                ),
-                "alle i seksjon 2".alle(
-                    generatorSubsumsjon67
-                ),
-                "NAV-systemer vil svare automatsik på følgende fakta".alle(
-                    prototypeSøknad.dato(8).utfylt(),
-                    prototypeSøknad.dato(9).utfylt(),
-                )
-            )
-        }
-        return regeltre
-    }
-
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Søknadprosess {
-        val seksjoner = listOf(
-            Seksjon(
-                "seksjon1",
-                Rolle.søker,
-                prototypeSøknad.boolsk(1),
-                prototypeSøknad.boolsk(2),
-                prototypeSøknad.boolsk(3),
-                prototypeSøknad.boolsk(4),
-                prototypeSøknad.boolsk(5),
-            ),
-            Seksjon(
-                "seksjon2",
-                Rolle.søker,
-                prototypeSøknad.heltall(6),
-                prototypeSøknad.boolsk(7),
-                prototypeSøknad.heltall(67),
-            ),
-            Seksjon(
-                "navseksjon",
-                Rolle.nav,
-                prototypeSøknad.dato(8),
-                prototypeSøknad.dato(9),
-            )
-        )
-        val prototypeFaktagrupper = Søknadprosess(
-            prototypeSøknad,
-            seksjoner = seksjoner.toTypedArray(),
-            rootSubsumsjon = prototypeSubsumsjon
-        )
-
-        return Versjon.Bygger(
-            prototypeSøknad,
-            prototypeSubsumsjon,
-            mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
-        ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
     }
 }

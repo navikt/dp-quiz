@@ -45,22 +45,17 @@ internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
     @Test
     fun `Sjekker minimalt regeltre for dagpenger`() {
         besvar(UUID.randomUUID().toString(), MinimalSøknadsprosess.faktumBoolsk, true)
-
         melding(0).also {
-            assertEquals("NySøknad", it["@event_name"].asText())
-        }
-
-        melding(1).also {
             assertEquals("søker_oppgave", it["@event_name"].asText())
         }
 
         besvar(UUID.randomUUID().toString(), MinimalSøknadsprosess.faktumHeltall, 123)
-        besvarTekst(UUID.randomUUID().toString(), MinimalSøknadsprosess.faktumTekst, Tekst("dette er en tekst"))
-
-        melding(4).also {
-            assertEquals("NySøknad", it["@event_name"].asText())
+        melding(1).also {
+            assertEquals("søker_oppgave", it["@event_name"].asText())
         }
-        melding(5).also {
+
+        besvarTekst(UUID.randomUUID().toString(), MinimalSøknadsprosess.faktumTekst, Tekst("dette er en tekst"))
+        melding(2).also {
             assertEquals("søker_oppgave", it["@event_name"].asText())
         }
     }
