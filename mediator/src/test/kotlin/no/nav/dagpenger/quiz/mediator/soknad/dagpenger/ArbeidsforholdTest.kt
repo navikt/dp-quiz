@@ -22,7 +22,7 @@ internal class ArbeidsforholdTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        Arbeidsforhold.verifiserFeltsammensetting(47, 377128)
+        Arbeidsforhold.verifiserFeltsammensetting(48, 385176)
     }
 
     @BeforeEach
@@ -38,6 +38,12 @@ internal class ArbeidsforholdTest {
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret"))
         søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold kjent antall timer jobbet`}.1").besvar(true)
         søknadprosess.desimaltall("${Arbeidsforhold.`arbeidsforhold antall timer jobbet`}.1").besvar(40.5)
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold har tilleggsopplysninger`}.1").besvar(false)
+        assertEquals(true, søknadprosess.resultat())
+
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold har tilleggsopplysninger`}.1").besvar(true)
+        assertEquals(null, søknadprosess.resultat())
+
         søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold tilleggsopplysninger`}.1")
             .besvar(Tekst(""))
         assertEquals(true, søknadprosess.resultat())

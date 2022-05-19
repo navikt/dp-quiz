@@ -71,6 +71,7 @@ object Arbeidsforhold : DslFaktaseksjon {
     const val `arbeidsforhold rotasjon` = 8045
     const val `arbeidsforhold arbeidsdager siste rotasjon` = 8046
     const val `arbeidsforhold fridager siste rotasjon` = 8047
+    const val `arbeidsforhold har tilleggsopplysninger` = 8048
 
     override val fakta = listOf(
         dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger soknadsdato`,
@@ -81,6 +82,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             med "svar.ingen-passer" id `type arbeidstid`,
         boolsk faktum "faktum.arbeidsforhold.kjent-antall-timer-jobbet" id `arbeidsforhold kjent antall timer jobbet`,
         desimaltall faktum "faktum.arbeidsforhold.antall-timer-jobbet" id `arbeidsforhold antall timer jobbet`,
+        boolsk faktum "faktum.arbeidsforhold.har-tilleggsopplysninger" id `arbeidsforhold har tilleggsopplysninger`,
         tekst faktum "faktum.arbeidsforhold.tilleggsopplysninger" id `arbeidsforhold tilleggsopplysninger`,
         dato faktum "faktum.arbeidsforhold.startdato-arbeidsforhold" id `arbeidsforhold startdato arbeidsforhold`,
         dato faktum "faktum.arbeidsforhold.arbeidstid-redusert-fra-dato" id `arbeidsforhold arbeidstid redusert fra dato`,
@@ -141,6 +143,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             og `arbeidsforhold endret`
             og `arbeidsforhold kjent antall timer jobbet`
             og `arbeidsforhold antall timer jobbet`
+            og `arbeidsforhold har tilleggsopplysninger`
             og `arbeidsforhold tilleggsopplysninger`
             og `arbeidsforhold startdato arbeidsforhold`
             og `arbeidsforhold arbeidstid redusert fra dato`
@@ -229,7 +232,12 @@ object Arbeidsforhold : DslFaktaseksjon {
         envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret") hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `antall arbeidstimer ved ikke endret arbeidsforhold`(),
-                tekst(`arbeidsforhold tilleggsopplysninger`).utfylt()
+                "har tilleggsopplysninger eller ikke".minstEnAv(
+                    boolsk(`arbeidsforhold har tilleggsopplysninger`) er false,
+                    boolsk(`arbeidsforhold har tilleggsopplysninger`) er true hvisOppfylt {
+                        tekst(`arbeidsforhold tilleggsopplysninger`).utfylt()
+                    }
+                )
             )
         }
 
