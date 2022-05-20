@@ -121,7 +121,14 @@ internal class SøknadsmalVisitorJsonBuilderTest {
         val førsteSeksjon = malJson["seksjoner"][0]
         assertEquals("seksjon1", førsteSeksjon["beskrivendeId"].asText())
         assertEquals(5, førsteSeksjon["fakta"].size())
-        førsteSeksjon["fakta"][0].assertFaktaAsJson("1", "boolean", "boolsk1", listOf("søker"))
+        førsteSeksjon["fakta"][0].assertValgFaktaAsJson(
+            "1",
+            "boolean",
+            "boolsk1",
+            listOf("søker"),
+            listOf("true", "false")
+        )
+
         førsteSeksjon["fakta"][1].assertFaktaAsJson("2", "int", "heltall2", listOf("søker"))
         førsteSeksjon["fakta"][2].assertFaktaAsJson("15", "tekst", "tekst15", listOf("søker"))
         førsteSeksjon["fakta"][3].assertFaktaAsJson("16", "periode", "periode16", listOf("søker"))

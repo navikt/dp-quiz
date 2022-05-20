@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.unit.marshalling
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
@@ -137,6 +138,29 @@ class SøkerJsonBuilderTest {
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertFerdig(it)
         }
+    }
+
+    @Test
+    fun `Boolske fakta skal ha en beskrivendeId for hvert av de to gyldige valgene`() {
+        val regel = søkerSubsumsjon()
+        val søknadprosess = søknadprosess(regel)
+
+        SøkerJsonBuilder(søknadprosess).resultat().also { jsonUtenSvar ->
+            jsonUtenSvar["seksjoner"][0]["fakta"][0].assertBoolskFaktumHarGyldigeValg("f1")
+        }
+
+        søknadprosess.boolsk(1).besvar(true)
+        SøkerJsonBuilder(søknadprosess).resultat().also { jsonMedSvar ->
+            assertBesvarteFakta(1, "seksjon1", jsonMedSvar)
+            jsonMedSvar["seksjoner"][0]["fakta"][0].assertBoolskFaktumHarGyldigeValg("f1")
+        }
+    }
+
+    private fun JsonNode.assertBoolskFaktumHarGyldigeValg(expectedBaseBeskrivendeId: String) {
+        val expectedGyldigeValg = listOf("true", "false").map { "$expectedBaseBeskrivendeId.$it" }
+        val actual: List<String> = this.get("gyldigeValg").toSet().map { it.asText() }
+        assertEquals(2, actual.size)
+        Assertions.assertTrue(expectedGyldigeValg.containsAll<String>(actual))
     }
 
     private fun søkerSubsumsjon(): Subsumsjon {

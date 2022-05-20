@@ -12,6 +12,8 @@ import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.marshalling.FaktumsvarTilJson.isBoolean
+import no.nav.dagpenger.model.marshalling.FaktumsvarTilJson.lagBeskrivendeIderForGyldigeBoolskeValg
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.FaktumVisitor
@@ -151,7 +153,11 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
             clazz: Class<R>,
             gyldigeValg: GyldigeValg?
         ) {
-            lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigeValg)
+            var overstyrbareGyldigeValg = gyldigeValg
+            if (clazz.isBoolean()) {
+                overstyrbareGyldigeValg = faktum.lagBeskrivendeIderForGyldigeBoolskeValg()
+            }
+            lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, overstyrbareGyldigeValg)
         }
 
         private fun lagFaktumNode(
