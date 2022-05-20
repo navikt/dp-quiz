@@ -17,8 +17,8 @@ internal object Dagpenger {
 
     val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 218)
 
-    fun registrer(registrer: (søknad: Søknad) -> Unit) {
-        registrer(søknad)
+    fun registrer(registrer: (prototype: Søknad) -> Unit) {
+        registrer(prototypeSøknad)
     }
 
     private val faktaseksjoner = listOf(
@@ -39,7 +39,7 @@ internal object Dagpenger {
     private val alleFakta = flatMapAlleFakta()
     private val alleSeksjoner = flatMapAlleSeksjoner()
 
-    private val søknad: Søknad
+    private val prototypeSøknad: Søknad
         get() = Søknad(
             VERSJON_ID,
             *alleFakta
@@ -48,19 +48,19 @@ internal object Dagpenger {
     private val søknadsprosess: Søknadprosess = Søknadprosess(*alleSeksjoner)
 
     object Subsumsjoner {
-        val regeltre: Subsumsjon = with(søknad) {
-            Bosted.regeltre(søknad).hvisOppfylt {
-                Gjenopptak.regeltre(søknad).hvisOppfylt {
+        val regeltre: Subsumsjon = with(prototypeSøknad) {
+            Bosted.regeltre(prototypeSøknad).hvisOppfylt {
+                Gjenopptak.regeltre(prototypeSøknad).hvisOppfylt {
                     // Barnetillegg.regeltre(søknad).hvisOppfylt {
-                    Arbeidsforhold.regeltre(søknad).hvisOppfylt {
-                        EøsArbeidsforhold.regeltre(søknad).hvisOppfylt {
-                            EgenNæring.regeltre(søknad).hvisOppfylt {
-                                Verneplikt.regeltre(søknad).hvisOppfylt {
-                                    AndreYtelser.regeltre(søknad).hvisOppfylt {
-                                        Utdanning.regeltre(søknad).hvisOppfylt {
-                                            ReellArbeidssoker.regeltre(søknad).hvisOppfylt {
-                                                Tilleggsopplysninger.regeltre(søknad).hvisOppfylt {
-                                                    DokumentasjonsKrav.regeltre(søknad)
+                    Arbeidsforhold.regeltre(prototypeSøknad).hvisOppfylt {
+                        EøsArbeidsforhold.regeltre(prototypeSøknad).hvisOppfylt {
+                            EgenNæring.regeltre(prototypeSøknad).hvisOppfylt {
+                                Verneplikt.regeltre(prototypeSøknad).hvisOppfylt {
+                                    AndreYtelser.regeltre(prototypeSøknad).hvisOppfylt {
+                                        Utdanning.regeltre(prototypeSøknad).hvisOppfylt {
+                                            ReellArbeidssoker.regeltre(prototypeSøknad).hvisOppfylt {
+                                                Tilleggsopplysninger.regeltre(prototypeSøknad).hvisOppfylt {
+                                                    DokumentasjonsKrav.regeltre(prototypeSøknad)
                                                 }
                                             }
                                         }
@@ -84,7 +84,7 @@ internal object Dagpenger {
 
     @Suppress("unused")
     private val versjon = Versjon.Bygger(
-        prototypeSøknad = søknad,
+        prototypeSøknad = prototypeSøknad,
         prototypeSubsumsjon = regeltre,
         prototypeUserInterfaces = mapOf(
             Versjon.UserInterfaceType.Web to søknadsprosess
@@ -99,6 +99,6 @@ internal object Dagpenger {
     }.toTypedArray()
 
     private fun flatMapAlleSeksjoner() = faktaseksjoner.map { faktaSeksjon ->
-        faktaSeksjon.seksjon(søknad)
+        faktaSeksjon.seksjon(prototypeSøknad)
     }.flatten().toTypedArray()
 }

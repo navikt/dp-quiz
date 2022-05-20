@@ -21,7 +21,7 @@ internal class NySøknadBehovLøserTest : SøknadBesvarer() {
     @BeforeEach
     fun setup() {
         Postgres.withMigratedDb {
-            Dagpenger.registrer { søknad -> FaktumTable(søknad) }
+            Dagpenger.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
             val søknadPersistence = SøknadRecord()
             val resultatPersistence = ResultatRecord()
             testRapid = TestRapid().also {

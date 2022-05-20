@@ -40,11 +40,11 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 val resultatRecord = ResultatRecord()
                 AvslagPåMinsteinntektOppsett.registrer { søknad -> FaktumTable(søknad) }
                 AvslagPåMinsteinntektService(søknadRecord, rapidsConnection)
-                Dagpenger.registrer { søknad ->
-                    FaktumTable(søknad)
+                Dagpenger.registrer { prototypeSøknad ->
+                    FaktumTable(prototypeSøknad)
                     val sisteDagpengerVersjon = Versjon.siste(Prosess.Dagpenger)
                     Versjon.id(sisteDagpengerVersjon).also { versjon ->
-                        val søknadsprosess = versjon.søknadprosess(søknad, Versjon.UserInterfaceType.Web)
+                        val søknadsprosess = versjon.søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
                         rapidsConnection.publish(SøknadsmalVisitorJsonBuilder(søknadsprosess).resultat().toString())
                     }
                 }

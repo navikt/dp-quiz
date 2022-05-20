@@ -25,9 +25,9 @@ internal class DagpengerTest : SøknadBesvarer() {
 
     @BeforeEach
     fun setup() {
-        Dagpenger.registrer { søknadPrototype ->
+        Dagpenger.registrer { prototypeSøknad ->
             søknadsprosess = Versjon.id(Dagpenger.VERSJON_ID)
-                .søknadprosess(søknadPrototype, Versjon.UserInterfaceType.Web)
+                .søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
         }
 
         val søknadPersistence = mockk<SøknadPersistence>().also {
