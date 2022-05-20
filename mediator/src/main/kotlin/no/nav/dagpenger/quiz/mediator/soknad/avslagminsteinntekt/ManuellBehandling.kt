@@ -15,26 +15,26 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.jobbetUtenforNorge
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.jobbetUtenforNorgeManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.prototypeSøknad
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.svangerskapsrelaterteSykepengerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.sykepengerSiste36mnd
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.søknad
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningsdatoManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.virkningsdato
 
 internal object ManuellBehandling {
-    private val hattInntektFraFangstOgFisk = with(søknad) {
+    private val hattInntektFraFangstOgFisk = with(prototypeSøknad) {
         boolsk(fangstOgFiskInntektSiste36mnd) er true hvisOppfyltManuell (boolsk(fangstOgFiskManuell))
     }
 
-    private val harArbeidetEøs = with(søknad) {
+    private val harArbeidetEøs = with(prototypeSøknad) {
         boolsk(eøsArbeid) er true hvisOppfyltManuell (boolsk(eøsArbeidManuell))
     }
 
-    private val harJobbetUtenforNorge = with(søknad) {
+    private val harJobbetUtenforNorge = with(prototypeSøknad) {
         boolsk(jobbetUtenforNorge) er true hvisOppfyltManuell (boolsk(jobbetUtenforNorgeManuell))
     }
 
-    private val virkningsdatoEtterNåværendeInntektsrapporteringsperiode = with(søknad) {
+    private val virkningsdatoEtterNåværendeInntektsrapporteringsperiode = with(prototypeSøknad) {
         dato(virkningsdato) etter dato(inntektsrapporteringsperiodeTom) hvisOppfyltManuell (
             boolsk(
                 uhåndterbartVirkningsdatoManuell
@@ -42,15 +42,15 @@ internal object ManuellBehandling {
             )
     }
 
-    private val erMuligGjenopptak = with(søknad) {
+    private val erMuligGjenopptak = with(prototypeSøknad) {
         boolsk(harHattDagpengerSiste36mnd) er true hvisOppfyltManuell (boolsk(periodeOppbruktManuell))
     }
 
-    private val harHattSykepenger = with(søknad) {
+    private val harHattSykepenger = with(prototypeSøknad) {
         boolsk(sykepengerSiste36mnd) er true hvisOppfyltManuell (boolsk(svangerskapsrelaterteSykepengerManuell))
     }
 
-    private val harHattLukkedeSakerSiste8Uker = with(søknad) {
+    private val harHattLukkedeSakerSiste8Uker = with(prototypeSøknad) {
         boolsk(hattLukkedeSakerSiste8Uker) er true hvisOppfyltManuell (boolsk(hattLukkedeSakerSiste8UkerManuell))
     }
 

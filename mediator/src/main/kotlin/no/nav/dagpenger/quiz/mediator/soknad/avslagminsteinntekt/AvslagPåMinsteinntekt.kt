@@ -26,13 +26,13 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.minsteinntektsterskel36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.oppfyllerMinsteinntektManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.over67årFradato
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.prototypeSøknad
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.reellArbeidssøkerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPerioder
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.senesteMuligeVirkningsdato
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.søknad
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.uhåndterbartVirkningsdatoManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.villigTilÅBytteYrke
@@ -40,10 +40,10 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.ManuellBehandling.`skal behandles av Arena`
 
 internal object AvslagPåMinsteinntekt {
-    private val sjekkInntektNesteKalendermåned = with(søknad) {
+    private val sjekkInntektNesteKalendermåned = with(prototypeSøknad) {
         boolsk(harInntektNesteKalendermåned) er true hvisOppfyltManuell (boolsk(inntektNesteKalendermånedManuell))
     }
-    private val `oppfyller krav til minste arbeidsinntekt eller unntakene` = with(søknad) {
+    private val `oppfyller krav til minste arbeidsinntekt eller unntakene` = with(prototypeSøknad) {
         "minste arbeidsinntekt".minstEnAv(
             inntekt(inntektSiste36mnd) minst inntekt(minsteinntektsterskel36mnd),
             inntekt(inntektSiste12mnd) minst inntekt(minsteinntektsterskel12mnd),
@@ -53,14 +53,14 @@ internal object AvslagPåMinsteinntekt {
         }
     }
 
-    private val `må være registrert som arbeidssøker ved virkningstidspunkt eller behandlingsdato` = with(søknad) {
+    private val `må være registrert som arbeidssøker ved virkningstidspunkt eller behandlingsdato` = with(prototypeSøknad) {
         generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
             dato(førsteAvVirkningsdatoOgBehandlingsdato) mellom
                 dato(registrertArbeidssøkerPeriodeFom) og dato(registrertArbeidssøkerPeriodeTom)
         } hvisIkkeOppfyltManuell (boolsk(registrertArbeidssøkerManuell))
     }
 
-    private val `er reell arbeidssøker` = with(søknad) {
+    private val `er reell arbeidssøker` = with(prototypeSøknad) {
         "er reell arbeidssøker".alle(
             boolsk(kanJobbeDeltid) er true,
             boolsk(helseTilAlleTyperJobb) er true,
@@ -69,13 +69,13 @@ internal object AvslagPåMinsteinntekt {
         ) hvisIkkeOppfyltManuell (boolsk(reellArbeidssøkerManuell))
     }
 
-    private val `søkeren må være under 67 år ved virkningstidspunkt` = with(søknad) {
+    private val `søkeren må være under 67 år ved virkningstidspunkt` = with(prototypeSøknad) {
         "under 67år" deltre {
             dato(virkningsdato) før dato(over67årFradato)
         }
     }
 
-    private val `virkningstidspunkt kan ikke være mer enn 14 dager frem i tid` = with(søknad) {
+    private val `virkningstidspunkt kan ikke være mer enn 14 dager frem i tid` = with(prototypeSøknad) {
         dato(virkningsdato) førEllerLik dato(senesteMuligeVirkningsdato) hvisIkkeOppfyltManuell (
             boolsk(
                 uhåndterbartVirkningsdatoManuell
@@ -83,7 +83,7 @@ internal object AvslagPåMinsteinntekt {
             )
     }
 
-    private val `har hentet arbeidsforhold` = with(søknad) {
+    private val `har hentet arbeidsforhold` = with(prototypeSøknad) {
         heltall(antallEndredeArbeidsforhold) minst (0)
     }
 

@@ -23,8 +23,8 @@ internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
     val VERSJON_ID = Prosessversjon(Prosess.AvslagPåMinsteinntekt, 29)
 
-    fun registrer(registrer: (søknad: Søknad) -> Unit) {
-        registrer(søknad)
+    fun registrer(registrer: (prototype: Søknad) -> Unit) {
+        registrer(prototypeSøknad)
     }
 
     const val ønsketDato = 1
@@ -77,7 +77,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val hattLukkedeSakerSiste8Uker = 59
     const val hattLukkedeSakerSiste8UkerManuell = 60
 
-    internal val søknad: Søknad
+    internal val prototypeSøknad: Søknad
         get() = Søknad(
             VERSJON_ID,
             dato faktum "Ønsker dagpenger fra dato" id ønsketDato avhengerAv innsendtSøknadsId,
@@ -168,8 +168,9 @@ internal object AvslagPåMinsteinntektOppsett {
             )
         )
 
+    @Suppress("unused")
     private val versjon = Versjon.Bygger(
-        prototypeSøknad = søknad,
+        prototypeSøknad = prototypeSøknad,
         prototypeSubsumsjon = regeltre,
         prototypeUserInterfaces = mapOf(
             Versjon.UserInterfaceType.Web to søknadprosess

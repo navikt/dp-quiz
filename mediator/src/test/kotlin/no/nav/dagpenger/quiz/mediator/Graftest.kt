@@ -144,7 +144,7 @@ class Graftest {
     fun `avslag`() {
 
         val manglerInntekt = Versjon.Bygger(
-            AvslagPåMinsteinntektOppsett.søknad,
+            AvslagPåMinsteinntektOppsett.prototypeSøknad,
             AvslagPåMinsteinntekt.regeltre,
             mapOf(Versjon.UserInterfaceType.Web to Seksjoner.søknadprosess)
         )
