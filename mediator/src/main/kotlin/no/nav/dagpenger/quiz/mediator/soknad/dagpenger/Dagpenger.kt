@@ -51,17 +51,16 @@ internal object Dagpenger {
         val regeltre: Subsumsjon = with(søknad) {
             Bosted.regeltre(søknad).hvisOppfylt {
                 Gjenopptak.regeltre(søknad).hvisOppfylt {
-                    Barnetillegg.regeltre(søknad).hvisOppfylt {
-                        Arbeidsforhold.regeltre(søknad).hvisOppfylt {
-                            EøsArbeidsforhold.regeltre(søknad).hvisOppfylt {
-                                EgenNæring.regeltre(søknad).hvisOppfylt {
-                                    Verneplikt.regeltre(søknad).hvisOppfylt {
-                                        AndreYtelser.regeltre(søknad).hvisOppfylt {
-                                            Utdanning.regeltre(søknad).hvisOppfylt {
-                                                ReellArbeidssoker.regeltre(søknad).hvisOppfylt {
-                                                    Tilleggsopplysninger.regeltre(søknad).hvisOppfylt {
-                                                        DokumentasjonsKrav.regeltre(søknad)
-                                                    }
+                    // Barnetillegg.regeltre(søknad).hvisOppfylt {
+                    Arbeidsforhold.regeltre(søknad).hvisOppfylt {
+                        EøsArbeidsforhold.regeltre(søknad).hvisOppfylt {
+                            EgenNæring.regeltre(søknad).hvisOppfylt {
+                                Verneplikt.regeltre(søknad).hvisOppfylt {
+                                    AndreYtelser.regeltre(søknad).hvisOppfylt {
+                                        Utdanning.regeltre(søknad).hvisOppfylt {
+                                            ReellArbeidssoker.regeltre(søknad).hvisOppfylt {
+                                                Tilleggsopplysninger.regeltre(søknad).hvisOppfylt {
+                                                    DokumentasjonsKrav.regeltre(søknad)
                                                 }
                                             }
                                         }
@@ -69,6 +68,7 @@ internal object Dagpenger {
                                 }
                             }
                         }
+                        // }
                     }
                 }
             }

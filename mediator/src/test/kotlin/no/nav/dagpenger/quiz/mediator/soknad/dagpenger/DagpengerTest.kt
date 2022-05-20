@@ -54,8 +54,8 @@ internal class DagpengerTest : SøknadBesvarer() {
             val harMottattDagpenger = Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja")
             besvar(Gjenopptak.`mottatt dagpenger siste 12 mnd`, harMottattDagpenger)
 
-            søknadsprosess.verifiserAtNesteSeksjonEr(Barnetillegg)
-            besvar(Barnetillegg.`barn liste`, 0)
+            // søknadsprosess.verifiserAtNesteSeksjonEr(Barnetillegg)
+            // besvar(Barnetillegg.`barn liste`, 0)
 
             søknadsprosess.verifiserAtNesteSeksjonEr(Arbeidsforhold)
 
