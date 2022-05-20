@@ -4,10 +4,10 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger.Subsumsjoner.regeltre
 
@@ -15,23 +15,24 @@ internal object Dagpenger {
 
     private val logger = KotlinLogging.logger { }
 
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 217)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 218)
 
     fun registrer(registrer: (søknad: Søknad) -> Unit) {
         registrer(søknad)
     }
 
     private val faktaseksjoner = listOf(
-        AndreYtelser,
-        Arbeidsforhold,
-        Barnetillegg,
         Bosted,
-        EgenNæring,
+        Gjenopptak,
+        Barnetillegg,
+        Arbeidsforhold,
         EøsArbeidsforhold,
-        ReellArbeidssoker,
-        Tilleggsopplysninger,
-        Utdanning,
+        EgenNæring,
         Verneplikt,
+        AndreYtelser,
+        ReellArbeidssoker,
+        Utdanning,
+        Tilleggsopplysninger,
         DokumentasjonsKrav
     )
 
@@ -44,11 +45,33 @@ internal object Dagpenger {
             *alleFakta
         )
 
-    internal val søknadsprosess: Søknadprosess = Søknadprosess(*alleSeksjoner)
+    private val søknadsprosess: Søknadprosess = Søknadprosess(*alleSeksjoner)
 
     object Subsumsjoner {
         val regeltre: Subsumsjon = with(søknad) {
-            heltall(Barnetillegg.`barn liste`) minst (0)
+            Bosted.regeltre(søknad).hvisOppfylt {
+                Gjenopptak.regeltre(søknad).hvisOppfylt {
+                    Barnetillegg.regeltre(søknad).hvisOppfylt {
+                        Arbeidsforhold.regeltre(søknad).hvisOppfylt {
+                            EøsArbeidsforhold.regeltre(søknad).hvisOppfylt {
+                                EgenNæring.regeltre(søknad).hvisOppfylt {
+                                    Verneplikt.regeltre(søknad).hvisOppfylt {
+                                        AndreYtelser.regeltre(søknad).hvisOppfylt {
+                                            Utdanning.regeltre(søknad).hvisOppfylt {
+                                                ReellArbeidssoker.regeltre(søknad).hvisOppfylt {
+                                                    Tilleggsopplysninger.regeltre(søknad).hvisOppfylt {
+                                                        DokumentasjonsKrav.regeltre(søknad)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

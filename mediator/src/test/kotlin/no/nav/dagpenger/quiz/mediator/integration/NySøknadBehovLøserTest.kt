@@ -46,15 +46,17 @@ internal class NySøknadBehovLøserTest : SøknadBesvarer() {
         withSøknad(nySøknadBehov) { _ ->
             assertEquals(2, testRapid.inspektør.size)
             melding(0).let {
-                assertEquals("faktum_svar", it["@event_name"].asText())
-                assertEquals(
-                    listOf("Barn"),
-                    it["@behov"].map { it.asText() }
-                )
+                assertEquals("søker_oppgave", it["@event_name"].asText())
+                assertFalse { it.toString().contains(""""svar":""") }
             }
 
             melding(1).let {
-                assertFalse { it.toString().contains(""""svar":""") }
+                assertEquals("behov", it["@event_name"].asText())
+                assertEquals(
+                    listOf("NySøknad"),
+                    it["@behov"].map { it.asText() }
+                )
+                assertFalse(it["@løsning"]["NySøknad"].isNull, "NySøknad behov skal besvares med søknad id")
             }
         }
     }
