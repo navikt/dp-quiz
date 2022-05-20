@@ -120,7 +120,8 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
             avhengigeFakta: Set<Faktum<*>>,
             avhengerAvFakta: Set<Faktum<*>>,
             roller: Set<Rolle>,
-            clazz: Class<R>
+            clazz: Class<R>,
+            gyldigevalg: GyldigeValg?
         ) {
             lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller)
         }
