@@ -1,6 +1,5 @@
 package no.nav.dagpenger.model.unit.marshalling
 
-import com.fasterxml.jackson.databind.JsonNode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
@@ -23,7 +22,6 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -48,7 +46,8 @@ internal class SøknadsmalVisitorJsonBuilderTest {
             envalg faktum "envalg11" med "valg1" med "valg2" id 11,
             dato faktum "dato12" id 12,
             inntekt faktum "inntekt13" id 13,
-            heltall faktum "generator14" id 14 genererer 12 og 13,
+            envalg faktum "envalg18" id 18 med "valg1" med "valg2",
+            heltall faktum "generator14" id 14 genererer 12 og 13 og 18,
             tekst faktum "tekst15" id 15,
             periode faktum "periode16" id 16,
             periode faktum "pågåendePeriode17" id 17
@@ -82,6 +81,7 @@ internal class SøknadsmalVisitorJsonBuilderTest {
                 prototypeSøknad.envalg(11),
                 prototypeSøknad.dato(12),
                 prototypeSøknad.inntekt(13),
+                prototypeSøknad.envalg(18),
                 prototypeSøknad.generator(14),
             ),
             Seksjon(
@@ -160,7 +160,8 @@ internal class SøknadsmalVisitorJsonBuilderTest {
             "14", "generator", "generator14", listOf("søker"),
             assertTemplates = listOf(
                 { it.assertFaktaAsJson("12", "localdate", "dato12", listOf("søker")) },
-                { it.assertFaktaAsJson("13", "inntekt", "inntekt13", listOf("søker")) }
+                { it.assertFaktaAsJson("13", "inntekt", "inntekt13", listOf("søker")) },
+                { it.assertValgFaktaAsJson("18", "envalg", "envalg18", listOf("søker"), listOf("valg1", "valg2")) },
             )
         )
 
@@ -170,55 +171,5 @@ internal class SøknadsmalVisitorJsonBuilderTest {
         fjerdeSeksjon["fakta"][0].assertFaktaAsJson("7", "dokument", "dokument7", listOf("nav"))
         fjerdeSeksjon["fakta"][1].assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav"))
         fjerdeSeksjon["fakta"][2].assertFaktaAsJson("9", "localdate", "dato9", listOf("nav"))
-    }
-
-    private fun JsonNode.assertFaktaAsJson(
-        expectedId: String,
-        expectedType: String,
-        expectedBeskrivendeId: String,
-        expectedRoller: List<String>,
-        assertSvar: ((JsonNode) -> Unit)? = null
-    ) {
-        assertEquals(expectedBeskrivendeId, this.get("beskrivendeId").asText())
-        assertEquals(expectedType, this.get("type").asText())
-        assertEquals(expectedId, this.get("id").asText())
-        if (expectedRoller.isNotEmpty()) {
-            val actual: List<String> = this.get("roller").toSet().map { it.asText() }
-            assertEquals(
-                expectedRoller.size,
-                actual.size,
-                "$expectedBeskrivendeId har $actual, forventet $expectedRoller "
-            )
-            assertTrue(expectedRoller.containsAll<String>(actual)) { "$expectedBeskrivendeId har $actual, forventet $expectedRoller " }
-        }
-        assertSvar?.let { assert -> assert(this.get("svar")) }
-    }
-
-    private fun JsonNode.assertGeneratorFaktaAsJson(
-        expectedId: String,
-        expectedType: String,
-        expectedBeskrivendeId: String,
-        expectedRoller: List<String>,
-        assertTemplates: List<(JsonNode) -> Unit>,
-        assertSvar: ((JsonNode) -> Unit)? = null
-    ) {
-        this.assertFaktaAsJson(expectedId, expectedType, expectedBeskrivendeId, expectedRoller, assertSvar)
-        assertTemplates.forEachIndexed { index: Int, test: (JsonNode) -> Unit ->
-            test(this.get("templates")[index])
-        }
-    }
-
-    private fun JsonNode.assertValgFaktaAsJson(
-        expectedId: String,
-        expectedClass: String,
-        expectedNavn: String,
-        expectedRoller: List<String>,
-        expectedGyldigeValg: List<String>,
-        assertSvar: ((JsonNode) -> Unit)? = null
-    ) {
-        this.assertFaktaAsJson(expectedId, expectedClass, expectedNavn, expectedRoller, assertSvar)
-        val expectedGyldigeValgMedPrefix = expectedGyldigeValg.map { "$expectedNavn.$it" }
-        val actual: List<String> = this.get("gyldigeValg").toSet().map { it.asText() }
-        assertTrue(expectedGyldigeValgMedPrefix.containsAll<String>(actual))
     }
 }

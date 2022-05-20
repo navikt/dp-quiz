@@ -176,8 +176,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     private class SøknadFaktumVisitor(
         faktum: Faktum<*>,
         private val genererteFaktum: List<Faktum<*>> = emptyList()
-    ) :
-        FaktumVisitor {
+    ) : FaktumVisitor {
 
         val root: ObjectNode = mapper.createObjectNode()
 
