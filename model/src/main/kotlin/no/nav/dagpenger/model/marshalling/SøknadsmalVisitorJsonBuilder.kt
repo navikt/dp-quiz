@@ -123,7 +123,7 @@ class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : Søknadpro
             clazz: Class<R>,
             gyldigevalg: GyldigeValg?
         ) {
-            lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller)
+            lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigevalg)
         }
 
         override fun <R : Comparable<R>> visitUtenSvar(

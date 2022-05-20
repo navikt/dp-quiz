@@ -2,7 +2,6 @@ package no.nav.dagpenger.model.unit.marshalling
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
@@ -39,6 +38,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class SøkerJsonBuilderTest {
@@ -82,19 +82,33 @@ internal class SøkerJsonBuilderTest {
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertMetadata(it)
             assertAntallSeksjoner(1, it)
-            assertUbesvartFaktum("seksjon1", it)
+            val fakta = it.finnSeksjon("seksjon1")["fakta"]
+            fakta[0].assertFaktaAsJson("1", "boolean", "f1", listOf("søker"))
         }
 
         søknadprosess.boolsk(1).besvar(true)
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertAntallSeksjoner(1, it)
-            assertUbesvartFaktum("seksjon1", it)
-            assertBesvarteFakta(1, "seksjon1", it)
+
+            assertAntallSeksjoner(1, it)
+            val fakta = it.finnSeksjon("seksjon1")["fakta"]
+            fakta[0].assertFaktaAsJson("1", "boolean", "f1", listOf("søker")) { svar ->
+                assertEquals("true", svar.asText())
+            }
+            fakta[1].assertFaktaAsJson("3", "boolean", "f3", listOf("søker"))
         }
 
         søknadprosess.boolsk(3).besvar(true)
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertAntallSeksjoner(1, it)
+            val fakta = it.finnSeksjon("seksjon1")["fakta"]
+            fakta[0].assertFaktaAsJson("1", "boolean", "f1", listOf("søker")) { svar ->
+                assertEquals("true", svar.asText())
+            }
+            fakta[1].assertFaktaAsJson("3", "boolean", "f3", listOf("søker")) { svar ->
+                assertEquals("true", svar.asText())
+            }
+            fakta[2].assertFaktaAsJson("5", "boolean", "f5", listOf("søker"))
             assertUbesvartFaktum("seksjon1", it)
             assertBesvarteFakta(2, "seksjon1", it)
         }
@@ -102,6 +116,24 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.boolsk(5).besvar(true)
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertAntallSeksjoner(2, it)
+            val seksjon1Fakta = it.finnSeksjon("seksjon1")["fakta"]
+            seksjon1Fakta[0].assertFaktaAsJson("1", "boolean", "f1", listOf("søker")) { svar ->
+                assertEquals("true", svar.asText())
+            }
+            seksjon1Fakta[1].assertFaktaAsJson("3", "boolean", "f3", listOf("søker")) { svar ->
+                assertEquals("true", svar.asText())
+            }
+            seksjon1Fakta[2].assertFaktaAsJson("5", "boolean", "f5", listOf("søker")) { svar ->
+                assertEquals("true", svar.asText())
+            }
+            val seksjon2Fakta = it.finnSeksjon("seksjon2")["fakta"]
+            seksjon2Fakta[0].assertGeneratorFaktaAsJson(
+                "67", "generator", "f67", listOf("søker"),
+                assertTemplates = listOf(
+                    { it.assertFaktaAsJson("6", "int", "f6", listOf("søker")) },
+                    { it.assertFaktaAsJson("7", "boolean", "f7", listOf("søker")) },
+                )
+            )
             assertBesvarteFakta(3, "seksjon1", it)
             assertUbesvartFaktum("seksjon2", it)
         }
@@ -112,6 +144,14 @@ internal class SøkerJsonBuilderTest {
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertAntallSeksjoner(2, it)
             assertBesvarteFakta(1, "seksjon2", it)
+            val seksjon2Fakta = it.finnSeksjon("seksjon2")["fakta"]
+            seksjon2Fakta[0].assertGeneratorFaktaAsJson(
+                "67", "generator", "f67", listOf("søker"),
+                assertTemplates = listOf(
+                    { it.assertFaktaAsJson("6", "int", "f6", listOf("søker")) },
+                    { it.assertFaktaAsJson("7", "boolean", "f7", listOf("søker")) },
+                )
+            )
             assertBesvartGeneratorFaktum(2, "f67", "seksjon2", it)
             assertUbesvartGeneratorFaktum("f67", "seksjon2", it)
         }
@@ -128,7 +168,12 @@ internal class SøkerJsonBuilderTest {
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertAntallSeksjoner(2, it)
             assertBesvarteFakta(1, "seksjon2", it)
-            assertUbesvartGeneratorFaktum(forventetAntall = 0, generatorFaktumNavn = "f67", seksjon = "seksjon2", søkerJson = it)
+            assertUbesvartGeneratorFaktum(
+                forventetAntall = 0,
+                generatorFaktumNavn = "f67",
+                seksjon = "seksjon2",
+                søkerJson = it
+            )
             assertBesvartGeneratorFaktum(4, "f67", "seksjon2", it)
             assertIkkeFerdig(it)
         }
@@ -147,17 +192,40 @@ internal class SøkerJsonBuilderTest {
 
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertAntallSeksjoner(4, it)
-            val generatorSeksjon = it["seksjoner"].find { seksjon -> seksjon["beskrivendeId"].asText() == "seksjon3" }!!
-            val templates = generatorSeksjon["fakta"][0]["templates"]
-            assertEquals(2, templates.size())
-            assertEquals(listOf("f17.envalg1", "f17.envalg2"), templates[0]["gyldigeValg"].map { it.asText() })
-            assertEquals(listOf("f18.flervalg1", "f18.flervalg2"), templates[1]["gyldigeValg"].map { it.asText() })
-            assertUbesvartGeneratorFaktum(forventetAntall = 1, generatorFaktumNavn = "f1718", seksjon = "seksjon3", søkerJson = it)
+            val generatorFakta = it.finnSeksjon("seksjon3")["fakta"]
+            generatorFakta[0].assertGeneratorFaktaAsJson(
+                "1718", "generator", "f1718", listOf("søker"),
+                assertTemplates = listOf(
+                    {
+                        it.assertValgFaktaAsJson(
+                            "17",
+                            "envalg",
+                            "f17",
+                            listOf("søker"),
+                            expectedGyldigeValg = listOf("envalg1", "envalg2")
+                        )
+                    },
+                    {
+                        it.assertValgFaktaAsJson(
+                            "18",
+                            "flervalg",
+                            "f18",
+                            listOf("søker"),
+                            expectedGyldigeValg = listOf("flervalg1", "flervalg2")
+                        )
+                    },
+                )
+            )
+            assertUbesvartGeneratorFaktum(
+                forventetAntall = 1,
+                generatorFaktumNavn = "f1718",
+                seksjon = "seksjon3",
+                søkerJson = it
+            )
         }
 
         søknadprosess.envalg("17.1").besvar(Envalg("f17.envalg1"))
         søknadprosess.flervalg("18.1").besvar(Flervalg("f18.flervalg2"))
-
 
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertFerdig(it)
@@ -195,7 +263,6 @@ internal class SøkerJsonBuilderTest {
             }
         }
         val generatorSubsumsjon67 = prototypeSøknad.generator(67) med deltre
-
 
         val generatorSubsumsjon1718 = prototypeSøknad.generator(1718) med "Besvarte valg".deltre {
             "alle må være besvarte".alle(
@@ -298,7 +365,12 @@ internal class SøkerJsonBuilderTest {
         assertThrows<AssertionError> { assertFerdig(søkerJson) }
     }
 
-    private fun assertBesvartGeneratorFaktum(forventetAntall: Int, generatorFaktumNavn: String, seksjon: String, søkerJson: ObjectNode) {
+    private fun assertBesvartGeneratorFaktum(
+        forventetAntall: Int,
+        generatorFaktumNavn: String,
+        seksjon: String,
+        søkerJson: ObjectNode
+    ) {
         assertEquals(
             forventetAntall,
             søkerJson["seksjoner"].find { it["beskrivendeId"].asText() == seksjon }?.get("fakta")
@@ -308,7 +380,12 @@ internal class SøkerJsonBuilderTest {
         )
     }
 
-    private fun assertUbesvartGeneratorFaktum(generatorFaktumNavn: String, seksjon: String, søkerJson: ObjectNode, forventetAntall: Int = 1) {
+    private fun assertUbesvartGeneratorFaktum(
+        generatorFaktumNavn: String,
+        seksjon: String,
+        søkerJson: ObjectNode,
+        forventetAntall: Int = 1
+    ) {
         assertEquals(
             forventetAntall,
             søkerJson["seksjoner"].find { it["beskrivendeId"].asText() == seksjon }?.get("fakta")
