@@ -40,19 +40,30 @@ abstract class SøknadBesvarer {
     ) {
         val søknadsId = triggNySøknadsprosess(førsteEvent)
         block { faktumId: Int, svar: Any ->
-            when (svar) {
-                is Inntekt -> besvarInntekt(søknadsId, faktumId, svar)
-                is Periode -> besvarPeriode(søknadsId, faktumId, svar)
-                is Tekst -> besvarTekst(søknadsId, faktumId, svar)
-                is Envalg, is Flervalg -> besvarValg(søknadsId, faktumId, svar as Valg)
-                is Dokument -> besvarDokument(søknadsId, faktumId, svar)
-                is List<*> -> besvarGenerator(søknadsId, faktumId, svar as List<List<Pair<String, Any>>>)
-                is Land -> besvarLand(søknadsId, faktumId, svar)
-                else -> besvar(søknadsId, faktumId, svar)
-            }
+            besvar(søknadsId, faktumId, svar)
         }
     }
+    protected fun besvar(søknadsId: String, faktumId: Int, svar: Any) = when (svar) {
+        is Inntekt -> besvarInntekt(søknadsId, faktumId, svar)
+        is Periode -> besvarPeriode(søknadsId, faktumId, svar)
+        is Tekst -> besvarTekst(søknadsId, faktumId, svar)
+        is Envalg, is Flervalg -> besvarValg(søknadsId, faktumId, svar as Valg)
+        is Dokument -> besvarDokument(søknadsId, faktumId, svar)
+        is List<*> -> besvarGenerator(søknadsId, faktumId, svar as List<List<Pair<String, Any>>>)
+        is Land -> besvarLand(søknadsId, faktumId, svar)
+        else -> besvarSimpeltFaktum(søknadsId, faktumId, svar)
+    }
 
+    protected fun withSøknadsId(
+        søknadsId: UUID = UUID.randomUUID(),
+        block: (
+            besvar: (faktumId: Int, svar: Any) -> Unit,
+        ) -> Unit
+    ) {
+        block { faktumId: Int, svar: Any ->
+            besvar(søknadsId.toString(), faktumId, svar)
+        }
+    }
     protected fun besvarDokument(søknadsId: String, faktumId: Int, svar: Dokument) {
         //language=JSON
         val message = svar.reflection { lastOppTidsstempel, urn: String ->
@@ -76,7 +87,7 @@ abstract class SøknadBesvarer {
         testRapid.sendTestMessage(message)
     }
 
-    protected fun besvar(søknadsId: String, faktumId: Int, svar: Any) {
+    private fun besvarSimpeltFaktum(søknadsId: String, faktumId: Int, svar: Any) {
         //language=JSON
         val message = """{
               "søknad_uuid": "$søknadsId",
