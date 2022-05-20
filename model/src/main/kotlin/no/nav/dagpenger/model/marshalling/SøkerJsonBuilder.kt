@@ -191,9 +191,10 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             avhengigeFakta: Set<Faktum<*>>,
             avhengerAvFakta: Set<Faktum<*>>,
             roller: Set<Rolle>,
-            clazz: Class<R>
+            clazz: Class<R>,
+            gyldigevalg: GyldigeValg?
         ) {
-            lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller)
+            lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigevalg)
         }
 
         override fun <R : Comparable<R>> visitUtenSvar(

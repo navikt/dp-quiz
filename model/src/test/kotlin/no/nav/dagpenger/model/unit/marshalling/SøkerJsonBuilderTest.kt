@@ -1,12 +1,17 @@
 package no.nav.dagpenger.model.unit.marshalling
 
 import com.fasterxml.jackson.databind.node.ObjectNode
+import no.nav.dagpenger.model.factory.BaseFaktumFactory
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Dokument
+import no.nav.dagpenger.model.faktum.Envalg
+import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
@@ -35,7 +40,7 @@ import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class SøkerJsonBuilderTest {
+internal class SøkerJsonBuilderTest {
 
     private lateinit var prototypeSøknad: Søknad
 
@@ -60,7 +65,10 @@ class SøkerJsonBuilderTest {
             boolsk faktum "f13" id 13,
             boolsk faktum "f14" id 14,
             dokument faktum "f15" id 15 avhengerAv 5,
-            boolsk faktum "f16" id 16 avhengerAv 15
+            boolsk faktum "f16" id 16 avhengerAv 15,
+            envalg faktum "f17" id 17 med "envalg1" med "envalg2",
+            flervalg faktum "f18" id 18 med "flervalg1" med "flervalg2",
+            heltall faktum "f1718" id 1718 genererer 17 og 18,
         )
     }
 
@@ -134,6 +142,22 @@ class SøkerJsonBuilderTest {
 
         søknadprosess.dokument(15).besvar(Dokument(LocalDate.now(), "urn:nav:1234"))
 
+        søknadprosess.generator(1718).besvar(1)
+
+        SøkerJsonBuilder(søknadprosess).resultat().also {
+            assertAntallSeksjoner(4, it)
+            val generatorSeksjon = it["seksjoner"].find { seksjon -> seksjon["beskrivendeId"].asText() == "seksjon3" }!!
+            val templates = generatorSeksjon["fakta"][0]["templates"]
+            assertEquals(2, templates.size())
+            assertEquals(listOf("f17.envalg1", "f17.envalg2"), templates[0]["gyldigeValg"].map { it.asText() })
+            assertEquals(listOf("f18.flervalg1", "f18.flervalg2"), templates[1]["gyldigeValg"].map { it.asText() })
+            assertUbesvartGeneratorFaktum(forventetAntall = 1, generatorFaktumNavn = "f1718", seksjon = "seksjon3", søkerJson = it)
+        }
+
+        søknadprosess.envalg("17.1").besvar(Envalg("f17.envalg1"))
+        søknadprosess.flervalg("18.1").besvar(Flervalg("f18.flervalg2"))
+
+
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertFerdig(it)
         }
@@ -147,6 +171,14 @@ class SøkerJsonBuilderTest {
             }
         }
         val generatorSubsumsjon67 = prototypeSøknad.generator(67) med deltre
+
+
+        val generatorSubsumsjon1718 = prototypeSøknad.generator(1718) med "Besvarte valg".deltre {
+            "alle må være besvarte".alle(
+                prototypeSøknad.envalg(17).utfylt(),
+                prototypeSøknad.envalg(18).utfylt(),
+            )
+        }
 
         val regeltre = "regel" deltre {
             "alle i søknaden skal være besvart".alle(
@@ -162,7 +194,7 @@ class SøkerJsonBuilderTest {
                 "alle i seksjon 2".alle(
                     generatorSubsumsjon67
                 ),
-                "NAV-systemer vil svare automatsik på følgende fakta".alle(
+                "NAV-systemer vil svare automatisk på følgende fakta".alle(
                     prototypeSøknad.dato(8).utfylt(),
                     prototypeSøknad.dato(9).utfylt(),
                 ),
@@ -170,7 +202,10 @@ class SøkerJsonBuilderTest {
                     prototypeSøknad.boolsk(5) er true hvisOppfylt {
                         prototypeSøknad.boolsk(16) dokumenteresAv prototypeSøknad.dokument(15)
                     }
-                )
+                ),
+                "Generator med valg".alle(
+                    generatorSubsumsjon1718
+                ),
             )
         }
         return regeltre
@@ -204,6 +239,13 @@ class SøkerJsonBuilderTest {
                 "dokumentasjon",
                 Rolle.søker,
                 prototypeSøknad.dokument(15)
+            ),
+            Seksjon(
+                "seksjon3",
+                Rolle.søker,
+                prototypeSøknad.generator(1718),
+                prototypeSøknad.envalg(17),
+                prototypeSøknad.flervalg(18),
             ),
             Seksjon(
                 "saksbehandler godkjenning",

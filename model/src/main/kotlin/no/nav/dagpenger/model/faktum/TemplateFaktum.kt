@@ -38,7 +38,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
 
     override fun accept(visitor: FaktumVisitor) {
         faktumId.accept(visitor)
-        visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, roller, clazz)
+        visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, roller, clazz, gyldigevalg)
     }
 
     override fun add(seksjon: Seksjon) =
