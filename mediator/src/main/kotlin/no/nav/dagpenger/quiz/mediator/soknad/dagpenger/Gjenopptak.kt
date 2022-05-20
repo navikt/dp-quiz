@@ -21,6 +21,6 @@ object Gjenopptak : DslFaktaseksjon {
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("gjenopptak", Rolle.søker, *this.databaseIder()))
 
     fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
-        boolsk(`mottatt dagpenger siste 12 mnd`).utfylt()
+        envalg(`mottatt dagpenger siste 12 mnd`).utfylt()
     }
 }
