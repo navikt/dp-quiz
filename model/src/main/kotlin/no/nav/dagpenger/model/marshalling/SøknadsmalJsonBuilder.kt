@@ -20,7 +20,7 @@ import no.nav.dagpenger.model.visitor.FaktumVisitor
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.util.UUID
 
-class SøknadsmalVisitorJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
+class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
 
     companion object {
         private val mapper = ObjectMapper()

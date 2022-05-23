@@ -14,7 +14,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.marshalling.SøknadsmalVisitorJsonBuilder
+import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -26,7 +26,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-internal class SøknadsmalVisitorJsonBuilderTest {
+internal class SøknadsmalJsonBuilderTest {
     private lateinit var prototypeSøknad: Søknad
 
     @BeforeEach
@@ -112,7 +112,7 @@ internal class SøknadsmalVisitorJsonBuilderTest {
         val regel = søkerSubsumsjon()
         val søknadprosess = søknadprosess(regel)
 
-        val malJson = SøknadsmalVisitorJsonBuilder(søknadprosess).resultat()
+        val malJson = SøknadsmalJsonBuilder(søknadprosess).resultat()
 
         assertEquals(0, malJson["versjon_id"].asInt())
         assertEquals("test", malJson["versjon_navn"].asText())
