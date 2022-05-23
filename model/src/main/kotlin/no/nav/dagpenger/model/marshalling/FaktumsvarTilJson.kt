@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
+import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Flervalg
-import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Land
@@ -60,7 +60,7 @@ object FaktumsvarTilJson {
 
     private fun Inntekt.asJsonNode() = reflection { årlig, _, _, _ -> årlig }
 
-    fun <Boolean : Comparable<Boolean>> GrunnleggendeFaktum<Boolean>.lagBeskrivendeIderForGyldigeBoolskeValg() =
+    fun <Boolean : Comparable<Boolean>> Faktum<Boolean>.lagBeskrivendeIderForGyldigeBoolskeValg() =
         GyldigeValg("$navn.true", "$navn.false")
 
     fun Class<*>.isBoolean() = simpleName.lowercase() == "boolean"

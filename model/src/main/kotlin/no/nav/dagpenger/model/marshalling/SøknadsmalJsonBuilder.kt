@@ -123,7 +123,11 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
             clazz: Class<R>,
             gyldigevalg: GyldigeValg?
         ) {
-            lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigevalg)
+            var overstyrbareGyldigeValg = gyldigevalg
+            if (clazz.isBoolean()) {
+                overstyrbareGyldigeValg = faktum.lagBeskrivendeIderForGyldigeBoolskeValg()
+            }
+            lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, overstyrbareGyldigeValg)
         }
 
         override fun <R : Comparable<R>> visitUtenSvar(

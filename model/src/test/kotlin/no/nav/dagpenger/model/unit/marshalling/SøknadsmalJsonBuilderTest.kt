@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.helpers.toPrettyJson
 import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -47,7 +48,8 @@ internal class SøknadsmalJsonBuilderTest {
             dato faktum "dato12" id 12,
             inntekt faktum "inntekt13" id 13,
             envalg faktum "envalg18" id 18 med "valg1" med "valg2",
-            heltall faktum "generator14" id 14 genererer 12 og 13 og 18,
+            boolsk faktum "boolsk19" id 19,
+            heltall faktum "generator14" id 14 genererer 12 og 13 og 18 og 19,
             tekst faktum "tekst15" id 15,
             periode faktum "periode16" id 16,
             periode faktum "pågåendePeriode17" id 17
@@ -82,6 +84,7 @@ internal class SøknadsmalJsonBuilderTest {
                 prototypeSøknad.dato(12),
                 prototypeSøknad.inntekt(13),
                 prototypeSøknad.envalg(18),
+                prototypeSøknad.boolsk(19),
                 prototypeSøknad.generator(14),
             ),
             Seksjon(
@@ -113,6 +116,7 @@ internal class SøknadsmalJsonBuilderTest {
         val søknadprosess = søknadprosess(regel)
 
         val malJson = SøknadsmalJsonBuilder(søknadprosess).resultat()
+        println(malJson.toPrettyJson())
 
         assertEquals(0, malJson["versjon_id"].asInt())
         assertEquals("test", malJson["versjon_navn"].asText())
@@ -169,6 +173,7 @@ internal class SøknadsmalJsonBuilderTest {
                 { it.assertFaktaAsJson("12", "localdate", "dato12", listOf("søker")) },
                 { it.assertFaktaAsJson("13", "inntekt", "inntekt13", listOf("søker")) },
                 { it.assertValgFaktaAsJson("18", "envalg", "envalg18", listOf("søker"), listOf("valg1", "valg2")) },
+                { it.assertValgFaktaAsJson("19", "boolean", "boolsk19", listOf("søker"), listOf("true", "false")) },
             )
         )
 
