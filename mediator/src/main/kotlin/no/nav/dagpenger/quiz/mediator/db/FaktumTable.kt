@@ -137,7 +137,7 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        gyldigevalg: GyldigeValg?
+        gyldigeValg: GyldigeValg?
     ) {
         skrivFaktum(faktum, clazz)
         avhengigheter[faktum] = avhengigeFakta

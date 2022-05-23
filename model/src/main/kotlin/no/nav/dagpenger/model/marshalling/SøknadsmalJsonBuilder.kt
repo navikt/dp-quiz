@@ -121,9 +121,9 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
             avhengerAvFakta: Set<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>,
-            gyldigevalg: GyldigeValg?
+            gyldigeValg: GyldigeValg?
         ) {
-            var overstyrbareGyldigeValg = gyldigevalg
+            var overstyrbareGyldigeValg = gyldigeValg
             if (clazz.isBoolean()) {
                 overstyrbareGyldigeValg = faktum.lagBeskrivendeIderForGyldigeBoolskeValg()
             }

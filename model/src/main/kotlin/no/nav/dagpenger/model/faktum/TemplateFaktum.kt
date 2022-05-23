@@ -10,7 +10,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     avhengigeFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     avhengerAvFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     roller: MutableSet<Rolle> = mutableSetOf(),
-    private val gyldigevalg: GyldigeValg? = null
+    private val gyldigeValg: GyldigeValg? = null
 ) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private val seksjoner = mutableListOf<Seksjon>()
 
@@ -38,7 +38,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
 
     override fun accept(visitor: FaktumVisitor) {
         faktumId.accept(visitor)
-        visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, roller, clazz, gyldigevalg)
+        visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, roller, clazz, gyldigeValg)
     }
 
     override fun add(seksjon: Seksjon) =
@@ -54,7 +54,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
                 avhengerAvFakta.toList().deepCopy(indeks, søknad).toMutableSet(),
                 mutableSetOf(),
                 roller,
-                gyldigevalg
+                gyldigeValg
             ).also { søknad.add(it) }
     }
 
@@ -75,7 +75,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
                         avhengerAvFakta.toList().deepCopy(indeks, søknad).toMutableSet(),
                         mutableSetOf(),
                         roller,
-                        gyldigevalg
+                        gyldigeValg
                     )
                 )
             }
@@ -89,7 +89,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
         val avhengigheter = avhengigeFakta.map { it.bygg(byggetFakta) }.toMutableSet()
-        return TemplateFaktum(faktumId, navn, clazz, avhengigheter, avhengerAvFakta, roller, gyldigevalg)
+        return TemplateFaktum(faktumId, navn, clazz, avhengigheter, avhengerAvFakta, roller, gyldigeValg)
             .also { byggetFakta[faktumId] = it }
     }
 }

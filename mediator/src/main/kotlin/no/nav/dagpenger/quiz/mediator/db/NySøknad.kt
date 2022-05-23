@@ -109,7 +109,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        gyldigevalg: GyldigeValg?
+        gyldigeValg: GyldigeValg?
     ) {
         skrivFaktumVerdi(faktum)
     }

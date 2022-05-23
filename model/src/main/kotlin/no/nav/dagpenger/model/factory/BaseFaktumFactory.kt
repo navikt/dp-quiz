@@ -20,7 +20,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     private val navn: String
 ) : FaktumFactory<T>() {
     private val templateIder = mutableListOf<Int>()
-    private val gyldigevalg = mutableSetOf<String>()
+    private val gyldigeValg = mutableSetOf<String>()
 
     companion object {
         object boolsk {
@@ -70,7 +70,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 
     infix fun id(rootId: Int) = this.apply { this.rootId = rootId }
 
-    infix fun med(valg: String) = this.apply { gyldigevalg.add("$navn.$valg") }
+    infix fun med(valg: String) = this.apply { gyldigeValg.add("$navn.$valg") }
 
     @Suppress("UNCHECKED_CAST")
     override fun faktum(): Faktum<T> {
@@ -79,13 +79,13 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
                 faktumId = faktumId,
                 navn = navn,
                 clazz = clazz,
-                gyldigevalg = GyldigeValg(gyldigevalg)
+                gyldigeValg = GyldigeValg(gyldigeValg)
             ) as Faktum<T>
             Flervalg::class.java -> GrunnleggendeFaktum(
                 faktumId = faktumId,
                 navn = navn,
                 clazz = clazz,
-                gyldigevalg = GyldigeValg(gyldigevalg)
+                gyldigeValg = GyldigeValg(gyldigeValg)
             ) as Faktum<T>
             else -> GrunnleggendeFaktum(faktumId, navn, clazz)
         }

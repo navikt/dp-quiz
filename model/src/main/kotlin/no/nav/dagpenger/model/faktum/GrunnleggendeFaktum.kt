@@ -10,7 +10,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     avhengerAvFakta: MutableSet<Faktum<*>>,
     protected val godkjenner: MutableSet<Faktum<*>>,
     roller: MutableSet<Rolle>,
-    private val gyldigevalg: GyldigeValg? = null
+    private val gyldigeValg: GyldigeValg? = null
 ) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private var tilstand: Tilstand = Ukjent
     protected lateinit var gjeldendeSvar: R
@@ -18,7 +18,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     private data class Besvarer(val ident: String)
 
-    internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>, gyldigevalg: GyldigeValg? = null) : this(
+    internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>, gyldigeValg: GyldigeValg? = null) : this(
         faktumId = faktumId,
         navn = navn,
         clazz = clazz,
@@ -26,7 +26,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         avhengerAvFakta = mutableSetOf(),
         godkjenner = mutableSetOf(),
         roller = mutableSetOf(),
-        gyldigevalg = gyldigevalg
+        gyldigeValg = gyldigeValg
     )
 
     internal fun godkjenner(fakta: List<Faktum<*>>) = godkjenner.addAll(fakta)
@@ -35,7 +35,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     override fun besvar(r: R, besvarer: String?) = this.apply {
         when (r) {
-            is ValgteVerdier -> requireNotNull(gyldigevalg) { "Et valg faktum uten gyldigevalg?" }.sjekk(r)
+            is ValgteVerdier -> requireNotNull(gyldigeValg) { "Et valg faktum uten gyldigeValg?" }.sjekk(r)
         }
         super.besvar(r, besvarer)
         gjeldendeSvar = r
@@ -53,7 +53,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
 
-        return GrunnleggendeFaktum(faktumId, navn, clazz, mutableSetOf(), mutableSetOf(), mutableSetOf(), roller, gyldigevalg)
+        return GrunnleggendeFaktum(faktumId, navn, clazz, mutableSetOf(), mutableSetOf(), mutableSetOf(), roller, gyldigeValg)
             .also { nyttFaktum ->
                 byggetFakta[faktumId] = nyttFaktum
                 this.avhengigeFakta.forEach { nyttFaktum.avhengigeFakta.add(it.bygg(byggetFakta)) }
@@ -85,14 +85,14 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         if (tilstand.kode == kode) fakta.add(this)
     }
 
-    override fun tilTemplate() = TemplateFaktum(faktumId, navn, clazz, gyldigevalg = gyldigevalg)
+    override fun tilTemplate() = TemplateFaktum(faktumId, navn, clazz, gyldigeValg = gyldigeValg)
 
     protected open fun acceptUtenSvar(visitor: FaktumVisitor) {
-        visitor.visitUtenSvar(this, Ukjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz, gyldigevalg)
+        visitor.visitUtenSvar(this, Ukjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz, gyldigeValg)
     }
 
     protected open fun acceptMedSvar(visitor: FaktumVisitor) {
-        visitor.visitMedSvar(this, Kjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz, gjeldendeSvar, besvartAv?.ident, gyldigevalg)
+        visitor.visitMedSvar(this, Kjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz, gjeldendeSvar, besvartAv?.ident, gyldigeValg)
     }
 
     private interface Tilstand {

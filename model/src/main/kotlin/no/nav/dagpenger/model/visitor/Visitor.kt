@@ -62,7 +62,7 @@ interface FaktumVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        gyldigevalg: GyldigeValg?
+        gyldigeValg: GyldigeValg?
     ) {
     }
 
