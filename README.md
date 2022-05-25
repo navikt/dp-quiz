@@ -101,3 +101,8 @@ FROM faktum_verdi
          LEFT JOIN navn n on faktum_verdi.faktum_id = n.id
 ORDER BY indeks;
 ```
+
+## Oppgradering av gradle wrapper
+Finn nyeste versjon av gradle her: https://gradle.org/releases/
+Kjør så følgende kommando:
+```./gradlew wrapper --gradle-version $gradleVersjon```
