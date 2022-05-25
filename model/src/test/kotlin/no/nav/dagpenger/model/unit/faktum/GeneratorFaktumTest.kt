@@ -18,6 +18,7 @@ import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.deltre
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -116,5 +117,32 @@ class GeneratorFaktumTest {
         søknadprosess.dato("3.2").besvar(8.januar)
         søknadprosess.dato(4).besvar(5.januar)
         assertEquals(true, søknadprosess.rootSubsumsjon.resultat())
+    }
+
+    @Test
+    fun `Templatefaktum innenfor generatorfaktum kan ikke være avhengig av et annet templatefaktum`() {
+        val søknadPrototype = Søknad(
+            testversjon,
+            heltall faktum "periode antall" id 1 genererer 2 og 3,
+            dato faktum "fom" id 2,
+            dato faktum "tom" id 3 avhengerAv 2, // Dette forårsaker feilen
+            dato faktum "ønsket dato" id 4
+        )
+        val prototypeSubsumsjon = søknadPrototype generator 1 har "periode".deltre {
+            søknadPrototype.dato(4) mellom søknadPrototype.dato(2) og søknadPrototype.dato(3)
+        }
+
+        val prototypeSøknadprosess = Søknadprosess(
+            Seksjon("periode antall", Rolle.nav, søknadPrototype generator 1),
+            Seksjon("periode", Rolle.nav, søknadPrototype dato 2, søknadPrototype dato 3),
+            Seksjon("søknadsdato", Rolle.søker, søknadPrototype dato 4),
+        )
+        søknadprosessTestBygger = Versjon.Bygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
+        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
+
+        assertThrows<StackOverflowError> {
+            // Får først error når man besvarer faktum, ikke når man bygger faktum avhengighetene
+            søknadprosess.generator(1).besvar(2)
+        }
     }
 }
