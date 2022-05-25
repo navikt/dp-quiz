@@ -17,12 +17,13 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class ArbeidsforholdTest {
-    private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Arbeidsforhold.fakta())
+    private val fakta = Arbeidsforhold.fakta() + Gjenopptak.fakta()
+    private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *fakta)
     private lateinit var søknadprosess: Søknadprosess
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        Arbeidsforhold.verifiserFeltsammensetting(48, 385176)
+        Arbeidsforhold.verifiserFeltsammensetting(54, 433485)
     }
 
     @BeforeEach
@@ -31,8 +32,35 @@ internal class ArbeidsforholdTest {
     }
 
     @Test
+    fun `arbeidsforhold ved gjenopptak av dagpenger`() {
+        `besvar innledende spørsmål om arbeidsforhold for gjenopptak`()
+        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak endringer i arbeidsforhold siden sist`).besvar(false)
+        assertEquals(true, søknadprosess.resultat())
+
+        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak endringer i arbeidsforhold siden sist`).besvar(true)
+        assertEquals(null, søknadprosess.resultat())
+
+        `besvar spørsmål for et arbeidsforhold`()
+
+        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak onsker ny beregning av dagpenger`).besvar(false)
+        assertEquals(true, søknadprosess.resultat())
+
+        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak onsker ny beregning av dagpenger`).besvar(true)
+        assertEquals(null, søknadprosess.resultat())
+
+        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak onsker aa faa fastsatt ny vanlig arbeidstid`).besvar(false)
+        assertEquals(true, søknadprosess.resultat())
+
+        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak onsker aa faa fastsatt ny vanlig arbeidstid`).besvar(true)
+        assertEquals(null, søknadprosess.resultat())
+
+        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
+        assertEquals(true, søknadprosess.resultat())
+    }
+
+    @Test
     fun `ikke endret arbeidsforhold`() {
-        `besvar innledende info om arbeidsforhold`()
+        `besvar innledende spørsmål om arbeidsforhold`()
 
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret"))
@@ -51,7 +79,7 @@ internal class ArbeidsforholdTest {
 
     @Test
     fun avskjediget() {
-        `besvar innledende info om arbeidsforhold`()
+        `besvar innledende spørsmål om arbeidsforhold`()
 
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.avskjediget"))
@@ -63,7 +91,7 @@ internal class ArbeidsforholdTest {
 
     @Test
     fun `sagt opp av arbeidsgiver`() {
-        `besvar innledende info om arbeidsforhold`()
+        `besvar innledende spørsmål om arbeidsforhold`()
 
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
@@ -82,7 +110,7 @@ internal class ArbeidsforholdTest {
 
     @Test
     fun `Arbeidsgiver er konkurs`() {
-        `besvar innledende info om arbeidsforhold`()
+        `besvar innledende spørsmål om arbeidsforhold`()
 
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs"))
@@ -113,7 +141,7 @@ internal class ArbeidsforholdTest {
 
     @Test
     fun `Kontrakten er utgått`() {
-        `besvar innledende info om arbeidsforhold`()
+        `besvar innledende spørsmål om arbeidsforhold`()
 
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt"))
@@ -142,7 +170,7 @@ internal class ArbeidsforholdTest {
 
     @Test
     fun `Sagt opp selv`() {
-        `besvar innledende info om arbeidsforhold`()
+        `besvar innledende spørsmål om arbeidsforhold`()
 
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv"))
@@ -156,7 +184,7 @@ internal class ArbeidsforholdTest {
 
     @Test
     fun `Redusert arbeidstid`() {
-        `besvar innledende info om arbeidsforhold`()
+        `besvar innledende spørsmål om arbeidsforhold`()
 
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid"))
@@ -172,7 +200,7 @@ internal class ArbeidsforholdTest {
 
     @Test
     fun permittert() {
-        `besvar innledende info om arbeidsforhold`()
+        `besvar innledende spørsmål om arbeidsforhold`()
 
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
@@ -190,7 +218,25 @@ internal class ArbeidsforholdTest {
         assertEquals(true, søknadprosess.resultat())
     }
 
-    private fun `besvar innledende info om arbeidsforhold`() {
+    private fun `besvar innledende spørsmål om arbeidsforhold for gjenopptak`() {
+        søknadprosess.boolsk(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(true)
+        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak jobbet siden sist du fikk dagpenger`).besvar(true)
+        søknadprosess.tekst(Arbeidsforhold.`gjenopptak aarsak til stans av dagpenger`).besvar(Tekst("Årsak"))
+        søknadprosess.dato(Arbeidsforhold.`gjenopptak soknadsdato`).besvar(1.januar)
+    }
+
+    private fun `besvar spørsmål for et arbeidsforhold`() {
+        søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(1)
+        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))
+        søknadprosess.land("${Arbeidsforhold.`arbeidsforhold land`}.1").besvar(Land("NOR"))
+        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
+            .besvar(Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret"))
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold kjent antall timer jobbet`}.1").besvar(false)
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold har tilleggsopplysninger`}.1").besvar(false)
+    }
+
+    private fun `besvar innledende spørsmål om arbeidsforhold`() {
+        søknadprosess.boolsk(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(false)
         søknadprosess.dato(Arbeidsforhold.`dagpenger soknadsdato`).besvar(1.januar)
         søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
         søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(1)

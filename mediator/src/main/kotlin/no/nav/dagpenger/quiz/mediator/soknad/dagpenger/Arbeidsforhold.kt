@@ -19,6 +19,7 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.bareEnAv
 import no.nav.dagpenger.model.subsumsjon.deltre
+import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
@@ -72,6 +73,12 @@ object Arbeidsforhold : DslFaktaseksjon {
     const val `arbeidsforhold arbeidsdager siste rotasjon` = 8046
     const val `arbeidsforhold fridager siste rotasjon` = 8047
     const val `arbeidsforhold har tilleggsopplysninger` = 8048
+    const val `gjenopptak jobbet siden sist du fikk dagpenger` = 8049
+    const val `gjenopptak aarsak til stans av dagpenger` = 8050
+    const val `gjenopptak soknadsdato` = 8051
+    const val `gjenopptak endringer i arbeidsforhold siden sist` = 8052
+    const val `gjenopptak onsker ny beregning av dagpenger` = 8053
+    const val `gjenopptak onsker aa faa fastsatt ny vanlig arbeidstid` = 8054
 
     override val fakta = listOf(
         dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger soknadsdato`,
@@ -193,26 +200,47 @@ object Arbeidsforhold : DslFaktaseksjon {
             med "svar.kontrakt-utgaatt"
             med "svar.sagt-opp-selv"
             med "svar.redusert-arbeidstid"
-            med "svar.permittert" id `arbeidsforhold endret`
+            med "svar.permittert" id `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.gjenopptak.jobbet-siden-sist" id `gjenopptak jobbet siden sist du fikk dagpenger`,
+        tekst faktum "faktum.arbeidsforhold.gjenopptak.aarsak-til-stans" id `gjenopptak aarsak til stans av dagpenger`,
+        dato faktum "faktum.arbeidsforhold.gjenopptak.soknadsdato-gjenopptak" id `gjenopptak soknadsdato`,
+        boolsk faktum "faktum.arbeidsforhold.gjenopptak.endringer-i-arbeidsforhold" id `gjenopptak endringer i arbeidsforhold siden sist`,
+        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-ny-beregning" id `gjenopptak onsker ny beregning av dagpenger`,
+        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid" id `gjenopptak onsker aa faa fastsatt ny vanlig arbeidstid`,
     )
 
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *this.databaseIder()))
 
     fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
-        "arbeidsforhold".alle(
-            søknadsdato(),
-            `type arbeidstid`(),
-            `alle arbeidsforhold`()
-        )
+        `har mottat dagpenger siste 12 mnd`() hvisOppfylt {
+            `arbeidsforhold gjenopptak`()
+        } hvisIkkeOppfylt {
+            arbeidsforhold()
+        }
     }
 
-    private fun Søknad.søknadsdato() = dato(`dagpenger soknadsdato`).utfylt()
+    private fun Søknad.`har mottat dagpenger siste 12 mnd`() =
+        boolsk(Gjenopptak.`mottatt dagpenger siste 12 mnd`) er true
 
-    private fun Søknad.`type arbeidstid`() = envalg(`type arbeidstid`).utfylt()
+    private fun Søknad.`arbeidsforhold gjenopptak`() =
+        "spørsmål om gjenopptaket".alle(
+            boolsk(`gjenopptak jobbet siden sist du fikk dagpenger`).utfylt(),
+            tekst(`gjenopptak aarsak til stans av dagpenger`).utfylt(),
+            dato(`gjenopptak soknadsdato`).utfylt(),
+            "hatt endringer i arbeidsforhold siden sist eller ikke".minstEnAv(
+                boolsk(`gjenopptak endringer i arbeidsforhold siden sist`) er false,
+                boolsk(`gjenopptak endringer i arbeidsforhold siden sist`) er true hvisOppfylt {
+                    "arbeidsforhold og spørsmål om beregning og fastsatt ny arbeidstid".alle(
+                        `alle arbeidsforhold`(),
+                        `ønsker ny beregning og fastsatt ny arbeidstid eller ikke`()
+                    )
+                }
+            )
+        )
 
     private fun Søknad.`alle arbeidsforhold`() =
         generator(arbeidsforhold) med "en eller flere arbeidsforhold".deltre {
-            "info om arbeidsforholdet".alle(
+            "spørsmål om arbeidsforholdet".alle(
                 tekst(`arbeidsforhold navn bedrift`).utfylt(),
                 land(`arbeidsforhold land`).utfylt(),
                 "hvordan arbeidsforholdet har endret seg".bareEnAv(
@@ -227,6 +255,30 @@ object Arbeidsforhold : DslFaktaseksjon {
                 )
             )
         }
+
+    private fun Søknad.`ønsker ny beregning og fastsatt ny arbeidstid eller ikke`() =
+        "ønsker ny beregning av dagpenger eller ikke".minstEnAv(
+            boolsk(`gjenopptak onsker ny beregning av dagpenger`) er false,
+            boolsk(`gjenopptak onsker ny beregning av dagpenger`) er true hvisOppfylt {
+                "ønsker å få fastsatt ny vanlig arbeidstid eller ikke".minstEnAv(
+                    boolsk(`gjenopptak onsker aa faa fastsatt ny vanlig arbeidstid`) er false,
+                    boolsk(`gjenopptak onsker aa faa fastsatt ny vanlig arbeidstid`) er true hvisOppfylt {
+                        `type arbeidstid`()
+                    }
+                )
+            }
+        )
+
+    private fun Søknad.arbeidsforhold() =
+        "søknadsdato, type arbeidstid og alle arbeidsforhold".alle(
+            søknadsdato(),
+            `type arbeidstid`(),
+            `alle arbeidsforhold`()
+        )
+
+    private fun Søknad.søknadsdato() = dato(`dagpenger soknadsdato`).utfylt()
+
+    private fun Søknad.`type arbeidstid`() = envalg(`type arbeidstid`).utfylt()
 
     private fun Søknad.`ikke endret`() =
         envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret") hvisOppfylt {
