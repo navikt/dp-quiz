@@ -61,7 +61,7 @@ object FaktumsvarTilJson {
     private fun Inntekt.asJsonNode() = reflection { årlig, _, _, _ -> årlig }
 
     fun <Boolean : Comparable<Boolean>> Faktum<Boolean>.lagBeskrivendeIderForGyldigeBoolskeValg() =
-        GyldigeValg("$navn.true", "$navn.false")
+        GyldigeValg("$navn.svar.ja", "$navn.svar.nei")
 
     fun Class<*>.isBoolean() = simpleName.lowercase() == "boolean"
 }

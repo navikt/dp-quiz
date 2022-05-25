@@ -248,7 +248,7 @@ internal class SøkerJsonBuilderTest {
     }
 
     private fun JsonNode.assertBoolskFaktumHarGyldigeValg(expectedBaseBeskrivendeId: String) {
-        val expectedGyldigeValg = listOf("true", "false").map { "$expectedBaseBeskrivendeId.$it" }
+        val expectedGyldigeValg = listOf("svar.ja", "svar.nei").map { "$expectedBaseBeskrivendeId.$it" }
         val actual: List<String> = this.get("gyldigeValg").toSet().map { it.asText() }
         assertEquals(2, actual.size)
         Assertions.assertTrue(expectedGyldigeValg.containsAll<String>(actual))
