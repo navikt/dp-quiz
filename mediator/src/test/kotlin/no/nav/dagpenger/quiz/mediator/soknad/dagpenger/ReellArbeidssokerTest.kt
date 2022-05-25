@@ -29,11 +29,11 @@ internal class ReellArbeidssokerTest {
     }
 
     @Test
-    fun `Faktumavhengigheter deltid blir besvart og invalidert`() {
+    fun `Fakta om hvorfor deltid blir besvart`() {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *ReellArbeidssoker.fakta())
         val søknadprosess = søknad.testSøknadprosess(ReellArbeidssoker.regeltre(søknad))
 
-        `Besvar alt av deltidfakta`(søknadprosess)
+        `Besvar alle fakta hvorfor deltid`(søknadprosess)
 
         assertFaktaErBesvart(
             søknadprosess.boolsk(`Kan jobbe heltid`),
@@ -41,7 +41,28 @@ internal class ReellArbeidssokerTest {
             søknadprosess.tekst(`Skriv kort om situasjonen din`),
             søknadprosess.heltall(`Antall timer deltid du kan jobbe`)
         )
+    }
 
+    @Test
+    fun `Fakta om hvorfor ikke jobbe i hele Norge blir besvart`() {
+        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *ReellArbeidssoker.fakta())
+        val søknadprosess = søknad.testSøknadprosess(ReellArbeidssoker.regeltre(søknad))
+
+        `Besvar alle fakta hvorfor ikke jobbe i hele Norge`(søknadprosess)
+
+        assertFaktaErBesvart(
+            søknadprosess.boolsk(`Kan du jobbe i hele Norge`),
+            søknadprosess.flervalg(`Årsak kan ikke jobbe i hele Norge`),
+            søknadprosess.tekst(`Kort om hvorfor ikke jobbe hele norge`)
+        )
+    }
+
+    @Test
+    fun `Fakta om deltid blir riktig invalidert`() {
+        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *ReellArbeidssoker.fakta())
+        val søknadprosess = søknad.testSøknadprosess(ReellArbeidssoker.regeltre(søknad))
+
+        `Besvar alle fakta hvorfor deltid`(søknadprosess)
         søknadprosess.boolsk(`Kan jobbe heltid`).besvar(true)
 
         assertAvhengigeFaktaInvalideres(
@@ -50,12 +71,18 @@ internal class ReellArbeidssokerTest {
             søknadprosess.heltall(`Antall timer deltid du kan jobbe`)
         )
 
-        `Besvar alt av deltidfakta`(søknadprosess)
-
+        `Besvar alle fakta hvorfor deltid`(søknadprosess)
         søknadprosess.flervalg(`Årsak til kun deltid`).besvar(Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon"))
-        assertEquals(true, søknadprosess.flervalg(`Årsak til kun deltid`).erBesvart())
+
         assertAvhengigeFaktaInvalideres(
             søknadprosess.tekst(`Skriv kort om situasjonen din`),
+            søknadprosess.heltall(`Antall timer deltid du kan jobbe`)
+        )
+
+        `Besvar alle fakta hvorfor deltid`(søknadprosess)
+        søknadprosess.tekst(`Skriv kort om situasjonen din`).besvar(Tekst("Noe greier"))
+
+        assertAvhengigeFaktaInvalideres(
             søknadprosess.heltall(`Antall timer deltid du kan jobbe`)
         )
     }
@@ -137,13 +164,22 @@ internal class ReellArbeidssokerTest {
         )
     }
 
-    private fun `Besvar alt av deltidfakta`(søknadprosess: Søknadprosess) {
+    private fun `Besvar alle fakta hvorfor deltid`(søknadprosess: Søknadprosess) {
         søknadprosess.boolsk(`Kan jobbe heltid`).besvar(false)
         søknadprosess.flervalg(`Årsak til kun deltid`).besvar(
             Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon")
         )
         søknadprosess.tekst(`Skriv kort om situasjonen din`).besvar(Tekst("Jeg er omringet av maur"))
         søknadprosess.heltall(`Antall timer deltid du kan jobbe`).besvar(20)
+    }
+
+    private fun `Besvar alle fakta hvorfor ikke jobbe i hele Norge`(søknadprosess: Søknadprosess) {
+        `Besvar alle fakta hvorfor deltid`(søknadprosess)
+        søknadprosess.boolsk(`Kan du jobbe i hele Norge`).besvar(false)
+        søknadprosess.flervalg(`Årsak kan ikke jobbe i hele Norge`).besvar(
+            Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse", "faktum.ikke-jobbe-hele-norge.svar.annen-situasjon")
+        )
+        søknadprosess.tekst(`Kort om hvorfor ikke jobbe hele norge`).besvar(Tekst("Jeg er redd for hai"))
     }
 
     private fun assertFaktaErBesvart(vararg fakta: Faktum<*>) {

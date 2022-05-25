@@ -40,6 +40,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
             med "svar.annen-situasjon" id `Årsak til kun deltid` avhengerAv `Kan jobbe heltid`,
         heltall faktum "faktum.kun-deltid-aarsak-antall-timer" id `Antall timer deltid du kan jobbe` avhengerAv `Årsak til kun deltid` og `Skriv kort om situasjonen din`,
         tekst faktum "faktum.kort-om-hvorfor-kun-deltid" id `Skriv kort om situasjonen din` avhengerAv `Årsak til kun deltid`,
+
         boolsk faktum "faktum.jobbe-hele-norge" id `Kan du jobbe i hele Norge` avhengerAv `Kan jobbe heltid` og `Antall timer deltid du kan jobbe`,
         flervalg faktum "faktum.ikke-jobbe-hele-norge"
             med "svar.redusert-helse"
@@ -50,6 +51,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
             med "svar.har-fylt-60"
             med "svar.annen-situasjon" id `Årsak kan ikke jobbe i hele Norge` avhengerAv `Kan du jobbe i hele Norge`,
         tekst faktum "faktum.kort-om-hvorfor-ikke-jobbe-hele-norge" id `Kort om hvorfor ikke jobbe hele norge` avhengerAv `Årsak kan ikke jobbe i hele Norge`,
+
         boolsk faktum "faktum.alle-typer-arbeid" id `Kan ta alle typer arbeid` avhengerAv `Kan du jobbe i hele Norge` og `Kort om hvorfor ikke jobbe hele norge` og `Årsak kan ikke jobbe i hele Norge`,
         boolsk faktum "faktum.bytte-yrke-ned-i-lonn" id `Kan bytte yrke og eller gå ned i lønn` avhengerAv `Kan ta alle typer arbeid`
     )
