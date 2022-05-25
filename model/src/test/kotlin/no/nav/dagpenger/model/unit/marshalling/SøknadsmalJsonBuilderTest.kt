@@ -130,7 +130,7 @@ internal class SøknadsmalJsonBuilderTest {
             "boolean",
             "boolsk1",
             listOf("søker"),
-            listOf("true", "false")
+            listOf("svar.ja", "svar.nei")
         )
 
         førsteSeksjon["fakta"][1].assertFaktaAsJson("2", "int", "heltall2", listOf("søker"))
@@ -173,7 +173,7 @@ internal class SøknadsmalJsonBuilderTest {
                 { it.assertFaktaAsJson("12", "localdate", "dato12", listOf("søker")) },
                 { it.assertFaktaAsJson("13", "inntekt", "inntekt13", listOf("søker")) },
                 { it.assertValgFaktaAsJson("18", "envalg", "envalg18", listOf("søker"), listOf("valg1", "valg2")) },
-                { it.assertValgFaktaAsJson("19", "boolean", "boolsk19", listOf("søker"), listOf("true", "false")) },
+                { it.assertValgFaktaAsJson("19", "boolean", "boolsk19", listOf("søker"), listOf("svar.ja", "svar.nei")) },
             )
         )
 
