@@ -32,6 +32,21 @@ internal class ArbeidsforholdTest {
     }
 
     @Test
+    fun `Trenger ikke fylle inn arbeidsforhold når type arbeidstid er besvart med Ingen alternativer passer og det ikke er gjenopptak`() {
+        søknadprosess.boolsk(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(false)
+        søknadprosess.dato(Arbeidsforhold.`dagpenger soknadsdato`).besvar(1.januar)
+
+        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.varierende"))
+        assertEquals(null, søknadprosess.resultat())
+
+        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.kombinasjon"))
+        assertEquals(null, søknadprosess.resultat())
+
+        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
+        assertEquals(true, søknadprosess.resultat())
+    }
+
+    @Test
     fun `arbeidsforhold ved gjenopptak av dagpenger`() {
         `besvar innledende spørsmål om arbeidsforhold for gjenopptak`()
         søknadprosess.boolsk(Arbeidsforhold.`gjenopptak endringer i arbeidsforhold siden sist`).besvar(false)

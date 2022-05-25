@@ -269,16 +269,18 @@ object Arbeidsforhold : DslFaktaseksjon {
             }
         )
 
+    private fun Søknad.`type arbeidstid`() = envalg(`type arbeidstid`).utfylt()
+
     private fun Søknad.arbeidsforhold() =
         "søknadsdato, type arbeidstid og alle arbeidsforhold".alle(
             søknadsdato(),
             `type arbeidstid`(),
-            `alle arbeidsforhold`()
+            envalg(`type arbeidstid`) er Envalg("faktum.type-arbeidstid.svar.ingen-passer") hvisIkkeOppfylt {
+                `alle arbeidsforhold`()
+            }
         )
 
     private fun Søknad.søknadsdato() = dato(`dagpenger soknadsdato`).utfylt()
-
-    private fun Søknad.`type arbeidstid`() = envalg(`type arbeidstid`).utfylt()
 
     private fun Søknad.`ikke endret`() =
         envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret") hvisOppfylt {
