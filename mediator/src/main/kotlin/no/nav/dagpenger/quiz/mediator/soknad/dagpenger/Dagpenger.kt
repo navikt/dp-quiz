@@ -49,18 +49,18 @@ internal object Dagpenger {
 
     object Subsumsjoner {
         val regeltre: Subsumsjon = with(prototypeSøknad) {
-            Bosted.regeltre(prototypeSøknad).hvisOppfylt {
-                Gjenopptak.regeltre(prototypeSøknad).hvisOppfylt {
+            Bosted.regeltre(this).hvisOppfylt {
+                Gjenopptak.regeltre(this).hvisOppfylt {
                     // Barnetillegg.regeltre(søknad).hvisOppfylt {
-                    Arbeidsforhold.regeltre(prototypeSøknad).hvisOppfylt {
-                        EøsArbeidsforhold.regeltre(prototypeSøknad).hvisOppfylt {
-                            EgenNæring.regeltre(prototypeSøknad).hvisOppfylt {
-                                Verneplikt.regeltre(prototypeSøknad).hvisOppfylt {
-                                    AndreYtelser.regeltre(prototypeSøknad).hvisOppfylt {
-                                        Utdanning.regeltre(prototypeSøknad).hvisOppfylt {
-                                            ReellArbeidssoker.regeltre(prototypeSøknad).hvisOppfylt {
-                                                Tilleggsopplysninger.regeltre(prototypeSøknad).hvisOppfylt {
-                                                    DokumentasjonsKrav.regeltre(prototypeSøknad)
+                    Arbeidsforhold.regeltre(this).hvisOppfylt {
+                        EøsArbeidsforhold.regeltre(this).hvisOppfylt {
+                            EgenNæring.regeltre(this).hvisOppfylt {
+                                Verneplikt.regeltre(this).hvisOppfylt {
+                                    AndreYtelser.regeltre(this).hvisOppfylt {
+                                        Utdanning.regeltre(this).hvisOppfylt {
+                                            ReellArbeidssoker.regeltre(this).hvisOppfylt {
+                                                Tilleggsopplysninger.regeltre(this).hvisOppfylt {
+                                                    DokumentasjonsKrav.regeltre(this)
                                                 }
                                             }
                                         }

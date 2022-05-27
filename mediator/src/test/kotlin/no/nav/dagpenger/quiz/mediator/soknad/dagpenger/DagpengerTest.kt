@@ -57,7 +57,8 @@ internal class DagpengerTest : SøknadBesvarer() {
             // søknadsprosess.verifiserAtNesteSeksjonEr(Barnetillegg)
             // besvar(Barnetillegg.`barn liste`, 0)
 
-            søknadsprosess.verifiserAtNesteSeksjonEr(Arbeidsforhold)
+            //TODO: Se jira issue DAG-284
+            //søknadsprosess.verifiserAtNesteSeksjonEr(Arbeidsforhold)
 
             assertEquals(false, søknadsprosess.erFerdig())
         }
