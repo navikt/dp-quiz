@@ -25,22 +25,39 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: kafka
       KAFKA_CREATE_TOPICS: "private-dagpenger-behov-v2:1:1"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+  postgres:
+    container_name: postgres
+    hostname: postgres
+    image: "postgres:12.8"
+    ports:
+      - "5432:5432"
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+
   dp-quiz:
-    image: docker.pkg.github.com/navikt/dp-quiz/dp-quiz-api:latest
+    image: ghcr.io/navikt/dp-quiz/dp-quiz-mediator:latest
+    container_name: quiz
     depends_on:
       - kafka
+      - postgres
     ports:
       - "8080:8080"
+    env_file: .env
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka://kafka:9092
-  dp-quizshow:
-    image: docker.pkg.github.com/navikt/dp-quizshow/dp-quizshow:latest
-    depends_on:
-      - dp-quiz
-    ports:
-      - "3000:3000"
-    environment:
-      BASE_PATH: /arbeid/dagpenger/quizshow
-      API_BASE_URL: http://dp-quiz:8080
+
+#  dp-quizshow:
+#    image: docker.pkg.github.com/navikt/dp-quizshow/dp-quizshow:latest
+#    depends_on:
+#      - dp-quiz
+#    ports:
+#      - "3000:3000"
+#    environment:
+#      BASE_PATH: /arbeid/dagpenger/quizshow
+#      API_BASE_URL: http://dp-quiz:8080
 
 
