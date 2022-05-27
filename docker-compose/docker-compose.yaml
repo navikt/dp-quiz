@@ -30,13 +30,15 @@ services:
     container_name: postgres
     hostname: postgres
     image: "postgres:12.8"
+    volumes:
+      - "./db-initscripts:/docker-entrypoint-initdb.d"
     ports:
       - "5432:5432"
     env_file: .env
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_DATABASES: "${DB_NAME_QUIZ}, ${DB_NAME_SOKNAD}"
 
   dp-quiz:
     image: ghcr.io/navikt/dp-quiz/dp-quiz-mediator:latest
@@ -48,7 +50,21 @@ services:
       - "8080:8080"
     env_file: .env
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka://kafka:9092
+      DB_DATABASE: ${DB_NAME_QUIZ}
+      DB_USERNAME: "${DB_NAME_QUIZ}-user"
+
+  dp-soknad:
+    image: ghcr.io/navikt/dp-soknad/dp-soknad:f56a7664dbd9203aad6c8f5be7fbbd098a002b6e
+    container_name: soknad
+    depends_on:
+      - kafka
+      - postgres
+    ports:
+      - "8081:8080"
+    env_file: .env
+    environment:
+      DB_DATABASE: ${DB_NAME_SOKNAD}
+      DB_USERNAME: "${DB_NAME_SOKNAD}-user"
 
 #  dp-quizshow:
 #    image: docker.pkg.github.com/navikt/dp-quizshow/dp-quizshow:latest
@@ -59,5 +75,3 @@ services:
 #    environment:
 #      BASE_PATH: /arbeid/dagpenger/quizshow
 #      API_BASE_URL: http://dp-quiz:8080
-
-
