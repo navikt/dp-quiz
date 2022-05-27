@@ -40,7 +40,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DATABASES: "${DB_NAME_QUIZ}, ${DB_NAME_SOKNAD}"
 
-  dp-quiz:
+  quiz:
     image: ghcr.io/navikt/dp-quiz/dp-quiz-mediator:latest
     container_name: quiz
     depends_on:
@@ -53,12 +53,13 @@ services:
       DB_DATABASE: ${DB_NAME_QUIZ}
       DB_USERNAME: "${DB_NAME_QUIZ}-user"
 
-  dp-soknad:
+  soknad:
     image: ghcr.io/navikt/dp-soknad/dp-soknad:f56a7664dbd9203aad6c8f5be7fbbd098a002b6e
     container_name: soknad
     depends_on:
       - kafka
       - postgres
+      - oauth
     ports:
       - "8081:8080"
     env_file: .env
@@ -67,7 +68,7 @@ services:
       DB_USERNAME: "${DB_NAME_SOKNAD}-user"
       NAIS_CLUSTER_NAME: "dev-gcp"
 
-  mock-oauth2-server:
+  oauth:
     image: ghcr.io/navikt/mock-oauth2-server:0.4.8
     container_name: oauth
     ports:
