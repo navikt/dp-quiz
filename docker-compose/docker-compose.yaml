@@ -23,7 +23,7 @@ services:
       KAFKA_LISTENERS: kafka://:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: kafka:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: kafka
-      KAFKA_CREATE_TOPICS: "private-dagpenger-behov-v2:1:1"
+      KAFKA_CREATE_TOPICS: "teamdagpenger.rapid.v1:1:1,teamdagpenger.journalforing.v1:1:1"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
 
   postgres:
