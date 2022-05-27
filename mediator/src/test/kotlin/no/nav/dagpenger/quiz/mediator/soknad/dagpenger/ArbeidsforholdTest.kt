@@ -33,7 +33,7 @@ internal class ArbeidsforholdTest {
 
     @Test
     fun `Trenger ikke fylle inn arbeidsforhold når type arbeidstid er besvart med Ingen alternativer passer og det ikke er gjenopptak`() {
-        søknadprosess.boolsk(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(false)
+        søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
         søknadprosess.dato(Arbeidsforhold.`dagpenger soknadsdato`).besvar(1.januar)
 
         søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.varierende"))
@@ -234,7 +234,7 @@ internal class ArbeidsforholdTest {
     }
 
     private fun `besvar innledende spørsmål om arbeidsforhold for gjenopptak`() {
-        søknadprosess.boolsk(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(true)
+        søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(Envalg(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja")))
         søknadprosess.boolsk(Arbeidsforhold.`gjenopptak jobbet siden sist du fikk dagpenger`).besvar(true)
         søknadprosess.tekst(Arbeidsforhold.`gjenopptak aarsak til stans av dagpenger`).besvar(Tekst("Årsak"))
         søknadprosess.dato(Arbeidsforhold.`gjenopptak soknadsdato`).besvar(1.januar)
@@ -251,7 +251,7 @@ internal class ArbeidsforholdTest {
     }
 
     private fun `besvar innledende spørsmål om arbeidsforhold`() {
-        søknadprosess.boolsk(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(false)
+        søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
         søknadprosess.dato(Arbeidsforhold.`dagpenger soknadsdato`).besvar(1.januar)
         søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
         søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(1)

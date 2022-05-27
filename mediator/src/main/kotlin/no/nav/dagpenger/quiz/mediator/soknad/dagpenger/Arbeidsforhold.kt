@@ -220,7 +220,7 @@ object Arbeidsforhold : DslFaktaseksjon {
     }
 
     private fun Søknad.`har mottat dagpenger siste 12 mnd`() =
-        boolsk(Gjenopptak.`mottatt dagpenger siste 12 mnd`) er true
+        envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`) er Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja")
 
     private fun Søknad.`arbeidsforhold gjenopptak`() =
         "spørsmål om gjenopptaket".alle(
