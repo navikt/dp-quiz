@@ -19,8 +19,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object DokumentasjonskravUtdanning : DslFaktaseksjon {
 
-    const val `dokumentasjon på sluttdato` = 12000
-    const val `dokumentasjon på sluttdato tilgjengelig` = 12001
+    const val `dokumentasjon på sluttdato` = 12001
+    const val `dokumentasjon på sluttdato tilgjengelig` = 12002
     const val `dokumentasjon på sluttdato ikke tilgjengelig årsak` = 12003
 
     override val fakta: List<FaktumFactory<*>>

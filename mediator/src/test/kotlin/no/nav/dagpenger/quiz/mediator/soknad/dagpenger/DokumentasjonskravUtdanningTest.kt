@@ -20,7 +20,7 @@ internal class DokumentasjonskravUtdanningTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        DokumentasjonskravUtdanning.verifiserFeltsammensetting(3, 36004)
+        DokumentasjonskravUtdanning.verifiserFeltsammensetting(3, 36006)
     }
 
     @BeforeEach
