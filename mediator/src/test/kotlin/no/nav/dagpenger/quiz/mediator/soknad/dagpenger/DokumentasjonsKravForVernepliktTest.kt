@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -17,6 +18,11 @@ internal class DokumentasjonsKravForVernepliktTest {
     private val dokumentfakta = Verneplikt.fakta() + DokumentasjonskravVerneplikt.fakta()
     private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *dokumentfakta)
     private lateinit var søknadprosess: Søknadprosess
+
+    @Test
+    fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
+        DokumentasjonskravVerneplikt.verifiserFeltsammensetting(3, 33006)
+    }
 
     @BeforeEach
     fun setup() {
