@@ -25,9 +25,9 @@ object DokumentasjonskravUtdanning : DslFaktaseksjon {
 
     override val fakta: List<FaktumFactory<*>>
         get() = listOf(
+            dokument faktum "faktum.dokument-utdanning-sluttdato" id `dokumentasjon på sluttdato` avhengerAv Utdanning.`avsluttet utdanning siste 6 mnd`,
             boolsk faktum "faktum.dokument-utdanning-sluttdato-tilgjengelig" id `dokumentasjon på sluttdato tilgjengelig`,
-            dokument faktum "faktum.dokument-utdanning-sluttdato" id `dokumentasjon på sluttdato`,
-            tekst faktum "faktum.dokument-utdanning-sluttdato-årsak" id `dokumentasjon på sluttdato ikke tilgjengelig årsak`
+            tekst faktum "faktum.dokument-utdanning-sluttdato-årsak" id `dokumentasjon på sluttdato ikke tilgjengelig årsak` avhengerAv `dokumentasjon på sluttdato tilgjengelig`
         )
 
     override fun seksjon(søknad: Søknad): List<Seksjon> {
