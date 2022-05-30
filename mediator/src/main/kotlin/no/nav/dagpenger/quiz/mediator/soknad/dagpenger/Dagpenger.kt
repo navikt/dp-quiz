@@ -16,7 +16,7 @@ internal object Dagpenger {
 
     private val logger = KotlinLogging.logger { }
 
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 221)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 222)
 
     fun registrer(registrer: (prototype: Søknad) -> Unit) {
         registrer(prototypeSøknad)
@@ -35,7 +35,8 @@ internal object Dagpenger {
         Utdanning,
         Tilleggsopplysninger,
         DokumentasjonskravVerneplikt,
-        DokumentasjonskravUtdanning
+        DokumentasjonskravUtdanning,
+        DokumentasjonskravEgenNæring
     )
 
     private val alleFakta = flatMapAlleFakta()
@@ -64,7 +65,8 @@ internal object Dagpenger {
                                                 Tilleggsopplysninger.regeltre(this).hvisOppfylt {
                                                     "dokumentasjonskrav".alle(
                                                         DokumentasjonskravVerneplikt.regeltre(this),
-                                                        DokumentasjonskravUtdanning.regeltre(this)
+                                                        DokumentasjonskravUtdanning.regeltre(this),
+                                                        DokumentasjonskravEgenNæring.regeltre(this)
                                                     )
                                                 }
                                             }
