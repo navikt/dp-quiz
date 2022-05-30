@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger.Subsumsjoner.regeltre
@@ -15,7 +16,7 @@ internal object Dagpenger {
 
     private val logger = KotlinLogging.logger { }
 
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 220)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 221)
 
     fun registrer(registrer: (prototype: Søknad) -> Unit) {
         registrer(prototypeSøknad)
@@ -33,7 +34,8 @@ internal object Dagpenger {
         ReellArbeidssoker,
         Utdanning,
         Tilleggsopplysninger,
-        DokumentasjonsKrav
+        DokumentasjonskravVerneplikt,
+        DokumentasjonskravUtdanning
     )
 
     private val alleFakta = flatMapAlleFakta()
@@ -60,7 +62,10 @@ internal object Dagpenger {
                                         Utdanning.regeltre(this).hvisOppfylt {
                                             ReellArbeidssoker.regeltre(this).hvisOppfylt {
                                                 Tilleggsopplysninger.regeltre(this).hvisOppfylt {
-                                                    DokumentasjonsKrav.regeltre(this)
+                                                    "dokumentasjonskrav".alle(
+                                                        DokumentasjonskravVerneplikt.regeltre(this),
+                                                        DokumentasjonskravUtdanning.regeltre(this)
+                                                    )
                                                 }
                                             }
                                         }

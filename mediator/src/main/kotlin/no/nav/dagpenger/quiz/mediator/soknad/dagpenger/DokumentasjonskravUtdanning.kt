@@ -17,17 +17,17 @@ import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
-object DokumentasjonsKrav : DslFaktaseksjon {
+object DokumentasjonskravUtdanning : DslFaktaseksjon {
 
-    const val `tjenestebevis for avtjent verneplikt` = 11001
-    const val `tjenestebevis tilgjengelig` = 11002
-    const val `tjenestebevis ikke tilgjengelig årsak` = 11003
+    const val `dokumentasjon på sluttdato` = 12000
+    const val `dokumentasjon på sluttdato tilgjengelig` = 12001
+    const val `dokumentasjon på sluttdato ikke tilgjengelig årsak` = 12003
 
     override val fakta: List<FaktumFactory<*>>
         get() = listOf(
-            boolsk faktum "faktum.dokument-verneplikt-tjenestebevis-tilgjengelig" id `tjenestebevis tilgjengelig`,
-            dokument faktum "faktum.dokument-verneplikt-tjenestebevis" id `tjenestebevis for avtjent verneplikt` avhengerAv Verneplikt.`avtjent militaer sivilforsvar tjeneste siste 12 mnd`,
-            tekst faktum "faktum.dokument-verneplikt-tjenestebevis-årsak" id `tjenestebevis ikke tilgjengelig årsak` avhengerAv `tjenestebevis tilgjengelig`
+            boolsk faktum "faktum.dokument-utdanning-sluttdato-tilgjengelig" id `dokumentasjon på sluttdato tilgjengelig`,
+            dokument faktum "faktum.dokument-utdanning-sluttdato" id `dokumentasjon på sluttdato`,
+            tekst faktum "faktum.dokument-utdanning-sluttdato-årsak" id `dokumentasjon på sluttdato ikke tilgjengelig årsak`
         )
 
     override fun seksjon(søknad: Søknad): List<Seksjon> {
@@ -37,13 +37,13 @@ object DokumentasjonsKrav : DslFaktaseksjon {
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
 
         "dokumentasjonskrav".deltre {
-            "dokumentasjonskrav verneplikt".minstEnAv(
-                boolsk(Verneplikt.`avtjent militaer sivilforsvar tjeneste siste 12 mnd`) er false,
-                boolsk(Verneplikt.`avtjent militaer sivilforsvar tjeneste siste 12 mnd`) er true hvisOppfylt {
-                    boolsk(`tjenestebevis tilgjengelig`) er true hvisOppfylt {
-                        dokument(`tjenestebevis for avtjent verneplikt`).utfylt()
+            "dokumentasjonskrav utdanning".minstEnAv(
+                boolsk(Utdanning.`avsluttet utdanning siste 6 mnd`) er false,
+                boolsk(Utdanning.`avsluttet utdanning siste 6 mnd`) er true hvisOppfylt {
+                    boolsk(`dokumentasjon på sluttdato tilgjengelig`) er true hvisOppfylt {
+                        dokument(`dokumentasjon på sluttdato`).utfylt()
                     } hvisIkkeOppfylt {
-                        tekst(`tjenestebevis ikke tilgjengelig årsak`).utfylt()
+                        tekst(`dokumentasjon på sluttdato ikke tilgjengelig årsak`).utfylt()
                     }
                 }
             )
