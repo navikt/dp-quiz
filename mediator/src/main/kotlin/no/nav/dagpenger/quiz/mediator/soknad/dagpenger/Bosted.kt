@@ -35,11 +35,11 @@ object Bosted : DslFaktaseksjon {
         periode faktum "faktum.reist-tilbake-periode" id `reist tilbake periode` avhengerAv `reist tilbake etter arbeidsledig`,
 
         // @todo: Skal denne være tekst?
-        tekst faktum "faktum.reist-tilbake-aarsak" id `reist tilbake aarsak` avhengerAv `reist tilbake periode`,
+        tekst faktum "faktum.reist-tilbake-aarsak" id `reist tilbake aarsak` avhengerAv `reist tilbake etter arbeidsledig`,
 
-        boolsk faktum "faktum.reist-tilbake-en-gang-eller-mer" id `reist tilbake en gang i uka eller mer` avhengerAv `reist tilbake aarsak`,
+        boolsk faktum "faktum.reist-tilbake-en-gang-eller-mer" id `reist tilbake en gang i uka eller mer` avhengerAv `hvilket land bor du i`,
 
-        boolsk faktum "faktum.reist-i-takt-med-rotasjon" id `reist i takt med rotasjon` avhengerAv `reist tilbake en gang i uka eller mer` og `reist tilbake etter arbeidsledig`,
+        boolsk faktum "faktum.reist-i-takt-med-rotasjon" id `reist i takt med rotasjon` avhengerAv `reist tilbake en gang i uka eller mer`,
     )
 
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("bostedsland", Rolle.søker, *this.databaseIder()))
