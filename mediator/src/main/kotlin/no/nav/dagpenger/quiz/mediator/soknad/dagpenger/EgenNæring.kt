@@ -12,7 +12,7 @@ import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.utfylt
-import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
@@ -66,21 +66,24 @@ object EgenNæring : DslFaktaseksjon {
 
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("egen-naering", Rolle.søker, *this.databaseIder()))
 
-    fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
-        "Egen næring".alle(
-            "driver egen næring eller ikke".minstEnAv(
-                boolsk(`driver du egen naering`) er false,
-                boolsk(`driver du egen naering`) er true hvisOppfylt {
-                    `næringenes organisasjonsnummer og arbeidstimer`()
-                }
-            ),
-            "driver eget gårdsbruk eller ikke".minstEnAv(
-                boolsk(`driver du eget gaardsbruk`) er false,
-                boolsk(`driver du eget gaardsbruk`) er true hvisOppfylt {
-                    `organisasjonsnummer, type gårdsbruk og eier`()
-                }
+    override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
+
+        "egennæring".deltre {
+            "Egen næring".alle(
+                "driver egen næring eller ikke".minstEnAv(
+                    boolsk(`driver du egen naering`) er false,
+                    boolsk(`driver du egen naering`) er true hvisOppfylt {
+                        `næringenes organisasjonsnummer og arbeidstimer`()
+                    }
+                ),
+                "driver eget gårdsbruk eller ikke".minstEnAv(
+                    boolsk(`driver du eget gaardsbruk`) er false,
+                    boolsk(`driver du eget gaardsbruk`) er true hvisOppfylt {
+                        `organisasjonsnummer, type gårdsbruk og eier`()
+                    }
+                )
             )
-        )
+        }
     }
 
     private fun Søknad.`næringenes organisasjonsnummer og arbeidstimer`() =

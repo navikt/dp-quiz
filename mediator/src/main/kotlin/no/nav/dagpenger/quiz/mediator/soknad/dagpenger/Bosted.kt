@@ -11,9 +11,10 @@ import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.erIkke
 import no.nav.dagpenger.model.regel.utfylt
-import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.bareEnAv
+import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
@@ -43,15 +44,16 @@ object Bosted : DslFaktaseksjon {
 
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("bostedsland", Rolle.søker, *this.databaseIder()))
 
-    fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
-
-        // TODO: Finn ut av bruk av paragrafer i kode?
-        "§ 4-2 Opphold i Norge".bareEnAv(
-            `innenfor Norge`(),
-            `innenfor Storbritannia`(),
-            `innenfor EØS eller Sveits`(),
-            `utenfor EØS`()
-        )
+    override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
+        "bosted".deltre {
+            // TODO: Finn ut av bruk av paragrafer i kode?
+            "§ 4-2 Opphold i Norge".bareEnAv(
+                `innenfor Norge`(),
+                `innenfor Storbritannia`(),
+                `innenfor EØS eller Sveits`(),
+                `utenfor EØS`()
+            )
+        }
     }
 
     private fun Søknad.`innenfor Norge`() = "§ 4-2 Opphold i Norge".bareEnAv(

@@ -6,6 +6,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
+import no.nav.dagpenger.model.regel.utfylt
+import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.deltre
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -23,6 +26,11 @@ internal class DslFaktaseksjonTest {
 
         override fun seksjon(søknad: Søknad) =
             listOf(søknad.seksjon("dummy-seksjon", Rolle.søker, *this.databaseIder()))
+
+        override fun regeltre(søknad: Søknad): DeltreSubsumsjon =
+            "deltre".deltre {
+                søknad.id(id1).utfylt()
+            }
     }
 
     @Test

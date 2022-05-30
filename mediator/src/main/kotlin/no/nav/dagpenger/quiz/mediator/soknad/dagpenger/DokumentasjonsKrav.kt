@@ -10,7 +10,8 @@ import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
@@ -33,17 +34,19 @@ object DokumentasjonsKrav : DslFaktaseksjon {
         return listOf(søknad.seksjon("dokumentasjonskrav", Rolle.søker, *this.databaseIder()))
     }
 
-    fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
+    override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
 
-        "dokumentasjonskrav".minstEnAv(
-            boolsk(Verneplikt.`avtjent militaer sivilforsvar tjeneste siste 12 mnd`) er false,
-            boolsk(Verneplikt.`avtjent militaer sivilforsvar tjeneste siste 12 mnd`) er true hvisOppfylt {
-                boolsk(`tjenestebevis tilgjengelig`) er true hvisOppfylt {
-                    dokument(`tjenestebevis for avtjent verneplikt`).utfylt()
-                } hvisIkkeOppfylt {
-                    tekst(`tjenestebevis ikke tilgjengelig årsak`).utfylt()
+        "dokumentasjonskrav".deltre {
+            "dokumentasjonskrav verneplikt".minstEnAv(
+                boolsk(Verneplikt.`avtjent militaer sivilforsvar tjeneste siste 12 mnd`) er false,
+                boolsk(Verneplikt.`avtjent militaer sivilforsvar tjeneste siste 12 mnd`) er true hvisOppfylt {
+                    boolsk(`tjenestebevis tilgjengelig`) er true hvisOppfylt {
+                        dokument(`tjenestebevis for avtjent verneplikt`).utfylt()
+                    } hvisIkkeOppfylt {
+                        tekst(`tjenestebevis ikke tilgjengelig årsak`).utfylt()
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 }

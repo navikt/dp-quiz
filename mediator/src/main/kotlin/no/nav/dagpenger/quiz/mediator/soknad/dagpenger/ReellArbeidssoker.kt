@@ -10,8 +10,9 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.utfylt
-import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
+import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
@@ -57,12 +58,14 @@ object ReellArbeidssoker : DslFaktaseksjon {
     )
 
     // https://lovdata.no/lov/1997-02-28-19/§4-5
-    fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
-        "§ 4-5.Reelle arbeidssøkere".alle(
-            `Søkers arbeidskapasitet`(),
-            `Søkers evne til å flytte for arbeid`(),
-            `Søkers arbeidsmobilitet`()
-        )
+    override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
+        "reell arbeidssøker".deltre {
+            "§ 4-5.Reelle arbeidssøkere".alle(
+                `Søkers arbeidskapasitet`(),
+                `Søkers evne til å flytte for arbeid`(),
+                `Søkers arbeidsmobilitet`()
+            )
+        }
     }
 
     private fun Søknad.`Søkers arbeidskapasitet`() = "".minstEnAv(
@@ -79,7 +82,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
             }
         }
 
-    private fun Søknad.`Årsak til deltid`() =
+    private fun Søknad.`Årsak til deltid`() = "Årsak til deltid".deltre {
         flervalg(`Årsak til kun deltid`).utfylt() hvisOppfylt {
             "Årsak til deltid".minstEnAv(
                 flervalg(`Årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.redusert-helse"),
@@ -93,6 +96,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
                 },
             )
         }
+    }
 
     private fun Søknad.`Søkers evne til å flytte for arbeid`() = "".minstEnAv(
         `Jobbe i hele Norge`(),

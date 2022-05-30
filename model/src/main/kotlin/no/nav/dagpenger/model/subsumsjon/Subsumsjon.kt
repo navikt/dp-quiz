@@ -226,8 +226,14 @@ fun String.minstEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon {
 
 fun String.bareEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon = BareEnAvSubsumsjon(this, subsumsjoner.toList())
 
-infix fun Subsumsjon.hvisOppfylt(block: SubsumsjonGenerator) = this.also { this.oppfylt(block()) }
-infix fun Subsumsjon.hvisIkkeOppfylt(block: SubsumsjonGenerator) = this.also { this.ikkeOppfylt(block()) }
+infix fun Subsumsjon.hvisOppfylt(block: SubsumsjonGenerator) = this.also {
+    require(it.oppfylt is TomSubsumsjon) { " Kan ikke overskrive oppfylt gren, er allerede satt til subsumsjon '${it.oppfylt.navn}'" }
+    this.oppfylt(block())
+}
+infix fun Subsumsjon.hvisIkkeOppfylt(block: SubsumsjonGenerator) = this.also {
+    require(it.ikkeOppfylt is TomSubsumsjon) { " Kan ikke overskrive IKKE oppfylt gren, er allerede satt til subsumsjon '${it.ikkeOppfylt.navn}'" }
+    this.ikkeOppfylt(block())
+}
 
 infix fun Subsumsjon.hvisIkkeOppfyltManuell(manuellFaktum: Faktum<Boolean>) = hvisIkkeOppfylt { manuellFaktum er true }
 infix fun Subsumsjon.hvisOppfyltManuell(manuellFaktum: Faktum<Boolean>) = hvisOppfylt { manuellFaktum er true }

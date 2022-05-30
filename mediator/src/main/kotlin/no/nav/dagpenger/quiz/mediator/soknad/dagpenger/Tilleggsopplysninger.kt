@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.utfylt
+import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
@@ -23,12 +24,14 @@ object Tilleggsopplysninger : DslFaktaseksjon {
     override fun seksjon(søknad: Søknad) =
         listOf(søknad.seksjon("tilleggsopplysninger", Rolle.søker, *this.databaseIder()))
 
-    fun regeltre(søknad: Søknad) = with(søknad) {
-        "har tilleggsopplysninger eller ikke".minstEnAv(
-            boolsk(`har tilleggsopplysninger`) er false,
-            boolsk(`har tilleggsopplysninger`) er true hvisOppfylt {
-                tekst(tilleggsopplysninger).utfylt()
-            }
-        )
+    override fun regeltre(søknad: Søknad) = with(søknad) {
+        "tilleggsopplysninger".deltre {
+            "har tilleggsopplysninger eller ikke".minstEnAv(
+                boolsk(`har tilleggsopplysninger`) er false,
+                boolsk(`har tilleggsopplysninger`) er true hvisOppfylt {
+                    tekst(tilleggsopplysninger).utfylt()
+                }
+            )
+        }
     }
 }

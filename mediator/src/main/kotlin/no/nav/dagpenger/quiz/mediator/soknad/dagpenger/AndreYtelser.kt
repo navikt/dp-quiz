@@ -11,8 +11,9 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.utfylt
-import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
+import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
@@ -62,26 +63,28 @@ object AndreYtelser : DslFaktaseksjon {
     )
 
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("andre-ytelser", Rolle.søker, *this.databaseIder()))
-    fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
-        "Har eller har ikke endre ytelser".minstEnAv(
-            boolsk(`andre ytelser mottatt eller sokt`) er false,
-            boolsk(`andre ytelser mottatt eller sokt`) er true hvisOppfylt {
-                "Har angitt at har en eller flere andre ytelser".minstEnAv(
-                    tjenestepensjon(),
-                    arbeidsløsGFF(),
-                    garantiloggfraGFF(),
-                    etterlønnFraArbeidsgiver(),
-                    dagpengerFraAnnetEøsLand(),
-                    annenYtelse()
+    override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
+        "andre ytelser".deltre {
+            "Har eller har ikke endre ytelser".minstEnAv(
+                boolsk(`andre ytelser mottatt eller sokt`) er false,
+                boolsk(`andre ytelser mottatt eller sokt`) er true hvisOppfylt {
+                    "Har angitt at har en eller flere andre ytelser".minstEnAv(
+                        tjenestepensjon(),
+                        arbeidsløsGFF(),
+                        garantiloggfraGFF(),
+                        etterlønnFraArbeidsgiver(),
+                        dagpengerFraAnnetEøsLand(),
+                        annenYtelse()
+                    )
+                },
+            ).hvisOppfylt {
+                "Felles avsluttningsspørsmål".minstEnAv(
+                    boolsk(`utbetaling eller okonomisk gode tidligere arbeidsgiver`) er false,
+                    boolsk(`utbetaling eller okonomisk gode tidligere arbeidsgiver`) er true hvisOppfylt {
+                        tekst(`okonomisk gode tidligere arbeidsgiver hva omfatter avtalen`).utfylt()
+                    }
                 )
-            },
-        ).hvisOppfylt {
-            "Felles avsluttningsspørsmål".minstEnAv(
-                boolsk(`utbetaling eller okonomisk gode tidligere arbeidsgiver`) er false,
-                boolsk(`utbetaling eller okonomisk gode tidligere arbeidsgiver`) er true hvisOppfylt {
-                    tekst(`okonomisk gode tidligere arbeidsgiver hva omfatter avtalen`).utfylt()
-                }
-            )
+            }
         }
     }
 

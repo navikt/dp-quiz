@@ -15,7 +15,7 @@ import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.utfylt
-import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.bareEnAv
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -211,11 +211,13 @@ object Arbeidsforhold : DslFaktaseksjon {
 
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *this.databaseIder()))
 
-    fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
-        `har mottat dagpenger siste 12 mnd`() hvisOppfylt {
-            `arbeidsforhold gjenopptak`()
-        } hvisIkkeOppfylt {
-            arbeidsforhold()
+    override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
+        "arbeidsforhold".deltre {
+            `har mottat dagpenger siste 12 mnd`() hvisOppfylt {
+                `arbeidsforhold gjenopptak`()
+            } hvisIkkeOppfylt {
+                arbeidsforhold()
+            }
         }
     }
 

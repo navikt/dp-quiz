@@ -13,7 +13,7 @@ import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
@@ -57,22 +57,24 @@ object Barnetillegg : DslFaktaseksjon {
         return listOf(barnetilleggRegister, barnetilleggSøker)
     }
 
-    fun regeltre(søknad: Søknad): Subsumsjon = with(søknad) {
-        "barn eller ikke".minstEnAv(
-            generator(`barn liste`) er 0,
-            generator(`barn liste`) minst 1 hvisOppfylt {
-                generator(`barn liste`) med "et eller flere barn".deltre {
-                    `barnets navn, fødselsdsto og bostedsland`().hvisOppfylt {
-                        "forsørger eller ikke".minstEnAv(
-                            boolsk(`forsoerger du barnet`) er false,
-                            boolsk(`forsoerger du barnet`) er true hvisOppfylt {
-                                `har barnet årsinntekt over 1G`()
-                            }
-                        )
+    override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
+        "barnetillegg".deltre {
+            "barn eller ikke".minstEnAv(
+                generator(`barn liste`) er 0,
+                generator(`barn liste`) minst 1 hvisOppfylt {
+                    generator(`barn liste`) med "et eller flere barn".deltre {
+                        `barnets navn, fødselsdsto og bostedsland`().hvisOppfylt {
+                            "forsørger eller ikke".minstEnAv(
+                                boolsk(`forsoerger du barnet`) er false,
+                                boolsk(`forsoerger du barnet`) er true hvisOppfylt {
+                                    `har barnet årsinntekt over 1G`()
+                                }
+                            )
+                        }
                     }
                 }
-            }
-        )
+            )
+        }
     }
 
     private fun Søknad.`barnets navn, fødselsdsto og bostedsland`() = "navn, dato og bostedsland".alle(
