@@ -9,7 +9,7 @@ application {
 
 dependencies {
     implementation(project(":model"))
-    implementation(RapidAndRivers)
+    implementation(RapidAndRiversKtor2)
     implementation(Database.Flyway)
     implementation(Database.HikariCP)
     implementation(Database.Postgres)
@@ -19,7 +19,7 @@ dependencies {
     implementation("de.slub-dresden:urnlib:2.0.1")
 
     // unleash
-    implementation("io.getunleash:unleash-client-java:5.0.2") {
+    implementation("io.getunleash:unleash-client-java:5.1.0") {
         exclude("org.apache.logging.log4j")
     }
 

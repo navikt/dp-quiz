@@ -37,7 +37,6 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
         søknadprosess.søknad.accept(this)
         søknadprosess.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(søknadprosess.rootSubsumsjon).accept(this)
     }
-
     fun resultat() = root
 
     override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
