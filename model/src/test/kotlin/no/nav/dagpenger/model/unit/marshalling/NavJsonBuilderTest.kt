@@ -164,6 +164,7 @@ class NavJsonBuilderTest {
         assertEquals("folkeregisterident", json["identer"][0]["type"].asText())
         assertEquals("12020052345", json["identer"][0]["id"].asText())
         assertTrue(json.has("@id"))
+        assertTrue(json.has("@behovId"))
         assertTrue(json.has("@opprettet"))
         assertEquals(faktumOgBehov.values.toList(), json["@behov"].map { it.asText() })
         assertEquals(faktumOgBehov.keys.toString(), json["fakta"].map { it["id"].asText() }.toString())

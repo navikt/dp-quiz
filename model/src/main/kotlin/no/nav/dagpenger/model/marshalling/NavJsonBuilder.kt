@@ -43,6 +43,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
         root.put("@event_name", "faktum_svar")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
+        root.put("@behovId", "${UUID.randomUUID()}")
         root.put("søknad_uuid", "$uuid")
         root.put("seksjon_navn", seksjonNavn)
         root.set<ArrayNode>("fakta", faktaNode)
