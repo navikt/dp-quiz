@@ -2,7 +2,8 @@ package no.nav.dagpenger.model.unit.marshalling
 
 import com.fasterxml.jackson.databind.JsonNode
 import org.junit.jupiter.api.Assertions
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 
 internal fun JsonNode.finnSeksjon(seksjon: String): JsonNode {
     val jsonNode = this["seksjoner"].find { it["beskrivendeId"].asText() == seksjon }
@@ -29,6 +30,18 @@ internal fun JsonNode.assertFaktaAsJson(
         Assertions.assertTrue(expectedRoller.containsAll<String>(actual)) { "$expectedBeskrivendeId har $actual, forventet $expectedRoller " }
     }
     assertSvar?.let { assert -> assert(this["svar"]) }
+}
+
+internal fun JsonNode.assertLandFaktum(
+    expectedId: String,
+    expectedType: String,
+    expectedBeskrivendeId: String,
+    expectedRoller: List<String>,
+    assertSvar: ((JsonNode) -> Unit)? = null
+) {
+    this.assertFaktaAsJson(expectedId, expectedType, expectedBeskrivendeId, expectedRoller, assertSvar)
+    assertTrue(this.has("gyldigeLand"), "Forventer at landfaktum har gyldige land")
+    assertTrue(0 < this.get("gyldigeLand").size(), "Forventet at gyldige land ikke er tom")
 }
 
 internal fun JsonNode.assertGeneratorFaktaAsJson(

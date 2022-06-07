@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer
+import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -96,7 +97,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         templates: List<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        svar: R
+        svar: R,
     ) {
         if (!erISeksjon) return
         if (id in besøkteFaktumIder) return
@@ -113,7 +114,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         avhengerAvFakta: Set<Faktum<*>>,
         templates: List<Faktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
     ) {
         if (!erISeksjon) return
         if (id in besøkteFaktumIder) return
@@ -133,7 +134,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         clazz: Class<R>,
         svar: R,
         besvartAv: String?,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
     ) {
         if (!erISeksjon) return
         if (id in besøkteFaktumIder) return
@@ -153,7 +154,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
     ) {
         if (!erISeksjon) return
         if (id in besøkteFaktumIder) return
@@ -177,7 +178,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
 
     private class SøknadFaktumVisitor(
         faktum: Faktum<*>,
-        private val genererteFaktum: List<Faktum<*>> = emptyList()
+        private val genererteFaktum: List<Faktum<*>> = emptyList(),
     ) : FaktumVisitor {
 
         val root: ObjectNode = mapper.createObjectNode()
@@ -193,7 +194,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             avhengerAvFakta: Set<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>,
-            gyldigeValg: GyldigeValg?
+            gyldigeValg: GyldigeValg?,
         ) {
             lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigeValg)
         }
@@ -205,7 +206,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             avhengerAvFakta: Set<Faktum<*>>,
             templates: List<Faktum<*>>,
             roller: Set<Rolle>,
-            clazz: Class<R>
+            clazz: Class<R>,
         ) {
 
             val jsonTemplates = mapper.createArrayNode()
@@ -223,7 +224,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             templates: List<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>,
-            svar: R
+            svar: R,
         ) {
             val jsonTemplates = mapper.createArrayNode()
             templates.forEach { template ->
@@ -257,13 +258,22 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             clazz: Class<R>,
             svar: R,
             besvartAv: String?,
-            gyldigeValg: GyldigeValg?
+            gyldigeValg: GyldigeValg?,
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
             if (clazz.isBoolean()) {
                 overstyrbareGyldigeValg = faktum.lagBeskrivendeIderForGyldigeBoolskeValg()
             }
-            lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, overstyrbareGyldigeValg, svar, besvartAv)
+            lagFaktumNode(
+                id,
+                clazz.simpleName.lowercase(),
+                faktum.navn,
+                roller,
+                null,
+                overstyrbareGyldigeValg,
+                svar,
+                besvartAv
+            )
         }
 
         override fun <R : Comparable<R>> visitUtenSvar(
@@ -275,7 +285,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             godkjenner: Set<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>,
-            gyldigeValg: GyldigeValg?
+            gyldigeValg: GyldigeValg?,
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
             if (clazz.isBoolean()) {
@@ -292,7 +302,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             templates: ArrayNode? = null,
             gyldigeValg: GyldigeValg? = null,
             svar: R? = null,
-            besvartAv: String? = null
+            besvartAv: String? = null,
         ) {
 
             root.also { faktumNode ->
@@ -314,6 +324,18 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                     }
                 }
                 if (templates != null) faktumNode.set<ArrayNode>("templates", templates)
+
+                leggPåGyldigeLand(clazz, faktumNode)
+            }
+        }
+
+        private fun leggPåGyldigeLand(clazz: String, faktumNode: ObjectNode) {
+            if (clazz == "land") {
+                faktumNode.putArray("gyldigeLand").also { arrayNode ->
+                    Land.gyldigeLand.forEach { land ->
+                        arrayNode.add(land)
+                    }
+                }
             }
         }
     }

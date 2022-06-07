@@ -5,6 +5,7 @@ import no.nav.pam.geography.CountryDAO
 class Land(alpha3Code: String) : Comparable<Land> {
     companion object {
         private val countryDAO = CountryDAO()
+        internal val gyldigeLand = countryDAO.immutableCountryList.map { it.alpha3Code }
     }
 
     val alpha3Code: String

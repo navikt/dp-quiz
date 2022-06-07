@@ -8,10 +8,12 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
+import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
@@ -69,6 +71,7 @@ internal class SøkerJsonBuilderTest {
             envalg faktum "f17" id 17 med "envalg1" med "envalg2",
             flervalg faktum "f18" id 18 med "flervalg1" med "flervalg2",
             heltall faktum "f1718" id 1718 genererer 17 og 18,
+            land faktum "f19" id 19
         )
     }
 
@@ -227,6 +230,20 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.flervalg("18.1").besvar(Flervalg("f18.flervalg2"))
 
         SøkerJsonBuilder(søknadprosess).resultat().also {
+            assertAntallSeksjoner(5, it)
+            val seksjonsFakta = it.finnSeksjon("Gyldige land")["fakta"]
+            seksjonsFakta[0].assertLandFaktum(
+                "19",
+                "land",
+                "f19",
+                listOf("søker"),
+            )
+            assertUbesvartFaktum("Gyldige land", it)
+        }
+
+        søknadprosess.land(19).besvar(Land("NOR"))
+
+        SøkerJsonBuilder(søknadprosess).resultat().also {
             assertFerdig(it)
         }
     }
@@ -296,6 +313,9 @@ internal class SøkerJsonBuilderTest {
                 "Generator med valg".alle(
                     generatorSubsumsjon1718
                 ),
+                "Land".alle(
+                    prototypeSøknad.land(19).utfylt()
+                )
             )
         }
         return regeltre
@@ -341,6 +361,11 @@ internal class SøkerJsonBuilderTest {
                 "saksbehandler godkjenning",
                 Rolle.saksbehandler,
                 prototypeSøknad.boolsk(16)
+            ),
+            Seksjon(
+                "Gyldige land",
+                Rolle.søker,
+                prototypeSøknad.land(19)
             )
         )
         val prototypeFaktagrupper = Søknadprosess(

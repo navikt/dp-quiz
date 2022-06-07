@@ -2,12 +2,19 @@ package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.faktum.Land
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 internal class LandTest {
+
+    @Test
+    fun `Har gyldige land`() {
+        assertTrue(Land.gyldigeLand.isNotEmpty())
+    }
+
     @Test
     fun validation() {
         assertThrows<IllegalArgumentException> { Land("NORGE") }
