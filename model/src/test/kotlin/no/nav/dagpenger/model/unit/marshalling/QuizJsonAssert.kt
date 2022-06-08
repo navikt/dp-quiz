@@ -37,9 +37,12 @@ internal fun JsonNode.assertLandFaktum(
     expectedType: String,
     expectedBeskrivendeId: String,
     expectedRoller: List<String>,
+    expectedLandgruppeIder: Set<String>,
     assertSvar: ((JsonNode) -> Unit)? = null
 ) {
     this.assertFaktaAsJson(expectedId, expectedType, expectedBeskrivendeId, expectedRoller, assertSvar)
+    assertTrue(this.has("grupper"), "Landfaktum må ha grupper")
+    assertEquals(expectedLandgruppeIder, this["grupper"].map { it["gruppeId"].asText() }.toSet())
     assertTrue(this.has("gyldigeLand"), "Forventer at landfaktum har gyldige land")
     assertTrue(0 < this.get("gyldigeLand").size(), "Forventet at gyldige land ikke er tom")
 }

@@ -71,7 +71,7 @@ internal class SøkerJsonBuilderTest {
             envalg faktum "f17" id 17 med "envalg1" med "envalg2",
             flervalg faktum "f18" id 18 med "flervalg1" med "flervalg2",
             heltall faktum "f1718" id 1718 genererer 17 og 18,
-            land faktum "f19" id 19
+            land faktum "f19" gruppe "eøs" med listOf(Land("SWE")) gruppe "norge-jan-mayen" med listOf(Land("NOR")) id 19
         )
     }
 
@@ -237,6 +237,7 @@ internal class SøkerJsonBuilderTest {
                 "land",
                 "f19",
                 listOf("søker"),
+                setOf("f19.gruppe.eøs", "f19.gruppe.norge-jan-mayen"),
             )
             assertUbesvartFaktum("Gyldige land", it)
         }

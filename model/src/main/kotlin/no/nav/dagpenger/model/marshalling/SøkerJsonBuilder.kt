@@ -278,6 +278,31 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                 svar,
                 besvartAv
             )
+            if (clazz.isAssignableFrom(Land::class.java)) {
+                leggPåGyldigeLand(this.root)
+                leggTilLandGrupper(landGrupper)
+            }
+        }
+
+        private fun leggTilLandGrupper(landGrupper: LandGrupper?) {
+            this.root.putArray("grupper").also { landgrupperNode ->
+                landGrupper?.forEach { (gruppe, land) ->
+                    val gruppeNode = mapper.createObjectNode()
+                    gruppeNode.put("gruppeId", gruppe)
+                    val landNode =
+                        land.foldRight(mapper.createArrayNode()) { landkode, array -> array.also { it.add(landkode.alpha3Code) } }
+                    gruppeNode.set<ArrayNode>("land", landNode)
+                    landgrupperNode.add(gruppeNode)
+                }
+            }
+        }
+
+        private fun leggPåGyldigeLand(faktumNode: ObjectNode) {
+            faktumNode.putArray("gyldigeLand").also { arrayNode ->
+                Land.gyldigeLand.forEach { land ->
+                    arrayNode.add(land)
+                }
+            }
         }
 
         override fun <R : Comparable<R>> visitUtenSvar(
@@ -297,6 +322,11 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                 overstyrbareGyldigeValg = faktum.lagBeskrivendeIderForGyldigeBoolskeValg()
             }
             lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, overstyrbareGyldigeValg)
+
+            if (clazz.isAssignableFrom(Land::class.java)) {
+                leggPåGyldigeLand(this.root)
+                leggTilLandGrupper(landGrupper)
+            }
         }
 
         private fun <R : Comparable<R>> lagFaktumNode(
@@ -329,18 +359,6 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                     }
                 }
                 if (templates != null) faktumNode.set<ArrayNode>("templates", templates)
-
-                leggPåGyldigeLand(clazz, faktumNode)
-            }
-        }
-
-        private fun leggPåGyldigeLand(clazz: String, faktumNode: ObjectNode) {
-            if (clazz == "land") {
-                faktumNode.putArray("gyldigeLand").also { arrayNode ->
-                    Land.gyldigeLand.forEach { land ->
-                        arrayNode.add(land)
-                    }
-                }
             }
         }
     }

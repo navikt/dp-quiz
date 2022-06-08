@@ -28,7 +28,7 @@ object Bosted : DslFaktaseksjon {
     const val `reist i takt med rotasjon` = 6006
 
     override val fakta = listOf(
-        land faktum "faktum.hvilket-land-bor-du-i" id `hvilket land bor du i`,
+        land faktum "faktum.hvilket-land-bor-du-i" gruppe "eøs" med eøsEllerSveits() gruppe "norge-jan-mayen" med norge() gruppe "storbritannia" med storbritannia() id `hvilket land bor du i`,
 
         boolsk faktum "faktum.reist-tilbake-etter-arbeidsledig" id `reist tilbake etter arbeidsledig` avhengerAv `hvilket land bor du i`,
 
