@@ -72,13 +72,11 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
-        erISeksjon = erSøkerseksjon(rolle)
+        erISeksjon = true
         gjeldendeSeksjon = mapper.createObjectNode()
         gjeldendeSeksjonFakta = mapper.createArrayNode()
         gjeldendeSeksjon.put("beskrivendeId", seksjon.navn)
     }
-
-    private fun erSøkerseksjon(rolle: Rolle) = rolle == Rolle.søker
 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
         if (gjeldendeSeksjonFakta.size() > 0) {
@@ -266,6 +264,8 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             gyldigeValg: GyldigeValg?,
             landGrupper: LandGrupper?,
         ) {
+
+
             var overstyrbareGyldigeValg = gyldigeValg
             if (clazz.erBoolean()) {
                 overstyrbareGyldigeValg = faktum.lagBeskrivendeIderForGyldigeBoolskeValg()
@@ -283,6 +283,10 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             if (clazz.erLand()) {
                 this.root.leggTilGyldigeLand()
                 this.root.leggTilLandGrupper(landGrupper)
+            }
+
+            if(!faktum.harRolle(Rolle.søker)) {
+                this.root.put("readOnly", true)
             }
         }
 

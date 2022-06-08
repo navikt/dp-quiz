@@ -184,6 +184,8 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.dato("9").besvar(LocalDate.now())
 
         SøkerJsonBuilder(søknadprosess).resultat().also {
+            val navSeksjon = it.finnSeksjon("navseksjon")
+            println(navSeksjon.asText())
             assertAntallSeksjoner(3, it)
             assertUbesvartFaktum("dokumentasjon", it)
         }
@@ -394,7 +396,7 @@ internal class SøkerJsonBuilderTest {
         forventetAntall: Int,
         generatorFaktumNavn: String,
         seksjon: String,
-        søkerJson: ObjectNode
+        søkerJson: ObjectNode,
     ) {
         assertEquals(
             forventetAntall,
@@ -409,7 +411,7 @@ internal class SøkerJsonBuilderTest {
         generatorFaktumNavn: String,
         seksjon: String,
         søkerJson: ObjectNode,
-        forventetAntall: Int = 1
+        forventetAntall: Int = 1,
     ) {
         assertEquals(
             forventetAntall,
@@ -439,6 +441,7 @@ internal class SøkerJsonBuilderTest {
     }
 
     private fun assertAntallSeksjoner(forventetAntall: Int, søkerJson: ObjectNode) {
+        println(søkerJson)
         assertEquals(forventetAntall, søkerJson["seksjoner"].size())
     }
 
