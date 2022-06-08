@@ -13,8 +13,9 @@ import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
-import no.nav.dagpenger.model.marshalling.FaktumsvarTilJson.isBoolean
-import no.nav.dagpenger.model.marshalling.FaktumsvarTilJson.lagBeskrivendeIderForGyldigeBoolskeValg
+import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.erBoolean
+import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.lagBeskrivendeIderForGyldigeBoolskeValg
+import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.lagFaktumNode
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.FaktumVisitor
@@ -126,10 +127,18 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
             gyldigeValg: GyldigeValg?
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
-            if (clazz.isBoolean()) {
+
+            if (clazz.erBoolean()) {
                 overstyrbareGyldigeValg = faktum.lagBeskrivendeIderForGyldigeBoolskeValg()
             }
-            lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, overstyrbareGyldigeValg)
+            this.root.lagFaktumNode<R>(
+                id,
+                clazz.simpleName.lowercase(),
+                faktum.navn,
+                roller,
+                null,
+                overstyrbareGyldigeValg
+            )
         }
 
         override fun <R : Comparable<R>> visitUtenSvar(
@@ -146,7 +155,7 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
             templates.forEach { template ->
                 jsonTemplates.add(SøknadFaktumVisitor(template).root)
             }
-            lagFaktumNode(id, "generator", faktum.navn, roller, jsonTemplates)
+            this.root.lagFaktumNode<R>(id, "generator", faktum.navn, roller, jsonTemplates)
         }
 
         override fun <R : Comparable<R>> visitUtenSvar(
@@ -162,39 +171,17 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
             landGrupper: LandGrupper?
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
-            if (clazz.isBoolean()) {
+            if (clazz.erBoolean()) {
                 overstyrbareGyldigeValg = faktum.lagBeskrivendeIderForGyldigeBoolskeValg()
             }
-            lagFaktumNode(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, overstyrbareGyldigeValg)
-        }
-
-        private fun lagFaktumNode(
-            id: String,
-            clazz: String,
-            navn: String? = null,
-            roller: Set<Rolle>,
-            templates: ArrayNode? = null,
-            gyldigeValg: GyldigeValg? = null
-        ) {
-
-            root.also { faktumNode ->
-                faktumNode.put("id", id)
-                faktumNode.put("type", clazz)
-                faktumNode.put("beskrivendeId", navn)
-                faktumNode.putArray("roller").also { arrayNode ->
-                    roller.forEach { rolle ->
-                        arrayNode.add(rolle.typeNavn)
-                    }
-                }
-                gyldigeValg?.let { gv ->
-                    faktumNode.putArray("gyldigeValg").also { arrayNode ->
-                        gv.forEach {
-                            arrayNode.add(it)
-                        }
-                    }
-                }
-                if (templates != null) faktumNode.set<ArrayNode>("templates", templates)
-            }
+            this.root.lagFaktumNode<R>(
+                id,
+                clazz.simpleName.lowercase(),
+                faktum.navn,
+                roller,
+                null,
+                overstyrbareGyldigeValg
+            )
         }
     }
 }

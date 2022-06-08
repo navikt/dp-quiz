@@ -9,15 +9,17 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
-import no.nav.dagpenger.model.marshalling.FaktumsvarTilJson.isBoolean
-import no.nav.dagpenger.model.marshalling.FaktumsvarTilJson.lagBeskrivendeIderForGyldigeBoolskeValg
-import no.nav.dagpenger.model.marshalling.FaktumsvarTilJson.putR
+import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.erBoolean
+import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.erLand
+import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.lagBeskrivendeIderForGyldigeBoolskeValg
+import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.lagFaktumNode
+import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilGyldigeLand
+import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilLandGrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.FaktumVisitor
@@ -199,7 +201,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             clazz: Class<R>,
             gyldigeValg: GyldigeValg?,
         ) {
-            lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigeValg)
+            this.root.lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigeValg)
         }
 
         override fun <R : Comparable<R>> visitUtenSvar(
@@ -216,7 +218,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             templates.forEach { template ->
                 jsonTemplates.add(SøknadFaktumVisitor(template).root)
             }
-            lagFaktumNode<R>(id, "generator", faktum.navn, roller, jsonTemplates)
+            this.root.lagFaktumNode<R>(id, "generator", faktum.navn, roller, jsonTemplates)
         }
 
         override fun <R : Comparable<R>> visitMedSvar(
@@ -233,7 +235,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             templates.forEach { template ->
                 jsonTemplates.add(SøknadFaktumVisitor(template).root)
             }
-            lagFaktumNode(id, "generator", faktum.navn, roller, jsonTemplates, svar = svar)
+            this.root.lagFaktumNode(id, "generator", faktum.navn, roller, jsonTemplates, svar = svar)
             val svarListe = mapper.createArrayNode()
 
             (1..faktum.svar()).forEach { i ->
@@ -265,10 +267,10 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             landGrupper: LandGrupper?,
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
-            if (clazz.isBoolean()) {
+            if (clazz.erBoolean()) {
                 overstyrbareGyldigeValg = faktum.lagBeskrivendeIderForGyldigeBoolskeValg()
             }
-            lagFaktumNode(
+            this.root.lagFaktumNode(
                 id,
                 clazz.simpleName.lowercase(),
                 faktum.navn,
@@ -278,30 +280,9 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                 svar,
                 besvartAv
             )
-            if (clazz.isAssignableFrom(Land::class.java)) {
-                leggPåGyldigeLand(this.root)
-                leggTilLandGrupper(landGrupper)
-            }
-        }
-
-        private fun leggTilLandGrupper(landGrupper: LandGrupper?) {
-            this.root.putArray("grupper").also { landgrupperNode ->
-                landGrupper?.forEach { (gruppe, land) ->
-                    val gruppeNode = mapper.createObjectNode()
-                    gruppeNode.put("gruppeId", gruppe)
-                    val landNode =
-                        land.foldRight(mapper.createArrayNode()) { landkode, array -> array.also { it.add(landkode.alpha3Code) } }
-                    gruppeNode.set<ArrayNode>("land", landNode)
-                    landgrupperNode.add(gruppeNode)
-                }
-            }
-        }
-
-        private fun leggPåGyldigeLand(faktumNode: ObjectNode) {
-            faktumNode.putArray("gyldigeLand").also { arrayNode ->
-                Land.gyldigeLand.forEach { land ->
-                    arrayNode.add(land)
-                }
+            if (clazz.erLand()) {
+                this.root.leggTilGyldigeLand()
+                this.root.leggTilLandGrupper(landGrupper)
             }
         }
 
@@ -318,47 +299,21 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             landGrupper: LandGrupper?,
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
-            if (clazz.isBoolean()) {
+            if (clazz.erBoolean()) {
                 overstyrbareGyldigeValg = faktum.lagBeskrivendeIderForGyldigeBoolskeValg()
             }
-            lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, overstyrbareGyldigeValg)
+            this.root.lagFaktumNode<R>(
+                id,
+                clazz.simpleName.lowercase(),
+                faktum.navn,
+                roller,
+                null,
+                overstyrbareGyldigeValg
+            )
 
-            if (clazz.isAssignableFrom(Land::class.java)) {
-                leggPåGyldigeLand(this.root)
-                leggTilLandGrupper(landGrupper)
-            }
-        }
-
-        private fun <R : Comparable<R>> lagFaktumNode(
-            id: String,
-            clazz: String,
-            navn: String? = null,
-            roller: Set<Rolle>,
-            templates: ArrayNode? = null,
-            gyldigeValg: GyldigeValg? = null,
-            svar: R? = null,
-            besvartAv: String? = null,
-        ) {
-
-            root.also { faktumNode ->
-                faktumNode.put("id", id)
-                faktumNode.put("type", clazz)
-                faktumNode.put("beskrivendeId", navn)
-                svar?.also { faktumNode.putR("svar", it) }
-                besvartAv?.also { faktumNode.put("besvartAv", it) }
-                faktumNode.putArray("roller").also { arrayNode ->
-                    roller.forEach { rolle ->
-                        arrayNode.add(rolle.typeNavn)
-                    }
-                }
-                gyldigeValg?.let { gv ->
-                    faktumNode.putArray("gyldigeValg").also { arrayNode ->
-                        gv.forEach {
-                            arrayNode.add(it)
-                        }
-                    }
-                }
-                if (templates != null) faktumNode.set<ArrayNode>("templates", templates)
+            if (clazz.erLand()) {
+                this.root.leggTilGyldigeLand()
+                this.root.leggTilLandGrupper(landGrupper)
             }
         }
     }
