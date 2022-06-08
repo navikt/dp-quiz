@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Land
+import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -135,6 +136,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         svar: R,
         besvartAv: String?,
         gyldigeValg: GyldigeValg?,
+        landGrupper: LandGrupper?,
     ) {
         if (!erISeksjon) return
         if (id in besøkteFaktumIder) return
@@ -155,6 +157,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
+        landGrupper: LandGrupper?,
     ) {
         if (!erISeksjon) return
         if (id in besøkteFaktumIder) return
@@ -259,6 +262,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             svar: R,
             besvartAv: String?,
             gyldigeValg: GyldigeValg?,
+            landGrupper: LandGrupper?,
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
             if (clazz.isBoolean()) {
@@ -286,6 +290,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             roller: Set<Rolle>,
             clazz: Class<R>,
             gyldigeValg: GyldigeValg?,
+            landGrupper: LandGrupper?,
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
             if (clazz.isBoolean()) {

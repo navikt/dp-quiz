@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer
+import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.marshalling.FaktumsvarTilJson.putR
@@ -61,7 +62,8 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
+        landGrupper: LandGrupper?
     ) {
         lagFaktumNode<R>(id, faktum.navn, roller, godkjenner, clazz, besvartAv = null)
     }
@@ -77,7 +79,8 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         clazz: Class<R>,
         svar: R,
         besvartAv: String?,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
+        landGrupper: LandGrupper?
     ) {
         lagFaktumNode(id, faktum.navn, roller, godkjenner, clazz, svar, besvartAv)
     }

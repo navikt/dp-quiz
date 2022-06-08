@@ -12,6 +12,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
+import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -44,7 +45,8 @@ private class FaktumVisitor(
         godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
+        landGrupper: LandGrupper?
     ) {
         jsonGenerator.writeStartObject()
         jsonGenerator.skrivStandardFelt(id, tilstand, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
@@ -63,7 +65,8 @@ private class FaktumVisitor(
         clazz: Class<R>,
         svar: R,
         besvartAv: String?,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
+        landGrupper: LandGrupper?
     ) {
         jsonGenerator.writeStartObject()
         jsonGenerator.skrivStandardFelt(id, tilstand, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)

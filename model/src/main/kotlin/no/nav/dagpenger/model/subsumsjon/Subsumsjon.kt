@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
+import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.UtledetFaktum
@@ -131,7 +132,8 @@ abstract class Subsumsjon protected constructor(
             godkjenner: Set<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>,
-            gyldigeValg: GyldigeValg?
+            gyldigeValg: GyldigeValg?,
+            landGrupper: LandGrupper?
         ) {
             if (!ignore) {
                 resultater.add(faktum)
@@ -149,7 +151,8 @@ abstract class Subsumsjon protected constructor(
             clazz: Class<R>,
             svar: R,
             besvartAv: String?,
-            gyldigeValg: GyldigeValg?
+            gyldigeValg: GyldigeValg?,
+            landGrupper: LandGrupper?
         ) {
             if (!ignore) {
                 resultater.add(faktum)

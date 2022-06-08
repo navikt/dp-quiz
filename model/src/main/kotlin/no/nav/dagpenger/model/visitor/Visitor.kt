@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer
+import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
@@ -36,7 +37,8 @@ interface FaktumVisitor {
         godkjenner: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
+        landGrupper: LandGrupper?
     ) {
     }
 
@@ -51,7 +53,8 @@ interface FaktumVisitor {
         clazz: Class<R>,
         svar: R,
         besvartAv: String?,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
+        landGrupper: LandGrupper?
     ) {
     }
 

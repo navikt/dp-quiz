@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
+import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
@@ -45,7 +46,8 @@ internal class FaktumBesvartAvTest {
             clazz: Class<R>,
             svar: R,
             besvartAv: String?,
-            gyldigeValg: GyldigeValg?
+            gyldigeValg: GyldigeValg?,
+            landGrupper: LandGrupper?
         ) {
             besvartAv?.let { identer.add(it) }
         }

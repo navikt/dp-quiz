@@ -2,6 +2,8 @@ package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
+typealias LandGrupper = Map<String, List<Land>>
+
 open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     faktumId: FaktumId,
     navn: String,
@@ -10,7 +12,8 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     avhengerAvFakta: MutableSet<Faktum<*>>,
     protected val godkjenner: MutableSet<Faktum<*>>,
     roller: MutableSet<Rolle>,
-    private val gyldigeValg: GyldigeValg? = null
+    private val gyldigeValg: GyldigeValg? = null,
+    private val landGrupper: LandGrupper? = null
 ) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private var tilstand: Tilstand = Ukjent
     protected lateinit var gjeldendeSvar: R
@@ -18,7 +21,13 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     private data class Besvarer(val ident: String)
 
-    internal constructor(faktumId: FaktumId, navn: String, clazz: Class<R>, gyldigeValg: GyldigeValg? = null) : this(
+    internal constructor(
+        faktumId: FaktumId,
+        navn: String,
+        clazz: Class<R>,
+        gyldigeValg: GyldigeValg? = null,
+        landGrupper: LandGrupper? = null
+    ) : this(
         faktumId = faktumId,
         navn = navn,
         clazz = clazz,
@@ -26,7 +35,8 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         avhengerAvFakta = mutableSetOf(),
         godkjenner = mutableSetOf(),
         roller = mutableSetOf(),
-        gyldigeValg = gyldigeValg
+        gyldigeValg = gyldigeValg,
+        landGrupper = landGrupper
     )
 
     internal fun godkjenner(fakta: List<Faktum<*>>) = godkjenner.addAll(fakta)
@@ -53,7 +63,17 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
 
-        return GrunnleggendeFaktum(faktumId, navn, clazz, mutableSetOf(), mutableSetOf(), mutableSetOf(), roller, gyldigeValg)
+        return GrunnleggendeFaktum(
+            faktumId,
+            navn,
+            clazz,
+            mutableSetOf(),
+            mutableSetOf(),
+            mutableSetOf(),
+            roller,
+            gyldigeValg,
+            landGrupper
+        )
             .also { nyttFaktum ->
                 byggetFakta[faktumId] = nyttFaktum
                 this.avhengigeFakta.forEach { nyttFaktum.avhengigeFakta.add(it.bygg(byggetFakta)) }
@@ -88,11 +108,35 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     override fun tilTemplate() = TemplateFaktum(faktumId, navn, clazz, gyldigeValg = gyldigeValg)
 
     protected open fun acceptUtenSvar(visitor: FaktumVisitor) {
-        visitor.visitUtenSvar(this, Ukjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz, gyldigeValg)
+        visitor.visitUtenSvar(
+            this,
+            Ukjent.kode,
+            id,
+            avhengigeFakta,
+            avhengerAvFakta,
+            godkjenner,
+            roller,
+            clazz,
+            gyldigeValg,
+            landGrupper
+        )
     }
 
     protected open fun acceptMedSvar(visitor: FaktumVisitor) {
-        visitor.visitMedSvar(this, Kjent.kode, id, avhengigeFakta, avhengerAvFakta, godkjenner, roller, clazz, gjeldendeSvar, besvartAv?.ident, gyldigeValg)
+        visitor.visitMedSvar(
+            this,
+            Kjent.kode,
+            id,
+            avhengigeFakta,
+            avhengerAvFakta,
+            godkjenner,
+            roller,
+            clazz,
+            gjeldendeSvar,
+            besvartAv?.ident,
+            gyldigeValg,
+            landGrupper
+        )
     }
 
     private interface Tilstand {
@@ -101,7 +145,8 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         fun <R : Comparable<R>> svar(faktum: GrunnleggendeFaktum<R>): R =
             throw IllegalStateException("Faktumet '$faktum' er ikke kjent enda")
 
-        fun <R : Comparable<R>> besvartAv(faktum: GrunnleggendeFaktum<R>): String? = throw IllegalStateException("Faktumet er ikke kjent enda")
+        fun <R : Comparable<R>> besvartAv(faktum: GrunnleggendeFaktum<R>): String? =
+            throw IllegalStateException("Faktumet er ikke kjent enda")
     }
 
     private object Ukjent : Tilstand {

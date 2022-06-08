@@ -21,6 +21,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 ) : FaktumFactory<T>() {
     private val templateIder = mutableListOf<Int>()
     private val gyldigeValg = mutableSetOf<String>()
+    private val landGrupper = mutableMapOf<String, List<Land>>()
 
     companion object {
         object boolsk {
@@ -72,6 +73,20 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 
     infix fun med(valg: String) = this.apply { gyldigeValg.add("$navn.$valg") }
 
+    infix fun gruppe(gruppeNavn: String) = LandGruppe(this, gruppeNavn)
+
+    class LandGruppe<T : Comparable<T>>(val baseFaktumFactory: BaseFaktumFactory<T>, private val gruppeNavn: String) {
+        infix fun med(land: List<Land>): BaseFaktumFactory<T> {
+            return baseFaktumFactory.landGruppe(
+                Pair(gruppeNavn, land)
+            )
+        }
+    }
+
+    private fun landGruppe(landGruppe: Pair<String, List<Land>>): BaseFaktumFactory<T> {
+        return this.apply { landGrupper["${this.navn}.gruppe.${landGruppe.first}"] = landGruppe.second }
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun faktum(): Faktum<T> {
         return when (clazz) {
@@ -86,6 +101,12 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
                 navn = navn,
                 clazz = clazz,
                 gyldigeValg = GyldigeValg(gyldigeValg)
+            ) as Faktum<T>
+            Land::class.java -> GrunnleggendeFaktum(
+                faktumId = faktumId,
+                navn = navn,
+                clazz = clazz,
+                landGrupper = landGrupper
             ) as Faktum<T>
             else -> GrunnleggendeFaktum(faktumId, navn, clazz)
         }
