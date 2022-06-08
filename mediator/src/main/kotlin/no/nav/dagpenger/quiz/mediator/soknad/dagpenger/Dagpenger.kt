@@ -16,7 +16,7 @@ internal object Dagpenger {
 
     private val logger = KotlinLogging.logger { }
 
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 222)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 223)
 
     fun registrer(registrer: (prototype: Søknad) -> Unit) {
         registrer(prototypeSøknad)
@@ -85,7 +85,7 @@ internal object Dagpenger {
     private val faktumNavBehov =
         FaktumNavBehov(
             mapOf(
-                Barnetillegg.`barn liste` to "Barn",
+                BarnetilleggRegister.`barn liste register` to "Barn",
             )
         )
 

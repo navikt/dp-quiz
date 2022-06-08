@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.daglig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknadprosess
@@ -98,5 +99,14 @@ internal class BaseFaktumFactoryTest {
             assertTrue(faktum.erBesvart())
             assertEquals(it, faktum.svar())
         }
+    }
+
+    @Test
+    fun `Alle faktum kan endres av en rolle som ikke er spesifisert i seksjon`() {
+        val søknadprosess = Søknad(testversjon, dokument faktum "dokument" id 3 kanEndresAv Rolle.nav).testSøknadprosess()
+        val faktum = søknadprosess dokument 3
+        assertTrue(faktum.harRolle(Rolle.nav), "Bør inneholde rolle ${Rolle.nav.typeNavn}")
+        assertTrue(faktum.harRolle(Rolle.søker), "Bør inneholde rolle ${Rolle.søker.typeNavn}")
+        assertFalse(faktum.harRolle(Rolle.saksbehandler), "Bør ikke inneholde rolle ${Rolle.saksbehandler.typeNavn}")
     }
 }

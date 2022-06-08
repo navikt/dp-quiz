@@ -25,6 +25,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         faktumId: FaktumId,
         navn: String,
         clazz: Class<R>,
+        roller: MutableSet<Rolle> = mutableSetOf(),
         gyldigeValg: GyldigeValg? = null,
         landGrupper: LandGrupper? = null
     ) : this(
@@ -34,7 +35,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         avhengigeFakta = mutableSetOf(),
         avhengerAvFakta = mutableSetOf(),
         godkjenner = mutableSetOf(),
-        roller = mutableSetOf(),
+        roller = roller,
         gyldigeValg = gyldigeValg,
         landGrupper = landGrupper
     )

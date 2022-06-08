@@ -2,10 +2,12 @@ package no.nav.dagpenger.model.factory
 
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
+import no.nav.dagpenger.model.faktum.Rolle
 
 abstract class FaktumFactory<T : Comparable<T>> {
     internal var rootId = 0
     private val avhengigheter = mutableListOf<Int>()
+    protected val roller = mutableSetOf<Rolle>()
 
     internal abstract fun faktum(): Faktum<T>
 
@@ -24,4 +26,5 @@ abstract class FaktumFactory<T : Comparable<T>> {
     internal open fun sammensattAv(faktumMap: Map<FaktumId, Faktum<*>>) {}
 
     internal open fun tilTemplate(faktumMap: MutableMap<FaktumId, Faktum<*>>) {}
+    infix fun kanEndresAv(rolle: Rolle): FaktumFactory<T> = this.also { roller.add(rolle) }
 }

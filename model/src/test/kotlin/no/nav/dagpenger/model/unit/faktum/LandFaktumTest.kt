@@ -18,7 +18,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class LandFaktumTest {
+internal class LandFaktumTest {
 
     private lateinit var søknadprosess: Søknadprosess
     private lateinit var landFaktum: Faktum<Land>
