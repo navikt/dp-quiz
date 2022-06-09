@@ -109,4 +109,22 @@ internal class BaseFaktumFactoryTest {
         assertTrue(faktum.harRolle(Rolle.søker), "Bør inneholde rolle ${Rolle.søker.typeNavn}")
         assertFalse(faktum.harRolle(Rolle.saksbehandler), "Bør ikke inneholde rolle ${Rolle.saksbehandler.typeNavn}")
     }
+
+    @Test
+    fun `Også template faktum kan endres av en rolle som ikke er spesifisert i seksjon`() {
+
+        val søknadprosess = Søknad(
+            testversjon,
+            boolsk faktum "boolsk" id 1,
+            dokument faktum "dokument" id 2 kanEndresAv Rolle.nav,
+            heltall faktum "generator" id 12 genererer 1 og 2
+        ).testSøknadprosess()
+        val generator = søknadprosess generator 12
+        generator.besvar(1)
+
+        val dokumentFaktum = søknadprosess dokument "2.1"
+        assertTrue(dokumentFaktum.harRolle(Rolle.nav), "Bør inneholde rolle ${Rolle.nav.typeNavn}")
+        assertTrue(dokumentFaktum.harRolle(Rolle.søker), "Bør inneholde rolle ${Rolle.søker.typeNavn}")
+        assertFalse(dokumentFaktum.harRolle(Rolle.saksbehandler), "Bør ikke inneholde rolle ${Rolle.saksbehandler.typeNavn}")
+    }
 }

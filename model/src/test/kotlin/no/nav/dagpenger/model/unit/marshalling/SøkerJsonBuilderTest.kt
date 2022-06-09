@@ -33,14 +33,15 @@ import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 internal class SøkerJsonBuilderTest {
 
@@ -58,7 +59,7 @@ internal class SøkerJsonBuilderTest {
             heltall faktum "f6" id 6,
             boolsk faktum "f7" id 7,
             heltall faktum "f67" id 67 genererer 6 og 7,
-            dato faktum "f8" id 8,
+            dato faktum "f8" id 8 kanEndresAv Rolle.søker,
             dato faktum "f9" id 9,
             maks dato "f10" av 8 og 9 id 10,
             boolsk faktum "f11" id 11 avhengerAv 10,
@@ -168,7 +169,7 @@ internal class SøkerJsonBuilderTest {
 
         søknadprosess.boolsk("7.2").besvar(true)
         SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertAntallSeksjoner(2, it)
+            assertAntallSeksjoner(3, it)
             assertBesvarteFakta(1, "seksjon2", it)
             assertUbesvartGeneratorFaktum(
                 forventetAntall = 0,
@@ -184,9 +185,18 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.dato("9").besvar(LocalDate.now())
 
         SøkerJsonBuilder(søknadprosess).resultat().also {
-            val navSeksjon = it.finnSeksjon("navseksjon")
-            println(navSeksjon.asText())
-            assertAntallSeksjoner(3, it)
+            val navFakta = it.finnSeksjon("navseksjon")["fakta"]
+            val f8Faktum = navFakta[0]
+            f8Faktum.assertFaktaAsJson("8", "localdate", "f8", listOf("søker", "nav"))
+            assertTrue(f8Faktum.has("readOnly"))
+            assertFalse(f8Faktum.get("readOnly").asBoolean())
+
+            val f9Faktum = navFakta[1]
+            f9Faktum.assertFaktaAsJson("9", "localdate", "f9", listOf("nav"))
+            assertTrue(f9Faktum.has("readOnly"))
+            assertTrue(f9Faktum.get("readOnly").asBoolean())
+
+            assertAntallSeksjoner(4, it)
             assertUbesvartFaktum("dokumentasjon", it)
         }
 
@@ -195,7 +205,7 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.generator(1718).besvar(1)
 
         SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertAntallSeksjoner(4, it)
+            assertAntallSeksjoner(5, it)
             val generatorFakta = it.finnSeksjon("seksjon3")["fakta"]
             generatorFakta[0].assertGeneratorFaktaAsJson(
                 "1718", "generator", "f1718", listOf("søker"),
@@ -232,7 +242,7 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.flervalg("18.1").besvar(Flervalg("f18.flervalg2"))
 
         SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertAntallSeksjoner(5, it)
+            assertAntallSeksjoner(6, it)
             val seksjonsFakta = it.finnSeksjon("Gyldige land")["fakta"]
             seksjonsFakta[0].assertLandFaktum(
                 "19",
@@ -441,7 +451,6 @@ internal class SøkerJsonBuilderTest {
     }
 
     private fun assertAntallSeksjoner(forventetAntall: Int, søkerJson: ObjectNode) {
-        println(søkerJson)
         assertEquals(forventetAntall, søkerJson["seksjoner"].size())
     }
 

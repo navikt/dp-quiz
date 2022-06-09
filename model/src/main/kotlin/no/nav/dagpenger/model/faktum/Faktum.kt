@@ -110,6 +110,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     }
 
     fun harRolle(rolle: Rolle) = rolle in roller
+    fun harIkkeRolle(rolle: Rolle) = !harRolle(rolle)
 }
 
 fun List<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
