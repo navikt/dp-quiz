@@ -36,7 +36,7 @@ fun JsonNode.asLand() = Land(asText())
 
 fun JsonNode.asPeriode(): Periode {
     val fom = this["fom"].asLocalDate()
-    val tom = this["tom"].asOptionalLocalDate()
+    val tom = this["tom"]?.asOptionalLocalDate()
     return Periode(fom, tom)
 }
 

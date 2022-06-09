@@ -56,6 +56,15 @@ internal class JsonNodeExtensionsTest {
 }
     """.trimIndent()
 
+    private val jsonMedPeriodeUtenTom = """
+{
+  "svar": {
+      "fom": "2018-02-01"
+  
+  }
+}
+    """.trimIndent()
+
     private val jsonMedDokumentsvar = """
 {
   "svar": {
@@ -113,6 +122,17 @@ internal class JsonNodeExtensionsTest {
     @Test
     fun `Skal konvertere et svar til en pågående Periode`() {
         val faktumNode = objectMapper.readValue<JsonNode>(jsonMedPågåendePeriodeISvaret)
+        val svarnode = faktumNode["svar"]
+
+        val pågåendePeriode = svarnode.asPeriode()
+
+        val forventetPeriode = Periode(1.februar())
+        assertEquals(forventetPeriode, pågåendePeriode)
+    }
+
+    @Test
+    fun `Skal konvertere et svar til en pågående Periode der tom er null`() {
+        val faktumNode = objectMapper.readValue<JsonNode>(jsonMedPeriodeUtenTom)
         val svarnode = faktumNode["svar"]
 
         val pågåendePeriode = svarnode.asPeriode()
