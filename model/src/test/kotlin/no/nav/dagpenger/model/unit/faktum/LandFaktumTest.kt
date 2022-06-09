@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.unit.faktum
 
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
@@ -27,7 +28,9 @@ internal class LandFaktumTest {
     fun setup() {
         søknadprosess = Søknad(
             testversjon,
-            land faktum "land" gruppe "eøs" med eøsEllerSveits() gruppe "norge-jan-mayen" med norge() id 1
+            land faktum "land" gruppe "eøs" med eøsEllerSveits() gruppe "norge-jan-mayen" med norge() id 1,
+            land faktum "land" gruppe "eøs" med eøsEllerSveits() gruppe "norge-jan-mayen" med norge() id 2,
+            heltall faktum "land generator" genererer 2 id 3
         ).testSøknadprosess()
 
         landFaktum = søknadprosess.land(1)
@@ -55,6 +58,18 @@ internal class LandFaktumTest {
         assertEquals(norge(), forventetLandGrupper["land.gruppe.norge-jan-mayen"])
     }
 
+    @Test
+    fun `Templatefaktum har landgrupper`() {
+        val generatorfaktum = søknadprosess.generator(3)
+        generatorfaktum.besvar(1)
+        val landfaktumTemplate = søknadprosess.land("2.1")
+        val forventetLandGrupper = LandFaktumVisitor(landfaktumTemplate).forventetLandGrupper
+        assertTrue { forventetLandGrupper.containsKey("land.gruppe.eøs") }
+        assertEquals(eøsEllerSveits(), forventetLandGrupper["land.gruppe.eøs"])
+        assertTrue { forventetLandGrupper.containsKey("land.gruppe.norge-jan-mayen") }
+        assertEquals(norge(), forventetLandGrupper["land.gruppe.norge-jan-mayen"])
+    }
+
     private class LandFaktumVisitor(faktum: Faktum<*>) : FaktumVisitor {
 
         init {
@@ -75,9 +90,9 @@ internal class LandFaktumTest {
             svar: R,
             besvartAv: String?,
             gyldigeValg: GyldigeValg?,
-            landGrupper: LandGrupper?
+            landGrupper: LandGrupper?,
         ) {
-            forventetLandGrupper = landGrupper!!
+            forventetLandGrupper = landGrupper ?: throw AssertionError("Faktum med id $id mangler landgrupper")
         }
 
         override fun <R : Comparable<R>> visitUtenSvar(
@@ -90,9 +105,9 @@ internal class LandFaktumTest {
             roller: Set<Rolle>,
             clazz: Class<R>,
             gyldigeValg: GyldigeValg?,
-            landGrupper: LandGrupper?
+            landGrupper: LandGrupper?,
         ) {
-            forventetLandGrupper = landGrupper!!
+            forventetLandGrupper = landGrupper ?: throw AssertionError("Faktum med id $id mangler landgrupper")
         }
     }
 
