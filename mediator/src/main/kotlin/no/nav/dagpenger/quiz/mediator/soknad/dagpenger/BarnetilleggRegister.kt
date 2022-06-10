@@ -40,13 +40,13 @@ object BarnetilleggRegister : DslFaktaseksjon {
             og `forsoerger du barnet register`
             og `barn aarsinntekt over 1g register`
             og `barn inntekt register`,
-        tekst faktum "faktum.register.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn register`,
-        tekst faktum "faktum.register.barn-etternavn" id `barn etternavn register`,
-        dato faktum "faktum.register.barn-foedselsdato" id `barn foedselsdato register`,
-        land faktum "faktum.register.barn-bostedsland" id `barn bostedsland register`,
-        boolsk faktum "faktum.register.forsoerger-du-barnet" id `forsoerger du barnet register` kanEndresAv Rolle.søker,
-        boolsk faktum "faktum.register.barn-aarsinntekt-over-1g" id `barn aarsinntekt over 1g register` kanEndresAv Rolle.søker,
-        heltall faktum "faktum.register.barn-inntekt" id `barn inntekt register` kanEndresAv Rolle.søker,
+        tekst faktum "faktum.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn register`,
+        tekst faktum "faktum.barn-etternavn" id `barn etternavn register`,
+        dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato register`,
+        land faktum "faktum.barn-bostedsland" id `barn bostedsland register`,
+        boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet register` kanEndresAv Rolle.søker,
+        boolsk faktum "faktum.barn-aarsinntekt-over-1g" id `barn aarsinntekt over 1g register` kanEndresAv Rolle.søker,
+        heltall faktum "faktum.barn-inntekt" id `barn inntekt register` kanEndresAv Rolle.søker,
 
     )
 
