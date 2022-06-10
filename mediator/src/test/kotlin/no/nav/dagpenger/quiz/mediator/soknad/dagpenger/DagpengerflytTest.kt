@@ -25,6 +25,9 @@ class DagpengerflytTest {
 
         søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
 
+        søknadprosess.generator(BarnetilleggSøker.`barn liste`).besvar(0)
+        søknadprosess.generator(BarnetilleggRegister.`barn liste register`).besvar(0)
+
         søknadprosess.dato(Arbeidsforhold.`dagpenger soknadsdato`).besvar(1.januar)
         søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
 

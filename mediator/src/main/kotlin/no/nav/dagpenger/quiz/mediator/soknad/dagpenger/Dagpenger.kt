@@ -54,20 +54,21 @@ internal object Dagpenger {
         val regeltre: Subsumsjon = with(prototypeSøknad) {
             Bosted.regeltre(this).hvisOppfylt {
                 Gjenopptak.regeltre(this).hvisOppfylt {
-                    // Barnetillegg.regeltre(søknad).hvisOppfylt {
-                    Arbeidsforhold.regeltre(this).hvisOppfylt {
-                        EøsArbeidsforhold.regeltre(this).hvisOppfylt {
-                            EgenNæring.regeltre(this).hvisOppfylt {
-                                Verneplikt.regeltre(this).hvisOppfylt {
-                                    AndreYtelser.regeltre(this).hvisOppfylt {
-                                        Utdanning.regeltre(this).hvisOppfylt {
-                                            ReellArbeidssoker.regeltre(this).hvisOppfylt {
-                                                Tilleggsopplysninger.regeltre(this).hvisOppfylt {
-                                                    "dokumentasjonskrav".alle(
-                                                        DokumentasjonskravVerneplikt.regeltre(this),
-                                                        DokumentasjonskravUtdanning.regeltre(this),
-                                                        DokumentasjonskravEgenNæring.regeltre(this)
-                                                    )
+                    Barnetillegg.regeltre(this).hvisOppfylt {
+                        Arbeidsforhold.regeltre(this).hvisOppfylt {
+                            EøsArbeidsforhold.regeltre(this).hvisOppfylt {
+                                EgenNæring.regeltre(this).hvisOppfylt {
+                                    Verneplikt.regeltre(this).hvisOppfylt {
+                                        AndreYtelser.regeltre(this).hvisOppfylt {
+                                            Utdanning.regeltre(this).hvisOppfylt {
+                                                ReellArbeidssoker.regeltre(this).hvisOppfylt {
+                                                    Tilleggsopplysninger.regeltre(this).hvisOppfylt {
+                                                        "dokumentasjonskrav".alle(
+                                                            DokumentasjonskravVerneplikt.regeltre(this),
+                                                            DokumentasjonskravUtdanning.regeltre(this),
+                                                            DokumentasjonskravEgenNæring.regeltre(this)
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }
@@ -75,7 +76,6 @@ internal object Dagpenger {
                                 }
                             }
                         }
-                        // }
                     }
                 }
             }

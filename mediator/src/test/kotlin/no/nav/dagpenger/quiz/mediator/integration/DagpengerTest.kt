@@ -12,6 +12,8 @@ import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Arbeidsforhold
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.BarnetilleggSøker
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Bosted
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Gjenopptak
@@ -57,8 +59,8 @@ internal class DagpengerTest : SøknadBesvarer() {
             val harMottattDagpenger = Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja")
             besvar(Gjenopptak.`mottatt dagpenger siste 12 mnd`, harMottattDagpenger)
 
-            // søknadsprosess.verifiserAtNesteSeksjonEr(Barnetillegg)
-            // besvar(Barnetillegg.`barn liste`, 0)
+            søknadsprosess.verifiserAtNesteSeksjonEr(Barnetillegg)
+            besvar(BarnetilleggSøker.`barn liste`, 0)
 
             søknadsprosess.verifiserAtNesteSeksjonEr(Arbeidsforhold)
 
