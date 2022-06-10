@@ -32,8 +32,6 @@ object BarnetilleggSøker : DslFaktaseksjon {
     const val `barn inntekt` = 1008
 
     override val fakta = listOf(
-        boolsk faktum "faktum.barn-aarsinntekt-over-1g" id `barn aarsinntekt over 1g`,
-        heltall faktum "faktum.barn-inntekt" id `barn inntekt`,
         heltall faktum "faktum.barn-liste" id `barn liste`
             genererer `barn fornavn mellomnavn`
             og `barn etternavn`
@@ -46,7 +44,10 @@ object BarnetilleggSøker : DslFaktaseksjon {
         tekst faktum "faktum.barn-etternavn" id `barn etternavn`,
         dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato`,
         land faktum "faktum.barn-bostedsland" id `barn bostedsland`,
-        boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`
+        boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`,
+        boolsk faktum "faktum.barn-aarsinntekt-over-1g" id `barn aarsinntekt over 1g`,
+        // @todo: Burde være faktum type 'inntekt'?
+        heltall faktum "faktum.barn-inntekt" id `barn inntekt`
 
     )
 

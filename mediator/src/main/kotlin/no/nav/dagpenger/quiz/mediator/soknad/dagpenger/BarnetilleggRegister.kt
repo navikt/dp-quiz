@@ -56,7 +56,8 @@ object BarnetilleggRegister : DslFaktaseksjon {
             `barn liste register`,
             `barn fornavn mellomnavn register`,
             `barn etternavn register`,
-            `barn bostedsland register`
+            `barn bostedsland register`,
+            `barn foedselsdato register`
         )
         return listOf(barnetilleggRegister)
     }
