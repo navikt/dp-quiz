@@ -26,7 +26,7 @@ object BarnetilleggSøker : DslFaktaseksjon {
     const val `barn fornavn mellomnavn` = 1002
     const val `barn etternavn` = 1003
     const val `barn foedselsdato` = 1004
-    const val `barn bostedsland` = 1005
+    const val `barn statsborgerskap` = 1005
     const val `forsoerger du barnet` = 1006
     const val `barn aarsinntekt over 1g` = 1007
     const val `barn inntekt` = 1008
@@ -36,14 +36,14 @@ object BarnetilleggSøker : DslFaktaseksjon {
             genererer `barn fornavn mellomnavn`
             og `barn etternavn`
             og `barn foedselsdato`
-            og `barn bostedsland`
+            og `barn statsborgerskap`
             og `forsoerger du barnet`
             og `barn aarsinntekt over 1g`
             og `barn inntekt`,
         tekst faktum "faktum.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn`,
         tekst faktum "faktum.barn-etternavn" id `barn etternavn`,
         dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato`,
-        land faktum "faktum.barn-bostedsland" id `barn bostedsland`,
+        land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap`,
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`,
         boolsk faktum "faktum.barn-aarsinntekt-over-1g" id `barn aarsinntekt over 1g`,
         // @todo: Burde være faktum type 'inntekt'?
@@ -87,7 +87,7 @@ object BarnetilleggSøker : DslFaktaseksjon {
         tekst(`barn fornavn mellomnavn`).utfylt(),
         tekst(`barn etternavn`).utfylt(),
         dato(`barn foedselsdato`).utfylt(),
-        land(`barn bostedsland`).utfylt(),
+        land(`barn statsborgerskap`).utfylt(),
     )
 
     private fun Søknad.`har barnet årsinntekt over 1G`() = "inntekt over 1G eller ikke".minstEnAv(

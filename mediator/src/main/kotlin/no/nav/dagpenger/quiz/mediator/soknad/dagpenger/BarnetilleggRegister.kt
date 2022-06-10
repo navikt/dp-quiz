@@ -25,7 +25,7 @@ object BarnetilleggRegister : DslFaktaseksjon {
     const val `barn fornavn mellomnavn register` = 1010
     const val `barn etternavn register` = 1011
     const val `barn foedselsdato register` = 1012
-    const val `barn bostedsland register` = 1013
+    const val `barn statsborgerskap register` = 1013
     const val `forsoerger du barnet register` = 1014
     const val `barn aarsinntekt over 1g register` = 1015
     const val `barn inntekt register` = 1016
@@ -36,14 +36,14 @@ object BarnetilleggRegister : DslFaktaseksjon {
             genererer `barn fornavn mellomnavn register`
             og `barn etternavn register`
             og `barn foedselsdato register`
-            og `barn bostedsland register`
+            og `barn statsborgerskap register`
             og `forsoerger du barnet register`
             og `barn aarsinntekt over 1g register`
             og `barn inntekt register`,
         tekst faktum "faktum.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn register`,
         tekst faktum "faktum.barn-etternavn" id `barn etternavn register`,
         dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato register`,
-        land faktum "faktum.barn-bostedsland" id `barn bostedsland register`,
+        land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap register`,
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet register` kanEndresAv Rolle.søker,
         boolsk faktum "faktum.barn-aarsinntekt-over-1g" id `barn aarsinntekt over 1g register` kanEndresAv Rolle.søker,
         heltall faktum "faktum.barn-inntekt" id `barn inntekt register` kanEndresAv Rolle.søker,
@@ -56,7 +56,7 @@ object BarnetilleggRegister : DslFaktaseksjon {
             `barn liste register`,
             `barn fornavn mellomnavn register`,
             `barn etternavn register`,
-            `barn bostedsland register`,
+            `barn statsborgerskap register`,
             `barn foedselsdato register`
         )
         return listOf(barnetilleggRegister)

@@ -43,7 +43,7 @@ internal class BarnetilleggSøkerTest {
         søknadprosess.tekst("${BarnetilleggSøker.`barn fornavn mellomnavn`}.1").besvar(Tekst("Ola"))
         søknadprosess.tekst("${BarnetilleggSøker.`barn etternavn`}.1").besvar(Tekst("Nordmann"))
         søknadprosess.dato("${BarnetilleggSøker.`barn foedselsdato`}.1").besvar(LocalDate.now().minusYears(1))
-        søknadprosess.land("${BarnetilleggSøker.`barn bostedsland`}.1").besvar(Land("NOR"))
+        søknadprosess.land("${BarnetilleggSøker.`barn statsborgerskap`}.1").besvar(Land("NOR"))
         søknadprosess.boolsk("${BarnetilleggSøker.`forsoerger du barnet`}.1").besvar(false)
         assertEquals(true, søknadprosess.resultat())
 
