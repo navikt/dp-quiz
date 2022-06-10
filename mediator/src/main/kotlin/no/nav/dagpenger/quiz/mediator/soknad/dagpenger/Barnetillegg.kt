@@ -14,7 +14,7 @@ object Barnetillegg : DslFaktaseksjon {
         get() = BarnetilleggSøker.fakta + BarnetilleggRegister.fakta
 
     override fun seksjon(søknad: Søknad): List<Seksjon> {
-        return BarnetilleggSøker.seksjon(søknad) + BarnetilleggRegister.seksjon(søknad)
+        return BarnetilleggRegister.seksjon(søknad) + BarnetilleggSøker.seksjon(søknad)
     }
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon {
