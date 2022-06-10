@@ -1,4 +1,4 @@
-package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
+package no.nav.dagpenger.quiz.mediator.integration
 
 import io.mockk.every
 import io.mockk.mockk
@@ -9,9 +9,12 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
-import no.nav.dagpenger.quiz.mediator.integration.SøknadBesvarer
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Arbeidsforhold
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Bosted
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Gjenopptak
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
