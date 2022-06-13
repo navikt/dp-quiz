@@ -220,6 +220,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                 jsonTemplates.add(SøknadFaktumVisitor(template).root)
             }
             this.root.lagFaktumNode<R>(id, "generator", faktum.navn, roller, jsonTemplates)
+            this.root.put("readOnly", faktum.harIkkeRolle(Rolle.søker))
         }
 
         override fun <R : Comparable<R>> visitMedSvar(
@@ -251,6 +252,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                 svarListe.add(indeks)
             }
             this.root.set<ArrayNode>("svar", svarListe)
+            this.root.put("readOnly", faktum.harIkkeRolle(Rolle.søker))
         }
 
         override fun <R : Comparable<R>> visitMedSvar(
@@ -319,6 +321,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                 this.root.leggTilGyldigeLand()
                 this.root.leggTilLandGrupper(landGrupper)
             }
+            this.root.put("readOnly", faktum.harIkkeRolle(Rolle.søker))
         }
     }
 }

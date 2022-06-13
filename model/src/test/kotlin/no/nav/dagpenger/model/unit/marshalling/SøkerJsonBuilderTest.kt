@@ -21,6 +21,7 @@ import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.under
 import no.nav.dagpenger.model.regel.utfylt
@@ -46,6 +47,7 @@ import java.util.UUID
 internal class SøkerJsonBuilderTest {
 
     private lateinit var prototypeSøknad: Søknad
+    private lateinit var søknadprosess: Søknadprosess
 
     @BeforeEach
     fun setup() {
@@ -72,15 +74,15 @@ internal class SøkerJsonBuilderTest {
             envalg faktum "f17" id 17 med "envalg1" med "envalg2",
             flervalg faktum "f18" id 18 med "flervalg1" med "flervalg2",
             heltall faktum "f1718" id 1718 genererer 17 og 18,
-            land faktum "f19" gruppe "eøs" med listOf(Land("SWE")) gruppe "norge-jan-mayen" med listOf(Land("NOR")) id 19
+            land faktum "f19" gruppe "eøs" med listOf(Land("SWE")) gruppe "norge-jan-mayen" med listOf(Land("NOR")) id 19,
+            dato faktum "f20" id 20,
+            heltall faktum "f21" genererer 20 id 21
         )
+        søknadprosess = søknadprosess(søkerSubsumsjon())
     }
 
     @Test
     fun `SøkerJsonBuilder returnerer besvarte fakta og neste ubesvarte faktum`() {
-
-        val regel = søkerSubsumsjon()
-        val søknadprosess = søknadprosess(regel)
 
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertMetadata(it)
@@ -256,6 +258,26 @@ internal class SøkerJsonBuilderTest {
 
         søknadprosess.land(19).besvar(Land("NOR"))
 
+        SøkerJsonBuilder(søknadprosess).resultat().also { it ->
+            assertAntallSeksjoner(7, it)
+            val generatorFakta = it.finnSeksjon("nav generator fakta")["fakta"]
+            generatorFakta[0].assertGeneratorFaktaAsJson(
+                "21", "generator", "f21", listOf("nav"),
+                assertTemplates = listOf {
+                    it.assertFaktaAsJson(
+                        "20",
+                        "localdate",
+                        "f20",
+                        listOf("nav"),
+                    )
+                }
+            )
+            assertTrue(generatorFakta[0]["readOnly"].asBoolean())
+        }
+
+        søknadprosess.generator(21).besvar(1)
+        søknadprosess.dato("20.1").besvar(LocalDate.now())
+
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertFerdig(it)
         }
@@ -328,7 +350,12 @@ internal class SøkerJsonBuilderTest {
                 ),
                 "Land".alle(
                     prototypeSøknad.land(19).utfylt()
-                )
+                ),
+                prototypeSøknad.generator(21) har
+                    "deltre".deltre {
+                        prototypeSøknad.dato(20).utfylt()
+                    }
+
             )
         }
         return regeltre
@@ -379,6 +406,12 @@ internal class SøkerJsonBuilderTest {
                 "Gyldige land",
                 Rolle.søker,
                 prototypeSøknad.land(19)
+            ),
+            Seksjon(
+                "nav generator fakta",
+                Rolle.nav,
+                prototypeSøknad.generator(21),
+                prototypeSøknad.dato(20),
             )
         )
         val prototypeFaktagrupper = Søknadprosess(
@@ -395,7 +428,7 @@ internal class SøkerJsonBuilderTest {
     }
 
     private fun assertFerdig(søkerJson: ObjectNode) {
-        assertTrue(søkerJson["ferdig"].asBoolean(), "Forventer at søknadsprosessen er ferdig og venter på godkjenning")
+        assertTrue(søkerJson["ferdig"].asBoolean(), "Forventet at Dagpenger søknadsprosessen var ferdig. Mangler svar på ${søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }}")
     }
 
     private fun assertIkkeFerdig(søkerJson: ObjectNode) {
