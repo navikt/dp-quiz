@@ -55,10 +55,7 @@ object BarnetilleggSøker : DslFaktaseksjon {
         val barnetilleggSøker = søknad.seksjon(
             "barnetillegg",
             Rolle.søker,
-            *this.databaseIder(),
-            BarnetilleggRegister.`forsoerger du barnet register`,
-            BarnetilleggRegister.`barn aarsinntekt over 1g register`,
-            BarnetilleggRegister.`barn inntekt register`
+            *this.databaseIder()
         )
         return listOf(barnetilleggSøker)
     }
