@@ -54,7 +54,7 @@ services:
       DB_USERNAME: "${DB_NAME_QUIZ}-user"
 
   soknad:
-    image: ghcr.io/navikt/dp-soknad/dp-soknad:f56a7664dbd9203aad6c8f5be7fbbd098a002b6e
+    image: ghcr.io/navikt/dp-soknad/dp-soknad:latest
     container_name: soknad
     depends_on:
       - kafka
