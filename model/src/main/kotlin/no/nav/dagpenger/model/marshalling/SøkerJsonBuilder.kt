@@ -181,12 +181,8 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         avhengerAvFakta: Set<Faktum<*>> = emptySet(),
     ) {
         gjeldendeSeksjonFakta.add(SøknadFaktumVisitor(faktum, genererteFakta).root)
-        besøkteFaktumIder.add(id)
-
         gjeldendeSeksjonFakta.addAll(
             avhengerAvFakta.map { avhengerFaktum ->
-                if (besøkteFaktumIder.contains(avhengerFaktum.faktumId.id)) return
-
                 val avhengerReadOnlyStrategy: (faktum: Faktum<*>) -> Boolean = { true }
                 if (avhengerFaktum is GeneratorFaktum) {
                     SøknadFaktumVisitor(
@@ -199,6 +195,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                 }
             }
         )
+        besøkteFaktumIder.add(id)
     }
 
     private class AvhengerAvGeneratorVisitor(faktum: GeneratorFaktum) : FaktumVisitor {
