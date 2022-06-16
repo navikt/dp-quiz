@@ -18,7 +18,6 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.helpers.toPrettyJson
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
@@ -45,7 +44,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class SøkerJsonBuilderTest {
-
     private lateinit var prototypeSøknad: Søknad
     private lateinit var søknadprosess: Søknadprosess
 
@@ -83,7 +81,6 @@ internal class SøkerJsonBuilderTest {
 
     @Test
     fun `SøkerJsonBuilder returnerer besvarte fakta og neste ubesvarte faktum`() {
-
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertMetadata(it)
             assertAntallSeksjoner(1, it)
@@ -97,6 +94,7 @@ internal class SøkerJsonBuilderTest {
 
             assertAntallSeksjoner(1, it)
             val fakta = it.finnSeksjon("seksjon1")["fakta"]
+            assertEquals(2, fakta.size(), "Seksjonen inneholder duplikate faktum via avhengigeAv")
             fakta[0].assertFaktaAsJson("1", "boolean", "f1", listOf("søker")) { svar ->
                 assertEquals("true", svar.asText())
             }
@@ -192,7 +190,6 @@ internal class SøkerJsonBuilderTest {
             f8Faktum.assertFaktaAsJson("8", "localdate", "f8", listOf("nav"))
             assertTrue(f8Faktum.has("readOnly"))
             // assertFalse(f8Faktum.get("readOnly").asBoolean())
-
             val f9Faktum = navFakta[1]
             f9Faktum.assertFaktaAsJson("9", "localdate", "f9", listOf("nav"))
             assertTrue(f9Faktum.has("readOnly"))
@@ -207,11 +204,9 @@ internal class SøkerJsonBuilderTest {
             assertEquals(4, navFakta.size())
             assertEquals(1, navFakta.count { it["readOnly"].asBoolean() == false })
             assertEquals(3, navFakta.count { it["readOnly"].asBoolean() == true })
-
             val generator = navFakta.find { it["beskrivendeId"].asText() == "f67" }!!
             val generatorSvar = generator["svar"]
             assertEquals(2, generatorSvar.size())
-            println(generator.toPrettyJson())
             assertTrue(generatorSvar.all { indeksSvar -> indeksSvar.all { it["readOnly"].asBoolean() } })
         }
 
@@ -327,14 +322,12 @@ internal class SøkerJsonBuilderTest {
             }
         }
         val generatorSubsumsjon67 = prototypeSøknad.generator(67) med deltre
-
         val generatorSubsumsjon1718 = prototypeSøknad.generator(1718) med "Besvarte valg".deltre {
             "alle må være besvarte".alle(
                 prototypeSøknad.envalg(17).utfylt(),
                 prototypeSøknad.envalg(18).utfylt(),
             )
         }
-
         val regeltre = "regel" deltre {
             "alle i søknaden skal være besvart".alle(
                 "alle i seksjon 1".alle(
@@ -368,7 +361,6 @@ internal class SøkerJsonBuilderTest {
                     "deltre".deltre {
                         prototypeSøknad.dato(20).utfylt()
                     }
-
             )
         }
         return regeltre
@@ -441,7 +433,12 @@ internal class SøkerJsonBuilderTest {
     }
 
     private fun assertFerdig(søkerJson: ObjectNode) {
-        assertTrue(søkerJson["ferdig"].asBoolean(), "Forventet at Dagpenger søknadsprosessen var ferdig. Mangler svar på ${søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }}")
+        assertTrue(
+            søkerJson["ferdig"].asBoolean(),
+            "Forventet at Dagpenger søknadsprosessen var ferdig. Mangler svar på ${
+            søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+            }"
+        )
     }
 
     private fun assertIkkeFerdig(søkerJson: ObjectNode) {
