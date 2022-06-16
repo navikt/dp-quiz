@@ -20,7 +20,6 @@ import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object BarnetilleggRegister : DslFaktaseksjon {
-
     const val `barn liste register` = 1009
     const val `barn fornavn mellomnavn register` = 1010
     const val `barn etternavn register` = 1011
@@ -29,9 +28,7 @@ object BarnetilleggRegister : DslFaktaseksjon {
     const val `forsoerger du barnet register` = 1014
     const val `barn aarsinntekt over 1g register` = 1015
     const val `barn inntekt register` = 1016
-
     override val fakta = listOf(
-
         heltall faktum "faktum.register.barn-liste" id `barn liste register`
             genererer `barn fornavn mellomnavn register`
             og `barn etternavn register`
@@ -44,10 +41,9 @@ object BarnetilleggRegister : DslFaktaseksjon {
         tekst faktum "faktum.barn-etternavn" id `barn etternavn register`,
         dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato register`,
         land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap register`,
-        boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet register` kanEndresAv Rolle.søker,
-        boolsk faktum "faktum.barn-aarsinntekt-over-1g" id `barn aarsinntekt over 1g register` kanEndresAv Rolle.søker,
-        heltall faktum "faktum.barn-inntekt" id `barn inntekt register` kanEndresAv Rolle.søker,
-
+        boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet register` avhengerAv `barn liste register`,
+        boolsk faktum "faktum.barn-aarsinntekt-over-1g" id `barn aarsinntekt over 1g register` avhengerAv `barn liste register`,
+        heltall faktum "faktum.barn-inntekt" id `barn inntekt register` avhengerAv `barn liste register`,
     )
 
     override fun seksjon(søknad: Søknad): List<Seksjon> {
@@ -59,7 +55,13 @@ object BarnetilleggRegister : DslFaktaseksjon {
             `barn statsborgerskap register`,
             `barn foedselsdato register`
         )
-        return listOf(barnetilleggRegister)
+        val barnesvar = søknad.seksjon(
+            "barnetillegg-register-svar", Rolle.søker,
+            `forsoerger du barnet register`,
+            `barn aarsinntekt over 1g register`,
+            `barn inntekt register`
+        )
+        return listOf(barnetilleggRegister, barnesvar)
     }
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {

@@ -56,9 +56,6 @@ object BarnetilleggSøker : DslFaktaseksjon {
             "barnetillegg",
             Rolle.søker,
             *this.databaseIder(),
-            BarnetilleggRegister.`forsoerger du barnet register`,
-            BarnetilleggRegister.`barn aarsinntekt over 1g register`,
-            BarnetilleggRegister.`barn inntekt register`
         )
         return listOf(barnetilleggSøker)
     }
