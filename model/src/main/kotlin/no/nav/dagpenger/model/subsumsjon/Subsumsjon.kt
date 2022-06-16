@@ -181,7 +181,8 @@ abstract class Subsumsjon protected constructor(
             templates: List<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>,
-            svar: R
+            svar: R,
+            genererteFaktum: Set<Faktum<*>>
         ) {
             if (!ignore) {
                 resultater.add(faktum)

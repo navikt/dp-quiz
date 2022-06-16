@@ -118,7 +118,8 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
         templates: List<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        svar: R
+        svar: R,
+        genererteFaktum: Set<Faktum<*>>
     ) {
         lagFaktumNode(id, faktum.navn, type = clazz, svar = svar)
     }

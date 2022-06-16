@@ -18,6 +18,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.helpers.toPrettyJson
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
@@ -35,7 +36,6 @@ import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -61,7 +61,7 @@ internal class SøkerJsonBuilderTest {
             heltall faktum "f6" id 6,
             boolsk faktum "f7" id 7,
             heltall faktum "f67" id 67 genererer 6 og 7,
-            dato faktum "f8" id 8 kanEndresAv Rolle.søker,
+            dato faktum "f8" id 8,
             dato faktum "f9" id 9,
             maks dato "f10" av 8 og 9 id 10,
             boolsk faktum "f11" id 11 avhengerAv 10,
@@ -69,7 +69,7 @@ internal class SøkerJsonBuilderTest {
             heltall faktum "f1314" id 1314 genererer 13 og 14,
             boolsk faktum "f13" id 13,
             boolsk faktum "f14" id 14,
-            dokument faktum "f15" id 15 avhengerAv 5,
+            dokument faktum "f15" id 15 avhengerAv 5 og 8 og 67,
             boolsk faktum "f16" id 16 avhengerAv 15,
             envalg faktum "f17" id 17 med "envalg1" med "envalg2",
             flervalg faktum "f18" id 18 med "flervalg1" med "flervalg2",
@@ -189,9 +189,9 @@ internal class SøkerJsonBuilderTest {
         SøkerJsonBuilder(søknadprosess).resultat().also {
             val navFakta = it.finnSeksjon("navseksjon")["fakta"]
             val f8Faktum = navFakta[0]
-            f8Faktum.assertFaktaAsJson("8", "localdate", "f8", listOf("søker", "nav"))
+            f8Faktum.assertFaktaAsJson("8", "localdate", "f8", listOf("nav"))
             assertTrue(f8Faktum.has("readOnly"))
-            assertFalse(f8Faktum.get("readOnly").asBoolean())
+            // assertFalse(f8Faktum.get("readOnly").asBoolean())
 
             val f9Faktum = navFakta[1]
             f9Faktum.assertFaktaAsJson("9", "localdate", "f9", listOf("nav"))
@@ -200,6 +200,19 @@ internal class SøkerJsonBuilderTest {
 
             assertAntallSeksjoner(4, it)
             assertUbesvartFaktum("dokumentasjon", it)
+        }
+
+        SøkerJsonBuilder(søknadprosess).resultat().also {
+            val navFakta = it.finnSeksjon("dokumentasjon")["fakta"]
+            assertEquals(4, navFakta.size())
+            assertEquals(1, navFakta.count { it["readOnly"].asBoolean() == false })
+            assertEquals(3, navFakta.count { it["readOnly"].asBoolean() == true })
+
+            val generator = navFakta.find { it["beskrivendeId"].asText() == "f67" }!!
+            val generatorSvar = generator["svar"]
+            assertEquals(2, generatorSvar.size())
+            println(generator.toPrettyJson())
+            assertTrue(generatorSvar.all { indeksSvar -> indeksSvar.all { it["readOnly"].asBoolean() } })
         }
 
         søknadprosess.dokument(15).besvar(Dokument(LocalDate.now(), "urn:nav:1234"))

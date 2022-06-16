@@ -102,13 +102,15 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R,
+        genererteFaktum: Set<Faktum<*>>
     ) {
         if (!erISeksjon) return
         if (id in besøkteFaktumIder) return
         val genererte = erGenerertFraTemplate.filter { generertFaktum ->
             templates.any { generertFaktum.faktumId.generertFra(it.faktumId) }
-        }
-        addFaktum(faktum, id, genererte)
+        }.toSet()
+
+        addFaktum(faktum, id, genererte, avhengerAvFakta)
     }
 
     override fun <R : Comparable<R>> visitUtenSvar(
@@ -123,8 +125,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         if (!erISeksjon) return
         if (id in besøkteFaktumIder) return
         if (faktum !in nesteUbesvarteFakta) return
-
-        addFaktum(faktum, id)
+        addFaktum(faktum, id, avhengerAvFakta = avhengerAvFakta)
     }
 
     override fun <R : Comparable<R>> visitMedSvar(
@@ -147,7 +148,8 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             erGenerertFraTemplate.add(faktum)
             return
         }
-        addFaktum(faktum, id)
+
+        addFaktum(faktum, id, avhengerAvFakta = avhengerAvFakta)
     }
 
     override fun <R : Comparable<R>> visitUtenSvar(
@@ -169,22 +171,63 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             erGenerertFraTemplate.add(faktum)
             return
         }
-        addFaktum(faktum, id)
+        addFaktum(faktum, id, avhengerAvFakta = avhengerAvFakta)
     }
 
-    private fun <R : Comparable<R>> addFaktum(faktum: Faktum<R>, id: String) {
-        gjeldendeSeksjonFakta.add(SøknadFaktumVisitor(faktum).root)
+    private fun <R : Comparable<R>> addFaktum(
+        faktum: Faktum<R>,
+        id: String,
+        genererteFakta: Set<Faktum<*>> = emptySet(),
+        avhengerAvFakta: Set<Faktum<*>> = emptySet(),
+    ) {
+        gjeldendeSeksjonFakta.add(SøknadFaktumVisitor(faktum, genererteFakta).root)
+        gjeldendeSeksjonFakta.addAll(
+            avhengerAvFakta.map { avhengerFaktum ->
+                val avhengerReadOnlyStrategy: (faktum: Faktum<*>) -> Boolean = { true }
+                if (avhengerFaktum is GeneratorFaktum) {
+                    SøknadFaktumVisitor(
+                        avhengerFaktum,
+                        AvhengerAvGeneratorVisitor(avhengerFaktum).genererteFakta,
+                        readOnlyStrategy = avhengerReadOnlyStrategy
+                    ).root
+                } else {
+                    SøknadFaktumVisitor(avhengerFaktum, readOnlyStrategy = avhengerReadOnlyStrategy).root
+                }
+            }
+        )
         besøkteFaktumIder.add(id)
     }
 
-    private fun <R : Comparable<R>> addFaktum(faktum: Faktum<R>, id: String, generatorFaktum: List<Faktum<*>>) {
-        gjeldendeSeksjonFakta.add(SøknadFaktumVisitor(faktum, generatorFaktum).root)
-        besøkteFaktumIder.add(id)
+    private class AvhengerAvGeneratorVisitor(faktum: GeneratorFaktum) : FaktumVisitor {
+        val genererteFakta = mutableSetOf<Faktum<*>>()
+
+        init {
+            faktum.accept(this)
+        }
+
+        override fun <R : Comparable<R>> visitMedSvar(
+            faktum: GeneratorFaktum,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            templates: List<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>,
+            svar: R,
+            genererteFaktum: Set<Faktum<*>>
+        ) {
+            genererteFakta.addAll(genererteFaktum)
+        }
+    }
+
+    fun interface ReadOnlyStrategy {
+        fun readOnly(faktum: Faktum<*>): Boolean
     }
 
     private class SøknadFaktumVisitor(
         faktum: Faktum<*>,
-        private val genererteFaktum: List<Faktum<*>> = emptyList(),
+        private val genererteFaktum: Set<Faktum<*>> = emptySet(),
+        private val readOnlyStrategy: ReadOnlyStrategy = ReadOnlyStrategy { it.harIkkeRolle(Rolle.søker) }
     ) : FaktumVisitor {
 
         val root: ObjectNode = mapper.createObjectNode()
@@ -220,7 +263,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                 jsonTemplates.add(SøknadFaktumVisitor(template).root)
             }
             this.root.lagFaktumNode<R>(id, "generator", faktum.navn, roller, jsonTemplates)
-            this.root.put("readOnly", faktum.harIkkeRolle(Rolle.søker))
+            this.root.put("readOnly", readOnlyStrategy.readOnly(faktum))
         }
 
         override fun <R : Comparable<R>> visitMedSvar(
@@ -232,6 +275,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             roller: Set<Rolle>,
             clazz: Class<R>,
             svar: R,
+            genererteFaktum: Set<Faktum<*>>
         ) {
             val jsonTemplates = mapper.createArrayNode()
             templates.forEach { template ->
@@ -242,17 +286,17 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
 
             (1..faktum.svar()).forEach { i ->
                 val indeks = mapper.createArrayNode()
-                genererteFaktum.filter { faktum ->
+                this.genererteFaktum.filter { faktum ->
                     faktum.faktumId.reflection { _, indeks ->
                         indeks == i
                     }
                 }.forEach {
-                    indeks.add(SøknadFaktumVisitor(it).root)
+                    indeks.add(SøknadFaktumVisitor(it, readOnlyStrategy = readOnlyStrategy).root)
                 }
                 svarListe.add(indeks)
             }
             this.root.set<ArrayNode>("svar", svarListe)
-            this.root.put("readOnly", faktum.harIkkeRolle(Rolle.søker))
+            this.root.put("readOnly", readOnlyStrategy.readOnly(faktum))
         }
 
         override fun <R : Comparable<R>> visitMedSvar(
@@ -289,7 +333,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                 this.root.leggTilLandGrupper(landGrupper)
             }
 
-            this.root.put("readOnly", faktum.harIkkeRolle(Rolle.søker))
+            this.root.put("readOnly", readOnlyStrategy.readOnly(faktum))
         }
 
         override fun <R : Comparable<R>> visitUtenSvar(
@@ -321,7 +365,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                 this.root.leggTilGyldigeLand()
                 this.root.leggTilLandGrupper(landGrupper)
             }
-            this.root.put("readOnly", faktum.harIkkeRolle(Rolle.søker))
+            this.root.put("readOnly", readOnlyStrategy.readOnly(faktum))
         }
     }
 }
