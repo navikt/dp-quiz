@@ -31,17 +31,18 @@ import java.util.UUID
 class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
     companion object {
         private val mapper = ObjectMapper()
+        private val avhengerReadOnlyStrategy: (faktum: Faktum<*>) -> Boolean = { true }
     }
 
+    private var taMedAvhengigheter: Boolean = false
     private val root: ObjectNode = mapper.createObjectNode()
     private val seksjoner = mapper.createArrayNode()
     private var rootId = 0
     private val besøkteFaktumIder = mutableSetOf<String>()
     private var erISeksjon = false
     private lateinit var gjeldendeSeksjon: ObjectNode
-    private lateinit var gjeldendeSeksjonFakta: ArrayNode
-    private var gjeldendeFakta = mutableSetOf<Faktum<*>>()
-    private var avhengigeFakta = mutableSetOf<Faktum<*>>()
+    private lateinit var gjeldendeSeksjonFakta: MutableList<BruktFaktum>
+    private lateinit var gjeldendeAvhengerAvFakta: MutableSet<Faktum<*>>
     private val nesteUbesvarteFakta = søknadprosess.nesteFakta()
     private val erGenerertFraTemplate = mutableListOf<Faktum<*>>()
     private val ferdig = søknadprosess.erFerdigFor(Rolle.søker, Rolle.nav)
@@ -75,35 +76,43 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
         erISeksjon = erSøkerEllerNavSeksjon(rolle)
-        gjeldendeSeksjon = mapper.createObjectNode()
-        gjeldendeSeksjonFakta = mapper.createArrayNode()
-        gjeldendeFakta.clear()
-        gjeldendeSeksjon.put("beskrivendeId", seksjon.navn)
+        gjeldendeAvhengerAvFakta = mutableSetOf()
+        gjeldendeSeksjonFakta = mutableListOf()
+        gjeldendeSeksjon = mapper.createObjectNode().apply {
+            put("beskrivendeId", seksjon.navn)
+        }
+    }
+
+    override fun preVisitAvhengerAv(seksjon: Seksjon, avhengerAvFakta: Set<Faktum<*>>) {
+        taMedAvhengigheter = true
+    }
+
+    override fun postVisitAvhengerAv(seksjon: Seksjon, avhengerAvFakta: Set<Faktum<*>>) {
+        taMedAvhengigheter = false
     }
 
     private fun erSøkerEllerNavSeksjon(rolle: Rolle) =
-        rolle == Rolle.søker || rolle == Rolle.nav
+        // TODO: Trenger vi NAV?
+        rolle == Rolle.søker // || rolle == Rolle.nav
 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
-        if (gjeldendeSeksjonFakta.size() > 0) {
-            gjeldendeSeksjon.set<ArrayNode>("fakta", gjeldendeSeksjonFakta)
-            seksjoner.add(gjeldendeSeksjon)
-
-            gjeldendeSeksjonFakta.addAll(
-                avhengigeFakta.filterNot { gjeldendeFakta.contains(it) }
-                    .map { avhengerFaktum ->
-                        val avhengerReadOnlyStrategy: (faktum: Faktum<*>) -> Boolean = { true }
-                        if (avhengerFaktum is GeneratorFaktum) {
+        if (gjeldendeSeksjonFakta.isNotEmpty()) {
+            val fakta =
+                gjeldendeSeksjonFakta.fold(mapper.createArrayNode()) { acc, (faktum, genererteFakta) ->
+                    // TODO: Finn en smoothere måte å velge strategi
+                    when (faktum) {
+                        in gjeldendeAvhengerAvFakta -> acc.add(
                             SøknadFaktumVisitor(
-                                avhengerFaktum,
-                                AvhengerAvGeneratorVisitor(avhengerFaktum).genererteFakta,
+                                faktum,
+                                genererteFakta,
                                 readOnlyStrategy = avhengerReadOnlyStrategy
                             ).root
-                        } else {
-                            SøknadFaktumVisitor(avhengerFaktum, readOnlyStrategy = avhengerReadOnlyStrategy).root
-                        }
+                        )
+                        else -> acc.add(SøknadFaktumVisitor(faktum, genererteFakta).root)
                     }
-            )
+                }
+            gjeldendeSeksjon.set<ArrayNode>("fakta", fakta)
+            seksjoner.add(gjeldendeSeksjon)
         }
         erISeksjon = false
     }
@@ -124,7 +133,9 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         genererteFaktum: Set<Faktum<*>>
     ) {
         if (!erISeksjon) return
-        if (id in besøkteFaktumIder) return
+        // TODO: Kan denne glattes ut?
+        if (id in besøkteFaktumIder && faktum !in gjeldendeAvhengerAvFakta) return
+        // TODO: Finn ut hvordan vi kan hente svar i generator når de inkluderes som avhengigeAv
         val genererte = erGenerertFraTemplate.filter { generertFaktum ->
             templates.any { generertFaktum.faktumId.generertFra(it.faktumId) }
         }.toSet()
@@ -142,7 +153,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         clazz: Class<R>,
     ) {
         if (!erISeksjon) return
-        if (id in besøkteFaktumIder) return
+        if (id in besøkteFaktumIder && faktum !in gjeldendeAvhengerAvFakta) return
         if (faktum !in nesteUbesvarteFakta) return
         addFaktum(faktum, id, avhengerAvFakta = avhengerAvFakta)
     }
@@ -162,7 +173,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         landGrupper: LandGrupper?,
     ) {
         if (!erISeksjon) return
-        if (id in besøkteFaktumIder) return
+        if (id in besøkteFaktumIder && faktum !in gjeldendeAvhengerAvFakta) return
         if (faktum.faktumId.harIndeks()) {
             erGenerertFraTemplate.add(faktum)
             return
@@ -184,13 +195,21 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         landGrupper: LandGrupper?,
     ) {
         if (!erISeksjon) return
-        if (id in besøkteFaktumIder) return
-        if (faktum !in nesteUbesvarteFakta) return
-        if (faktum.faktumId.harIndeks()) {
-            erGenerertFraTemplate.add(faktum)
-            return
+        if (id in besøkteFaktumIder && faktum !in gjeldendeAvhengerAvFakta) return
+        // TODO: FIKS DENNE :D
+        if (faktum in nesteUbesvarteFakta) {
+            if (faktum.faktumId.harIndeks()) {
+                erGenerertFraTemplate.add(faktum)
+                return
+            }
+            addFaktum(faktum, id, avhengerAvFakta = avhengerAvFakta)
+        } else if (faktum in gjeldendeAvhengerAvFakta) {
+            if (faktum.faktumId.harIndeks()) {
+                erGenerertFraTemplate.add(faktum)
+                return
+            }
+            addFaktum(faktum, id, avhengerAvFakta = avhengerAvFakta)
         }
-        addFaktum(faktum, id, avhengerAvFakta = avhengerAvFakta)
     }
 
     private fun <R : Comparable<R>> addFaktum(
@@ -199,32 +218,14 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         genererteFakta: Set<Faktum<*>> = emptySet(),
         avhengerAvFakta: Set<Faktum<*>> = emptySet(),
     ) {
-        gjeldendeSeksjonFakta.add(SøknadFaktumVisitor(faktum, genererteFakta).root)
-        gjeldendeFakta.add(faktum)
-        avhengigeFakta.addAll(avhengerAvFakta)
+        gjeldendeSeksjonFakta.add(
+            BruktFaktum(
+                faktum,
+                genererteFakta,
+            )
+        )
+        gjeldendeAvhengerAvFakta.addAll(avhengerAvFakta)
         besøkteFaktumIder.add(id)
-    }
-
-    private class AvhengerAvGeneratorVisitor(faktum: GeneratorFaktum) : FaktumVisitor {
-        val genererteFakta = mutableSetOf<Faktum<*>>()
-
-        init {
-            faktum.accept(this)
-        }
-
-        override fun <R : Comparable<R>> visitMedSvar(
-            faktum: GeneratorFaktum,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFakta: Set<Faktum<*>>,
-            templates: List<Faktum<*>>,
-            roller: Set<Rolle>,
-            clazz: Class<R>,
-            svar: R,
-            genererteFaktum: Set<Faktum<*>>
-        ) {
-            genererteFakta.addAll(genererteFaktum)
-        }
     }
 
     fun interface ReadOnlyStrategy {
@@ -372,4 +373,9 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             this.root.put("readOnly", readOnlyStrategy.readOnly(faktum))
         }
     }
+
+    private data class BruktFaktum(
+        val faktum: Faktum<*>,
+        val genererteFaktum: Set<Faktum<*>>,
+    )
 }

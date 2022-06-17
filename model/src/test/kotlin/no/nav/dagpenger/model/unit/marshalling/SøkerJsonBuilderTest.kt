@@ -200,11 +200,11 @@ internal class SøkerJsonBuilderTest {
         }
 
         SøkerJsonBuilder(søknadprosess).resultat().also {
-            val navFakta = it.finnSeksjon("dokumentasjon")["fakta"]
-            assertEquals(4, navFakta.size())
-            assertEquals(1, navFakta.count { it["readOnly"].asBoolean() == false })
-            assertEquals(3, navFakta.count { it["readOnly"].asBoolean() == true })
-            val generator = navFakta.find { it["beskrivendeId"].asText() == "f67" }!!
+            val dokumentasjonFakta = it.finnSeksjon("dokumentasjon")["fakta"]
+            assertEquals(4, dokumentasjonFakta.size())
+            assertEquals(1, dokumentasjonFakta.count { it["readOnly"].asBoolean() == false })
+            assertEquals(3, dokumentasjonFakta.count { it["readOnly"].asBoolean() == true })
+            val generator = dokumentasjonFakta.find { it["beskrivendeId"].asText() == "f67" }!!
             val generatorSvar = generator["svar"]
             assertEquals(2, generatorSvar.size())
             assertTrue(generatorSvar.all { indeksSvar -> indeksSvar.all { it["readOnly"].asBoolean() } })
