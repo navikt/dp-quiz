@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Faktum
-import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
@@ -31,18 +30,16 @@ import java.util.UUID
 class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
     companion object {
         private val mapper = ObjectMapper()
-        private val avhengerReadOnlyStrategy: (faktum: Faktum<*>) -> Boolean = { true }
+        private val avhengerReadOnlyStrategy = ReadOnlyStrategy { true }
+        private val iSeksjonReadOnlyStrategy = ReadOnlyStrategy { it.harIkkeRolle(Rolle.søker) }
     }
 
-    private var taMedAvhengigheter: Boolean = false
     private val root: ObjectNode = mapper.createObjectNode()
     private val seksjoner = mapper.createArrayNode()
-    private var rootId = 0
-    private val besøkteFaktumIder = mutableSetOf<String>()
-    private var erISeksjon = false
     private lateinit var gjeldendeSeksjon: ObjectNode
-    private lateinit var gjeldendeSeksjonFakta: MutableList<BruktFaktum>
-    private lateinit var gjeldendeAvhengerAvFakta: MutableSet<Faktum<*>>
+    private var besøkteFaktum: MutableList<BesøktFaktum> = mutableListOf()
+    private lateinit var seksjonFakta: Set<Faktum<*>>
+    private lateinit var seksjonAvhengerAvFakta: Set<Faktum<*>>
     private val nesteUbesvarteFakta = søknadprosess.nesteFakta()
     private val erGenerertFraTemplate = mutableListOf<Faktum<*>>()
     private val ferdig = søknadprosess.erFerdigFor(Rolle.søker, Rolle.nav)
@@ -75,50 +72,48 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
-        erISeksjon = erSøkerEllerNavSeksjon(rolle)
-        gjeldendeAvhengerAvFakta = mutableSetOf()
-        gjeldendeSeksjonFakta = mutableListOf()
+        val besvarteFakta = fakta.filter { it.erBesvart() }.toSet()
+        val erAlleBesvart = besvarteFakta.isNotEmpty()
+        val nesteFakta = nesteUbesvarteFakta.any { fakta.contains(it) }
+
+        seksjonFakta = if (erAlleBesvart || nesteFakta) {
+            if (nesteFakta) {
+                besvarteFakta + nesteUbesvarteFakta
+            } else {
+                fakta
+            }
+        } else {
+            emptySet()
+        }
+
         gjeldendeSeksjon = mapper.createObjectNode().apply {
             put("beskrivendeId", seksjon.navn)
         }
     }
 
     override fun preVisitAvhengerAv(seksjon: Seksjon, avhengerAvFakta: Set<Faktum<*>>) {
-        taMedAvhengigheter = true
+        seksjonAvhengerAvFakta = avhengerAvFakta.filter { it.erBesvart() }.toSet()
     }
 
     override fun postVisitAvhengerAv(seksjon: Seksjon, avhengerAvFakta: Set<Faktum<*>>) {
-        taMedAvhengigheter = false
     }
 
-    private fun erSøkerEllerNavSeksjon(rolle: Rolle) =
-        // TODO: Trenger vi NAV?
-        rolle == Rolle.søker // || rolle == Rolle.nav
-
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
-        if (gjeldendeSeksjonFakta.isNotEmpty()) {
+        if (seksjonFakta.isNotEmpty()) {
+            val faktumSomSkalMed = seksjonFakta + seksjonAvhengerAvFakta + nesteUbesvarteFakta
+            val brukteFaktum = besøkteFaktum.filter { faktumSomSkalMed.contains(it.faktum) }
             val fakta =
-                gjeldendeSeksjonFakta.fold(mapper.createArrayNode()) { acc, (faktum, genererteFakta) ->
-                    // TODO: Finn en smoothere måte å velge strategi
-                    when (faktum) {
-                        in gjeldendeAvhengerAvFakta -> acc.add(
-                            SøknadFaktumVisitor(
-                                faktum,
-                                genererteFakta,
-                                readOnlyStrategy = avhengerReadOnlyStrategy
-                            ).root
-                        )
-                        else -> acc.add(SøknadFaktumVisitor(faktum, genererteFakta).root)
+                brukteFaktum.fold(mapper.createArrayNode()) { acc, (faktum, genererteFakta) ->
+                    val strategi = when (faktum) {
+                        in seksjonAvhengerAvFakta -> avhengerReadOnlyStrategy
+                        else -> iSeksjonReadOnlyStrategy
                     }
+                    acc.add(SøknadFaktumVisitor(faktum, genererteFakta, readOnlyStrategy = strategi).root)
                 }
             gjeldendeSeksjon.set<ArrayNode>("fakta", fakta)
             seksjoner.add(gjeldendeSeksjon)
         }
-        erISeksjon = false
-    }
-
-    override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
-        this.rootId = rootId
+        seksjonAvhengerAvFakta = mutableSetOf()
     }
 
     override fun <R : Comparable<R>> visitMedSvar(
@@ -132,15 +127,12 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         svar: R,
         genererteFaktum: Set<Faktum<*>>
     ) {
-        if (!erISeksjon) return
-        // TODO: Kan denne glattes ut?
-        if (id in besøkteFaktumIder && faktum !in gjeldendeAvhengerAvFakta) return
         // TODO: Finn ut hvordan vi kan hente svar i generator når de inkluderes som avhengigeAv
         val genererte = erGenerertFraTemplate.filter { generertFaktum ->
             templates.any { generertFaktum.faktumId.generertFra(it.faktumId) }
         }.toSet()
 
-        addFaktum(faktum, id, genererte, avhengerAvFakta)
+        addFaktum(faktum, genererte)
     }
 
     override fun <R : Comparable<R>> visitUtenSvar(
@@ -152,10 +144,8 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         roller: Set<Rolle>,
         clazz: Class<R>,
     ) {
-        if (!erISeksjon) return
-        if (id in besøkteFaktumIder && faktum !in gjeldendeAvhengerAvFakta) return
         if (faktum !in nesteUbesvarteFakta) return
-        addFaktum(faktum, id, avhengerAvFakta = avhengerAvFakta)
+        addFaktum(faktum)
     }
 
     override fun <R : Comparable<R>> visitMedSvar(
@@ -172,14 +162,12 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         gyldigeValg: GyldigeValg?,
         landGrupper: LandGrupper?,
     ) {
-        if (!erISeksjon) return
-        if (id in besøkteFaktumIder && faktum !in gjeldendeAvhengerAvFakta) return
         if (faktum.faktumId.harIndeks()) {
             erGenerertFraTemplate.add(faktum)
             return
         }
 
-        addFaktum(faktum, id, avhengerAvFakta = avhengerAvFakta)
+        addFaktum(faktum)
     }
 
     override fun <R : Comparable<R>> visitUtenSvar(
@@ -194,38 +182,25 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         gyldigeValg: GyldigeValg?,
         landGrupper: LandGrupper?,
     ) {
-        if (!erISeksjon) return
-        if (id in besøkteFaktumIder && faktum !in gjeldendeAvhengerAvFakta) return
-        // TODO: FIKS DENNE :D
-        if (faktum in nesteUbesvarteFakta) {
-            if (faktum.faktumId.harIndeks()) {
-                erGenerertFraTemplate.add(faktum)
-                return
-            }
-            addFaktum(faktum, id, avhengerAvFakta = avhengerAvFakta)
-        } else if (faktum in gjeldendeAvhengerAvFakta) {
-            if (faktum.faktumId.harIndeks()) {
-                erGenerertFraTemplate.add(faktum)
-                return
-            }
-            addFaktum(faktum, id, avhengerAvFakta = avhengerAvFakta)
+        if (faktum !in nesteUbesvarteFakta) return
+        if (faktum.faktumId.harIndeks()) {
+            erGenerertFraTemplate.add(faktum)
+            return
         }
+        addFaktum(faktum)
     }
 
     private fun <R : Comparable<R>> addFaktum(
         faktum: Faktum<R>,
-        id: String,
         genererteFakta: Set<Faktum<*>> = emptySet(),
-        avhengerAvFakta: Set<Faktum<*>> = emptySet(),
     ) {
-        gjeldendeSeksjonFakta.add(
-            BruktFaktum(
+        if (besøkteFaktum.any { it.faktum == faktum }) return
+        besøkteFaktum.add(
+            BesøktFaktum(
                 faktum,
                 genererteFakta,
             )
         )
-        gjeldendeAvhengerAvFakta.addAll(avhengerAvFakta)
-        besøkteFaktumIder.add(id)
     }
 
     fun interface ReadOnlyStrategy {
@@ -235,7 +210,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     private class SøknadFaktumVisitor(
         faktum: Faktum<*>,
         private val genererteFaktum: Set<Faktum<*>> = emptySet(),
-        private val readOnlyStrategy: ReadOnlyStrategy = ReadOnlyStrategy { it.harIkkeRolle(Rolle.søker) }
+        private val readOnlyStrategy: ReadOnlyStrategy = iSeksjonReadOnlyStrategy
     ) : FaktumVisitor {
         val root: ObjectNode = mapper.createObjectNode()
 
@@ -374,7 +349,8 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         }
     }
 
-    private data class BruktFaktum(
+    // Representerer alle faktum har blitt besvart eller skal besvares i neste seksjon + avhengigheter
+    private data class BesøktFaktum(
         val faktum: Faktum<*>,
         val genererteFaktum: Set<Faktum<*>>,
     )
