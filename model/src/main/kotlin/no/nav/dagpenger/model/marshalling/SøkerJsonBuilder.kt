@@ -30,7 +30,6 @@ import java.util.UUID
 class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
     companion object {
         private val mapper = ObjectMapper()
-        private val avhengerReadOnlyStrategy = ReadOnlyStrategy { true }
         private val iSeksjonReadOnlyStrategy = ReadOnlyStrategy { it.harIkkeRolle(Rolle.søker) }
     }
 
@@ -99,6 +98,11 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     }
 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
+        val avhengerReadOnlyStrategy = ReadOnlyStrategy {
+            !seksjonFakta.contains(it) || !seksjonFakta.any { seksjonFaktum ->
+                seksjonFaktum.faktumId.generertFra(it.faktumId)
+            }
+        }
         if (seksjonFakta.isNotEmpty()) {
             val faktumSomSkalMed = seksjonFakta + seksjonAvhengerAvFakta + nesteUbesvarteFakta
             val brukteFaktum = besøkteFaktum.filter { faktumSomSkalMed.contains(it.faktum) }
