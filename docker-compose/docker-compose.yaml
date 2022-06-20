@@ -75,13 +75,3 @@ services:
     ports:
       - 8080:8080
     hostname: host.docker.internal
-
-#  dp-quizshow:
-#    image: docker.pkg.github.com/navikt/dp-quizshow/dp-quizshow:latest
-#    depends_on:
-#      - dp-quiz
-#    ports:
-#      - "3000:3000"
-#    environment:
-#      BASE_PATH: /arbeid/dagpenger/quizshow
-#      API_BASE_URL: http://dp-quiz:8080
