@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.helpers.januar
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn liste`
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertTrue
@@ -27,18 +28,18 @@ class DagpengerflytTest {
 
         søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
 
-        søknadprosess.generator(BarnetilleggRegister.`barn liste register`).besvar(1)
-        søknadprosess.tekst("${BarnetilleggRegister.`barn fornavn mellomnavn register`}.1").besvar(Tekst("test testen"))
-        søknadprosess.tekst("${BarnetilleggRegister.`barn etternavn register`}.1").besvar(Tekst("TTTT"))
-        søknadprosess.dato("${BarnetilleggRegister.`barn foedselsdato register`}.1").besvar(LocalDate.now().minusYears(10))
-        søknadprosess.land("${BarnetilleggRegister.`barn statsborgerskap register`}.1").besvar(Land("NOR"))
+        søknadprosess.generator(Barnetillegg.`barn liste register`).besvar(1)
+        søknadprosess.tekst("${Barnetillegg.`barn fornavn mellomnavn register`}.1").besvar(Tekst("test testen"))
+        søknadprosess.tekst("${Barnetillegg.`barn etternavn register`}.1").besvar(Tekst("TTTT"))
+        søknadprosess.dato("${Barnetillegg.`barn foedselsdato register`}.1").besvar(LocalDate.now().minusYears(10))
+        søknadprosess.land("${Barnetillegg.`barn statsborgerskap register`}.1").besvar(Land("NOR"))
 
         // Besvares av bruker
-        søknadprosess.boolsk("${BarnetilleggRegister.`forsoerger du barnet register`}.1").besvar(false)
-        søknadprosess.boolsk("${BarnetilleggRegister.`barn aarsinntekt over 1g register`}.1").besvar(false)
-        søknadprosess.heltall("${BarnetilleggRegister.`barn inntekt register`}.1").besvar(0)
+        søknadprosess.boolsk("${Barnetillegg.`forsoerger du barnet register`}.1").besvar(false)
+        søknadprosess.boolsk("${Barnetillegg.`barn aarsinntekt over 1g register`}.1").besvar(false)
+        søknadprosess.heltall("${Barnetillegg.`barn inntekt register`}.1").besvar(0)
 
-        søknadprosess.generator(BarnetilleggSøker.`barn liste`).besvar(0)
+        søknadprosess.generator(`barn liste`).besvar(0)
 
         søknadprosess.dato(Arbeidsforhold.`dagpenger soknadsdato`).besvar(1.januar)
         søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
