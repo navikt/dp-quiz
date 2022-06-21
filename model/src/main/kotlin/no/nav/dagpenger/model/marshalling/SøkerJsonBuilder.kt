@@ -84,10 +84,6 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         } else {
             emptySet()
         }
-
-        gjeldendeSeksjon = mapper.createObjectNode().apply {
-            put("beskrivendeId", seksjon.navn)
-        }
     }
 
     override fun preVisitAvhengerAv(seksjon: Seksjon, avhengerAvFakta: Set<Faktum<*>>) {
@@ -98,6 +94,11 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     }
 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
+        if (rolle != Rolle.søker) return
+        gjeldendeSeksjon = mapper.createObjectNode().apply {
+            put("beskrivendeId", seksjon.navn)
+        }
+
         val avhengerReadOnlyStrategy = ReadOnlyStrategy {
             !seksjonFakta.contains(it) || !seksjonFakta.any { seksjonFaktum ->
                 seksjonFaktum.faktumId.generertFra(it.faktumId)
@@ -264,7 +265,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         ) {
             val jsonTemplates = mapper.createArrayNode()
             templates.forEach { template ->
-                jsonTemplates.add(SøknadFaktumVisitor(template).root)
+                jsonTemplates.add(SøknadFaktumVisitor(template, readOnlyStrategy = readOnlyStrategy).root)
             }
             this.root.lagFaktumNode(id, "generator", faktum.navn, roller, jsonTemplates, svar = svar)
             val svarListe = mapper.createArrayNode()
