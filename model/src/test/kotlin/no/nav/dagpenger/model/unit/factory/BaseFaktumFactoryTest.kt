@@ -9,7 +9,6 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.daglig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.månedlig
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknadprosess
@@ -99,32 +98,5 @@ internal class BaseFaktumFactoryTest {
             assertTrue(faktum.erBesvart())
             assertEquals(it, faktum.svar())
         }
-    }
-
-    @Test
-    fun `Alle faktum kan endres av en rolle som ikke er spesifisert i seksjon`() {
-        val søknadprosess = Søknad(testversjon, dokument faktum "dokument" id 3 kanEndresAv Rolle.nav).testSøknadprosess()
-        val faktum = søknadprosess dokument 3
-        assertTrue(faktum.harRolle(Rolle.nav), "Bør inneholde rolle ${Rolle.nav.typeNavn}")
-        assertTrue(faktum.harRolle(Rolle.søker), "Bør inneholde rolle ${Rolle.søker.typeNavn}")
-        assertFalse(faktum.harRolle(Rolle.saksbehandler), "Bør ikke inneholde rolle ${Rolle.saksbehandler.typeNavn}")
-    }
-
-    @Test
-    fun `Også template faktum kan endres av en rolle som ikke er spesifisert i seksjon`() {
-
-        val søknadprosess = Søknad(
-            testversjon,
-            boolsk faktum "boolsk" id 1,
-            dokument faktum "dokument" id 2 kanEndresAv Rolle.nav,
-            heltall faktum "generator" id 12 genererer 1 og 2
-        ).testSøknadprosess()
-        val generator = søknadprosess generator 12
-        generator.besvar(1)
-
-        val dokumentFaktum = søknadprosess dokument "2.1"
-        assertTrue(dokumentFaktum.harRolle(Rolle.nav), "Bør inneholde rolle ${Rolle.nav.typeNavn}")
-        assertTrue(dokumentFaktum.harRolle(Rolle.søker), "Bør inneholde rolle ${Rolle.søker.typeNavn}")
-        assertFalse(dokumentFaktum.harRolle(Rolle.saksbehandler), "Bør ikke inneholde rolle ${Rolle.saksbehandler.typeNavn}")
     }
 }

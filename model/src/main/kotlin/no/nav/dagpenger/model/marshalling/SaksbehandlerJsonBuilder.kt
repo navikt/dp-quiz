@@ -100,7 +100,8 @@ class SaksbehandlerJsonBuilder(
         templates: List<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        svar: R
+        svar: R,
+        genererteFaktum: Set<Faktum<*>>
     ) {
         if (!ignore) {
             val genererte = søknadprosess.flatMap {

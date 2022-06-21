@@ -95,23 +95,20 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
                 navn = navn,
                 clazz = clazz,
                 gyldigeValg = GyldigeValg(gyldigeValg),
-                roller = roller
             ) as Faktum<T>
             Flervalg::class.java -> GrunnleggendeFaktum(
                 faktumId = faktumId,
                 navn = navn,
                 clazz = clazz,
                 gyldigeValg = GyldigeValg(gyldigeValg),
-                roller = roller
             ) as Faktum<T>
             Land::class.java -> GrunnleggendeFaktum(
                 faktumId = faktumId,
                 navn = navn,
                 clazz = clazz,
                 landGrupper = landGrupper,
-                roller = roller
             ) as Faktum<T>
-            else -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz, roller = roller)
+            else -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz)
         }
     }
 

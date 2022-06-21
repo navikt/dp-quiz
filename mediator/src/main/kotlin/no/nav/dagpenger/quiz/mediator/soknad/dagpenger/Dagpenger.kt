@@ -85,7 +85,7 @@ internal object Dagpenger {
     private val faktumNavBehov =
         FaktumNavBehov(
             mapOf(
-                BarnetilleggRegister.`barn liste register` to "Barn",
+                Barnetillegg.`barn liste register` to "Barn",
             )
         )
 

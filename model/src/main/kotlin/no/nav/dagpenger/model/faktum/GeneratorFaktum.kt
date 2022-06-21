@@ -46,7 +46,8 @@ class GeneratorFaktum internal constructor(
     }
 
     override fun acceptMedSvar(visitor: FaktumVisitor) {
-        visitor.visitMedSvar(this, id, avhengigeFakta, avhengerAvFakta, templates, roller, Int::class.java, gjeldendeSvar)
+        val genererteFaktum = templates.flatMap { template -> søknad.filter { it.faktumId.generertFra(template.faktumId) && it.erBesvart() } }.toSet()
+        visitor.visitMedSvar(this, id, avhengigeFakta, avhengerAvFakta, templates, roller, Int::class.java, gjeldendeSvar, genererteFaktum)
     }
 
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): GeneratorFaktum {
