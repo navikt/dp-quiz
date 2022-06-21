@@ -169,7 +169,7 @@ internal class SøkerJsonBuilderTest {
 
         søknadprosess.boolsk("7.2").besvar(true)
         SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertAntallSeksjoner(3, it)
+            assertAntallSeksjoner(2, it)
             assertBesvarteFakta(1, "seksjon2", it)
             assertUbesvartGeneratorFaktum(
                 forventetAntall = 0,
@@ -184,23 +184,8 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.dato("8").besvar(LocalDate.now())
         søknadprosess.dato("9").besvar(LocalDate.now())
 
-        SøkerJsonBuilder(søknadprosess).resultat().also {
-            val navFakta = it.finnSeksjon("navseksjon")["fakta"]
-            val f8Faktum = navFakta[0]
-            f8Faktum.assertFaktaAsJson("8", "localdate", "f8", listOf("nav"))
-            assertTrue(f8Faktum.has("readOnly"))
-            // assertFalse(f8Faktum.get("readOnly").asBoolean())
-            val f9Faktum = navFakta[1]
-            f9Faktum.assertFaktaAsJson("9", "localdate", "f9", listOf("nav"))
-            assertTrue(f9Faktum.has("readOnly"))
-            assertTrue(f9Faktum.get("readOnly").asBoolean())
-
-            assertAntallSeksjoner(4, it)
-            assertUbesvartFaktum("dokumentasjon", it)
-        }
-
-        SøkerJsonBuilder(søknadprosess).resultat().also {
-            val dokumentasjonFakta = it.finnSeksjon("dokumentasjon")["fakta"]
+        SøkerJsonBuilder(søknadprosess).resultat().also { søkerJson ->
+            val dokumentasjonFakta = søkerJson.finnSeksjon("dokumentasjon")["fakta"]
             assertEquals(4, dokumentasjonFakta.size())
             assertEquals(1, dokumentasjonFakta.count { it["readOnly"].asBoolean() == false })
             assertEquals(3, dokumentasjonFakta.count { it["readOnly"].asBoolean() == true })
@@ -215,7 +200,7 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.generator(1718).besvar(1)
 
         SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertAntallSeksjoner(5, it)
+            assertAntallSeksjoner(4, it)
             val generatorFakta = it.finnSeksjon("seksjon3")["fakta"]
             generatorFakta[0].assertGeneratorFaktaAsJson(
                 "1718", "generator", "f1718", listOf("søker"),
@@ -252,7 +237,7 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.flervalg("18.1").besvar(Flervalg("f18.flervalg2"))
 
         SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertAntallSeksjoner(6, it)
+            assertAntallSeksjoner(5, it)
             val seksjonsFakta = it.finnSeksjon("Gyldige land")["fakta"]
             seksjonsFakta[0].assertLandFaktum(
                 "19",
@@ -265,23 +250,6 @@ internal class SøkerJsonBuilderTest {
         }
 
         søknadprosess.land(19).besvar(Land("NOR"))
-
-        SøkerJsonBuilder(søknadprosess).resultat().also { it ->
-            assertAntallSeksjoner(7, it)
-            val generatorFakta = it.finnSeksjon("nav generator fakta")["fakta"]
-            generatorFakta[0].assertGeneratorFaktaAsJson(
-                "21", "generator", "f21", listOf("nav"),
-                assertTemplates = listOf {
-                    it.assertFaktaAsJson(
-                        "20",
-                        "localdate",
-                        "f20",
-                        listOf("nav"),
-                    )
-                }
-            )
-            assertTrue(generatorFakta[0]["readOnly"].asBoolean())
-        }
 
         søknadprosess.generator(21).besvar(1)
         søknadprosess.dato("20.1").besvar(LocalDate.now())
