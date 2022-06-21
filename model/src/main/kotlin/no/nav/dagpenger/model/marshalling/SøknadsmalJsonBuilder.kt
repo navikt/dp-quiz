@@ -14,8 +14,11 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.erBoolean
+import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.erLand
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.lagBeskrivendeIderForGyldigeBoolskeValg
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.lagFaktumNode
+import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilGyldigeLand
+import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilLandGrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.FaktumVisitor
@@ -182,6 +185,10 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
                 null,
                 overstyrbareGyldigeValg
             )
+            if (clazz.erLand()) {
+                this.root.leggTilGyldigeLand()
+                this.root.leggTilLandGrupper(landGrupper)
+            }
         }
     }
 }

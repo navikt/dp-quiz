@@ -8,8 +8,10 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
@@ -52,7 +54,11 @@ internal class SøknadsmalJsonBuilderTest {
             heltall faktum "generator14" id 14 genererer 12 og 13 og 18 og 19,
             tekst faktum "tekst15" id 15,
             periode faktum "periode16" id 16,
-            periode faktum "pågåendePeriode17" id 17
+            periode faktum "pågåendePeriode17" id 17,
+            land faktum "f20"
+                gruppe "eøs" med listOf(Land("SWE"))
+                gruppe "storbritannia" med listOf(Land("GBR"))
+                gruppe "norge-jan-mayen" med listOf(Land("NOR")) id 20
         )
     }
 
@@ -87,6 +93,7 @@ internal class SøknadsmalJsonBuilderTest {
                 prototypeSøknad.boolsk(19),
                 prototypeSøknad.generator(14),
             ),
+            Seksjon("seksjon4", Rolle.søker, prototypeSøknad.land(20)),
             Seksjon(
                 "nav", Rolle.nav,
                 prototypeSøknad.dokument(7),
@@ -120,7 +127,7 @@ internal class SøknadsmalJsonBuilderTest {
 
         assertEquals(0, malJson["versjon_id"].asInt())
         assertEquals("test", malJson["versjon_navn"].asText())
-        assertEquals(4, malJson["seksjoner"].size())
+        assertEquals(5, malJson["seksjoner"].size())
 
         val førsteSeksjon = malJson["seksjoner"][0]
         assertEquals("seksjon1", førsteSeksjon["beskrivendeId"].asText())
@@ -173,15 +180,29 @@ internal class SøknadsmalJsonBuilderTest {
                 { it.assertFaktaAsJson("12", "localdate", "dato12", listOf("søker")) },
                 { it.assertFaktaAsJson("13", "inntekt", "inntekt13", listOf("søker")) },
                 { it.assertValgFaktaAsJson("18", "envalg", "envalg18", listOf("søker"), listOf("valg1", "valg2")) },
-                { it.assertValgFaktaAsJson("19", "boolean", "boolsk19", listOf("søker"), listOf("svar.ja", "svar.nei")) },
+                {
+                    it.assertValgFaktaAsJson(
+                        "19",
+                        "boolean",
+                        "boolsk19",
+                        listOf("søker"),
+                        listOf("svar.ja", "svar.nei")
+                    )
+                },
             )
         )
-
         val fjerdeSeksjon = malJson["seksjoner"][3]
-        assertEquals("nav", fjerdeSeksjon["beskrivendeId"].asText())
-        assertEquals(3, fjerdeSeksjon["fakta"].size())
-        fjerdeSeksjon["fakta"][0].assertFaktaAsJson("7", "dokument", "dokument7", listOf("nav"))
-        fjerdeSeksjon["fakta"][1].assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav"))
-        fjerdeSeksjon["fakta"][2].assertFaktaAsJson("9", "localdate", "dato9", listOf("nav"))
+        assertEquals("seksjon4", fjerdeSeksjon["beskrivendeId"].asText())
+        assertEquals(1, fjerdeSeksjon["fakta"].size())
+        fjerdeSeksjon["fakta"][0].assertFaktaAsJson("20", "land", "f20", listOf("søker"))
+        assertEquals(3, fjerdeSeksjon["fakta"][0]["grupper"].size())
+        assertEquals(249, fjerdeSeksjon["fakta"][0]["gyldigeLand"].size())
+
+        val navSeksjon = malJson["seksjoner"][4]
+        assertEquals("nav", navSeksjon["beskrivendeId"].asText())
+        assertEquals(3, navSeksjon["fakta"].size())
+        navSeksjon["fakta"][0].assertFaktaAsJson("7", "dokument", "dokument7", listOf("nav"))
+        navSeksjon["fakta"][1].assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav"))
+        navSeksjon["fakta"][2].assertFaktaAsJson("9", "localdate", "dato9", listOf("nav"))
     }
 }
