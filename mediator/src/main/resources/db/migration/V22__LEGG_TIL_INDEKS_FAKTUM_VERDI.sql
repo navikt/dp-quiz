@@ -1,0 +1,1 @@
+CREATE INDEX faktum_verdi_soknad_faktum_id ON faktum_verdi (soknad_id, faktum_id)
