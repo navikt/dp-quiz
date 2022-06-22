@@ -42,6 +42,10 @@ class DagpengerflytTest {
 
         søknadprosess.generator(`barn liste`).besvar(0)
 
+        søknadprosess.nesteSeksjoner().onEach {
+            it.somSpørsmål()
+        }
+
         søknadprosess.dato(Arbeidsforhold.`dagpenger soknadsdato`).besvar(1.januar)
         søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
 

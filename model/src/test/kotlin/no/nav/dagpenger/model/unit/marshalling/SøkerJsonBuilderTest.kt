@@ -120,6 +120,7 @@ internal class SøkerJsonBuilderTest {
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertAntallSeksjoner(2, it)
             val seksjon1Fakta = it.finnSeksjon("seksjon1")["fakta"]
+            assertEquals(3, seksjon1Fakta.size())
             seksjon1Fakta[0].assertFaktaAsJson("1", "boolean", "f1", listOf("søker")) { svar ->
                 assertEquals("true", svar.asText())
             }

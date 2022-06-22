@@ -105,7 +105,8 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             }
         }
         if (seksjonFakta.isNotEmpty()) {
-            val faktumSomSkalMed = seksjonFakta + seksjonAvhengerAvFakta + nesteUbesvarteFakta
+            val ubesvarteFakta = nesteUbesvarteFakta.filter { seksjonFakta.contains(it) }
+            val faktumSomSkalMed = seksjonFakta + seksjonAvhengerAvFakta +  ubesvarteFakta
             val brukteFaktum = besøkteFaktum.filter { faktumSomSkalMed.contains(it.faktum) }
             val fakta =
                 brukteFaktum.fold(mapper.createArrayNode()) { acc, (faktum, genererteFakta) ->
