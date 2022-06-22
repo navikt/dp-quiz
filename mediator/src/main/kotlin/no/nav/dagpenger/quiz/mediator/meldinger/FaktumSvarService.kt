@@ -86,6 +86,7 @@ internal class FaktumSvarService(
                 val prosessnavn = ProsessVersjonVisitor(søknadprosess).prosessnavn
                 if (søknadprosess.erFerdig()) {
                     if (prosessnavn == Prosess.Dagpenger) {
+                        log.info { "$søknadUuid er ferdig. Mangler svar på ${søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }}" }
                         SøkerJsonBuilder(søknadprosess).resultat().also { json ->
                             val message = json.toString().let { JsonMessage(it, MessageProblems(it)) }
                             context.publish(message.toJson())
