@@ -15,11 +15,17 @@ internal fun JsonNode.assertFaktaAsJson(
     expectedType: String,
     expectedBeskrivendeId: String,
     expectedRoller: List<String>,
+    readOnly: Boolean = false,
     assertSvar: ((JsonNode) -> Unit)? = null
 ) {
-    assertEquals(expectedBeskrivendeId, this.get("beskrivendeId").asText())
+    val beskrivendeId = this.get("beskrivendeId").asText()
+    assertEquals(expectedBeskrivendeId, beskrivendeId)
     assertEquals(expectedType, this.get("type").asText())
     assertEquals(expectedId, this.get("id").asText())
+    if (this.has("readOnly")) {
+        val forventetReadOnly = this.get("readOnly").asBoolean()
+        assertEquals(readOnly, forventetReadOnly, "Forventet at $beskrivendeId har readOnly $readOnly men har $forventetReadOnly")
+    }
     if (expectedRoller.isNotEmpty()) {
         val actual: List<String> = this.get("roller").toSet().map { it.asText() }
         assertEquals(
@@ -38,9 +44,10 @@ internal fun JsonNode.assertLandFaktum(
     expectedBeskrivendeId: String,
     expectedRoller: List<String>,
     expectedLandgruppeIder: Set<String>,
+    readOnly: Boolean = false,
     assertSvar: ((JsonNode) -> Unit)? = null
 ) {
-    this.assertFaktaAsJson(expectedId, expectedType, expectedBeskrivendeId, expectedRoller, assertSvar)
+    this.assertFaktaAsJson(expectedId, expectedType, expectedBeskrivendeId, expectedRoller, readOnly, assertSvar)
     assertTrue(this.has("grupper"), "Landfaktum må ha grupper")
     assertEquals(expectedLandgruppeIder, this["grupper"].map { it["gruppeId"].asText() }.toSet())
     assertTrue(this.has("gyldigeLand"), "Forventer at landfaktum har gyldige land")
@@ -52,10 +59,11 @@ internal fun JsonNode.assertGeneratorFaktaAsJson(
     expectedType: String,
     expectedBeskrivendeId: String,
     expectedRoller: List<String>,
+    readOnly: Boolean = false,
     assertTemplates: List<(JsonNode) -> Unit>,
     assertSvar: ((JsonNode) -> Unit)? = null
 ) {
-    this.assertFaktaAsJson(expectedId, expectedType, expectedBeskrivendeId, expectedRoller, assertSvar)
+    this.assertFaktaAsJson(expectedId, expectedType, expectedBeskrivendeId, expectedRoller, readOnly, assertSvar)
     assertTemplates.forEachIndexed { index: Int, test: (JsonNode) -> Unit ->
         test(this.get("templates")[index])
     }
@@ -67,9 +75,10 @@ internal fun JsonNode.assertValgFaktaAsJson(
     expectedNavn: String,
     expectedRoller: List<String>,
     expectedGyldigeValg: List<String>,
+    readOnly: Boolean = false,
     assertSvar: ((JsonNode) -> Unit)? = null
 ) {
-    this.assertFaktaAsJson(expectedId, expectedClass, expectedNavn, expectedRoller, assertSvar)
+    this.assertFaktaAsJson(expectedId, expectedClass, expectedNavn, expectedRoller, readOnly, assertSvar)
     val expectedGyldigeValgMedPrefix = expectedGyldigeValg.map { "$expectedNavn.$it" }
     val actual: List<String> = this.get("gyldigeValg").toSet().map { it.asText() }
     Assertions.assertTrue(expectedGyldigeValgMedPrefix.containsAll<String>(actual)) { "\nExpected: $expectedGyldigeValg\n  Actual: $actual" }

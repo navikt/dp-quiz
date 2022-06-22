@@ -110,6 +110,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             val fakta =
                 brukteFaktum.fold(mapper.createArrayNode()) { acc, (faktum, genererteFakta) ->
                     val strategi = when (faktum) {
+                        in seksjonFakta -> iSeksjonReadOnlyStrategy
                         in seksjonAvhengerAvFakta -> avhengerReadOnlyStrategy
                         else -> iSeksjonReadOnlyStrategy
                     }
@@ -208,7 +209,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         )
     }
 
-    fun interface ReadOnlyStrategy {
+    private fun interface ReadOnlyStrategy {
         fun readOnly(faktum: Faktum<*>): Boolean
     }
 
