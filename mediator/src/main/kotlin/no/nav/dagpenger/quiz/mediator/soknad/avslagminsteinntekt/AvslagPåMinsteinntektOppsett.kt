@@ -168,15 +168,16 @@ internal object AvslagPåMinsteinntektOppsett {
             )
         )
 
-    @Suppress("unused")
-    private val versjon = Versjon.Bygger(
-        prototypeSøknad = prototypeSøknad,
-        prototypeSubsumsjon = regeltre,
-        prototypeUserInterfaces = mapOf(
-            Versjon.UserInterfaceType.Web to søknadprosess
-        ),
-        faktumNavBehov = faktumNavBehov
-    ).registrer().also {
-        logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
+    init {
+        Versjon.Bygger(
+            prototypeSøknad = prototypeSøknad,
+            prototypeSubsumsjon = regeltre,
+            prototypeUserInterfaces = mapOf(
+                Versjon.UserInterfaceType.Web to søknadprosess
+            ),
+            faktumNavBehov = faktumNavBehov
+        ).registrer().also {
+            logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
+        }
     }
 }
