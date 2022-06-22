@@ -36,7 +36,6 @@ internal object Dagpenger {
         Tilleggsopplysninger,
         DokumentasjonskravVerneplikt,
         DokumentasjonskravUtdanning,
-        DokumentasjonskravEgenNæring
     )
 
     private val alleFakta = flatMapAlleFakta()
@@ -66,7 +65,6 @@ internal object Dagpenger {
                                                         "dokumentasjonskrav".alle(
                                                             DokumentasjonskravVerneplikt.regeltre(this),
                                                             DokumentasjonskravUtdanning.regeltre(this),
-                                                            DokumentasjonskravEgenNæring.regeltre(this)
                                                         )
                                                     }
                                                 }
