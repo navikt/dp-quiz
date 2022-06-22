@@ -87,6 +87,9 @@ object Barnetillegg : DslFaktaseksjon {
         )
         val barnetillegg = søknad.seksjon(
             "barnetillegg", Rolle.søker,
+            `forsoerger du barnet register`,
+            `barn aarsinntekt over 1g register`,
+            `barn inntekt register`,
             `barn liste`,
             `barn fornavn mellomnavn`,
             `barn etternavn`,
@@ -94,10 +97,7 @@ object Barnetillegg : DslFaktaseksjon {
             `barn statsborgerskap`,
             `forsoerger du barnet`,
             `barn aarsinntekt over 1g`,
-            `barn inntekt`,
-            `forsoerger du barnet register`,
-            `barn aarsinntekt over 1g register`,
-            `barn inntekt register`
+            `barn inntekt`
         )
 
         return listOf(barnetilleggRegister, barnetillegg)
