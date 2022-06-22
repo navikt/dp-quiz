@@ -86,18 +86,15 @@ internal class FaktumSvarService(
                 val prosessnavn = ProsessVersjonVisitor(søknadprosess).prosessnavn
                 if (søknadprosess.erFerdig()) {
                     if (prosessnavn == Prosess.Dagpenger) {
-                        log.info { "$søknadUuid er ferdig. Mangler svar på ${søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }}" }
                         SøkerJsonBuilder(søknadprosess).resultat().also { json ->
                             val message = json.toString().let { JsonMessage(it, MessageProblems(it)) }
                             context.publish(message.toJson())
                         }
+                        log.info { "Ferdig med søknad ${søknadprosess.søknad.uuid}. Resultatet er: ${søknadprosess.resultat()}" }
                     } else {
                         sendResultat(søknadprosess, context)
                     }
                 } else {
-                    if (prosessnavn == Prosess.Dagpenger) {
-                        log.info { "$søknadUuid er ikke ferdig. Mangler svar på ${søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }}" }
-                    }
                     søknadprosess.sendNesteSeksjon(context)
                 }
             }

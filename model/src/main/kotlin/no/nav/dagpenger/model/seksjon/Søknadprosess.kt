@@ -82,5 +82,5 @@ class Søknadprosess private constructor(
     fun resultat() = rootSubsumsjon.resultat()
 
     fun erFerdig() = nesteSeksjoner().all { fakta -> fakta.all { faktum -> faktum.erBesvart() } }
-    fun erFerdigFor(vararg roller: Rolle): Boolean = nesteSeksjoner().any { fakta -> fakta.none { faktum -> roller.any { faktum.harRolle(it) } } }
+    fun erFerdigFor(vararg roller: Rolle): Boolean = nesteSeksjoner().all { fakta -> fakta.none { faktum -> roller.any { faktum.harRolle(it) } } }
 }
