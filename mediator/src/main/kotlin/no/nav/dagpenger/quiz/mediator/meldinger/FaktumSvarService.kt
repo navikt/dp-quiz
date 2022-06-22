@@ -95,7 +95,7 @@ internal class FaktumSvarService(
                     }
                 } else {
                     if (prosessnavn == Prosess.Dagpenger) {
-                        log.info { "Er ikke ferdig. Mangler svar på ${søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }}" }
+                        log.info { "$søknadUuid er ikke ferdig. Mangler svar på ${søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }}" }
                     }
                     søknadprosess.sendNesteSeksjon(context)
                 }
