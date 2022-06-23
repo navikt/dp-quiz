@@ -42,6 +42,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     private val nesteUbesvarteFakta = søknadprosess.nesteFakta()
     private val erGenerertFraTemplate = mutableListOf<Faktum<*>>()
     private val ferdig = søknadprosess.erFerdigFor(Rolle.søker, Rolle.nav)
+    private lateinit var status: SeksjonStatus
 
     init {
         søknadprosess.søknad.accept(this)
@@ -70,19 +71,30 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         root.set<ArrayNode>("seksjoner", seksjoner)
     }
 
+    enum class SeksjonStatus {
+        Ferdig,
+        Aktiv,
+        Fremtidig
+    }
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
         val besvarteFakta = fakta.filter { it.erBesvart() }.toSet()
         val erAlleBesvart = besvarteFakta.isNotEmpty()
-        val nesteFakta = nesteUbesvarteFakta.any { fakta.contains(it) }
+        val nesteFakta = nesteUbesvarteFakta.filter { fakta.contains(it) }
 
-        seksjonFakta = if (erAlleBesvart || nesteFakta) {
-            if (nesteFakta) {
-                besvarteFakta + nesteUbesvarteFakta
+        status = if (erAlleBesvart || nesteFakta.isNotEmpty()) {
+            if (nesteFakta.isNotEmpty()) {
+                SeksjonStatus.Aktiv
             } else {
-                fakta
+                SeksjonStatus.Ferdig
             }
         } else {
-            emptySet()
+            SeksjonStatus.Fremtidig
+        }
+
+        seksjonFakta = when (status) {
+            SeksjonStatus.Aktiv -> besvarteFakta + nesteFakta
+            SeksjonStatus.Ferdig -> fakta
+            SeksjonStatus.Fremtidig -> emptySet()
         }
     }
 
@@ -95,18 +107,13 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
         if (rolle != Rolle.søker) return
-        gjeldendeSeksjon = mapper.createObjectNode().apply {
-            put("beskrivendeId", seksjon.navn)
-        }
-
         val avhengerReadOnlyStrategy = ReadOnlyStrategy {
             !seksjonFakta.contains(it) || !seksjonFakta.any { seksjonFaktum ->
                 seksjonFaktum.faktumId.generertFra(it.faktumId)
             }
         }
         if (seksjonFakta.isNotEmpty()) {
-            val ubesvarteFakta = nesteUbesvarteFakta.filter { seksjonFakta.contains(it) }
-            val faktumSomSkalMed = seksjonFakta + seksjonAvhengerAvFakta + ubesvarteFakta
+            val faktumSomSkalMed = seksjonFakta + seksjonAvhengerAvFakta
             val brukteFaktum = besøkteFaktum.filter { faktumSomSkalMed.contains(it.faktum) }
             val fakta =
                 brukteFaktum.fold(mapper.createArrayNode()) { acc, (faktum, genererteFakta) ->
@@ -117,6 +124,12 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
                     }
                     acc.add(SøknadFaktumVisitor(faktum, genererteFakta, readOnlyStrategy = strategi).root)
                 }
+            gjeldendeSeksjon = mapper.createObjectNode().apply {
+                put("beskrivendeId", seksjon.navn)
+                put("ferdig", status == SeksjonStatus.Ferdig)
+                put("status", status.name)
+            }
+
             gjeldendeSeksjon.set<ArrayNode>("fakta", fakta)
             seksjoner.add(gjeldendeSeksjon)
         }

@@ -138,6 +138,7 @@ internal class SøkerJsonBuilderTest {
                     { it.assertFaktaAsJson("7", "boolean", "f7", listOf("søker")) },
                 )
             )
+            assertSeksjonFerdig("seksjon1", it)
             assertBesvarteFakta(3, "seksjon1", it)
             assertUbesvartFaktum("seksjon2", it)
         }
@@ -179,6 +180,7 @@ internal class SøkerJsonBuilderTest {
                 søkerJson = it
             )
             assertBesvartGeneratorFaktum(4, "f67", "seksjon2", it)
+            assertSeksjonFerdig("seksjon2", it)
             assertIkkeFerdig(it)
         }
 
@@ -460,6 +462,13 @@ internal class SøkerJsonBuilderTest {
                 it.has("svar")
             }?.size
         )
+    }
+
+    private fun assertSeksjonFerdig(seksjon: String, søkerJson: ObjectNode) {
+        assertTrue(
+            søkerJson["seksjoner"].find { it["beskrivendeId"].asText() == seksjon }?.get("ferdig")
+                ?.asBoolean() == true
+        ) { "Forventet at $seksjon er ferdig " }
     }
 
     private fun assertAntallSeksjoner(forventetAntall: Int, søkerJson: ObjectNode) {
