@@ -360,4 +360,8 @@ class SøknadRecord : SøknadPersistence {
             )
         }.toMap()
     }
+
+    override fun slett(uuid: UUID): Boolean {
+        TODO("Not yet implemented")
+    }
 }

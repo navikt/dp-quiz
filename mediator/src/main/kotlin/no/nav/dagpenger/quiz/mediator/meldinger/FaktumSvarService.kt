@@ -43,6 +43,7 @@ internal class FaktumSvarService(
 
     init {
         River(rapidsConnection).apply {
+
             validate { message ->
                 message.demandValue("@event_name", "faktum_svar")
                 message.requireKey(
