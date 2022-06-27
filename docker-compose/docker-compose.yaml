@@ -72,6 +72,7 @@ services:
 
   auth:
     image: ghcr.io/navikt/fakedings/fakedings:b1244f187badb294b47e0e3c3042abec91e04658
+#    image: ghcr.io/navikt/mock-oauth2-server:0.5.1
     container_name: auth
     ports:
       - 8080:8080
