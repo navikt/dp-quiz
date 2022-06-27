@@ -235,9 +235,9 @@ class SøknadRecord : SøknadPersistence {
         return true
     }
 
-    private fun svarMap(søknad: Søknad): MutableMap<String, Faktum<*>?> = søknad.map { faktum ->
+    private fun svarMap(søknad: Søknad): MutableMap<String, Faktum<*>?> = søknad.associate { faktum ->
         faktum.id to (if (faktum.erBesvart()) faktum else null)
-    }.toMap().toMutableMap()
+    }.toMutableMap()
 
     private fun slettDødeTemplatefakta(
         søknad: Søknad,
@@ -363,14 +363,12 @@ class SøknadRecord : SøknadPersistence {
 
     override fun slett(uuid: UUID): Boolean {
         using(sessionOf(dataSource)) { session ->
-            session.transaction {
-                it.run( //language=PostgreSQL
-                    queryOf(
-                        "DELETE FROM soknad WHERE uuid = :uuid",
-                        mapOf("uuid" to uuid)
-                    ).asUpdate
-                )
-            }
+            session.run( //language=PostgreSQL
+                queryOf(
+                    "CALL slett_soknad(:uuid)",
+                    mapOf("uuid" to uuid)
+                ).asUpdate
+            )
         }
         return true
     }

@@ -28,6 +28,7 @@ import no.nav.dagpenger.quiz.mediator.helpers.mai
 import no.nav.dagpenger.quiz.mediator.helpers.mars
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
@@ -60,7 +61,7 @@ internal class SøknadRecordTest {
     }
 
     @Test
-    fun `Slette søknad`(){
+    fun `Slette søknad`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
@@ -100,7 +101,7 @@ internal class SøknadRecordTest {
             originalSøknadprosess.tekst(23).besvar(Tekst("tekst2"))
             originalSøknadprosess.periode(24).besvar(Periode(1.mars(), 1.april()))
             originalSøknadprosess.land(25).besvar(Land("NOR"))
-            originalSøknadprosess.desimaltall(26).besvar(1.5)
+            originalSøknadprosess.desimaltall(26).besvar(1.5, besvarer = "123")
 
             lagreHentOgSammenlign()
 
@@ -110,7 +111,26 @@ internal class SøknadRecordTest {
             assertRecordCount(0, "faktum_verdi")
             assertRecordCount(0, "gammel_faktum_verdi")
             assertRecordCount(0, "dokument")
+            assertRecordCount(0, "valgte_verdier")
+            assertRecordCount(0, "periode")
+            assertRecordCount(0, "besvarer")
         }
+    }
+
+    @Test @Disabled
+    fun `Skal kun slette besvarer hvis den ikke refererer til andre søknader`() = Postgres.withMigratedDb {
+        FaktumTable(SøknadEksempel1.prototypeFakta1)
+        søknadRecord = SøknadRecord()
+
+        val søknadProsess1 = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon)
+        val søknadProsess2 = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon)
+        val besvarer = "123"
+        søknadProsess1.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
+        søknadRecord.lagre(søknadProsess1.søknad)
+        søknadProsess2.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
+        søknadRecord.lagre(søknadProsess2.søknad)
+
+        søknadRecord.slett(søknadProsess1.søknad.uuid)
     }
 
     @Test fun `Lagring og henting av fakta med kotliquery spesial tegn`() {
