@@ -362,6 +362,16 @@ class SøknadRecord : SøknadPersistence {
     }
 
     override fun slett(uuid: UUID): Boolean {
-        TODO("Not yet implemented")
+        using(sessionOf(dataSource)) { session ->
+            session.transaction {
+                it.run( //language=PostgreSQL
+                    queryOf(
+                        "DELETE FROM soknad WHERE uuid = :uuid",
+                        mapOf("uuid" to uuid)
+                    ).asUpdate
+                )
+            }
+        }
+        return true
     }
 }

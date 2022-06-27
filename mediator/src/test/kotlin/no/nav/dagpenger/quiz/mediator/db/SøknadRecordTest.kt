@@ -59,6 +59,60 @@ internal class SøknadRecordTest {
         }
     }
 
+    @Test
+    fun `Slette søknad`(){
+        Postgres.withMigratedDb {
+            byggOriginalSøknadprosess()
+
+            originalSøknadprosess.dato(2).besvar(LocalDate.now())
+            originalSøknadprosess.inntekt(6).besvar(10000.årlig)
+            originalSøknadprosess.boolsk(10).besvar(true)
+            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sid:sse"))
+            originalSøknadprosess.envalg(20).besvar(Envalg("f20.envalg1"))
+            originalSøknadprosess.flervalg(21).besvar(Flervalg("f21.flervalg1"))
+            originalSøknadprosess.heltall(22).besvar(123)
+            originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
+            originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
+            originalSøknadprosess.land(25).besvar(Land("SWE"))
+            originalSøknadprosess.desimaltall(26).besvar(2.5)
+
+            lagreHentOgSammenlign()
+
+            assertNull(gammelVerdiForKolonnen("dato"))
+            assertNull(gammelVerdiForKolonnen("aarlig_inntekt"))
+            assertNull(gammelVerdiForKolonnen("boolsk"))
+            assertNull(gammelVerdiForKolonnen("dokument_id"))
+            assertNull(gammelVerdiForKolonnen("envalg_id"))
+            assertNull(gammelVerdiForKolonnen("flervalg_id"))
+            assertNull(gammelVerdiForKolonnen("heltall"))
+            assertNull(gammelVerdiForKolonnen("tekst"))
+            assertNull(gammelVerdiForKolonnen("periode_id"))
+            assertNull(gammelVerdiForKolonnen("land"))
+            assertNull(gammelVerdiForKolonnen("desimaltall"))
+
+            originalSøknadprosess.dato(2).besvar(LocalDate.now().minusDays(3))
+            originalSøknadprosess.inntekt(6).besvar(19999.årlig)
+            originalSøknadprosess.boolsk(10).besvar(false)
+            originalSøknadprosess.dokument(11).besvar(Dokument(2.januar.atStartOfDay(), "urn:sid:sse"))
+            originalSøknadprosess.envalg(20).besvar(Envalg("f20.envalg2"))
+            originalSøknadprosess.flervalg(21).besvar(Flervalg("f21.flervalg2"))
+            originalSøknadprosess.heltall(22).besvar(456)
+            originalSøknadprosess.tekst(23).besvar(Tekst("tekst2"))
+            originalSøknadprosess.periode(24).besvar(Periode(1.mars(), 1.april()))
+            originalSøknadprosess.land(25).besvar(Land("NOR"))
+            originalSøknadprosess.desimaltall(26).besvar(1.5)
+
+            lagreHentOgSammenlign()
+
+            søknadRecord.slett(originalSøknadprosess.søknad.uuid)
+
+            assertRecordCount(0, "soknad")
+            assertRecordCount(0, "faktum_verdi")
+            assertRecordCount(0, "gammel_faktum_verdi")
+            assertRecordCount(0, "dokument")
+        }
+    }
+
     @Test fun `Lagring og henting av fakta med kotliquery spesial tegn`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
@@ -295,7 +349,8 @@ internal class SøknadRecordTest {
                         "SELECT COUNT (*) FROM $table"
                     ).map { it.int(1) }.asSingle
                 )
-            }
+            },
+            "Forventet $recordCount i tabell $table"
         )
     }
 
