@@ -13,4 +13,5 @@ interface SøknadPersistence {
     fun hent(uuid: UUID, type: Versjon.UserInterfaceType? = null): Søknadprosess
     fun lagre(søknad: Søknad): Boolean
     fun opprettede(identer: Identer): Map<LocalDateTime, UUID>
+    fun slett(uuid: UUID): Boolean
 }
