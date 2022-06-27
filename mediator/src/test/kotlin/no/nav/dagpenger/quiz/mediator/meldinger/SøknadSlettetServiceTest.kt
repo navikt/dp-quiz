@@ -5,10 +5,11 @@ import io.mockk.verify
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
+import java.util.UUID
 
-class SøknadSlettetServiceTest {
+internal class SøknadSlettetServiceTest {
 
-    val søknadPersistence = mockk<SøknadPersistence>()
+    val søknadPersistence = mockk<SøknadPersistence>(relaxed = true)
     val testRapid = TestRapid().also {
         SøknadSlettetService(
             rapidsConnection = it,
@@ -18,19 +19,20 @@ class SøknadSlettetServiceTest {
 
     @Test
     fun `tar i mot søknadSlettetEvent`() {
-        testRapid.publish(søknadSlettetEvent())
+        val søknadUUID = UUID.randomUUID()
+        testRapid.sendTestMessage(søknadSlettetEvent(søknadUUID))
         verify {
-            søknadPersistence.slett(any())
+            søknadPersistence.slett(søknadUUID)
         }
     }
 
-    fun søknadSlettetEvent() =
+    fun søknadSlettetEvent(søknadUUID: UUID) =
         //language=JSON
         """{
   "@event_name": "søknad_slettet",
   "@opprettet": "2022-06-24T14:26:43.975947",
   "@id": "190de272-9535-40c6-b710-6d233cbdd600",
-  "søknad_uuid": "d955e6bf-9a3e-4266-a071-0aa8bef12cdc",
+  "søknad_uuid": "$søknadUUID",
   "system_read_count": 0,
   "system_participating_services": [
     {
