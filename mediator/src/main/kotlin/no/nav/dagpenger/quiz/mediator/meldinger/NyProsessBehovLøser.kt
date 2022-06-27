@@ -2,7 +2,6 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
@@ -14,23 +13,19 @@ import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.withMDC
 import java.util.UUID
 
-internal class NySøknadBehovLøser(
+internal class NyProsessBehovLøser(
     private val søknadPersistence: SøknadRecord,
-    rapidsConnection: RapidsConnection,
-    private val prosessVersjon: Prosessversjon = Versjon.siste(Prosess.Dagpenger)
+    rapidsConnection: RapidsConnection
 ) : River.PacketListener {
-
     private companion object {
         private val log = KotlinLogging.logger {}
         private val sikkerlogg = KotlinLogging.logger("tjenestekall")
     }
 
-    private val behovNavn = "NySøknad"
-
     init {
         River(rapidsConnection).apply {
             validate { it.demandValue("@event_name", "behov") }
-            validate { it.demandAllOrAny("@behov", listOf(behovNavn)) }
+            validate { it.demandAllOrAny("@behov", listOf("NySøknad", "NyInnsending")) }
             validate { it.requireKey("@id", "@opprettet") }
             validate { it.requireKey("søknad_uuid") }
             validate { it.requireKey("ident") }
@@ -39,6 +34,12 @@ internal class NySøknadBehovLøser(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
+        val behovNavn = packet["@behov"].single().asText()
+        val prosessVersjon = when (behovNavn) {
+            "NySøknad" -> Versjon.siste(Prosess.Dagpenger)
+            "NyInnsending" -> Versjon.siste(Prosess.Innsending)
+            else -> throw Error("Mangler prosess for $behovNavn")
+        }
         val søknadUuid = packet["søknad_uuid"].asText().let { søknadUuid -> UUID.fromString(søknadUuid) }
         withMDC("søknad_uuid" to søknadUuid.toString()) {
             log.info { "Mottok $behovNavn behov" }
@@ -46,7 +47,6 @@ internal class NySøknadBehovLøser(
                 .folkeregisterIdent(packet["ident"].asText())
                 // @todo: Aktør id?
                 .build()
-
             val faktagrupperType = Versjon.UserInterfaceType.Web
             søknadPersistence.ny(identer, faktagrupperType, prosessVersjon, søknadUuid).also { søknadsprosess ->
                 søknadPersistence.lagre(søknadsprosess.søknad)

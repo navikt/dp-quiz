@@ -175,6 +175,16 @@ infix fun GeneratorFaktum.har(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
     )
 )
 
+infix fun Faktum<*>.sannsynliggjøresAv(dokument: Faktum<Dokument>): Subsumsjon =
+    EnkelSubsumsjon(
+        object : Regel {
+            override val typeNavn = "dokumentopplastning"
+            override fun resultat(fakta: List<Faktum<*>>) = true
+            override fun toString(fakta: List<Faktum<*>>) = "Sjekk at dokument `${fakta[0]}` er opplastet"
+        },
+        dokument
+    )
+
 infix fun Faktum<Boolean>.dokumenteresAv(dokument: Faktum<Dokument>): Subsumsjon =
     GodkjenningsSubsumsjon(
         JaAction,
@@ -213,6 +223,7 @@ private class Utfylt : Regel {
     override val typeNavn = "utfylt"
     override fun resultat(fakta: List<Faktum<*>>) =
         fakta[0].erBesvart()
+
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er besvart"
 }
 

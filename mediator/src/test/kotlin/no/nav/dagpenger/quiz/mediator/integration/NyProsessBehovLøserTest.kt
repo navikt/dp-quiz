@@ -5,23 +5,25 @@ import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
-import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadBehovLøser
+import no.nav.dagpenger.quiz.mediator.meldinger.NyProsessBehovLøser
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
+import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class NySøknadBehovLøserTest : SøknadBesvarer() {
-
+internal class NyProsessBehovLøserTest : SøknadBesvarer() {
     @BeforeEach
     fun setup() {
         Postgres.withMigratedDb {
-            Dagpenger.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
+            Dagpenger.registrer(::FaktumTable)
+            Innsending.registrer(::FaktumTable)
             val søknadPersistence = SøknadRecord()
             val resultatPersistence = ResultatRecord()
             testRapid = TestRapid().also {
@@ -30,7 +32,7 @@ internal class NySøknadBehovLøserTest : SøknadBesvarer() {
                     resultatPersistence = resultatPersistence,
                     rapidsConnection = it
                 )
-                NySøknadBehovLøser(søknadPersistence, it)
+                NyProsessBehovLøser(søknadPersistence, it)
             }
         }
     }
@@ -42,8 +44,7 @@ internal class NySøknadBehovLøserTest : SøknadBesvarer() {
 
     @Test
     fun `Hent alle fakta happy path`() {
-
-        withSøknad(nySøknadBehov) { _ ->
+        withSøknad(nySøknadBehov()) { _ ->
             assertEquals(2, testRapid.inspektør.size)
             melding(0).let {
                 assertEquals("søker_oppgave", it["@event_name"].asText())
@@ -62,15 +63,25 @@ internal class NySøknadBehovLøserTest : SøknadBesvarer() {
     }
 
     @Test
+    fun `Oppretter ny prosess for innsending`() {
+        val uuid = triggNySøknadsprosess(nySøknadBehov("NyInnsending"))
+        assertEquals(2, testRapid.inspektør.size)
+        assertDoesNotThrow {
+            UUID.fromString(uuid)
+        }
+
+        assertEquals("faktum.hvorfor", testRapid.inspektør.message(0)["seksjoner"][0]["fakta"][0]["beskrivendeId"].asText())
+    }
+
+    @Test
     fun `Ignore nysøknad med fakta`() {
         testRapid.sendTestMessage(ferdigNySøknadløsning)
         assertEquals(0, testRapid.inspektør.size)
     }
 
     private val søknadUUID = UUID.randomUUID()
-
-    //language=JSON
     private val ferdigNySøknadløsning =
+        //language=JSON
         """
         {
           "@event_name": "behov",
@@ -86,12 +97,12 @@ internal class NySøknadBehovLøserTest : SøknadBesvarer() {
         
         """.trimIndent()
 
-    //language=JSON
-    private val nySøknadBehov =
+    private fun nySøknadBehov(behov: String = "NySøknad") =
+        //language=JSON
         """
         {
           "@event_name": "behov",
-          "@behov" : ["NySøknad"],
+          "@behov" : ["$behov"],
           "@opprettet": "${LocalDateTime.now()}",
           "@id": "${UUID.randomUUID()}",
           "søknad_uuid": "$søknadUUID",

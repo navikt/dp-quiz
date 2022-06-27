@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator
 
+import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
@@ -12,10 +13,11 @@ import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.ManuellBehandlingSink
-import no.nav.dagpenger.quiz.mediator.meldinger.NySøknadBehovLøser
+import no.nav.dagpenger.quiz.mediator.meldinger.NyProsessBehovLøser
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
+import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
@@ -40,6 +42,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 val resultatRecord = ResultatRecord()
                 AvslagPåMinsteinntektOppsett.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
                 AvslagPåMinsteinntektService(søknadRecord, rapidsConnection)
+
                 Dagpenger.registrer { prototypeSøknad ->
                     FaktumTable(prototypeSøknad)
                     val sisteDagpengerVersjon = Versjon.siste(Prosess.Dagpenger)
@@ -48,7 +51,12 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                         rapidsConnection.publish(SøknadsmalJsonBuilder(søknadsprosess).resultat().toString())
                     }
                 }
-                NySøknadBehovLøser(søknadRecord, rapidsConnection)
+
+                Innsending.registrer { prototype: Søknad ->
+                    FaktumTable(prototype)
+                }
+
+                NyProsessBehovLøser(søknadRecord, rapidsConnection)
                 FaktumSvarService(søknadRecord, resultatRecord, rapidsConnection)
                 BehandlingsdatoService(rapidsConnection)
                 SenesteMuligeVirkningsdatoService(rapidsConnection)
