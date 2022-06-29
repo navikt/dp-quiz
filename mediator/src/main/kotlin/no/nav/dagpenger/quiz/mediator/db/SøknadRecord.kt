@@ -341,35 +341,31 @@ class SøknadRecord : SøknadPersistence {
 
     override fun slett(uuid: UUID): Boolean {
         using(sessionOf(dataSource)) { session ->
-            val besvartAv: List<Long> = session.transaction { transaction ->
+            session.transaction { transaction ->
                 transaction.run( //language=PostgreSQL
                     queryOf(
                         """
-                            WITH soknad_id AS (DELETE FROM soknad WHERE uuid = :uuid RETURNING id)
-                            SELECT besvarer.id
-                            FROM besvarer
-                            JOIN faktum_verdi fv on besvarer.id = fv.besvart_av WHERE fv.soknad_id = (SELECT id FROM soknad_id)
-                                                
-
-                                    
+                            WITH soknad_id AS (DELETE FROM soknad WHERE uuid = :uuid RETURNING id),
+                            be AS (
+                        
+                                SELECT b.besvart_av
+                                FROM faktum_verdi a
+                                FULL OUTER JOIN faktum_verdi b ON  b.besvart_av = a.besvart_av
+                                WHERE a.soknad_id = (SELECT id FROM soknad_id)
+                                  AND a.besvart_av IS NOT NULL
+                                GROUP BY b.besvart_av
+                                HAVING  COUNT(DISTINCT(b.soknad_id)) <= 1
+                                                            
+                            )
+                                               
+                            DELETE
+                            FROM besvarer  
+                            WHERE besvarer.id in (SELECT id FROM be)           
                         """,
                         mapOf("uuid" to uuid),
-                    ).map { row ->
-                        row.long(1)
-                    }.asList
+                    ).asUpdate
                 )
             }
-
-            session.run(
-                queryOf(
-                    """
-                   DELETE
-                   FROM besvarer be  
-                   WHERE be.id =any(?) AND be.id NOT IN (SELECT besvart_av FROM faktum_verdi WHERE besvart_av = be.id)
-            """.trimIndent(), besvartAv.toTypedArray()
-                ).asUpdate
-            )
-
         }
         return true
     }
