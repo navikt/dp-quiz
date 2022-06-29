@@ -49,13 +49,13 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
     private fun build(updateClauseBuilder: UpdateClauseBuilder): UpdateQueryAction {
         val statement =
             if (updateClauseBuilder.insertStmt() != null) {
-                "WITH SSSfaktum_verdi_id AS (" + updateClauseBuilder.updateClause() + " " + whereClause + " RETURNING id) " + updateClauseBuilder.insertStmt()
+                "WITH oppdatert_faktum_verdi_id AS (" + updateClauseBuilder.updateClause() + " " + whereClause + " RETURNING id) " + updateClauseBuilder.insertStmt()
             } else {
                 updateClauseBuilder.updateClause() + " " + whereClause
             }
 
         return queryOf(
-            statement = statement.also { println(it) },
+            statement = statement,
             paramMap = whereClauseParameters + updateClauseBuilder.paramMap()
         ).asUpdate
     }
@@ -102,7 +102,9 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
             """UPDATE faktum_verdi SET  besvart_av = $besvartAv, opprettet=NOW() AT TIME ZONE 'utc'"""
 
         override fun insertStmt() = // language=PostgreSQL
-            """INSERT INTO valgte_verdier (faktum_verdi_id, verdier) VALUES ((SELECT id FROM SSSfaktum_verdi_id), '{$arrayString}')"""
+            """INSERT INTO valgte_verdier (faktum_verdi_id, verdier) VALUES ((SELECT id FROM oppdatert_faktum_verdi_id), '{$arrayString}')
+               ON CONFLICT (faktum_verdi_id) DO UPDATE SET verdier = '{$arrayString}'
+            """.trimMargin()
     }
 
     private class FlervalgBuilder(svar: Flervalg, private val besvartAv: Int?) : UpdateClauseBuilder {
@@ -113,7 +115,9 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
             """UPDATE faktum_verdi SET  besvart_av = $besvartAv, opprettet=NOW() AT TIME ZONE 'utc'"""
 
         override fun insertStmt() = // language=PostgreSQL
-            """INSERT INTO valgte_verdier (faktum_verdi_id, verdier) VALUES ((SELECT id FROM SSSfaktum_verdi_id), '{$arrayString}')"""
+            """INSERT INTO valgte_verdier (faktum_verdi_id, verdier) VALUES ((SELECT id FROM oppdatert_faktum_verdi_id), '{$arrayString}')
+              ON CONFLICT (faktum_verdi_id) DO UPDATE SET verdier = '{$arrayString}'
+            """.trimMargin()
     }
 
     private class PeriodeBuilder(svar: Periode, private val besvartAv: Int?) : UpdateClauseBuilder {
@@ -131,7 +135,9 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
             """UPDATE faktum_verdi SET besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc'"""
 
         override fun insertStmt() = // language=PostgreSQL
-            """INSERT INTO periode (faktum_verdi_id, fom, tom) VALUES ((SELECT id FROM SSSfaktum_verdi_id), :fom, :tom)"""
+            """INSERT INTO periode (faktum_verdi_id, fom, tom) VALUES ((SELECT id FROM oppdatert_faktum_verdi_id), :fom, :tom)
+               ON CONFLICT (faktum_verdi_id) DO UPDATE SET fom = :fom, tom = :tom
+            """.trimMargin()
 
         override fun paramMap(): Map<String, Any?> {
             return mapOf(
@@ -179,7 +185,9 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
             """UPDATE faktum_verdi SET besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc'"""
 
         override fun insertStmt() = // language=PostgreSQL
-            """INSERT INTO dokument (faktum_verdi_id, opplastet, urn) VALUES ((SELECT id FROM SSSfaktum_verdi_id), :opplastet, :urn)"""
+            """INSERT INTO dokument (faktum_verdi_id, opplastet, urn) VALUES ((SELECT id FROM oppdatert_faktum_verdi_id), :opplastet, :urn) 
+               ON CONFLICT (faktum_verdi_id) DO UPDATE SET opplastet = :opplastet, urn = :urn
+            """.trimMargin()
 
         override fun paramMap(): Map<String, Any?> {
             return mapOf(

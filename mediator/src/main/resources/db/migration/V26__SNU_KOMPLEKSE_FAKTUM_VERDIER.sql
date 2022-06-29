@@ -15,6 +15,7 @@ WHERE gammel_faktum_verdi.dokument_id = dokument.id;
 
 ALTER TABLE dokument
     ALTER COLUMN faktum_verdi_id SET NOT NULL,
+    ADD UNIQUE (faktum_verdi_id),
     ADD CONSTRAINT faktum_verdi_id_fk FOREIGN KEY (faktum_verdi_id) REFERENCES faktum_verdi(id) ON DELETE CASCADE;
 
 --- VALGTE VERDIER
@@ -46,6 +47,7 @@ WHERE gammel_faktum_verdi.flervalg_id = valgte_verdier.id;
 
 ALTER TABLE valgte_verdier
     ALTER COLUMN faktum_verdi_id SET NOT NULL,
+    ADD UNIQUE (faktum_verdi_id),
     ADD CONSTRAINT faktum_verdi_id_fk FOREIGN KEY (faktum_verdi_id) REFERENCES faktum_verdi(id) ON DELETE CASCADE;
 
 
@@ -66,6 +68,7 @@ WHERE gammel_faktum_verdi.periode_id = periode.id;
 
 ALTER TABLE periode
     ALTER COLUMN faktum_verdi_id SET NOT NULL,
+    ADD UNIQUE (faktum_verdi_id),
     ADD CONSTRAINT faktum_verdi_id_fk FOREIGN KEY (faktum_verdi_id) REFERENCES faktum_verdi(id) ON DELETE CASCADE;
 
 
