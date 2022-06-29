@@ -23,8 +23,6 @@ import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
-import org.postgresql.util.PGobject
-import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -34,7 +32,10 @@ class SøknadRecord : SøknadPersistence {
     private val personRecord = PersonRecord()
 
     override fun ny(
-        identer: Identer, type: Versjon.UserInterfaceType, prosessVersjon: Prosessversjon, uuid: UUID
+        identer: Identer,
+        type: Versjon.UserInterfaceType,
+        prosessVersjon: Prosessversjon,
+        uuid: UUID
     ): Søknadprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
         return Versjon.id(prosessVersjon).søknadprosess(person, type, uuid).also { søknadprosess ->
@@ -64,14 +65,14 @@ class SøknadRecord : SøknadPersistence {
         } ?: throw IllegalArgumentException("Søknad finnes ikke, uuid: $uuid")
 
         return Versjon.id(Prosessversjon(Prosess(rad.navn), rad.versjonId)).søknadprosess(
-                person = personRecord.hentPerson(rad.personId),
-                type = Versjon.UserInterfaceType.fromId(rad.typeId),
-                uuid = uuid
-            ).also { søknadprosess ->
-                svarList(uuid).onEach { row ->
-                    søknadprosess.søknad.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
-                }
+            person = personRecord.hentPerson(rad.personId),
+            type = Versjon.UserInterfaceType.fromId(rad.typeId),
+            uuid = uuid
+        ).also { søknadprosess ->
+            svarList(uuid).onEach { row ->
+                søknadprosess.søknad.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
             }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -103,7 +104,8 @@ class SøknadRecord : SøknadPersistence {
             (faktum as Faktum<Dokument>).rehydrer(
                 Dokument(
                     row.opplastet, row.urn
-                ), row.besvartAv
+                ),
+                row.besvartAv
             )
         }
         if (row.envalg != null) {
@@ -116,7 +118,8 @@ class SøknadRecord : SøknadPersistence {
             (faktum as Faktum<Periode>).rehydrer(
                 Periode(
                     row.fom, row.tom
-                ), row.besvartAv
+                ),
+                row.besvartAv
             )
         }
     }
@@ -153,7 +156,8 @@ class SøknadRecord : SøknadPersistence {
                             LEFT JOIN valgte_verdier envalg ON faktum_verdi.envalg_id = envalg.id
                             LEFT JOIN valgte_verdier flervalg ON faktum_verdi.flervalg_id = flervalg.id
                             LEFT JOIN besvarer ON faktum_verdi.besvart_av = besvarer.id
-                            ORDER BY indeks""", uuid
+                            ORDER BY indeks""",
+                    uuid
                 ).map {
                     FaktumVerdiRow(
                         it.int("root_id"),
@@ -232,7 +236,9 @@ class SøknadRecord : SøknadPersistence {
     }.toMutableMap()
 
     private fun slettDødeTemplatefakta(
-        søknad: Søknad, nyeSvar: Map<String, Faktum<*>?>, originalSvar: MutableMap<String, Faktum<*>?>
+        søknad: Søknad,
+        nyeSvar: Map<String, Faktum<*>?>,
+        originalSvar: MutableMap<String, Faktum<*>?>
     ) {
         originalSvar.keys.toSet().subtract(nyeSvar.keys.toSet())
             .map { FaktumId(it).reflection { rootId, indeks -> Triple(rootId, indeks, it) } }
@@ -260,7 +266,8 @@ class SøknadRecord : SøknadPersistence {
                         AND faktum.root_id = ? 
                         AND faktum_verdi.indeks = ?
                 )
-        """.trimIndent(), søknad.uuid, rootId, indeks
+        """.trimIndent(),
+        søknad.uuid, rootId, indeks
     ).asExecute
 
     private fun oppdaterFaktum(faktum: Faktum<*>?, søknad: Søknad, indeks: Int, rootId: Int): UpdateQueryAction =
@@ -272,13 +279,15 @@ class SøknadRecord : SøknadPersistence {
             session.run(
                 queryOf( //language=PostgreSQL
                     """
-                         SELECT id FROM besvarer WHERE identifikator = :besvarer""", mapOf("besvarer" to besvarer)
+                         SELECT id FROM besvarer WHERE identifikator = :besvarer""",
+                    mapOf("besvarer" to besvarer)
                 ).map { it.int(1) }.asSingle
             ) ?: session.run(
                 queryOf( //language=PostgreSQL
                     """
                     INSERT INTO besvarer (identifikator) VALUES (:besvarer) RETURNING id
-                    """.trimIndent(), mapOf("besvarer" to besvarer)
+                    """.trimIndent(),
+                    mapOf("besvarer" to besvarer)
                 ).map { it.int(1) }.asSingle
             )
         }
@@ -311,7 +320,8 @@ class SøknadRecord : SøknadPersistence {
               AND soknad.uuid = ?
               AND faktum.root_id = ?
               AND faktum_verdi.indeks = ?
-                """.trimMargin(), søknad.uuid, rootId, indeks
+                """.trimMargin(),
+            søknad.uuid, rootId, indeks
         ).asExecute
 
     private fun opprettTemplateFaktum(indeks: Int, søknad: Søknad, rootId: Int): ExecuteQueryAction =
@@ -323,7 +333,8 @@ class SøknadRecord : SøknadPersistence {
             WHERE soknad.uuid = :soknadUuid
               AND faktum.versjon_id = soknad.versjon_id
               AND faktum.root_id = :rootId
-            """.trimMargin(), mapOf(
+            """.trimMargin(),
+            mapOf(
                 "indeks" to indeks, "soknadUuid" to søknad.uuid, "rootId" to rootId
             )
         ).asExecute
