@@ -155,10 +155,10 @@ class SøknadRecord : SøknadPersistence {
                             FROM faktum_verdi
                             JOIN soknad_faktum ON faktum_verdi.soknad_id = soknad_faktum.soknad_id 
                                 AND faktum_verdi.faktum_id = soknad_faktum.faktum_id
-                            LEFT JOIN dokument ON faktum_verdi.dokument_id = dokument.id
-                            LEFT JOIN periode ON faktum_verdi.periode_id = periode.id
-                            LEFT JOIN valgte_verdier envalg ON faktum_verdi.envalg_id = envalg.id
-                            LEFT JOIN valgte_verdier flervalg ON faktum_verdi.flervalg_id = flervalg.id
+                            LEFT JOIN dokument ON faktum_verdi.id = dokument.faktum_verdi_id
+                            LEFT JOIN periode ON faktum_verdi.id = periode.faktum_verdi_id
+                            LEFT JOIN valgte_verdier envalg ON faktum_verdi.id = envalg.faktum_verdi_id
+                            LEFT JOIN valgte_verdier flervalg ON faktum_verdi.id = flervalg.faktum_verdi_id
                             LEFT JOIN besvarer ON faktum_verdi.besvart_av = besvarer.id
                             ORDER BY indeks""",
                     uuid

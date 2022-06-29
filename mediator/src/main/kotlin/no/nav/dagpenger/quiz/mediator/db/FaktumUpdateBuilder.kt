@@ -17,6 +17,13 @@ import java.time.LocalDateTime
 
 internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
     //language=PostgreSQL
+
+    private val withFaktumId = """
+           WITH faktum_verdi_id AS (SELECT faktum_verdi.id FROM faktum_verdi, soknad, faktum
+                WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id
+                AND soknad.uuid = :uuid AND faktum_verdi.indeks = :indeks AND faktum.root_id = :rootId)
+    """
+
     private val whereClause = """
                WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, soknad, faktum
                 WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id
@@ -48,7 +55,7 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
 
     private fun build(updateClauseBuilder: UpdateClauseBuilder): UpdateQueryAction {
         return queryOf(
-            statement = updateClauseBuilder.updateClause() + " " + whereClause,
+            statement = (withFaktumId + " " +  updateClauseBuilder.updateClause() + " " + whereClause).also { println(it) },
             paramMap = whereClauseParameters + updateClauseBuilder.paramMap()
         ).asUpdate
     }
@@ -95,9 +102,12 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
     private class EnvalgBuilder(svar: Envalg, private val besvartAv: Int?) : UpdateClauseBuilder {
         private val arrayString = svar.joinToString { """"$it"""" }
         override fun updateClause(): String {
-            return """WITH valg_inserted_id AS (INSERT INTO valgte_verdier (verdier) VALUES ('{$arrayString}') returning id) 
-                                           UPDATE faktum_verdi SET envalg_id = (SELECT id FROM valg_inserted_id) , besvart_av = $besvartAv,
-              opprettet=NOW() AT TIME ZONE 'utc' """
+            // language=PostgreSQL
+            return """
+              , envalg AS (INSERT INTO valgte_verdier (faktum_verdi_id, verdier) VALUES (faktum_verdi_id, '{$arrayString}'))
+              UPDATE faktum_verdi SET  besvart_av = $besvartAv, opprettet=NOW() AT TIME ZONE 'utc'
+              
+              """
         }
     }
 
@@ -106,9 +116,9 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
 
         @Language("PostgreSQL")
         override fun updateClause(): String {
-            return """WITH valg_inserted_id AS (INSERT INTO valgte_verdier (verdier) VALUES ('{$arrayString}') returning id)
-                                           UPDATE faktum_verdi SET flervalg_id = (SELECT id FROM valg_inserted_id) , besvart_av = $besvartAv,
-              opprettet=NOW() AT TIME ZONE 'utc' """
+            return """
+              , flervalg AS (INSERT INTO valgte_verdier (faktum_verdi_id, verdier) VALUES (faktum_verdi_id, '{$arrayString}')) 
+              UPDATE faktum_verdi SET  besvart_av = $besvartAv, opprettet=NOW() AT TIME ZONE 'utc' """
         }
     }
 
@@ -126,8 +136,8 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
         @Language("PostgreSQL")
         override fun updateClause() =
             """
-        WITH inserted_id AS (INSERT INTO periode (fom, tom) VALUES (:fom, :tom) returning id)
-        UPDATE faktum_verdi SET periode_id = (SELECT id FROM inserted_id) , besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc' 
+        , periode AS (INSERT INTO periode (faktum_verdi_id, fom, tom) VALUES (faktum_verdi_id, :fom, :tom))
+        UPDATE faktum_verdi SET besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc' 
            """
 
         override fun paramMap(): Map<String, Any?> {
@@ -176,8 +186,8 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
         @Language("PostgreSQL")
         override fun updateClause() =
             """
-        WITH inserted_id AS (INSERT INTO dokument (opplastet, urn) VALUES (:opplastet, :urn) returning id)
-        UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id) , besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc' 
+        , dokument AS (INSERT INTO dokument (faktum_verdi_id, opplastet, urn) VALUES (faktum_verdi_id, :opplastet, :urn))
+        UPDATE faktum_verdi SET besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc' 
            """
 
         override fun paramMap(): Map<String, Any?> {
