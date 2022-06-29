@@ -28,7 +28,6 @@ import no.nav.dagpenger.quiz.mediator.helpers.mai
 import no.nav.dagpenger.quiz.mediator.helpers.mars
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
@@ -117,7 +116,7 @@ internal class SøknadRecordTest {
         }
     }
 
-    @Test @Disabled
+    @Test
     fun `Skal kun slette besvarer hvis den ikke refererer til andre søknader`() = Postgres.withMigratedDb {
         FaktumTable(SøknadEksempel1.prototypeFakta1)
         søknadRecord = SøknadRecord()
@@ -131,6 +130,8 @@ internal class SøknadRecordTest {
         søknadRecord.lagre(søknadProsess2.søknad)
 
         søknadRecord.slett(søknadProsess1.søknad.uuid)
+
+        assertRecordCount(1, "besvarer")
     }
 
     @Test fun `Lagring og henting av fakta med kotliquery spesial tegn`() {

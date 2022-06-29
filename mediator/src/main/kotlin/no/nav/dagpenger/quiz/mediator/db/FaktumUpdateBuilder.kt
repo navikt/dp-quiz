@@ -47,31 +47,25 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
     }
 
     private fun build(updateClauseBuilder: UpdateClauseBuilder): UpdateQueryAction {
-        val statement =
-            if (updateClauseBuilder.insertStmt() != null) {
-                "WITH oppdatert_faktum_verdi_id AS (" + updateClauseBuilder.updateClause() + " " + whereClause + " RETURNING id) " + updateClauseBuilder.insertStmt()
-            } else {
-                updateClauseBuilder.updateClause() + " " + whereClause
-            }
-
         return queryOf(
-            statement = statement,
+            statement = updateClauseBuilder.updateClause() + " " + whereClause,
             paramMap = whereClauseParameters + updateClauseBuilder.paramMap()
         ).asUpdate
     }
 
     private interface UpdateClauseBuilder {
         fun updateClause(): String
-        fun insertStmt(): String? = null
         fun paramMap(): Map<String, Any?> = emptyMap()
     }
 
     private class BooleanBuilder(private val svar: Boolean, private val besvartAv: Int?) : UpdateClauseBuilder {
+
         override fun updateClause() =
-            """UPDATE faktum_verdi SET boolsk = $svar, besvart_av = $besvartAv, opprettet=NOW() AT TIME ZONE 'utc'"""
+            """UPDATE faktum_verdi  SET boolsk = $svar , besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc' """
     }
 
     private class LocalDateBuilder(private val svar: LocalDate, private val besvartAv: Int?) : UpdateClauseBuilder {
+
         override fun updateClause() =
             """UPDATE faktum_verdi  SET dato = '${tilPostgresDato(svar)}' , besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc' """
 
@@ -87,37 +81,35 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
     }
 
     private class IntBuilder(private val svar: Int, private val besvartAv: Int?) : UpdateClauseBuilder {
+
         override fun updateClause() =
             """UPDATE faktum_verdi  SET heltall = $svar , besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc' """
     }
 
     private class DoubleBuilder(private val svar: Double, private val besvartAv: Int?) : UpdateClauseBuilder {
+
         override fun updateClause() =
             """UPDATE faktum_verdi  SET desimaltall = $svar , besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc' """
     }
 
     private class EnvalgBuilder(svar: Envalg, private val besvartAv: Int?) : UpdateClauseBuilder {
         private val arrayString = svar.joinToString { """"$it"""" }
-        override fun updateClause() = // language=PostgreSQL
-            """UPDATE faktum_verdi SET  besvart_av = $besvartAv, opprettet=NOW() AT TIME ZONE 'utc'"""
-
-        override fun insertStmt() = // language=PostgreSQL
-            """INSERT INTO valgte_verdier (faktum_verdi_id, verdier) VALUES ((SELECT id FROM oppdatert_faktum_verdi_id), '{$arrayString}')
-               ON CONFLICT (faktum_verdi_id) DO UPDATE SET verdier = '{$arrayString}'
-            """.trimMargin()
+        override fun updateClause(): String {
+            return """WITH valg_inserted_id AS (INSERT INTO valgte_verdier (soknad_id, verdier) VALUES ((SELECT id FROM soknad WHERE uuid = :uuid), '{$arrayString}') returning id) 
+                                           UPDATE faktum_verdi SET envalg_id = (SELECT id FROM valg_inserted_id) , besvart_av = $besvartAv,
+              opprettet=NOW() AT TIME ZONE 'utc' """
+        }
     }
 
     private class FlervalgBuilder(svar: Flervalg, private val besvartAv: Int?) : UpdateClauseBuilder {
         private val arrayString = svar.joinToString { """"$it"""" }
 
         @Language("PostgreSQL")
-        override fun updateClause() = // language=PostgreSQL
-            """UPDATE faktum_verdi SET  besvart_av = $besvartAv, opprettet=NOW() AT TIME ZONE 'utc'"""
-
-        override fun insertStmt() = // language=PostgreSQL
-            """INSERT INTO valgte_verdier (faktum_verdi_id, verdier) VALUES ((SELECT id FROM oppdatert_faktum_verdi_id), '{$arrayString}')
-              ON CONFLICT (faktum_verdi_id) DO UPDATE SET verdier = '{$arrayString}'
-            """.trimMargin()
+        override fun updateClause(): String {
+            return """WITH valg_inserted_id AS (INSERT INTO valgte_verdier (soknad_id, verdier) VALUES ((SELECT id FROM soknad WHERE uuid = :uuid), '{$arrayString}') returning id)
+                                           UPDATE faktum_verdi SET flervalg_id = (SELECT id FROM valg_inserted_id) , besvart_av = $besvartAv,
+              opprettet=NOW() AT TIME ZONE 'utc' """
+        }
     }
 
     private class PeriodeBuilder(svar: Periode, private val besvartAv: Int?) : UpdateClauseBuilder {
@@ -131,13 +123,12 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
             }
         }
 
-        override fun updateClause() = // language=PostgreSQL
-            """UPDATE faktum_verdi SET besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc'"""
-
-        override fun insertStmt() = // language=PostgreSQL
-            """INSERT INTO periode (faktum_verdi_id, fom, tom) VALUES ((SELECT id FROM oppdatert_faktum_verdi_id), :fom, :tom)
-               ON CONFLICT (faktum_verdi_id) DO UPDATE SET fom = :fom, tom = :tom
-            """.trimMargin()
+        @Language("PostgreSQL")
+        override fun updateClause() =
+            """
+        WITH inserted_id AS (INSERT INTO periode (soknad_id, fom, tom) VALUES ((SELECT id FROM soknad WHERE uuid = :uuid), :fom, :tom) returning id)
+        UPDATE faktum_verdi SET periode_id = (SELECT id FROM inserted_id) , besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc' 
+           """
 
         override fun paramMap(): Map<String, Any?> {
             return mapOf(
@@ -148,6 +139,7 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
     }
 
     private class LandBuilder(private val svar: Land, private val besvartAv: Int?) : UpdateClauseBuilder {
+
         override fun updateClause() =
             """UPDATE faktum_verdi  SET land = :land , besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc'"""
 
@@ -159,6 +151,7 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
     }
 
     private class TekstBuilder(private val svar: Tekst, private val besvartAv: Int?) : UpdateClauseBuilder {
+
         override fun updateClause() =
             """UPDATE faktum_verdi  SET tekst = :tekst , besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc'"""
 
@@ -182,12 +175,10 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
 
         @Language("PostgreSQL")
         override fun updateClause() =
-            """UPDATE faktum_verdi SET besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc'"""
-
-        override fun insertStmt() = // language=PostgreSQL
-            """INSERT INTO dokument (faktum_verdi_id, opplastet, urn) VALUES ((SELECT id FROM oppdatert_faktum_verdi_id), :opplastet, :urn) 
-               ON CONFLICT (faktum_verdi_id) DO UPDATE SET opplastet = :opplastet, urn = :urn
-            """.trimMargin()
+            """
+        WITH inserted_id AS (INSERT INTO dokument (soknad_id,opplastet, urn) VALUES ((SELECT id FROM soknad WHERE uuid = :uuid), :opplastet, :urn) returning id)
+        UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id) , besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc' 
+           """
 
         override fun paramMap(): Map<String, Any?> {
             return mapOf(
@@ -198,6 +189,7 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
     }
 
     private object NullFaktumBuilder : UpdateClauseBuilder {
+
         @Language("PostgreSQL")
         override fun updateClause() =
             """UPDATE faktum_verdi
