@@ -21,6 +21,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn liste`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn liste register`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn statsborgerskap`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn statsborgerskap register`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`egne barn`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`forsoerger du barnet`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`forsoerger du barnet register`
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
@@ -30,7 +31,6 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
 internal class BarnetilleggTest {
-
     private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Barnetillegg.fakta())
     private lateinit var søknadprosess: Søknadprosess
 
@@ -43,19 +43,20 @@ internal class BarnetilleggTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        Barnetillegg.verifiserFeltsammensetting(16, 16136)
+        Barnetillegg.verifiserFeltsammensetting(17, 17153)
     }
 
     @Test
     fun `Må ikke besvare noe om vi ikke finner noen barn i registeret`() {
         søknadprosess.generator(`barn liste register`).besvar(0)
-        søknadprosess.generator(`barn liste`).besvar(0)
+        søknadprosess.boolsk(`egne barn`).besvar(false)
         assertEquals(true, søknadprosess.resultat())
     }
 
     @Test
     fun `Søker har ingen barn i registeret men registrerer 1 barn manuelt`() {
         søknadprosess.generator(`barn liste register`).besvar(0)
+        søknadprosess.boolsk(`egne barn`).besvar(true)
         søknadprosess.generator(`barn liste`).besvar(1)
         assertEquals(null, søknadprosess.resultat())
 
@@ -77,6 +78,7 @@ internal class BarnetilleggTest {
     @Test
     fun `Søker har 1 barn i registeret`() {
         søknadprosess.generator(`barn liste register`).besvar(1)
+        søknadprosess.boolsk(`egne barn`).besvar(false)
         søknadprosess.generator(`barn liste`).besvar(0)
         assertEquals(null, søknadprosess.resultat())
 

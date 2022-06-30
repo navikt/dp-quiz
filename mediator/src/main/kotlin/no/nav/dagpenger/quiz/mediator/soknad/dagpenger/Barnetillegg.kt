@@ -16,12 +16,12 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
+import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Barnetillegg : DslFaktaseksjon {
-
     const val `barn liste` = 1001
     const val `barn fornavn mellomnavn` = 1002
     const val `barn etternavn` = 1003
@@ -30,7 +30,7 @@ object Barnetillegg : DslFaktaseksjon {
     const val `forsoerger du barnet` = 1006
     const val `barn aarsinntekt over 1g` = 1007
     const val `barn inntekt` = 1008
-
+    const val `egne barn` = 1017
     const val `barn liste register` = 1009
     const val `barn fornavn mellomnavn register` = 1010
     const val `barn etternavn register` = 1011
@@ -39,7 +39,6 @@ object Barnetillegg : DslFaktaseksjon {
     const val `forsoerger du barnet register` = 1014
     const val `barn aarsinntekt over 1g register` = 1015
     const val `barn inntekt register` = 1016
-
     override val fakta = listOf(
         heltall faktum "faktum.register.barn-liste" id `barn liste register`
             genererer `barn fornavn mellomnavn register`
@@ -56,7 +55,6 @@ object Barnetillegg : DslFaktaseksjon {
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet register` avhengerAv `barn liste register`,
         boolsk faktum "faktum.barn-aarsinntekt-over-1g" id `barn aarsinntekt over 1g register` avhengerAv `barn liste register`,
         heltall faktum "faktum.barn-inntekt" id `barn inntekt register` avhengerAv `barn liste register`,
-
         heltall faktum "faktum.barn-liste" id `barn liste`
             genererer `barn fornavn mellomnavn`
             og `barn etternavn`
@@ -72,8 +70,8 @@ object Barnetillegg : DslFaktaseksjon {
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`,
         boolsk faktum "faktum.barn-aarsinntekt-over-1g" id `barn aarsinntekt over 1g`,
         // @todo: Burde være faktum type 'inntekt'?
-        heltall faktum "faktum.barn-inntekt" id `barn inntekt`
-
+        heltall faktum "faktum.barn-inntekt" id `barn inntekt`,
+        boolsk faktum "faktum.legge-til-egne-barn" id `egne barn`,
     )
 
     override fun seksjon(søknad: Søknad): List<Seksjon> {
@@ -90,6 +88,7 @@ object Barnetillegg : DslFaktaseksjon {
             `forsoerger du barnet register`,
             `barn aarsinntekt over 1g register`,
             `barn inntekt register`,
+            `egne barn`,
             `barn liste`,
             `barn fornavn mellomnavn`,
             `barn etternavn`,
@@ -123,21 +122,23 @@ object Barnetillegg : DslFaktaseksjon {
                     }
                 }
             ).hvisOppfylt {
-                "barnetillegg fra søker".minstEnAv(
-                    generator(`barn liste`) er 0, // TODO: Erstatte med "skal du legge til flere barn?"
-                    generator(`barn liste`) minst 1 hvisOppfylt {
-                        generator(`barn liste`) med "et eller flere barn".deltre {
-                            `barnets navn, fødselsdato og bostedsland`().hvisOppfylt {
-                                "forsørger eller ikke".minstEnAv(
-                                    boolsk(`forsoerger du barnet`) er false,
-                                    boolsk(`forsoerger du barnet`) er true hvisOppfylt {
-                                        `har barnet årsinntekt over 1G`()
-                                    }
-                                )
+                boolsk(`egne barn`) er false hvisIkkeOppfylt {
+                    "barnetillegg fra søker".minstEnAv(
+                        generator(`barn liste`) er 0,
+                        generator(`barn liste`) minst 1 hvisOppfylt {
+                            generator(`barn liste`) med "et eller flere barn".deltre {
+                                `barnets navn, fødselsdato og bostedsland`().hvisOppfylt {
+                                    "forsørger eller ikke".minstEnAv(
+                                        boolsk(`forsoerger du barnet`) er false,
+                                        boolsk(`forsoerger du barnet`) er true hvisOppfylt {
+                                            `har barnet årsinntekt over 1G`()
+                                        }
+                                    )
+                                }
                             }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

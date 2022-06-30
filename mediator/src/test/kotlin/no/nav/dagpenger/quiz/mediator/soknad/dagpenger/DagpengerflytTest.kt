@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.helpers.januar
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn liste`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`egne barn`
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertTrue
@@ -40,7 +40,7 @@ class DagpengerflytTest {
         søknadprosess.boolsk("${Barnetillegg.`barn aarsinntekt over 1g register`}.1").besvar(false)
         søknadprosess.heltall("${Barnetillegg.`barn inntekt register`}.1").besvar(0)
 
-        søknadprosess.generator(`barn liste`).besvar(0)
+        søknadprosess.boolsk(`egne barn`).besvar(false)
 
         søknadprosess.nesteSeksjoner().onEach {
             it.somSpørsmål()

@@ -17,14 +17,13 @@ import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Bosted
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Gjenopptak
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class DagpengerTest : SøknadBesvarer() {
-
     private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
-
     private lateinit var søknadsprosess: Søknadprosess
 
     @BeforeEach
@@ -33,7 +32,6 @@ internal class DagpengerTest : SøknadBesvarer() {
             søknadsprosess = Versjon.id(Dagpenger.VERSJON_ID)
                 .søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
         }
-
         val søknadPersistence = mockk<SøknadPersistence>().also {
             every { it.hent(any(), any()) } returns søknadsprosess
             every { it.lagre(any() as Søknad) } returns true
@@ -60,7 +58,7 @@ internal class DagpengerTest : SøknadBesvarer() {
 
             søknadsprosess.verifiserAtNesteSeksjonEr(Barnetillegg)
             besvar(Barnetillegg.`barn liste register`, 0)
-            besvar(Barnetillegg.`barn liste`, 0)
+            besvar(Barnetillegg.`egne barn`, false)
 
             søknadsprosess.verifiserAtNesteSeksjonEr(Arbeidsforhold)
 
@@ -69,6 +67,7 @@ internal class DagpengerTest : SøknadBesvarer() {
     }
 
     private fun Søknadprosess.verifiserAtNesteSeksjonEr(faktaseksjon: DslFaktaseksjon) {
+        assertNotEquals(nesteSeksjoner().size, 0, "Har ikke neste seksjon")
         assertEquals(faktaseksjon.seksjon(søknad)[0].navn, nesteSeksjoner()[0].navn)
     }
 }
