@@ -1,0 +1,1 @@
+-- Fjernet opprinnelig prosedyre. Tips fra https://stackoverflow.com/questions/46668426/what-is-the-best-way-to-remove-repeatable-scripts-from-flyway-migrations
