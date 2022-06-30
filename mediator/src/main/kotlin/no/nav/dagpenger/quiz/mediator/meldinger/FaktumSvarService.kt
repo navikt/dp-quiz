@@ -101,7 +101,7 @@ internal class FaktumSvarService(
             }
         } catch (e: Exception) {
             log.error(e) { "Kunne ikke lagre faktum for søknad $søknadUuid" }
-            throw e
+            // throw e
         }
     }
 
