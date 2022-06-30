@@ -58,7 +58,7 @@ class Dokumentasjonskrav(
         (dokument faktum "dokumentasjon av $navn" id dokumentId).also {
             dokumenterer.forEach { dok -> it.avhengerAv(dok) }
         },
-        boolsk faktum "godkjenning av dokumentasjon for $navn" id godkjenning
+        boolsk faktum "godkjenning av dokumentasjon for $navn" id godkjenning avhengerAv dokumentId og årsak
     )
 
     fun regeltre(søknad: Søknad): GodkjenningsSubsumsjon = with(søknad) {
