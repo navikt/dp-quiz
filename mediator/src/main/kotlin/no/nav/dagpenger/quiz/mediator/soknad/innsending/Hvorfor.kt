@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.soknad.innsending
 
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.FaktumFactory
@@ -17,7 +16,10 @@ import no.nav.dagpenger.quiz.mediator.soknad.dokumenteresAv
 object Hvorfor : DslFaktaseksjon {
     const val `hvorfor vil du sende oss ting` = 1001
     const val `hva sender du oss` = 1002
-    const val `dokumentasjon` = 1003
+    const val `dokumentasjon tilgjengelig` = 1003
+    const val `dokumentasjon årsak` = 1004
+    const val `dokumentasjon` = 1005
+    const val `godkjenning av dokumentasjon` = 1006
     override val fakta: List<FaktumFactory<*>>
         get() = listOf(
             envalg faktum "faktum.hvorfor"
@@ -26,19 +28,31 @@ object Hvorfor : DslFaktaseksjon {
                 med "svar.endring"
                 med "svar.vet-ikke" id `hvorfor vil du sende oss ting`,
             tekst faktum "faktum.hva" id `hva sender du oss`,
-            dokument faktum "faktum.dokument" id `dokumentasjon`,
         ) + vedleggKrav.fakta
     private val vedleggKrav = listOf(
         `hva sender du oss`
     ).dokumenteresAv(
-        "tjenestebevis",
-        1004,
-        1005,
-        11006,
-        11007
+        "innsendingen",
+        `dokumentasjon tilgjengelig`,
+        `dokumentasjon årsak`,
+        `dokumentasjon`,
+        `godkjenning av dokumentasjon`
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("spørsmål", Rolle.søker, *this.databaseIder()))
+    override fun seksjon(søknad: Søknad) = listOf(
+        søknad.seksjon(
+            "spørsmål", Rolle.søker,
+            `hvorfor vil du sende oss ting`,
+            `hva sender du oss`,
+            `dokumentasjon tilgjengelig`,
+            `dokumentasjon årsak`,
+            `dokumentasjon`,
+        ),
+        søknad.seksjon(
+            "godkjenning", Rolle.saksbehandler,
+            `godkjenning av dokumentasjon`,
+        )
+    )
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "spørsmål".deltre {
