@@ -2,15 +2,16 @@
 
 ALTER TABLE dokument ADD COLUMN soknad_id BIGINT;
 
-UPDATE dokument
-SET soknad_id = faktum_verdi.soknad_id
-FROM faktum_verdi
-WHERE faktum_verdi.dokument_id = dokument.id;
+UPDATE dokument AS d
+SET soknad_id = fv.soknad_id
+FROM faktum_verdi AS fv
+WHERE fv.dokument_id = d.id;
 
-UPDATE dokument
-SET soknad_id = gammel_faktum_verdi.soknad_id
-FROM gammel_faktum_verdi
-WHERE gammel_faktum_verdi.dokument_id = dokument.id;
+
+UPDATE dokument AS d
+SET soknad_id = fv.soknad_id
+FROM gammel_faktum_verdi AS fv
+WHERE fv.dokument_id = d.id;
 
 
 ALTER TABLE dokument
@@ -21,27 +22,28 @@ ALTER TABLE dokument
 
 ALTER TABLE valgte_verdier ADD COLUMN soknad_id BIGINT;
 
-UPDATE valgte_verdier
-SET soknad_id = faktum_verdi.soknad_id
-FROM faktum_verdi
-WHERE faktum_verdi.envalg_id = valgte_verdier.id;
+UPDATE valgte_verdier AS vv
+SET soknad_id = fv.soknad_id
+FROM faktum_verdi AS fv
+WHERE vv.id = fv.envalg_id;
 
 
-UPDATE valgte_verdier
-SET soknad_id = faktum_verdi.soknad_id
-FROM faktum_verdi
-WHERE faktum_verdi.flervalg_id = valgte_verdier.id;
-
-UPDATE valgte_verdier
-SET soknad_id = gammel_faktum_verdi.soknad_id
-FROM gammel_faktum_verdi
-WHERE gammel_faktum_verdi.envalg_id = valgte_verdier.id;
+UPDATE valgte_verdier AS vv
+SET soknad_id = fv.soknad_id
+FROM gammel_faktum_verdi AS fv
+WHERE vv.id = fv.envalg_id;
 
 
-UPDATE valgte_verdier
-SET soknad_id = gammel_faktum_verdi.soknad_id
-FROM gammel_faktum_verdi
-WHERE gammel_faktum_verdi.flervalg_id = valgte_verdier.id;
+UPDATE valgte_verdier AS vv
+SET soknad_id = fv.soknad_id
+FROM faktum_verdi AS fv
+WHERE vv.id = fv.flervalg_id;
+
+
+UPDATE valgte_verdier AS vv
+SET soknad_id = fv.soknad_id
+FROM gammel_faktum_verdi AS fv
+WHERE vv.id = fv.flervalg_id;
 
 
 ALTER TABLE valgte_verdier
@@ -53,15 +55,17 @@ ALTER TABLE valgte_verdier
 
 ALTER TABLE periode ADD COLUMN soknad_id BIGINT;
 
-UPDATE periode
-SET soknad_id = faktum_verdi.soknad_id
-FROM faktum_verdi
-WHERE faktum_verdi.periode_id = periode.id;
+UPDATE periode AS p
+SET soknad_id = fv.soknad_id
+FROM faktum_verdi AS fv
+WHERE fv.periode_id = p.id;
 
-UPDATE periode
-SET soknad_id = gammel_faktum_verdi.soknad_id
-FROM gammel_faktum_verdi
-WHERE gammel_faktum_verdi.periode_id = periode.id;
+
+
+UPDATE periode AS p
+SET soknad_id = fv.soknad_id
+FROM gammel_faktum_verdi AS fv
+WHERE fv.periode_id = p.id;
 
 
 ALTER TABLE periode
