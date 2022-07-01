@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Faktum
-import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
@@ -26,22 +25,16 @@ import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.util.UUID
 
 class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
-
     companion object {
         private val mapper = ObjectMapper()
     }
 
     private val root: ObjectNode = mapper.createObjectNode()
-    private lateinit var faktaNode: ArrayNode
     private val seksjoner = mapper.createArrayNode()
-    private lateinit var gjeldendeSeksjon: ObjectNode
-    private var rootId = 0
-    private val faktumIder = mutableSetOf<String>()
-    private var erISeksjon = false
+    private lateinit var fakta: MutableSet<Faktum<*>>
 
     init {
-        søknadprosess.søknad.accept(this)
-        søknadprosess.forEach { it.accept(this) }
+        søknadprosess.accept(this)
     }
 
     fun resultat() = root
@@ -57,20 +50,20 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
-        erISeksjon = true
-        gjeldendeSeksjon = mapper.createObjectNode()
-        faktaNode = mapper.createArrayNode()
-        gjeldendeSeksjon.put("beskrivendeId", seksjon.navn)
+        this.fakta = fakta.filter { it !is TemplateFaktum<*> }.toMutableSet()
     }
 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
-        gjeldendeSeksjon.set<ArrayNode>("fakta", faktaNode)
-        seksjoner.add(gjeldendeSeksjon)
-        erISeksjon = false
-    }
+        if (rolle != Rolle.søker) return
+        val faktaNode = fakta.fold(mapper.createArrayNode()) { acc, faktum ->
+            acc.add(SøknadFaktumVisitor(faktum).root)
+        }
+        val gjeldendeSeksjon = mapper.createObjectNode().apply {
+            put("beskrivendeId", seksjon.navn)
+            set<ArrayNode>("fakta", faktaNode)
+        }
 
-    override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
-        this.rootId = rootId
+        seksjoner.add(gjeldendeSeksjon)
     }
 
     override fun <R : Comparable<R>> visitUtenSvar(
@@ -82,9 +75,8 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
-        if (!erISeksjon) return
-        if (id in faktumIder) return
-        addFaktum(faktum, id)
+        if (!::fakta.isInitialized) return
+        fakta.addAll(avhengerAvFakta)
     }
 
     override fun <R : Comparable<R>> visitUtenSvar(
@@ -99,21 +91,14 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
         gyldigeValg: GyldigeValg?,
         landGrupper: LandGrupper?
     ) {
-        if (!erISeksjon) return
-        if (id in faktumIder) return
-        addFaktum(faktum, id)
-    }
-
-    private fun <R : Comparable<R>> addFaktum(faktum: Faktum<R>, id: String) {
-        faktaNode.add(SøknadFaktumVisitor(faktum).root)
-        faktumIder.add(id)
+        if (!::fakta.isInitialized) return
+        fakta.addAll(avhengerAvFakta)
     }
 
     private class SøknadFaktumVisitor(
         faktum: Faktum<*>
     ) :
         FaktumVisitor {
-
         val root: ObjectNode = mapper.createObjectNode()
 
         init {
@@ -153,7 +138,6 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
             roller: Set<Rolle>,
             clazz: Class<R>
         ) {
-
             val jsonTemplates = mapper.createArrayNode()
             templates.forEach { template ->
                 jsonTemplates.add(SøknadFaktumVisitor(template).root)
