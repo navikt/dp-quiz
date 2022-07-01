@@ -44,7 +44,7 @@ internal class SøknadsmalJsonBuilderTest {
             desimaltall faktum "desimaltall6" id 6,
             dokument faktum "dokument7" id 7,
             inntekt faktum "inntekt8" id 8,
-            dato faktum "dato9" id 9,
+            heltall faktum "dato9" id 9 genererer 7 og 8,
             flervalg faktum "flervalg10" med "valg1" med "valg2" med "valg3" id 10,
             envalg faktum "envalg11" med "valg1" med "valg2" id 11,
             dato faktum "dato12" id 12,
@@ -58,7 +58,7 @@ internal class SøknadsmalJsonBuilderTest {
             land faktum "f20"
                 gruppe "eøs" med listOf(Land("SWE"))
                 gruppe "storbritannia" med listOf(Land("GBR"))
-                gruppe "norge-jan-mayen" med listOf(Land("NOR")) id 20 avhengerAv 7 og 8 og 9
+                gruppe "norge-jan-mayen" med listOf(Land("NOR")) id 20
         )
     }
 
@@ -93,13 +93,13 @@ internal class SøknadsmalJsonBuilderTest {
                 prototypeSøknad.boolsk(19),
                 prototypeSøknad.generator(14),
             ),
-            Seksjon("seksjon4", Rolle.søker, prototypeSøknad.land(20)),
             Seksjon(
                 "nav", Rolle.nav,
                 prototypeSøknad.dokument(7),
                 prototypeSøknad.inntekt(8),
                 prototypeSøknad.dato(9)
             ),
+            Seksjon("seksjon4", Rolle.søker, prototypeSøknad.land(20), prototypeSøknad.inntekt(8)),
             rootSubsumsjon = prototypeSubsumsjon
         )
 
@@ -200,14 +200,18 @@ internal class SøknadsmalJsonBuilderTest {
         }
         with(malJson["seksjoner"][3]) {
             assertEquals("seksjon4", this["beskrivendeId"].asText())
-            assertEquals(4, this["fakta"].size())
+            assertEquals(2, this["fakta"].size())
             this["fakta"][0].assertFaktaAsJson("20", "land", "f20", listOf("søker"))
             assertEquals(3, this["fakta"][0]["grupper"].size())
             assertEquals(249, this["fakta"][0]["gyldigeLand"].size())
             // Kommer via avhengigAv
-            this["fakta"][1].assertFaktaAsJson("7", "dokument", "dokument7", listOf("nav"))
-            this["fakta"][2].assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav"))
-            this["fakta"][3].assertFaktaAsJson("9", "localdate", "dato9", listOf("nav"))
+            this["fakta"][1].assertGeneratorFaktaAsJson(
+                "9", "generator", "dato9", listOf("nav"),
+                assertTemplates = listOf(
+                    { it.assertFaktaAsJson("7", "dokument", "dokument7", listOf("nav")) },
+                    { it.assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav", "søker")) }
+                )
+            )
         }
     }
 }

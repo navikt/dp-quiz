@@ -32,6 +32,7 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
     private val root: ObjectNode = mapper.createObjectNode()
     private val seksjoner = mapper.createArrayNode()
     private lateinit var fakta: MutableSet<Faktum<*>>
+    private val generatorFakta = mutableMapOf<GeneratorFaktum, List<Faktum<*>>>()
 
     init {
         søknadprosess.accept(this)
@@ -75,6 +76,7 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
+        generatorFakta.putIfAbsent(faktum, templates)
         if (!::fakta.isInitialized) return
         fakta.addAll(avhengerAvFakta)
     }
@@ -93,6 +95,23 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
     ) {
         if (!::fakta.isInitialized) return
         fakta.addAll(avhengerAvFakta)
+    }
+
+    override fun <R : Comparable<R>> visit(
+        faktum: TemplateFaktum<R>,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>,
+        gyldigeValg: GyldigeValg?
+    ) {
+        if (!::fakta.isInitialized) return
+        fakta.addAll(
+            generatorFakta.filter { (_, templates) ->
+                templates.contains(faktum)
+            }.keys
+        )
     }
 
     private class SøknadFaktumVisitor(
