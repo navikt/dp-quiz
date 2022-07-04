@@ -46,6 +46,10 @@ FROM gammel_faktum_verdi AS fv
 WHERE vv.id = fv.flervalg_id;
 
 
+SELECT *
+FROM valgte_verdier
+where soknad_id is null;
+
 ALTER TABLE valgte_verdier
     ALTER COLUMN soknad_id SET NOT NULL,
     ADD CONSTRAINT faktum_verdi_id_fk FOREIGN KEY (soknad_id) REFERENCES soknad(id) ON DELETE CASCADE;
