@@ -74,7 +74,7 @@ interface FaktumVisitor {
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
-        templates: List<Faktum<*>>,
+        templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
@@ -85,7 +85,7 @@ interface FaktumVisitor {
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
-        templates: List<Faktum<*>>,
+        templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R,

@@ -26,6 +26,10 @@ class GeneratorFaktum internal constructor(
         templates.forEach { template -> template.generate(r, søknad) }
     }
 
+    internal fun harGenerert(other: FaktumId) = this.templates.any {
+        other.generertFra(it.faktumId)
+    }
+
     override fun rehydrer(r: Int, besvarer: String?): Faktum<Int> = this.also {
         super.rehydrer(r, besvarer)
         templates.forEach { template -> template.generate(r, søknad) }
@@ -46,8 +50,20 @@ class GeneratorFaktum internal constructor(
     }
 
     override fun acceptMedSvar(visitor: FaktumVisitor) {
-        val genererteFaktum = templates.flatMap { template -> søknad.filter { it.faktumId.generertFra(template.faktumId) && it.erBesvart() } }.toSet()
-        visitor.visitMedSvar(this, id, avhengigeFakta, avhengerAvFakta, templates, roller, Int::class.java, gjeldendeSvar, genererteFaktum)
+        val genererteFaktum =
+            templates.flatMap { template -> søknad.filter { it.faktumId.generertFra(template.faktumId) && it.erBesvart() } }
+                .toSet()
+        visitor.visitMedSvar(
+            this,
+            id,
+            avhengigeFakta,
+            avhengerAvFakta,
+            templates,
+            roller,
+            Int::class.java,
+            gjeldendeSvar,
+            genererteFaktum
+        )
     }
 
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): GeneratorFaktum {

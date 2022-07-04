@@ -8,6 +8,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
@@ -97,7 +98,7 @@ class SaksbehandlerJsonBuilder(
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
-        templates: List<Faktum<*>>,
+        templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R,

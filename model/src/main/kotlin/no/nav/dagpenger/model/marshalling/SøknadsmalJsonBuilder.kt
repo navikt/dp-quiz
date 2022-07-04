@@ -59,12 +59,11 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
         val faktaNode = fakta.fold(mapper.createArrayNode()) { acc, faktum ->
             acc.add(SøknadFaktumVisitor(faktum).root)
         }
-        val gjeldendeSeksjon = mapper.createObjectNode().apply {
+        mapper.createObjectNode().apply {
             put("beskrivendeId", seksjon.navn)
             set<ArrayNode>("fakta", faktaNode)
+            seksjoner.add(this)
         }
-
-        seksjoner.add(gjeldendeSeksjon)
     }
 
     override fun <R : Comparable<R>> visitUtenSvar(
@@ -72,7 +71,7 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
-        templates: List<Faktum<*>>,
+        templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
@@ -153,7 +152,7 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
             id: String,
             avhengigeFakta: Set<Faktum<*>>,
             avhengerAvFakta: Set<Faktum<*>>,
-            templates: List<Faktum<*>>,
+            templates: List<TemplateFaktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>
         ) {
