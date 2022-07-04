@@ -158,6 +158,8 @@ internal class SøkerJsonBuilderTest {
                 )
             )
             assertBesvartGeneratorFaktum(2, "f67", "seksjon2", it)
+
+            // 6.2 skal bli med fordi regeltreet sier at 6 er neste faktum
             assertUbesvartGeneratorFaktum("f67", "seksjon2", it)
         }
 

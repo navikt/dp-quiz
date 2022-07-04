@@ -13,6 +13,7 @@ import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.putR
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -77,7 +78,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
         id: String,
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
-        templates: List<Faktum<*>>,
+        templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>
     ) {
