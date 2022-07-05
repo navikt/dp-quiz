@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.db
 
+import kotliquery.TransactionalSession
 import kotliquery.action.ExecuteQueryAction
 import kotliquery.action.UpdateQueryAction
 import kotliquery.queryOf
@@ -75,54 +76,120 @@ class SøknadRecord : SøknadPersistence {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun rehydrerFaktum(row: FaktumVerdiRow, faktum: Faktum<*>) {
-        if (row.heltall != null) {
-            (faktum as Faktum<Int>).rehydrer(row.heltall, row.besvartAv)
-        }
-        if (row.boolsk != null) {
-            (faktum as Faktum<Boolean>).rehydrer(row.boolsk, row.besvartAv)
-        }
-        if (row.dato != null) {
-            (faktum as Faktum<LocalDate>).rehydrer(row.dato, row.besvartAv)
-        }
-        if (row.inntekt != null) {
-            (faktum as Faktum<Inntekt>).rehydrer(row.inntekt, row.besvartAv)
-        }
-        if (row.desimaltall != null) {
-            (faktum as Faktum<Double>).rehydrer(row.desimaltall, row.besvartAv)
-        }
-        if (row.tekst != null) {
-            (faktum as Faktum<Tekst>).rehydrer(row.tekst, row.besvartAv)
+    override fun lagre(søknad: Søknad): Boolean {
+        val nyeSvar: MutableMap<String, Faktum<*>?> = svarMap(søknad)
+        val originalSvar: MutableMap<String, Faktum<*>?> = svarMap(hent(søknad.uuid).søknad)
+        using(sessionOf(dataSource)) { session ->
+            session.transaction { transactionalSession ->
+                slettDødeTemplatefakta(søknad, nyeSvar, originalSvar, transactionalSession)
+                oppdaterEndretFaktum(originalSvar, nyeSvar, søknad, transactionalSession)
+                skrivNyeFaktum(nyeSvar, originalSvar, søknad, transactionalSession)
+            }
         }
 
-        if (row.land != null) {
-            (faktum as Faktum<Land>).rehydrer(row.land, row.besvartAv)
-        }
+        // TODO: burde ikke alltid returnere true?? hva hvis noe går galt som ikke kræsjer? hvorfor boolean?
+        return true
+    }
 
-        if (row.opplastet != null && row.urn != null) {
-            (faktum as Faktum<Dokument>).rehydrer(
-                Dokument(
-                    row.opplastet, row.urn
-                ),
-                row.besvartAv
-            )
+    override fun slett(uuid: UUID): Boolean {
+        using(sessionOf(dataSource)) { session ->
+            session.transaction { transaction ->
+                transaction.run( //language=PostgreSQL
+                    queryOf(
+                        """
+                            WITH soknad_id AS (DELETE FROM soknad WHERE uuid = :uuid RETURNING id),
+                            be AS (
+                        
+                                SELECT b.besvart_av
+                                FROM faktum_verdi a
+                                FULL OUTER JOIN faktum_verdi b ON  b.besvart_av = a.besvart_av
+                                WHERE a.soknad_id = (SELECT id FROM soknad_id)
+                                  AND a.besvart_av IS NOT NULL
+                                GROUP BY b.besvart_av
+                                HAVING  COUNT(DISTINCT(b.soknad_id)) <= 1
+                                                            
+                            )
+                                               
+                            DELETE
+                            FROM besvarer  
+                            WHERE besvarer.id in (SELECT id FROM be)           
+                        """,
+                        mapOf("uuid" to uuid),
+                    ).asUpdate
+                )
+            }
         }
-        if (row.envalg != null) {
-            (faktum as Faktum<Envalg>).rehydrer(row.envalg, row.besvartAv)
-        }
-        if (row.flervalg != null) {
-            (faktum as Faktum<Flervalg>).rehydrer(row.flervalg, row.besvartAv)
-        }
-        if (row.fom != null) {
-            (faktum as Faktum<Periode>).rehydrer(
-                Periode(
-                    row.fom, row.tom
-                ),
-                row.besvartAv
-            )
+        return true
+    }
+
+    private fun skrivNyeFaktum(
+        nyeSvar: MutableMap<String, Faktum<*>?>,
+        originalSvar: MutableMap<String, Faktum<*>?>,
+        søknad: Søknad,
+        transactionalSession: TransactionalSession,
+    ) {
+        nyeSvar.filterNot { (id, _) -> originalSvar.containsKey(id) }.forEach { (id, svar) ->
+            val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
+
+            transactionalSession.run(opprettTemplateFaktum(indeks, søknad, rootId))
+            if (svar != null) transactionalSession.run(oppdaterFaktum(svar, søknad, indeks, rootId))
         }
     }
+
+    private fun oppdaterEndretFaktum(
+        originalSvar: MutableMap<String, Faktum<*>?>,
+        nyeSvar: MutableMap<String, Faktum<*>?>,
+        søknad: Søknad,
+        transactionalSession: TransactionalSession
+    ) {
+        originalSvar.filterNot { (id, faktum) -> nyeSvar[id]?.svar() == faktum?.svar() }
+            .forEach { (id, originaltFaktum) ->
+                val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
+
+                if (originaltFaktum?.erBesvart() == true) {
+                    transactionalSession.run(arkiverFaktum(søknad, rootId, indeks))
+                }
+                transactionalSession.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId))
+            }
+    }
+
+    private fun svarMap(søknad: Søknad): MutableMap<String, Faktum<*>?> = søknad.associate { faktum ->
+        faktum.id to (if (faktum.erBesvart()) faktum else null)
+    }.toMutableMap()
+
+    private fun slettDødeTemplatefakta(
+        søknad: Søknad,
+        nyeSvar: Map<String, Faktum<*>?>,
+        originalSvar: MutableMap<String, Faktum<*>?>,
+        transactionalSession: TransactionalSession
+    ) {
+        originalSvar.keys.toSet().subtract(nyeSvar.keys.toSet())
+            .map { FaktumId(it).reflection { rootId, indeks -> Triple(rootId, indeks, it) } }
+            .forEach { (rootId, indeks, id) ->
+                val originaltFaktum = originalSvar[id]?.svar()
+                if (originaltFaktum != null) {
+                    transactionalSession.run(arkiverFaktum(søknad = søknad, rootId = rootId, indeks = indeks))
+                }
+                transactionalSession.run(slettDødeFaktum(søknad = søknad, rootId, indeks))
+                originalSvar.remove(id)
+            }
+    }
+
+    private fun slettDødeFaktum(søknad: Søknad, rootId: Int, indeks: Int) = queryOf(
+        //language=PostgreSQL
+        """
+              DELETE FROM faktum_verdi
+              WHERE id IN 
+                (SELECT faktum_verdi.id as faktum_id FROM soknad, faktum_verdi, faktum
+                  WHERE faktum_verdi.soknad_id = soknad.id 
+                        AND faktum_verdi.faktum_id = faktum.id 
+                        AND soknad.uuid = ? 
+                        AND faktum.root_id = ? 
+                        AND faktum_verdi.indeks = ?
+                )
+        """.trimIndent(),
+        søknad.uuid, rootId, indeks
+    ).asExecute
 
     private fun svarList(uuid: UUID): List<FaktumVerdiRow> {
         return using(sessionOf(dataSource)) { session ->
@@ -202,73 +269,54 @@ class SøknadRecord : SøknadPersistence {
         val id: FaktumId = if (indeks == 0) FaktumId(root_id) else FaktumId(root_id).medIndeks(indeks)
     )
 
-    override fun lagre(søknad: Søknad): Boolean {
-        val nyeSvar: MutableMap<String, Faktum<*>?> = svarMap(søknad)
-        val originalSvar: MutableMap<String, Faktum<*>?> = svarMap(hent(søknad.uuid).søknad)
-
-        slettDødeTemplatefakta(søknad, nyeSvar, originalSvar)
-
-        originalSvar.filterNot { (id, faktum) -> nyeSvar[id]?.svar() == faktum?.svar() }
-            .forEach { (id, originaltFaktum) ->
-                val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
-
-                using(sessionOf(dataSource)) { session ->
-                    if (originaltFaktum?.svar() != null) {
-                        session.run(arkiverFaktum(søknad, rootId, indeks))
-                    }
-                    session.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId))
-                }
-            }
-
-        nyeSvar.filterNot { (id, _) -> originalSvar.containsKey(id) }.forEach { (id, svar) ->
-            val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
-            using(sessionOf(dataSource)) { session ->
-                session.run(opprettTemplateFaktum(indeks, søknad, rootId))
-                if (svar != null) session.run(oppdaterFaktum(svar, søknad, indeks, rootId))
-            }
+    @Suppress("UNCHECKED_CAST")
+    private fun rehydrerFaktum(row: FaktumVerdiRow, faktum: Faktum<*>) {
+        if (row.heltall != null) {
+            (faktum as Faktum<Int>).rehydrer(row.heltall, row.besvartAv)
         }
-        // TODO: burde ikke alltid returnere true?? hva hvis noe går galt som ikke kræsjer? hvorfor boolean?
-        return true
+        if (row.boolsk != null) {
+            (faktum as Faktum<Boolean>).rehydrer(row.boolsk, row.besvartAv)
+        }
+        if (row.dato != null) {
+            (faktum as Faktum<LocalDate>).rehydrer(row.dato, row.besvartAv)
+        }
+        if (row.inntekt != null) {
+            (faktum as Faktum<Inntekt>).rehydrer(row.inntekt, row.besvartAv)
+        }
+        if (row.desimaltall != null) {
+            (faktum as Faktum<Double>).rehydrer(row.desimaltall, row.besvartAv)
+        }
+        if (row.tekst != null) {
+            (faktum as Faktum<Tekst>).rehydrer(row.tekst, row.besvartAv)
+        }
+
+        if (row.land != null) {
+            (faktum as Faktum<Land>).rehydrer(row.land, row.besvartAv)
+        }
+
+        if (row.opplastet != null && row.urn != null) {
+            (faktum as Faktum<Dokument>).rehydrer(
+                Dokument(
+                    row.opplastet, row.urn
+                ),
+                row.besvartAv
+            )
+        }
+        if (row.envalg != null) {
+            (faktum as Faktum<Envalg>).rehydrer(row.envalg, row.besvartAv)
+        }
+        if (row.flervalg != null) {
+            (faktum as Faktum<Flervalg>).rehydrer(row.flervalg, row.besvartAv)
+        }
+        if (row.fom != null) {
+            (faktum as Faktum<Periode>).rehydrer(
+                Periode(
+                    row.fom, row.tom
+                ),
+                row.besvartAv
+            )
+        }
     }
-
-    private fun svarMap(søknad: Søknad): MutableMap<String, Faktum<*>?> = søknad.associate { faktum ->
-        faktum.id to (if (faktum.erBesvart()) faktum else null)
-    }.toMutableMap()
-
-    private fun slettDødeTemplatefakta(
-        søknad: Søknad,
-        nyeSvar: Map<String, Faktum<*>?>,
-        originalSvar: MutableMap<String, Faktum<*>?>
-    ) {
-        originalSvar.keys.toSet().subtract(nyeSvar.keys.toSet())
-            .map { FaktumId(it).reflection { rootId, indeks -> Triple(rootId, indeks, it) } }
-            .forEach { (rootId, indeks, id) ->
-                using(sessionOf(dataSource)) { session ->
-                    val originaltFaktum = originalSvar[id]?.svar()
-                    if (originaltFaktum != null) {
-                        session.run(arkiverFaktum(søknad = søknad, rootId = rootId, indeks = indeks))
-                    }
-                    session.run(slettDødeFaktum(søknad = søknad, rootId, indeks))
-                    originalSvar.remove(id)
-                }
-            }
-    }
-
-    private fun slettDødeFaktum(søknad: Søknad, rootId: Int, indeks: Int) = queryOf(
-        //language=PostgreSQL
-        """
-              DELETE FROM faktum_verdi
-              WHERE id IN 
-                (SELECT faktum_verdi.id as faktum_id FROM soknad, faktum_verdi, faktum
-                  WHERE faktum_verdi.soknad_id = soknad.id 
-                        AND faktum_verdi.faktum_id = faktum.id 
-                        AND soknad.uuid = ? 
-                        AND faktum.root_id = ? 
-                        AND faktum_verdi.indeks = ?
-                )
-        """.trimIndent(),
-        søknad.uuid, rootId, indeks
-    ).asExecute
 
     private fun oppdaterFaktum(faktum: Faktum<*>?, søknad: Søknad, indeks: Int, rootId: Int): UpdateQueryAction =
         FaktumUpdateBuilder(søknad, indeks, rootId).build(faktum?.svar(), besvart(faktum?.besvartAv()))
@@ -348,36 +396,5 @@ class SøknadRecord : SøknadPersistence {
                 ).map { it.localDateTime(1) to UUID.fromString(it.string(2)) }.asList
             )
         }.toMap()
-    }
-
-    override fun slett(uuid: UUID): Boolean {
-        using(sessionOf(dataSource)) { session ->
-            session.transaction { transaction ->
-                transaction.run( //language=PostgreSQL
-                    queryOf(
-                        """
-                            WITH soknad_id AS (DELETE FROM soknad WHERE uuid = :uuid RETURNING id),
-                            be AS (
-                        
-                                SELECT b.besvart_av
-                                FROM faktum_verdi a
-                                FULL OUTER JOIN faktum_verdi b ON  b.besvart_av = a.besvart_av
-                                WHERE a.soknad_id = (SELECT id FROM soknad_id)
-                                  AND a.besvart_av IS NOT NULL
-                                GROUP BY b.besvart_av
-                                HAVING  COUNT(DISTINCT(b.soknad_id)) <= 1
-                                                            
-                            )
-                                               
-                            DELETE
-                            FROM besvarer  
-                            WHERE besvarer.id in (SELECT id FROM be)           
-                        """,
-                        mapOf("uuid" to uuid),
-                    ).asUpdate
-                )
-            }
-        }
-        return true
     }
 }
