@@ -100,7 +100,6 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
         if (rolle != Rolle.søker) return
         if (gjeldendeFakta.isEmpty()) return
-
         // Splitt grunnleggende fakta og generatorer sine fakta
         val (fakta, generatorFakta) = (gjeldendeFakta + avhengigheter).partition { !it.faktumId.harIndeks() }
         val faktaNode = fakta.fold(mapper.createArrayNode()) { acc, faktum ->
@@ -137,7 +136,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
 
     private class SøknadFaktumVisitor(
         faktum: Faktum<*>,
-        private val besvarteOgNesteGeneratorFaktum: Set<Faktum<*>> = emptySet(),
+        private val besvarteOgNesteGeneratorFakta: Set<Faktum<*>> = emptySet(),
         private val readOnlyStrategy: ReadOnlyStrategy = skalIkkeBesvaresAvSøker
     ) : FaktumVisitor {
         val root: ObjectNode = mapper.createObjectNode()
@@ -186,25 +185,28 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             svar: R,
             genererteFaktum: Set<Faktum<*>>
         ) {
-            val jsonTemplates = mapper.createArrayNode()
-            templates.forEach { template ->
-                jsonTemplates.add(SøknadFaktumVisitor(template, readOnlyStrategy = readOnlyStrategy).root)
+            val jsonTemplates = templates.fold(mapper.createArrayNode()) { acc, template ->
+                acc.add(SøknadFaktumVisitor(template).root)
             }
 
             this.root.lagFaktumNode(id, "generator", faktum.navn, roller, jsonTemplates, svar = svar)
-            val svarListe = mapper.createArrayNode()
-
-            (1..faktum.svar()).forEach { i ->
-                val indeks = mapper.createArrayNode()
-                this.besvarteOgNesteGeneratorFaktum.filter { faktum ->
-                    faktum.faktumId.reflection { _, indeks ->
-                        indeks == i
-                    }
-                }.forEach {
-                    indeks.add(SøknadFaktumVisitor(it, readOnlyStrategy = readOnlyStrategy).root)
+            val svarListe = mapper.createArrayNode().apply {
+                // Skal alltid inneholde like mange elementer som generatoren er besvart med
+                repeat(faktum.svar()) { i -> insertArray(i) }
+                // Grupper fakta etter indeks så de kan slås opp i
+                val grupperteFakta =
+                    besvarteOgNesteGeneratorFakta.groupBy { it.faktumId.reflection { _, indeks -> indeks } }
+                // Erstatt placeholdere med besvarte eller neste fakta
+                forEachIndexed { indeks, arrayNode ->
+                    set(
+                        indeks,
+                        grupperteFakta[indeks + 1]?.fold(mapper.createArrayNode()) { acc, faktum ->
+                            acc.add(SøknadFaktumVisitor(faktum, readOnlyStrategy = readOnlyStrategy).root)
+                        } ?: arrayNode
+                    )
                 }
-                svarListe.add(indeks)
             }
+
             this.root.set<ArrayNode>("svar", svarListe)
             this.root.put("readOnly", readOnlyStrategy.readOnly(faktum))
         }
