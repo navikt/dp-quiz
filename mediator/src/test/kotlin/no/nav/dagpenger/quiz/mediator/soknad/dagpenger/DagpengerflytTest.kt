@@ -37,9 +37,6 @@ class DagpengerflytTest {
 
         // Besvares av bruker
         søknadprosess.boolsk("${Barnetillegg.`forsoerger du barnet register`}.1").besvar(false)
-        søknadprosess.boolsk("${Barnetillegg.`barn aarsinntekt over 1g register`}.1").besvar(false)
-        søknadprosess.heltall("${Barnetillegg.`barn inntekt register`}.1").besvar(0)
-
         søknadprosess.boolsk(`egne barn`).besvar(false)
 
         søknadprosess.nesteSeksjoner().onEach {

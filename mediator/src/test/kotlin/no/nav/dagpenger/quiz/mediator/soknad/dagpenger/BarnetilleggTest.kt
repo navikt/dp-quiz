@@ -7,16 +7,12 @@ import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn aarsinntekt over 1g`
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn aarsinntekt over 1g register`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn etternavn`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn etternavn register`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn foedselsdato`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn foedselsdato register`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn fornavn mellomnavn`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn fornavn mellomnavn register`
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn inntekt`
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn inntekt register`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn liste`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn liste register`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn statsborgerskap`
@@ -43,7 +39,7 @@ internal class BarnetilleggTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        Barnetillegg.verifiserFeltsammensetting(17, 17153)
+        Barnetillegg.verifiserFeltsammensetting(13, 13091)
     }
 
     @Test
@@ -68,10 +64,7 @@ internal class BarnetilleggTest {
         assertEquals(true, søknadprosess.resultat())
 
         søknadprosess.boolsk("${`forsoerger du barnet`}.1").besvar(true)
-        assertEquals(null, søknadprosess.resultat())
 
-        søknadprosess.boolsk("${`barn aarsinntekt over 1g`}.1").besvar(true)
-        søknadprosess.heltall("${`barn inntekt`}.1").besvar(100)
         assertEquals(true, søknadprosess.resultat())
     }
 
@@ -90,10 +83,7 @@ internal class BarnetilleggTest {
         assertEquals(true, søknadprosess.resultat())
 
         søknadprosess.boolsk("${`forsoerger du barnet register`}.1").besvar(true)
-        assertEquals(null, søknadprosess.resultat())
 
-        søknadprosess.boolsk("${`barn aarsinntekt over 1g register`}.1").besvar(true)
-        søknadprosess.heltall("${`barn inntekt register`}.1").besvar(100)
         assertEquals(true, søknadprosess.resultat())
     }
 }
