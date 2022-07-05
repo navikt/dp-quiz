@@ -28,13 +28,13 @@ object Barnetillegg : DslFaktaseksjon {
     const val `barn foedselsdato` = 1004
     const val `barn statsborgerskap` = 1005
     const val `forsoerger du barnet` = 1006
-    const val `egne barn` = 1017
-    const val `barn liste register` = 1009
-    const val `barn fornavn mellomnavn register` = 1010
-    const val `barn etternavn register` = 1011
-    const val `barn foedselsdato register` = 1012
-    const val `barn statsborgerskap register` = 1013
-    const val `forsoerger du barnet register` = 1014
+    const val `egne barn` = 1007
+    const val `barn liste register` = 1008
+    const val `barn fornavn mellomnavn register` = 1009
+    const val `barn etternavn register` = 1010
+    const val `barn foedselsdato register` = 1011
+    const val `barn statsborgerskap register` = 1012
+    const val `forsoerger du barnet register` = 1013
 
     override val fakta = listOf(
         heltall faktum "faktum.register.barn-liste" id `barn liste register`
