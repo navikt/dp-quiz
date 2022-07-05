@@ -33,13 +33,16 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         private val skalIkkeBesvaresAvSøker = ReadOnlyStrategy { it.harIkkeRolle(Rolle.søker) }
     }
 
-    private lateinit var gjeldendeFakta: Set<Faktum<*>>
     private val root: ObjectNode = mapper.createObjectNode()
     private val seksjoner = mapper.createArrayNode()
+    private lateinit var gjeldendeFakta: Set<Faktum<*>>
     private lateinit var avhengigheter: MutableSet<Faktum<*>>
     private val nesteUbesvarteFakta = søknadprosess.nesteFakta()
     private val ferdig = søknadprosess.erFerdigFor(Rolle.søker, Rolle.nav)
     private lateinit var status: SeksjonStatus
+    private val avhengigeFaktaErLåst = ReadOnlyStrategy {
+        !gjeldendeFakta.contains(it)
+    }
 
     init {
         søknadprosess.accept(this)
@@ -97,20 +100,16 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
         if (rolle != Rolle.søker) return
         if (gjeldendeFakta.isEmpty()) return
-        val avhengigeFaktaErLåst = ReadOnlyStrategy {
-            !gjeldendeFakta.contains(it)
-        }
+
+        // Splitt grunnleggende fakta og generatorer sine fakta
         val (fakta, generatorFakta) = (gjeldendeFakta + avhengigheter).partition { !it.faktumId.harIndeks() }
         val faktaNode = fakta.fold(mapper.createArrayNode()) { acc, faktum ->
-            when (faktum) {
-                is GeneratorFaktum -> {
-                    val f = generatorFakta.filter { faktum.harGenerert(it.faktumId) }.toSet()
-                    acc.add(SøknadFaktumVisitor(faktum, f, avhengigeFaktaErLåst).root)
-                }
-                else -> {
-                    acc.add(SøknadFaktumVisitor(faktum, emptySet(), avhengigeFaktaErLåst).root)
-                }
+            val generatorFaktumFakta = when (faktum) {
+                is GeneratorFaktum -> generatorFakta.filter { faktum.harGenerert(it.faktumId) }.toSet()
+                else -> emptySet()
             }
+
+            acc.add(SøknadFaktumVisitor(faktum, generatorFaktumFakta, avhengigeFaktaErLåst).root)
         }
 
         mapper.createObjectNode().apply {
@@ -138,7 +137,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
 
     private class SøknadFaktumVisitor(
         faktum: Faktum<*>,
-        private val genererteFaktum: Set<Faktum<*>> = emptySet(),
+        private val besvarteOgNesteGeneratorFaktum: Set<Faktum<*>> = emptySet(),
         private val readOnlyStrategy: ReadOnlyStrategy = skalIkkeBesvaresAvSøker
     ) : FaktumVisitor {
         val root: ObjectNode = mapper.createObjectNode()
@@ -197,7 +196,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
 
             (1..faktum.svar()).forEach { i ->
                 val indeks = mapper.createArrayNode()
-                this.genererteFaktum.filter { faktum ->
+                this.besvarteOgNesteGeneratorFaktum.filter { faktum ->
                     faktum.faktumId.reflection { _, indeks ->
                         indeks == i
                     }
@@ -278,10 +277,4 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
             this.root.put("readOnly", readOnlyStrategy.readOnly(faktum))
         }
     }
-
-    // Representerer alle faktum har blitt besvart eller skal besvares i neste seksjon + avhengigheter
-    private data class BesøktFaktum(
-        val faktum: Faktum<*>,
-        val genererteFaktum: Set<Faktum<*>>,
-    )
 }
