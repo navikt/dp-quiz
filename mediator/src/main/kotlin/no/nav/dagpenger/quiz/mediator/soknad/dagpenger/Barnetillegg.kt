@@ -28,49 +28,37 @@ object Barnetillegg : DslFaktaseksjon {
     const val `barn foedselsdato` = 1004
     const val `barn statsborgerskap` = 1005
     const val `forsoerger du barnet` = 1006
-    const val `barn aarsinntekt over 1g` = 1007
-    const val `barn inntekt` = 1008
-    const val `egne barn` = 1017
-    const val `barn liste register` = 1009
-    const val `barn fornavn mellomnavn register` = 1010
-    const val `barn etternavn register` = 1011
-    const val `barn foedselsdato register` = 1012
-    const val `barn statsborgerskap register` = 1013
-    const val `forsoerger du barnet register` = 1014
-    const val `barn aarsinntekt over 1g register` = 1015
-    const val `barn inntekt register` = 1016
+    const val `egne barn` = 1007
+    const val `barn liste register` = 1008
+    const val `barn fornavn mellomnavn register` = 1009
+    const val `barn etternavn register` = 1010
+    const val `barn foedselsdato register` = 1011
+    const val `barn statsborgerskap register` = 1012
+    const val `forsoerger du barnet register` = 1013
+
     override val fakta = listOf(
         heltall faktum "faktum.register.barn-liste" id `barn liste register`
             genererer `barn fornavn mellomnavn register`
             og `barn etternavn register`
             og `barn foedselsdato register`
             og `barn statsborgerskap register`
-            og `forsoerger du barnet register`
-            og `barn aarsinntekt over 1g register`
-            og `barn inntekt register`,
+            og `forsoerger du barnet register`,
         tekst faktum "faktum.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn register`,
         tekst faktum "faktum.barn-etternavn" id `barn etternavn register`,
         dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato register`,
         land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap register`,
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet register` avhengerAv `barn liste register`,
-        boolsk faktum "faktum.barn-aarsinntekt-over-1g" id `barn aarsinntekt over 1g register` avhengerAv `barn liste register`,
-        heltall faktum "faktum.barn-inntekt" id `barn inntekt register` avhengerAv `barn liste register`,
         heltall faktum "faktum.barn-liste" id `barn liste`
             genererer `barn fornavn mellomnavn`
             og `barn etternavn`
             og `barn foedselsdato`
             og `barn statsborgerskap`
-            og `forsoerger du barnet`
-            og `barn aarsinntekt over 1g`
-            og `barn inntekt`,
+            og `forsoerger du barnet`,
         tekst faktum "faktum.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn`,
         tekst faktum "faktum.barn-etternavn" id `barn etternavn`,
         dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato`,
         land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap`,
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`,
-        boolsk faktum "faktum.barn-aarsinntekt-over-1g" id `barn aarsinntekt over 1g`,
-        // @todo: Burde være faktum type 'inntekt'?
-        heltall faktum "faktum.barn-inntekt" id `barn inntekt`,
         boolsk faktum "faktum.legge-til-egne-barn" id `egne barn`,
     )
 
@@ -86,8 +74,6 @@ object Barnetillegg : DslFaktaseksjon {
         val barnetillegg = søknad.seksjon(
             "barnetillegg", Rolle.søker,
             `forsoerger du barnet register`,
-            `barn aarsinntekt over 1g register`,
-            `barn inntekt register`,
             `egne barn`,
             `barn liste`,
             `barn fornavn mellomnavn`,
@@ -95,8 +81,6 @@ object Barnetillegg : DslFaktaseksjon {
             `barn foedselsdato`,
             `barn statsborgerskap`,
             `forsoerger du barnet`,
-            `barn aarsinntekt over 1g`,
-            `barn inntekt`
         )
 
         return listOf(barnetilleggRegister, barnetillegg)
@@ -108,17 +92,7 @@ object Barnetillegg : DslFaktaseksjon {
                 generator(`barn liste register`) minst 0,
                 generator(`barn liste register`) minst 1 hvisOppfylt {
                     generator(`barn liste register`) med "et eller flere barn".deltre {
-                        "forsørger eller ikke".minstEnAv(
-                            boolsk(`forsoerger du barnet register`) er false,
-                            boolsk(`forsoerger du barnet register`) er true hvisOppfylt {
-                                "inntekt over 1G eller ikke".minstEnAv(
-                                    boolsk(`barn aarsinntekt over 1g register`) er false,
-                                    boolsk(`barn aarsinntekt over 1g register`) er true hvisOppfylt {
-                                        heltall(`barn inntekt register`).utfylt()
-                                    }
-                                )
-                            }
-                        )
+                        boolsk(`forsoerger du barnet register`).utfylt()
                     }
                 }
             ).hvisOppfylt {
@@ -128,12 +102,7 @@ object Barnetillegg : DslFaktaseksjon {
                         generator(`barn liste`) minst 1 hvisOppfylt {
                             generator(`barn liste`) med "et eller flere barn".deltre {
                                 `barnets navn, fødselsdato og bostedsland`().hvisOppfylt {
-                                    "forsørger eller ikke".minstEnAv(
-                                        boolsk(`forsoerger du barnet`) er false,
-                                        boolsk(`forsoerger du barnet`) er true hvisOppfylt {
-                                            `har barnet årsinntekt over 1G`()
-                                        }
-                                    )
+                                    boolsk(`forsoerger du barnet`).utfylt()
                                 }
                             }
                         }
@@ -149,14 +118,4 @@ object Barnetillegg : DslFaktaseksjon {
         dato(`barn foedselsdato`).utfylt(),
         land(`barn statsborgerskap`).utfylt(),
     )
-
-    private fun Søknad.`har barnet årsinntekt over 1G`() = "inntekt over 1G eller ikke".minstEnAv(
-        boolsk(`barn aarsinntekt over 1g`) er false,
-        boolsk(`barn aarsinntekt over 1g`) er true hvisOppfylt {
-            `barnets inntekt`()
-        }
-    )
-
-    private fun Søknad.`barnets inntekt`() =
-        heltall(`barn inntekt`).utfylt()
 }
