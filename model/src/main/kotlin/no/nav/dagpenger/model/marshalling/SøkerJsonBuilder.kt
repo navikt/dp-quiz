@@ -27,7 +27,7 @@ import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
 
-class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
+class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : SøknadprosessVisitor {
     companion object {
         private val mapper = ObjectMapper()
         private val skalIkkeBesvaresAvSøker = ReadOnlyStrategy { it.harIkkeRolle(Rolle.søker) }
@@ -35,11 +35,9 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
 
     private val root: ObjectNode = mapper.createObjectNode()
     private val seksjoner = mapper.createArrayNode()
-    private lateinit var gjeldendeFakta: Set<Faktum<*>>
+    private lateinit var gjeldendeFakta: Seksjon
     private lateinit var avhengigheter: MutableSet<Faktum<*>>
-    private val nesteUbesvarteFakta = søknadprosess.nesteFakta()
     private val ferdig = søknadprosess.erFerdigFor(Rolle.søker, Rolle.nav)
-    private lateinit var status: SeksjonStatus
     private val avhengigeFaktaErLåst = ReadOnlyStrategy {
         !gjeldendeFakta.contains(it)
     }
@@ -70,31 +68,9 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
         root.set<ArrayNode>("seksjoner", seksjoner)
     }
 
-    enum class SeksjonStatus {
-        Ferdig,
-        Aktiv,
-        Fremtidig
-    }
-
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
         avhengigheter = mutableSetOf()
-        val besvarteFakta = fakta.filter { it.erBesvart() }.toSet()
-        val nesteFakta = nesteUbesvarteFakta.filter { fakta.contains(it) }
-
-        status = if (besvarteFakta.isNotEmpty() || nesteFakta.isNotEmpty()) {
-            if (nesteFakta.isNotEmpty()) {
-                SeksjonStatus.Aktiv
-            } else {
-                SeksjonStatus.Ferdig
-            }
-        } else {
-            SeksjonStatus.Fremtidig
-        }
-        gjeldendeFakta = when (status) {
-            SeksjonStatus.Aktiv -> besvarteFakta + nesteFakta
-            SeksjonStatus.Ferdig -> besvarteFakta
-            SeksjonStatus.Fremtidig -> emptySet()
-        }
+        gjeldendeFakta = seksjon.gjeldendeFakta(søknadprosess.rootSubsumsjon)
     }
 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
@@ -113,8 +89,7 @@ class SøkerJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor 
 
         mapper.createObjectNode().apply {
             put("beskrivendeId", seksjon.navn)
-            put("ferdig", status == SeksjonStatus.Ferdig)
-            put("status", status.name)
+            put("ferdig", gjeldendeFakta.erAlleBesvart())
 
             set<ArrayNode>("fakta", faktaNode)
             seksjoner.add(this)

@@ -34,7 +34,12 @@ class Seksjon private constructor(
             }
     }
 
-    constructor(navn: String, rolle: Rolle, vararg fakta: Faktum<*>) : this(navn, rolle, fakta.toMutableSet(), mutableSetOf<Faktum<*>>())
+    constructor(navn: String, rolle: Rolle, vararg fakta: Faktum<*>) : this(
+        navn,
+        rolle,
+        fakta.toMutableSet(),
+        mutableSetOf<Faktum<*>>()
+    )
 
     internal fun filtrertSeksjon(subsumsjon: Subsumsjon) = filtrertSeksjon(subsumsjon.relevanteFakta())
 
@@ -45,6 +50,9 @@ class Seksjon private constructor(
             seksjonFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet(),
             avhengerAvFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet()
         ).also { it.søknadprosess = søknadprosess }
+
+    internal fun gjeldendeFakta(subsumsjon: Subsumsjon) = filtrertSeksjon(subsumsjon.nesteFakta())
+    internal fun erAlleBesvart() = this.all { it.erBesvart() }
 
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>) =
         nesteFakta.any { it in seksjonFakta }
