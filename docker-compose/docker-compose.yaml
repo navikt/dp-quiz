@@ -1,5 +1,7 @@
-version: '3'
+version: '3.7'
+
 services:
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     hostname: zookeeper
@@ -71,9 +73,43 @@ services:
       TOKEN_X_CLIENT_ID: "localhost:teamdagpenger:dp-soknad"
 
   auth:
-    image: ghcr.io/navikt/fakedings/fakedings:b1244f187badb294b47e0e3c3042abec91e04658
-#    image: ghcr.io/navikt/mock-oauth2-server:0.5.1
+    image: ghcr.io/navikt/mock-oauth2-server:0.5.1
     container_name: auth
     ports:
       - 8080:8080
     hostname: host.docker.internal
+    environment:
+      JSON_CONFIG: "{\"interactiveLogin\":false}"
+
+  wonderwall:
+    image: ghcr.io/nais/wonderwall:latest
+    container_name: wonderwall
+    ports:
+      - "3000:3000"
+    restart: on-failure
+    environment:
+      WONDERWALL_OPENID_CLIENT_ID: "bogus"
+      WONDERWALL_OPENID_CLIENT_JWK: "{\"p\":\"uOVr8HlLNQa2CBeyZcI4QPzONzH8ESSNUMezFiY8DJ5-ko0xF-FYV_vNCHmd83zlIpWwLY0einu0zUIwNfZGrrk_6DwRpL1Vp2qHSb3517ECA1jZhGioMg3drXzrWj8qVMCN6ALzpS6v2tKtX90EqHNc0op9FxE8OV3tRoE34ss\",\"kty\":\"RSA\",\"q\":\"sZhIOjYDT5gOzrVZlcEX10WUJ6_vSnUiOpZuKL0EEfEbLdDn3UiFguFuftEJsusxBL0N57yo7e1-qkma9TDM7duB5By82QBtZdi44e1RwzKuPHzZaSa_OzZ6Wc3IJJLVikB8C--ZtuycQcfuz9vgvmKLAEap7kcSCzf_1KYaXzU\",\"d\":\"cXG89u8C10MOyMD1Pf2bpl0TkuMZTBVUm8nmxkJ0qZiFXz00YgoQfPHj_Hhb73WoEqQ66IbXtA_3gJIS1AYeA7zIRNfjoouDqzYKgun50w1uGtQoJe4qLRdI7ar4kZyMEoGHPK5UOzMa3QGELWSTysQQ7WFE6b0L7HykgjQUI1XTYcn-5bAoAxYpkM2_PCUPKGas7k7TqCuLMtIc-J2qGAt_hNC6GqudNjzkKPntyR8q3Z4D2RzdYTAqdsC8XBYwRweDkBAYwJpKVY5v4Dx8JoNLdgs9mdzpzEm6TUXV2kmvjoNsAvJOkfGMNiFHdaLXh-waOp5KCNzx5TwKocwAWQ\",\"e\":\"AQAB\",\"use\":\"sig\",\"kid\":\"bogus\",\"qi\":\"MpDblHwYEihpniTU_RDc9ILBRi-RCgRNaLg5rMieWZhK35B9ZO01L9T3vDP6ptHJ0e8nW1nkKt2tF4SU0EZbvOGY5e1dvy6b-pOhtRrgAJcyUvE-vgZjbdJOg4uEvO_z4XQB8BiyJOyB_4F3T45p_pKkJl_MbP2SJndOiZUuk9U\",\"dp\":\"KM8yaMxMxjJqARVB4eXhRq7F0TbuHNaFflvlcjEUNfDRnQUe3dd2CU1hbspxC2n4pQ6G6Tbpk8VEHb3LKE3oQe5PZbHEbyj--8mufJ86wtmlyRlWQTxcS1f2IrGcvLmOXVB2wcvM_Rt14wV3EN6WhZuY1DuO6oV6Vmsd0N76d8s\",\"alg\":\"RS256\",\"dq\":\"XuHjROZyomW1E48kS7QcTrEn1IRUrk0ienbAaBeEQymzwaipGDqUyjYy2KJKMkMhr0xqT3MmNef7EnO8zF7EPhhWr08DPlTSHeXJ8TrfwhAjssFpTpqa9MHIYI5m7dNdLz4AiEf8shR771EoL_lje5Qee4lFZL6nz0Kd9jjAQjk\",\"n\":\"gEScA-v949tebACuHaXmSU9jZ4znaLveNYOPYIxR3dRZug-kV9kuKZamePRvR7XwsX7_ZfTTtbYOIG8H616pUIXSxbJwBlstbZRJVm5JOR3iK93vQKo7-62c1WkBhrvPgF31NOwdtDwKKKArUDReWoNtmsWrzmI0zY0y8wfwKxXB9LTjwc3AHO4enWpAMxhjrw3h4QxYZxcEtPP2EwKU2qnbXP-0AKvxOrA_fX2PBVb55JwAkgieFtsSRvmR6cNisYsndI3-ndtEjtgoKlGS1oHBba6ZHpRdRVlH7u3TfL5eH7LqxpqZQXY2KDMxZC_UxveK-sbfyEesP6tlKFlJBw\"}"
+      WONDERWALL_OPENID_WELL_KNOWN_URL: http://host.docker.internal:8080/idporten/.well-known/openid-configuration
+      WONDERWALL_INGRESS: http://localhost:3000
+      WONDERWALL_BIND_ADDRESS: 0.0.0.0:3000
+      WONDERWALL_UPSTREAM_HOST: frontend:3001
+      WONDERWALL_AUTO_LOGIN: true
+      WONDERWALL_LOG_FORMAT: "text"
+
+  frontend:
+    image: ghcr.io/navikt/dp-soknadsdialog/dp-soknadsdialog:4adfc83122cf790f955a877ced63b088fef3ac3d
+    container_name: frontend
+    ports:
+      - 3001:3001
+    env_file: .env
+    environment:
+      PORT: 3001
+      SELF_URL: http://localhost:3000/arbeid/dagpenger/soknad
+      NEXT_PUBLIC_BASE_PATH: "/arbeid/dagpenger/soknad"
+      DEKORATOR_ENV: "dev"
+      API_BASE_URL: http://localhost:8081/arbeid/dagpenger/soknadapi
+      NEXT_PUBLIC_LOCALHOST: true
+      IDPORTEN_WELL_KNOWN_URL: http://host.docker.internal:8080/idporten/.well-known/openid-configuration
+      TOKEN_X_CLIENT_ID: "localhost:teamdagpenger:dp-soknadsdialog"
+      TOKEN_X_PRIVATE_JWK: "{\"p\":\"zoo6Mgk8VMKI461_dzeU-wflmGVs1jcl4dxe8_W-9jeR84YISN13Uk3TU2kqLGz07Z8eMRkOnMkq2abGfQAwxyG3PPVM0xPr8tg8NVpClMvJFRd9RlVJ485IMmJ0t8t3sjiZo6q_ndqYJ5G6VMi3_o7s8gACKnnoh7ohTB49ep0\",\"kty\":\"RSA\",\"q\":\"wMAmevT8vJaD58QeytnbW9TWwqxPFJzu9YPjgXkbPA234HKF4UXZnIeqMtrBb3Ea3-vxVtuxGPT7wULfgCd7WJMh625tX7_WxkHSJTy_TY4-HETBIcZrikdJ8vPQcemvpCyla6DvUpwiQBc0G-9wBov1_938Jk0uOMy-3Bq6zJE\",\"d\":\"X56QX4_vtuCntzj4X7utYNMn9qHjz6B2tl9V4_UMPUjpIUJiNXQlA9CHsxeP4VzOUeerKL9EFmMoYjDYj_uOfLsJwQP-eRrlJg0da4dF2HTVXUb6qJOOGXq86GQ8L7KD2_gSo4uHydpTqLe1r9yhabw8Dcbsm4YKJ7MNle3aoovDShlwCgul5V0_JYD0bvOHMSFI4aomIUk3w5dp0g8fecNYsRCOaaZpjt9yHrz9Ryd1lbx24eu8UmJi7WH4SIJFWaKxKqYEoaC832-3A7TCycayFe517akNU1_nq8TDvgDDjjCEm2T8FOqed1tjdc0wJVQu_w9qU2ZUTuGPMmYtwQ\",\"e\":\"AQAB\",\"use\":\"sig\",\"kid\":\"localhost:teamdagpenger:dp-soknadsdialog\",\"qi\":\"XmjNimJ9zdB4s0kicusSS5UcaL2p1uQYtMrNO8YH75RmUIh092iUhlF_rJ7SiexZ4m-th3I_fuLhchECysV-T4l9H4pxRjrrHnlF1X0NkMcohw8J1gx_Od8wubJQYSJ3S8xDGZEDCBIuCBslPwOtJrrf2t5eJS9dNzgPT1UC4Lg\",\"dp\":\"Dru3iQg1oIo7_5nJxPRXEU0v6J4blHBcqG7y6w41sBSoualu_9ukfl-E2qde1cpz8ltuaOwzqaWEBACsmhAgaqQSESwibdA2_ZzFNr0YkMq0rmd9jT3aRoDZj5aMYuwFvtXgx9cPUjBcuD3h_9hNn8AMUPsFLIiDuOLjKy3hDtU\",\"alg\":\"RS256\",\"dq\":\"oxSwOg33nDQZDEnx550lrG_K-NDC4-TXhSB-p7fopAnTTnJ29Z-cu4RJK1fMm9Ztb5F4Ew4zq7LzIpPK9-nvwYRTCZfXsFBmjj14aIsaLKsxv8coRMRVjpw8Y_OHpCmcsuIXX5W9hv6VN_ap3wzZkqBulXqi8WERv3rz7NQswhE\",\"n\":\"m4KyXOSe_bjAG9rsHR8nrTabipYIAGIGvUOJ4jlRBQ7MYmO5LXgt8YM9ctKdfhbHe78oNa8iPvOmDXAMtf8jlYLGrcLRqb_9kQfKo-uNeC5JG-xBR2NbMFGPYlr9KOxMC-ReehO6R7YjjpxVQJQa83awR0WzCC4h2KIBXaF8dfsNqqCsz9hj2IU6gj6DoPSTClokHFFsao6HtDagQqykxFmn4ogZxj1eF8aZ3W5LBBAMi6ObVapLzCGrw-l0LaQk0ELRGPSouIQEd21mw7rX99xi9fq5BMZd18DBwRolEY8NDUD1PFuUm4p4CY6ZsKHhLTxORugbxlzKR6BBJpmO7Q\"}"
