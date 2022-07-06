@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.Faktum.Companion.erAlleBesvart
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
@@ -13,7 +14,6 @@ import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
-import no.nav.dagpenger.model.faktum.erAlleBesvart
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.erBoolean
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.erLand
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.lagBeskrivendeIderForGyldigeBoolskeValg

@@ -14,6 +14,8 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     val id: String get() = faktumId.id
 
     companion object {
+
+        internal fun Collection<Faktum<*>>.erAlleBesvart() = this.all { it.erBesvart() }
         private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, søknadprosess: Søknadprosess) {
             faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { søknadprosess.faktum(it.faktumId) })
             faktum.avhengerAvFakta.addAll(this.avhengerAvFakta.map { søknadprosess.faktum(it.faktumId) })
@@ -112,5 +114,3 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     fun harRolle(rolle: Rolle) = rolle in roller
     fun harIkkeRolle(rolle: Rolle) = !harRolle(rolle)
 }
-
-internal fun Collection<Faktum<*>>.erAlleBesvart() = this.all { it.erBesvart() }
