@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.faktum.Faktum.Companion.deepCopy
 import no.nav.dagpenger.model.faktum.Faktum.FaktumTilstand.Ukjent
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.erBesvart
+import no.nav.dagpenger.model.faktum.erAlleBesvart
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
@@ -73,7 +73,7 @@ open class EnkelSubsumsjon protected constructor(
 
     private fun nesteSubsumsjon() = if (lokaltResultat() == true) oppfyltSubsumsjon else ikkeOppfyltSubsumsjon
 
-    override fun lokaltResultat() = if (subsumsjonFakta.erBesvart()) regel.resultat(subsumsjonFakta) else null
+    override fun lokaltResultat() = if (subsumsjonFakta.erAlleBesvart()) regel.resultat(subsumsjonFakta) else null
 
     override fun toString() = regel.toString(subsumsjonFakta)
 

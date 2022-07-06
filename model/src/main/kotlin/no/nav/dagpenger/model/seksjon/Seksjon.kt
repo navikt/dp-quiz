@@ -52,7 +52,6 @@ class Seksjon private constructor(
         ).also { it.søknadprosess = søknadprosess }
 
     internal fun gjeldendeFakta(subsumsjon: Subsumsjon) = filtrertSeksjon(subsumsjon.nesteFakta())
-    internal fun erAlleBesvart() = this.all { it.erBesvart() }
 
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>) =
         nesteFakta.any { it in seksjonFakta }

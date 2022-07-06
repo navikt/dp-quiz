@@ -113,4 +113,4 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     fun harIkkeRolle(rolle: Rolle) = !harRolle(rolle)
 }
 
-fun List<Faktum<*>>.erBesvart() = this.all { it.erBesvart() }
+internal fun Collection<Faktum<*>>.erAlleBesvart() = this.all { it.erBesvart() }

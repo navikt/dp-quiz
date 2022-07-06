@@ -13,6 +13,7 @@ import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.faktum.erAlleBesvart
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.erBoolean
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.erLand
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.lagBeskrivendeIderForGyldigeBoolskeValg
