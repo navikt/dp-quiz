@@ -358,7 +358,11 @@ internal class SøknadRecordTest {
     private fun byggOriginalSøknadprosess() {
         FaktumTable(SøknadEksempel1.prototypeFakta1)
         søknadRecord = SøknadRecord()
-        originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon)
+        try {
+            originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

@@ -28,7 +28,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
     private val faktumList = mutableListOf<Faktum<*>>()
     private var personId: UUID? = null
     private lateinit var søknadUUID: UUID
-    private val faktumParams = mutableListOf<List<Any>>()
+    private val faktumParametre = mutableListOf<Map<String, Any>>()
 
     init {
         if (SøknadUuid(søknad).ikkeEksisterer()) {
@@ -66,16 +66,16 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         val faktumInsertStatement = //language=PostgreSQL
             """INSERT INTO faktum_verdi
                                 (soknad_id, indeks, faktum_id)
-                            VALUES ((SELECT id FROM soknad WHERE uuid = ?), ?,
-                                    (SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?))""".trimMargin()
-
+                            VALUES (:soknadId, :indeks,
+                                    (SELECT id FROM faktum WHERE versjon_id = :internVersjonId AND root_id = :rootId))""".trimMargin()
         using(sessionOf(dataSource)) { session ->
             session.transaction { transactionalSession ->
-                transactionalSession.run(
+                val id = transactionalSession.run(
                     queryOf( //language=PostgreSQL
                         """
-                        INSERT INTO soknad(uuid, versjon_id, person_id, sesjon_type_id) 
-                        VALUES (:uuid, :versjon_id, :person_id, :sesjon_type_id) 
+                         INSERT INTO soknad(uuid, versjon_id, person_id, sesjon_type_id) 
+                         VALUES (:uuid, :versjon_id, :person_id, :sesjon_type_id) 
+                         RETURNING id                        
                         """.trimIndent(),
                         mapOf(
                             "uuid" to søknadUUID,
@@ -83,9 +83,11 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
                             "person_id" to personId,
                             "sesjon_type_id" to type.id
                         )
-                    ).asUpdate
+                    ).map { it.long(1) }.asSingle
                 )
-                transactionalSession.batchPreparedStatement(faktumInsertStatement, faktumParams)
+
+                val params = faktumParametre.map { originalParameter -> mapOf("soknadId" to id) + originalParameter }
+                transactionalSession.batchPreparedNamedStatement(faktumInsertStatement, params)
             }
         }
     }
@@ -143,7 +145,13 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
 
     private fun skrivFaktumVerdi(faktum: Faktum<*>) {
         if (faktum in faktumList) return else faktumList.add(faktum)
-        faktumParams.add(listOf(søknadUUID, indeks, internVersjonId, rootId))
+        faktumParametre.add(
+            mapOf(
+                "indeks" to indeks,
+                "internVersjonId" to internVersjonId,
+                "rootId" to rootId
+            )
+        )
     }
 
     private class SøknadUuid(søknad: Søknad) : SøknadVisitor {
