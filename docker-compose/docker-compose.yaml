@@ -79,7 +79,7 @@ services:
       - "8080:8080"
     hostname: host.docker.internal
     environment:
-      JSON_CONFIG: "{\"interactiveLogin\":false}"
+      JSON_CONFIG: "{\"interactiveLogin\":true}"
 
   wonderwall:
     image: ghcr.io/nais/wonderwall:latest
@@ -109,7 +109,6 @@ services:
       NEXT_PUBLIC_BASE_PATH: "/arbeid/dagpenger/soknad"
       DEKORATOR_ENV: "dev"
       API_BASE_URL: http://soknad:8080/arbeid/dagpenger/soknadapi
-      NEXT_PUBLIC_LOCALHOST: true
       IDPORTEN_WELL_KNOWN_URL: http://host.docker.internal:8080/idporten/.well-known/openid-configuration
       NAIS_CLUSTER_NAME: "localhost"
       TOKEN_X_CLIENT_ID: "localhost:teamdagpenger:dp-soknadsdialog"
