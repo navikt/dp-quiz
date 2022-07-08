@@ -98,7 +98,7 @@ services:
       WONDERWALL_LOG_FORMAT: "text"
 
   frontend:
-    image: ghcr.io/navikt/dp-soknadsdialog/dp-soknadsdialog:4adfc83122cf790f955a877ced63b088fef3ac3d
+    image: ghcr.io/navikt/dp-soknadsdialog/dp-soknadsdialog:04dfdfcc7a1964d63406237deebb4a874c916bb7
     container_name: frontend
     ports:
       - "3001:3001"
@@ -108,7 +108,7 @@ services:
       SELF_URL: http://localhost:3000/arbeid/dagpenger/soknad
       NEXT_PUBLIC_BASE_PATH: "/arbeid/dagpenger/soknad"
       DEKORATOR_ENV: "dev"
-      API_BASE_URL: http://localhost:8081/arbeid/dagpenger/soknadapi
+      API_BASE_URL: http://soknad:8080/arbeid/dagpenger/soknadapi
       NEXT_PUBLIC_LOCALHOST: true
       IDPORTEN_WELL_KNOWN_URL: http://host.docker.internal:8080/idporten/.well-known/openid-configuration
       TOKEN_X_CLIENT_ID: "localhost:teamdagpenger:dp-soknadsdialog"

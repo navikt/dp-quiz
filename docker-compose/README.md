@@ -18,7 +18,7 @@ Muliggjøre lokal kjøring av søknadsdialogen og quiz lokalt.
 
 ### Bruke søknadsdialogen lokalt
 1. `docker-compose up -d` --> starter alle containerene i bakgrunnen.
-2. Gå til http://localhost:3000/, du skal da bli automatisk logget inn.
+2. Gå til http://localhost:4000/, du skal da bli automatisk logget inn.
 
 
 ### Stoppe alle containere
