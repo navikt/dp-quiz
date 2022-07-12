@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
@@ -9,6 +10,7 @@ import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
+import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
@@ -66,5 +68,16 @@ internal class EnkelSubsumsjonsTest {
         assertThrows<IllegalArgumentException> {
             subsumsjon hvisIkkeOppfylt { etValg er true }
         }
+    }
+
+    @Test
+    fun `heltall minst regel`() {
+        val søknadprosess = Søknad(testversjon, heltall faktum "heltall" id 1).testSøknadprosess()
+        val heltall = søknadprosess.heltall(1)
+        val minstSubsumsumsjon = heltall minst 2
+        heltall.besvar(1)
+        assertFalse(minstSubsumsumsjon.resultat()!!)
+        heltall.besvar(2)
+        assertTrue(minstSubsumsumsjon.resultat()!!)
     }
 }

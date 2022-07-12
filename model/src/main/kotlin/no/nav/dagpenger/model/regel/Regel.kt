@@ -187,8 +187,8 @@ infix fun Faktum<*>.sannsynliggjøresAv(dokument: Faktum<Dokument>): Subsumsjon 
 
 infix fun Faktum<Boolean>.dokumenteresAv(dokument: Faktum<Dokument>): Subsumsjon =
     GodkjenningsSubsumsjon(
-        JaAction,
-        EnkelSubsumsjon(
+        action = JaAction,
+        child = EnkelSubsumsjon(
             object : Regel {
                 override val typeNavn = "dokumentgodkjenning"
                 override fun resultat(fakta: List<Faktum<*>>) = true
@@ -196,7 +196,7 @@ infix fun Faktum<Boolean>.dokumenteresAv(dokument: Faktum<Dokument>): Subsumsjon
             },
             dokument
         ),
-        this as GrunnleggendeFaktum<Boolean>
+        godkjenning = this as GrunnleggendeFaktum<Boolean>
     )
 
 infix fun Faktum<Int>.under(maksAlder: Int): Subsumsjon {
