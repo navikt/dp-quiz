@@ -18,7 +18,7 @@ import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.deltre
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -140,9 +140,14 @@ class GeneratorFaktumTest {
         søknadprosessTestBygger = Versjon.Bygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
         val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
 
-        assertThrows<StackOverflowError> {
-            // Får først error når man besvarer faktum, ikke når man bygger faktum avhengighetene
-            søknadprosess.generator(1).besvar(2)
-        }
+        søknadprosess.generator(1).besvar(1)
+        søknadprosess.dato("2.1").besvar(LocalDate.now())
+        søknadprosess.dato("3.1").besvar(LocalDate.now())
+
+        assertEquals(LocalDate.now(), søknadprosess.dato("3.1").svar())
+
+        søknadprosess.dato("2.1").besvar(LocalDate.now().plusDays(1))
+
+        assertFalse(søknadprosess.dato("3.1").erBesvart())
     }
 }

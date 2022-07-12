@@ -35,13 +35,13 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     internal fun addAll(fakta: List<Faktum<*>>) = fakta.forEach { underordnet ->
         underordnede.add(underordnet as Faktum<R>)
         avhengigeFakta.forEach { avhengig ->
-            underordnet.harAvhengighet(avhengig)
+            underordnet.leggTilAvhengighet(avhengig)
         }
     }
 
-    override fun harAvhengighet(other: Faktum<*>) {
-        super.harAvhengighet(other)
-        underordnede.forEach { it.harAvhengighet(other) }
+    override fun leggTilAvhengighet(other: Faktum<*>) {
+        super.leggTilAvhengighet(other)
+        underordnede.forEach { it.leggTilAvhengighet(other) }
     }
 
     override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> =

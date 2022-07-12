@@ -39,10 +39,11 @@ object EgenNæring : DslFaktaseksjon {
     override val fakta = listOf(
         boolsk faktum "faktum.driver-du-egen-naering" id `driver du egen naering`,
         heltall faktum "faktum.egen-naering-organisasjonsnummer-liste" id `egen naering organisasjonsnummer liste`
-            genererer `egen naering organisasjonsnummer`,
-        heltall faktum "faktum.egen-naering-organisasjonsnummer" id `egen naering organisasjonsnummer`, // avhengerAv `driver du egen naering`
+            genererer `egen naering organisasjonsnummer` avhengerAv `driver du egen naering`,
+        heltall faktum "faktum.egen-naering-organisasjonsnummer" id `egen naering organisasjonsnummer`,
         desimaltall faktum "faktum.egen-naering-arbeidstimer-for" id `egen naering arbeidstimer for`,
         desimaltall faktum "faktum.egen-naering-arbeidstimer-naa" id `egen naering arbeidstimer naa`,
+
         boolsk faktum "faktum.driver-du-eget-gaardsbruk" id `driver du eget gaardsbruk`,
         heltall faktum "faktum.eget-gaardsbruk-organisasjonsnummer" id `eget gaardsbruk organisasjonsnummer` avhengerAv `driver du eget gaardsbruk`,
         flervalg faktum "faktum.eget-gaardsbruk-type-gaardsbruk"

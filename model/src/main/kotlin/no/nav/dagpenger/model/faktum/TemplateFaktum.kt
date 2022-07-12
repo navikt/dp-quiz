@@ -51,36 +51,40 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
                 faktumId medIndeks indeks,
                 navn,
                 clazz,
-                avhengigeFakta.toList().deepCopy(indeks, søknad).toMutableSet(),
-                avhengerAvFakta.toList().deepCopy(indeks, søknad).toMutableSet(),
+                mutableSetOf(),
+                mutableSetOf(),
                 mutableSetOf(),
                 roller,
                 gyldigeValg,
                 landgrupper
-            ).also { søknad.add(it) }
+            ).also { lagdFaktum ->
+                søknad.add(lagdFaktum)
+                avhengigeFakta.toList().deepCopy(indeks, søknad).onEach { lagdFaktum.leggTilAvhengighet(it) }
+            }
     }
 
     internal fun generate(r: Int, søknad: Søknad) {
         seksjoner.forEach { originalSeksjon ->
             (1..r).forEach { indeks ->
                 val seksjon = if (originalSeksjon.bareTemplates()) {
-                    originalSeksjon.deepCopy(indeks, søknad)
+                    originalSeksjon.deepCopy(indeks)
                 } else {
                     originalSeksjon
                 }
-                seksjon.add(
-                    GrunnleggendeFaktum(
-                        faktumId.medIndeks(indeks),
-                        navn,
-                        clazz,
-                        avhengigeFakta.toList().deepCopy(indeks, søknad).toMutableSet(),
-                        avhengerAvFakta.toList().deepCopy(indeks, søknad).toMutableSet(),
-                        mutableSetOf(),
-                        roller,
-                        gyldigeValg,
-                        landgrupper
-                    )
-                )
+                GrunnleggendeFaktum(
+                    faktumId.medIndeks(indeks),
+                    navn,
+                    clazz,
+                    mutableSetOf(),
+                    mutableSetOf(),
+                    mutableSetOf(),
+                    roller,
+                    gyldigeValg,
+                    landgrupper
+                ).also { lagdFaktum ->
+                    seksjon.add(lagdFaktum)
+                    avhengigeFakta.toList().deepCopy(indeks, søknad).onEach { lagdFaktum.leggTilAvhengighet(it) }
+                }
             }
         }
     }

@@ -62,7 +62,7 @@ class Seksjon private constructor(
 
     internal fun bareTemplates() = seksjonFakta.all { it is TemplateFaktum }
 
-    internal fun deepCopy(indeks: Int, søknad: Søknad): Seksjon {
+    internal fun deepCopy(indeks: Int): Seksjon {
         return if (indeks <= genererteSeksjoner.size) genererteSeksjoner[indeks - 1]
         else Seksjon(navn, rolle, mutableSetOf(), avhengerAvFakta.toMutableSet(), indeks).also {
             søknadprosess.add(søknadprosess.indexOf(this) + indeks, it)

@@ -74,7 +74,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     internal open fun add(seksjon: Seksjon): Boolean = false
 
-    internal open infix fun harAvhengighet(other: Faktum<*>) {
+    internal open infix fun leggTilAvhengighet(other: Faktum<*>) {
         this.avhengigeFakta.add(other)
         other.avhengerAvFakta.add(this)
     }

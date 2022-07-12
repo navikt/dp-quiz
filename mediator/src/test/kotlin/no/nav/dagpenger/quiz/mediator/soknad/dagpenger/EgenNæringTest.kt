@@ -10,8 +10,8 @@ import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -82,7 +82,6 @@ internal class EgenNæringTest {
         assertEquals(true, søknadprosess.resultat())
     }
 
-    @Disabled
     @Test
     fun `Avhengigheter driver egen næring`() {
         søknadprosess.boolsk(EgenNæring.`driver du egen naering`).besvar(true)
@@ -91,7 +90,8 @@ internal class EgenNæringTest {
         assertTrue(søknadprosess.heltall("${EgenNæring.`egen naering organisasjonsnummer`}.1").erBesvart())
 
         søknadprosess.boolsk(EgenNæring.`driver du egen naering`).besvar(false)
-        assertFalse(søknadprosess.heltall("${EgenNæring.`egen naering organisasjonsnummer`}.1").erBesvart())
+        assertFalse(søknadprosess.generator(EgenNæring.`egen naering organisasjonsnummer liste`).erBesvart())
+        assertThrows<IllegalArgumentException> { søknadprosess.heltall("${EgenNæring.`egen naering organisasjonsnummer`}.1") }
     }
 
     @Test
