@@ -59,7 +59,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
                 landgrupper
             ).also { lagdFaktum ->
                 søknad.add(lagdFaktum)
-                avhengigeFakta.toList().deepCopy(indeks, søknad).onEach { lagdFaktum.leggTilAvhengighet(it) }
+                avhengigeFakta.toList().deepCopy(indeks, søknad).forEach { lagdFaktum.leggTilAvhengighet(it) }
             }
     }
 
@@ -83,7 +83,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
                     landgrupper
                 ).also { lagdFaktum ->
                     seksjon.add(lagdFaktum)
-                    avhengigeFakta.toList().deepCopy(indeks, søknad).onEach { lagdFaktum.leggTilAvhengighet(it) }
+                    avhengigeFakta.toList().deepCopy(indeks, søknad).forEach { lagdFaktum.leggTilAvhengighet(it) }
                 }
             }
         }
