@@ -18,6 +18,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.helpers.toPrettyJson
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
@@ -195,9 +196,35 @@ internal class SøkerJsonBuilderTest {
             assertEquals(1, dokumentasjonFakta.count { it["readOnly"].asBoolean() == false })
             assertEquals(3, dokumentasjonFakta.count { it["readOnly"].asBoolean() == true })
             val generator = dokumentasjonFakta.find { it["beskrivendeId"].asText() == "f67" }!!
-            val generatorSvar = generator["svar"]
-            assertEquals(2, generatorSvar.size())
-            assertTrue(generatorSvar.all { indeksSvar -> indeksSvar.all { it["readOnly"].asBoolean() } })
+
+
+            println(dokumentasjonFakta)
+            dokumentasjonFakta[3].assertGeneratorFaktaAsJson(
+                "67", "generator", "f67", listOf("søker"), true,
+                assertTemplates = listOf(
+                    { it.assertFaktaAsJson("6", "int", "f6", listOf("søker")) },
+                    { it.assertFaktaAsJson("7", "boolean", "f7", listOf("søker")) },
+                )
+            ) {
+
+                assertEquals(2, it.size())
+                it[0][0].assertFaktaAsJson(
+                    "6.1", "int", "f6", listOf("søker"), true
+                ) {
+                    assertEquals(21, it.asInt())
+                }
+                it[0][1].assertFaktaAsJson(
+                    "7.1", "boolean", "f7", listOf("søker"), true
+                )
+                it[1][0].assertFaktaAsJson(
+                    "6.2", "int", "f6", listOf("søker"), true
+                ) {
+                    assertEquals(19, it.asInt())
+                }
+                it[1][1].assertFaktaAsJson(
+                    "7.2", "boolean", "f7", listOf("søker"), true
+                )
+            }
         }
 
         søknadprosess.dokument(15).besvar(Dokument(LocalDate.now(), "urn:nav:1234"))

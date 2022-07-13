@@ -97,6 +97,21 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
         }
     }
 
+    override fun <R : Comparable<R>> visitMedSvar(
+        faktum: GeneratorFaktum,
+        id: String,
+        avhengigeFakta: Set<Faktum<*>>,
+        avhengerAvFakta: Set<Faktum<*>>,
+        templates: List<TemplateFaktum<*>>,
+        roller: Set<Rolle>,
+        clazz: Class<R>,
+        svar: R,
+        genererteFaktum: Set<Faktum<*>>
+    ) {
+        if (!::gjeldendeFakta.isInitialized) return
+        avhengigheter.addAll(genererteFaktum)
+    }
+
     override fun <R : Comparable<R>> postVisitAvhengerAvFakta(
         faktum: Faktum<R>,
         avhengerAvFakta: MutableSet<Faktum<*>>
