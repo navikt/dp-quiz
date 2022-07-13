@@ -12,15 +12,18 @@ internal annotation class JsonAssertMarker
 
 @JsonAssertMarker
 internal class MedSøknad private constructor(private val søknad: JsonNode, block: MedSøknad.() -> Unit) {
-    constructor(søknadprosess: Søknadprosess, block: MedSøknad.() -> Unit) : this(SøkerJsonBuilder(søknadprosess).resultat(), block)
-
-    var antallSeksjoner: Int
-        get() = throw IllegalStateException()
-        set(value) = assertEquals(value, søknad["seksjoner"].size())
+    constructor(
+        søknadprosess: Søknadprosess,
+        block: MedSøknad.() -> Unit
+    ) : this(SøkerJsonBuilder(søknadprosess).resultat(), block)
 
     init {
         block(this)
     }
+
+    fun harAntallSeksjoner(value: Int) = assertEquals(value, søknad["seksjoner"].size())
+
+    fun erFerdig() = assertEquals(true, søknad["ferdig"].asBoolean())
 
     fun seksjon(seksjonNavn: String, block: MedSeksjon.() -> Unit) {
         block(MedSeksjon(søknad.finnSeksjon(seksjonNavn)))
@@ -29,9 +32,7 @@ internal class MedSøknad private constructor(private val søknad: JsonNode, blo
 
 @JsonAssertMarker
 internal class MedSeksjon(private val seksjon: JsonNode) {
-    var ferdig: Boolean
-        get() = throw IllegalStateException()
-        set(value) = assertEquals(value, seksjon["ferdig"].asBoolean())
+    fun erFerdig() = assertEquals(true, seksjon["ferdig"].asBoolean())
 
     fun fakta(block: MedFakta.() -> Unit) = fakta(true, block)
 
@@ -51,15 +52,12 @@ internal class MedSeksjon(private val seksjon: JsonNode) {
 @JsonAssertMarker
 internal class MedFakta(private val fakta: JsonNode) {
     internal var faktaSomIkkeErSjekket = fakta.map { it["beskrivendeId"].asText() }.toMutableSet()
-    var antall: Int
-        get() = throw IllegalStateException()
-        set(value) = antall(value)
-    var antallReadOnly: Int
-        get() = throw IllegalStateException()
-        set(value) = antall(value, true)
-    var antallBesvarte: Int
-        get() = throw IllegalStateException()
-        set(value) = assertEquals(value, fakta.count { it.has("svar") }, "Feil antall faktum")
+
+    fun harAntallFakta(value: Int) = antall(value)
+    fun harAntallReadOnly(value: Int) = antall(value, true)
+
+    fun harAntallBesvarte(value: Int) =
+        assertEquals(value, fakta.count { it.has("svar") }, "Feil antall faktum i seksjon")
 
     private fun antall(antall: Int) = antall(antall, null)
 
@@ -86,6 +84,38 @@ internal class MedFakta(private val fakta: JsonNode) {
         it.erType("int")
     }
 
+    fun land(navn: String, block: MedLandFaktum.() -> Unit) {
+        val faktum = MedLandFaktum(fakta.finnFaktum(navn))
+        faktum.erType("land")
+
+        block(faktum)
+        faktaSomIkkeErSjekket.remove(navn)
+    }
+
+    fun envalg(navn: String, block: MedEnvalgFaktum.() -> Unit) {
+        val faktum = MedEnvalgFaktum(fakta.finnFaktum(navn))
+        faktum.erType("envalg")
+
+        block(faktum)
+        faktaSomIkkeErSjekket.remove(navn)
+    }
+
+    fun flervalg(navn: String, block: MedFlervalgFaktum.() -> Unit) {
+        val faktum = MedFlervalgFaktum(fakta.finnFaktum(navn))
+        faktum.erType("flervalg")
+
+        block(faktum)
+        faktaSomIkkeErSjekket.remove(navn)
+    }
+
+    fun generator(navn: String, block: MedGeneratorFaktum.() -> Unit) {
+        val faktum = MedGeneratorFaktum(fakta.finnFaktum(navn))
+        faktum.erType("generator")
+
+        block(faktum)
+        faktaSomIkkeErSjekket.remove(navn)
+    }
+
     private fun faktum(navn: String, block: MedFaktum.() -> Unit): MedFaktum {
         val medFaktum = MedFaktum(fakta.finnFaktum(navn))
         block(medFaktum)
@@ -93,50 +123,62 @@ internal class MedFakta(private val fakta: JsonNode) {
         return medFaktum
     }
 
-    fun generator(navn: String, block: MedGeneratorFaktum.() -> Unit) {
-        val medGeneratorFaktum = MedGeneratorFaktum(fakta.finnFaktum(navn))
-        medGeneratorFaktum.assertGenerator()
-
-        block(medGeneratorFaktum)
-        faktaSomIkkeErSjekket.remove(navn)
-    }
+    fun alle(block: MedFaktum.() -> Unit) = fakta.forEach { block(MedFaktum(it)) }
 }
 
 @JsonAssertMarker
 internal open class MedFaktum(val faktum: JsonNode) {
-    fun erBesvart(boolsk: Boolean = true) = assertEquals(boolsk, faktum.has("svar"), "Faktumet er besvart")
+    protected val navn = faktum["beskrivendeId"].asText()
+
+    fun erBesvart() = erBesvart(true)
+    fun erIkkeBesvart() = erBesvart(false)
+    private fun erBesvart(boolsk: Boolean = true) = assertEquals(boolsk, faktum.has("svar"), "Faktum $navn er besvart")
 
     fun erReadOnly(readOnly: Boolean = true) =
-        assertEquals(readOnly, faktum["readOnly"].asBoolean(), "Faktum var ikke readOnly")
+        assertEquals(readOnly, faktum["readOnly"].asBoolean(), "Faktum $navn var ikke readOnly")
 
     internal fun erType(type: String) = assertEquals(type, faktum["type"].asText())
 
     fun harRoller(vararg rolle: String) = harRoller(rolle.toList())
 
     private fun harRoller(roller: List<String>) = faktum.get("roller").toSet().map { it.asText() }.also {
-       assertEquals(roller, it)
+        assertEquals(roller, it)
     }
 
     fun erBesvartMed(boolsk: Boolean) = assertEquals(boolsk, faktum["svar"].asBoolean())
-    fun erBesvartMed(int: Int) = assertEquals(int, faktum["svar"].asInt())
+
+    open fun erBesvartMed(int: Int) = assertEquals(int, faktum["svar"].asInt(), "Faktum $navn er besvart med")
 }
 
 @JsonAssertMarker
 internal class MedGeneratorFaktum(faktum: JsonNode) : MedFaktum(faktum) {
-    var antall: Int
-        get() = throw IllegalStateException()
-        set(value) = antall(value)
+    private val svar = faktum["svar"]
+    private val templates = faktum["templates"]
+    fun svar(i: Int, block: MedFakta.() -> Unit) = MedFakta(svar[i - 1]).also { block(it) }
 
-    internal fun assertGenerator() =
-        assertEquals("generator", faktum["type"].asText(), "Faktum $navn er ikke en generator")
+    fun templates(block: MedFakta.() -> Unit) = MedFakta(templates).also { block(it) }
 
-    fun svar(i: Int, block: MedFakta.() -> Unit) {
-        val medFakta = MedFakta(faktum["svar"][i - 1])
+    override fun erBesvartMed(antallSvar: Int) = assertEquals(antallSvar, svar.size())
+    fun alle(block: MedFaktum.() -> Unit) = svar.flatten().forEach { block(MedFaktum(it)) }
+}
 
-        block(medFakta)
-    }
+@JsonAssertMarker
+internal open class MedEnvalgFaktum(faktum: JsonNode) : MedFaktum(faktum) {
+    fun harGyldigeValg(vararg valg: String) = harGyldigeValg(valg.toList())
+    private fun harGyldigeValg(valg: List<String>) =
+        faktum.get("gyldigeValg").toSet().map { it.asText() }
+            .also { assertEquals(valg, it, "Valgfaktum ${this.navn} har ikke riktige valg") }
+}
 
-    private fun antall(antallSvar: Int) = assertEquals(antallSvar, faktum["svar"].size())
+@JsonAssertMarker
+internal class MedFlervalgFaktum(faktum: JsonNode) : MedEnvalgFaktum(faktum)
+
+@JsonAssertMarker
+internal open class MedLandFaktum(faktum: JsonNode) : MedFaktum(faktum) {
+    fun harGrupper(vararg valg: String) = harGrupper(valg.toList())
+    private fun harGrupper(grupper: List<String>) =
+        faktum.get("grupper").toSet().map { it["gruppeId"].asText() }
+            .also { assertEquals(grupper, it, "Landfaktum ${this.navn} har ikke riktige grupper") }
 }
 
 private fun JsonNode.finnFaktum(navn: String): JsonNode {

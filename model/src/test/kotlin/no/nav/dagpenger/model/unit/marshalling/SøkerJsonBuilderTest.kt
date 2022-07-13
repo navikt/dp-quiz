@@ -86,108 +86,99 @@ internal class SøkerJsonBuilderTest {
             assertMetadata(it)
         }
 
-        MedSøknad(søknadprosess){
-            antallSeksjoner = 1
-            seksjon("seksjon1"){
+        MedSøknad(søknadprosess) {
+            harAntallSeksjoner(1)
+            seksjon("seksjon1") {
                 fakta {
-                    boolsk("f1"){
-                        erBesvart(false)
+                    boolsk("f1") {
                         harRoller("søker")
+                        erIkkeBesvart()
                     }
                 }
             }
         }
 
         søknadprosess.boolsk(1).besvar(true)
-        SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertAntallSeksjoner(1, it)
-
-            assertAntallSeksjoner(1, it)
-            val fakta = it.finnSeksjon("seksjon1")["fakta"]
-            assertEquals(2, fakta.size(), "Seksjonen inneholder duplikate faktum via avhengigeAv")
-            fakta[0].assertFaktaAsJson("1", "boolean", "f1", listOf("søker")) { svar ->
-                assertEquals("true", svar.asText())
+        MedSøknad(søknadprosess) {
+            harAntallSeksjoner(1)
+            seksjon("seksjon1") {
+                fakta {
+                    harAntallFakta(2)
+                    alle { harRoller("søker") }
+                    boolsk("f1") { erBesvartMed(true) }
+                    boolsk("f3") { erIkkeBesvart() }
+                }
             }
-            fakta[1].assertFaktaAsJson("3", "boolean", "f3", listOf("søker"))
         }
 
         søknadprosess.boolsk(3).besvar(true)
-        SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertAntallSeksjoner(1, it)
-            val fakta = it.finnSeksjon("seksjon1")["fakta"]
-            fakta[0].assertFaktaAsJson("1", "boolean", "f1", listOf("søker")) { svar ->
-                assertEquals("true", svar.asText())
+        MedSøknad(søknadprosess) {
+            harAntallSeksjoner(1)
+            seksjon("seksjon1") {
+                fakta {
+                    alle { harRoller("søker") }
+                    boolsk("f1") { erBesvartMed(true) }
+                    boolsk("f3") { erBesvartMed(true) }
+                    boolsk("f5") { erIkkeBesvart() }
+                }
             }
-            fakta[1].assertFaktaAsJson("3", "boolean", "f3", listOf("søker")) { svar ->
-                assertEquals("true", svar.asText())
-            }
-            fakta[2].assertFaktaAsJson("5", "boolean", "f5", listOf("søker"))
-            assertUbesvartFaktum("seksjon1", it)
-            assertBesvarteFakta(2, "seksjon1", it)
         }
 
         søknadprosess.boolsk(5).besvar(true)
-        SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertAntallSeksjoner(2, it)
-            val seksjon1Fakta = it.finnSeksjon("seksjon1")["fakta"]
-            assertEquals(3, seksjon1Fakta.size())
-            seksjon1Fakta[0].assertFaktaAsJson("1", "boolean", "f1", listOf("søker")) { svar ->
-                assertEquals("true", svar.asText())
+        MedSøknad(søknadprosess) {
+            harAntallSeksjoner(2)
+            seksjon("seksjon1") {
+                erFerdig()
+                fakta {
+                    boolsk("f1") { erBesvartMed(true) }
+                    boolsk("f3") { erBesvartMed(true) }
+                    boolsk("f5") { erBesvartMed(true) }
+                }
             }
-            seksjon1Fakta[1].assertFaktaAsJson("3", "boolean", "f3", listOf("søker")) { svar ->
-                assertEquals("true", svar.asText())
+            seksjon("seksjon2") {
+                fakta {
+                    generator("f67") {
+                        erIkkeBesvart()
+                    }
+                }
             }
-            seksjon1Fakta[2].assertFaktaAsJson("5", "boolean", "f5", listOf("søker")) { svar ->
-                assertEquals("true", svar.asText())
-            }
-            val seksjon2Fakta = it.finnSeksjon("seksjon2")["fakta"]
-            seksjon2Fakta[0].assertGeneratorFaktaAsJson(
-                "67",
-                "generator",
-                "f67",
-                listOf("søker"),
-                assertTemplates = listOf(
-                    { it.assertFaktaAsJson("6", "int", "f6", listOf("søker")) },
-                    { it.assertFaktaAsJson("7", "boolean", "f7", listOf("søker")) }
-                )
-            )
-            assertSeksjonFerdig("seksjon1", it)
-            assertBesvarteFakta(3, "seksjon1", it)
-            assertUbesvartFaktum("seksjon2", it)
         }
 
         søknadprosess.generator(67).besvar(2)
         søknadprosess.heltall("6.1").besvar(21)
         søknadprosess.boolsk("7.1").besvar(true)
-        SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertAntallSeksjoner(2, it)
-            assertBesvarteFakta(1, "seksjon2", it)
-            val seksjon2Fakta = it.finnSeksjon("seksjon2")["fakta"]
-            seksjon2Fakta[0].assertGeneratorFaktaAsJson(
-                "67",
-                "generator",
-                "f67",
-                listOf("søker"),
-                assertTemplates = listOf(
-                    { it.assertFaktaAsJson("6", "int", "f6", listOf("søker")) },
-                    { it.assertFaktaAsJson("7", "boolean", "f7", listOf("søker")) }
-                )
-            )
-            assertBesvartGeneratorFaktum(2, "f67", "seksjon2", it)
-            // 6.2 skal bli med fordi regeltreet sier at 6 er neste faktum
-            assertUbesvartGeneratorFaktum("f67", "seksjon2", it)
+        MedSøknad(søknadprosess) {
+            harAntallSeksjoner(2)
+            seksjon("seksjon2") {
+                fakta {
+                    alle { harRoller("søker") }
+                    generator("f67") {
+                        erBesvartMed(2)
+                        svar(1) {
+                            harAntallFakta(2)
+                            harAntallBesvarte(2)
+                        }
+                        svar(2) {
+                            // Bare 6.2 skal bli med fordi regeltreet sier at 6 er neste faktum. Ikke 7.2
+                            harAntallFakta(1)
+                            harAntallBesvarte(0)
+                        }
+                    }
+                }
+            }
         }
 
         søknadprosess.heltall("6.2").besvar(19)
         MedSøknad(søknadprosess) {
-            antallSeksjoner = 2
+            harAntallSeksjoner(2)
             seksjon("seksjon2") {
                 fakta {
-                    antallBesvarte = 1
+                    harAntallBesvarte(1)
+                    alle { harRoller("søker") }
                     generator("f67") {
-                        antall = 2
-                        svar(1) { antallBesvarte = 2 }
-                        svar(2) { antallBesvarte = 1 }
+                        erBesvartMed(2)
+                        svar(1) { harAntallBesvarte(2) }
+                        svar(2) { harAntallBesvarte(1) }
                     }
                 }
             }
@@ -195,16 +186,15 @@ internal class SøkerJsonBuilderTest {
 
         søknadprosess.boolsk("7.2").besvar(true)
         MedSøknad(søknadprosess) {
-            antallSeksjoner = 2
-            seksjon("seksjon2") { ferdig = true }
+            harAntallSeksjoner(2)
+            seksjon("seksjon2") { erFerdig() }
             seksjon("seksjon2") {
                 fakta {
-                    antall = 1
+                    harAntallFakta(1)
                     generator("f67") {
-                        erBesvart()
-                        antall = 2
-                        svar(1) { antallBesvarte = 2 }
-                        svar(2) { antallBesvarte = 2 }
+                        erBesvartMed(2)
+                        svar(1) { harAntallBesvarte(2) }
+                        svar(2) { harAntallBesvarte(2) }
                     }
                 }
             }
@@ -216,10 +206,11 @@ internal class SøkerJsonBuilderTest {
         MedSøknad(søknadprosess) {
             seksjon("dokumentasjon") {
                 fakta {
-                    antall = 4
-                    antallReadOnly = 3
+                    harAntallFakta(4)
+                    harAntallReadOnly(3)
                     dato("f8") {
                         erReadOnly()
+                        erBesvart()
                     }
                     boolsk("f5") {
                         erReadOnly()
@@ -230,26 +221,15 @@ internal class SøkerJsonBuilderTest {
                     }
                     generator("f67") {
                         erReadOnly()
-                        antall = 2
+                        alle { erReadOnly() }
+                        erBesvartMed(2)
                         svar(1) {
-                            heltall("f6") {
-                                erReadOnly()
-                                erBesvartMed(21)
-                            }
-                            boolsk("f7") {
-                                erReadOnly()
-                                erBesvartMed(true)
-                            }
+                            heltall("f6") { erBesvartMed(21) }
+                            boolsk("f7") { erBesvartMed(true) }
                         }
                         svar(2) {
-                            heltall("f6") {
-                                erReadOnly()
-                                erBesvartMed(19)
-                            }
-                            boolsk("f7") {
-                                erReadOnly()
-                                erBesvartMed(true)
-                            }
+                            heltall("f6") { erBesvartMed(19) }
+                            boolsk("f7") { erBesvartMed(true) }
                         }
                     }
                 }
@@ -257,60 +237,51 @@ internal class SøkerJsonBuilderTest {
         }
 
         søknadprosess.dokument(15).besvar(Dokument(LocalDate.now(), "urn:nav:1234"))
-
         søknadprosess.generator(1718).besvar(1)
 
-        SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertAntallSeksjoner(4, it)
-            val generatorFakta = it.finnSeksjon("seksjon3")["fakta"]
-            generatorFakta[0].assertGeneratorFaktaAsJson(
-                "1718",
-                "generator",
-                "f1718",
-                listOf("søker"),
-                assertTemplates = listOf(
-                    {
-                        it.assertValgFaktaAsJson(
-                            "17",
-                            "envalg",
-                            "f17",
-                            listOf("søker"),
-                            expectedGyldigeValg = listOf("envalg1", "envalg2")
-                        )
-                    },
-                    {
-                        it.assertValgFaktaAsJson(
-                            "18",
-                            "flervalg",
-                            "f18",
-                            listOf("søker"),
-                            expectedGyldigeValg = listOf("flervalg1", "flervalg2")
-                        )
+        MedSøknad(søknadprosess) {
+            harAntallSeksjoner(4)
+            seksjon("seksjon3") {
+                fakta {
+                    harAntallFakta(1)
+                    harAntallBesvarte(1)
+                    generator("f1718") {
+                        erBesvartMed(1)
+                        harRoller("søker")
+
+                        svar(1) {
+                            envalg("f17") {
+                                erIkkeBesvart()
+                                harGyldigeValg("f17.envalg1", "f17.envalg2")
+                            }
+                        }
+
+                        templates {
+                            alle { harRoller("søker") }
+                            envalg("f17") {
+                                harGyldigeValg("f17.envalg1", "f17.envalg2")
+                            }
+                            flervalg("f18") {
+                                harGyldigeValg("f18.flervalg1", "f18.flervalg2")
+                            }
+                        }
                     }
-                )
-            )
-            assertUbesvartGeneratorFaktum(
-                forventetAntall = 1,
-                generatorFaktumNavn = "f1718",
-                seksjon = "seksjon3",
-                søkerJson = it
-            )
+                }
+            }
         }
 
         søknadprosess.envalg("17.1").besvar(Envalg("f17.envalg1"))
         søknadprosess.flervalg("18.1").besvar(Flervalg("f18.flervalg2"))
 
-        SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertAntallSeksjoner(5, it)
-            val seksjonsFakta = it.finnSeksjon("Gyldige land")["fakta"]
-            seksjonsFakta[0].assertLandFaktum(
-                "19",
-                "land",
-                "f19",
-                listOf("søker"),
-                setOf("f19.gruppe.eøs", "f19.gruppe.norge-jan-mayen")
-            )
-            assertUbesvartFaktum("Gyldige land", it)
+        MedSøknad(søknadprosess) {
+            harAntallSeksjoner(5)
+            seksjon("Gyldige land") {
+                fakta {
+                    land("f19") {
+                        harGrupper("f19.gruppe.eøs", "f19.gruppe.norge-jan-mayen")
+                    }
+                }
+            }
         }
 
         søknadprosess.land(19).besvar(Land("NOR"))
@@ -318,9 +289,7 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.generator(21).besvar(1)
         søknadprosess.dato("20.1").besvar(LocalDate.now())
 
-        SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertFerdig(it)
-        }
+        MedSøknad(søknadprosess) { erFerdig() }
     }
 
     @Test
