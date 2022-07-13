@@ -16,6 +16,7 @@ import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.medSeksjon
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
@@ -132,10 +133,13 @@ internal class SøkerJsonBuilderTest {
             }
             val seksjon2Fakta = it.finnSeksjon("seksjon2")["fakta"]
             seksjon2Fakta[0].assertGeneratorFaktaAsJson(
-                "67", "generator", "f67", listOf("søker"),
+                "67",
+                "generator",
+                "f67",
+                listOf("søker"),
                 assertTemplates = listOf(
                     { it.assertFaktaAsJson("6", "int", "f6", listOf("søker")) },
-                    { it.assertFaktaAsJson("7", "boolean", "f7", listOf("søker")) },
+                    { it.assertFaktaAsJson("7", "boolean", "f7", listOf("søker")) }
                 )
             )
             assertSeksjonFerdig("seksjon1", it)
@@ -151,14 +155,16 @@ internal class SøkerJsonBuilderTest {
             assertBesvarteFakta(1, "seksjon2", it)
             val seksjon2Fakta = it.finnSeksjon("seksjon2")["fakta"]
             seksjon2Fakta[0].assertGeneratorFaktaAsJson(
-                "67", "generator", "f67", listOf("søker"),
+                "67",
+                "generator",
+                "f67",
+                listOf("søker"),
                 assertTemplates = listOf(
                     { it.assertFaktaAsJson("6", "int", "f6", listOf("søker")) },
-                    { it.assertFaktaAsJson("7", "boolean", "f7", listOf("søker")) },
+                    { it.assertFaktaAsJson("7", "boolean", "f7", listOf("søker")) }
                 )
             )
             assertBesvartGeneratorFaktum(2, "f67", "seksjon2", it)
-
             // 6.2 skal bli med fordi regeltreet sier at 6 er neste faktum
             assertUbesvartGeneratorFaktum("f67", "seksjon2", it)
         }
@@ -190,36 +196,48 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.dato("9").besvar(LocalDate.now())
 
         SøkerJsonBuilder(søknadprosess).resultat().also { søkerJson ->
-            val dokumentasjonFakta = søkerJson.finnSeksjon("dokumentasjon")["fakta"]
-            assertEquals(4, dokumentasjonFakta.size())
-            assertEquals(1, dokumentasjonFakta.count { it["readOnly"].asBoolean() == false })
-            assertEquals(3, dokumentasjonFakta.count { it["readOnly"].asBoolean() == true })
-
-            dokumentasjonFakta[3].assertGeneratorFaktaAsJson(
-                "67", "generator", "f67", listOf("søker"), true,
-                assertTemplates = listOf(
-                    { it.assertFaktaAsJson("6", "int", "f6", listOf("søker")) },
-                    { it.assertFaktaAsJson("7", "boolean", "f7", listOf("søker")) },
-                )
-            ) {
-
-                assertEquals(2, it.size())
-                it[0][0].assertFaktaAsJson(
-                    "6.1", "int", "f6", listOf("søker"), true
-                ) {
-                    assertEquals(21, it.asInt())
+            søkerJson.medSeksjon("dokumentasjon") {
+                fakta {
+                    antall(4)
+                    antallReadOnly(3)
+                    faktum("f8") {
+                        readOnly()
+                        erType("localdate")
+                    }
+                    faktum("f5") {
+                        readOnly()
+                        erType("boolean")
+                        besvartMed(true)
+                    }
+                    faktum("f15") {
+                        readOnly(false)
+                        erType("dokument")
+                    }
+                    generatorFaktum("f67") {
+                        readOnly()
+                        antall(2)
+                        svar(1) {
+                            faktum("f6") {
+                                readOnly()
+                                besvartMed(21)
+                            }
+                            faktum("f7") {
+                                readOnly()
+                                besvartMed(true)
+                            }
+                        }
+                        svar(2) {
+                            faktum("f6") {
+                                readOnly()
+                                besvartMed(19)
+                            }
+                            faktum("f7") {
+                                readOnly()
+                                besvartMed(true)
+                            }
+                        }
+                    }
                 }
-                it[0][1].assertFaktaAsJson(
-                    "7.1", "boolean", "f7", listOf("søker"), true
-                )
-                it[1][0].assertFaktaAsJson(
-                    "6.2", "int", "f6", listOf("søker"), true
-                ) {
-                    assertEquals(19, it.asInt())
-                }
-                it[1][1].assertFaktaAsJson(
-                    "7.2", "boolean", "f7", listOf("søker"), true
-                )
             }
         }
 
@@ -231,7 +249,10 @@ internal class SøkerJsonBuilderTest {
             assertAntallSeksjoner(4, it)
             val generatorFakta = it.finnSeksjon("seksjon3")["fakta"]
             generatorFakta[0].assertGeneratorFaktaAsJson(
-                "1718", "generator", "f1718", listOf("søker"),
+                "1718",
+                "generator",
+                "f1718",
+                listOf("søker"),
                 assertTemplates = listOf(
                     {
                         it.assertValgFaktaAsJson(
@@ -250,7 +271,7 @@ internal class SøkerJsonBuilderTest {
                             listOf("søker"),
                             expectedGyldigeValg = listOf("flervalg1", "flervalg2")
                         )
-                    },
+                    }
                 )
             )
             assertUbesvartGeneratorFaktum(
@@ -272,7 +293,7 @@ internal class SøkerJsonBuilderTest {
                 "land",
                 "f19",
                 listOf("søker"),
-                setOf("f19.gruppe.eøs", "f19.gruppe.norge-jan-mayen"),
+                setOf("f19.gruppe.eøs", "f19.gruppe.norge-jan-mayen")
             )
             assertUbesvartFaktum("Gyldige land", it)
         }
@@ -321,7 +342,7 @@ internal class SøkerJsonBuilderTest {
         val generatorSubsumsjon1718 = prototypeSøknad.generator(1718) med "Besvarte valg".deltre {
             "alle må være besvarte".alle(
                 prototypeSøknad.envalg(17).utfylt(),
-                prototypeSøknad.envalg(18).utfylt(),
+                prototypeSøknad.envalg(18).utfylt()
             )
         }
         val regeltre = "regel" deltre {
@@ -340,7 +361,7 @@ internal class SøkerJsonBuilderTest {
                 ),
                 "NAV-systemer vil svare automatisk på følgende fakta".alle(
                     prototypeSøknad.dato(8).utfylt(),
-                    prototypeSøknad.dato(9).utfylt(),
+                    prototypeSøknad.dato(9).utfylt()
                 ),
                 "dokumentasjon".alle(
                     prototypeSøknad.boolsk(5) er true hvisOppfylt {
@@ -371,20 +392,20 @@ internal class SøkerJsonBuilderTest {
                 prototypeSøknad.boolsk(2),
                 prototypeSøknad.boolsk(3),
                 prototypeSøknad.boolsk(4),
-                prototypeSøknad.boolsk(5),
+                prototypeSøknad.boolsk(5)
             ),
             Seksjon(
                 "seksjon2",
                 Rolle.søker,
                 prototypeSøknad.heltall(6),
                 prototypeSøknad.boolsk(7),
-                prototypeSøknad.heltall(67),
+                prototypeSøknad.heltall(67)
             ),
             Seksjon(
                 "navseksjon",
                 Rolle.nav,
                 prototypeSøknad.dato(8),
-                prototypeSøknad.dato(9),
+                prototypeSøknad.dato(9)
             ),
             Seksjon(
                 "dokumentasjon",
@@ -396,7 +417,7 @@ internal class SøkerJsonBuilderTest {
                 Rolle.søker,
                 prototypeSøknad.generator(1718),
                 prototypeSøknad.envalg(17),
-                prototypeSøknad.flervalg(18),
+                prototypeSøknad.flervalg(18)
             ),
             Seksjon(
                 "saksbehandler godkjenning",
@@ -412,7 +433,7 @@ internal class SøkerJsonBuilderTest {
                 "nav generator fakta",
                 Rolle.nav,
                 prototypeSøknad.generator(21),
-                prototypeSøknad.dato(20),
+                prototypeSøknad.dato(20)
             )
         )
         val prototypeFaktagrupper = Søknadprosess(
@@ -445,7 +466,7 @@ internal class SøkerJsonBuilderTest {
         forventetAntall: Int,
         generatorFaktumNavn: String,
         seksjon: String,
-        søkerJson: ObjectNode,
+        søkerJson: ObjectNode
     ) {
         assertEquals(
             forventetAntall,
@@ -460,7 +481,7 @@ internal class SøkerJsonBuilderTest {
         generatorFaktumNavn: String,
         seksjon: String,
         søkerJson: ObjectNode,
-        forventetAntall: Int = 1,
+        forventetAntall: Int = 1
     ) {
         assertEquals(
             forventetAntall,
