@@ -58,6 +58,7 @@ subprojects {
 
     ktlint {
         version.set(Ktlint.version)
+        verbose.set(true)
     }
 
     dependencies {

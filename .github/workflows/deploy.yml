@@ -18,15 +18,15 @@ jobs:
         with:
           java-version: '17.x'
 
-     # - name: Setup gradle dependency cache
-      #  uses: actions/cache@v2
-       # with:
-        #  path: |
-         #   ~/.gradle/caches
-          #  ~/.gradle/wrapper
-          #key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', 'buildSrc/src/main/kotlin/Constants.kt') }}
-          #restore-keys: |
-           # ${{ runner.os }}-gradle-
+      - name: Setup gradle dependency cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', 'buildSrc/src/main/kotlin/Constants.kt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Build with Gradle
         run: ./gradlew build --info
