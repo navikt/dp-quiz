@@ -198,7 +198,8 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
                 session.run(
                     queryOf(
                         """WITH inserted_id as (INSERT INTO navn (navn) values (?) returning id)
-                               INSERT INTO faktum (versjon_id, faktum_type, root_id, regel, navn_id ) SELECT ?, ?, ?, ?, id from inserted_id returning id""".trimMargin(),
+                               INSERT INTO faktum (versjon_id, faktum_type, root_id, regel, navn_id ) SELECT ?, ?, ?, ?, id from inserted_id returning id
+                        """.trimMargin(),
                         faktum.navn,
                         prosessVersjonId,
                         ClassKode[clazz],

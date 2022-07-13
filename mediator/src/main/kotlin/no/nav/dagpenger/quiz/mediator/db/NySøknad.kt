@@ -67,7 +67,8 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
             """INSERT INTO faktum_verdi
                                 (soknad_id, indeks, faktum_id)
                             VALUES (:soknadId, :indeks,
-                                    (SELECT id FROM faktum WHERE versjon_id = :internVersjonId AND root_id = :rootId))""".trimMargin()
+                                    (SELECT id FROM faktum WHERE versjon_id = :internVersjonId AND root_id = :rootId))
+            """.trimMargin()
         using(sessionOf(dataSource)) { session ->
             session.transaction { transactionalSession ->
                 val id = transactionalSession.run(

@@ -40,5 +40,6 @@ internal class SøknadSlettetServiceTest {
       "time": "2022-06-24T14:26:44.026033"
     }
   ]
-}""".trimMargin()
+}
+        """.trimMargin()
 }

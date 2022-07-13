@@ -368,7 +368,7 @@ class SøknadRecord : SøknadPersistence {
               AND soknad.uuid = ?
               AND faktum.root_id = ?
               AND faktum_verdi.indeks = ?
-                """.trimMargin(),
+            """.trimMargin(),
             søknad.uuid, rootId, indeks
         ).asExecute
 

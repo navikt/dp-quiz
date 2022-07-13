@@ -18,7 +18,6 @@ import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.deltre
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -117,37 +116,5 @@ class GeneratorFaktumTest {
         søknadprosess.dato("3.2").besvar(8.januar)
         søknadprosess.dato(4).besvar(5.januar)
         assertEquals(true, søknadprosess.rootSubsumsjon.resultat())
-    }
-
-    @Test
-    fun `Templatefaktum innenfor generatorfaktum kan ikke være avhengig av et annet templatefaktum`() {
-        val søknadPrototype = Søknad(
-            testversjon,
-            heltall faktum "periode antall" id 1 genererer 2 og 3,
-            dato faktum "fom" id 2,
-            dato faktum "tom" id 3 avhengerAv 2, // Dette forårsaker feilen
-            dato faktum "ønsket dato" id 4
-        )
-        val prototypeSubsumsjon = søknadPrototype generator 1 har "periode".deltre {
-            søknadPrototype.dato(4) mellom søknadPrototype.dato(2) og søknadPrototype.dato(3)
-        }
-
-        val prototypeSøknadprosess = Søknadprosess(
-            Seksjon("periode antall", Rolle.nav, søknadPrototype generator 1),
-            Seksjon("periode", Rolle.nav, søknadPrototype dato 2, søknadPrototype dato 3),
-            Seksjon("søknadsdato", Rolle.søker, søknadPrototype dato 4),
-        )
-        søknadprosessTestBygger = Versjon.Bygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
-        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
-
-        søknadprosess.generator(1).besvar(1)
-        søknadprosess.dato("2.1").besvar(LocalDate.now())
-        søknadprosess.dato("3.1").besvar(LocalDate.now())
-
-        assertEquals(LocalDate.now(), søknadprosess.dato("3.1").svar())
-
-        søknadprosess.dato("2.1").besvar(LocalDate.now().plusDays(1))
-
-        assertFalse(søknadprosess.dato("3.1").erBesvart())
     }
 }

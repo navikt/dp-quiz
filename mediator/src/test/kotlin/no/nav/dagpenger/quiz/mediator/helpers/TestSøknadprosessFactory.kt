@@ -9,17 +9,24 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 
-internal fun Søknad.testSøknadprosess(subsumsjon: Subsumsjon): Søknadprosess {
+internal fun Søknad.testSøknadprosess(
+    subsumsjon: Subsumsjon,
+    seksjon: Søknad.() -> List<Seksjon> = {
+        listOf(
+            Seksjon(
+                "seksjon",
+                Rolle.søker,
+                *(this.map { faktum -> faktum }.toTypedArray())
+            )
+        )
+    }
+): Søknadprosess {
     return Versjon.Bygger(
         this,
         subsumsjon,
         mapOf(
             Versjon.UserInterfaceType.Web to Søknadprosess(
-                Seksjon(
-                    "seksjon",
-                    Rolle.søker,
-                    *(this.map { faktum -> faktum }.toTypedArray())
-                )
+                *seksjon().toTypedArray()
             )
         )
     ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)

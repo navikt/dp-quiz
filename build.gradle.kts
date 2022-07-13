@@ -2,10 +2,11 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+
 plugins {
     application
     kotlin("jvm") version Kotlin.version
-    id(Spotless.spotless) version Spotless.version
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
 }
 
 repositories {
@@ -16,7 +17,6 @@ repositories {
 
 allprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
-    apply(plugin = Spotless.spotless)
     tasks.withType<KotlinCompile>().all {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
@@ -29,15 +29,6 @@ allprojects {
         testImplementation(Junit5.api)
     }
 
-    spotless {
-        kotlin {
-            ktlint(Ktlint.version)
-        }
-        kotlinGradle {
-            target("*.gradle.kts", "buildSrc/**/*.kt*")
-            ktlint(Ktlint.version)
-        }
-    }
 
     tasks.withType<Test> {
         useJUnitPlatform()
@@ -61,8 +52,13 @@ subprojects {
         maven("https://jitpack.io")
     }
 
-    tasks.named("compileKotlin") {
-        dependsOn("spotlessCheck")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    tasks.withType<KotlinCompile>().configureEach {
+        dependsOn("ktlintFormat")
+    }
+
+    ktlint {
+        version.set(Ktlint.version)
     }
 
     dependencies {

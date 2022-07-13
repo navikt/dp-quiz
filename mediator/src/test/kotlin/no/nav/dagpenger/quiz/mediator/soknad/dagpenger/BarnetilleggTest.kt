@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import kotlin.test.assertTrue
 
 internal class BarnetilleggTest {
     private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Barnetillegg.fakta())
@@ -34,7 +35,9 @@ internal class BarnetilleggTest {
     fun setup() {
         søknadprosess = søknad.testSøknadprosess(
             Barnetillegg.regeltre(søknad)
-        )
+        ) {
+            Barnetillegg.seksjon(this)
+        }
     }
 
     @Test
@@ -79,6 +82,10 @@ internal class BarnetilleggTest {
         søknadprosess.tekst("${`barn etternavn register`}.1").besvar(Tekst("Nordmann"))
         søknadprosess.dato("${`barn foedselsdato register`}.1").besvar(LocalDate.now().minusYears(1))
         søknadprosess.land("${`barn statsborgerskap register`}.1").besvar(Land("NOR"))
+        val seksjon = søknadprosess.nesteSeksjoner().first()
+        assertEquals("barnetillegg", seksjon.navn)
+        assertTrue(seksjon.contains(søknadprosess.boolsk("${`forsoerger du barnet register`}.1")))
+
         søknadprosess.boolsk("${`forsoerger du barnet register`}.1").besvar(false)
         assertEquals(true, søknadprosess.resultat())
 
