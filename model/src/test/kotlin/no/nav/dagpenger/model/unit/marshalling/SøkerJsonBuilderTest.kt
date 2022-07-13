@@ -16,7 +16,7 @@ import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.helpers.medSeksjon
+import no.nav.dagpenger.model.helpers.MedSøknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
@@ -178,28 +178,30 @@ internal class SøkerJsonBuilderTest {
         }
 
         søknadprosess.boolsk("7.2").besvar(true)
-        SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertAntallSeksjoner(2, it)
-            assertBesvarteFakta(1, "seksjon2", it)
-            assertUbesvartGeneratorFaktum(
-                forventetAntall = 0,
-                generatorFaktumNavn = "f67",
-                seksjon = "seksjon2",
-                søkerJson = it
-            )
-            assertBesvartGeneratorFaktum(4, "f67", "seksjon2", it)
-            assertSeksjonFerdig("seksjon2", it)
-            assertIkkeFerdig(it)
+        MedSøknad(SøkerJsonBuilder(søknadprosess).resultat()) {
+            antallSeksjoner = 2
+            seksjon("seksjon2") { ferdig = true }
+            seksjon("seksjon2") {
+                fakta {
+                    antall = 1
+                    generatorFaktum("f67") {
+                        besvart = true
+                        antall = 2
+                        svar(1) { antallBesvarte = 2 }
+                        svar(2) { antallBesvarte = 2 }
+                    }
+                }
+            }
         }
 
         søknadprosess.dato("8").besvar(LocalDate.now())
         søknadprosess.dato("9").besvar(LocalDate.now())
 
-        SøkerJsonBuilder(søknadprosess).resultat().also { søkerJson ->
-            søkerJson.medSeksjon("dokumentasjon") {
+        MedSøknad(SøkerJsonBuilder(søknadprosess).resultat()) {
+            seksjon("dokumentasjon") {
                 fakta {
-                    antall(4)
-                    antallReadOnly(3)
+                    antall = 4
+                    antallReadOnly = 3
                     faktum("f8") {
                         readOnly()
                         erType("localdate")
@@ -215,7 +217,7 @@ internal class SøkerJsonBuilderTest {
                     }
                     generatorFaktum("f67") {
                         readOnly()
-                        antall(2)
+                        antall = 2
                         svar(1) {
                             faktum("f6") {
                                 readOnly()
