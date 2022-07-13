@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
-import io.getunleash.FakeUnleash
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.intellij.lang.annotations.Language
@@ -20,9 +19,6 @@ internal class NySøknadTest {
     private companion object {
         private val testRapid = TestRapid()
         private val søknadPersistance = SøknadPersistenceFake()
-        private val unleash = FakeUnleash().also {
-            it.enableAll()
-        }
 
         init {
             AvslagPåMinsteinntektService(søknadPersistance, testRapid, SøknadEksempel.prosessVersjon)

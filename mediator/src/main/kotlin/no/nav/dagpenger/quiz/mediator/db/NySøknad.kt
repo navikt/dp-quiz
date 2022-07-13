@@ -22,12 +22,13 @@ import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.util.UUID
 
 class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) : SøknadVisitor {
-    private var søknadId = 0
     private var internVersjonId = 0
     private var rootId = 0
     private var indeks = 0
     private val faktumList = mutableListOf<Faktum<*>>()
     private var personId: UUID? = null
+    private lateinit var søknadUUID: UUID
+    private val faktumParametre = mutableListOf<Map<String, Any>>()
 
     init {
         if (SøknadUuid(søknad).ikkeEksisterer()) {
@@ -53,28 +54,42 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
 
     override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
         this.internVersjonId = hentInternId(prosessVersjon)
-        søknadId = using(sessionOf(dataSource)) { session ->
-            session.run(
-                queryOf( //language=PostgreSQL
-                    """
-                        INSERT INTO soknad(uuid, versjon_id, person_id, sesjon_type_id) 
-                        VALUES (:uuid, :versjon_id, :person_id, :sesjon_type_id) 
-                        RETURNING id
-                    """.trimIndent(),
-                    mapOf(
-                        "uuid" to uuid,
-                        "versjon_id" to internVersjonId,
-                        "person_id" to personId,
-                        "sesjon_type_id" to type.id
-                    )
-                ).map { it.int(1) }.asSingle
-            ) ?: throw IllegalArgumentException("failed to find søknadId")
-        }
+        this.søknadUUID = uuid
     }
 
     override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
         this.rootId = rootId
         this.indeks = indeks
+    }
+
+    override fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+        val faktumInsertStatement = //language=PostgreSQL
+            """INSERT INTO faktum_verdi
+                                (soknad_id, indeks, faktum_id)
+                            VALUES (:soknadId, :indeks,
+                                    (SELECT id FROM faktum WHERE versjon_id = :internVersjonId AND root_id = :rootId))""".trimMargin()
+        using(sessionOf(dataSource)) { session ->
+            session.transaction { transactionalSession ->
+                val id = transactionalSession.run(
+                    queryOf( //language=PostgreSQL
+                        """
+                         INSERT INTO soknad(uuid, versjon_id, person_id, sesjon_type_id) 
+                         VALUES (:uuid, :versjon_id, :person_id, :sesjon_type_id) 
+                         RETURNING id                        
+                        """.trimIndent(),
+                        mapOf(
+                            "uuid" to søknadUUID,
+                            "versjon_id" to internVersjonId,
+                            "person_id" to personId,
+                            "sesjon_type_id" to type.id
+                        )
+                    ).map { it.long(1) }.asSingle
+                )
+
+                val params = faktumParametre.map { originalParameter -> mapOf("soknadId" to id) + originalParameter }
+                transactionalSession.batchPreparedNamedStatement(faktumInsertStatement, params)
+            }
+        }
     }
 
     override fun <R : Comparable<R>> visitUtenSvar(
@@ -130,20 +145,13 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
 
     private fun skrivFaktumVerdi(faktum: Faktum<*>) {
         if (faktum in faktumList) return else faktumList.add(faktum)
-        using(sessionOf(dataSource)) { session ->
-            session.run(
-                queryOf( //language=PostgreSQL
-                    """INSERT INTO faktum_verdi
-                                (soknad_id, indeks, faktum_id)
-                            VALUES (?, ?,
-                                    (SELECT id FROM faktum WHERE versjon_id = ? AND root_id = ?))""".trimMargin(),
-                    søknadId,
-                    indeks,
-                    internVersjonId,
-                    rootId
-                ).asExecute
+        faktumParametre.add(
+            mapOf(
+                "indeks" to indeks,
+                "internVersjonId" to internVersjonId,
+                "rootId" to rootId
             )
-        }
+        )
     }
 
     private class SøknadUuid(søknad: Søknad) : SøknadVisitor {
