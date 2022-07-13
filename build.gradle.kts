@@ -29,7 +29,6 @@ allprojects {
         testImplementation(Junit5.api)
     }
 
-
     tasks.withType<Test> {
         useJUnitPlatform()
         testLogging {
