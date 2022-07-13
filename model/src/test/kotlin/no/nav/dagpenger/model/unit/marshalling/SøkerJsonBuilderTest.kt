@@ -18,7 +18,6 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.helpers.toPrettyJson
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
@@ -195,10 +194,7 @@ internal class SøkerJsonBuilderTest {
             assertEquals(4, dokumentasjonFakta.size())
             assertEquals(1, dokumentasjonFakta.count { it["readOnly"].asBoolean() == false })
             assertEquals(3, dokumentasjonFakta.count { it["readOnly"].asBoolean() == true })
-            val generator = dokumentasjonFakta.find { it["beskrivendeId"].asText() == "f67" }!!
 
-
-            println(dokumentasjonFakta)
             dokumentasjonFakta[3].assertGeneratorFaktaAsJson(
                 "67", "generator", "f67", listOf("søker"), true,
                 assertTemplates = listOf(
