@@ -33,7 +33,7 @@ internal fun JsonNode.assertFaktaAsJson(
             actual.size,
             "$expectedBeskrivendeId har $actual, forventet $expectedRoller "
         )
-        Assertions.assertTrue(expectedRoller.containsAll<String>(actual)) { "$expectedBeskrivendeId har $actual, forventet $expectedRoller " }
+        assertTrue(expectedRoller.containsAll<String>(actual)) { "$expectedBeskrivendeId har $actual, forventet $expectedRoller " }
     }
     assertSvar?.let { assert -> assert(this["svar"]) }
 }
@@ -81,5 +81,5 @@ internal fun JsonNode.assertValgFaktaAsJson(
     this.assertFaktaAsJson(expectedId, expectedClass, expectedNavn, expectedRoller, readOnly, assertSvar)
     val expectedGyldigeValgMedPrefix = expectedGyldigeValg.map { "$expectedNavn.$it" }
     val actual: List<String> = this.get("gyldigeValg").toSet().map { it.asText() }
-    Assertions.assertTrue(expectedGyldigeValgMedPrefix.containsAll<String>(actual)) { "\nExpected: $expectedGyldigeValg\n  Actual: $actual" }
+    assertTrue(expectedGyldigeValgMedPrefix.containsAll<String>(actual)) { "\nExpected: $expectedGyldigeValg\n  Actual: $actual" }
 }

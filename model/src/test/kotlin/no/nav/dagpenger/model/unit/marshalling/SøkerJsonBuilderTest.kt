@@ -84,9 +84,18 @@ internal class SøkerJsonBuilderTest {
     fun `SøkerJsonBuilder returnerer besvarte fakta og neste ubesvarte faktum`() {
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertMetadata(it)
-            assertAntallSeksjoner(1, it)
-            val fakta = it.finnSeksjon("seksjon1")["fakta"]
-            fakta[0].assertFaktaAsJson("1", "boolean", "f1", listOf("søker"))
+        }
+
+        MedSøknad(søknadprosess){
+            antallSeksjoner = 1
+            seksjon("seksjon1"){
+                fakta {
+                    boolsk("f1"){
+                        erBesvart(false)
+                        harRoller("søker")
+                    }
+                }
+            }
         }
 
         søknadprosess.boolsk(1).besvar(true)
@@ -170,22 +179,29 @@ internal class SøkerJsonBuilderTest {
         }
 
         søknadprosess.heltall("6.2").besvar(19)
-        SøkerJsonBuilder(søknadprosess).resultat().also {
-            assertAntallSeksjoner(2, it)
-            assertBesvarteFakta(1, "seksjon2", it)
-            assertUbesvartGeneratorFaktum("f67", "seksjon2", it)
-            assertBesvartGeneratorFaktum(3, "f67", "seksjon2", it)
+        MedSøknad(søknadprosess) {
+            antallSeksjoner = 2
+            seksjon("seksjon2") {
+                fakta {
+                    antallBesvarte = 1
+                    generator("f67") {
+                        antall = 2
+                        svar(1) { antallBesvarte = 2 }
+                        svar(2) { antallBesvarte = 1 }
+                    }
+                }
+            }
         }
 
         søknadprosess.boolsk("7.2").besvar(true)
-        MedSøknad(SøkerJsonBuilder(søknadprosess).resultat()) {
+        MedSøknad(søknadprosess) {
             antallSeksjoner = 2
             seksjon("seksjon2") { ferdig = true }
             seksjon("seksjon2") {
                 fakta {
                     antall = 1
-                    generatorFaktum("f67") {
-                        besvart = true
+                    generator("f67") {
+                        erBesvart()
                         antall = 2
                         svar(1) { antallBesvarte = 2 }
                         svar(2) { antallBesvarte = 2 }
@@ -197,45 +213,42 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.dato("8").besvar(LocalDate.now())
         søknadprosess.dato("9").besvar(LocalDate.now())
 
-        MedSøknad(SøkerJsonBuilder(søknadprosess).resultat()) {
+        MedSøknad(søknadprosess) {
             seksjon("dokumentasjon") {
                 fakta {
                     antall = 4
                     antallReadOnly = 3
-                    faktum("f8") {
-                        readOnly()
-                        erType("localdate")
+                    dato("f8") {
+                        erReadOnly()
                     }
-                    faktum("f5") {
-                        readOnly()
-                        erType("boolean")
-                        besvartMed(true)
+                    boolsk("f5") {
+                        erReadOnly()
+                        erBesvartMed(true)
                     }
-                    faktum("f15") {
-                        readOnly(false)
-                        erType("dokument")
+                    dokument("f15") {
+                        erReadOnly(false)
                     }
-                    generatorFaktum("f67") {
-                        readOnly()
+                    generator("f67") {
+                        erReadOnly()
                         antall = 2
                         svar(1) {
-                            faktum("f6") {
-                                readOnly()
-                                besvartMed(21)
+                            heltall("f6") {
+                                erReadOnly()
+                                erBesvartMed(21)
                             }
-                            faktum("f7") {
-                                readOnly()
-                                besvartMed(true)
+                            boolsk("f7") {
+                                erReadOnly()
+                                erBesvartMed(true)
                             }
                         }
                         svar(2) {
-                            faktum("f6") {
-                                readOnly()
-                                besvartMed(19)
+                            heltall("f6") {
+                                erReadOnly()
+                                erBesvartMed(19)
                             }
-                            faktum("f7") {
-                                readOnly()
-                                besvartMed(true)
+                            boolsk("f7") {
+                                erReadOnly()
+                                erBesvartMed(true)
                             }
                         }
                     }
