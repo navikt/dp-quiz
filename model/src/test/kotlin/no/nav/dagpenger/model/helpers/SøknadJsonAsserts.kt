@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon.navn
 import no.nav.dagpenger.model.unit.marshalling.finnSeksjon
 import kotlin.test.assertEquals
+@DslMarker
+annotation class JsonAssertMarker
 
+@JsonAssertMarker
 class MedSeksjon(private val seksjon: JsonNode) {
     fun fakta(block: MedFakta.() -> Unit) = fakta(true, block)
     fun fakta(sjekkAlle: Boolean, block: MedFakta.() -> Unit) {
@@ -21,6 +24,7 @@ class MedSeksjon(private val seksjon: JsonNode) {
     }
 }
 
+@JsonAssertMarker
 class MedFakta(private val fakta: JsonNode) {
     var faktaSomIkkeErSjekket = fakta.map { it["beskrivendeId"].asText() }.toMutableSet()
 
@@ -50,6 +54,7 @@ class MedFakta(private val fakta: JsonNode) {
     }
 }
 
+@JsonAssertMarker
 open class MedFaktum(val faktum: JsonNode) {
     fun readOnly(readOnly: Boolean = true) {
         assertEquals(readOnly, faktum["readOnly"].asBoolean(), "Faktum var ikke readOnly")
@@ -63,6 +68,7 @@ open class MedFaktum(val faktum: JsonNode) {
     fun besvartMed(int: Int) = assertEquals(int, faktum["svar"].asInt())
 }
 
+@JsonAssertMarker
 class MedGeneratorFaktum(faktum: JsonNode) : MedFaktum(faktum) {
     internal fun assertGenerator() =
         assertEquals("generator", faktum["type"].asText(), "Faktum $navn er ikke en generator")
