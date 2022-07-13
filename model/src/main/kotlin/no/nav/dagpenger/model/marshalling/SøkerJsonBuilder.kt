@@ -109,7 +109,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
         genererteFaktum: Set<Faktum<*>>
     ) {
         if (!::gjeldendeFakta.isInitialized) return
-        avhengigheter.addAll(genererteFaktum)
+        avhengigheter.addAll(genererteFaktum + faktum)
     }
 
     override fun <R : Comparable<R>> postVisitAvhengerAvFakta(
