@@ -1,6 +1,5 @@
 package no.nav.dagpenger.model.unit.marshalling
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
@@ -36,10 +35,8 @@ import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -73,7 +70,10 @@ internal class SøkerJsonBuilderTest {
             envalg faktum "f17" id 17 med "envalg1" med "envalg2",
             flervalg faktum "f18" id 18 med "flervalg1" med "flervalg2",
             heltall faktum "f1718" id 1718 genererer 17 og 18,
-            land faktum "f19" gruppe "eøs" med listOf(Land("SWE")) gruppe "norge-jan-mayen" med listOf(Land("NOR")) id 19,
+            land faktum "f19" gruppe "eøs" med listOf(Land("SWE")) gruppe "norge-jan-mayen" med listOf(
+                Land("NOR"),
+                Land("SJM")
+            ) id 19,
             dato faktum "f20" id 20,
             heltall faktum "f21" genererer 20 id 21
         )
@@ -278,7 +278,15 @@ internal class SøkerJsonBuilderTest {
             seksjon("Gyldige land") {
                 fakta {
                     land("f19") {
-                        harGrupper("f19.gruppe.eøs", "f19.gruppe.norge-jan-mayen")
+                        harLand("NOR", "SWE")
+                        grupper(sjekkAlle = true) {
+                            gruppe("f19.gruppe.eøs") {
+                                harLand("SWE")
+                            }
+                            gruppe("f19.gruppe.norge-jan-mayen") {
+                                harLand("NOR", "SJM")
+                            }
+                        }
                     }
                 }
             }
@@ -296,23 +304,19 @@ internal class SøkerJsonBuilderTest {
     fun `Boolske fakta skal ha en beskrivendeId for hvert av de to gyldige valgene`() {
         val regel = søkerSubsumsjon()
         val søknadprosess = søknadprosess(regel)
-
-        SøkerJsonBuilder(søknadprosess).resultat().also { jsonUtenSvar ->
-            jsonUtenSvar["seksjoner"][0]["fakta"][0].assertBoolskFaktumHarGyldigeValg("f1")
+        // Sjekk uten svar
+        MedSøknad(søknadprosess) {
+            seksjon("seksjon1") {
+                fakta { boolsk("f1") { harGyldigeValg("f1.svar.ja", "f1.svar.nei") } }
+            }
         }
-
+        // Sjekk med svar
         søknadprosess.boolsk(1).besvar(true)
-        SøkerJsonBuilder(søknadprosess).resultat().also { jsonMedSvar ->
-            assertBesvarteFakta(1, "seksjon1", jsonMedSvar)
-            jsonMedSvar["seksjoner"][0]["fakta"][0].assertBoolskFaktumHarGyldigeValg("f1")
+        MedSøknad(søknadprosess) {
+            seksjon("seksjon1") {
+                fakta(sjekkAlle = false) { boolsk("f1") { harGyldigeValg("f1.svar.ja", "f1.svar.nei") } }
+            }
         }
-    }
-
-    private fun JsonNode.assertBoolskFaktumHarGyldigeValg(expectedBaseBeskrivendeId: String) {
-        val expectedGyldigeValg = listOf("svar.ja", "svar.nei").map { "$expectedBaseBeskrivendeId.$it" }
-        val actual: List<String> = this.get("gyldigeValg").toSet().map { it.asText() }
-        assertEquals(2, actual.size)
-        Assertions.assertTrue(expectedGyldigeValg.containsAll<String>(actual))
     }
 
     private fun søkerSubsumsjon(): Subsumsjon {
@@ -431,78 +435,6 @@ internal class SøkerJsonBuilderTest {
             prototypeSubsumsjon,
             mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
         ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
-    }
-
-    private fun assertFerdig(søkerJson: ObjectNode) {
-        assertTrue(
-            søkerJson["ferdig"].asBoolean(),
-            "Forventet at Dagpenger søknadsprosessen var ferdig. Mangler svar på ${
-            søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
-            }"
-        )
-    }
-
-    private fun assertIkkeFerdig(søkerJson: ObjectNode) {
-        assertThrows<AssertionError> { assertFerdig(søkerJson) }
-    }
-
-    private fun assertBesvartGeneratorFaktum(
-        forventetAntall: Int,
-        generatorFaktumNavn: String,
-        seksjon: String,
-        søkerJson: ObjectNode
-    ) {
-        assertEquals(
-            forventetAntall,
-            søkerJson["seksjoner"].find { it["beskrivendeId"].asText() == seksjon }?.get("fakta")
-                ?.find { it["beskrivendeId"].asText() == generatorFaktumNavn }?.get("svar")?.flatten()?.filter {
-                    it.has("svar")
-                }?.size
-        )
-    }
-
-    private fun assertUbesvartGeneratorFaktum(
-        generatorFaktumNavn: String,
-        seksjon: String,
-        søkerJson: ObjectNode,
-        forventetAntall: Int = 1
-    ) {
-        assertEquals(
-            forventetAntall,
-            søkerJson["seksjoner"].find { it["beskrivendeId"].asText() == seksjon }?.get("fakta")
-                ?.find { it["beskrivendeId"].asText() == generatorFaktumNavn }?.get("svar")?.flatten()?.filterNot {
-                    it.has("svar")
-                }?.size
-        )
-    }
-
-    private fun assertUbesvartFaktum(seksjon: String, søkerJson: ObjectNode) {
-        assertEquals(
-            1,
-            søkerJson["seksjoner"].find { it["beskrivendeId"].asText() == seksjon }?.get("fakta")?.filterNot {
-                it.has("svar")
-            }?.size
-        )
-    }
-
-    private fun assertBesvarteFakta(forventetAntall: Int, seksjon: String, søkerJson: ObjectNode) {
-        assertEquals(
-            forventetAntall,
-            søkerJson["seksjoner"].find { it["beskrivendeId"].asText() == seksjon }?.get("fakta")?.filter {
-                it.has("svar")
-            }?.size
-        )
-    }
-
-    private fun assertSeksjonFerdig(seksjon: String, søkerJson: ObjectNode) {
-        assertTrue(
-            søkerJson["seksjoner"].find { it["beskrivendeId"].asText() == seksjon }?.get("ferdig")
-                ?.asBoolean() == true
-        ) { "Forventet at $seksjon er ferdig " }
-    }
-
-    private fun assertAntallSeksjoner(forventetAntall: Int, søkerJson: ObjectNode) {
-        assertEquals(forventetAntall, søkerJson["seksjoner"].size())
     }
 
     private fun assertMetadata(søkerJson: ObjectNode) {

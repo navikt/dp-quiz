@@ -5,6 +5,8 @@ import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.unit.marshalling.finnSeksjon
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import kotlin.test.assertContains
 
 @DslMarker
 internal annotation class JsonAssertMarker
@@ -83,25 +85,17 @@ internal class MedFakta(private val fakta: JsonNode) {
         it.erType("int")
     }
 
+    fun envalg(navn: String, block: MedFaktum.() -> Unit) = faktum(navn, block).also {
+        it.erType("envalg")
+    }
+
+    fun flervalg(navn: String, block: MedFaktum.() -> Unit) = faktum(navn, block).also {
+        it.erType("flervalg")
+    }
+
     fun land(navn: String, block: MedLandFaktum.() -> Unit) {
         val faktum = MedLandFaktum(fakta.finnFaktum(navn))
         faktum.erType("land")
-
-        block(faktum)
-        faktumSomIkkeErSjekket.remove(navn)
-    }
-
-    fun envalg(navn: String, block: MedEnvalgFaktum.() -> Unit) {
-        val faktum = MedEnvalgFaktum(fakta.finnFaktum(navn))
-        faktum.erType("envalg")
-
-        block(faktum)
-        faktumSomIkkeErSjekket.remove(navn)
-    }
-
-    fun flervalg(navn: String, block: MedFlervalgFaktum.() -> Unit) {
-        val faktum = MedFlervalgFaktum(fakta.finnFaktum(navn))
-        faktum.erType("flervalg")
 
         block(faktum)
         faktumSomIkkeErSjekket.remove(navn)
@@ -146,7 +140,13 @@ internal open class MedFaktum(val faktum: JsonNode) {
 
     fun erBesvartMed(boolsk: Boolean) = assertEquals(boolsk, faktum["svar"].asBoolean())
 
-    open fun erBesvartMed(antallSvar: Int) = assertEquals(antallSvar, faktum["svar"].asInt(), "Faktum $navn er besvart med")
+    open fun erBesvartMed(antallSvar: Int) =
+        assertEquals(antallSvar, faktum["svar"].asInt(), "Faktum $navn er besvart med")
+
+    fun harGyldigeValg(vararg valg: String) = harGyldigeValg(valg.toList())
+    private fun harGyldigeValg(valg: List<String>) =
+        faktum.get("gyldigeValg").toSet().map { it.asText() }
+            .also { assertEquals(valg, it, "Valgfaktum ${this.navn} har ikke riktige valg") }
 }
 
 @JsonAssertMarker
@@ -158,26 +158,53 @@ internal class MedGeneratorFaktum(faktum: JsonNode) : MedFaktum(faktum) {
     fun templates(block: MedFakta.() -> Unit) = MedFakta(templates).also { block(it) }
 
     override fun erBesvartMed(antallSvar: Int) = assertEquals(antallSvar, svar.size())
+
     fun alle(block: MedFaktum.() -> Unit) = svar.flatten().forEach { block(MedFaktum(it)) }
 }
 
 @JsonAssertMarker
-internal open class MedEnvalgFaktum(faktum: JsonNode) : MedFaktum(faktum) {
-    fun harGyldigeValg(vararg valg: String) = harGyldigeValg(valg.toList())
-    private fun harGyldigeValg(valg: List<String>) =
-        faktum.get("gyldigeValg").toSet().map { it.asText() }
-            .also { assertEquals(valg, it, "Valgfaktum ${this.navn} har ikke riktige valg") }
-}
-
-@JsonAssertMarker
-internal class MedFlervalgFaktum(faktum: JsonNode) : MedEnvalgFaktum(faktum)
-
-@JsonAssertMarker
 internal open class MedLandFaktum(faktum: JsonNode) : MedFaktum(faktum) {
-    fun harGrupper(vararg valg: String) = harGrupper(valg.toList())
-    private fun harGrupper(grupper: List<String>) =
-        faktum.get("grupper").toSet().map { it["gruppeId"].asText() }
-            .also { assertEquals(grupper, it, "Landfaktum ${this.navn} har ikke riktige grupper") }
+    fun harLand(vararg land: String) {
+        val alleLand = faktum.get("gyldigeLand").map { it.asText() }
+        land.toList().forEach {
+            assertContains(alleLand, it, "Landfaktum $navn mangler land $it")
+        }
+    }
+
+    fun grupper(sjekkAlle: Boolean, block: MedGruppeLandFaktum.() -> Unit) {
+        val gruppeland = MedGruppeLandFaktum(faktum)
+        block(gruppeland)
+        if (sjekkAlle) gruppeland.sjekkAlle()
+    }
+
+    @JsonAssertMarker
+    internal inner class MedGruppeLandFaktum(
+        faktum: JsonNode
+    ) {
+        private val sjekkaGrupper = mutableListOf<String>()
+        private val grupper = faktum["grupper"].associate { fakta ->
+            val navn = fakta["gruppeId"].asText()
+            navn to fakta["land"].map { it.asText() }
+        }
+
+        fun gruppe(gruppeNavn: String, block: MedGruppeFaktum.() -> Unit) {
+            assertTrue(grupper.containsKey(gruppeNavn), "Landfaktum ${this@MedLandFaktum.navn} mangler gruppe $gruppeNavn")
+            block(MedGruppeFaktum(grupper[gruppeNavn]!!))
+            sjekkaGrupper.add(gruppeNavn)
+        }
+
+        internal fun sjekkAlle() = assertEquals(grupper.keys.toList(), sjekkaGrupper, "Landfaktum ${this@MedLandFaktum.navn} mangler sjekk for grupper")
+
+        internal inner class MedGruppeFaktum(
+            private val gruppeland: List<String>
+        ) {
+            fun harLand(vararg land: String) {
+                land.toList().forEach {
+                    assertContains(gruppeland, it, "Landfaktum $land mangler land $it")
+                }
+            }
+        }
+    }
 }
 
 private fun JsonNode.finnFaktum(navn: String): JsonNode {
