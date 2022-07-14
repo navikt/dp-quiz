@@ -59,8 +59,9 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
                 landgrupper
             ).also { lagdFaktum ->
                 søknad.add(lagdFaktum)
+                // TODO: Vi bør prøve å lage en test hvor det er nødvendig å sette avhengigheter begge veier her
                 avhengerAvFakta.toList().deepCopy(indeks, søknad).forEach { it.leggTilAvhengighet(lagdFaktum) }
-                avhengigeFakta.toList().deepCopy(indeks, søknad).forEach { lagdFaktum.leggTilAvhengighet(it) }
+                // avhengigeFakta.toList().deepCopy(indeks, søknad).forEach { lagdFaktum.leggTilAvhengighet(it) }
             }
     }
 
@@ -84,8 +85,9 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
                     landgrupper
                 ).also { lagdFaktum ->
                     seksjon.add(lagdFaktum)
+                    // TODO: Vi bør prøve å lage en test hvor det er nødvendig å sette avhengigheter begge veier her
                     avhengerAvFakta.toList().deepCopy(indeks, søknad).forEach { it.leggTilAvhengighet(lagdFaktum) }
-                    avhengigeFakta.toList().deepCopy(indeks, søknad).forEach { lagdFaktum.leggTilAvhengighet(it) }
+                    // avhengigeFakta.toList().deepCopy(indeks, søknad).forEach { lagdFaktum.leggTilAvhengighet(it) }
                 }
             }
         }

@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.unit.faktum
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
@@ -11,6 +12,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
+import no.nav.dagpenger.model.visitor.FaktumVisitor
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -70,5 +72,17 @@ internal class AvhengigFaktumTest {
         søknadprosess.dato("2.1").besvar(LocalDate.now().plusDays(1))
 
         kotlin.test.assertFalse(søknadprosess.dato("3.1").erBesvart())
+        val visitor = AvhengigheterVisitor(søknadprosess.dato("2.1"))
+        assertEquals(1, visitor.avhengigheter.size)
+    }
+}
+
+class AvhengigheterVisitor(faktum: Faktum<*>) : FaktumVisitor {
+    lateinit var avhengigheter: Set<Faktum<*>>
+    init {
+        faktum.accept(this)
+    }
+    override fun <R : Comparable<R>> postVisitAvhengigeFakta(faktum: Faktum<R>, avhengigeFakta: MutableSet<Faktum<*>>) {
+        avhengigheter = avhengigeFakta
     }
 }
