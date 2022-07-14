@@ -83,19 +83,21 @@ internal class EgenNæringTest {
     }
 
     @Test
-    fun `Avhengigheter driver egen næring`() {
+    fun `Avhengigheter ved driver egen næring`() {
         søknadprosess.boolsk(EgenNæring.`driver du egen naering`).besvar(true)
         søknadprosess.generator(EgenNæring.`egen naering organisasjonsnummer liste`).besvar(1)
         søknadprosess.heltall("${EgenNæring.`egen naering organisasjonsnummer`}.1").besvar(123)
         assertTrue(søknadprosess.heltall("${EgenNæring.`egen naering organisasjonsnummer`}.1").erBesvart())
 
         søknadprosess.boolsk(EgenNæring.`driver du egen naering`).besvar(false)
+
+        // Nå blir generatoren ubesvart og alle templates tilbakestilles og fjernes.
         assertFalse(søknadprosess.generator(EgenNæring.`egen naering organisasjonsnummer liste`).erBesvart())
         assertThrows<IllegalArgumentException> { søknadprosess.heltall("${EgenNæring.`egen naering organisasjonsnummer`}.1") }
     }
 
     @Test
-    fun `Avhengigheter eget gårdsbruk`() {
+    fun `Avhengigheter ved eget gårdsbruk`() {
         val driverEgetGårdsbruk = søknadprosess.boolsk(EgenNæring.`driver du eget gaardsbruk`)
         val gårdsbrukOrgnummer = søknadprosess.heltall(EgenNæring.`eget gaardsbruk organisasjonsnummer`)
         val typeGårdsbruk = søknadprosess.flervalg(EgenNæring.`eget gaardsbruk type gaardsbruk`)
@@ -117,14 +119,14 @@ internal class EgenNæringTest {
         arbeidstimer.besvar(40.5)
         hvordanBeregnet.besvar(Tekst("forklaring"))
 
-        erBesvart(gårdsbrukOrgnummer, typeGårdsbruk, eier, årForArbeidstimer, arbeidstimer, hvordanBeregnet)
+        assertErBesvarte(gårdsbrukOrgnummer, typeGårdsbruk, eier, årForArbeidstimer, arbeidstimer, hvordanBeregnet)
 
         driverEgetGårdsbruk.besvar(false)
-        erUbesvart(gårdsbrukOrgnummer, typeGårdsbruk, eier, årForArbeidstimer, arbeidstimer, hvordanBeregnet)
+        assertErUbesvarte(gårdsbrukOrgnummer, typeGårdsbruk, eier, årForArbeidstimer, arbeidstimer, hvordanBeregnet)
     }
 
     @Test
-    fun `Avhengigheter eier av gårdsbruket`() {
+    fun `Avhengigheter ved eier av gårdsbruket`() {
         val eier = søknadprosess.flervalg(EgenNæring.`eget gaardsbruk hvem eier`)
         val andelInntektSelv = søknadprosess.desimaltall(EgenNæring.`eget gaardsbruk jeg andel inntekt`)
         val andelInntektSamboerEktefelle =
@@ -138,18 +140,18 @@ internal class EgenNæringTest {
         )
         andelInntektSelv.besvar(60.0)
         andelInntektSamboerEktefelle.besvar(40.0)
-        erBesvart(andelInntektSelv, andelInntektSamboerEktefelle)
+        assertErBesvarte(andelInntektSelv, andelInntektSamboerEktefelle)
 
         eier.besvar(Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.andre"))
-        erUbesvart(andelInntektSelv, andelInntektSamboerEktefelle)
+        assertErUbesvarte(andelInntektSelv, andelInntektSamboerEktefelle)
     }
 
-    private fun erBesvart(vararg fakta: Faktum<*>) =
+    private fun assertErBesvarte(vararg fakta: Faktum<*>) =
         fakta.forEach { faktum ->
             assertTrue(faktum.erBesvart())
         }
 
-    private fun erUbesvart(vararg fakta: Faktum<*>) =
+    private fun assertErUbesvarte(vararg fakta: Faktum<*>) =
         fakta.forEach { faktum ->
             assertFalse(faktum.erBesvart())
         }

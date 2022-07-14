@@ -87,63 +87,69 @@ object Arbeidsforhold : DslFaktaseksjon {
             med "svar.varierende"
             med "svar.kombinasjon"
             med "svar.ingen-passer" id `type arbeidstid`,
-        boolsk faktum "faktum.arbeidsforhold.kjent-antall-timer-jobbet" id `arbeidsforhold kjent antall timer jobbet`,
-        desimaltall faktum "faktum.arbeidsforhold.antall-timer-jobbet" id `arbeidsforhold antall timer jobbet`,
-        boolsk faktum "faktum.arbeidsforhold.har-tilleggsopplysninger" id `arbeidsforhold har tilleggsopplysninger`,
-        tekst faktum "faktum.arbeidsforhold.tilleggsopplysninger" id `arbeidsforhold tilleggsopplysninger`,
-        dato faktum "faktum.arbeidsforhold.startdato-arbeidsforhold" id `arbeidsforhold startdato arbeidsforhold`,
-        dato faktum "faktum.arbeidsforhold.arbeidstid-redusert-fra-dato" id `arbeidsforhold arbeidstid redusert fra dato`,
+        boolsk faktum "faktum.arbeidsforhold.kjent-antall-timer-jobbet" id `arbeidsforhold kjent antall timer jobbet` avhengerAv `arbeidsforhold endret`,
+        desimaltall faktum "faktum.arbeidsforhold.antall-timer-jobbet" id `arbeidsforhold antall timer jobbet` avhengerAv `arbeidsforhold kjent antall timer jobbet`,
+        boolsk faktum "faktum.arbeidsforhold.har-tilleggsopplysninger" id `arbeidsforhold har tilleggsopplysninger` avhengerAv `arbeidsforhold endret`,
+        tekst faktum "faktum.arbeidsforhold.tilleggsopplysninger" id `arbeidsforhold tilleggsopplysninger` avhengerAv `arbeidsforhold har tilleggsopplysninger`,
+        dato faktum "faktum.arbeidsforhold.startdato-arbeidsforhold" id `arbeidsforhold startdato arbeidsforhold` avhengerAv `arbeidsforhold endret`,
+        dato faktum "faktum.arbeidsforhold.arbeidstid-redusert-fra-dato" id `arbeidsforhold arbeidstid redusert fra dato` avhengerAv `arbeidsforhold endret`,
         envalg faktum "faktum.arbeidsforhold.midlertidig-med-kontraktfestet-sluttdato"
             med "svar.ja"
             med "svar.nei"
-            med "svar.vet-ikke" id `arbeidsforhold midlertidig med kontraktfestet sluttdato`,
-        dato faktum "faktum.arbeidsforhold.kontraktfestet-sluttdato" id `arbeidsforhold kontraktfestet sluttdato`,
-        dato faktum "faktum.arbeidsforhold.midlertidig-arbeidsforhold-oppstartsdato" id `arbeidsforhold midlertidig arbeidsforhold oppstartsdato`,
-        boolsk faktum "faktum.arbeidsforhold.permittertert-fra-fiskeri-naering" id `arbeidsforhold permittertert fra fiskeri naering`,
-        periode faktum "faktum.arbeidsforhold.varighet" id `arbeidsforhold varighet`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-mistet-jobb" id `arbeidsforhold vet du antall timer foer mistet jobb`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-konkurs" id `arbeidsforhold vet du antall timer foer konkurs`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-kontrakt-utgikk" id `arbeidsforhold vet du antall timer foer kontrakt utgikk`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-du-sa-opp" id `arbeidsforhold vet du antall timer foer du sa opp`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-redusert-arbeidstid" id `arbeidsforhold vet du antall timer foer redusert arbeidstid`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-permittert" id `arbeidsforhold vet du antall timer foer permittert`,
-        desimaltall faktum "faktum.arbeidsforhold.antall-timer-dette-arbeidsforhold" id `arbeidsforhold antall timer dette arbeidsforhold`,
-        periode faktum "faktum.arbeidsforhold.permittert-periode" id `arbeidsforhold permittert periode`,
-        heltall faktum "faktum.arbeidsforhold.permittert-prosent" id `arbeidsforhold permittert prosent`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-lonnsplikt-periode" id `arbeidsforhold vet du lonnsplikt periode`,
-        periode faktum "faktum.arbeidsforhold.naar-var-lonnsplikt-periode" id `arbeidsforhold naar var lonnsplikt periode`,
-        tekst faktum "faktum.arbeidsforhold.aarsak-til-du-sa-opp" id `arbeidsforhold aarsak til du sa opp`,
-        boolsk faktum "faktum.arbeidsforhold.tilbud-om-forlengelse-eller-annen-stilling" id `arbeidsforhold tilbud om forlengelse eller annen stilling`,
+            med "svar.vet-ikke" id `arbeidsforhold midlertidig med kontraktfestet sluttdato` avhengerAv `arbeidsforhold endret`,
+        dato faktum "faktum.arbeidsforhold.kontraktfestet-sluttdato" id `arbeidsforhold kontraktfestet sluttdato` avhengerAv `arbeidsforhold midlertidig med kontraktfestet sluttdato`,
+        dato faktum "faktum.arbeidsforhold.midlertidig-arbeidsforhold-oppstartsdato" id `arbeidsforhold midlertidig arbeidsforhold oppstartsdato` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.permittertert-fra-fiskeri-naering" id `arbeidsforhold permittertert fra fiskeri naering` avhengerAv `arbeidsforhold endret`,
+        periode faktum "faktum.arbeidsforhold.varighet" id `arbeidsforhold varighet` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-mistet-jobb" id `arbeidsforhold vet du antall timer foer mistet jobb` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-konkurs" id `arbeidsforhold vet du antall timer foer konkurs` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-kontrakt-utgikk" id `arbeidsforhold vet du antall timer foer kontrakt utgikk` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-du-sa-opp" id `arbeidsforhold vet du antall timer foer du sa opp` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-redusert-arbeidstid" id `arbeidsforhold vet du antall timer foer redusert arbeidstid` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-permittert" id `arbeidsforhold vet du antall timer foer permittert` avhengerAv `arbeidsforhold endret`,
+        desimaltall faktum "faktum.arbeidsforhold.antall-timer-dette-arbeidsforhold" id `arbeidsforhold antall timer dette arbeidsforhold`
+            avhengerAv `arbeidsforhold vet du antall timer foer mistet jobb`
+            og `arbeidsforhold vet du antall timer foer kontrakt utgikk`
+            og `arbeidsforhold vet du antall timer foer du sa opp`
+            og `arbeidsforhold vet du antall timer foer konkurs`
+            og `arbeidsforhold vet du antall timer foer redusert arbeidstid`
+            og `arbeidsforhold vet du antall timer foer permittert`,
+        periode faktum "faktum.arbeidsforhold.permittert-periode" id `arbeidsforhold permittert periode` avhengerAv `arbeidsforhold endret`,
+        heltall faktum "faktum.arbeidsforhold.permittert-prosent" id `arbeidsforhold permittert prosent` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-lonnsplikt-periode" id `arbeidsforhold vet du lonnsplikt periode` avhengerAv `arbeidsforhold endret`,
+        periode faktum "faktum.arbeidsforhold.naar-var-lonnsplikt-periode" id `arbeidsforhold naar var lonnsplikt periode` avhengerAv `arbeidsforhold vet du lonnsplikt periode`,
+        tekst faktum "faktum.arbeidsforhold.aarsak-til-du-sa-opp" id `arbeidsforhold aarsak til du sa opp` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.tilbud-om-forlengelse-eller-annen-stilling" id `arbeidsforhold tilbud om forlengelse eller annen stilling` avhengerAv `arbeidsforhold endret`,
         envalg faktum "faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling"
             med "svar.ja"
             med "svar.nei"
-            med "svar.ikke-svart" id `arbeidsforhold svar paa forlengelse eller annen stilling`,
-        tekst faktum "faktum.arbeidsforhold.aarsak-til-ikke-akseptert-tilbud" id `arbeidsforhold aarsak til ikke akseptert tilbud`,
-        boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler" id `arbeidsforhold soke forskudd lonnsgarantimidler`,
-        boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler-i-tillegg-til-dagpenger" id `arbeidsforhold soke forskudd lonnsgarantimidler i tillegg til dagpenger`,
-        boolsk faktum "faktum.arbeidsforhold.godta-trekk-fra-nav-av-forskudd-fra-lonnsgarantimidler" id `arbeidsforhold godta trekk fra nav av forskudd fra lonnsgarantimidler`,
+            med "svar.ikke-svart" id `arbeidsforhold svar paa forlengelse eller annen stilling` avhengerAv `arbeidsforhold tilbud om forlengelse eller annen stilling`,
+        tekst faktum "faktum.arbeidsforhold.aarsak-til-ikke-akseptert-tilbud" id `arbeidsforhold aarsak til ikke akseptert tilbud` avhengerAv `arbeidsforhold svar paa forlengelse eller annen stilling`,
+        boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler" id `arbeidsforhold soke forskudd lonnsgarantimidler` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler-i-tillegg-til-dagpenger" id `arbeidsforhold soke forskudd lonnsgarantimidler i tillegg til dagpenger` avhengerAv `arbeidsforhold soke forskudd lonnsgarantimidler`,
+        boolsk faktum "faktum.arbeidsforhold.godta-trekk-fra-nav-av-forskudd-fra-lonnsgarantimidler" id `arbeidsforhold godta trekk fra nav av forskudd fra lonnsgarantimidler` avhengerAv `arbeidsforhold soke forskudd lonnsgarantimidler`,
         envalg faktum "faktum.arbeidsforhold.har-sokt-om-lonnsgarantimidler"
             med "svar.nei"
             med "svar.nei-men-skal"
-            med "svar.ja" id `arbeidsforhold har sokt om lonnsgarantimidler`,
+            med "svar.ja" id `arbeidsforhold har sokt om lonnsgarantimidler` avhengerAv `arbeidsforhold soke forskudd lonnsgarantimidler`,
         envalg faktum "faktum.arbeidsforhold.dekker-lonnsgarantiordningen-lonnskravet-ditt"
             med "svar.ja"
             med "svar.nei"
-            med "svar.vet-ikke" id `arbeidsforhold dekker lonnsgarantiordningen lonnskravet ditt`,
-        boolsk faktum "faktum.arbeidsforhold.utbetalt-lonn-etter-konkurs" id `arbeidsforhold utbetalt lonn etter konkurs`,
-        dato faktum "faktum.arbeidsforhold.siste-dag-utbetalt-for-konkurs" id `arbeidsforhold siste dag utbetalt for konkurs`,
-        tekst faktum "faktum.arbeidsforhold.hva-er-aarsak-til-avskjediget" id `arbeidsforhold hva er aarsak til avskjediget`,
-        tekst faktum "faktum.arbeidsforhold.vet-du-aarsak-til-sagt-opp-av-arbeidsgiver" id `arbeidsforhold vet du aarsak til sagt opp av arbeidsgiver`,
-        tekst faktum "faktum.arbeidsforhold.vet-du-aarsak-til-redusert-arbeidstid" id `arbeidsforhold vet du aarsak til redusert arbeidstid`,
+            med "svar.vet-ikke" id `arbeidsforhold dekker lonnsgarantiordningen lonnskravet ditt` avhengerAv `arbeidsforhold soke forskudd lonnsgarantimidler`,
+        boolsk faktum "faktum.arbeidsforhold.utbetalt-lonn-etter-konkurs" id `arbeidsforhold utbetalt lonn etter konkurs` avhengerAv `arbeidsforhold soke forskudd lonnsgarantimidler`,
+        dato faktum "faktum.arbeidsforhold.siste-dag-utbetalt-for-konkurs" id `arbeidsforhold siste dag utbetalt for konkurs` avhengerAv `arbeidsforhold utbetalt lonn etter konkurs`,
+        tekst faktum "faktum.arbeidsforhold.hva-er-aarsak-til-avskjediget" id `arbeidsforhold hva er aarsak til avskjediget` avhengerAv `arbeidsforhold endret`,
+        tekst faktum "faktum.arbeidsforhold.vet-du-aarsak-til-sagt-opp-av-arbeidsgiver" id `arbeidsforhold vet du aarsak til sagt opp av arbeidsgiver` avhengerAv `arbeidsforhold endret`,
+        tekst faktum "faktum.arbeidsforhold.vet-du-aarsak-til-redusert-arbeidstid" id `arbeidsforhold vet du aarsak til redusert arbeidstid` avhengerAv `arbeidsforhold endret`,
         envalg faktum "faktum.arbeidsforhold.midlertidig-arbeidsforhold-med-sluttdato"
             med "svar.ja"
             med "svar.nei"
-            med "svar.vet-ikke" id `arbeidsforhold midlertidig arbeidsforhold med sluttdato`,
-        boolsk faktum "faktum.arbeidsforhold.tilbud-om-annen-stilling-eller-annet-sted-i-norge" id `arbeidsforhold tilbud om annen stilling eller annet sted i norge`,
-        boolsk faktum "faktum.arbeidsforhold.skift-eller-turnus" id `arbeidsforhold skift eller turnus`,
-        boolsk faktum "faktum.arbeidsforhold.rotasjon" id `arbeidsforhold rotasjon`,
-        heltall faktum "faktum.arbeidsforhold.arbeidsdager-siste-rotasjon" id `arbeidsforhold arbeidsdager siste rotasjon`,
-        heltall faktum "faktum.arbeidsforhold.fridager-siste-rotasjon" id `arbeidsforhold fridager siste rotasjon`,
+            med "svar.vet-ikke" id `arbeidsforhold midlertidig arbeidsforhold med sluttdato` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.tilbud-om-annen-stilling-eller-annet-sted-i-norge" id `arbeidsforhold tilbud om annen stilling eller annet sted i norge` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.skift-eller-turnus" id `arbeidsforhold skift eller turnus` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.rotasjon" id `arbeidsforhold rotasjon` avhengerAv `arbeidsforhold endret`,
+        heltall faktum "faktum.arbeidsforhold.arbeidsdager-siste-rotasjon" id `arbeidsforhold arbeidsdager siste rotasjon` avhengerAv `arbeidsforhold rotasjon`,
+        heltall faktum "faktum.arbeidsforhold.fridager-siste-rotasjon" id `arbeidsforhold fridager siste rotasjon` avhengerAv `arbeidsforhold rotasjon`,
         heltall faktum "faktum.arbeidsforhold" id `arbeidsforhold`
             genererer `arbeidsforhold navn bedrift`
             og `arbeidsforhold land`
