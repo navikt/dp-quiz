@@ -47,51 +47,66 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
 
     override fun deepCopy(indeks: Int, søknad: Søknad): Faktum<*> {
         return søknad.idOrNull(faktumId medIndeks indeks)
-            ?: GrunnleggendeFaktum(
-                faktumId medIndeks indeks,
-                navn,
-                clazz,
-                mutableSetOf(),
-                mutableSetOf(),
-                mutableSetOf(),
-                roller,
-                gyldigeValg,
-                landgrupper
-            ).also { lagdFaktum ->
-                søknad.add(lagdFaktum)
-                // TODO: Vi bør prøve å lage en test hvor det er nødvendig å sette avhengigheter begge veier her
-                avhengerAvFakta.toList().deepCopy(indeks, søknad).forEach { it.leggTilAvhengighet(lagdFaktum) }
-                // avhengigeFakta.toList().deepCopy(indeks, søknad).forEach { lagdFaktum.leggTilAvhengighet(it) }
-            }
+            ?: deepCopy(indeks)
+                .also { lagdFaktum ->
+                    søknad.add(lagdFaktum)
+                    leggTilAvhengighet(søknad, indeks, lagdFaktum)
+                }
     }
 
-    internal fun generate(r: Int, søknad: Søknad) {
+    private fun deepCopy(indeks: Int) = GrunnleggendeFaktum(
+        faktumId medIndeks indeks,
+        navn,
+        clazz,
+        mutableSetOf(),
+        mutableSetOf(),
+        mutableSetOf(),
+        roller,
+        gyldigeValg,
+        landgrupper
+    )
+
+    // Lag instans av template faktum ved besvar eller rehydrering av søknad
+    internal fun generate(generator: Int, søknad: Søknad) {
+        // Seksjoner dette templatet ligger i
         seksjoner.forEach { originalSeksjon ->
-            (1..r).forEach { indeks ->
-                val seksjon = if (originalSeksjon.bareTemplates()) {
-                    originalSeksjon.deepCopy(indeks)
-                } else {
-                    originalSeksjon
-                }
-                GrunnleggendeFaktum(
-                    faktumId.medIndeks(indeks),
-                    navn,
-                    clazz,
-                    mutableSetOf(),
-                    mutableSetOf(),
-                    mutableSetOf(),
-                    roller,
-                    gyldigeValg,
-                    landgrupper
-                ).also { lagdFaktum ->
+            generator.forHvertSvar { indeks: Int ->
+                // Sjekker om seksjonen er *kun* templates, og skal dermed klones før vi lager instanser av template i den
+                val seksjon = instansiertSeksjon(originalSeksjon, indeks)
+                deepCopy(indeks).also { lagdFaktum ->
                     seksjon.add(lagdFaktum)
-                    // TODO: Vi bør prøve å lage en test hvor det er nødvendig å sette avhengigheter begge veier her
-                    avhengerAvFakta.toList().deepCopy(indeks, søknad).forEach { it.leggTilAvhengighet(lagdFaktum) }
-                    // avhengigeFakta.toList().deepCopy(indeks, søknad).forEach { lagdFaktum.leggTilAvhengighet(it) }
+                    leggTilAvhengighet(søknad, indeks, lagdFaktum)
                 }
             }
         }
     }
+
+    private fun leggTilAvhengighet(
+        søknad: Søknad,
+        indeks: Int,
+        lagdFaktum: GrunnleggendeFaktum<R>
+    ) {
+        avhengerAvFakta.map { avhengighet ->
+            søknad.finnEksisterende(avhengighet) ?: avhengighet.deepCopy(indeks, søknad)
+        }.forEach { it.leggTilAvhengighet(lagdFaktum) }
+    }
+
+    // Finner et allerede instansiert faktum, eller lager ett nytt
+    private fun Søknad.finnEksisterende(avhengighet: Faktum<*>) = singleOrNull {
+        it.faktumId.generertFra(avhengighet.faktumId)
+    }
+
+    // Sjekker om seksjonen er *kun* templates, og skal dermed klones før vi lager instanser av template i den
+    private fun instansiertSeksjon(
+        originalSeksjon: Seksjon,
+        indeks: Int
+    ) = if (originalSeksjon.bareTemplates()) {
+        originalSeksjon.deepCopy(indeks)
+    } else {
+        originalSeksjon
+    }
+
+    private fun Int.forHvertSvar(block: (Int) -> Unit) = (1..this).forEach { block(it) }
 
     internal fun tilbakestill() {
         seksjoner.forEach { seksjon -> seksjon.tilbakestill(faktumId) }

@@ -8,7 +8,7 @@ class GeneratorFaktum internal constructor(
     private val templates: List<TemplateFaktum<*>>,
     avhengigeFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     avhengerAvFakta: MutableSet<Faktum<*>> = mutableSetOf(),
-    roller: MutableSet<Rolle> = mutableSetOf(),
+    roller: MutableSet<Rolle> = mutableSetOf()
 ) : GrunnleggendeFaktum<Int>(
     faktumId,
     navn,
@@ -20,10 +20,10 @@ class GeneratorFaktum internal constructor(
 ) {
     internal lateinit var søknad: Søknad
 
-    override fun besvar(r: Int, ident: String?): GrunnleggendeFaktum<Int> = this.also {
-        if (erBesvart() && svar() != r) tilbakestill()
-        super.besvar(r, ident)
-        templates.forEach { template -> template.generate(r, søknad) }
+    override fun besvar(antall: Int, ident: String?): GrunnleggendeFaktum<Int> = this.also {
+        if (erBesvart() && svar() != antall) tilbakestill()
+        super.besvar(antall, ident)
+        templates.forEach { template -> template.generate(antall, søknad) }
     }
 
     internal fun harGenerert(other: FaktumId) = this.templates.any {
