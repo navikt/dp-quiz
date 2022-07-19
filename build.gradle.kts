@@ -1,6 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     application
@@ -17,12 +16,8 @@ repositories {
 allprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = Spotless.spotless)
-    tasks.withType<KotlinCompile>().all {
-        kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
 
     dependencies {
-        implementation(kotlin("stdlib"))
         implementation(kotlin("reflect"))
 
         testRuntimeOnly(Junit5.engine)
@@ -31,7 +26,7 @@ allprojects {
 
     kotlin {
         jvmToolchain {
-            (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(17))
+            languageVersion.set(JavaLanguageVersion.of(17))
         }
     }
 
@@ -72,7 +67,6 @@ subprojects {
     }
 
     dependencies {
-        implementation(kotlin("stdlib-jdk8"))
         testImplementation(kotlin("test"))
         testImplementation(Junit5.api)
         testRuntimeOnly(Junit5.engine)
