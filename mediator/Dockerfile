@@ -9,6 +9,14 @@ RUN $JAVA_HOME/bin/jlink \
          --compress=2 \
          --output /javaruntime
 
+# cprof
+FROM debian:buster-slim as cprof
+RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /opt/cprof && \
+  wget -q -O- https://storage.googleapis.com/cloud-profiler/java/latest/profiler_java_agent.tar.gz \
+  | tar xzv -C /opt/cprof
+
 # Runtime
 FROM debian:buster-slim
 
@@ -17,6 +25,7 @@ ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH "${JAVA_HOME}/bin:${PATH}"
 
 COPY --from=jre-build /javaruntime $JAVA_HOME
+COPY --from=cprof /opt/cprof /opt/cprof
 
 COPY build/install/* /
 
