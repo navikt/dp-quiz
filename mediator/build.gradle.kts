@@ -1,6 +1,5 @@
 plugins {
     application
-    id(Shadow.shadow) version Shadow.version
 }
 
 application {

@@ -29,6 +29,12 @@ allprojects {
         testImplementation(Junit5.api)
     }
 
+    kotlin {
+        jvmToolchain {
+            (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
+
     spotless {
         kotlin {
             ktlint(Ktlint.version)
