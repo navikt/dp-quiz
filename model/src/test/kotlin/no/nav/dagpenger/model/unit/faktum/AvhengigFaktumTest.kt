@@ -20,7 +20,6 @@ import java.time.LocalDate
 import kotlin.test.assertEquals
 
 internal class AvhengigFaktumTest {
-
     @Test
     fun `Resetter avhengige faktum`() {
         val søknad = Søknad(
@@ -52,13 +51,11 @@ internal class AvhengigFaktumTest {
             dato faktum "tom" id 3 avhengerAv 2,
             dato faktum "ønsket dato" id 4
         )
-
         val prototypeSøknadprosess = Søknadprosess(
             Seksjon("periode antall", Rolle.nav, søknad generator 1),
             Seksjon("periode", Rolle.nav, søknad dato 2, søknad dato 3),
-            Seksjon("søknadsdato", Rolle.søker, søknad dato 4),
+            Seksjon("søknadsdato", Rolle.søker, søknad dato 4)
         )
-
         val søknadprosess =
             Versjon.Bygger(søknad, TomSubsumsjon, mapOf(Versjon.UserInterfaceType.Web to prototypeSøknadprosess))
                 .søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
@@ -72,7 +69,6 @@ internal class AvhengigFaktumTest {
         søknadprosess.dato("2.1").besvar(LocalDate.now().plusDays(1))
 
         kotlin.test.assertFalse(søknadprosess.dato("3.1").erBesvart())
-
         val visitor = AvhengigheterVisitor(søknadprosess.dato("2.1"))
         assertEquals(1, visitor.avhengigheter.size)
     }
@@ -80,9 +76,11 @@ internal class AvhengigFaktumTest {
 
 class AvhengigheterVisitor(faktum: Faktum<*>) : FaktumVisitor {
     lateinit var avhengigheter: Set<Faktum<*>>
+
     init {
         faktum.accept(this)
     }
+
     override fun <R : Comparable<R>> postVisitAvhengigeFakta(faktum: Faktum<R>, avhengigeFakta: MutableSet<Faktum<*>>) {
         avhengigheter = avhengigeFakta
     }
