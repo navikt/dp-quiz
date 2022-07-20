@@ -41,9 +41,9 @@ internal class DokumentSubsumsjonTest {
     }
 
     @Test
-    fun `Subsumsjon blir null når saksbehandler har avslått`() {
+    fun `Subsumsjon blir false når saksbehandler har avslått`() {
         dokumentGodkjenning.besvar(false)
-        assertEquals(null, subsumsjon.resultat())
+        assertEquals(false, subsumsjon.resultat())
     }
 
     @Test
@@ -56,13 +56,13 @@ internal class DokumentSubsumsjonTest {
     fun `Endre et faktum tilbakestiller svaret på det avhengige faktumet`() {
         assertEquals(true, subsumsjon.resultat())
         dokumentGodkjenning.besvar(false)
-        assertEquals(null, subsumsjon.resultat())
+        assertEquals(false, subsumsjon.resultat())
 
         dokumentFaktum.besvar(Dokument(2.januar, "urn:sid:sse"))
         assertFalse(dokumentGodkjenning.erBesvart())
         assertEquals(true, subsumsjon.resultat())
 
         dokumentGodkjenning.besvar(false)
-        assertEquals(null, subsumsjon.resultat())
+        assertEquals(false, subsumsjon.resultat())
     }
 }

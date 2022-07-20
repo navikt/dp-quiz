@@ -154,10 +154,10 @@ internal class SøknadSubsumsjonTest {
         assertEquals(null, søknadprosess.resultat())
 
         søknadprosess.dato(13).besvar(1.februar)
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(true, søknadprosess.resultat())
 
         søknadprosess.boolsk(19).besvar(false)
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(false, søknadprosess.resultat())
     }
 
     private fun assertIder(fakta: Set<Faktum<*>>, vararg ider: Int) {

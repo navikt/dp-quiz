@@ -50,7 +50,7 @@ internal class GodkjenningsSubsumsjonTest {
         faktum.besvar(true)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
         godkjenning.besvar(false)
-        assertEquals(null, godkjenningsSubsumsjon.resultat())
+        assertEquals(false, godkjenningsSubsumsjon.resultat())
         godkjenning.besvar(true)
         assertEquals(true, godkjenningsSubsumsjon.resultat())
         faktum.besvar(false)
@@ -59,7 +59,7 @@ internal class GodkjenningsSubsumsjonTest {
         godkjenning.besvar(true)
         assertEquals(false, godkjenningsSubsumsjon.resultat())
         godkjenning.besvar(false)
-        assertEquals(null, godkjenningsSubsumsjon.resultat())
+        assertEquals(false, godkjenningsSubsumsjon.resultat())
     }
 
     @Test
@@ -78,7 +78,7 @@ internal class GodkjenningsSubsumsjonTest {
         godkjenning.besvar(true)
         assertEquals(false, godkjenningsSubsumsjon.resultat())
         godkjenning.besvar(false)
-        assertEquals(null, godkjenningsSubsumsjon.resultat())
+        assertEquals(true, godkjenningsSubsumsjon.resultat())
     }
 
     @Test
