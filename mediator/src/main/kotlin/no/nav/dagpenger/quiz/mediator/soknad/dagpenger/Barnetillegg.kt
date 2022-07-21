@@ -53,7 +53,7 @@ object Barnetillegg : DslFaktaseksjon {
             og `barn etternavn`
             og `barn foedselsdato`
             og `barn statsborgerskap`
-            og `forsoerger du barnet`,
+            og `forsoerger du barnet` avhengerAv `forsoerger du barnet register`,
         tekst faktum "faktum.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn`,
         tekst faktum "faktum.barn-etternavn" id `barn etternavn`,
         dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato`,
