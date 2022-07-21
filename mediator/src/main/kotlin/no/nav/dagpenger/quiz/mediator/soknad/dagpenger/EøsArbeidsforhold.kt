@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
+import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -25,7 +26,6 @@ object EøsArbeidsforhold : DslFaktaseksjon {
     const val `eos arbeidsforhold land` = 9004
     const val `eos arbeidsforhold personnummer` = 9005
     const val `eos arbeidsforhold varighet` = 9006
-
     override val fakta = listOf(
         boolsk faktum "faktum.eos-arbeid-siste-36-mnd" id `eos arbeid siste 36 mnd`,
         heltall faktum "faktum.eos-arbeidsforhold" id `eos arbeidsforhold` avhengerAv `eos arbeid siste 36 mnd`
@@ -44,14 +44,17 @@ object EøsArbeidsforhold : DslFaktaseksjon {
             "Arbeidsforhold i EØS området".minstEnAv(
                 boolsk(`eos arbeid siste 36 mnd`) er false,
                 boolsk(`eos arbeid siste 36 mnd`) er true hvisOppfylt {
-                    generator(`eos arbeidsforhold`) har "En til flere EØS arbeidsforhold".deltre {
-                        "alt må være utfylt".alle(
-                            tekst(`eos arbeidsforhold arbeidsgivernavn`).utfylt(),
-                            land(`eos arbeidsforhold land`).utfylt(),
-                            tekst(`eos arbeidsforhold personnummer`).utfylt(),
-                            periode(`eos arbeidsforhold varighet`).utfylt()
-                        )
-                    }
+                    "Hvis ja, må det oppgi arbeidsforhold".alle(
+                        generator(`eos arbeidsforhold`) minst 1,
+                        generator(`eos arbeidsforhold`) har "En til flere EØS arbeidsforhold".deltre {
+                            "alt må være utfylt".alle(
+                                tekst(`eos arbeidsforhold arbeidsgivernavn`).utfylt(),
+                                land(`eos arbeidsforhold land`).utfylt(),
+                                tekst(`eos arbeidsforhold personnummer`).utfylt(),
+                                periode(`eos arbeidsforhold varighet`).utfylt()
+                            )
+                        }
+                    )
                 }
             )
         }
