@@ -35,7 +35,6 @@ object Barnetillegg : DslFaktaseksjon {
     const val `barn foedselsdato register` = 1011
     const val `barn statsborgerskap register` = 1012
     const val `forsoerger du barnet register` = 1013
-
     override val fakta = listOf(
         heltall faktum "faktum.register.barn-liste" id `barn liste register`
             genererer `barn fornavn mellomnavn register`
@@ -53,18 +52,19 @@ object Barnetillegg : DslFaktaseksjon {
             og `barn etternavn`
             og `barn foedselsdato`
             og `barn statsborgerskap`
-            og `forsoerger du barnet` avhengerAv `forsoerger du barnet register`,
+            og `forsoerger du barnet` avhengerAv `egne barn`,
         tekst faktum "faktum.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn`,
         tekst faktum "faktum.barn-etternavn" id `barn etternavn`,
         dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato`,
         land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap`,
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`,
-        boolsk faktum "faktum.legge-til-egne-barn" id `egne barn`,
+        boolsk faktum "faktum.legge-til-egne-barn" id `egne barn`
     )
 
     override fun seksjon(søknad: Søknad): List<Seksjon> {
         val barnetilleggRegister = søknad.seksjon(
-            "barnetillegg-register", Rolle.nav,
+            "barnetillegg-register",
+            Rolle.nav,
             `barn liste register`,
             `barn fornavn mellomnavn register`,
             `barn etternavn register`,
@@ -80,7 +80,7 @@ object Barnetillegg : DslFaktaseksjon {
             `barn etternavn`,
             `barn foedselsdato`,
             `barn statsborgerskap`,
-            `forsoerger du barnet`,
+            `forsoerger du barnet`
         )
 
         return listOf(barnetilleggRegister, barnetillegg)
@@ -116,6 +116,6 @@ object Barnetillegg : DslFaktaseksjon {
         tekst(`barn fornavn mellomnavn`).utfylt(),
         tekst(`barn etternavn`).utfylt(),
         dato(`barn foedselsdato`).utfylt(),
-        land(`barn statsborgerskap`).utfylt(),
+        land(`barn statsborgerskap`).utfylt()
     )
 }
