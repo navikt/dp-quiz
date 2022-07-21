@@ -68,7 +68,7 @@ internal class AvhengigFaktumTest {
 
         søknadprosess.dato("2.1").besvar(LocalDate.now().plusDays(1))
 
-        kotlin.test.assertFalse(søknadprosess.dato("3.1").erBesvart())
+        assertFalse(søknadprosess.dato("3.1").erBesvart())
         val visitor = AvhengigheterVisitor(søknadprosess.dato("2.1"))
         assertEquals(1, visitor.avhengigheter.size)
     }

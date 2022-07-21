@@ -93,8 +93,11 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     }
 
     // Finner et allerede instansiert faktum, eller lager ett nytt
-    private fun Søknad.finnEksisterende(avhengighet: Faktum<*>) = singleOrNull {
-        it.faktumId.generertFra(avhengighet.faktumId)
+    private fun Søknad.finnEksisterende(avhengighet: Faktum<*>) = when (avhengighet) {
+        is TemplateFaktum<*> -> singleOrNull {
+            it.faktumId.generertFra(avhengighet.faktumId)
+        }
+        else -> idOrNull(avhengighet.faktumId)
     }
 
     // Sjekker om seksjonen er *kun* templates, og skal dermed klones før vi lager instanser av template i den

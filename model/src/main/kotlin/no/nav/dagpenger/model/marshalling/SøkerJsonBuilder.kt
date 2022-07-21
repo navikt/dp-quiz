@@ -143,7 +143,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
             avhengerAvFakta: Set<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>,
-            gyldigeValg: GyldigeValg?,
+            gyldigeValg: GyldigeValg?
         ) {
             this.root.lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigeValg)
         }
@@ -155,7 +155,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
             avhengerAvFakta: Set<Faktum<*>>,
             templates: List<TemplateFaktum<*>>,
             roller: Set<Rolle>,
-            clazz: Class<R>,
+            clazz: Class<R>
         ) {
             val jsonTemplates = mapper.createArrayNode()
             templates.forEach { template ->
@@ -214,7 +214,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
             svar: R,
             besvartAv: String?,
             gyldigeValg: GyldigeValg?,
-            landGrupper: LandGrupper?,
+            landGrupper: LandGrupper?
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
             if (clazz.erBoolean()) {
@@ -248,7 +248,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
             roller: Set<Rolle>,
             clazz: Class<R>,
             gyldigeValg: GyldigeValg?,
-            landGrupper: LandGrupper?,
+            landGrupper: LandGrupper?
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
             if (clazz.erBoolean()) {
