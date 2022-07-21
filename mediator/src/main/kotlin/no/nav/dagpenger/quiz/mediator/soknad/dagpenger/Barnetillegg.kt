@@ -47,18 +47,18 @@ object Barnetillegg : DslFaktaseksjon {
         dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato register`,
         land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap register`,
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet register` avhengerAv `barn liste register`,
-        heltall faktum "faktum.barn-liste" id `barn liste`
+        boolsk faktum "faktum.legge-til-egne-barn" id `egne barn`,
+        heltall faktum "faktum.barn-liste" id `barn liste` avhengerAv `egne barn`
             genererer `barn fornavn mellomnavn`
             og `barn etternavn`
             og `barn foedselsdato`
             og `barn statsborgerskap`
-            og `forsoerger du barnet` avhengerAv `egne barn`,
+            og `forsoerger du barnet`,
         tekst faktum "faktum.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn`,
         tekst faktum "faktum.barn-etternavn" id `barn etternavn`,
         dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato`,
         land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap`,
-        boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`,
-        boolsk faktum "faktum.legge-til-egne-barn" id `egne barn`
+        boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`
     )
 
     override fun seksjon(søknad: Søknad): List<Seksjon> {

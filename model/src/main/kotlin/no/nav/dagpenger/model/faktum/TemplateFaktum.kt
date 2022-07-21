@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Seksjon.Companion.medSøknadprosess
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 class TemplateFaktum<R : Comparable<R>> internal constructor(
@@ -109,7 +110,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     private fun Int.forHvertSvar(block: (Int) -> Unit) = (1..this).forEach { block(it) }
 
     internal fun tilbakestill() {
-        seksjoner.forEach { seksjon -> seksjon.tilbakestill(faktumId) }
+        seksjoner.medSøknadprosess().forEach { it.tilbakestill(faktumId) }
     }
 
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
