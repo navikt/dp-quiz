@@ -105,7 +105,7 @@ services:
     env_file: .env
     environment:
       PORT: 3001
-      SELF_URL: http://localhost:3000/arbeid/dagpenger/soknad
+      SELF_URL: http://localhost:3001/arbeid/dagpenger/soknad
       NEXT_PUBLIC_BASE_PATH: "/arbeid/dagpenger/soknad"
       DEKORATOR_ENV: "dev"
       API_BASE_URL: http://soknad:8080/arbeid/dagpenger/soknadapi
