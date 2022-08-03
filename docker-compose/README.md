@@ -6,6 +6,7 @@ Muliggjøre lokal kjøring av søknadsdialogen og quiz lokalt.
   * Colima
   * docker-compose 
 * Github Personal Access Token (PAT) [token](https://docs.github.com/en/free-pro-team@latest/packages/using-github-packages-with-your-projects-ecosystem/configuring-docker-for-use-with-github-packages)
+* `127.0.0.1 host.docker.internal` må være lagt til i `/etc/hosts`
 
 ### Opprette PAT hos Github
 1. Lag et PAT hos Github, må gjøres fr å kunne laste ned docker-images fra Github sitt pakkerepo.
