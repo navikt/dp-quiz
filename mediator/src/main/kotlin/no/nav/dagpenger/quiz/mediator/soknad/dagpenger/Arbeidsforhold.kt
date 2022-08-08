@@ -108,12 +108,7 @@ object Arbeidsforhold : DslFaktaseksjon {
         boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-redusert-arbeidstid" id `arbeidsforhold vet du antall timer foer redusert arbeidstid` avhengerAv `arbeidsforhold endret`,
         boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-permittert" id `arbeidsforhold vet du antall timer foer permittert` avhengerAv `arbeidsforhold endret`,
         desimaltall faktum "faktum.arbeidsforhold.antall-timer-dette-arbeidsforhold" id `arbeidsforhold antall timer dette arbeidsforhold`
-            avhengerAv `arbeidsforhold vet du antall timer foer mistet jobb`
-            og `arbeidsforhold vet du antall timer foer kontrakt utgikk`
-            og `arbeidsforhold vet du antall timer foer du sa opp`
-            og `arbeidsforhold vet du antall timer foer konkurs`
-            og `arbeidsforhold vet du antall timer foer redusert arbeidstid`
-            og `arbeidsforhold vet du antall timer foer permittert`,
+            avhengerAv `arbeidsforhold endret`,
         periode faktum "faktum.arbeidsforhold.permittert-periode" id `arbeidsforhold permittert periode` avhengerAv `arbeidsforhold endret`,
         heltall faktum "faktum.arbeidsforhold.permittert-prosent" id `arbeidsforhold permittert prosent` avhengerAv `arbeidsforhold endret`,
         boolsk faktum "faktum.arbeidsforhold.vet-du-lonnsplikt-periode" id `arbeidsforhold vet du lonnsplikt periode` avhengerAv `arbeidsforhold endret`,
