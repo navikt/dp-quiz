@@ -78,7 +78,8 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
         if (rolle != Rolle.søker) return
         if (gjeldendeFakta.isEmpty()) return
         // Splitt grunnleggende fakta og generatorer sine fakta
-        val (fakta, generatorFakta) = (avhengigheter + gjeldendeFakta).partition { !it.faktumId.harIndeks() }
+        val avhengigheterUtenforGjeldendeSeksjon = avhengigheter.filterNot { gjeldendeFakta.contains(it) }
+        val (fakta, generatorFakta) = (avhengigheterUtenforGjeldendeSeksjon + gjeldendeFakta).partition { !it.faktumId.harIndeks() }
         val faktaNode = fakta.fold(mapper.createArrayNode()) { acc, faktum ->
             val generatorFaktumFakta = when (faktum) {
                 is GeneratorFaktum -> generatorFakta.filter { faktum.harGenerert(it.faktumId) }.toSet()

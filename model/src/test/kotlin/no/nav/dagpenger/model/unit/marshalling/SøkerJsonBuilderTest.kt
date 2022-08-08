@@ -208,16 +208,13 @@ internal class SøkerJsonBuilderTest {
                 fakta {
                     harAntallFakta(4)
                     harAntallReadOnly(3)
-                    dato("f8") {
-                        erReadOnly()
-                        erBesvart()
-                    }
                     boolsk("f5") {
                         erReadOnly()
                         erBesvartMed(true)
                     }
-                    dokument("f15") {
-                        erReadOnly(false)
+                    dato("f8") {
+                        erReadOnly()
+                        erBesvart()
                     }
                     generator("f67") {
                         erReadOnly()
@@ -231,6 +228,9 @@ internal class SøkerJsonBuilderTest {
                             heltall("f6") { erBesvartMed(19) }
                             boolsk("f7") { erBesvartMed(true) }
                         }
+                    }
+                    dokument("f15") {
+                        erReadOnly(false)
                     }
                 }
             }
@@ -314,7 +314,7 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.boolsk(1).besvar(true)
         MedSøknad(søknadprosess) {
             seksjon("seksjon1") {
-                fakta(sjekkAlle = false) { boolsk("f1") { harGyldigeValg("f1.svar.ja", "f1.svar.nei") } }
+                fakta(sjekkAlle = false, sjekkRekkefølge = false) { boolsk("f1") { harGyldigeValg("f1.svar.ja", "f1.svar.nei") } }
             }
         }
     }

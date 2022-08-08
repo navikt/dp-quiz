@@ -35,19 +35,22 @@ internal class MedSøknad private constructor(private val søknad: JsonNode, blo
 internal class MedSeksjon(private val seksjon: JsonNode) {
     fun erFerdig() = assertEquals(true, seksjon["ferdig"].asBoolean())
 
-    fun fakta(block: MedFakta.() -> Unit) = fakta(true, block)
+    fun fakta(block: MedFakta.() -> Unit) = fakta(sjekkAlle = true, sjekkRekkefølge = true, block = block)
 
-    fun fakta(sjekkAlle: Boolean, block: MedFakta.() -> Unit) {
+    fun fakta(sjekkAlle: Boolean, sjekkRekkefølge: Boolean, block: MedFakta.() -> Unit) {
         val medFakta = MedFakta(seksjon["fakta"])
         block(medFakta)
 
         if (sjekkAlle) medFakta.erAlleFaktumSjekket()
+        if (sjekkRekkefølge) medFakta.sjekkRekkfølge()
     }
 }
 
 @JsonAssertMarker
 internal class MedFakta(private val fakta: JsonNode) {
     private val faktumSomIkkeErSjekket = fakta.map { it["beskrivendeId"].asText() }.toMutableSet()
+    private val rekkefølge = faktumSomIkkeErSjekket.toMutableList()
+    private val verifisertIRekkefølge = mutableListOf<String>()
 
     fun erAlleFaktumSjekket() =
         assertEquals(
@@ -55,6 +58,12 @@ internal class MedFakta(private val fakta: JsonNode) {
             faktumSomIkkeErSjekket,
             "Det er faktum som ikke er verifisert. Sjekk alle eller sett sjekkAlle til false"
         )
+
+    fun sjekkRekkfølge() = assertEquals(
+        rekkefølge,
+        verifisertIRekkefølge,
+        "\nRekkefølgen på fakta-verifisering er ikke i henhold til rekkefølgen som er definert av seksjon + avhengigheter"
+    )
 
     fun harAntallFakta(value: Int) = antall(value, null)
     fun harAntallReadOnly(value: Int) = antall(value, true)
@@ -96,24 +105,27 @@ internal class MedFakta(private val fakta: JsonNode) {
     fun land(navn: String, block: MedLandFaktum.() -> Unit) {
         val faktum = MedLandFaktum(fakta.finnFaktum(navn))
         faktum.erType("land")
-
         block(faktum)
-        faktumSomIkkeErSjekket.remove(navn)
+        sjekketFaktum(navn)
     }
 
     fun generator(navn: String, block: MedGeneratorFaktum.() -> Unit) {
         val faktum = MedGeneratorFaktum(fakta.finnFaktum(navn))
         faktum.erType("generator")
-
         block(faktum)
-        faktumSomIkkeErSjekket.remove(navn)
+        sjekketFaktum(navn)
     }
 
     private fun faktum(navn: String, block: MedFaktum.() -> Unit): MedFaktum {
         val medFaktum = MedFaktum(fakta.finnFaktum(navn))
         block(medFaktum)
-        faktumSomIkkeErSjekket.remove(navn)
+        sjekketFaktum(navn)
         return medFaktum
+    }
+
+    private fun sjekketFaktum(navn: String) {
+        faktumSomIkkeErSjekket.remove(navn)
+        verifisertIRekkefølge.add(navn)
     }
 
     fun alle(block: MedFaktum.() -> Unit) = fakta.forEach { block(MedFaktum(it)) }
