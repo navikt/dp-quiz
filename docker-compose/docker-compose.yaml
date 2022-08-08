@@ -84,6 +84,18 @@ services:
     environment:
       KAFKA_RESET_POLICY: "earliest"
 
+
+  birgitte:
+    image: ghcr.io/navikt/dp-quiz-birgitte/dp-quiz-birgitte:latest
+    container_name: birgitte
+    depends_on:
+      - kafka
+    ports:
+      - "8084:8080"
+    env_file: .env
+    environment:
+      KAFKA_RESET_POLICY: "earliest"
+
   auth:
     image: ghcr.io/navikt/mock-oauth2-server:0.5.1
     container_name: auth
