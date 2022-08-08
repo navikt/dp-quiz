@@ -19,8 +19,7 @@ internal object Innsending {
     }
 
     private val faktaseksjoner = listOf(
-        Hvorfor,
-        // GammelSøknad,
+        Hvorfor
     )
     private val alleFakta = flatMapAlleFakta()
     private val alleSeksjoner = flatMapAlleSeksjoner()
@@ -39,9 +38,7 @@ internal object Innsending {
 
     private val faktumNavBehov =
         FaktumNavBehov(
-            mapOf(
-                // Barnetillegg.`barn liste register` to "Barn",
-            )
+            emptyMap()
         )
 
     init {
