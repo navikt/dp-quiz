@@ -128,15 +128,6 @@ internal class AvslagPåMinsteinntektTest {
     }
 
     @Test
-    @Disabled
-    fun `Skal manuelt behandles hvis over 67`() {
-        manglerInntekt.inntekt(inntektSiste36mnd).besvar(2000000.årlig)
-        manglerInntekt.dato(over67årFradato).besvar(1.januar)
-
-        assertNesteSeksjon("over 67 år")
-    }
-
-    @Test
     fun `De som ikke oppfyller kravet til minsteinntekt får avslag`() {
         assertTrue(manglerInntekt.erFerdig())
         assertEquals(false, manglerInntekt.resultat())
