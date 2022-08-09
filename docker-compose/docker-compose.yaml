@@ -103,7 +103,10 @@ services:
       - "8080:8080"
     hostname: host.docker.internal
     environment:
-      JSON_CONFIG: "{\"interactiveLogin\":true}"
+      JSON_CONFIG: >
+        {
+            "interactiveLogin": true
+        }
 
   wonderwall:
     image: ghcr.io/nais/wonderwall:latest
