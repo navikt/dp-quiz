@@ -28,7 +28,9 @@ internal class UtdanningTest {
 
     @BeforeEach
     fun setup() {
-        søknadprosess = søknad.testSøknadprosess(Utdanning.regeltre(søknad))
+        søknadprosess = søknad.testSøknadprosess(Utdanning.regeltre(søknad)) {
+            Utdanning.seksjon(this)
+        }
 
         tarUtdanning = søknadprosess.boolsk(Utdanning.`tar du utdanning`)
         nyligAvsluttetUtdanning = søknadprosess.boolsk(Utdanning.`avsluttet utdanning siste 6 mnd`)

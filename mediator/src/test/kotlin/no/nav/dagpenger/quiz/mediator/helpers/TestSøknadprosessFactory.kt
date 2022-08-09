@@ -2,7 +2,6 @@ package no.nav.dagpenger.quiz.mediator.helpers
 
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -11,15 +10,7 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 
 internal fun Søknad.testSøknadprosess(
     subsumsjon: Subsumsjon,
-    seksjon: Søknad.() -> List<Seksjon> = {
-        listOf(
-            Seksjon(
-                "seksjon",
-                Rolle.søker,
-                *(this.map { faktum -> faktum }.toTypedArray())
-            )
-        )
-    }
+    seksjon: Søknad.() -> List<Seksjon>
 ): Søknadprosess {
     return Versjon.Bygger(
         this,

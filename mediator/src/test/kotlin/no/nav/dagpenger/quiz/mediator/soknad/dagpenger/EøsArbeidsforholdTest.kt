@@ -28,7 +28,9 @@ internal class EøsArbeidsforholdTest {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *EøsArbeidsforhold.fakta())
         val søknadprosess = søknad.testSøknadprosess(
             EøsArbeidsforhold.regeltre(søknad)
-        )
+        ) {
+            EøsArbeidsforhold.seksjon(this)
+        }
 
         søknadprosess.boolsk(EøsArbeidsforhold.`eos arbeid siste 36 mnd`).besvar(false)
         assertEquals(true, søknadprosess.resultat())

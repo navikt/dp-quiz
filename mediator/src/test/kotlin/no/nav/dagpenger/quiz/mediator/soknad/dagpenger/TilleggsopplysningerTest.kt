@@ -28,7 +28,9 @@ internal class TilleggsopplysningerTest {
 
     @BeforeEach
     fun setup() {
-        søknadprosess = søknad.testSøknadprosess(Tilleggsopplysninger.regeltre(søknad))
+        søknadprosess = søknad.testSøknadprosess(Tilleggsopplysninger.regeltre(søknad)) {
+            Tilleggsopplysninger.seksjon(this)
+        }
         harTilleggsopplysninger = søknadprosess.boolsk(Tilleggsopplysninger.`har tilleggsopplysninger`)
         tilleggsopplysninger = søknadprosess.tekst(Tilleggsopplysninger.tilleggsopplysninger)
     }

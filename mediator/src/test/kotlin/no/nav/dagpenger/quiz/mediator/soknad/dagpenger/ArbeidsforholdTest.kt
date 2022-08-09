@@ -17,20 +17,35 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class ArbeidsforholdTest {
     private val fakta = Arbeidsforhold.fakta() + Gjenopptak.fakta()
     private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *fakta)
     private lateinit var søknadprosess: Søknadprosess
 
+    @BeforeEach
+    fun setup() {
+        søknadprosess = søknad.testSøknadprosess(Arbeidsforhold.regeltre(søknad)) {
+            Arbeidsforhold.seksjon(søknad)
+        }
+    }
+
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
         Arbeidsforhold.verifiserFeltsammensetting(54, 433485)
     }
 
-    @BeforeEach
-    fun setup() {
-        søknadprosess = søknad.testSøknadprosess(Arbeidsforhold.regeltre(søknad))
+    @Test
+    fun `Sjekk at alle fakta er definert i en seksjon`() {
+        val faktaISeksjoner = søknadprosess.flatten().map { it.id.toInt() }
+        val alleFakta = Arbeidsforhold.databaseIder().toList()
+        assertTrue(
+            faktaISeksjoner.containsAll(
+                alleFakta
+            ),
+            "Ikke alle faktum er ikke definert i seksjon.\nMangler seksjon for faktum id: ${alleFakta.toSet().minus(faktaISeksjoner.toSet())}"
+        )
     }
 
     @Test

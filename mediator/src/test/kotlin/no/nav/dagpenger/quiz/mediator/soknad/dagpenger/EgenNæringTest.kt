@@ -30,7 +30,9 @@ internal class EgenNæringTest {
     fun setup() {
         søknadprosess = søknad.testSøknadprosess(
             EgenNæring.regeltre(søknad)
-        )
+        ) {
+            EgenNæring.seksjon(this)
+        }
     }
 
     @Test

@@ -24,7 +24,9 @@ internal class BostedTest {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = søknad.testSøknadprosess(
             Bosted.regeltre(søknad)
-        )
+        ) {
+            Bosted.seksjon(this)
+        }
 
         søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("NOR"))
         assertEquals(true, søknadprosess.resultat())
@@ -38,7 +40,9 @@ internal class BostedTest {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = søknad.testSøknadprosess(
             Bosted.regeltre(søknad)
-        )
+        ) {
+            Bosted.seksjon(this)
+        }
 
         forventedeEøsLand().forEach { land ->
             søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(land)
@@ -59,7 +63,9 @@ internal class BostedTest {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = søknad.testSøknadprosess(
             Bosted.regeltre(søknad)
-        )
+        ) {
+            Bosted.seksjon(this)
+        }
 
         forventedeEøsLand().forEach { land ->
             søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(land)
@@ -90,7 +96,9 @@ internal class BostedTest {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = søknad.testSøknadprosess(
             Bosted.regeltre(søknad)
-        )
+        ) {
+            Bosted.seksjon(this)
+        }
 
         søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("GBR"))
         assertEquals(true, søknadprosess.resultat())
@@ -107,7 +115,9 @@ internal class BostedTest {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = søknad.testSøknadprosess(
             Bosted.regeltre(søknad)
-        )
+        ) {
+            Bosted.seksjon(this)
+        }
 
         søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("AUS"))
         assertEquals(true, søknadprosess.resultat())

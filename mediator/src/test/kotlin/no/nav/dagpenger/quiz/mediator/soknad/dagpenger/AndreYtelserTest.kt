@@ -41,7 +41,9 @@ internal class AndreYtelserTest {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = søknad.testSøknadprosess(
             AndreYtelser.regeltre(søknad)
-        )
+        ) {
+            AndreYtelser.seksjon(this)
+        }
 
         søknadprosess.boolsk(`andre ytelser mottatt eller sokt`).besvar(false)
         søknadprosess.boolsk(`utbetaling eller okonomisk gode tidligere arbeidsgiver`).besvar(false)
@@ -119,7 +121,9 @@ internal class AndreYtelserTest {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = søknad.testSøknadprosess(
             AndreYtelser.regeltre(søknad)
-        )
+        ) {
+            AndreYtelser.seksjon(this)
+        }
         søknadprosess.boolsk(`andre ytelser mottatt eller sokt`).besvar(true)
         søknadprosess.boolsk(`utbetaling eller okonomisk gode tidligere arbeidsgiver`).besvar(false)
 

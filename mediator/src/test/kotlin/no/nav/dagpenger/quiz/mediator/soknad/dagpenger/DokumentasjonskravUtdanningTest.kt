@@ -27,7 +27,9 @@ internal class DokumentasjonskravUtdanningTest {
     fun setup() {
         søknadprosess = søknad.testSøknadprosess(
             DokumentasjonskravUtdanning.regeltre(søknad)
-        )
+        ) {
+            DokumentasjonskravUtdanning.seksjon(this)
+        }
     }
 
     @Test

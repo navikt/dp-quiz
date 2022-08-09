@@ -21,7 +21,9 @@ internal class GjenopptakTest {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Gjenopptak.fakta())
         val søknadprosess = søknad.testSøknadprosess(
             Gjenopptak.regeltre(søknad)
-        )
+        ) {
+            Gjenopptak.seksjon(this)
+        }
 
         assertEquals(null, søknadprosess.resultat())
         søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))

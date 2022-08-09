@@ -24,7 +24,9 @@ internal class VernepliktTest {
     fun setup() {
         søknadprosess = søknad.testSøknadprosess(
             Verneplikt.regeltre(søknad)
-        )
+        ) {
+            Verneplikt.seksjon(this)
+        }
     }
 
     @Test
