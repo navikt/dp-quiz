@@ -9,7 +9,11 @@ abstract class FaktumFactory<T : Comparable<T>> {
 
     internal abstract fun faktum(): Faktum<T>
 
-    infix fun avhengerAv(otherId: Int) = this.also { avhengigheter.add(otherId) }
+    infix fun avhengerAv(otherId: Int) =
+        this.also {
+            require(this.rootId != otherId) { "Et faktum kan ikke være avhengig av seg selv. Faktum id '$rootId' avhengerAv '$otherId'." }
+            avhengigheter.add(otherId)
+        }
 
     internal fun avhengerAv(faktumMap: Map<FaktumId, Faktum<*>>) {
         avhengigheter.forEach {

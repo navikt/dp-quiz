@@ -99,4 +99,11 @@ internal class BaseFaktumFactoryTest {
             assertEquals(it, faktum.svar())
         }
     }
+
+    @Test
+    fun `Et faktum kan ikke avhengerAv seg selv`() {
+        assertThrows<IllegalArgumentException> {
+            boolsk faktum "boolean" id 1 avhengerAv 1
+        }
+    }
 }
