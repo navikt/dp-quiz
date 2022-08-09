@@ -74,7 +74,7 @@ services:
       TOKEN_X_CLIENT_ID: "localhost:teamdagpenger:dp-soknad"
 
   quizmock:
-    image: ghcr.io/navikt/dp-mock-quiz-behovloser:b4390d6dafaa040ddee9b761f452cb0f86f8cddc
+    image: ghcr.io/navikt/dp-mock-quiz-behovloser/dp-mock-quiz-behovloser:latest
     container_name: quizmock
     depends_on:
       - kafka
