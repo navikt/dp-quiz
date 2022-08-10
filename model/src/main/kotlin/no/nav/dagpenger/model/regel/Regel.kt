@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.DokumentasjonskravSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GeneratorSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
@@ -175,16 +176,6 @@ infix fun GeneratorFaktum.har(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
     )
 )
 
-infix fun Faktum<*>.sannsynliggjøresAv(dokument: Faktum<Dokument>): Subsumsjon =
-    EnkelSubsumsjon(
-        object : Regel {
-            override val typeNavn = "dokumentopplastning"
-            override fun resultat(fakta: List<Faktum<*>>) = true
-            override fun toString(fakta: List<Faktum<*>>) = "Sjekk at dokument `${fakta[0]}` er opplastet"
-        },
-        dokument
-    )
-
 infix fun Faktum<Boolean>.dokumenteresAv(dokument: Faktum<Dokument>): Subsumsjon =
     GodkjenningsSubsumsjon(
         action = JaAction,
@@ -240,6 +231,22 @@ private class Minst(private val tall: Int) : Regel {
         (fakta[0] as Faktum<Int>).svar() >= tall
 
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er minst $tall"
+}
+
+
+infix fun Subsumsjon.sannsynliggjøresAv(dokument: Faktum<Dokument>) =
+    Sannsynliggjøring(
+        this,
+        dokument as GrunnleggendeFaktum<Dokument>
+    )
+
+class Sannsynliggjøring(private val child: Subsumsjon, private val dokument: Faktum<Dokument>) {
+
+    fun godkjentAv(vararg godkjenningFakta: Faktum<Boolean>): Subsumsjon = DokumentasjonskravSubsumsjon(
+        child,
+        dokument as GrunnleggendeFaktum<Dokument>,
+        godkjenningFakta.map { it as GrunnleggendeFaktum<Boolean> }
+    )
 }
 
 fun Subsumsjon.godkjentAv(vararg faktum: Faktum<Boolean>) =
