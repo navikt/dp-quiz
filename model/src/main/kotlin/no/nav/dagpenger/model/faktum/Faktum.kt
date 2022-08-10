@@ -79,11 +79,6 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
         other.avhengerAvFakta.add(this)
     }
 
-    internal fun sannsynliggjøresAv(sannsynliggjøringsFakta: List<GrunnleggendeFaktum<Dokument>>) {
-
-        println("$sannsynliggjøringsFakta sannsynligjør $this")
-    }
-
     internal open fun deepCopy(indeks: Int, søknad: Søknad): Faktum<*> = this
 
     enum class FaktumTilstand {

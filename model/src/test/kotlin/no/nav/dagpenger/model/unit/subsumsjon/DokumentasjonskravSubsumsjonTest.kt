@@ -6,19 +6,19 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
-
 import no.nav.dagpenger.model.regel.sannsynliggjøresAv
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class DokumentasjonskravSubsumsjonTest {
 
     private val søknad = Søknad(
         testversjon,
         boolsk faktum "faktum" id 1,
-        dokument faktum "dokument" id 2,
+        dokument faktum "dokument" id 2 avhengerAv 1,
         boolsk faktum "godkjenning" id 3 avhengerAv 2
     )
 
@@ -32,10 +32,6 @@ class DokumentasjonskravSubsumsjonTest {
             (faktum er false).sannsynliggjøresAv(dokumentet).godkjentAv(godkjenning),
             faktum er true
         )
-
-        assertEquals(null, subsumsjon.resultat())
-        faktum.besvar(true)
-        assertEquals(true, subsumsjon.resultat())
 
         faktum.besvar(false)
         assertEquals(true, subsumsjon.resultat())
@@ -52,5 +48,10 @@ class DokumentasjonskravSubsumsjonTest {
 
         godkjenning.besvar(false)
         assertEquals(false, subsumsjon.resultat())
+
+        faktum.besvar(true)
+        assertEquals(true, subsumsjon.resultat())
+        assertFalse(dokumentet.erBesvart())
+        assertFalse(godkjenning.erBesvart())
     }
 }

@@ -11,6 +11,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
     avhengigeFakta: MutableSet<Faktum<*>>,
     avhengerAvFakta: MutableSet<Faktum<*>>,
     protected val godkjenner: MutableSet<Faktum<*>>,
+    protected val sannsynliggjøringsFakta: MutableSet<Faktum<*>>,
     roller: MutableSet<Rolle>,
     private val gyldigeValg: GyldigeValg? = null,
     private val landGrupper: LandGrupper? = null
@@ -35,12 +36,19 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
         avhengigeFakta = mutableSetOf(),
         avhengerAvFakta = mutableSetOf(),
         godkjenner = mutableSetOf(),
+        sannsynliggjøringsFakta = mutableSetOf(),
         roller = roller,
         gyldigeValg = gyldigeValg,
         landGrupper = landGrupper
     )
 
     internal fun godkjenner(fakta: List<Faktum<*>>) = godkjenner.addAll(fakta)
+
+    internal fun sannsynliggjøresAv(sannsynliggjøringsFakta: List<GrunnleggendeFaktum<Dokument>>) {
+
+        println("$sannsynliggjøringsFakta sannsynligjør $this")
+        this.sannsynliggjøringsFakta.addAll(sannsynliggjøringsFakta)
+    }
 
     override fun type() = clazz
 
@@ -71,6 +79,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
             mutableSetOf(),
             mutableSetOf(),
             mutableSetOf(),
+            mutableSetOf(),
             roller,
             gyldigeValg,
             landGrupper
@@ -80,6 +89,7 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
                 this.avhengigeFakta.forEach { nyttFaktum.avhengigeFakta.add(it.bygg(byggetFakta)) }
                 this.avhengerAvFakta.forEach { nyttFaktum.avhengerAvFakta.add(it.bygg(byggetFakta)) }
                 this.godkjenner.forEach { nyttFaktum.godkjenner.add(it.bygg(byggetFakta)) }
+                this.sannsynliggjøringsFakta.forEach { nyttFaktum.sannsynliggjøringsFakta.add(it.bygg(byggetFakta)) }
             }
     }
 
@@ -113,33 +123,35 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     protected open fun acceptUtenSvar(visitor: FaktumVisitor) {
         visitor.visitUtenSvar(
-            this,
-            Ukjent.kode,
-            id,
-            avhengigeFakta,
-            avhengerAvFakta,
-            godkjenner,
-            roller,
-            clazz,
-            gyldigeValg,
-            landGrupper
+            faktum = this,
+            tilstand = Ukjent.kode,
+            id = id,
+            avhengigeFakta = avhengigeFakta,
+            avhengerAvFakta = avhengerAvFakta,
+            godkjenner = godkjenner,
+            sannsynliggjøringsFakta = sannsynliggjøringsFakta,
+            roller = roller,
+            clazz = clazz,
+            gyldigeValg = gyldigeValg,
+            landGrupper = landGrupper
         )
     }
 
     protected open fun acceptMedSvar(visitor: FaktumVisitor) {
         visitor.visitMedSvar(
-            this,
-            Kjent.kode,
-            id,
-            avhengigeFakta,
-            avhengerAvFakta,
-            godkjenner,
-            roller,
-            clazz,
-            gjeldendeSvar,
-            besvartAv?.ident,
-            gyldigeValg,
-            landGrupper
+            faktum = this,
+            tilstand = Kjent.kode,
+            id = id,
+            avhengigeFakta = avhengigeFakta,
+            avhengerAvFakta = avhengerAvFakta,
+            godkjenner = godkjenner,
+            sannsynliggjøringsFakta = sannsynliggjøringsFakta,
+            roller = roller,
+            clazz = clazz,
+            svar = gjeldendeSvar,
+            besvartAv = besvartAv?.ident,
+            gyldigeValg = gyldigeValg,
+            landGrupper = landGrupper
         )
     }
 

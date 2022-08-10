@@ -233,7 +233,6 @@ private class Minst(private val tall: Int) : Regel {
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er minst $tall"
 }
 
-
 infix fun Subsumsjon.sannsynliggjøresAv(dokument: Faktum<Dokument>) =
     Sannsynliggjøring(
         this,

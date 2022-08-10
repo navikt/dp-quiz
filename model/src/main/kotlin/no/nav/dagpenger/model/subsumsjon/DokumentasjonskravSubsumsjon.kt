@@ -18,9 +18,9 @@ class DokumentasjonskravSubsumsjon private constructor(
     navn, Action.UansettAction, dokumentopplastning, godkjenningsfakta
 ) {
 
-
     init {
-        child.alleFakta().forEach { it.sannsynliggjøresAv(listOf(sannsynliggjøringsFakta)) }
+        require(child.alleFakta().all { it is GrunnleggendeFaktum }) { "SannsynliggjøringsFakta er kun støttet for GrunnleggendeFaktum" }
+        child.alleFakta().forEach { (it as GrunnleggendeFaktum).sannsynliggjøresAv(listOf(sannsynliggjøringsFakta)) }
     }
 
     internal constructor(
@@ -29,14 +29,16 @@ class DokumentasjonskravSubsumsjon private constructor(
         godkjenningsFakta: List<GrunnleggendeFaktum<Boolean>>
     ) :
         this(
-            "${child.navn} dokumentasjonskrav", child, EnkelSubsumsjon(
+            "${child.navn} dokumentasjonskrav", child,
+            EnkelSubsumsjon(
                 object : Regel {
                     override val typeNavn = "dokumentopplastning"
                     override fun resultat(fakta: List<Faktum<*>>) = true
                     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at dokument `${fakta[0]}` er opplastet"
                 },
                 sannsynliggjøringsFakta
-            ), sannsynliggjøringsFakta, godkjenningsFakta
+            ),
+            sannsynliggjøringsFakta, godkjenningsFakta
         )
 
     override fun lokaltResultat(): Boolean? = when (child.resultat()) {
@@ -48,7 +50,6 @@ class DokumentasjonskravSubsumsjon private constructor(
         }
         else -> child.resultat()
     }
-
 
     override fun deepCopy(): Subsumsjon {
         return DokumentasjonskravSubsumsjon(
