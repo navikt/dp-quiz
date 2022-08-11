@@ -19,16 +19,18 @@ Muliggjøre lokal kjøring av søknadsdialogen og quiz lokalt.
 
 ### Bruke søknadsdialogen lokalt
 1. `docker-compose up -d` --> starter alle containerene i bakgrunnen.
-2. Gå til http://localhost:4000/, og fyll inn et fødselsnummer.
-3. Fyll inn det samme fødselsnummeret i claim-et pid:
+2. Vent til dp-soknad er klar. 
+   * Kjør `docker-compose logs soknad -f` og se etter `"Mottatt søknadsmal med versjon_navn Dagpenger og versjon_id XXX"`
+3. Gå til http://localhost:4000/arbeid/dagpenger/soknad/en, og fyll inn et fødselsnummer.
+4. Fyll inn det samme fødselsnummeret i claim-et pid:
 ```json
 {
   "pid": "<samme fødselsnummer som i steg 2>"
 }
 ```
-4. Klikk på Sign-in.
+5. Klikk på Sign-in.
 
-NB! Det er opprettet en egen [oppgave](https://jira.adeo.no/browse/DAG-340) på å automatisere steg 2-4.
+NB! Det er opprettet en egen [oppgave](https://jira.adeo.no/browse/DAG-340) på å automatisere steg 3-5.
 
 ### Stoppe alle containere
 * `docker-compose down` --> stopper alle kjørende containere, men beholder tilstand i databaser og på kafka. 

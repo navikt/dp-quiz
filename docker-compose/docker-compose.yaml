@@ -141,7 +141,7 @@ services:
       WONDERWALL_LOG_FORMAT: "text"
 
   frontend:
-    image: ghcr.io/navikt/dp-soknadsdialog/dp-soknadsdialog:b270b92695d9a1721c323afc796a3d46a907a8ae
+    image: ghcr.io/navikt/dp-soknadsdialog/dp-soknadsdialog:latest
     container_name: frontend
     ports:
       - "3001:3001"
