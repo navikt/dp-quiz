@@ -54,6 +54,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
         root.put("versjon_id", prosessVersjon.versjon)
         root.put("versjon_navn", prosessVersjon.prosessnavn.id)
         root.put("@opprettet", "${LocalDateTime.now()}")
+        root.put("sist_endret", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("søknad_uuid", "$uuid")
         root.put("ferdig", ferdig)
