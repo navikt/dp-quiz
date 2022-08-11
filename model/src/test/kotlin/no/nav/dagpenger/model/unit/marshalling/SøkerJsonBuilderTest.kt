@@ -440,7 +440,6 @@ internal class SøkerJsonBuilderTest {
     private fun assertMetadata(søkerJson: ObjectNode) {
         assertEquals("søker_oppgave", søkerJson["@event_name"].asText())
         Assertions.assertDoesNotThrow { søkerJson["@id"].asText().also { UUID.fromString(it) } }
-        Assertions.assertDoesNotThrow { søkerJson["sist_endret"].asText().also { LocalDateTime.parse(it) } }
         Assertions.assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
         Assertions.assertDoesNotThrow { søkerJson["søknad_uuid"].asText().also { UUID.fromString(it) } }
         assertEquals("12020052345", søkerJson["fødselsnummer"].asText())
