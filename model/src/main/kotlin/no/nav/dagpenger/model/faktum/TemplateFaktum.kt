@@ -62,7 +62,6 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
         avhengigeFakta = mutableSetOf(),
         avhengerAvFakta = mutableSetOf(),
         godkjenner = mutableSetOf(),
-        sannsynliggjøringsFakta = mutableSetOf(),
         roller = roller,
         gyldigeValg = gyldigeValg,
         landGrupper = landgrupper
@@ -120,7 +119,16 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     override fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*> {
         if (byggetFakta.containsKey(faktumId)) return byggetFakta[faktumId]!!
         val avhengigheter = avhengigeFakta.map { it.bygg(byggetFakta) }.toMutableSet()
-        return TemplateFaktum(faktumId, navn, clazz, avhengigheter, avhengerAvFakta, roller, gyldigeValg, landgrupper)
+        return TemplateFaktum(
+            faktumId,
+            navn,
+            clazz,
+            avhengigheter,
+            avhengerAvFakta,
+            roller,
+            gyldigeValg,
+            landgrupper
+        )
             .also { byggetFakta[faktumId] = it }
     }
 }

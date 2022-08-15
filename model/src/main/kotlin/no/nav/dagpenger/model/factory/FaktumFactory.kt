@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.faktum.FaktumId
 abstract class FaktumFactory<T : Comparable<T>> {
     internal var rootId = 0
     private val avhengigheter = mutableListOf<Int>()
+    private val sannsynliggjøresAv = mutableListOf<Int>()
 
     internal abstract fun faktum(): Faktum<T>
 
@@ -13,6 +14,12 @@ abstract class FaktumFactory<T : Comparable<T>> {
         this.also {
             require(this.rootId != otherId) { "Et faktum kan ikke være avhengig av seg selv. Faktum id '$rootId' avhengerAv '$otherId'." }
             avhengigheter.add(otherId)
+        }
+
+    infix fun sannsynliggjør(otherId: Int) =
+        this.also {
+            require(this.rootId != otherId) { "Et faktum kan ikke være sannsynliggjøres av seg selv. Faktum id '$rootId' sannsynliggjøresAv '$otherId'." }
+            avhengerAv(otherId)
         }
 
     internal fun avhengerAv(faktumMap: Map<FaktumId, Faktum<*>>) {

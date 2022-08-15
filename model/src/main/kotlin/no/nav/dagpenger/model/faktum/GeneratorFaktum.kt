@@ -16,7 +16,6 @@ class GeneratorFaktum internal constructor(
     avhengigeFakta = avhengigeFakta,
     avhengerAvFakta = avhengerAvFakta,
     godkjenner = mutableSetOf(),
-    sannsynliggjøringsFakta = mutableSetOf(),
     roller = roller
 ) {
     internal lateinit var søknad: Søknad
