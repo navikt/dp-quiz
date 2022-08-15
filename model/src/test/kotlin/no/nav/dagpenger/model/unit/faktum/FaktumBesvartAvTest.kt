@@ -42,7 +42,6 @@ internal class FaktumBesvartAvTest {
             avhengigeFakta: Set<Faktum<*>>,
             avhengerAvFakta: Set<Faktum<*>>,
             godkjenner: Set<Faktum<*>>,
-            sannsynliggjøringsFakta: Set<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>,
             svar: R,

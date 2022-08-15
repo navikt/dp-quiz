@@ -106,7 +106,6 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
         godkjenner: Set<Faktum<*>>,
-        sannsynliggjøringsFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,

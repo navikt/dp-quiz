@@ -100,7 +100,6 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
         godkjenner: Set<Faktum<*>>,
-        sannsynliggjøringsFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
