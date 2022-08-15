@@ -155,6 +155,8 @@ internal open class MedFaktum(val faktum: JsonNode) {
     open fun erBesvartMed(antallSvar: Int) =
         assertEquals(antallSvar, faktum["svar"].asInt(), "Faktum $navn er besvart med")
 
+    fun sannsynliggjøresAv(block: MedFakta.() -> Unit) = MedFakta(faktum["sannsynliggjøresAv"]).also { block(it) }
+
     fun harGyldigeValg(vararg valg: String) = harGyldigeValg(valg.toList())
     private fun harGyldigeValg(valg: List<String>) =
         faktum.get("gyldigeValg").toSet().map { it.asText() }

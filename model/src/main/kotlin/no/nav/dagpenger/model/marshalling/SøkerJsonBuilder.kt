@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.marshalling
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Faktum.Companion.erAlleBesvart
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
@@ -217,6 +218,53 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
             gyldigeValg: GyldigeValg?,
             landGrupper: LandGrupper?
         ) {
+            skrivFaktum(
+                gyldigeValg = gyldigeValg,
+                clazz = clazz,
+                faktum = faktum,
+                id = id,
+                roller = roller,
+                svar = svar,
+                besvartAv = besvartAv,
+                landGrupper = landGrupper,
+                avhengigeFakta = avhengigeFakta
+            )
+        }
+
+        override fun <R : Comparable<R>> visitUtenSvar(
+            faktum: GrunnleggendeFaktum<R>,
+            tilstand: Faktum.FaktumTilstand,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            godkjenner: Set<Faktum<*>>,
+            roller: Set<Rolle>,
+            clazz: Class<R>,
+            gyldigeValg: GyldigeValg?,
+            landGrupper: LandGrupper?
+        ) {
+            skrivFaktum(
+                gyldigeValg = gyldigeValg,
+                clazz = clazz,
+                faktum = faktum,
+                id = id,
+                roller = roller,
+                landGrupper = landGrupper,
+                avhengigeFakta = avhengigeFakta
+            )
+        }
+
+        private fun <R : Comparable<R>> skrivFaktum(
+            gyldigeValg: GyldigeValg?,
+            clazz: Class<R>,
+            faktum: GrunnleggendeFaktum<R>,
+            id: String,
+            roller: Set<Rolle>,
+            svar: R? = null,
+            besvartAv: String? = null,
+            landGrupper: LandGrupper?,
+            avhengigeFakta: Set<Faktum<*>>
+        ) {
             var overstyrbareGyldigeValg = gyldigeValg
             if (clazz.erBoolean()) {
                 overstyrbareGyldigeValg = faktum.lagBeskrivendeIderForGyldigeBoolskeValg()
@@ -236,38 +284,10 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
                 this.root.leggTilLandGrupper(landGrupper)
             }
 
-            this.root.put("readOnly", readOnlyStrategy.readOnly(faktum))
-        }
-
-        override fun <R : Comparable<R>> visitUtenSvar(
-            faktum: GrunnleggendeFaktum<R>,
-            tilstand: Faktum.FaktumTilstand,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFakta: Set<Faktum<*>>,
-            godkjenner: Set<Faktum<*>>,
-            roller: Set<Rolle>,
-            clazz: Class<R>,
-            gyldigeValg: GyldigeValg?,
-            landGrupper: LandGrupper?
-        ) {
-            var overstyrbareGyldigeValg = gyldigeValg
-            if (clazz.erBoolean()) {
-                overstyrbareGyldigeValg = faktum.lagBeskrivendeIderForGyldigeBoolskeValg()
+            val sannsynliggjøringerAsJson = avhengigeFakta.filter { it.type() == Dokument::class.java }.fold(mapper.createArrayNode()) { acc, template ->
+                acc.add(SøknadFaktumVisitor(template, readOnlyStrategy = readOnlyStrategy).root)
             }
-            this.root.lagFaktumNode<R>(
-                id,
-                clazz.simpleName.lowercase(),
-                faktum.navn,
-                roller,
-                null,
-                overstyrbareGyldigeValg
-            )
-
-            if (clazz.erLand()) {
-                this.root.leggTilGyldigeLand()
-                this.root.leggTilLandGrupper(landGrupper)
-            }
+            this.root.set<ArrayNode>("sannsynliggjøresAv", sannsynliggjøringerAsJson)
             this.root.put("readOnly", readOnlyStrategy.readOnly(faktum))
         }
     }

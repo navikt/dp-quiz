@@ -21,6 +21,7 @@ import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.godkjentAv
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.under
@@ -56,7 +57,7 @@ internal class SøkerJsonBuilderTest {
             boolsk faktum "f5" id 5,
             heltall faktum "f6" id 6,
             boolsk faktum "f7" id 7,
-            heltall faktum "f67" id 67 genererer 6 og 7,
+            heltall faktum "f67" id 67 genererer 6 og 7 og 22,
             dato faktum "f8" id 8,
             dato faktum "f9" id 9,
             maks dato "f10" av 8 og 9 id 10,
@@ -75,7 +76,9 @@ internal class SøkerJsonBuilderTest {
                 Land("SJM")
             ) id 19,
             dato faktum "f20" id 20,
-            heltall faktum "f21" genererer 20 id 21
+            heltall faktum "f21" genererer 20 id 21,
+            dokument faktum "f22" id 22 sannsynliggjør 6,
+            boolsk faktum "f23" id 23 avhengerAv 22,
         )
         søknadprosess = søknadprosess(søkerSubsumsjon())
     }
@@ -221,7 +224,14 @@ internal class SøkerJsonBuilderTest {
                         alle { erReadOnly() }
                         erBesvartMed(2)
                         svar(1) {
-                            heltall("f6") { erBesvartMed(21) }
+                            heltall("f6") {
+                                erBesvartMed(21)
+                                sannsynliggjøresAv {
+                                    dokument("f22") {
+                                        erIkkeBesvart()
+                                    }
+                                }
+                            }
                             boolsk("f7") { erBesvartMed(true) }
                         }
                         svar(2) {
@@ -326,7 +336,8 @@ internal class SøkerJsonBuilderTest {
                 prototypeSøknad.boolsk(7).utfylt()
             }
         }
-        val generatorSubsumsjon67 = prototypeSøknad.generator(67) med deltre
+
+        val generatorSubsumsjon67 = (prototypeSøknad.generator(67) med deltre).godkjentAv(prototypeSøknad.boolsk(23))
         val generatorSubsumsjon1718 = prototypeSøknad.generator(1718) med "Besvarte valg".deltre {
             "alle må være besvarte".alle(
                 prototypeSøknad.envalg(17).utfylt(),
@@ -366,6 +377,7 @@ internal class SøkerJsonBuilderTest {
                     "deltre".deltre {
                         prototypeSøknad.dato(20).utfylt()
                     }
+
             )
         }
         return regeltre
@@ -405,7 +417,7 @@ internal class SøkerJsonBuilderTest {
                 Rolle.søker,
                 prototypeSøknad.generator(1718),
                 prototypeSøknad.envalg(17),
-                prototypeSøknad.flervalg(18)
+                prototypeSøknad.flervalg(18),
             ),
             Seksjon(
                 "saksbehandler godkjenning",
@@ -422,6 +434,12 @@ internal class SøkerJsonBuilderTest {
                 Rolle.nav,
                 prototypeSøknad.generator(21),
                 prototypeSøknad.dato(20)
+            ),
+            Seksjon(
+                "godkjenner seksjon",
+                Rolle.saksbehandler,
+                prototypeSøknad.boolsk(23),
+                prototypeSøknad.dokument(22)
             )
         )
         val prototypeFaktagrupper = Søknadprosess(
