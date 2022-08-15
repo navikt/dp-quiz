@@ -44,11 +44,8 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     internal fun godkjenner(fakta: List<Faktum<*>>) = godkjenner.addAll(fakta)
 
-    internal fun sannsynliggjøresAv(sannsynliggjøringsFakta: List<GrunnleggendeFaktum<Dokument>>) {
-
-        println("$sannsynliggjøringsFakta sannsynligjør $this")
+    internal fun sannsynliggjøresAv(sannsynliggjøringsFakta: List<GrunnleggendeFaktum<Dokument>>) =
         this.sannsynliggjøringsFakta.addAll(sannsynliggjøringsFakta)
-    }
 
     override fun type() = clazz
 

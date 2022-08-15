@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.unit.subsumsjon
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.faktum.Dokument
+import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
@@ -27,20 +28,28 @@ class DokumentasjonskravSubsumsjonTest {
     private val godkjenning = søknad boolsk 3
 
     @Test
-    fun `noe`() {
+    fun `Skal lage sannsynliggjøring for en subsumsjon som kan dokumenteres og skal godkjennes `() {
         val subsumsjon = "må svare ja hvis ikke må en dokumentere neiet".minstEnAv(
             (faktum er false).sannsynliggjøresAv(dokumentet).godkjentAv(godkjenning),
             faktum er true
         )
 
+        assertEquals(setOf(faktum as GrunnleggendeFaktum), subsumsjon.nesteFakta())
+
         faktum.besvar(false)
+
         assertEquals(true, subsumsjon.resultat())
+
         dokumentet.besvar(Dokument(LocalDateTime.now(), "urn:sid:1"))
+
         assertEquals(true, subsumsjon.resultat())
+
         godkjenning.besvar(false)
+
         assertEquals(false, subsumsjon.resultat())
 
         dokumentet.besvar(Dokument(LocalDateTime.now(), "urn:sid:2"))
+
         assertEquals(true, subsumsjon.resultat())
 
         godkjenning.besvar(true)

@@ -7,7 +7,6 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
-import no.nav.dagpenger.model.subsumsjon.DokumentasjonskravSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GeneratorSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
@@ -240,14 +239,12 @@ infix fun Subsumsjon.sannsynliggjøresAv(dokument: Faktum<Dokument>) =
     )
 
 class Sannsynliggjøring(private val child: Subsumsjon, private val dokument: Faktum<Dokument>) {
-
-    fun godkjentAv(vararg godkjenningFakta: Faktum<Boolean>): Subsumsjon = DokumentasjonskravSubsumsjon(
-        child,
-        dokument as GrunnleggendeFaktum<Dokument>,
-        godkjenningFakta.map { it as GrunnleggendeFaktum<Boolean> }
-    )
+    init {
+        require(child.alleFakta().all { it is GrunnleggendeFaktum }) { "SannsynliggjøringsFakta er kun støttet for GrunnleggendeFaktum" }
+        child.alleFakta().forEach { (it as GrunnleggendeFaktum).sannsynliggjøresAv(listOf(dokument as GrunnleggendeFaktum)) }
+    }
+    fun godkjentAv(vararg godkjenningFakta: Faktum<Boolean>): Subsumsjon = child.godkjentAv(*godkjenningFakta)
 }
-
 fun Subsumsjon.godkjentAv(vararg faktum: Faktum<Boolean>) =
     GodkjenningsSubsumsjon(UansettAction, this, faktum.map { it as GrunnleggendeFaktum<Boolean> }).also {
         faktum.forEach { it.sjekkAvhengigheter() }
