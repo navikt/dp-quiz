@@ -175,16 +175,6 @@ infix fun GeneratorFaktum.har(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
     )
 )
 
-infix fun Faktum<*>.sannsynliggjøresAv(dokument: Faktum<Dokument>): Subsumsjon =
-    EnkelSubsumsjon(
-        object : Regel {
-            override val typeNavn = "dokumentopplastning"
-            override fun resultat(fakta: List<Faktum<*>>) = true
-            override fun toString(fakta: List<Faktum<*>>) = "Sjekk at dokument `${fakta[0]}` er opplastet"
-        },
-        dokument
-    )
-
 infix fun Faktum<Boolean>.dokumenteresAv(dokument: Faktum<Dokument>): Subsumsjon =
     GodkjenningsSubsumsjon(
         action = JaAction,
@@ -242,6 +232,19 @@ private class Minst(private val tall: Int) : Regel {
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er minst $tall"
 }
 
+infix fun Subsumsjon.sannsynliggjøresAv(dokument: Faktum<Dokument>) =
+    Sannsynliggjøring(
+        this,
+        dokument as GrunnleggendeFaktum<Dokument>
+    )
+
+class Sannsynliggjøring(private val child: Subsumsjon, private val dokument: Faktum<Dokument>) {
+    init {
+        require(child.alleFakta().all { it is GrunnleggendeFaktum }) { "SannsynliggjøringsFakta er kun støttet for GrunnleggendeFaktum" }
+        child.alleFakta().forEach { (it as GrunnleggendeFaktum).sannsynliggjøresAv(listOf(dokument as GrunnleggendeFaktum)) }
+    }
+    fun godkjentAv(vararg godkjenningFakta: Faktum<Boolean>): Subsumsjon = child.godkjentAv(*godkjenningFakta)
+}
 fun Subsumsjon.godkjentAv(vararg faktum: Faktum<Boolean>) =
     GodkjenningsSubsumsjon(UansettAction, this, faktum.map { it as GrunnleggendeFaktum<Boolean> }).also {
         faktum.forEach { it.sjekkAvhengigheter() }

@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
-class GodkjenningsSubsumsjon private constructor(
+open class GodkjenningsSubsumsjon private constructor(
     navn: String,
     private val action: Action,
     private val child: Subsumsjon,
@@ -25,9 +25,12 @@ class GodkjenningsSubsumsjon private constructor(
     internal constructor(action: Action, child: Subsumsjon, godkjenning: List<GrunnleggendeFaktum<Boolean>>) :
         this("${child.navn} godkjenning", action, child, godkjenning, TomSubsumsjon, TomSubsumsjon)
 
+    internal constructor(navn: String, action: Action, child: Subsumsjon, godkjenning: List<GrunnleggendeFaktum<Boolean>>) :
+        this(navn, action, child, godkjenning, TomSubsumsjon, TomSubsumsjon)
+
     enum class Action(internal val strategy: (Boolean, Boolean?) -> Boolean?) {
-        JaAction({ childResultat: Boolean, godkjenningResultat: Boolean? -> childResultat && godkjenningResultat != false }),
-        NeiAction({ childResultat: Boolean, godkjenningResultat: Boolean? -> childResultat || godkjenningResultat == false }),
+        JaAction({ childResultat: Boolean, godkjenningResultat: Boolean? -> childResultat && (godkjenningResultat != false) }),
+        NeiAction({ childResultat: Boolean, godkjenningResultat: Boolean? -> childResultat || (godkjenningResultat == false) }),
         UansettAction({ childResultat: Boolean, godkjenningResultat: Boolean? ->
             if (godkjenningResultat != null)
                 if (godkjenningResultat) childResultat else !childResultat

@@ -10,13 +10,14 @@ class GeneratorFaktum internal constructor(
     avhengerAvFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     roller: MutableSet<Rolle> = mutableSetOf()
 ) : GrunnleggendeFaktum<Int>(
-    faktumId,
-    navn,
-    Int::class.java,
-    avhengigeFakta,
-    avhengerAvFakta,
-    mutableSetOf(),
-    roller
+    faktumId = faktumId,
+    navn = navn,
+    clazz = Int::class.java,
+    avhengigeFakta = avhengigeFakta,
+    avhengerAvFakta = avhengerAvFakta,
+    godkjenner = mutableSetOf(),
+    sannsynliggjøringsFakta = mutableSetOf(),
+    roller = roller
 ) {
     internal lateinit var søknad: Søknad
 

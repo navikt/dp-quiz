@@ -56,15 +56,16 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     }
 
     private fun deepCopy(indeks: Int) = GrunnleggendeFaktum(
-        faktumId medIndeks indeks,
-        navn,
-        clazz,
-        mutableSetOf(),
-        mutableSetOf(),
-        mutableSetOf(),
-        roller,
-        gyldigeValg,
-        landgrupper
+        faktumId = faktumId medIndeks indeks,
+        navn = navn,
+        clazz = clazz,
+        avhengigeFakta = mutableSetOf(),
+        avhengerAvFakta = mutableSetOf(),
+        godkjenner = mutableSetOf(),
+        sannsynliggjøringsFakta = mutableSetOf(),
+        roller = roller,
+        gyldigeValg = gyldigeValg,
+        landGrupper = landgrupper
     )
 
     // Lag instans av template faktum ved besvar eller rehydrering av søknad
