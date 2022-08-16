@@ -136,7 +136,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
     }
 
     private class SannsynliggjøringsFaktaFinner(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
-        val fakta = mutableSetOf<GrunnleggendeFaktum<Dokument>>()
+        val fakta = mutableSetOf<GrunnleggendeFaktum<*>>()
 
         init {
             subsumsjon.accept(this)
@@ -144,7 +144,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
 
         override fun postVisit(
             subsumsjon: SannsynliggjøringsSubsumsjon,
-            sannsynliggjøringsFakta: GrunnleggendeFaktum<Dokument>,
+            sannsynliggjøringsFakta: GrunnleggendeFaktum<*>,
             lokaltResultat: Boolean?
         ) {
             if (lokaltResultat != true) return

@@ -1,6 +1,5 @@
 package no.nav.dagpenger.model.subsumsjon
 
-import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Søknad
@@ -11,7 +10,7 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 class SannsynliggjøringsSubsumsjon private constructor(
     navn: String,
     private val child: Subsumsjon,
-    private val sannsynliggjøringsFaktum: Faktum<Dokument>
+    private val sannsynliggjøringsFaktum: Faktum<*>
 ) : SammensattSubsumsjon(navn, mutableListOf(child), TomSubsumsjon, TomSubsumsjon) {
 
     init {
@@ -20,7 +19,7 @@ class SannsynliggjøringsSubsumsjon private constructor(
 
     internal constructor(
         child: Subsumsjon,
-        sannsynliggjøringsFakta: Faktum<Dokument>
+        sannsynliggjøringsFakta: Faktum<*>
     ) :
         this(
             "${child.navn} sannsynligjøring",
@@ -32,7 +31,7 @@ class SannsynliggjøringsSubsumsjon private constructor(
 
     override fun accept(visitor: SubsumsjonVisitor) {
         lokaltResultat().also { subsumsjon ->
-            visitor.preVisit(this, sannsynliggjøringsFaktum as GrunnleggendeFaktum<Dokument>, subsumsjon)
+            visitor.preVisit(this, sannsynliggjøringsFaktum as GrunnleggendeFaktum<*>, subsumsjon)
             super.accept(visitor)
             sannsynliggjøringsFaktum.accept(visitor)
             visitor.postVisit(this, sannsynliggjøringsFaktum, subsumsjon)
@@ -51,7 +50,7 @@ class SannsynliggjøringsSubsumsjon private constructor(
         return SannsynliggjøringsSubsumsjon(
             "$navn [$indeks]",
             child.deepCopy(indeks, søknad),
-            sannsynliggjøringsFaktum.deepCopy(indeks, søknad) as Faktum<Dokument>
+            sannsynliggjøringsFaktum.deepCopy(indeks, søknad)
         )
     }
 

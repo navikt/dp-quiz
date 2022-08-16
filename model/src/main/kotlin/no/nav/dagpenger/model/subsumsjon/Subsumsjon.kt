@@ -1,7 +1,6 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.factory.FaktaRegel
-import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
@@ -255,8 +254,8 @@ infix fun Subsumsjon.uansett(block: SubsumsjonGenerator): Subsumsjon {
     }
 }
 
-infix fun Subsumsjon.sannsynliggjøresAv(dokumentFaktum: Faktum<Dokument>) = SannsynliggjøringsSubsumsjon(
+infix fun Subsumsjon.sannsynliggjøresAv(sannsynliggjøringsFaktum: Faktum<*>) = SannsynliggjøringsSubsumsjon(
     this,
-    dokumentFaktum
+    sannsynliggjøringsFaktum
 )
 typealias SubsumsjonGenerator = () -> Subsumsjon

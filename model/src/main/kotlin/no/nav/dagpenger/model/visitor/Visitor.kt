@@ -1,7 +1,6 @@
 package no.nav.dagpenger.model.visitor
 
 import no.nav.dagpenger.model.factory.FaktaRegel
-import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
@@ -240,14 +239,14 @@ interface SubsumsjonVisitor : FaktumVisitor {
 
     fun preVisit(
         subsumsjon: SannsynliggjøringsSubsumsjon,
-        sannsynliggjøringsFakta: GrunnleggendeFaktum<Dokument>,
+        sannsynliggjøringsFakta: GrunnleggendeFaktum<*>,
         lokaltResultat: Boolean?
     ) {
     }
 
     fun postVisit(
         subsumsjon: SannsynliggjøringsSubsumsjon,
-        sannsynliggjøringsFakta: GrunnleggendeFaktum<Dokument>,
+        sannsynliggjøringsFakta: GrunnleggendeFaktum<*>,
         lokaltResultat: Boolean?
     ) {
     }
