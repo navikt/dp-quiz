@@ -24,7 +24,10 @@ import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilLandGruppe
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder.ReadOnlyStrategy
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.subsumsjon.SannsynliggjøringsSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
+import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
@@ -35,6 +38,8 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
         private val skalIkkeBesvaresAvSøker = ReadOnlyStrategy { it.harIkkeRolle(Rolle.søker) }
     }
 
+    private val sannsynliggjøringsFaktaListe: Set<Faktum<*>> =
+        SannsynliggjøringsFaktaFinner(søknadprosess.rootSubsumsjon).fakta
     private val root: ObjectNode = mapper.createObjectNode()
     private val seksjoner = mapper.createArrayNode()
     private lateinit var gjeldendeFakta: Seksjon
@@ -87,7 +92,14 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
                 else -> emptySet()
             }
 
-            acc.add(SøknadFaktumVisitor(faktum, generatorFaktumFakta, avhengigeFaktaErLåst).root)
+            acc.add(
+                SøknadFaktumVisitor(
+                    faktum,
+                    generatorFaktumFakta,
+                    avhengigeFaktaErLåst,
+                    sannsynliggjøringsFaktaListe
+                ).root
+            )
         }
 
         mapper.createObjectNode().apply {
@@ -123,6 +135,23 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
         avhengigheter.addAll(avhengerAvFakta)
     }
 
+    private class SannsynliggjøringsFaktaFinner(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
+        val fakta = mutableSetOf<GrunnleggendeFaktum<Dokument>>()
+
+        init {
+            subsumsjon.accept(this)
+        }
+
+        override fun postVisit(
+            subsumsjon: SannsynliggjøringsSubsumsjon,
+            sannsynliggjøringsFakta: GrunnleggendeFaktum<Dokument>,
+            lokaltResultat: Boolean?
+        ) {
+            if (lokaltResultat != true) return
+            fakta.add(sannsynliggjøringsFakta)
+        }
+    }
+
     private fun interface ReadOnlyStrategy {
         fun readOnly(faktum: Faktum<*>): Boolean
     }
@@ -130,7 +159,9 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
     private class SøknadFaktumVisitor(
         faktum: Faktum<*>,
         private val besvarteOgNesteGeneratorFakta: Set<Faktum<*>> = emptySet(),
-        private val readOnlyStrategy: ReadOnlyStrategy = skalIkkeBesvaresAvSøker
+        // TODO: Erstatte dette med noe decoratorish?
+        private val readOnlyStrategy: ReadOnlyStrategy = skalIkkeBesvaresAvSøker,
+        private val sannsynliggjøringsFaktaListe: Set<Faktum<*>> = emptySet()
     ) : FaktumVisitor {
         val root: ObjectNode = mapper.createObjectNode()
 
@@ -194,7 +225,13 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
                     set(
                         indeks,
                         grupperteFakta[indeks + 1]?.fold(mapper.createArrayNode()) { acc, faktum ->
-                            acc.add(SøknadFaktumVisitor(faktum, readOnlyStrategy = readOnlyStrategy).root)
+                            acc.add(
+                                SøknadFaktumVisitor(
+                                    faktum,
+                                    readOnlyStrategy = readOnlyStrategy,
+                                    sannsynliggjøringsFaktaListe = sannsynliggjøringsFaktaListe
+                                ).root
+                            )
                         } ?: arrayNode
                     )
                 }
@@ -283,10 +320,11 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
                 this.root.leggTilGyldigeLand()
                 this.root.leggTilLandGrupper(landGrupper)
             }
-
-            val sannsynliggjøringerAsJson = avhengigeFakta.filter { it.type() == Dokument::class.java }.fold(mapper.createArrayNode()) { acc, template ->
-                acc.add(SøknadFaktumVisitor(template, readOnlyStrategy = readOnlyStrategy).root)
-            }
+            val sannsynliggjøringerAsJson = avhengigeFakta.filter { it.type() == Dokument::class.java }
+                .filter { sannsynliggjøringsFaktaListe.contains(it) }
+                .fold(mapper.createArrayNode()) { acc, template ->
+                    acc.add(SøknadFaktumVisitor(template, readOnlyStrategy = readOnlyStrategy).root)
+                }
             this.root.set<ArrayNode>("sannsynliggjøresAv", sannsynliggjøringerAsJson)
             this.root.put("readOnly", readOnlyStrategy.readOnly(faktum))
         }

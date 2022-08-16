@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.visitor
 
 import no.nav.dagpenger.model.factory.FaktaRegel
+import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
@@ -24,6 +25,7 @@ import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GeneratorSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
+import no.nav.dagpenger.model.subsumsjon.SannsynliggjøringsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
 
@@ -182,10 +184,38 @@ interface SubsumsjonVisitor : FaktumVisitor {
     fun preVisit(subsumsjon: GeneratorSubsumsjon, deltre: DeltreSubsumsjon) {}
     fun postVisit(subsumsjon: GeneratorSubsumsjon, deltre: DeltreSubsumsjon) {}
 
-    fun preVisit(subsumsjon: AlleSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun postVisit(subsumsjon: AlleSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun preVisit(subsumsjon: MinstEnAvSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun postVisit(subsumsjon: MinstEnAvSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun preVisit(
+        subsumsjon: AlleSubsumsjon,
+        subsumsjoner: List<Subsumsjon>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?
+    ) {
+    }
+
+    fun postVisit(
+        subsumsjon: AlleSubsumsjon,
+        subsumsjoner: List<Subsumsjon>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?
+    ) {
+    }
+
+    fun preVisit(
+        subsumsjon: MinstEnAvSubsumsjon,
+        subsumsjoner: List<Subsumsjon>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?
+    ) {
+    }
+
+    fun postVisit(
+        subsumsjon: MinstEnAvSubsumsjon,
+        subsumsjoner: List<Subsumsjon>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?
+    ) {
+    }
+
     fun preVisit(subsumsjon: BareEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun postVisit(subsumsjon: BareEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
     fun preVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
@@ -205,6 +235,20 @@ interface SubsumsjonVisitor : FaktumVisitor {
         godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         resultat: Boolean?,
         childResultat: Boolean?
+    ) {
+    }
+
+    fun preVisit(
+        subsumsjon: SannsynliggjøringsSubsumsjon,
+        sannsynliggjøringsFakta: GrunnleggendeFaktum<Dokument>,
+        lokaltResultat: Boolean?
+    ) {
+    }
+
+    fun postVisit(
+        subsumsjon: SannsynliggjøringsSubsumsjon,
+        sannsynliggjøringsFakta: GrunnleggendeFaktum<Dokument>,
+        lokaltResultat: Boolean?
     ) {
     }
 

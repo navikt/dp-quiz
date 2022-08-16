@@ -236,6 +236,7 @@ infix fun Subsumsjon.hvisOppfylt(block: SubsumsjonGenerator) = this.also {
     require(it.oppfylt is TomSubsumsjon) { " Kan ikke overskrive oppfylt gren, er allerede satt til subsumsjon '${it.oppfylt.navn}'" }
     this.oppfylt(block())
 }
+
 infix fun Subsumsjon.hvisIkkeOppfylt(block: SubsumsjonGenerator) = this.also {
     require(it.ikkeOppfylt is TomSubsumsjon) { " Kan ikke overskrive IKKE oppfylt gren, er allerede satt til subsumsjon '${it.ikkeOppfylt.navn}'" }
     this.ikkeOppfylt(block())
@@ -255,7 +256,7 @@ infix fun Subsumsjon.uansett(block: SubsumsjonGenerator): Subsumsjon {
 }
 
 infix fun Subsumsjon.sannsynliggjøresAv(dokumentFaktum: Faktum<Dokument>) = SannsynliggjøringsSubsumsjon(
-    this, dokumentFaktum
+    this,
+    dokumentFaktum
 )
-
 typealias SubsumsjonGenerator = () -> Subsumsjon

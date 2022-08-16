@@ -149,7 +149,7 @@ internal class SøkerJsonBuilderTest {
         }
 
         søknadprosess.generator(67).besvar(2)
-        søknadprosess.heltall("6.1").besvar(21)
+        søknadprosess.heltall("6.1").besvar(11)
         søknadprosess.boolsk("7.1").besvar(true)
         MedSøknad(søknadprosess) {
             harAntallSeksjoner(2)
@@ -226,7 +226,7 @@ internal class SøkerJsonBuilderTest {
                         erBesvartMed(2)
                         svar(1) {
                             heltall("f6") {
-                                erBesvartMed(21)
+                                erBesvartMed(11)
                                 sannsynliggjøresAv {
                                     dokument("f22") {
                                         erIkkeBesvart()
