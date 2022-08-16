@@ -259,3 +259,30 @@ infix fun Subsumsjon.sannsynliggjøresAv(sannsynliggjøringsFaktum: Faktum<*>) =
     sannsynliggjøringsFaktum
 )
 typealias SubsumsjonGenerator = () -> Subsumsjon
+
+fun Subsumsjon.godkjentAv(vararg faktum: Faktum<Boolean>) =
+    GodkjenningsSubsumsjon(
+        GodkjenningsSubsumsjon.Action.UansettAction,
+        this,
+        faktum.map { it as GrunnleggendeFaktum<Boolean> }
+    ).also {
+        faktum.forEach { it.sjekkAvhengigheter() }
+    }
+
+fun Subsumsjon.oppfyltGodkjentAv(vararg faktum: Faktum<Boolean>) =
+    GodkjenningsSubsumsjon(
+        GodkjenningsSubsumsjon.Action.JaAction,
+        this,
+        faktum.map { it as GrunnleggendeFaktum<Boolean> }
+    ).also {
+        faktum.forEach { it.sjekkAvhengigheter() }
+    }
+
+fun Subsumsjon.ikkeOppfyltGodkjentAv(vararg faktum: Faktum<Boolean>) =
+    GodkjenningsSubsumsjon(
+        GodkjenningsSubsumsjon.Action.NeiAction,
+        this,
+        faktum.map { it as GrunnleggendeFaktum<Boolean> }
+    ).also {
+        faktum.forEach { it.sjekkAvhengigheter() }
+    }

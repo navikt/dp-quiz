@@ -15,7 +15,6 @@ import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.minst
-import no.nav.dagpenger.model.regel.oppfyltGodkjentAv
 import no.nav.dagpenger.model.regel.under
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -27,6 +26,7 @@ import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
+import no.nav.dagpenger.model.subsumsjon.oppfyltGodkjentAv
 import no.nav.dagpenger.model.subsumsjon.uansett
 
 private val prototypeSøknad1 = Søknad(

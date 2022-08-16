@@ -6,12 +6,12 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.regel.godkjentAv
-import no.nav.dagpenger.model.regel.ikkeOppfyltGodkjentAv
-import no.nav.dagpenger.model.regel.oppfyltGodkjentAv
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.godkjentAv
+import no.nav.dagpenger.model.subsumsjon.ikkeOppfyltGodkjentAv
+import no.nav.dagpenger.model.subsumsjon.oppfyltGodkjentAv
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

@@ -11,8 +11,6 @@ import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GeneratorSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.JaAction
-import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.NeiAction
-import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action.UansettAction
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
@@ -175,6 +173,7 @@ infix fun GeneratorFaktum.har(deltre: DeltreSubsumsjon) = DeltreSubsumsjon(
     )
 )
 
+@Deprecated("Er på vei ut, erstattes av sannsynliggjøresAv")
 infix fun Faktum<Boolean>.dokumenteresAv(dokument: Faktum<Dokument>): Subsumsjon =
     GodkjenningsSubsumsjon(
         action = JaAction,
@@ -231,18 +230,3 @@ private class Minst(private val tall: Int) : Regel {
 
     override fun toString(fakta: List<Faktum<*>>) = "Sjekk at '${fakta[0]}' er minst $tall"
 }
-
-fun Subsumsjon.godkjentAv(vararg faktum: Faktum<Boolean>) =
-    GodkjenningsSubsumsjon(UansettAction, this, faktum.map { it as GrunnleggendeFaktum<Boolean> }).also {
-        faktum.forEach { it.sjekkAvhengigheter() }
-    }
-
-fun Subsumsjon.oppfyltGodkjentAv(vararg faktum: Faktum<Boolean>) =
-    GodkjenningsSubsumsjon(JaAction, this, faktum.map { it as GrunnleggendeFaktum<Boolean> }).also {
-        faktum.forEach { it.sjekkAvhengigheter() }
-    }
-
-fun Subsumsjon.ikkeOppfyltGodkjentAv(vararg faktum: Faktum<Boolean>) =
-    GodkjenningsSubsumsjon(NeiAction, this, faktum.map { it as GrunnleggendeFaktum<Boolean> }).also {
-        faktum.forEach { it.sjekkAvhengigheter() }
-    }
