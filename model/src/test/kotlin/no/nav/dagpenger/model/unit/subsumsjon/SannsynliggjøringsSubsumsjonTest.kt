@@ -16,22 +16,23 @@ import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
+import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-class DokumentasjonskravSubsumsjonTest {
+class SannsynliggjøringsSubsumsjonTest {
     private val søknad = Søknad(
         testversjon,
         boolsk faktum "faktum" id 1,
-        dokument faktum "dokument" id 2 sannsynliggjør 1,
+        dokument faktum "dokument" id 2,
         boolsk faktum "godkjenning" id 3 avhengerAv 2,
         heltall faktum "generator" id 4 genererer 5 og 6 og 7,
         boolsk faktum "generert-boolsk1" id 5,
         boolsk faktum "generert-boolsk2" id 6,
-        dokument faktum "dokument for generator" id 7 sannsynliggjør 5 og 6,
+        dokument faktum "dokument for generator" id 7,
         boolsk faktum "godkjenning for generator" id 8 avhengerAv 7
     )
     private val faktum = søknad boolsk 1
@@ -40,12 +41,13 @@ class DokumentasjonskravSubsumsjonTest {
     private val generator = søknad generator 4
     private val generatorB1 = søknad boolsk 5
     private val generatorB2 = søknad boolsk 6
+    private val generatorDokument = søknad dokument 7
     private val generatorGodkjenning = søknad boolsk 8
 
     @Test
     fun `Skal lage sannsynliggjøring for en subsumsjon som kan dokumenteres og skal godkjennes `() {
         val subsumsjon = "må svare ja hvis ikke må en dokumentere neiet".minstEnAv(
-            (faktum er false).godkjentAv(godkjenning),
+            (faktum er false).sannsynliggjøresAv(dokumentet).godkjentAv(godkjenning),
             faktum er true
         )
 
@@ -83,7 +85,7 @@ class DokumentasjonskravSubsumsjonTest {
     fun `Skal lage sannsynliggjøring for en subsumsjon med generator som kan dokumenteres og skal godkjennes `() {
         val subsumsjon = generator.med(
             "deltre".deltre {
-                "generator".alle(generatorB1 er true, generatorB2 er true)
+                "generator".alle(generatorB1 er true, generatorB2 er true).sannsynliggjøresAv(generatorDokument)
             }
         ).godkjentAv(generatorGodkjenning)
         val søknadprosess = søknad.testSøknadprosess(subsumsjon) {

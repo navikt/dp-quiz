@@ -34,6 +34,7 @@ import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
+import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -77,7 +78,7 @@ internal class SøkerJsonBuilderTest {
             ) id 19,
             dato faktum "f20" id 20,
             heltall faktum "f21" genererer 20 id 21,
-            dokument faktum "f22" id 22 sannsynliggjør 6,
+            dokument faktum "f22" id 22,
             boolsk faktum "f23" id 23 avhengerAv 22,
         )
         søknadprosess = søknadprosess(søkerSubsumsjon())
@@ -330,7 +331,7 @@ internal class SøkerJsonBuilderTest {
     }
 
     private fun søkerSubsumsjon(): Subsumsjon {
-        val alleBarnMåværeUnder18år = prototypeSøknad.heltall(6) under 18
+        val alleBarnMåværeUnder18år = (prototypeSøknad.heltall(6) under 18).sannsynliggjøresAv(prototypeSøknad.dokument(22))
         val deltre = "§ 1.2 har kun ikke myndige barn".deltre {
             alleBarnMåværeUnder18år.hvisIkkeOppfylt {
                 prototypeSøknad.boolsk(7).utfylt()

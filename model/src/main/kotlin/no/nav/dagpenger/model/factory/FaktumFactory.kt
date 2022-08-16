@@ -16,12 +16,6 @@ abstract class FaktumFactory<T : Comparable<T>> {
             avhengigheter.add(otherId)
         }
 
-    infix fun sannsynliggjør(otherId: Int) =
-        this.also {
-            require(this.rootId != otherId) { "Et faktum kan ikke være sannsynliggjøres av seg selv. Faktum id '$rootId' sannsynliggjøresAv '$otherId'." }
-            avhengerAv(otherId)
-        }
-
     internal fun avhengerAv(faktumMap: Map<FaktumId, Faktum<*>>) {
         avhengigheter.forEach {
             (faktumMap[FaktumId(it)] as Faktum<*>).leggTilAvhengighet(faktumMap[FaktumId(rootId)] as Faktum<*>)
