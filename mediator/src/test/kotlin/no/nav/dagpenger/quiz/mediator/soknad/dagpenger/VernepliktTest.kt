@@ -17,7 +17,7 @@ internal class VernepliktTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        Verneplikt.verifiserFeltsammensetting(1, 7001)
+        Verneplikt.verifiserFeltsammensetting(3, 21006)
     }
 
     @BeforeEach

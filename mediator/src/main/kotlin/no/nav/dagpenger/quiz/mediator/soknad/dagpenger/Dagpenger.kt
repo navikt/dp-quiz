@@ -7,16 +7,13 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger.Subsumsjoner.regeltre
 
 internal object Dagpenger {
-
     private val logger = KotlinLogging.logger { }
-
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 227)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 228)
 
     fun registrer(registrer: (prototype: Søknad) -> Unit) {
         registrer(prototypeSøknad)
@@ -33,20 +30,15 @@ internal object Dagpenger {
         AndreYtelser,
         Utdanning,
         ReellArbeidssoker,
-        Tilleggsopplysninger,
-        DokumentasjonskravVerneplikt,
-        DokumentasjonskravUtdanning,
+        Tilleggsopplysninger
     )
-
     private val alleFakta = flatMapAlleFakta()
     private val alleSeksjoner = flatMapAlleSeksjoner()
-
     private val prototypeSøknad: Søknad
         get() = Søknad(
             VERSJON_ID,
             *alleFakta
         )
-
     private val søknadsprosess: Søknadprosess = Søknadprosess(*alleSeksjoner)
 
     object Subsumsjoner {
@@ -61,12 +53,7 @@ internal object Dagpenger {
                                         AndreYtelser.regeltre(this).hvisOppfylt {
                                             Utdanning.regeltre(this).hvisOppfylt {
                                                 ReellArbeidssoker.regeltre(this).hvisOppfylt {
-                                                    Tilleggsopplysninger.regeltre(this).hvisOppfylt {
-                                                        "dokumentasjonskrav".alle(
-                                                            DokumentasjonskravVerneplikt.regeltre(this),
-                                                            DokumentasjonskravUtdanning.regeltre(this),
-                                                        )
-                                                    }
+                                                    Tilleggsopplysninger.regeltre(this)
                                                 }
                                             }
                                         }
@@ -83,7 +70,7 @@ internal object Dagpenger {
     private val faktumNavBehov =
         FaktumNavBehov(
             mapOf(
-                Barnetillegg.`barn liste register` to "Barn",
+                Barnetillegg.`barn liste register` to "Barn"
             )
         )
 

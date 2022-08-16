@@ -23,7 +23,7 @@ internal class UtdanningTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        Utdanning.verifiserFeltsammensetting(3, 6006)
+        Utdanning.verifiserFeltsammensetting(5, 10015)
     }
 
     @BeforeEach

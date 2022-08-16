@@ -17,7 +17,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class EgenNæringTest {
-
     private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, versjon = -1), *EgenNæring.fakta())
     private lateinit var søknadprosess: Søknadprosess
 
@@ -92,7 +91,6 @@ internal class EgenNæringTest {
         assertTrue(søknadprosess.heltall("${EgenNæring.`egen naering organisasjonsnummer`}.1").erBesvart())
 
         søknadprosess.boolsk(EgenNæring.`driver du egen naering`).besvar(false)
-
         // Nå blir generatoren ubesvart og alle templates tilbakestilles og fjernes.
         assertFalse(søknadprosess.generator(EgenNæring.`egen naering organisasjonsnummer liste`).erBesvart())
         assertThrows<IllegalArgumentException> { søknadprosess.heltall("${EgenNæring.`egen naering organisasjonsnummer`}.1") }

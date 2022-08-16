@@ -6,7 +6,6 @@ import no.nav.dagpenger.model.faktum.FaktumId
 abstract class FaktumFactory<T : Comparable<T>> {
     internal var rootId = 0
     private val avhengigheter = mutableListOf<Int>()
-    private val sannsynliggjøresAv = mutableListOf<Int>()
 
     internal abstract fun faktum(): Faktum<T>
 
