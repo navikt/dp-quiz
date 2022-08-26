@@ -1,5 +1,6 @@
 package no.nav.dagpenger.model.marshalling
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -18,7 +19,9 @@ import java.time.LocalDate
 
 object FaktumTilJsonHjelper {
 
-    private val mapper = ObjectMapper()
+    private val mapper = ObjectMapper().also {
+        it.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+    }
 
     internal fun <R> ObjectNode.putR(beskrivendeId: String = "svar", svar: R) {
         when (svar) {
@@ -48,9 +51,9 @@ object FaktumTilJsonHjelper {
 
     private fun Periode.asJsonNode() =
         reflection { fom, tom ->
-            mapper.createObjectNode().also {
-                it.put("fom", fom.toString())
-                it.put("tom", tom?.toString())
+            mapper.createObjectNode().also { node ->
+                node.put("fom", fom.toString())
+                tom?.let { node.put("tom", tom.toString()) }
             }
         }
 
