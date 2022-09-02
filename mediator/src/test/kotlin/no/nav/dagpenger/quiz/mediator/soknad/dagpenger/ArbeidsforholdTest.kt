@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Land
@@ -14,9 +15,11 @@ import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 internal class ArbeidsforholdTest {
@@ -377,6 +380,26 @@ internal class ArbeidsforholdTest {
         )
 
         assertEquals(null, søknadprosess.resultat())
+    }
+
+    // DAG-341. Feil i arbeidsforhold-generator
+    @Disabled
+    @Test
+    fun `Bug - rekkefølgen på spørsmålene blir feil`() {
+        søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
+            .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
+        søknadprosess.dato(Arbeidsforhold.`dagpenger soknadsdato`).besvar(1.januar)
+        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
+        søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(1)
+        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))
+        søknadprosess.land("${Arbeidsforhold.`arbeidsforhold land`}.1").besvar(Land("NOR"))
+        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1").besvar(Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs"))
+        søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
+        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold midlertidig arbeidsforhold med sluttdato`}.1").besvar(Envalg("faktum.arbeidsforhold.midlertidig-arbeidsforhold-med-sluttdato.svar.ja"))
+
+        val nesteSeksjonAsJsonNode = jacksonObjectMapper().readTree(søknadprosess.nesteSeksjoner()[0].somSpørsmål())
+        val arbeidsforholdGeneratorSvar = nesteSeksjonAsJsonNode["seksjoner"][0]["fakta"][2]["svar"][0]
+        assertNull(arbeidsforholdGeneratorSvar.last()["svar"], "siste spørsmål i listen skal være ubesvart")
     }
 
     private fun `besvar innledende spørsmål om arbeidsforhold for gjenopptak`() {
