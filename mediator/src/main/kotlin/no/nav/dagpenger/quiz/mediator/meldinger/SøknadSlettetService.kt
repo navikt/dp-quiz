@@ -30,8 +30,12 @@ internal class SøknadSlettetService(
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val uuid = UUID.fromString(packet["søknad_uuid"].asText())
         withMDC("søknad_uuid" to uuid.toString()) {
-            søknadPersistence.slett(uuid)
-            logger.info { "Søknad slettet" }
+            try {
+                søknadPersistence.slett(uuid)
+                logger.info { "Søknad slettet" }
+            } catch (e: Exception) {
+                logger.error { "Sletting av søknad med uuid: $uuid feilet" }
+            }
         }
     }
 }
