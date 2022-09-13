@@ -50,6 +50,7 @@ internal class SøknadSlettetServiceTest {
   "@opprettet": "2022-06-24T14:26:43.975947",
   "@id": "190de272-9535-40c6-b710-6d233cbdd600",
   "søknad_uuid": "$søknadUUID",
+  "ident": "12345678901",
   "system_read_count": 0,
   "system_participating_services": [
     {
