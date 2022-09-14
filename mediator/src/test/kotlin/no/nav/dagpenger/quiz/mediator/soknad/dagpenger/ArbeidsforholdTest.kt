@@ -15,7 +15,6 @@ import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -383,7 +382,6 @@ internal class ArbeidsforholdTest {
     }
 
     // DAG-341. Feil i arbeidsforhold-generator
-    @Disabled
     @Test
     fun `Bug - rekkefølgen på spørsmålene blir feil`() {
         søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)

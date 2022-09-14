@@ -217,23 +217,40 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
             val svarListe = mapper.createArrayNode().apply {
                 // Skal alltid inneholde like mange elementer som generatoren er besvart med
                 repeat(faktum.svar()) { i -> insertArray(i) }
+
+                // Behandler besvarte og neste (ubesvarte) fakta hver for seg
+                val (besvarteFakta, nesteFakta) = besvarteOgNesteGeneratorFakta.partition { it.erBesvart() }
+
                 // Grupper fakta etter indeks så de kan slås opp i
-                val grupperteFakta =
-                    besvarteOgNesteGeneratorFakta.groupBy { it.faktumId.reflection { _, indeks -> indeks } }
-                // Erstatt placeholdere med besvarte eller neste fakta
+                val grupperteBesvarteFakta =
+                    besvarteFakta.groupBy { it.faktumId.reflection { _, indeks -> indeks } }
+                val grupperteNesteFakta =
+                    nesteFakta.groupBy { it.faktumId.reflection { _, indeks -> indeks } }
+
+                // Erstatt placeholdere med besvarte fakta først
                 forEachIndexed { indeks, arrayNode ->
-                    set(
-                        indeks,
-                        grupperteFakta[indeks + 1]?.fold(mapper.createArrayNode()) { acc, faktum ->
-                            acc.add(
-                                SøknadFaktumVisitor(
-                                    faktum,
-                                    readOnlyStrategy = readOnlyStrategy,
-                                    sannsynliggjøringsFaktaListe = sannsynliggjøringsFaktaListe
-                                ).root
-                            )
-                        } ?: arrayNode
-                    )
+                    val alleFaktaForGjeldendeGeneratorindeks = grupperteBesvarteFakta[indeks + 1]?.fold(mapper.createArrayNode()) { acc, besvartFaktum ->
+                        acc.add(
+                            SøknadFaktumVisitor(
+                                besvartFaktum,
+                                readOnlyStrategy = readOnlyStrategy,
+                                sannsynliggjøringsFaktaListe = sannsynliggjøringsFaktaListe
+                            ).root
+                        )
+                    } ?: arrayNode
+
+                    // Erstatt placeholdere med neste fakta til slutt
+                    grupperteNesteFakta[indeks + 1]?.fold(alleFaktaForGjeldendeGeneratorindeks as ArrayNode) { acc, ubesvartFaktum ->
+                        acc.add(
+                            SøknadFaktumVisitor(
+                                ubesvartFaktum,
+                                readOnlyStrategy = readOnlyStrategy,
+                                sannsynliggjøringsFaktaListe = sannsynliggjøringsFaktaListe
+                            ).root
+                        )
+                    }
+
+                    set(indeks, alleFaktaForGjeldendeGeneratorindeks)
                 }
             }
 
