@@ -166,7 +166,6 @@ object Arbeidsforhold : DslFaktaseksjon {
             og `arbeidsforhold vet du antall timer foer du sa opp`
             og `arbeidsforhold vet du antall timer foer redusert arbeidstid`
             og `arbeidsforhold vet du antall timer foer permittert`
-            og `arbeidsforhold antall timer dette arbeidsforhold`
             og `arbeidsforhold permittert periode`
             og `arbeidsforhold permittert prosent`
             og `arbeidsforhold vet du lonnsplikt periode`
@@ -186,6 +185,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             og `arbeidsforhold vet du aarsak til sagt opp av arbeidsgiver`
             og `arbeidsforhold vet du aarsak til redusert arbeidstid`
             og `arbeidsforhold midlertidig arbeidsforhold med sluttdato`
+            og `arbeidsforhold antall timer dette arbeidsforhold`
             og `arbeidsforhold tilbud om annen stilling eller annet sted i norge`
             og `arbeidsforhold skift eller turnus`
             og `arbeidsforhold rotasjon`
