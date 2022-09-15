@@ -20,10 +20,8 @@ internal class SøknadSlettetService(
 
     init {
         River(rapidsConnection).apply {
-            validate {
-                it.demandValue("@event_name", "søknad_slettet")
-                it.requireKey("søknad_uuid")
-            }
+            validate { it.demandValue("@event_name", "søknad_slettet") }
+            validate { it.requireKey("søknad_uuid") }
         }.register(this)
     }
 
@@ -31,8 +29,8 @@ internal class SøknadSlettetService(
         val uuid = UUID.fromString(packet["søknad_uuid"].asText())
         withMDC("søknad_uuid" to uuid.toString()) {
             try {
+                logger.info { "Forsøker å slette søknad: $uuid" }
                 søknadPersistence.slett(uuid)
-                logger.info { "Søknad slettet" }
             } catch (e: Exception) {
                 logger.error { "Sletting av søknad med uuid: $uuid feilet" }
             }
