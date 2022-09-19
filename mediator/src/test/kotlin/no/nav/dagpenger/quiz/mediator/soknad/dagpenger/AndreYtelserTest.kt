@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
+import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
@@ -28,6 +29,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class AndreYtelserTest {
@@ -51,7 +53,8 @@ internal class AndreYtelserTest {
 
         søknadprosess.boolsk(`utbetaling eller okonomisk gode tidligere arbeidsgiver`).besvar(true)
         assertEquals(null, søknadprosess.resultat())
-        søknadprosess.tekst(`okonomisk gode tidligere arbeidsgiver hva omfatter avtalen`).besvar(Tekst("dummy begrunnelse"))
+        søknadprosess.tekst(`okonomisk gode tidligere arbeidsgiver hva omfatter avtalen`)
+            .besvar(Tekst("dummy begrunnelse"))
         assertEquals(true, søknadprosess.resultat())
     }
 
@@ -107,13 +110,52 @@ internal class AndreYtelserTest {
             besvarAlleFaktaForDagpengerFraAnnetEØSLand(søknadprosess)
             besvarAlleFaktaForAnnenYtelse(søknadprosess)
             søknadprosess.boolsk(`utbetaling eller okonomisk gode tidligere arbeidsgiver`).besvar(true)
-            søknadprosess.tekst(`okonomisk gode tidligere arbeidsgiver hva omfatter avtalen`).besvar(Tekst("dummy begrunnelse"))
+            søknadprosess.tekst(`okonomisk gode tidligere arbeidsgiver hva omfatter avtalen`)
+                .besvar(Tekst("dummy begrunnelse"))
 
             søknadprosess.forEach { seksjon ->
                 seksjon.forEach { faktum ->
                     assertTrue(faktum.erBesvart(), "Faktum med id=${faktum.id} skal være besvart")
                 }
             }
+        }
+    }
+
+    @Test
+    fun `Avhengigheter`() {
+        verifiserAnnenYtelseUtenØkonomiskGode { søknadprosess ->
+            besvarAlleFaktaForTjenestepensjon(søknadprosess)
+            besvarAlleFaktaForGFF(søknadprosess)
+            besvarAlleFaktaForGarantiloggFraGFF(søknadprosess)
+            besvarAlleFaktaForEtterlønn(søknadprosess)
+            besvarAlleFaktaForDagpengerFraAnnetEØSLand(søknadprosess)
+            besvarAlleFaktaForAnnenYtelse(søknadprosess)
+            søknadprosess.boolsk(`utbetaling eller okonomisk gode tidligere arbeidsgiver`).besvar(true)
+            søknadprosess.tekst(`okonomisk gode tidligere arbeidsgiver hva omfatter avtalen`)
+                .besvar(Tekst("dummy begrunnelse"))
+
+            søknadprosess.forEach { seksjon ->
+                seksjon.forEach { faktum ->
+                    assertTrue(faktum.erBesvart(), "Faktum med id=${faktum.id} skal være besvart")
+                }
+            }
+
+            søknadprosess.boolsk(`andre ytelser mottatt eller sokt`).besvar(false)
+
+            assertErUbesvarte(
+                søknadprosess.flervalg(`hvilke andre ytelser`),
+                søknadprosess.tekst(`tjenestepensjon hvem utbetaler`),
+                søknadprosess.periode(`tjenestepensjon hvilken periode`),
+                søknadprosess.periode(`arbeidsløs GFF hvilken periode`),
+                søknadprosess.periode(`garantilott fra GFF hvilken periode`),
+                søknadprosess.tekst(`etterlonn arbeidsgiver hvem utbetaler`),
+                søknadprosess.periode(`etterlonn arbeidsgiver hvilken periode`),
+                søknadprosess.land(`dagpenger hvilket eos land utbetaler`),
+                søknadprosess.periode(`dagpenger eos land hvilken periode`),
+                søknadprosess.tekst(`hvilken annen ytelse`),
+                søknadprosess.tekst(`annen ytelse hvem utebetaler`),
+                søknadprosess.periode(`annen ytelse hvilken periode`)
+            )
         }
     }
 
@@ -131,6 +173,7 @@ internal class AndreYtelserTest {
 
         assertEquals(true, søknadprosess.resultat())
     }
+
     private fun besvarAlleFaktaForTjenestepensjon(søknadprosess: Søknadprosess) {
         søknadprosess.flervalg(`hvilke andre ytelser`)
             .besvar(Flervalg("faktum.hvilke-andre-ytelser.svar.pensjon-offentlig-tjenestepensjon"))
@@ -176,4 +219,9 @@ internal class AndreYtelserTest {
         val nå = LocalDate.now()
         søknadprosess.periode(`annen ytelse hvilken periode`).besvar(Periode(nå.minusYears(7), nå))
     }
+
+    private fun assertErUbesvarte(vararg fakta: Faktum<*>) =
+        fakta.forEach { faktum ->
+            assertFalse(faktum.erBesvart())
+        }
 }

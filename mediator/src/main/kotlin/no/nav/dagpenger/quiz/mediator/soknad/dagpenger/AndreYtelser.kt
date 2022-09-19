@@ -43,22 +43,22 @@ object AndreYtelser : DslFaktaseksjon {
             med "svar.garantilott-garantikassen-for-fiskere"
             med "svar.etterlonn-arbeidsgiver"
             med "svar.dagpenger-annet-eos-land"
-            med "svar.annen-ytelse" id `hvilke andre ytelser`,
-        tekst faktum "faktum.tjenestepensjon-hvem-utbetaler" id `tjenestepensjon hvem utbetaler`,
-        periode faktum "faktum.tjenestepensjon-hvilken-periode" id `tjenestepensjon hvilken periode`,
-        tekst faktum "faktum.etterlonn-arbeidsgiver-hvem-utbetaler" id `etterlonn arbeidsgiver hvem utbetaler`,
-        periode faktum "faktum.etterlonn-arbeidsgiver-hvilken-periode" id `etterlonn arbeidsgiver hvilken periode`,
-        land faktum "faktum.dagpenger-hvilket-eos-land-utbetaler" id `dagpenger hvilket eos land utbetaler`,
-        periode faktum "faktum.dagpenger-eos-land-hvilken-periode" id `dagpenger eos land hvilken periode`,
+            med "svar.annen-ytelse" id `hvilke andre ytelser` avhengerAv `andre ytelser mottatt eller sokt`,
+        tekst faktum "faktum.tjenestepensjon-hvem-utbetaler" id `tjenestepensjon hvem utbetaler` avhengerAv `andre ytelser mottatt eller sokt`,
+        periode faktum "faktum.tjenestepensjon-hvilken-periode" id `tjenestepensjon hvilken periode` avhengerAv `andre ytelser mottatt eller sokt`,
+        tekst faktum "faktum.etterlonn-arbeidsgiver-hvem-utbetaler" id `etterlonn arbeidsgiver hvem utbetaler` avhengerAv `andre ytelser mottatt eller sokt`,
+        periode faktum "faktum.etterlonn-arbeidsgiver-hvilken-periode" id `etterlonn arbeidsgiver hvilken periode` avhengerAv `andre ytelser mottatt eller sokt`,
+        land faktum "faktum.dagpenger-hvilket-eos-land-utbetaler" id `dagpenger hvilket eos land utbetaler` avhengerAv `andre ytelser mottatt eller sokt`,
+        periode faktum "faktum.dagpenger-eos-land-hvilken-periode" id `dagpenger eos land hvilken periode` avhengerAv `andre ytelser mottatt eller sokt`,
         // @todo: Skal denne være tekst?
-        tekst faktum "faktum.hvilken-annen-ytelse" id `hvilken annen ytelse`,
+        tekst faktum "faktum.hvilken-annen-ytelse" id `hvilken annen ytelse` avhengerAv `andre ytelser mottatt eller sokt`,
         // @todo: Skal denne være tekst?
-        tekst faktum "faktum.annen-ytelse-hvem-utebetaler" id `annen ytelse hvem utebetaler`,
-        periode faktum "faktum.annen-ytelse-hvilken-periode" id `annen ytelse hvilken periode`,
+        tekst faktum "faktum.annen-ytelse-hvem-utebetaler" id `annen ytelse hvem utebetaler` avhengerAv `andre ytelser mottatt eller sokt`,
+        periode faktum "faktum.annen-ytelse-hvilken-periode" id `annen ytelse hvilken periode` avhengerAv `andre ytelser mottatt eller sokt`,
         boolsk faktum "faktum.utbetaling-eller-okonomisk-gode-tidligere-arbeidsgiver" id `utbetaling eller okonomisk gode tidligere arbeidsgiver`,
-        tekst faktum "faktum.okonomisk-gode-tidligere-arbeidsgiver-hva-omfatter-avtalen" id `okonomisk gode tidligere arbeidsgiver hva omfatter avtalen`,
-        periode faktum "faktum.arbeidsløs-GFF-hvilken-periode" id `arbeidsløs GFF hvilken periode`,
-        periode faktum "faktum.garantilott-GFF-hvilken-periode" id `garantilott fra GFF hvilken periode`,
+        tekst faktum "faktum.okonomisk-gode-tidligere-arbeidsgiver-hva-omfatter-avtalen" id `okonomisk gode tidligere arbeidsgiver hva omfatter avtalen` avhengerAv `utbetaling eller okonomisk gode tidligere arbeidsgiver`,
+        periode faktum "faktum.arbeidsløs-GFF-hvilken-periode" id `arbeidsløs GFF hvilken periode` avhengerAv `andre ytelser mottatt eller sokt`,
+        periode faktum "faktum.garantilott-GFF-hvilken-periode" id `garantilott fra GFF hvilken periode` avhengerAv `andre ytelser mottatt eller sokt`,
         // @todo: det trengs et dokumentfaktum per mulig ytelse, siden flere av de kan velges samtidig
     )
 
