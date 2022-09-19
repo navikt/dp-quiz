@@ -23,7 +23,7 @@ object Bosted : DslFaktaseksjon {
     const val `hvilket land bor du i` = 6001
     const val `reist tilbake etter arbeidsledig` = 6002
     const val `reist tilbake periode` = 6003
-    const val `reist tilbake aarsak` = 6004
+    const val `reist tilbake årsak` = 6004
     const val `reist tilbake en gang i uka eller mer` = 6005
     const val `reist i takt med rotasjon` = 6006
 
@@ -38,7 +38,7 @@ object Bosted : DslFaktaseksjon {
         periode faktum "faktum.reist-tilbake-periode" id `reist tilbake periode` avhengerAv `reist tilbake etter arbeidsledig`,
 
         // @todo: Skal denne være tekst?
-        tekst faktum "faktum.reist-tilbake-aarsak" id `reist tilbake aarsak` avhengerAv `reist tilbake etter arbeidsledig`,
+        tekst faktum "faktum.reist-tilbake-aarsak" id `reist tilbake årsak` avhengerAv `reist tilbake etter arbeidsledig`,
 
         boolsk faktum "faktum.reist-tilbake-en-gang-eller-mer" id `reist tilbake en gang i uka eller mer` avhengerAv `hvilket land bor du i`,
 
@@ -83,7 +83,7 @@ object Bosted : DslFaktaseksjon {
 
         val reistTilbake = boolsk(`reist tilbake etter arbeidsledig`) er true hvisOppfylt {
             periode(`reist tilbake periode`).utfylt().hvisOppfylt {
-                tekst(`reist tilbake aarsak`).utfylt().hvisOppfylt {
+                tekst(`reist tilbake årsak`).utfylt().hvisOppfylt {
                     `reist tilbake en gang i uka eller mer regel`
                 }
             }

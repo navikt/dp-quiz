@@ -78,7 +78,7 @@ internal class BostedTest {
                 )
             )
             assertEquals(null, søknadprosess.resultat())
-            søknadprosess.tekst(Bosted.`reist tilbake aarsak`).besvar(Tekst("Varmt vann og SOL i utlandet"))
+            søknadprosess.tekst(Bosted.`reist tilbake årsak`).besvar(Tekst("Varmt vann og SOL i utlandet"))
             assertEquals(null, søknadprosess.resultat())
             søknadprosess.boolsk(Bosted.`reist tilbake en gang i uka eller mer`).besvar(true)
             assertEquals(true, søknadprosess.resultat())

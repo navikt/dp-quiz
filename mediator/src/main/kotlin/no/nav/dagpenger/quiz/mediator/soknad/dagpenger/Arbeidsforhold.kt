@@ -25,7 +25,7 @@ import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Arbeidsforhold : DslFaktaseksjon {
-    const val `dagpenger soknadsdato` = 8001
+    const val `dagpenger søknadsdato` = 8001
     const val `type arbeidstid` = 8002
     const val `arbeidsforhold` = 8003
     const val `arbeidsforhold navn bedrift` = 8004
@@ -39,33 +39,33 @@ object Arbeidsforhold : DslFaktaseksjon {
     const val `arbeidsforhold midlertidig med kontraktfestet sluttdato` = 8012
     const val `arbeidsforhold kontraktfestet sluttdato` = 8013
     const val `arbeidsforhold midlertidig arbeidsforhold oppstartsdato` = 8014
-    const val `arbeidsforhold permittertert fra fiskeri naering` = 8015
+    const val `arbeidsforhold permittert fra fiskeri næring` = 8015
     const val `arbeidsforhold varighet` = 8016
-    const val `arbeidsforhold vet du antall timer foer mistet jobb` = 8017
-    const val `arbeidsforhold vet du antall timer foer konkurs` = 8018
-    const val `arbeidsforhold vet du antall timer foer kontrakt utgikk` = 8019
-    const val `arbeidsforhold vet du antall timer foer du sa opp` = 8020
-    const val `arbeidsforhold vet du antall timer foer redusert arbeidstid` = 8021
-    const val `arbeidsforhold vet du antall timer foer permittert` = 8022
+    const val `arbeidsforhold vet du antall timer før mistet jobb` = 8017
+    const val `arbeidsforhold vet du antall timer før konkurs` = 8018
+    const val `arbeidsforhold vet du antall timer før kontrakt utgikk` = 8019
+    const val `arbeidsforhold vet du antall timer før du sa opp` = 8020
+    const val `arbeidsforhold vet du antall timer før redusert arbeidstid` = 8021
+    const val `arbeidsforhold vet du antall timer før permittert` = 8022
     const val `arbeidsforhold antall timer dette arbeidsforhold` = 8023
     const val `arbeidsforhold permittert periode` = 8024
     const val `arbeidsforhold permittert prosent` = 8025
-    const val `arbeidsforhold vet du lonnsplikt periode` = 8026
-    const val `arbeidsforhold naar var lonnsplikt periode` = 8027
-    const val `arbeidsforhold aarsak til du sa opp` = 8028
+    const val `arbeidsforhold vet du lønnsplikt periode` = 8026
+    const val `arbeidsforhold når var lønnsplikt periode` = 8027
+    const val `arbeidsforhold årsak til du sa opp` = 8028
     const val `arbeidsforhold tilbud om forlengelse eller annen stilling` = 8029
-    const val `arbeidsforhold svar paa forlengelse eller annen stilling` = 8030
-    const val `arbeidsforhold aarsak til ikke akseptert tilbud` = 8031
-    const val `arbeidsforhold soke forskudd lonnsgarantimidler` = 8032
-    const val `arbeidsforhold soke forskudd lonnsgarantimidler i tillegg til dagpenger` = 8033
-    const val `arbeidsforhold godta trekk fra nav av forskudd fra lonnsgarantimidler` = 8034
-    const val `arbeidsforhold har sokt om lonnsgarantimidler` = 8035
-    const val `arbeidsforhold dekker lonnsgarantiordningen lonnskravet ditt` = 8036
-    const val `arbeidsforhold utbetalt lonn etter konkurs` = 8037
+    const val `arbeidsforhold svar på forlengelse eller annen stilling` = 8030
+    const val `arbeidsforhold årsak til ikke akseptert tilbud` = 8031
+    const val `arbeidsforhold søke forskudd lønnsgarantimidler` = 8032
+    const val `arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger` = 8033
+    const val `arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler` = 8034
+    const val `arbeidsforhold har søkt om lønnsgarantimidler` = 8035
+    const val `arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt` = 8036
+    const val `arbeidsforhold utbetalt lønn etter konkurs` = 8037
     const val `arbeidsforhold siste dag utbetalt for konkurs` = 8038
-    const val `arbeidsforhold hva er aarsak til avskjediget` = 8039
-    const val `arbeidsforhold vet du aarsak til sagt opp av arbeidsgiver` = 8040
-    const val `arbeidsforhold vet du aarsak til redusert arbeidstid` = 8041
+    const val `arbeidsforhold hva er årsak til avskjediget` = 8039
+    const val `arbeidsforhold vet du årsak til sagt opp av arbeidsgiver` = 8040
+    const val `arbeidsforhold vet du årsak til redusert arbeidstid` = 8041
     const val `arbeidsforhold midlertidig arbeidsforhold med sluttdato` = 8042
     const val `arbeidsforhold tilbud om annen stilling eller annet sted i norge` = 8043
     const val `arbeidsforhold skift eller turnus` = 8044
@@ -74,14 +74,14 @@ object Arbeidsforhold : DslFaktaseksjon {
     const val `arbeidsforhold fridager siste rotasjon` = 8047
     const val `arbeidsforhold har tilleggsopplysninger` = 8048
     const val `gjenopptak jobbet siden sist du fikk dagpenger` = 8049
-    const val `gjenopptak aarsak til stans av dagpenger` = 8050
-    const val `gjenopptak soknadsdato` = 8051
+    const val `gjenopptak årsak til stans av dagpenger` = 8050
+    const val `gjenopptak søknadsdato` = 8051
     const val `gjenopptak endringer i arbeidsforhold siden sist` = 8052
-    const val `gjenopptak onsker ny beregning av dagpenger` = 8053
-    const val `gjenopptak onsker aa faa fastsatt ny vanlig arbeidstid` = 8054
+    const val `gjenopptak ønsker ny beregning av dagpenger` = 8053
+    const val `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid` = 8054
 
     override val fakta = listOf(
-        dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger soknadsdato`,
+        dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger søknadsdato`,
         envalg faktum "faktum.type-arbeidstid"
             med "svar.fast"
             med "svar.varierende"
@@ -99,43 +99,43 @@ object Arbeidsforhold : DslFaktaseksjon {
             med "svar.vet-ikke" id `arbeidsforhold midlertidig med kontraktfestet sluttdato` avhengerAv `arbeidsforhold endret`,
         dato faktum "faktum.arbeidsforhold.kontraktfestet-sluttdato" id `arbeidsforhold kontraktfestet sluttdato` avhengerAv `arbeidsforhold midlertidig med kontraktfestet sluttdato`,
         dato faktum "faktum.arbeidsforhold.midlertidig-arbeidsforhold-oppstartsdato" id `arbeidsforhold midlertidig arbeidsforhold oppstartsdato` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.permittertert-fra-fiskeri-naering" id `arbeidsforhold permittertert fra fiskeri naering` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.permittertert-fra-fiskeri-naering" id `arbeidsforhold permittert fra fiskeri næring` avhengerAv `arbeidsforhold endret`,
         periode faktum "faktum.arbeidsforhold.varighet" id `arbeidsforhold varighet` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-mistet-jobb" id `arbeidsforhold vet du antall timer foer mistet jobb` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-konkurs" id `arbeidsforhold vet du antall timer foer konkurs` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-kontrakt-utgikk" id `arbeidsforhold vet du antall timer foer kontrakt utgikk` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-du-sa-opp" id `arbeidsforhold vet du antall timer foer du sa opp` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-redusert-arbeidstid" id `arbeidsforhold vet du antall timer foer redusert arbeidstid` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-permittert" id `arbeidsforhold vet du antall timer foer permittert` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-mistet-jobb" id `arbeidsforhold vet du antall timer før mistet jobb` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-konkurs" id `arbeidsforhold vet du antall timer før konkurs` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-kontrakt-utgikk" id `arbeidsforhold vet du antall timer før kontrakt utgikk` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-du-sa-opp" id `arbeidsforhold vet du antall timer før du sa opp` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-redusert-arbeidstid" id `arbeidsforhold vet du antall timer før redusert arbeidstid` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-permittert" id `arbeidsforhold vet du antall timer før permittert` avhengerAv `arbeidsforhold endret`,
         desimaltall faktum "faktum.arbeidsforhold.antall-timer-dette-arbeidsforhold" id `arbeidsforhold antall timer dette arbeidsforhold`
             avhengerAv `arbeidsforhold endret`,
         periode faktum "faktum.arbeidsforhold.permittert-periode" id `arbeidsforhold permittert periode` avhengerAv `arbeidsforhold endret`,
         heltall faktum "faktum.arbeidsforhold.permittert-prosent" id `arbeidsforhold permittert prosent` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-lonnsplikt-periode" id `arbeidsforhold vet du lonnsplikt periode` avhengerAv `arbeidsforhold endret`,
-        periode faktum "faktum.arbeidsforhold.naar-var-lonnsplikt-periode" id `arbeidsforhold naar var lonnsplikt periode` avhengerAv `arbeidsforhold vet du lonnsplikt periode`,
-        tekst faktum "faktum.arbeidsforhold.aarsak-til-du-sa-opp" id `arbeidsforhold aarsak til du sa opp` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-lonnsplikt-periode" id `arbeidsforhold vet du lønnsplikt periode` avhengerAv `arbeidsforhold endret`,
+        periode faktum "faktum.arbeidsforhold.naar-var-lonnsplikt-periode" id `arbeidsforhold når var lønnsplikt periode` avhengerAv `arbeidsforhold vet du lønnsplikt periode`,
+        tekst faktum "faktum.arbeidsforhold.aarsak-til-du-sa-opp" id `arbeidsforhold årsak til du sa opp` avhengerAv `arbeidsforhold endret`,
         boolsk faktum "faktum.arbeidsforhold.tilbud-om-forlengelse-eller-annen-stilling" id `arbeidsforhold tilbud om forlengelse eller annen stilling` avhengerAv `arbeidsforhold endret`,
         envalg faktum "faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling"
             med "svar.ja"
             med "svar.nei"
-            med "svar.ikke-svart" id `arbeidsforhold svar paa forlengelse eller annen stilling` avhengerAv `arbeidsforhold tilbud om forlengelse eller annen stilling`,
-        tekst faktum "faktum.arbeidsforhold.aarsak-til-ikke-akseptert-tilbud" id `arbeidsforhold aarsak til ikke akseptert tilbud` avhengerAv `arbeidsforhold svar paa forlengelse eller annen stilling`,
-        boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler" id `arbeidsforhold soke forskudd lonnsgarantimidler` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler-i-tillegg-til-dagpenger" id `arbeidsforhold soke forskudd lonnsgarantimidler i tillegg til dagpenger` avhengerAv `arbeidsforhold soke forskudd lonnsgarantimidler`,
-        boolsk faktum "faktum.arbeidsforhold.godta-trekk-fra-nav-av-forskudd-fra-lonnsgarantimidler" id `arbeidsforhold godta trekk fra nav av forskudd fra lonnsgarantimidler` avhengerAv `arbeidsforhold soke forskudd lonnsgarantimidler`,
+            med "svar.ikke-svart" id `arbeidsforhold svar på forlengelse eller annen stilling` avhengerAv `arbeidsforhold tilbud om forlengelse eller annen stilling`,
+        tekst faktum "faktum.arbeidsforhold.aarsak-til-ikke-akseptert-tilbud" id `arbeidsforhold årsak til ikke akseptert tilbud` avhengerAv `arbeidsforhold svar på forlengelse eller annen stilling`,
+        boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler" id `arbeidsforhold søke forskudd lønnsgarantimidler` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler-i-tillegg-til-dagpenger" id `arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger` avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
+        boolsk faktum "faktum.arbeidsforhold.godta-trekk-fra-nav-av-forskudd-fra-lonnsgarantimidler" id `arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler` avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
         envalg faktum "faktum.arbeidsforhold.har-sokt-om-lonnsgarantimidler"
             med "svar.nei"
             med "svar.nei-men-skal"
-            med "svar.ja" id `arbeidsforhold har sokt om lonnsgarantimidler` avhengerAv `arbeidsforhold soke forskudd lonnsgarantimidler`,
+            med "svar.ja" id `arbeidsforhold har søkt om lønnsgarantimidler` avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
         envalg faktum "faktum.arbeidsforhold.dekker-lonnsgarantiordningen-lonnskravet-ditt"
             med "svar.ja"
             med "svar.nei"
-            med "svar.vet-ikke" id `arbeidsforhold dekker lonnsgarantiordningen lonnskravet ditt` avhengerAv `arbeidsforhold soke forskudd lonnsgarantimidler`,
-        boolsk faktum "faktum.arbeidsforhold.utbetalt-lonn-etter-konkurs" id `arbeidsforhold utbetalt lonn etter konkurs` avhengerAv `arbeidsforhold soke forskudd lonnsgarantimidler`,
-        dato faktum "faktum.arbeidsforhold.siste-dag-utbetalt-for-konkurs" id `arbeidsforhold siste dag utbetalt for konkurs` avhengerAv `arbeidsforhold utbetalt lonn etter konkurs`,
-        tekst faktum "faktum.arbeidsforhold.hva-er-aarsak-til-avskjediget" id `arbeidsforhold hva er aarsak til avskjediget` avhengerAv `arbeidsforhold endret`,
-        tekst faktum "faktum.arbeidsforhold.vet-du-aarsak-til-sagt-opp-av-arbeidsgiver" id `arbeidsforhold vet du aarsak til sagt opp av arbeidsgiver` avhengerAv `arbeidsforhold endret`,
-        tekst faktum "faktum.arbeidsforhold.vet-du-aarsak-til-redusert-arbeidstid" id `arbeidsforhold vet du aarsak til redusert arbeidstid` avhengerAv `arbeidsforhold endret`,
+            med "svar.vet-ikke" id `arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt` avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
+        boolsk faktum "faktum.arbeidsforhold.utbetalt-lonn-etter-konkurs" id `arbeidsforhold utbetalt lønn etter konkurs` avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
+        dato faktum "faktum.arbeidsforhold.siste-dag-utbetalt-for-konkurs" id `arbeidsforhold siste dag utbetalt for konkurs` avhengerAv `arbeidsforhold utbetalt lønn etter konkurs`,
+        tekst faktum "faktum.arbeidsforhold.hva-er-aarsak-til-avskjediget" id `arbeidsforhold hva er årsak til avskjediget` avhengerAv `arbeidsforhold endret`,
+        tekst faktum "faktum.arbeidsforhold.vet-du-aarsak-til-sagt-opp-av-arbeidsgiver" id `arbeidsforhold vet du årsak til sagt opp av arbeidsgiver` avhengerAv `arbeidsforhold endret`,
+        tekst faktum "faktum.arbeidsforhold.vet-du-aarsak-til-redusert-arbeidstid" id `arbeidsforhold vet du årsak til redusert arbeidstid` avhengerAv `arbeidsforhold endret`,
         envalg faktum "faktum.arbeidsforhold.midlertidig-arbeidsforhold-med-sluttdato"
             med "svar.ja"
             med "svar.nei"
@@ -158,32 +158,32 @@ object Arbeidsforhold : DslFaktaseksjon {
             og `arbeidsforhold midlertidig med kontraktfestet sluttdato`
             og `arbeidsforhold kontraktfestet sluttdato`
             og `arbeidsforhold midlertidig arbeidsforhold oppstartsdato`
-            og `arbeidsforhold permittertert fra fiskeri naering`
+            og `arbeidsforhold permittert fra fiskeri næring`
             og `arbeidsforhold varighet`
-            og `arbeidsforhold vet du antall timer foer mistet jobb`
-            og `arbeidsforhold vet du antall timer foer konkurs`
-            og `arbeidsforhold vet du antall timer foer kontrakt utgikk`
-            og `arbeidsforhold vet du antall timer foer du sa opp`
-            og `arbeidsforhold vet du antall timer foer redusert arbeidstid`
-            og `arbeidsforhold vet du antall timer foer permittert`
+            og `arbeidsforhold vet du antall timer før mistet jobb`
+            og `arbeidsforhold vet du antall timer før konkurs`
+            og `arbeidsforhold vet du antall timer før kontrakt utgikk`
+            og `arbeidsforhold vet du antall timer før du sa opp`
+            og `arbeidsforhold vet du antall timer før redusert arbeidstid`
+            og `arbeidsforhold vet du antall timer før permittert`
             og `arbeidsforhold permittert periode`
             og `arbeidsforhold permittert prosent`
-            og `arbeidsforhold vet du lonnsplikt periode`
-            og `arbeidsforhold naar var lonnsplikt periode`
-            og `arbeidsforhold aarsak til du sa opp`
+            og `arbeidsforhold vet du lønnsplikt periode`
+            og `arbeidsforhold når var lønnsplikt periode`
+            og `arbeidsforhold årsak til du sa opp`
             og `arbeidsforhold tilbud om forlengelse eller annen stilling`
-            og `arbeidsforhold svar paa forlengelse eller annen stilling`
-            og `arbeidsforhold aarsak til ikke akseptert tilbud`
-            og `arbeidsforhold soke forskudd lonnsgarantimidler`
-            og `arbeidsforhold soke forskudd lonnsgarantimidler i tillegg til dagpenger`
-            og `arbeidsforhold godta trekk fra nav av forskudd fra lonnsgarantimidler`
-            og `arbeidsforhold har sokt om lonnsgarantimidler`
-            og `arbeidsforhold dekker lonnsgarantiordningen lonnskravet ditt`
-            og `arbeidsforhold utbetalt lonn etter konkurs`
+            og `arbeidsforhold svar på forlengelse eller annen stilling`
+            og `arbeidsforhold årsak til ikke akseptert tilbud`
+            og `arbeidsforhold søke forskudd lønnsgarantimidler`
+            og `arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`
+            og `arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`
+            og `arbeidsforhold har søkt om lønnsgarantimidler`
+            og `arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`
+            og `arbeidsforhold utbetalt lønn etter konkurs`
             og `arbeidsforhold siste dag utbetalt for konkurs`
-            og `arbeidsforhold hva er aarsak til avskjediget`
-            og `arbeidsforhold vet du aarsak til sagt opp av arbeidsgiver`
-            og `arbeidsforhold vet du aarsak til redusert arbeidstid`
+            og `arbeidsforhold hva er årsak til avskjediget`
+            og `arbeidsforhold vet du årsak til sagt opp av arbeidsgiver`
+            og `arbeidsforhold vet du årsak til redusert arbeidstid`
             og `arbeidsforhold midlertidig arbeidsforhold med sluttdato`
             og `arbeidsforhold antall timer dette arbeidsforhold`
             og `arbeidsforhold tilbud om annen stilling eller annet sted i norge`
@@ -203,11 +203,11 @@ object Arbeidsforhold : DslFaktaseksjon {
             med "svar.redusert-arbeidstid"
             med "svar.permittert" id `arbeidsforhold endret`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.jobbet-siden-sist" id `gjenopptak jobbet siden sist du fikk dagpenger`,
-        tekst faktum "faktum.arbeidsforhold.gjenopptak.aarsak-til-stans" id `gjenopptak aarsak til stans av dagpenger`,
-        dato faktum "faktum.arbeidsforhold.gjenopptak.soknadsdato-gjenopptak" id `gjenopptak soknadsdato`,
+        tekst faktum "faktum.arbeidsforhold.gjenopptak.aarsak-til-stans" id `gjenopptak årsak til stans av dagpenger`,
+        dato faktum "faktum.arbeidsforhold.gjenopptak.soknadsdato-gjenopptak" id `gjenopptak søknadsdato`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.endringer-i-arbeidsforhold" id `gjenopptak endringer i arbeidsforhold siden sist`,
-        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-ny-beregning" id `gjenopptak onsker ny beregning av dagpenger`,
-        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid" id `gjenopptak onsker aa faa fastsatt ny vanlig arbeidstid`,
+        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-ny-beregning" id `gjenopptak ønsker ny beregning av dagpenger`,
+        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid" id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
     )
 
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *this.databaseIder()))
@@ -228,8 +228,8 @@ object Arbeidsforhold : DslFaktaseksjon {
     private fun Søknad.`arbeidsforhold gjenopptak`() =
         "spørsmål om gjenopptaket".alle(
             boolsk(`gjenopptak jobbet siden sist du fikk dagpenger`).utfylt(),
-            tekst(`gjenopptak aarsak til stans av dagpenger`).utfylt(),
-            dato(`gjenopptak soknadsdato`).utfylt(),
+            tekst(`gjenopptak årsak til stans av dagpenger`).utfylt(),
+            dato(`gjenopptak søknadsdato`).utfylt(),
             "hatt endringer i arbeidsforhold siden sist eller ikke".minstEnAv(
                 boolsk(`gjenopptak endringer i arbeidsforhold siden sist`) er false,
                 boolsk(`gjenopptak endringer i arbeidsforhold siden sist`) er true hvisOppfylt {
@@ -261,11 +261,11 @@ object Arbeidsforhold : DslFaktaseksjon {
 
     private fun Søknad.`ønsker ny beregning og fastsatt ny arbeidstid eller ikke`() =
         "ønsker ny beregning av dagpenger eller ikke".minstEnAv(
-            boolsk(`gjenopptak onsker ny beregning av dagpenger`) er false,
-            boolsk(`gjenopptak onsker ny beregning av dagpenger`) er true hvisOppfylt {
+            boolsk(`gjenopptak ønsker ny beregning av dagpenger`) er false,
+            boolsk(`gjenopptak ønsker ny beregning av dagpenger`) er true hvisOppfylt {
                 "ønsker å få fastsatt ny vanlig arbeidstid eller ikke".minstEnAv(
-                    boolsk(`gjenopptak onsker aa faa fastsatt ny vanlig arbeidstid`) er false,
-                    boolsk(`gjenopptak onsker aa faa fastsatt ny vanlig arbeidstid`) er true hvisOppfylt {
+                    boolsk(`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`) er false,
+                    boolsk(`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`) er true hvisOppfylt {
                         `type arbeidstid`()
                     }
                 )
@@ -283,7 +283,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             }
         )
 
-    private fun Søknad.søknadsdato() = dato(`dagpenger soknadsdato`).utfylt()
+    private fun Søknad.søknadsdato() = dato(`dagpenger søknadsdato`).utfylt()
 
     private fun Søknad.`ikke endret`() =
         envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret") hvisOppfylt {
@@ -310,14 +310,14 @@ object Arbeidsforhold : DslFaktaseksjon {
         envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.avskjediget") hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `arbeidstimer før mistet jobb`(),
-                tekst(`arbeidsforhold hva er aarsak til avskjediget`).utfylt()
+                tekst(`arbeidsforhold hva er årsak til avskjediget`).utfylt()
             )
         }
 
     private fun Søknad.`arbeidstimer før mistet jobb`() =
         "antall arbeidstimer før mistet jobb kjent eller ikke".minstEnAv(
-            boolsk(`arbeidsforhold vet du antall timer foer mistet jobb`) er false,
-            boolsk(`arbeidsforhold vet du antall timer foer mistet jobb`) er true hvisOppfylt {
+            boolsk(`arbeidsforhold vet du antall timer før mistet jobb`) er false,
+            boolsk(`arbeidsforhold vet du antall timer før mistet jobb`) er true hvisOppfylt {
                 `antall timer jobbet`()
             }
         )
@@ -330,7 +330,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 `arbeidstimer før mistet jobb`(),
-                tekst(`arbeidsforhold vet du aarsak til sagt opp av arbeidsgiver`).utfylt(),
+                tekst(`arbeidsforhold vet du årsak til sagt opp av arbeidsgiver`).utfylt(),
                 `tilbud om annen stilling eller annet sted i Norge`(),
                 `skift, turnus og rotasjon`()
             )
@@ -369,29 +369,29 @@ object Arbeidsforhold : DslFaktaseksjon {
 
     private fun Søknad.`arbeidstimer før konkurs`() =
         "antall arbeidstimer før konkurs kjent eller ikke".minstEnAv(
-            boolsk(`arbeidsforhold vet du antall timer foer konkurs`) er false,
-            boolsk(`arbeidsforhold vet du antall timer foer konkurs`) er true hvisOppfylt {
+            boolsk(`arbeidsforhold vet du antall timer før konkurs`) er false,
+            boolsk(`arbeidsforhold vet du antall timer før konkurs`) er true hvisOppfylt {
                 `antall timer jobbet`()
             }
         )
 
     private fun Søknad.lønnsgarantimidler() =
         "ønsker å søke om forskudd på lønnsgarantimidler eller ikke".minstEnAv(
-            boolsk(`arbeidsforhold soke forskudd lonnsgarantimidler`) er false,
-            boolsk(`arbeidsforhold soke forskudd lonnsgarantimidler`) er true hvisOppfylt {
+            boolsk(`arbeidsforhold søke forskudd lønnsgarantimidler`) er false,
+            boolsk(`arbeidsforhold søke forskudd lønnsgarantimidler`) er true hvisOppfylt {
                 `oppfølgingsspørsmål om lønnsgarantimidler`()
             }
         )
 
     private fun Søknad.`oppfølgingsspørsmål om lønnsgarantimidler`() =
         "spørsmål om lønnsgarantimidler".alle(
-            boolsk(`arbeidsforhold soke forskudd lonnsgarantimidler i tillegg til dagpenger`).utfylt(),
-            boolsk(`arbeidsforhold godta trekk fra nav av forskudd fra lonnsgarantimidler`).utfylt(),
-            envalg(`arbeidsforhold har sokt om lonnsgarantimidler`).utfylt(),
-            envalg(`arbeidsforhold dekker lonnsgarantiordningen lonnskravet ditt`).utfylt(),
+            boolsk(`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`).utfylt(),
+            boolsk(`arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`).utfylt(),
+            envalg(`arbeidsforhold har søkt om lønnsgarantimidler`).utfylt(),
+            envalg(`arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`).utfylt(),
             "fått utbetalt lønn etter konkurs eller ikke".minstEnAv(
-                boolsk(`arbeidsforhold utbetalt lonn etter konkurs`) er false,
-                boolsk(`arbeidsforhold utbetalt lonn etter konkurs`) er true hvisOppfylt {
+                boolsk(`arbeidsforhold utbetalt lønn etter konkurs`) er false,
+                boolsk(`arbeidsforhold utbetalt lønn etter konkurs`) er true hvisOppfylt {
                     dato(`arbeidsforhold siste dag utbetalt for konkurs`).utfylt()
                 }
             )
@@ -409,8 +409,8 @@ object Arbeidsforhold : DslFaktaseksjon {
 
     private fun Søknad.`arbeidstimer før utgått kontrakt`() =
         "antall arbeidstimer før kontrakten utgikk kjent eller ikke".minstEnAv(
-            boolsk(`arbeidsforhold vet du antall timer foer kontrakt utgikk`) er false,
-            boolsk(`arbeidsforhold vet du antall timer foer kontrakt utgikk`) er true hvisOppfylt {
+            boolsk(`arbeidsforhold vet du antall timer før kontrakt utgikk`) er false,
+            boolsk(`arbeidsforhold vet du antall timer før kontrakt utgikk`) er true hvisOppfylt {
                 `antall timer jobbet`()
             }
         )
@@ -420,10 +420,10 @@ object Arbeidsforhold : DslFaktaseksjon {
             boolsk(`arbeidsforhold tilbud om forlengelse eller annen stilling`) er false,
             boolsk(`arbeidsforhold tilbud om forlengelse eller annen stilling`) er true hvisOppfylt {
                 "svar på tilbud om forlengelse eller annen stilling".minstEnAv(
-                    envalg(`arbeidsforhold svar paa forlengelse eller annen stilling`) er Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei") hvisOppfylt {
-                        tekst(`arbeidsforhold aarsak til ikke akseptert tilbud`).utfylt()
+                    envalg(`arbeidsforhold svar på forlengelse eller annen stilling`) er Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei") hvisOppfylt {
+                        tekst(`arbeidsforhold årsak til ikke akseptert tilbud`).utfylt()
                     },
-                    envalg(`arbeidsforhold svar paa forlengelse eller annen stilling`).utfylt()
+                    envalg(`arbeidsforhold svar på forlengelse eller annen stilling`).utfylt()
                 )
             }
         )
@@ -433,15 +433,15 @@ object Arbeidsforhold : DslFaktaseksjon {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 `arbeidstimer før sagt opp selv`(),
-                tekst(`arbeidsforhold aarsak til du sa opp`).utfylt(),
+                tekst(`arbeidsforhold årsak til du sa opp`).utfylt(),
                 `skift, turnus og rotasjon`()
             )
         }
 
     private fun Søknad.`arbeidstimer før sagt opp selv`() =
         "antall arbeidstimer før sagt opp selv kjent eller ikke".minstEnAv(
-            boolsk(`arbeidsforhold vet du antall timer foer du sa opp`) er false,
-            boolsk(`arbeidsforhold vet du antall timer foer du sa opp`) er true hvisOppfylt {
+            boolsk(`arbeidsforhold vet du antall timer før du sa opp`) er false,
+            boolsk(`arbeidsforhold vet du antall timer før du sa opp`) er true hvisOppfylt {
                 `antall timer jobbet`()
             }
         )
@@ -452,7 +452,7 @@ object Arbeidsforhold : DslFaktaseksjon {
                 dato(`arbeidsforhold startdato arbeidsforhold`).utfylt(),
                 dato(`arbeidsforhold arbeidstid redusert fra dato`).utfylt(),
                 `arbeidstimer før redusert arbeidstid`(),
-                tekst(`arbeidsforhold vet du aarsak til redusert arbeidstid`).utfylt(),
+                tekst(`arbeidsforhold vet du årsak til redusert arbeidstid`).utfylt(),
                 `tilbud om annen stilling eller annet sted i Norge`(),
                 `skift, turnus og rotasjon`()
             )
@@ -460,8 +460,8 @@ object Arbeidsforhold : DslFaktaseksjon {
 
     private fun Søknad.`arbeidstimer før redusert arbeidstid`() =
         "antall arbeidstimer før arbedstiden ble redusert kjent eller ikke".minstEnAv(
-            boolsk(`arbeidsforhold vet du antall timer foer redusert arbeidstid`) er false,
-            boolsk(`arbeidsforhold vet du antall timer foer redusert arbeidstid`) er true hvisOppfylt {
+            boolsk(`arbeidsforhold vet du antall timer før redusert arbeidstid`) er false,
+            boolsk(`arbeidsforhold vet du antall timer før redusert arbeidstid`) er true hvisOppfylt {
                 `antall timer jobbet`()
             }
         )
@@ -471,7 +471,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             "spørsmål om arbeidsforholdet".alle(
                 `midlertidig arbeidsforhold med sluttdato`(),
                 dato(`arbeidsforhold midlertidig arbeidsforhold oppstartsdato`).utfylt(),
-                boolsk(`arbeidsforhold permittertert fra fiskeri naering`).utfylt(),
+                boolsk(`arbeidsforhold permittert fra fiskeri næring`).utfylt(),
                 `arbeidstimer før permittert`(),
                 periode(`arbeidsforhold permittert periode`).utfylt(),
                 heltall(`arbeidsforhold permittert prosent`).utfylt(),
@@ -490,17 +490,17 @@ object Arbeidsforhold : DslFaktaseksjon {
 
     private fun Søknad.`arbeidstimer før permittert`() =
         "antall arbeidstimer før permittert kjent eller ikke".minstEnAv(
-            boolsk(`arbeidsforhold vet du antall timer foer permittert`) er false,
-            boolsk(`arbeidsforhold vet du antall timer foer permittert`) er true hvisOppfylt {
+            boolsk(`arbeidsforhold vet du antall timer før permittert`) er false,
+            boolsk(`arbeidsforhold vet du antall timer før permittert`) er true hvisOppfylt {
                 `antall timer jobbet`()
             }
         )
 
     private fun Søknad.lønnspliktsperiode() =
         "vet hva lønnspliktsperioden er eller ikke".minstEnAv(
-            boolsk(`arbeidsforhold vet du lonnsplikt periode`) er false,
-            boolsk(`arbeidsforhold vet du lonnsplikt periode`) er true hvisOppfylt {
-                periode(`arbeidsforhold naar var lonnsplikt periode`).utfylt()
+            boolsk(`arbeidsforhold vet du lønnsplikt periode`) er false,
+            boolsk(`arbeidsforhold vet du lønnsplikt periode`) er true hvisOppfylt {
+                periode(`arbeidsforhold når var lønnsplikt periode`).utfylt()
             }
         )
 }

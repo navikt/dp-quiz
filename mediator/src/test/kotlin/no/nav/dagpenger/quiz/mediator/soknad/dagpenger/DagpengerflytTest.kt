@@ -32,26 +32,26 @@ class DagpengerflytTest {
         søknadprosess.generator(Barnetillegg.`barn liste register`).besvar(1)
         søknadprosess.tekst("${Barnetillegg.`barn fornavn mellomnavn register`}.1").besvar(Tekst("test testen"))
         søknadprosess.tekst("${Barnetillegg.`barn etternavn register`}.1").besvar(Tekst("TTTT"))
-        søknadprosess.dato("${Barnetillegg.`barn foedselsdato register`}.1").besvar(LocalDate.now().minusYears(10))
+        søknadprosess.dato("${Barnetillegg.`barn fødselsdato register`}.1").besvar(LocalDate.now().minusYears(10))
         søknadprosess.land("${Barnetillegg.`barn statsborgerskap register`}.1").besvar(Land("NOR"))
 
         // Besvares av bruker
-        søknadprosess.boolsk("${Barnetillegg.`forsoerger du barnet register`}.1").besvar(false)
+        søknadprosess.boolsk("${Barnetillegg.`forsørger du barnet register`}.1").besvar(false)
         søknadprosess.boolsk(`egne barn`).besvar(false)
 
         søknadprosess.nesteSeksjoner().onEach {
             it.somSpørsmål()
         }
 
-        søknadprosess.dato(Arbeidsforhold.`dagpenger soknadsdato`).besvar(1.januar)
+        søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
         søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
 
-        søknadprosess.boolsk(EøsArbeidsforhold.`eos arbeid siste 36 mnd`).besvar(false)
+        søknadprosess.boolsk(EøsArbeidsforhold.`eøs arbeid siste 36 mnd`).besvar(false)
 
-        søknadprosess.boolsk(EgenNæring.`driver du egen naering`).besvar(false)
-        søknadprosess.boolsk(EgenNæring.`driver du eget gaardsbruk`).besvar(false)
+        søknadprosess.boolsk(EgenNæring.`driver du egen næring`).besvar(false)
+        søknadprosess.boolsk(EgenNæring.`driver du eget gårdsbruk`).besvar(false)
 
-        søknadprosess.boolsk(Verneplikt.`avtjent militaer sivilforsvar tjeneste siste 12 mnd`).besvar(false)
+        søknadprosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(false)
 
         søknadprosess.boolsk(AndreYtelser.`andre ytelser mottatt eller søkt`).besvar(false)
         søknadprosess.boolsk(AndreYtelser.`utbetaling eller økonomisk gode tidligere arbeidsgiver`).besvar(false)

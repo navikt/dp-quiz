@@ -31,13 +31,13 @@ internal class VernepliktTest {
 
     @Test
     fun `Har ikke avtjent verneplikt`() {
-        søknadprosess.boolsk(Verneplikt.`avtjent militaer sivilforsvar tjeneste siste 12 mnd`).besvar(false)
+        søknadprosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(false)
         assertEquals(true, søknadprosess.resultat())
     }
 
     @Test
     fun `Har avtjent verneplikt`() {
-        søknadprosess.boolsk(Verneplikt.`avtjent militaer sivilforsvar tjeneste siste 12 mnd`).besvar(true)
+        søknadprosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(true)
         assertEquals(true, søknadprosess.resultat())
     }
 }

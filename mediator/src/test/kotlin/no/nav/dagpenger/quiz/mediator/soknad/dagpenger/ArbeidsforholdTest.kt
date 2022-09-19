@@ -54,7 +54,7 @@ internal class ArbeidsforholdTest {
     fun `Trenger ikke fylle inn arbeidsforhold når type arbeidstid er besvart med Ingen alternativer passer og det ikke er gjenopptak`() {
         søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
-        søknadprosess.dato(Arbeidsforhold.`dagpenger soknadsdato`).besvar(1.januar)
+        søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
 
         søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.varierende"))
         assertEquals(null, søknadprosess.resultat())
@@ -78,16 +78,16 @@ internal class ArbeidsforholdTest {
 
         `besvar spørsmål for et arbeidsforhold`()
 
-        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak onsker ny beregning av dagpenger`).besvar(false)
+        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak ønsker ny beregning av dagpenger`).besvar(false)
         assertEquals(true, søknadprosess.resultat())
 
-        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak onsker ny beregning av dagpenger`).besvar(true)
+        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak ønsker ny beregning av dagpenger`).besvar(true)
         assertEquals(null, søknadprosess.resultat())
 
-        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak onsker aa faa fastsatt ny vanlig arbeidstid`).besvar(false)
+        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`).besvar(false)
         assertEquals(true, søknadprosess.resultat())
 
-        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak onsker aa faa fastsatt ny vanlig arbeidstid`).besvar(true)
+        søknadprosess.boolsk(Arbeidsforhold.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`).besvar(true)
         assertEquals(null, søknadprosess.resultat())
 
         søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
@@ -132,18 +132,18 @@ internal class ArbeidsforholdTest {
 
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.avskjediget"))
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer foer mistet jobb`}.1").besvar(true)
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før mistet jobb`}.1").besvar(true)
         søknadprosess.desimaltall("${Arbeidsforhold.`arbeidsforhold antall timer dette arbeidsforhold`}.1").besvar(40.5)
-        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold hva er aarsak til avskjediget`}.1").besvar(Tekst("Årsak"))
+        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold hva er årsak til avskjediget`}.1").besvar(Tekst("Årsak"))
         assertEquals(true, søknadprosess.resultat())
 
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
 
         assertErUbesvarte(
-            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer foer mistet jobb`}.1"),
+            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før mistet jobb`}.1"),
             søknadprosess.desimaltall("${Arbeidsforhold.`arbeidsforhold antall timer dette arbeidsforhold`}.1"),
-            søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold hva er aarsak til avskjediget`}.1")
+            søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold hva er årsak til avskjediget`}.1")
         )
 
         assertEquals(null, søknadprosess.resultat())
@@ -157,9 +157,9 @@ internal class ArbeidsforholdTest {
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
 
         søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer foer mistet jobb`}.1").besvar(true)
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før mistet jobb`}.1").besvar(true)
         søknadprosess.desimaltall("${Arbeidsforhold.`arbeidsforhold antall timer dette arbeidsforhold`}.1").besvar(40.5)
-        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold vet du aarsak til sagt opp av arbeidsgiver`}.1")
+        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold vet du årsak til sagt opp av arbeidsgiver`}.1")
             .besvar(Tekst("Årsak"))
         søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
             .besvar(true)
@@ -172,9 +172,9 @@ internal class ArbeidsforholdTest {
 
         assertErUbesvarte(
             søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold varighet`}.1"),
-            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer foer mistet jobb`}.1"),
+            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før mistet jobb`}.1"),
             søknadprosess.desimaltall("${Arbeidsforhold.`arbeidsforhold antall timer dette arbeidsforhold`}.1"),
-            søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold vet du aarsak til sagt opp av arbeidsgiver`}.1"),
+            søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold vet du årsak til sagt opp av arbeidsgiver`}.1"),
             søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1"),
         )
 
@@ -191,27 +191,27 @@ internal class ArbeidsforholdTest {
         søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
         søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold midlertidig arbeidsforhold med sluttdato`}.1")
             .besvar(true)
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer foer konkurs`}.1").besvar(true)
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før konkurs`}.1").besvar(true)
         søknadprosess.desimaltall("${Arbeidsforhold.`arbeidsforhold antall timer dette arbeidsforhold`}.1").besvar(40.5)
 
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold soke forskudd lonnsgarantimidler`}.1").besvar(false)
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold søke forskudd lønnsgarantimidler`}.1").besvar(false)
         `besvar spørsmål om skift, turnus og rotasjon`()
         assertEquals(true, søknadprosess.resultat())
 
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold soke forskudd lonnsgarantimidler`}.1").besvar(true)
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold søke forskudd lønnsgarantimidler`}.1").besvar(true)
         assertEquals(null, søknadprosess.resultat())
 
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold soke forskudd lonnsgarantimidler i tillegg til dagpenger`}.1")
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`}.1")
             .besvar(true)
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold godta trekk fra nav av forskudd fra lonnsgarantimidler`}.1")
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`}.1")
             .besvar(true)
-        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold har sokt om lonnsgarantimidler`}.1")
+        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold har søkt om lønnsgarantimidler`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.har-sokt-om-lonnsgarantimidler.svar.ja"))
-        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold dekker lonnsgarantiordningen lonnskravet ditt`}.1")
+        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`}.1")
             .besvar(
                 Envalg("faktum.arbeidsforhold.dekker-lonnsgarantiordningen-lonnskravet-ditt.svar.ja")
             )
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold utbetalt lonn etter konkurs`}.1").besvar(true)
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold utbetalt lønn etter konkurs`}.1").besvar(true)
         søknadprosess.dato("${Arbeidsforhold.`arbeidsforhold siste dag utbetalt for konkurs`}.1").besvar(1.januar)
 
         assertEquals(true, søknadprosess.resultat())
@@ -222,14 +222,14 @@ internal class ArbeidsforholdTest {
         assertErUbesvarte(
             søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold varighet`}.1"),
             søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold midlertidig arbeidsforhold med sluttdato`}.1"),
-            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer foer konkurs`}.1"),
+            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før konkurs`}.1"),
             søknadprosess.desimaltall("${Arbeidsforhold.`arbeidsforhold antall timer dette arbeidsforhold`}.1"),
-            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold soke forskudd lonnsgarantimidler`}.1"),
-            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold soke forskudd lonnsgarantimidler i tillegg til dagpenger`}.1"),
-            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold godta trekk fra nav av forskudd fra lonnsgarantimidler`}.1"),
-            søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold har sokt om lonnsgarantimidler`}.1"),
-            søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold dekker lonnsgarantiordningen lonnskravet ditt`}.1"),
-            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold utbetalt lonn etter konkurs`}.1"),
+            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold søke forskudd lønnsgarantimidler`}.1"),
+            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`}.1"),
+            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`}.1"),
+            søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold har søkt om lønnsgarantimidler`}.1"),
+            søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`}.1"),
+            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold utbetalt lønn etter konkurs`}.1"),
             søknadprosess.dato("${Arbeidsforhold.`arbeidsforhold siste dag utbetalt for konkurs`}.1"),
         )
 
@@ -244,7 +244,7 @@ internal class ArbeidsforholdTest {
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt"))
 
         søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer foer kontrakt utgikk`}.1")
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før kontrakt utgikk`}.1")
             .besvar(false)
         søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold tilbud om forlengelse eller annen stilling`}.1")
             .besvar(false)
@@ -255,19 +255,19 @@ internal class ArbeidsforholdTest {
             .besvar(true)
         assertEquals(null, søknadprosess.resultat())
 
-        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold svar paa forlengelse eller annen stilling`}.1")
+        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ja"))
         assertEquals(true, søknadprosess.resultat())
 
-        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold svar paa forlengelse eller annen stilling`}.1")
+        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ikke-svart"))
         assertEquals(true, søknadprosess.resultat())
 
-        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold svar paa forlengelse eller annen stilling`}.1")
+        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei"))
         assertEquals(null, søknadprosess.resultat())
 
-        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold aarsak til ikke akseptert tilbud`}.1")
+        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold årsak til ikke akseptert tilbud`}.1")
             .besvar(Tekst("Årsak"))
         assertEquals(true, søknadprosess.resultat())
 
@@ -277,8 +277,8 @@ internal class ArbeidsforholdTest {
         assertErUbesvarte(
             søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold varighet`}.1"),
             søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold tilbud om forlengelse eller annen stilling`}.1"),
-            søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold svar paa forlengelse eller annen stilling`}.1"),
-            søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold aarsak til ikke akseptert tilbud`}.1"),
+            søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold svar på forlengelse eller annen stilling`}.1"),
+            søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold årsak til ikke akseptert tilbud`}.1"),
         )
 
         assertEquals(null, søknadprosess.resultat())
@@ -291,8 +291,8 @@ internal class ArbeidsforholdTest {
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv"))
         søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer foer du sa opp`}.1").besvar(false)
-        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold aarsak til du sa opp`}.1").besvar(Tekst("Årsak"))
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før du sa opp`}.1").besvar(false)
+        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold årsak til du sa opp`}.1").besvar(Tekst("Årsak"))
 
         `besvar spørsmål om skift, turnus og rotasjon`()
         assertEquals(true, søknadprosess.resultat())
@@ -302,8 +302,8 @@ internal class ArbeidsforholdTest {
 
         assertErUbesvarte(
             søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold varighet`}.1"),
-            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer foer du sa opp`}.1"),
-            søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold aarsak til du sa opp`}.1")
+            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før du sa opp`}.1"),
+            søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold årsak til du sa opp`}.1")
         )
 
         assertEquals(null, søknadprosess.resultat())
@@ -317,9 +317,9 @@ internal class ArbeidsforholdTest {
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid"))
         søknadprosess.dato("${Arbeidsforhold.`arbeidsforhold startdato arbeidsforhold`}.1").besvar(1.januar)
         søknadprosess.dato("${Arbeidsforhold.`arbeidsforhold arbeidstid redusert fra dato`}.1").besvar(1.februar)
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer foer redusert arbeidstid`}.1")
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før redusert arbeidstid`}.1")
             .besvar(false)
-        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold vet du aarsak til redusert arbeidstid`}.1")
+        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold vet du årsak til redusert arbeidstid`}.1")
             .besvar(Tekst("Årsak"))
         søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
             .besvar(true)
@@ -333,8 +333,8 @@ internal class ArbeidsforholdTest {
         assertErUbesvarte(
             søknadprosess.dato("${Arbeidsforhold.`arbeidsforhold startdato arbeidsforhold`}.1"),
             søknadprosess.dato("${Arbeidsforhold.`arbeidsforhold arbeidstid redusert fra dato`}.1"),
-            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer foer redusert arbeidstid`}.1"),
-            søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold vet du aarsak til redusert arbeidstid`}.1"),
+            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før redusert arbeidstid`}.1"),
+            søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold vet du årsak til redusert arbeidstid`}.1"),
             søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
         )
 
@@ -352,12 +352,12 @@ internal class ArbeidsforholdTest {
         søknadprosess.dato("${Arbeidsforhold.`arbeidsforhold kontraktfestet sluttdato`}.1").besvar(1.februar)
         søknadprosess.dato("${Arbeidsforhold.`arbeidsforhold midlertidig arbeidsforhold oppstartsdato`}.1")
             .besvar(1.januar)
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold permittertert fra fiskeri naering`}.1").besvar(true)
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer foer permittert`}.1").besvar(false)
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold permittert fra fiskeri næring`}.1").besvar(true)
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før permittert`}.1").besvar(false)
         søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold permittert periode`}.1").besvar(Periode(5.januar))
         søknadprosess.heltall("${Arbeidsforhold.`arbeidsforhold permittert prosent`}.1").besvar(40)
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du lonnsplikt periode`}.1").besvar(true)
-        søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold naar var lonnsplikt periode`}.1")
+        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du lønnsplikt periode`}.1").besvar(true)
+        søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold når var lønnsplikt periode`}.1")
             .besvar(Periode(6.januar, 20.januar))
 
         `besvar spørsmål om skift, turnus og rotasjon`()
@@ -370,12 +370,12 @@ internal class ArbeidsforholdTest {
             søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold midlertidig med kontraktfestet sluttdato`}.1"),
             søknadprosess.dato("${Arbeidsforhold.`arbeidsforhold kontraktfestet sluttdato`}.1"),
             søknadprosess.dato("${Arbeidsforhold.`arbeidsforhold midlertidig arbeidsforhold oppstartsdato`}.1"),
-            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold permittertert fra fiskeri naering`}.1"),
-            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer foer permittert`}.1"),
+            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold permittert fra fiskeri næring`}.1"),
+            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før permittert`}.1"),
             søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold permittert periode`}.1"),
             søknadprosess.heltall("${Arbeidsforhold.`arbeidsforhold permittert prosent`}.1"),
-            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du lonnsplikt periode`}.1"),
-            søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold naar var lonnsplikt periode`}.1")
+            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du lønnsplikt periode`}.1"),
+            søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold når var lønnsplikt periode`}.1")
         )
 
         assertEquals(null, søknadprosess.resultat())
@@ -386,7 +386,7 @@ internal class ArbeidsforholdTest {
     fun `Bug - rekkefølgen på spørsmålene blir feil`() {
         søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
-        søknadprosess.dato(Arbeidsforhold.`dagpenger soknadsdato`).besvar(1.januar)
+        søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
         søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
         søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(1)
         søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))
@@ -404,8 +404,8 @@ internal class ArbeidsforholdTest {
         søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja")))
         søknadprosess.boolsk(Arbeidsforhold.`gjenopptak jobbet siden sist du fikk dagpenger`).besvar(true)
-        søknadprosess.tekst(Arbeidsforhold.`gjenopptak aarsak til stans av dagpenger`).besvar(Tekst("Årsak"))
-        søknadprosess.dato(Arbeidsforhold.`gjenopptak soknadsdato`).besvar(1.januar)
+        søknadprosess.tekst(Arbeidsforhold.`gjenopptak årsak til stans av dagpenger`).besvar(Tekst("Årsak"))
+        søknadprosess.dato(Arbeidsforhold.`gjenopptak søknadsdato`).besvar(1.januar)
     }
 
     private fun `besvar spørsmål for et arbeidsforhold`() {
@@ -421,7 +421,7 @@ internal class ArbeidsforholdTest {
     private fun `besvar innledende spørsmål om arbeidsforhold`() {
         søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
-        søknadprosess.dato(Arbeidsforhold.`dagpenger soknadsdato`).besvar(1.januar)
+        søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
         søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
         søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(1)
         søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))

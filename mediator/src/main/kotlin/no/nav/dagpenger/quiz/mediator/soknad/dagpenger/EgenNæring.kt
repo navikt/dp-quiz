@@ -20,48 +20,48 @@ import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object EgenNæring : DslFaktaseksjon {
-    const val `driver du egen naering` = 3001
-    const val `egen naering organisasjonsnummer liste` = 3002
-    const val `egen naering organisasjonsnummer` = 3003
-    const val `egen naering arbeidstimer for` = 3004
-    const val `egen naering arbeidstimer naa` = 3005
-    const val `driver du eget gaardsbruk` = 3006
-    const val `eget gaardsbruk organisasjonsnummer` = 3007
-    const val `eget gaardsbruk type gaardsbruk` = 3008
-    const val `eget gaardsbruk hvem eier` = 3009
-    const val `eget gaardsbruk jeg andel inntekt` = 3010
-    const val `eget gaardsbruk ektefelle samboer andel inntekt` = 3011
-    const val `eget gaardsbruk andre andel inntekt` = 3012
-    const val `eget gaardsbruk arbeidstimer aar` = 3013
-    const val `eget gaardsbruk arbeidsaar for timer` = 3014
-    const val `eget gaardsbruk arbeidstimer beregning` = 3015
+    const val `driver du egen næring` = 3001
+    const val `egen næring organisasjonsnummer liste` = 3002
+    const val `egen næring organisasjonsnummer` = 3003
+    const val `egen næring arbeidstimer før` = 3004
+    const val `egen næring arbeidstimer nå` = 3005
+    const val `driver du eget gårdsbruk` = 3006
+    const val `eget gårdsbruk organisasjonsnummer` = 3007
+    const val `eget gårdsbruk type gårdsbruk` = 3008
+    const val `eget gårdsbruk hvem eier` = 3009
+    const val `eget gårdsbruk jeg andel inntekt` = 3010
+    const val `eget gårdsbruk ektefelle samboer andel inntekt` = 3011
+    const val `eget gårdsbruk andre andel inntekt` = 3012
+    const val `eget gårdsbruk arbeidstimer år` = 3013
+    const val `eget gårdsbruk arbeidsår for timer` = 3014
+    const val `eget gårdsbruk arbeidstimer beregning` = 3015
 
     override val fakta = listOf(
-        boolsk faktum "faktum.driver-du-egen-naering" id `driver du egen naering`,
-        heltall faktum "faktum.egen-naering-organisasjonsnummer-liste" id `egen naering organisasjonsnummer liste`
-            genererer `egen naering organisasjonsnummer` avhengerAv `driver du egen naering`,
-        heltall faktum "faktum.egen-naering-organisasjonsnummer" id `egen naering organisasjonsnummer`,
-        desimaltall faktum "faktum.egen-naering-arbeidstimer-for" id `egen naering arbeidstimer for`,
-        desimaltall faktum "faktum.egen-naering-arbeidstimer-naa" id `egen naering arbeidstimer naa`,
+        boolsk faktum "faktum.driver-du-egen-naering" id `driver du egen næring`,
+        heltall faktum "faktum.egen-naering-organisasjonsnummer-liste" id `egen næring organisasjonsnummer liste`
+            genererer `egen næring organisasjonsnummer` avhengerAv `driver du egen næring`,
+        heltall faktum "faktum.egen-naering-organisasjonsnummer" id `egen næring organisasjonsnummer`,
+        desimaltall faktum "faktum.egen-naering-arbeidstimer-for" id `egen næring arbeidstimer før`,
+        desimaltall faktum "faktum.egen-naering-arbeidstimer-naa" id `egen næring arbeidstimer nå`,
 
-        boolsk faktum "faktum.driver-du-eget-gaardsbruk" id `driver du eget gaardsbruk`,
-        heltall faktum "faktum.eget-gaardsbruk-organisasjonsnummer" id `eget gaardsbruk organisasjonsnummer` avhengerAv `driver du eget gaardsbruk`,
+        boolsk faktum "faktum.driver-du-eget-gaardsbruk" id `driver du eget gårdsbruk`,
+        heltall faktum "faktum.eget-gaardsbruk-organisasjonsnummer" id `eget gårdsbruk organisasjonsnummer` avhengerAv `driver du eget gårdsbruk`,
         flervalg faktum "faktum.eget-gaardsbruk-type-gaardsbruk"
             med "svar.dyr"
             med "svar.jord"
             med "svar.skog"
-            med "svar.annet" id `eget gaardsbruk type gaardsbruk` avhengerAv `driver du eget gaardsbruk`,
+            med "svar.annet" id `eget gårdsbruk type gårdsbruk` avhengerAv `driver du eget gårdsbruk`,
         flervalg faktum "faktum.eget-gaardsbruk-hvem-eier"
             med "svar.selv"
             med "svar.ektefelle-samboer"
-            med "svar.andre" id `eget gaardsbruk hvem eier` avhengerAv `driver du eget gaardsbruk`,
-        desimaltall faktum "faktum.eget-gaardsbruk-jeg-andel-inntekt" id `eget gaardsbruk jeg andel inntekt` avhengerAv `eget gaardsbruk hvem eier`,
-        desimaltall faktum "faktum.eget-gaardsbruk-ektefelle-samboer-andel-inntekt" id `eget gaardsbruk ektefelle samboer andel inntekt` avhengerAv `eget gaardsbruk hvem eier`,
-        desimaltall faktum "faktum.eget-gaardsbruk-andre-andel-inntekt" id `eget gaardsbruk andre andel inntekt` avhengerAv `eget gaardsbruk hvem eier`,
-        desimaltall faktum "faktum.eget-gaardsbruk-arbeidstimer-aar" id `eget gaardsbruk arbeidstimer aar` avhengerAv `driver du eget gaardsbruk`,
-        heltall faktum "faktum.eget-gaardsbruk-arbeidsaar-for-timer" id `eget gaardsbruk arbeidsaar for timer` avhengerAv `driver du eget gaardsbruk`,
+            med "svar.andre" id `eget gårdsbruk hvem eier` avhengerAv `driver du eget gårdsbruk`,
+        desimaltall faktum "faktum.eget-gaardsbruk-jeg-andel-inntekt" id `eget gårdsbruk jeg andel inntekt` avhengerAv `eget gårdsbruk hvem eier`,
+        desimaltall faktum "faktum.eget-gaardsbruk-ektefelle-samboer-andel-inntekt" id `eget gårdsbruk ektefelle samboer andel inntekt` avhengerAv `eget gårdsbruk hvem eier`,
+        desimaltall faktum "faktum.eget-gaardsbruk-andre-andel-inntekt" id `eget gårdsbruk andre andel inntekt` avhengerAv `eget gårdsbruk hvem eier`,
+        desimaltall faktum "faktum.eget-gaardsbruk-arbeidstimer-aar" id `eget gårdsbruk arbeidstimer år` avhengerAv `driver du eget gårdsbruk`,
+        heltall faktum "faktum.eget-gaardsbruk-arbeidsaar-for-timer" id `eget gårdsbruk arbeidsår for timer` avhengerAv `driver du eget gårdsbruk`,
         // @todo: Skal denne være tekst?
-        tekst faktum "faktum.eget-gaardsbruk-arbeidstimer-beregning" id `eget gaardsbruk arbeidstimer beregning` avhengerAv `driver du eget gaardsbruk`
+        tekst faktum "faktum.eget-gaardsbruk-arbeidstimer-beregning" id `eget gårdsbruk arbeidstimer beregning` avhengerAv `driver du eget gårdsbruk`
 
     )
 
@@ -72,14 +72,14 @@ object EgenNæring : DslFaktaseksjon {
         "egennæring".deltre {
             "Egen næring".alle(
                 "driver egen næring eller ikke".minstEnAv(
-                    boolsk(`driver du egen naering`) er false,
-                    boolsk(`driver du egen naering`) er true hvisOppfylt {
+                    boolsk(`driver du egen næring`) er false,
+                    boolsk(`driver du egen næring`) er true hvisOppfylt {
                         `næringenes organisasjonsnummer og arbeidstimer`()
                     }
                 ),
                 "driver eget gårdsbruk eller ikke".minstEnAv(
-                    boolsk(`driver du eget gaardsbruk`) er false,
-                    boolsk(`driver du eget gaardsbruk`) er true hvisOppfylt {
+                    boolsk(`driver du eget gårdsbruk`) er false,
+                    boolsk(`driver du eget gårdsbruk`) er true hvisOppfylt {
                         `organisasjonsnummer, type gårdsbruk og eier`()
                     }
                 )
@@ -89,9 +89,9 @@ object EgenNæring : DslFaktaseksjon {
 
     private fun Søknad.`næringenes organisasjonsnummer og arbeidstimer`() =
         "organisasjonsnummer og arbeidstimer".alle(
-            generator(`egen naering organisasjonsnummer liste`) har "en eller flere organisasjonsnummer".deltre {
+            generator(`egen næring organisasjonsnummer liste`) har "en eller flere organisasjonsnummer".deltre {
                 "organisasjonsnummer for alle næringer".alle(
-                    heltall(`egen naering organisasjonsnummer`).utfylt()
+                    heltall(`egen næring organisasjonsnummer`).utfylt()
                 )
             },
             `arbeidstimer for næringen før og nå`()
@@ -99,14 +99,14 @@ object EgenNæring : DslFaktaseksjon {
 
     private fun Søknad.`arbeidstimer for næringen før og nå`() =
         "spørsmål om arbeidstimer".alle(
-            desimaltall(`egen naering arbeidstimer naa`).utfylt(),
-            desimaltall(`egen naering arbeidstimer for`).utfylt()
+            desimaltall(`egen næring arbeidstimer nå`).utfylt(),
+            desimaltall(`egen næring arbeidstimer før`).utfylt()
         )
 
     private fun Søknad.`organisasjonsnummer, type gårdsbruk og eier`() =
         "spørsmål om gårdsbruket".alle(
-            heltall(`eget gaardsbruk organisasjonsnummer`).utfylt(),
-            flervalg(`eget gaardsbruk type gaardsbruk`).utfylt(),
+            heltall(`eget gårdsbruk organisasjonsnummer`).utfylt(),
+            flervalg(`eget gårdsbruk type gårdsbruk`).utfylt(),
             "hvem eier gårdsbruket".minstEnAv(
                 `søkeren eier selv`(),
                 `søkerens ektefelle eller samboer eier`(),
@@ -116,23 +116,23 @@ object EgenNæring : DslFaktaseksjon {
         )
 
     private fun Søknad.`søkeren eier selv`() =
-        flervalg(`eget gaardsbruk hvem eier`) er Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.selv") hvisOppfylt {
-            desimaltall(`eget gaardsbruk jeg andel inntekt`).utfylt()
+        flervalg(`eget gårdsbruk hvem eier`) er Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.selv") hvisOppfylt {
+            desimaltall(`eget gårdsbruk jeg andel inntekt`).utfylt()
         }
 
     private fun Søknad.`søkerens ektefelle eller samboer eier`() =
-        flervalg(`eget gaardsbruk hvem eier`) er Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.ektefelle-samboer") hvisOppfylt {
-            desimaltall(`eget gaardsbruk ektefelle samboer andel inntekt`).utfylt()
+        flervalg(`eget gårdsbruk hvem eier`) er Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.ektefelle-samboer") hvisOppfylt {
+            desimaltall(`eget gårdsbruk ektefelle samboer andel inntekt`).utfylt()
         }
 
     private fun Søknad.`noen andre eier`() =
-        flervalg(`eget gaardsbruk hvem eier`) er Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.andre") hvisOppfylt {
-            desimaltall(`eget gaardsbruk andre andel inntekt`).utfylt()
+        flervalg(`eget gårdsbruk hvem eier`) er Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.andre") hvisOppfylt {
+            desimaltall(`eget gårdsbruk andre andel inntekt`).utfylt()
         }
 
     private fun Søknad.`arbeidsår, arbeidstimer og forklaring på beregning`() = "info arbeidstimer".alle(
-        heltall(`eget gaardsbruk arbeidsaar for timer`).utfylt(),
-        desimaltall(`eget gaardsbruk arbeidstimer aar`).utfylt(),
-        tekst(`eget gaardsbruk arbeidstimer beregning`).utfylt()
+        heltall(`eget gårdsbruk arbeidsår for timer`).utfylt(),
+        desimaltall(`eget gårdsbruk arbeidstimer år`).utfylt(),
+        tekst(`eget gårdsbruk arbeidstimer beregning`).utfylt()
     )
 }

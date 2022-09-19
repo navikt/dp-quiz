@@ -14,20 +14,20 @@ import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Verneplikt : DslFaktaseksjon {
-    const val `avtjent militaer sivilforsvar tjeneste siste 12 mnd` = 7001
-    const val `avtjent militaer sivilforsvar tjeneste siste 12 mnd dokumentasjon` = 7002
-    const val `avtjent militaer sivilforsvar tjeneste siste 12 mnd godkjenning` = 7003
+    const val `avtjent militær sivilforsvar tjeneste siste 12 mnd` = 7001
+    const val `avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon` = 7002
+    const val `avtjent militær sivilforsvar tjeneste siste 12 mnd godkjenning` = 7003
     override val fakta = listOf(
-        boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd" id `avtjent militaer sivilforsvar tjeneste siste 12 mnd`,
-        dokument faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-dokumentasjon" id `avtjent militaer sivilforsvar tjeneste siste 12 mnd dokumentasjon`,
-        boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-godkjenning" id `avtjent militaer sivilforsvar tjeneste siste 12 mnd godkjenning` avhengerAv `avtjent militaer sivilforsvar tjeneste siste 12 mnd dokumentasjon`
+        boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd" id `avtjent militær sivilforsvar tjeneste siste 12 mnd`,
+        dokument faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-dokumentasjon" id `avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon`,
+        boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-godkjenning" id `avtjent militær sivilforsvar tjeneste siste 12 mnd godkjenning` avhengerAv `avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon`
     )
 
     override fun seksjon(søknad: Søknad) = listOf(
         søknad.seksjon(
             "verneplikt",
             Rolle.søker,
-            `avtjent militaer sivilforsvar tjeneste siste 12 mnd`
+            `avtjent militær sivilforsvar tjeneste siste 12 mnd`
         )
     )
 
@@ -36,12 +36,12 @@ object Verneplikt : DslFaktaseksjon {
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "verneplikt".deltre {
             "må godkjennes hvis ja".minstEnAv(
-                (boolsk(`avtjent militaer sivilforsvar tjeneste siste 12 mnd`) er true).sannsynliggjøresAv(
+                (boolsk(`avtjent militær sivilforsvar tjeneste siste 12 mnd`) er true).sannsynliggjøresAv(
                     dokument(
-                        `avtjent militaer sivilforsvar tjeneste siste 12 mnd dokumentasjon`
+                        `avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon`
                     )
-                ).godkjentAv(boolsk(`avtjent militaer sivilforsvar tjeneste siste 12 mnd godkjenning`)),
-                boolsk(`avtjent militaer sivilforsvar tjeneste siste 12 mnd`) er false
+                ).godkjentAv(boolsk(`avtjent militær sivilforsvar tjeneste siste 12 mnd godkjenning`)),
+                boolsk(`avtjent militær sivilforsvar tjeneste siste 12 mnd`) er false
             )
         }
     }

@@ -7,10 +7,10 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eos arbeidsforhold arbeidsgivernavn`
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eos arbeidsforhold land`
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eos arbeidsforhold personnummer`
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eos arbeidsforhold varighet`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eøs arbeidsforhold arbeidsgivernavn`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eøs arbeidsforhold land`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eøs arbeidsforhold personnummer`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eøs arbeidsforhold varighet`
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -32,16 +32,16 @@ internal class EøsArbeidsforholdTest {
             EøsArbeidsforhold.seksjon(this)
         }
 
-        søknadprosess.boolsk(EøsArbeidsforhold.`eos arbeid siste 36 mnd`).besvar(false)
+        søknadprosess.boolsk(EøsArbeidsforhold.`eøs arbeid siste 36 mnd`).besvar(false)
         assertEquals(true, søknadprosess.resultat())
-        søknadprosess.boolsk(EøsArbeidsforhold.`eos arbeid siste 36 mnd`).besvar(true)
+        søknadprosess.boolsk(EøsArbeidsforhold.`eøs arbeid siste 36 mnd`).besvar(true)
         assertEquals(null, søknadprosess.resultat())
 
-        søknadprosess.generator(EøsArbeidsforhold.`eos arbeidsforhold`).besvar(2)
-        søknadprosess.tekst("$`eos arbeidsforhold arbeidsgivernavn`.1").besvar(Tekst("CERN"))
-        søknadprosess.land("$`eos arbeidsforhold land`.1").besvar(Land("CHE"))
-        søknadprosess.tekst("$`eos arbeidsforhold personnummer`.1").besvar(Tekst("12345678901"))
-        søknadprosess.periode("$`eos arbeidsforhold varighet`.1").besvar(
+        søknadprosess.generator(EøsArbeidsforhold.`eøs arbeidsforhold`).besvar(2)
+        søknadprosess.tekst("$`eøs arbeidsforhold arbeidsgivernavn`.1").besvar(Tekst("CERN"))
+        søknadprosess.land("$`eøs arbeidsforhold land`.1").besvar(Land("CHE"))
+        søknadprosess.tekst("$`eøs arbeidsforhold personnummer`.1").besvar(Tekst("12345678901"))
+        søknadprosess.periode("$`eøs arbeidsforhold varighet`.1").besvar(
             Periode(
                 fom = LocalDate.now().minusDays(50),
                 tom = LocalDate.now()
@@ -50,10 +50,10 @@ internal class EøsArbeidsforholdTest {
 
         assertEquals(null, søknadprosess.resultat())
 
-        søknadprosess.tekst("$`eos arbeidsforhold arbeidsgivernavn`.2").besvar(Tekst("CERN"))
-        søknadprosess.land("$`eos arbeidsforhold land`.2").besvar(Land("CHE"))
-        søknadprosess.tekst("$`eos arbeidsforhold personnummer`.2").besvar(Tekst("12345678901"))
-        søknadprosess.periode("$`eos arbeidsforhold varighet`.2").besvar(
+        søknadprosess.tekst("$`eøs arbeidsforhold arbeidsgivernavn`.2").besvar(Tekst("CERN"))
+        søknadprosess.land("$`eøs arbeidsforhold land`.2").besvar(Land("CHE"))
+        søknadprosess.tekst("$`eøs arbeidsforhold personnummer`.2").besvar(Tekst("12345678901"))
+        søknadprosess.periode("$`eøs arbeidsforhold varighet`.2").besvar(
             Periode(
                 fom = LocalDate.now().minusDays(50),
                 tom = LocalDate.now()

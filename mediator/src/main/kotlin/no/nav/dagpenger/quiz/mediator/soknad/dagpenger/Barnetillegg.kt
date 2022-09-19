@@ -25,40 +25,40 @@ object Barnetillegg : DslFaktaseksjon {
     const val `barn liste` = 1001
     const val `barn fornavn mellomnavn` = 1002
     const val `barn etternavn` = 1003
-    const val `barn foedselsdato` = 1004
+    const val `barn fødselsdato` = 1004
     const val `barn statsborgerskap` = 1005
-    const val `forsoerger du barnet` = 1006
+    const val `forsørger du barnet` = 1006
     const val `egne barn` = 1007
     const val `barn liste register` = 1008
     const val `barn fornavn mellomnavn register` = 1009
     const val `barn etternavn register` = 1010
-    const val `barn foedselsdato register` = 1011
+    const val `barn fødselsdato register` = 1011
     const val `barn statsborgerskap register` = 1012
-    const val `forsoerger du barnet register` = 1013
+    const val `forsørger du barnet register` = 1013
     override val fakta = listOf(
         heltall faktum "faktum.register.barn-liste" id `barn liste register`
             genererer `barn fornavn mellomnavn register`
             og `barn etternavn register`
-            og `barn foedselsdato register`
+            og `barn fødselsdato register`
             og `barn statsborgerskap register`
-            og `forsoerger du barnet register`,
+            og `forsørger du barnet register`,
         tekst faktum "faktum.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn register`,
         tekst faktum "faktum.barn-etternavn" id `barn etternavn register`,
-        dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato register`,
+        dato faktum "faktum.barn-foedselsdato" id `barn fødselsdato register`,
         land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap register`,
-        boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet register` avhengerAv `barn liste register`,
+        boolsk faktum "faktum.forsoerger-du-barnet" id `forsørger du barnet register` avhengerAv `barn liste register`,
         boolsk faktum "faktum.legge-til-egne-barn" id `egne barn`,
         heltall faktum "faktum.barn-liste" id `barn liste` avhengerAv `egne barn`
             genererer `barn fornavn mellomnavn`
             og `barn etternavn`
-            og `barn foedselsdato`
+            og `barn fødselsdato`
             og `barn statsborgerskap`
-            og `forsoerger du barnet`,
+            og `forsørger du barnet`,
         tekst faktum "faktum.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn`,
         tekst faktum "faktum.barn-etternavn" id `barn etternavn`,
-        dato faktum "faktum.barn-foedselsdato" id `barn foedselsdato`,
+        dato faktum "faktum.barn-foedselsdato" id `barn fødselsdato`,
         land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap`,
-        boolsk faktum "faktum.forsoerger-du-barnet" id `forsoerger du barnet`
+        boolsk faktum "faktum.forsoerger-du-barnet" id `forsørger du barnet`
     )
 
     override fun seksjon(søknad: Søknad): List<Seksjon> {
@@ -69,18 +69,18 @@ object Barnetillegg : DslFaktaseksjon {
             `barn fornavn mellomnavn register`,
             `barn etternavn register`,
             `barn statsborgerskap register`,
-            `barn foedselsdato register`
+            `barn fødselsdato register`
         )
         val barnetillegg = søknad.seksjon(
             "barnetillegg", Rolle.søker,
-            `forsoerger du barnet register`,
+            `forsørger du barnet register`,
             `egne barn`,
             `barn liste`,
             `barn fornavn mellomnavn`,
             `barn etternavn`,
-            `barn foedselsdato`,
+            `barn fødselsdato`,
             `barn statsborgerskap`,
-            `forsoerger du barnet`
+            `forsørger du barnet`
         )
 
         return listOf(barnetilleggRegister, barnetillegg)
@@ -92,7 +92,7 @@ object Barnetillegg : DslFaktaseksjon {
                 generator(`barn liste register`) minst 0,
                 generator(`barn liste register`) minst 1 hvisOppfylt {
                     generator(`barn liste register`) med "et eller flere barn".deltre {
-                        boolsk(`forsoerger du barnet register`).utfylt()
+                        boolsk(`forsørger du barnet register`).utfylt()
                     }
                 }
             ).hvisOppfylt {
@@ -102,7 +102,7 @@ object Barnetillegg : DslFaktaseksjon {
                         generator(`barn liste`) minst 1 hvisOppfylt {
                             generator(`barn liste`) med "et eller flere barn".deltre {
                                 `barnets navn, fødselsdato og bostedsland`().hvisOppfylt {
-                                    boolsk(`forsoerger du barnet`).utfylt()
+                                    boolsk(`forsørger du barnet`).utfylt()
                                 }
                             }
                         }
@@ -115,7 +115,7 @@ object Barnetillegg : DslFaktaseksjon {
     private fun Søknad.`barnets navn, fødselsdato og bostedsland`() = "navn, dato og bostedsland".alle(
         tekst(`barn fornavn mellomnavn`).utfylt(),
         tekst(`barn etternavn`).utfylt(),
-        dato(`barn foedselsdato`).utfylt(),
+        dato(`barn fødselsdato`).utfylt(),
         land(`barn statsborgerskap`).utfylt()
     )
 }

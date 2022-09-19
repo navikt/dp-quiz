@@ -9,17 +9,17 @@ import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn etternavn`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn etternavn register`
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn foedselsdato`
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn foedselsdato register`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn fornavn mellomnavn`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn fornavn mellomnavn register`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn fødselsdato`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn fødselsdato register`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn liste`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn liste register`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn statsborgerskap`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn statsborgerskap register`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`egne barn`
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`forsoerger du barnet`
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`forsoerger du barnet register`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`forsørger du barnet`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`forsørger du barnet register`
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -61,12 +61,12 @@ internal class BarnetilleggTest {
 
         søknadprosess.tekst("${`barn fornavn mellomnavn`}.1").besvar(Tekst("Ola"))
         søknadprosess.tekst("${`barn etternavn`}.1").besvar(Tekst("Nordmann"))
-        søknadprosess.dato("${`barn foedselsdato`}.1").besvar(LocalDate.now().minusYears(1))
+        søknadprosess.dato("${`barn fødselsdato`}.1").besvar(LocalDate.now().minusYears(1))
         søknadprosess.land("${`barn statsborgerskap`}.1").besvar(Land("NOR"))
-        søknadprosess.boolsk("${`forsoerger du barnet`}.1").besvar(false)
+        søknadprosess.boolsk("${`forsørger du barnet`}.1").besvar(false)
         assertEquals(true, søknadprosess.resultat())
 
-        søknadprosess.boolsk("${`forsoerger du barnet`}.1").besvar(true)
+        søknadprosess.boolsk("${`forsørger du barnet`}.1").besvar(true)
 
         assertEquals(true, søknadprosess.resultat())
     }
@@ -80,16 +80,16 @@ internal class BarnetilleggTest {
 
         søknadprosess.tekst("${`barn fornavn mellomnavn register`}.1").besvar(Tekst("Ola"))
         søknadprosess.tekst("${`barn etternavn register`}.1").besvar(Tekst("Nordmann"))
-        søknadprosess.dato("${`barn foedselsdato register`}.1").besvar(LocalDate.now().minusYears(1))
+        søknadprosess.dato("${`barn fødselsdato register`}.1").besvar(LocalDate.now().minusYears(1))
         søknadprosess.land("${`barn statsborgerskap register`}.1").besvar(Land("NOR"))
         val seksjon = søknadprosess.nesteSeksjoner().first()
         assertEquals("barnetillegg", seksjon.navn)
-        assertTrue(seksjon.contains(søknadprosess.boolsk("${`forsoerger du barnet register`}.1")))
+        assertTrue(seksjon.contains(søknadprosess.boolsk("${`forsørger du barnet register`}.1")))
 
-        søknadprosess.boolsk("${`forsoerger du barnet register`}.1").besvar(false)
+        søknadprosess.boolsk("${`forsørger du barnet register`}.1").besvar(false)
         assertEquals(true, søknadprosess.resultat())
 
-        søknadprosess.boolsk("${`forsoerger du barnet register`}.1").besvar(true)
+        søknadprosess.boolsk("${`forsørger du barnet register`}.1").besvar(true)
 
         assertEquals(true, søknadprosess.resultat())
     }
