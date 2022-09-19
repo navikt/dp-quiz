@@ -53,8 +53,8 @@ class DagpengerflytTest {
 
         søknadprosess.boolsk(Verneplikt.`avtjent militaer sivilforsvar tjeneste siste 12 mnd`).besvar(false)
 
-        søknadprosess.boolsk(AndreYtelser.`andre ytelser mottatt eller sokt`).besvar(false)
-        søknadprosess.boolsk(AndreYtelser.`utbetaling eller okonomisk gode tidligere arbeidsgiver`).besvar(false)
+        søknadprosess.boolsk(AndreYtelser.`andre ytelser mottatt eller søkt`).besvar(false)
+        søknadprosess.boolsk(AndreYtelser.`utbetaling eller økonomisk gode tidligere arbeidsgiver`).besvar(false)
 
         søknadprosess.boolsk(Utdanning.`tar du utdanning`).besvar(false)
         søknadprosess.boolsk(Utdanning.`avsluttet utdanning siste 6 mnd`).besvar(false)
