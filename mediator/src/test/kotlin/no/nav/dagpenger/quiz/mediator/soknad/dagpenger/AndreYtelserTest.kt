@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 internal class AndreYtelserTest {
     @Disabled
@@ -115,11 +114,7 @@ internal class AndreYtelserTest {
             søknadprosess.tekst(`økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`)
                 .besvar(Tekst("dummy begrunnelse"))
 
-            søknadprosess.forEach { seksjon ->
-                seksjon.forEach { faktum ->
-                    assertTrue(faktum.erBesvart(), "Faktum med id=${faktum.id} skal være besvart")
-                }
-            }
+            assertEquals(true, søknadprosess.resultat())
         }
     }
 
@@ -135,12 +130,6 @@ internal class AndreYtelserTest {
             søknadprosess.boolsk(`utbetaling eller økonomisk gode tidligere arbeidsgiver`).besvar(true)
             søknadprosess.tekst(`økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`)
                 .besvar(Tekst("dummy begrunnelse"))
-
-            søknadprosess.forEach { seksjon ->
-                seksjon.forEach { faktum ->
-                    assertTrue(faktum.erBesvart(), "Faktum med id=${faktum.id} skal være besvart")
-                }
-            }
 
             søknadprosess.boolsk(`andre ytelser mottatt eller søkt`).besvar(false)
 
