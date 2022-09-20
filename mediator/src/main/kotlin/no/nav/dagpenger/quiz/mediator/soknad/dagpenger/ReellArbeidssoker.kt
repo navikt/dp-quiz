@@ -22,28 +22,31 @@ import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object ReellArbeidssoker : DslFaktaseksjon {
 
-    const val `Kan jobbe heltid` = 1
-    const val `Årsak til kun deltid` = 2
-    const val `Skriv kort om situasjonen din` = 3
-    const val `Antall timer deltid du kan jobbe` = 4
-    const val `Kan du jobbe i hele Norge` = 5
-    const val `Årsak kan ikke jobbe i hele Norge` = 6
-    const val `Kort om hvorfor ikke jobbe hele norge` = 7
-    const val `Kan ta alle typer arbeid` = 8
-    const val `Kan bytte yrke og eller gå ned i lønn` = 9
-    const val `Dokumentasjon for redusert helse` = 10
-    const val `Godkjenning av dokumentasjon for redusert helse` = 11
-    const val `Dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov` = 12
-    const val `Godkjenning av dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov` = 13
-    const val `Dokumentasjon annen situasjon` = 14
-    const val `Godkjenning av dokumentasjon annen situasjon` = 15
-    const val `Dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18` =
+    const val `kan jobbe heltid` = 1
+    const val `årsak til kun deltid` = 2
+    const val `skriv kort om situasjonen din` = 3
+    const val `antall timer deltid du kan jobbe` = 4
+    const val `kan du jobbe i hele Norge` = 5
+    const val `årsak kan ikke jobbe i hele Norge` = 6
+    const val `kort om hvorfor ikke jobbe hele norge` = 7
+    const val `kan ta alle typer arbeid` = 8
+    const val `kan bytte yrke eller gå ned i lønn` = 9
+
+    const val `dokumentasjon for redusert helse` = 10
+    const val `godkjenning av dokumentasjon for redusert helse` = 11
+    const val `dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov` = 12
+    const val `godkjenning av dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov` = 13
+    const val `dokumentasjon annen situasjon` = 14
+    const val `godkjenning av dokumentasjon annen situasjon` = 15
+    const val `dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18` =
         16
-    const val `Godkjenning av dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18` =
+    const val `godkjenning av dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18` =
         17
+    const val `dokumentasjon kan ikke ta alle typer arbeid` = 18
+    const val `godkjenning av dokumentasjon kan ikke ta alle typer arbeid` = 19
 
     override val fakta = listOf(
-        boolsk faktum "faktum.jobbe-hel-deltid" id `Kan jobbe heltid`,
+        boolsk faktum "faktum.jobbe-hel-deltid" id `kan jobbe heltid`,
         flervalg faktum "faktum.kun-deltid-aarsak"
             med "svar.redusert-helse"
             med "svar.omsorg-baby"
@@ -51,11 +54,11 @@ object ReellArbeidssoker : DslFaktaseksjon {
             med "svar.omsorg-barn-spesielle-behov"
             med "svar.skift-turnus"
             med "svar.har-fylt-60"
-            med "svar.annen-situasjon" id `Årsak til kun deltid` avhengerAv `Kan jobbe heltid`,
-        heltall faktum "faktum.kun-deltid-aarsak-antall-timer" id `Antall timer deltid du kan jobbe` avhengerAv `Årsak til kun deltid` og `Skriv kort om situasjonen din`,
-        tekst faktum "faktum.kort-om-hvorfor-kun-deltid" id `Skriv kort om situasjonen din` avhengerAv `Årsak til kun deltid`,
+            med "svar.annen-situasjon" id `årsak til kun deltid` avhengerAv `kan jobbe heltid`,
+        heltall faktum "faktum.kun-deltid-aarsak-antall-timer" id `antall timer deltid du kan jobbe` avhengerAv `årsak til kun deltid` og `skriv kort om situasjonen din`,
+        tekst faktum "faktum.kort-om-hvorfor-kun-deltid" id `skriv kort om situasjonen din` avhengerAv `årsak til kun deltid`,
 
-        boolsk faktum "faktum.jobbe-hele-norge" id `Kan du jobbe i hele Norge`,
+        boolsk faktum "faktum.jobbe-hele-norge" id `kan du jobbe i hele Norge`,
         flervalg faktum "faktum.ikke-jobbe-hele-norge"
             med "svar.redusert-helse"
             med "svar.omsorg-baby"
@@ -63,126 +66,198 @@ object ReellArbeidssoker : DslFaktaseksjon {
             med "svar.omsorg-barn-spesielle-behov"
             med "svar.skift-turnus"
             med "svar.har-fylt-60"
-            med "svar.annen-situasjon" id `Årsak kan ikke jobbe i hele Norge` avhengerAv `Kan du jobbe i hele Norge`,
-        tekst faktum "faktum.kort-om-hvorfor-ikke-jobbe-hele-norge" id `Kort om hvorfor ikke jobbe hele norge` avhengerAv `Årsak kan ikke jobbe i hele Norge`,
+            med "svar.annen-situasjon" id `årsak kan ikke jobbe i hele Norge` avhengerAv `kan du jobbe i hele Norge`,
+        tekst faktum "faktum.kort-om-hvorfor-ikke-jobbe-hele-norge" id `kort om hvorfor ikke jobbe hele norge` avhengerAv `årsak kan ikke jobbe i hele Norge`,
 
-        boolsk faktum "faktum.alle-typer-arbeid" id `Kan ta alle typer arbeid`,
-        boolsk faktum "faktum.bytte-yrke-ned-i-lonn" id `Kan bytte yrke og eller gå ned i lønn`,
+        boolsk faktum "faktum.alle-typer-arbeid" id `kan ta alle typer arbeid`,
+        boolsk faktum "faktum.bytte-yrke-ned-i-lonn" id `kan bytte yrke eller gå ned i lønn`,
 
-        dokument faktum "faktum.dokumentasjon-redusert-helse" id `Dokumentasjon for redusert helse`,
-        boolsk faktum "faktum.godkjenning-dokumentasjon-redusert-helse" id `Godkjenning av dokumentasjon for redusert helse` avhengerAv `Dokumentasjon for redusert helse`,
+        dokument faktum "faktum.dokumentasjon-redusert-helse" id `dokumentasjon for redusert helse`,
+        boolsk faktum "faktum.godkjenning-dokumentasjon-redusert-helse" id `godkjenning av dokumentasjon for redusert helse` avhengerAv `dokumentasjon for redusert helse`,
 
-        dokument faktum "faktum.dokumentasjon-eneansvar-delt-ansvar-barn-under-18-spesielle-behov" id `Dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov`,
-        boolsk faktum "faktum.godkjenning-dokumentasjon-eneansvar-delt-ansvar-barn-under-18-spesielle-behov" id `Godkjenning av dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov` avhengerAv `Dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov`,
+        dokument faktum "faktum.dokumentasjon-eneansvar-delt-ansvar-barn-under-18-spesielle-behov" id `dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov`,
+        boolsk faktum "faktum.godkjenning-dokumentasjon-eneansvar-delt-ansvar-barn-under-18-spesielle-behov" id `godkjenning av dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov` avhengerAv `dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov`,
 
-        dokument faktum "faktum.dokumentasjon-skift-turnus" id `Dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18`,
-        boolsk faktum "faktum.godkjenning-dokumentasjon-skift-turnus" id `Godkjenning av dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18` avhengerAv `Dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18`,
+        dokument faktum "faktum.dokumentasjon-skift-turnus" id `dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18`,
+        boolsk faktum "faktum.godkjenning-dokumentasjon-skift-turnus" id `godkjenning av dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18` avhengerAv `dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18`,
 
-        dokument faktum "faktum.dokumentasjon-annen-situasjon" id `Dokumentasjon annen situasjon`,
-        boolsk faktum "faktum.godkjenning-dokumentasjon-annen-situasjon" id `Godkjenning av dokumentasjon annen situasjon` avhengerAv `Dokumentasjon annen situasjon`
+        dokument faktum "faktum.dokumentasjon-annen-situasjon" id `dokumentasjon annen situasjon`,
+        boolsk faktum "faktum.godkjenning-dokumentasjon-annen-situasjon" id `godkjenning av dokumentasjon annen situasjon` avhengerAv `dokumentasjon annen situasjon`,
+
+        dokument faktum "faktum.dokumentasjon-kan-ikke-ta-alle-typer-arbeid" id `dokumentasjon kan ikke ta alle typer arbeid`,
+        boolsk faktum "faktum.godkjenning-dokumentasjon-kan-ikke-ta-alle-typer-arbeid" id `godkjenning av dokumentasjon kan ikke ta alle typer arbeid` avhengerAv `dokumentasjon kan ikke ta alle typer arbeid`
     )
 
     // https://lovdata.no/lov/1997-02-28-19/§4-5
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "reell arbeidssøker".deltre {
             "§ 4-5.Reelle arbeidssøkere".alle(
-                `Søkers arbeidskapasitet`(),
-                `Søkers evne til å flytte for arbeid`(),
-                `Søkers arbeidsmobilitet`()
+                `søkers arbeidskapasitet`(),
+                `søkers evne til å flytte for arbeid`(),
+                `kan ta alle typer arbeid`(),
+                `kan bytte yrke eller gå ned i lønn`()
             )
         }
     }
 
-    private fun Søknad.`Søkers arbeidskapasitet`() = "".minstEnAv(
-        `Jobbe fulltid`(),
-        `Jobbe deltid`()
+    private fun Søknad.`søkers arbeidskapasitet`() = "".minstEnAv(
+        `jobbe fulltid`(),
+        `jobbe deltid`()
     )
 
-    private fun Søknad.`Jobbe fulltid`() = boolsk(`Kan jobbe heltid`) er true
+    private fun Søknad.`jobbe fulltid`() = boolsk(`kan jobbe heltid`) er true
 
-    private fun Søknad.`Jobbe deltid`() =
-        boolsk(`Kan jobbe heltid`) er false hvisOppfylt {
-            `Årsak til deltid`() hvisOppfylt {
-                heltall(`Antall timer deltid du kan jobbe`).utfylt()
+    private fun Søknad.`jobbe deltid`() =
+        boolsk(`kan jobbe heltid`) er false hvisOppfylt {
+            `årsak til deltid`() hvisOppfylt {
+                heltall(`antall timer deltid du kan jobbe`).utfylt()
             }
         }
 
-    private fun Søknad.`Årsak til deltid`() = "Årsak til deltid".deltre {
-        flervalg(`Årsak til kun deltid`).utfylt() hvisOppfylt {
+    private fun Søknad.`årsak til deltid`() = "Årsak til deltid".deltre {
+        flervalg(`årsak til kun deltid`).utfylt() hvisOppfylt {
             "Årsak til deltid".minstEnAv(
-                `Redusert helse`(),
-                flervalg(`Årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-baby"),
-                `Ansvar for barn med spesielle behov`(),
-                flervalg(`Årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-barn-spesielle-behov"),
-                `Ansvar for barn tom syvende klasse eller barn med spesielle behov under atten når annen forelder jobber skift turnus eller ikke i nærområdet`(),
-                flervalg(`Årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.har-fylt-60"),
-                `Annen situasjon`(),
+                `årsak bare deltid - redusert helse`(),
+                `årsak bare deltid - omsorg for barn under ett år`(),
+                `årsak bare deltid - ansvar for barn til og med syvende klasse`(),
+                `årsak bare deltid - omsorg for barn med spesielle behov`(),
+                `årsak bare deltid - ansvar for barn til og med syvende klasse eller med spesielle behov og annen forelder jobber skift turnus`(),
+                `årsak bare deltid- over seksti år`(),
+                `årsak bare deltid - annen situasjon`(),
             )
         }
     }
 
-    private fun Søknad.`Ansvar for barn tom syvende klasse eller barn med spesielle behov under atten når annen forelder jobber skift turnus eller ikke i nærområdet`() =
-        (flervalg(`Årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.skift-turnus")).sannsynliggjøresAv(
-            dokument(
-                `Dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18`
-            )
-        ).godkjentAv(
-            boolsk(
-                `Godkjenning av dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18`
-            )
-        )
+    private fun Søknad.`årsak bare deltid- over seksti år`() =
+        flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.har-fylt-60")
 
-    private fun Søknad.`Annen situasjon`() =
-        (flervalg(`Årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon")).sannsynliggjøresAv(
-            dokument(`Dokumentasjon annen situasjon`)
-        ).godkjentAv(boolsk(`Godkjenning av dokumentasjon annen situasjon`)) hvisOppfylt {
-            tekst(`Skriv kort om situasjonen din`).utfylt()
+    private fun Søknad.`årsak bare deltid - redusert helse`() =
+        (flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.redusert-helse"))
+            .sannsynliggjøresAv(dokument(`dokumentasjon for redusert helse`))
+            .godkjentAv(boolsk(`godkjenning av dokumentasjon for redusert helse`))
+
+    private fun Søknad.`årsak bare deltid - omsorg for barn under ett år`() =
+        flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-baby")
+
+    private fun Søknad.`årsak bare deltid - ansvar for barn til og med syvende klasse`() =
+        flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.eneansvar-barn")
+
+    private fun Søknad.`årsak bare deltid - omsorg for barn med spesielle behov`() =
+        (flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-barn-spesielle-behov"))
+            .sannsynliggjøresAv(
+                dokument(
+                    `dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov`
+                )
+            )
+            .godkjentAv(
+                boolsk(
+                    `godkjenning av dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov`
+                )
+            )
+
+    private fun Søknad.`årsak bare deltid - ansvar for barn til og med syvende klasse eller med spesielle behov og annen forelder jobber skift turnus`() =
+        (flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.skift-turnus"))
+            .sannsynliggjøresAv(
+                dokument(
+                    `dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18`
+                )
+            )
+            .godkjentAv(
+                boolsk(
+                    `godkjenning av dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18`
+                )
+            )
+
+    private fun Søknad.`årsak bare deltid - annen situasjon`() =
+        (flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon"))
+            .sannsynliggjøresAv(dokument(`dokumentasjon annen situasjon`))
+            .godkjentAv(boolsk(`godkjenning av dokumentasjon annen situasjon`)) hvisOppfylt {
+            tekst(`skriv kort om situasjonen din`).utfylt()
         }
 
-    private fun Søknad.`Ansvar for barn med spesielle behov`() =
-        (flervalg(`Årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.eneansvar-barn")).sannsynliggjøresAv(
-            dokument(`Dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov`)
-        ).godkjentAv(
-            boolsk(`Godkjenning av dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov`)
-        )
-
-    private fun Søknad.`Redusert helse`() =
-        (flervalg(`Årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.redusert-helse")).sannsynliggjøresAv(
-            dokument(`Dokumentasjon for redusert helse`)
-        ).godkjentAv(boolsk(`Godkjenning av dokumentasjon for redusert helse`))
-
-    private fun Søknad.`Søkers evne til å flytte for arbeid`() = "".minstEnAv(
-        `Jobbe i hele Norge`(),
-        `Ikke jobbe i hele Norge`()
+    private fun Søknad.`søkers evne til å flytte for arbeid`() = "".minstEnAv(
+        `jobbe i hele Norge`(),
+        `ikke jobbe i hele Norge`()
     )
 
-    private fun Søknad.`Jobbe i hele Norge`() =
-        boolsk(`Kan du jobbe i hele Norge`) er true
+    private fun Søknad.`jobbe i hele Norge`() =
+        boolsk(`kan du jobbe i hele Norge`) er true
 
-    private fun Søknad.`Ikke jobbe i hele Norge`() =
-        boolsk(`Kan du jobbe i hele Norge`) er false hvisOppfylt {
-            `Årsak til at man ikke kan jobbe i hele Norge`()
+    private fun Søknad.`ikke jobbe i hele Norge`() =
+        boolsk(`kan du jobbe i hele Norge`) er false hvisOppfylt {
+            `årsak til at man ikke kan jobbe i hele Norge`()
         }
 
-    private fun Søknad.`Årsak til at man ikke kan jobbe i hele Norge`() =
-        flervalg(`Årsak kan ikke jobbe i hele Norge`).utfylt() hvisOppfylt {
+    private fun Søknad.`årsak til at man ikke kan jobbe i hele Norge`() =
+        flervalg(`årsak kan ikke jobbe i hele Norge`).utfylt() hvisOppfylt {
             "Årsak til at man ikke kan jobbe i hele Norge".minstEnAv(
-                flervalg(`Årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse"),
-                flervalg(`Årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-baby"),
-                flervalg(`Årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.eneansvar-barn"),
-                flervalg(`Årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-barn-spesielle-behov"),
-                flervalg(`Årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.skift-turnus"),
-                flervalg(`Årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.har-fylt-60"),
-                flervalg(`Årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.annen-situasjon") hvisOppfylt {
-                    tekst(`Kort om hvorfor ikke jobbe hele norge`).utfylt()
-                }
+                `årsak ikke jobbe i hele Norge - redusert helse`(),
+                `årsak ikke jobbe i hele Norge - omsorg for barn under ett år`(),
+                `årsak ikke jobbe i hele Norge - ansvar for barn til og med syvende klasse`(),
+                `årsak ikke jobbe i hele Norge - omsorg for barn med spesielle behov`(),
+                `årsak ikke jobbe i hele Norge - ansvar for barn til og med syvende klasse eller med spesielle behov og annen forelder jobber skift turnus`(),
+                `årsak ikke jobbe i hele Norge - over seksti år`(),
+                `årsak ikke jobbe i hele Norge - annen situasjon`()
             )
         }
 
-    private fun Søknad.`Søkers arbeidsmobilitet`() = "".alle(
-        boolsk(`Kan ta alle typer arbeid`).utfylt(),
-        boolsk(`Kan bytte yrke og eller gå ned i lønn`).utfylt()
-    )
+    private fun Søknad.`årsak ikke jobbe i hele Norge - redusert helse`() =
+        (flervalg(`årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse"))
+            .sannsynliggjøresAv(dokument(`dokumentasjon for redusert helse`))
+            .godkjentAv(boolsk(`godkjenning av dokumentasjon for redusert helse`))
+
+    private fun Søknad.`årsak ikke jobbe i hele Norge - omsorg for barn under ett år`() =
+        flervalg(`årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-baby")
+
+    private fun Søknad.`årsak ikke jobbe i hele Norge - ansvar for barn til og med syvende klasse`() =
+        flervalg(`årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.eneansvar-barn")
+
+    private fun Søknad.`årsak ikke jobbe i hele Norge - omsorg for barn med spesielle behov`() =
+        (flervalg(`årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-barn-spesielle-behov"))
+            .sannsynliggjøresAv(
+                dokument(
+                    `dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov`
+                )
+            )
+            .godkjentAv(
+                boolsk(
+                    `godkjenning av dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov`
+                )
+            )
+
+    private fun Søknad.`årsak ikke jobbe i hele Norge - ansvar for barn til og med syvende klasse eller med spesielle behov og annen forelder jobber skift turnus`() =
+        (flervalg(`årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.skift-turnus"))
+            .sannsynliggjøresAv(
+                dokument(
+                    `dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18`
+                )
+            )
+            .godkjentAv(
+                boolsk(
+                    `godkjenning av dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18`
+                )
+            )
+
+    private fun Søknad.`årsak ikke jobbe i hele Norge - over seksti år`() =
+        flervalg(`årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.har-fylt-60")
+
+    private fun Søknad.`årsak ikke jobbe i hele Norge - annen situasjon`() =
+        (flervalg(`årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.annen-situasjon"))
+            .sannsynliggjøresAv(dokument(`dokumentasjon annen situasjon`))
+            .godkjentAv(boolsk(`godkjenning av dokumentasjon annen situasjon`)) hvisOppfylt {
+            tekst(`kort om hvorfor ikke jobbe hele norge`).utfylt()
+        }
+
+    private fun Søknad.`kan ta alle typer arbeid`() =
+        "kan ta alle typer arbeid eller ikke".minstEnAv(
+            (boolsk(`kan ta alle typer arbeid`) er false)
+                .sannsynliggjøresAv(dokument(`dokumentasjon kan ikke ta alle typer arbeid`))
+                .godkjentAv(boolsk(`godkjenning av dokumentasjon kan ikke ta alle typer arbeid`)),
+            boolsk(`kan ta alle typer arbeid`) er true
+        )
+
+    private fun Søknad.`kan bytte yrke eller gå ned i lønn`() =
+        boolsk(`kan bytte yrke eller gå ned i lønn`).utfylt()
 
     override fun seksjon(søknad: Søknad) =
         listOf(søknad.seksjon("reell-arbeidssoker", Rolle.søker, *this.databaseIder()))

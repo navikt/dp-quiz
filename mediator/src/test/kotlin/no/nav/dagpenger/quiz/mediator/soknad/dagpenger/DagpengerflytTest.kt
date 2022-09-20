@@ -60,10 +60,10 @@ class DagpengerflytTest {
         søknadprosess.boolsk(Utdanning.`avsluttet utdanning siste 6 mnd`).besvar(false)
         søknadprosess.boolsk(Utdanning.`planlegger utdanning med dagpenger`).besvar(false)
 
-        søknadprosess.boolsk(ReellArbeidssoker.`Kan jobbe heltid`).besvar(true)
-        søknadprosess.boolsk(ReellArbeidssoker.`Kan du jobbe i hele Norge`).besvar(true)
-        søknadprosess.boolsk(ReellArbeidssoker.`Kan ta alle typer arbeid`).besvar(true)
-        søknadprosess.boolsk(ReellArbeidssoker.`Kan bytte yrke og eller gå ned i lønn`).besvar(true)
+        søknadprosess.boolsk(ReellArbeidssoker.`kan jobbe heltid`).besvar(true)
+        søknadprosess.boolsk(ReellArbeidssoker.`kan du jobbe i hele Norge`).besvar(true)
+        søknadprosess.boolsk(ReellArbeidssoker.`kan ta alle typer arbeid`).besvar(true)
+        søknadprosess.boolsk(ReellArbeidssoker.`kan bytte yrke eller gå ned i lønn`).besvar(true)
 
         søknadprosess.boolsk(Tilleggsopplysninger.`har tilleggsopplysninger`).besvar(false)
         assertTrue(søknadprosess.erFerdigFor(Rolle.nav, Rolle.søker), "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }}")
