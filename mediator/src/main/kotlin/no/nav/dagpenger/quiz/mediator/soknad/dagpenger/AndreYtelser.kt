@@ -43,7 +43,7 @@ object AndreYtelser : DslFaktaseksjon {
     const val `dokumentasjon arbeidsløs GFF periode` = 5018
     const val `godkjenning dokumentasjon arbeidsløs GFF periode` = 5019
     const val `dokumentasjon garantilott fra GFF periode` = 5020
-    const val `godkjenning dokumentasjon garantilott fra GFF periode` = 502
+    const val `godkjenning dokumentasjon garantilott fra GFF periode` = 5021
     const val `dokumentasjon etterlønn` = 5022
     const val `godkjenning dokumentasjon etterlønn` = 5023
     const val `dokumentasjon dagpenger eøs land` = 5024
