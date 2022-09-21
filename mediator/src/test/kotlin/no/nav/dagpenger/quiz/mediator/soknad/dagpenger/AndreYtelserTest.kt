@@ -27,13 +27,12 @@ import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`utbetaling 
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertFalse
 
 internal class AndreYtelserTest {
-    @Disabled
+
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
         AndreYtelser.verifiserFeltsammensetting(29, 145435)
