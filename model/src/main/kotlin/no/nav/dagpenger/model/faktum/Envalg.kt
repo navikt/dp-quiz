@@ -5,7 +5,7 @@ class Envalg(valgteverdier: Set<String>) : Valg(valgteverdier), ValgteVerdier {
     constructor(vararg verdier: String) : this(verdier.toSet())
 
     override fun equals(other: Any?): Boolean {
-        return other is Envalg && this.valgteverdier.containsAll(other.valgteverdier)
+        return other is Envalg && this.valgteverdier == other.valgteverdier
     }
 
     override fun hashCode(): Int {

@@ -165,6 +165,19 @@ internal class SøknadRecordTest {
     }
 
     @Test
+    fun `lagre nye envalg og flervalg verdier`() {
+        Postgres.withMigratedDb {
+            byggOriginalSøknadprosess()
+            originalSøknadprosess.envalg(20).besvar(Envalg("f20.envalg1"))
+            originalSøknadprosess.flervalg(21).besvar(Flervalg("f21.flervalg1"))
+            lagreHentOgSammenlign()
+            originalSøknadprosess.envalg(20).besvar(Envalg("f20.envalg2"))
+            originalSøknadprosess.flervalg(21).besvar(Flervalg("f21.flervalg1", "f21.flervalg2"))
+            lagreHentOgSammenlign()
+        }
+    }
+
+    @Test
     fun `Nytt svar i fakta burde gjenspeiles i gammel_faktum_verdi`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()

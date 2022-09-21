@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import org.junit.jupiter.api.BeforeEach
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class EnvalgFaktumTest {
@@ -73,5 +76,25 @@ class EnvalgFaktumTest {
     fun `Skal kaste feil hvis flere gyldige alternativer velges`() {
         val envalg = søknad.envalg(1)
         assertThrows<IllegalArgumentException> { envalg.besvar(Envalg("valg1", "valg2")) }
+    }
+
+    @Test
+    fun `likhet test `() {
+        val envalg = Envalg("envalg1.valg1", "envalg2.valg2")
+        assertEquals(envalg, envalg)
+        assertEquals(envalg, Envalg("envalg1.valg1", "envalg2.valg2"))
+        assertNotEquals(envalg, Any())
+        assertNotEquals(Envalg("envalg1.valg2"), envalg)
+        assertNotEquals(envalg, Envalg("envalg1.valg2"))
+    }
+
+    @Test
+    fun `envalg subsumsjon `() {
+        val envalg = søknad.envalg(1)
+        envalg.besvar(Envalg("envalg.valg1"))
+        val erValgSubsumsjon = envalg er Envalg("envalg.valg1")
+        assertTrue { erValgSubsumsjon.resultat()!! }
+        envalg.besvar(Envalg("envalg.valg2"))
+        assertFalse { erValgSubsumsjon.resultat()!! }
     }
 }

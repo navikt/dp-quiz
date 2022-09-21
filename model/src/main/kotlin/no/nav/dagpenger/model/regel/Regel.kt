@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
+import no.nav.dagpenger.model.faktum.Valg
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
@@ -125,6 +126,18 @@ infix fun <T : Comparable<T>> Faktum<T>.er(other: T) = EnkelSubsumsjon(
     Er(other),
     this
 )
+
+infix fun <T : Valg>Faktum<T>.er(valg: T) = EnkelSubsumsjon(
+    Inneholder(valg),
+    this
+)
+
+private class Inneholder<T : Valg>(private val other: T) : Regel {
+
+    override val typeNavn: String = "inneholder"
+    override fun resultat(fakta: List<Faktum<*>>): Boolean = (fakta[0].svar() as Valg).containsAll(other)
+    override fun toString(fakta: List<Faktum<*>>): String = "Sjekk at `${fakta[0]}` inneholder $other"
+}
 
 private class Er<T : Comparable<T>>(private val other: T) : Regel {
     override val typeNavn = "er"
