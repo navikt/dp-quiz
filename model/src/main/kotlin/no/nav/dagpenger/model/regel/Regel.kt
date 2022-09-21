@@ -127,7 +127,7 @@ infix fun <T : Comparable<T>> Faktum<T>.er(other: T) = EnkelSubsumsjon(
     this
 )
 
-infix fun <T : Valg>Faktum<T>.er(valg: T) = EnkelSubsumsjon(
+infix fun <T : Valg>Faktum<T>.inneholder(valg: T) = EnkelSubsumsjon(
     Inneholder(valg),
     this
 )

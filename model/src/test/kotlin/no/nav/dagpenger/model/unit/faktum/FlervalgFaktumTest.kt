@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.inneholder
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
@@ -86,7 +86,7 @@ class FlervalgFaktumTest {
     fun `er regel for flervalg`() {
         val flervalg = søknad.flervalg(1)
         flervalg.besvar(Flervalg("flervalg1.valg3"))
-        val erRegel: Subsumsjon = flervalg er Flervalg("flervalg1.valg3")
+        val erRegel: Subsumsjon = flervalg inneholder Flervalg("flervalg1.valg3")
         assertTrue { erRegel.resultat()!! }
         flervalg.besvar(Flervalg("flervalg1.valg3", "flervalg1.valg2"))
         assertTrue { erRegel.resultat()!! }

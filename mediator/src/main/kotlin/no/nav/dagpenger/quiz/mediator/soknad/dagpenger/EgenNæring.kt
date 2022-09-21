@@ -11,6 +11,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
+import no.nav.dagpenger.model.regel.inneholder
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -116,17 +117,17 @@ object EgenNæring : DslFaktaseksjon {
         )
 
     private fun Søknad.`søkeren eier selv`() =
-        flervalg(`eget gårdsbruk hvem eier`) er Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.selv") hvisOppfylt {
+        flervalg(`eget gårdsbruk hvem eier`) inneholder Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.selv") hvisOppfylt {
             desimaltall(`eget gårdsbruk jeg andel inntekt`).utfylt()
         }
 
     private fun Søknad.`søkerens ektefelle eller samboer eier`() =
-        flervalg(`eget gårdsbruk hvem eier`) er Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.ektefelle-samboer") hvisOppfylt {
+        flervalg(`eget gårdsbruk hvem eier`) inneholder Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.ektefelle-samboer") hvisOppfylt {
             desimaltall(`eget gårdsbruk ektefelle samboer andel inntekt`).utfylt()
         }
 
     private fun Søknad.`noen andre eier`() =
-        flervalg(`eget gårdsbruk hvem eier`) er Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.andre") hvisOppfylt {
+        flervalg(`eget gårdsbruk hvem eier`) inneholder Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.andre") hvisOppfylt {
             desimaltall(`eget gårdsbruk andre andel inntekt`).utfylt()
         }
 

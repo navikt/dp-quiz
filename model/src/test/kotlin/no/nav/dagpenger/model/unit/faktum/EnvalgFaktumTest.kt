@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.inneholder
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import org.junit.jupiter.api.BeforeEach
@@ -92,7 +92,7 @@ class EnvalgFaktumTest {
     fun `envalg subsumsjon `() {
         val envalg = søknad.envalg(1)
         envalg.besvar(Envalg("envalg.valg1"))
-        val erValgSubsumsjon = envalg er Envalg("envalg.valg1")
+        val erValgSubsumsjon = envalg inneholder Envalg("envalg.valg1")
         assertTrue { erValgSubsumsjon.resultat()!! }
         envalg.besvar(Envalg("envalg.valg2"))
         assertFalse { erValgSubsumsjon.resultat()!! }

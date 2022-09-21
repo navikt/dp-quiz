@@ -11,6 +11,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.inneholder
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -128,7 +129,7 @@ object AndreYtelser : DslFaktaseksjon {
     }
 
     private fun Søknad.tjenestepensjon() =
-        (flervalg(`hvilke andre ytelser`) er Flervalg("faktum.hvilke-andre-ytelser.svar.pensjon-offentlig-tjenestepensjon"))
+        (flervalg(`hvilke andre ytelser`) inneholder Flervalg("faktum.hvilke-andre-ytelser.svar.pensjon-offentlig-tjenestepensjon"))
             .sannsynliggjøresAv(dokument(`dokumentasjon tjenestepensjon`))
             .godkjentAv(boolsk(`godkjenning dokumentasjon tjenestepensjon`)) hvisOppfylt {
             "hvem utbetaler pensjonen og for hvilken periode".alle(
@@ -139,7 +140,7 @@ object AndreYtelser : DslFaktaseksjon {
         }
 
     private fun Søknad.arbeidsløsGFF() =
-        (flervalg(`hvilke andre ytelser`) er Flervalg("faktum.hvilke-andre-ytelser.svar.arbeidsloshet-garantikassen-for-fiskere"))
+        (flervalg(`hvilke andre ytelser`) inneholder Flervalg("faktum.hvilke-andre-ytelser.svar.arbeidsloshet-garantikassen-for-fiskere"))
             .sannsynliggjøresAv(dokument(`dokumentasjon arbeidsløs GFF periode`))
             .godkjentAv(boolsk(`godkjenning dokumentasjon arbeidsløs GFF periode`)) hvisOppfylt {
             "for hvilken periode".alle(
@@ -148,7 +149,7 @@ object AndreYtelser : DslFaktaseksjon {
         }
 
     private fun Søknad.garantilottFraGFF() =
-        (flervalg(`hvilke andre ytelser`) er Flervalg("faktum.hvilke-andre-ytelser.svar.garantilott-garantikassen-for-fiskere"))
+        (flervalg(`hvilke andre ytelser`) inneholder Flervalg("faktum.hvilke-andre-ytelser.svar.garantilott-garantikassen-for-fiskere"))
             .sannsynliggjøresAv(dokument(`dokumentasjon garantilott fra GFF periode`))
             .godkjentAv(boolsk(`godkjenning dokumentasjon garantilott fra GFF periode`)) hvisOppfylt {
             "for hvilken periode".alle(
@@ -157,7 +158,7 @@ object AndreYtelser : DslFaktaseksjon {
         }
 
     private fun Søknad.etterlønnFraArbeidsgiver() =
-        (flervalg(`hvilke andre ytelser`) er Flervalg("faktum.hvilke-andre-ytelser.svar.etterlonn-arbeidsgiver"))
+        (flervalg(`hvilke andre ytelser`) inneholder Flervalg("faktum.hvilke-andre-ytelser.svar.etterlonn-arbeidsgiver"))
             .sannsynliggjøresAv(dokument(`dokumentasjon etterlønn`))
             .godkjentAv(boolsk(`godkjenning dokumentasjon etterlønn`)) hvisOppfylt {
             "hvem utbetaler etterlønnen og for hvilken periode".alle(
@@ -167,7 +168,7 @@ object AndreYtelser : DslFaktaseksjon {
         }
 
     private fun Søknad.dagpengerFraAnnetEøsLand() =
-        (flervalg(`hvilke andre ytelser`) er Flervalg("faktum.hvilke-andre-ytelser.svar.dagpenger-annet-eos-land"))
+        (flervalg(`hvilke andre ytelser`) inneholder Flervalg("faktum.hvilke-andre-ytelser.svar.dagpenger-annet-eos-land"))
             .sannsynliggjøresAv(dokument(`dokumentasjon dagpenger eøs land`))
             .godkjentAv(boolsk(`godkjenning dokumentasjon dagpenger eøs land`)) hvisOppfylt {
             "hvilket land utbetaler og for hvilken periode".alle(
@@ -177,7 +178,7 @@ object AndreYtelser : DslFaktaseksjon {
         }
 
     private fun Søknad.annenYtelse() =
-        (flervalg(`hvilke andre ytelser`) er Flervalg("faktum.hvilke-andre-ytelser.svar.annen-ytelse"))
+        (flervalg(`hvilke andre ytelser`) inneholder Flervalg("faktum.hvilke-andre-ytelser.svar.annen-ytelse"))
             .sannsynliggjøresAv(dokument(`dokumentasjon annen ytelse`))
             .godkjentAv(boolsk(`godkjenning dokumentasjon annen ytelse`)) hvisOppfylt {
             "hvem utbetaler og for hvilken periode".alle(

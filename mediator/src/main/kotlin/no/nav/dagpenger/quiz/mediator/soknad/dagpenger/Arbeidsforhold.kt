@@ -13,6 +13,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.inneholder
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
@@ -223,7 +224,7 @@ object Arbeidsforhold : DslFaktaseksjon {
     }
 
     private fun Søknad.`har mottat dagpenger siste 12 mnd`() =
-        envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`) er Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja")
+        envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`) inneholder Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja")
 
     private fun Søknad.`arbeidsforhold gjenopptak`() =
         "spørsmål om gjenopptaket".alle(
@@ -278,7 +279,7 @@ object Arbeidsforhold : DslFaktaseksjon {
         "søknadsdato, type arbeidstid og alle arbeidsforhold".alle(
             søknadsdato(),
             `type arbeidstid`(),
-            envalg(`type arbeidstid`) er Envalg("faktum.type-arbeidstid.svar.ingen-passer") hvisIkkeOppfylt {
+            envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.ingen-passer") hvisIkkeOppfylt {
                 `alle arbeidsforhold`()
             }
         )
@@ -286,7 +287,7 @@ object Arbeidsforhold : DslFaktaseksjon {
     private fun Søknad.søknadsdato() = dato(`dagpenger søknadsdato`).utfylt()
 
     private fun Søknad.`ikke endret`() =
-        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret") hvisOppfylt {
+        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret") hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `antall arbeidstimer ved ikke endret arbeidsforhold`(),
                 "har tilleggsopplysninger eller ikke".minstEnAv(
@@ -307,7 +308,7 @@ object Arbeidsforhold : DslFaktaseksjon {
         )
 
     private fun Søknad.avskjediget() =
-        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.avskjediget") hvisOppfylt {
+        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.avskjediget") hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `arbeidstimer før mistet jobb`(),
                 tekst(`arbeidsforhold hva er årsak til avskjediget`).utfylt()
@@ -326,7 +327,7 @@ object Arbeidsforhold : DslFaktaseksjon {
         desimaltall(`arbeidsforhold antall timer dette arbeidsforhold`).utfylt()
 
     private fun Søknad.`sagt opp av arbeidsgiver`() =
-        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver") hvisOppfylt {
+        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver") hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 `arbeidstimer før mistet jobb`(),
@@ -357,7 +358,7 @@ object Arbeidsforhold : DslFaktaseksjon {
         )
 
     private fun Søknad.`arbeidsgiver er konkurs`() =
-        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs") hvisOppfylt {
+        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs") hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 envalg(`arbeidsforhold midlertidig arbeidsforhold med sluttdato`).utfylt(),
@@ -398,7 +399,7 @@ object Arbeidsforhold : DslFaktaseksjon {
         )
 
     private fun Søknad.`kontrakten er utgått`() =
-        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt") hvisOppfylt {
+        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt") hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 `arbeidstimer før utgått kontrakt`(),
@@ -420,7 +421,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             boolsk(`arbeidsforhold tilbud om forlengelse eller annen stilling`) er false,
             boolsk(`arbeidsforhold tilbud om forlengelse eller annen stilling`) er true hvisOppfylt {
                 "svar på tilbud om forlengelse eller annen stilling".minstEnAv(
-                    envalg(`arbeidsforhold svar på forlengelse eller annen stilling`) er Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei") hvisOppfylt {
+                    envalg(`arbeidsforhold svar på forlengelse eller annen stilling`) inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei") hvisOppfylt {
                         tekst(`arbeidsforhold årsak til ikke akseptert tilbud`).utfylt()
                     },
                     envalg(`arbeidsforhold svar på forlengelse eller annen stilling`).utfylt()
@@ -429,7 +430,7 @@ object Arbeidsforhold : DslFaktaseksjon {
         )
 
     private fun Søknad.`sagt opp selv`() =
-        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv") hvisOppfylt {
+        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv") hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 `arbeidstimer før sagt opp selv`(),
@@ -447,7 +448,7 @@ object Arbeidsforhold : DslFaktaseksjon {
         )
 
     private fun Søknad.`redusert arbeidstid`() =
-        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid") hvisOppfylt {
+        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid") hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 dato(`arbeidsforhold startdato arbeidsforhold`).utfylt(),
                 dato(`arbeidsforhold arbeidstid redusert fra dato`).utfylt(),
@@ -467,7 +468,7 @@ object Arbeidsforhold : DslFaktaseksjon {
         )
 
     private fun Søknad.permittert() =
-        envalg(`arbeidsforhold endret`) er Envalg("faktum.arbeidsforhold.endret.svar.permittert") hvisOppfylt {
+        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.permittert") hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `midlertidig arbeidsforhold med sluttdato`(),
                 dato(`arbeidsforhold midlertidig arbeidsforhold oppstartsdato`).utfylt(),
@@ -482,7 +483,7 @@ object Arbeidsforhold : DslFaktaseksjon {
 
     private fun Søknad.`midlertidig arbeidsforhold med sluttdato`() =
         "midlertidig arbeidsforhold med sluttdato eller ikke".minstEnAv(
-            envalg(`arbeidsforhold midlertidig med kontraktfestet sluttdato`) er Envalg("faktum.arbeidsforhold.midlertidig-med-kontraktfestet-sluttdato.svar.ja") hvisOppfylt {
+            envalg(`arbeidsforhold midlertidig med kontraktfestet sluttdato`) inneholder Envalg("faktum.arbeidsforhold.midlertidig-med-kontraktfestet-sluttdato.svar.ja") hvisOppfylt {
                 dato(`arbeidsforhold kontraktfestet sluttdato`).utfylt()
             },
             envalg(`arbeidsforhold midlertidig med kontraktfestet sluttdato`).utfylt()

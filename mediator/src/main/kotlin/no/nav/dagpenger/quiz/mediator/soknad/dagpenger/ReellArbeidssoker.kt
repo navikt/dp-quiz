@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.regel.inneholder
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -130,18 +131,18 @@ object ReellArbeidssoker : DslFaktaseksjon {
     }
 
     private fun Søknad.`årsak bare deltid - redusert helse`() =
-        (flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.redusert-helse"))
+        (flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.redusert-helse"))
             .sannsynliggjøresAv(dokument(`dokumentasjon for redusert helse`))
             .godkjentAv(boolsk(`godkjenning av dokumentasjon for redusert helse`))
 
     private fun Søknad.`årsak bare deltid - omsorg for barn under ett år`() =
-        flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-baby")
+        flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-baby")
 
     private fun Søknad.`årsak bare deltid - ansvar for barn til og med syvende klasse`() =
-        flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.eneansvar-barn")
+        flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.eneansvar-barn")
 
     private fun Søknad.`årsak bare deltid - omsorg for barn med spesielle behov`() =
-        (flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-barn-spesielle-behov"))
+        (flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-barn-spesielle-behov"))
             .sannsynliggjøresAv(
                 dokument(
                     `dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov`
@@ -154,7 +155,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
             )
 
     private fun Søknad.`årsak bare deltid - ansvar for barn til og med syvende klasse eller med spesielle behov og annen forelder jobber skift turnus`() =
-        (flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.skift-turnus"))
+        (flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.skift-turnus"))
             .sannsynliggjøresAv(
                 dokument(
                     `dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18`
@@ -167,10 +168,10 @@ object ReellArbeidssoker : DslFaktaseksjon {
             )
 
     private fun Søknad.`årsak bare deltid- over seksti år`() =
-        flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.har-fylt-60")
+        flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.har-fylt-60")
 
     private fun Søknad.`årsak bare deltid - annen situasjon`() =
-        (flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon"))
+        (flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon"))
             .sannsynliggjøresAv(dokument(`dokumentasjon annen situasjon`))
             .godkjentAv(boolsk(`godkjenning av dokumentasjon annen situasjon`)) hvisOppfylt {
             tekst(`skriv kort om situasjonen din`).utfylt()
@@ -204,18 +205,18 @@ object ReellArbeidssoker : DslFaktaseksjon {
         }
 
     private fun Søknad.`årsak ikke jobbe i hele Norge - redusert helse`() =
-        (flervalg(`årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse"))
+        (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse"))
             .sannsynliggjøresAv(dokument(`dokumentasjon for redusert helse`))
             .godkjentAv(boolsk(`godkjenning av dokumentasjon for redusert helse`))
 
     private fun Søknad.`årsak ikke jobbe i hele Norge - omsorg for barn under ett år`() =
-        flervalg(`årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-baby")
+        flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-baby")
 
     private fun Søknad.`årsak ikke jobbe i hele Norge - ansvar for barn til og med syvende klasse`() =
-        flervalg(`årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.eneansvar-barn")
+        flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.eneansvar-barn")
 
     private fun Søknad.`årsak ikke jobbe i hele Norge - omsorg for barn med spesielle behov`() =
-        (flervalg(`årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-barn-spesielle-behov"))
+        (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-barn-spesielle-behov"))
             .sannsynliggjøresAv(
                 dokument(
                     `dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov`
@@ -228,7 +229,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
             )
 
     private fun Søknad.`årsak ikke jobbe i hele Norge - ansvar for barn til og med syvende klasse eller med spesielle behov og annen forelder jobber skift turnus`() =
-        (flervalg(`årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.skift-turnus"))
+        (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.skift-turnus"))
             .sannsynliggjøresAv(
                 dokument(
                     `dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18`
@@ -241,10 +242,10 @@ object ReellArbeidssoker : DslFaktaseksjon {
             )
 
     private fun Søknad.`årsak ikke jobbe i hele Norge - over seksti år`() =
-        flervalg(`årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.har-fylt-60")
+        flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.har-fylt-60")
 
     private fun Søknad.`årsak ikke jobbe i hele Norge - annen situasjon`() =
-        (flervalg(`årsak kan ikke jobbe i hele Norge`) er Flervalg("faktum.ikke-jobbe-hele-norge.svar.annen-situasjon"))
+        (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.annen-situasjon"))
             .sannsynliggjøresAv(dokument(`dokumentasjon annen situasjon`))
             .godkjentAv(boolsk(`godkjenning av dokumentasjon annen situasjon`)) hvisOppfylt {
             tekst(`kort om hvorfor ikke jobbe hele norge`).utfylt()
