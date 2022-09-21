@@ -56,7 +56,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
             med "svar.skift-turnus"
             med "svar.har-fylt-60"
             med "svar.annen-situasjon" id `årsak til kun deltid` avhengerAv `kan jobbe heltid`,
-        heltall faktum "faktum.kun-deltid-aarsak-antall-timer" id `antall timer deltid du kan jobbe` avhengerAv `årsak til kun deltid` og `skriv kort om situasjonen din`,
+        heltall faktum "faktum.kun-deltid-aarsak-antall-timer" id `antall timer deltid du kan jobbe` avhengerAv `kan jobbe heltid`,
         tekst faktum "faktum.kort-om-hvorfor-kun-deltid" id `skriv kort om situasjonen din` avhengerAv `årsak til kun deltid`,
 
         boolsk faktum "faktum.jobbe-hele-norge" id `kan du jobbe i hele Norge`,
@@ -125,7 +125,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
                 `årsak bare deltid - omsorg for barn med spesielle behov`(),
                 `årsak bare deltid - ansvar for barn til og med syvende klasse eller med spesielle behov og annen forelder jobber skift turnus`(),
                 `årsak bare deltid- over seksti år`(),
-                `årsak bare deltid - annen situasjon`(),
+                `årsak bare deltid - annen situasjon`()
             )
         }
     }

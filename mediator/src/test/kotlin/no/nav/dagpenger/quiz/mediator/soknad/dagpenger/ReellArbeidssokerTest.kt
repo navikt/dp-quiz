@@ -137,16 +137,11 @@ internal class ReellArbeidssokerTest {
         søknadprosess.flervalg(`årsak til kun deltid`).besvar(Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon"))
 
         assertAvhengigeFaktaInvalideres(
-            søknadprosess.tekst(`skriv kort om situasjonen din`),
-            søknadprosess.heltall(`antall timer deltid du kan jobbe`)
+            søknadprosess.tekst(`skriv kort om situasjonen din`)
         )
 
         `Besvar alle fakta hvorfor deltid`()
         søknadprosess.tekst(`skriv kort om situasjonen din`).besvar(Tekst("Noe greier"))
-
-        assertAvhengigeFaktaInvalideres(
-            søknadprosess.heltall(`antall timer deltid du kan jobbe`)
-        )
     }
 
     @Test
