@@ -100,10 +100,11 @@ object ReellArbeidssoker : DslFaktaseksjon {
         }
     }
 
-    private fun Søknad.`søkers arbeidskapasitet`() = "".minstEnAv(
-        `jobbe fulltid`(),
-        `jobbe deltid`()
-    )
+    private fun Søknad.`søkers arbeidskapasitet`() =
+        "Kan jobbe fulltid eller ikke".minstEnAv(
+            `jobbe fulltid`(),
+            `jobbe deltid`()
+        )
 
     private fun Søknad.`jobbe fulltid`() = boolsk(`kan jobbe heltid`) er true
 
@@ -127,9 +128,6 @@ object ReellArbeidssoker : DslFaktaseksjon {
             )
         }
     }
-
-    private fun Søknad.`årsak bare deltid- over seksti år`() =
-        flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.har-fylt-60")
 
     private fun Søknad.`årsak bare deltid - redusert helse`() =
         (flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.redusert-helse"))
@@ -168,6 +166,9 @@ object ReellArbeidssoker : DslFaktaseksjon {
                 )
             )
 
+    private fun Søknad.`årsak bare deltid- over seksti år`() =
+        flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.har-fylt-60")
+
     private fun Søknad.`årsak bare deltid - annen situasjon`() =
         (flervalg(`årsak til kun deltid`) er Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon"))
             .sannsynliggjøresAv(dokument(`dokumentasjon annen situasjon`))
@@ -175,10 +176,11 @@ object ReellArbeidssoker : DslFaktaseksjon {
             tekst(`skriv kort om situasjonen din`).utfylt()
         }
 
-    private fun Søknad.`søkers evne til å flytte for arbeid`() = "".minstEnAv(
-        `jobbe i hele Norge`(),
-        `ikke jobbe i hele Norge`()
-    )
+    private fun Søknad.`søkers evne til å flytte for arbeid`() =
+        "Kan ta jobber i hele Norge eller ikke".minstEnAv(
+            `jobbe i hele Norge`(),
+            `ikke jobbe i hele Norge`()
+        )
 
     private fun Søknad.`jobbe i hele Norge`() =
         boolsk(`kan du jobbe i hele Norge`) er true
@@ -249,7 +251,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
         }
 
     private fun Søknad.`kan ta alle typer arbeid`() =
-        "kan ta alle typer arbeid eller ikke".minstEnAv(
+        "Kan ta alle typer arbeid eller ikke".minstEnAv(
             (boolsk(`kan ta alle typer arbeid`) er false)
                 .sannsynliggjøresAv(dokument(`dokumentasjon kan ikke ta alle typer arbeid`))
                 .godkjentAv(boolsk(`godkjenning av dokumentasjon kan ikke ta alle typer arbeid`)),
