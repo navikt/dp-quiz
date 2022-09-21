@@ -19,12 +19,13 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
+import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
 // Understands how to build our application server
 internal class ApplicationBuilder : RapidsConnection.StatusListener {
-
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(Configuration.config)
     ).build()
@@ -49,7 +50,8 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                     val sisteDagpengerVersjon = Versjon.siste(Prosess.Dagpenger)
                     Versjon.id(sisteDagpengerVersjon).also { versjon ->
                         val søknadsprosess = versjon.søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
-                        rapidsConnection.publish(SøknadsmalJsonBuilder(søknadsprosess).resultat().toString())
+                        val malJson = SøknadsmalJsonBuilder(søknadsprosess).resultat().toString()
+                        rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
                     }
                 }
 
