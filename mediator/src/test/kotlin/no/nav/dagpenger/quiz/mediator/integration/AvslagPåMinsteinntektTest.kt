@@ -1,12 +1,12 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.helpers.desember
+import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
-import no.nav.dagpenger.quiz.mediator.helpers.desember
-import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett

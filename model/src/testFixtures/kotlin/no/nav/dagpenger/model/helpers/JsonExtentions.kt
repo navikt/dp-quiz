@@ -1,4 +1,4 @@
-package no.nav.dagpenger.quiz.mediator.helpers
+package no.nav.dagpenger.model.helpers
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.SerializationFeature

@@ -19,7 +19,6 @@ import no.nav.dagpenger.model.helpers.assertGeneratorFaktaAsJson
 import no.nav.dagpenger.model.helpers.assertValgFaktaAsJson
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.helpers.toPrettyJson
 import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -124,7 +123,6 @@ internal class SøknadsmalJsonBuilderTest {
         val regel = søkerSubsumsjon()
         val søknadprosess = søknadprosess(regel)
         val malJson = SøknadsmalJsonBuilder(søknadprosess).resultat()
-        println(malJson.toPrettyJson())
         assertEquals(0, malJson["versjon_id"].asInt())
         assertEquals("test", malJson["versjon_navn"].asText())
         // NAV seksjoner skal ikke med

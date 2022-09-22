@@ -8,9 +8,9 @@ import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.model.helpers.februar
+import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.quiz.mediator.helpers.februar
-import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting

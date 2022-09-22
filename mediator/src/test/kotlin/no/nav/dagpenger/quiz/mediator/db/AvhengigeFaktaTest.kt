@@ -26,6 +26,8 @@ import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.model.helpers.assertDeepEquals
+import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -34,8 +36,6 @@ import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
-import no.nav.dagpenger.quiz.mediator.helpers.assertDeepEquals
-import no.nav.dagpenger.quiz.mediator.helpers.januar
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime

@@ -1,4 +1,4 @@
-package no.nav.dagpenger.quiz.mediator.helpers
+package no.nav.dagpenger.model.helpers
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse

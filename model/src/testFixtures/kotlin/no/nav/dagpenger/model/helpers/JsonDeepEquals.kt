@@ -1,4 +1,4 @@
-package no.nav.dagpenger.quiz.mediator.helpers
+package no.nav.dagpenger.model.helpers
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.PropertyAccessor
@@ -126,7 +126,7 @@ private val objectMapper = jacksonObjectMapper()
     .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE)
     .registerModule(JavaTimeModule())
 
-internal fun assertJsonEquals(expected: Any, actual: Any) {
+fun assertJsonEquals(expected: Any, actual: Any) {
     val expectedJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(expected)
     val actualJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(actual)
     assertEquals(expectedJson, actualJson)

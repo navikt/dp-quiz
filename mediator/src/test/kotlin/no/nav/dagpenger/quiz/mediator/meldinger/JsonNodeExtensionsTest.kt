@@ -6,9 +6,9 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.quiz.mediator.helpers.februar
-import no.nav.dagpenger.quiz.mediator.helpers.januar
-import no.nav.dagpenger.quiz.mediator.helpers.mars
+import no.nav.dagpenger.model.helpers.februar
+import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.helpers.mars
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import kotlin.test.assertEquals

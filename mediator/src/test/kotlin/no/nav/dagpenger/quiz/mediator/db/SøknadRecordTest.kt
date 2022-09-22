@@ -12,6 +12,13 @@ import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.model.helpers.april
+import no.nav.dagpenger.model.helpers.assertDeepEquals
+import no.nav.dagpenger.model.helpers.assertJsonEquals
+import no.nav.dagpenger.model.helpers.februar
+import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.helpers.mai
+import no.nav.dagpenger.model.helpers.mars
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
@@ -19,13 +26,6 @@ import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
-import no.nav.dagpenger.quiz.mediator.helpers.april
-import no.nav.dagpenger.quiz.mediator.helpers.assertDeepEquals
-import no.nav.dagpenger.quiz.mediator.helpers.assertJsonEquals
-import no.nav.dagpenger.quiz.mediator.helpers.februar
-import no.nav.dagpenger.quiz.mediator.helpers.januar
-import no.nav.dagpenger.quiz.mediator.helpers.mai
-import no.nav.dagpenger.quiz.mediator.helpers.mars
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test

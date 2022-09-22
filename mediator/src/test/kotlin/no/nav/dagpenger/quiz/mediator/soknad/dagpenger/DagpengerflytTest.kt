@@ -4,9 +4,9 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.helpers.januar
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`egne barn`
 import org.junit.jupiter.api.Test
 import java.time.LocalDate

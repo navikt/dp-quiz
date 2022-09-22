@@ -1,6 +1,6 @@
-package no.nav.dagpenger.quiz.mediator.helpers
+package no.nav.dagpenger.model.helpers
 
-import no.nav.dagpenger.quiz.mediator.helpers.JsonExtentions.toPrettyJson
+import no.nav.dagpenger.model.helpers.JsonExtentions.toPrettyJson
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
