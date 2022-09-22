@@ -14,6 +14,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.assertFaktaAsJson
+import no.nav.dagpenger.model.helpers.assertGeneratorFaktaAsJson
+import no.nav.dagpenger.model.helpers.assertValgFaktaAsJson
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.helpers.toPrettyJson

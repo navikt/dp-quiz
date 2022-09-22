@@ -1,15 +1,15 @@
-package no.nav.dagpenger.model.unit.marshalling
+package no.nav.dagpenger.model.helpers
 
 import com.fasterxml.jackson.databind.JsonNode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 
-internal fun JsonNode.finnSeksjon(seksjon: String): JsonNode {
+fun JsonNode.finnSeksjon(seksjon: String): JsonNode {
     val jsonNode = this["seksjoner"].find { it["beskrivendeId"].asText() == seksjon }
     return checkNotNull(jsonNode) { "Fant ikke seksjon med navn '$seksjon' i json \n ${this.toPrettyString()}" }
 }
 
-internal fun JsonNode.assertFaktaAsJson(
+fun JsonNode.assertFaktaAsJson(
     expectedId: String,
     expectedType: String,
     expectedBeskrivendeId: String,
@@ -53,7 +53,7 @@ internal fun JsonNode.assertLandFaktum(
     assertTrue(0 < this.get("gyldigeLand").size(), "Forventet at gyldige land ikke er tom")
 }
 
-internal fun JsonNode.assertGeneratorFaktaAsJson(
+fun JsonNode.assertGeneratorFaktaAsJson(
     expectedId: String,
     expectedType: String,
     expectedBeskrivendeId: String,
@@ -68,7 +68,7 @@ internal fun JsonNode.assertGeneratorFaktaAsJson(
     }
 }
 
-internal fun JsonNode.assertValgFaktaAsJson(
+fun JsonNode.assertValgFaktaAsJson(
     expectedId: String,
     expectedClass: String,
     expectedNavn: String,

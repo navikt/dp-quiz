@@ -3,7 +3,6 @@ package no.nav.dagpenger.model.helpers
 import com.fasterxml.jackson.databind.JsonNode
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.unit.marshalling.finnSeksjon
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.assertContains
@@ -12,7 +11,7 @@ import kotlin.test.assertContains
 internal annotation class JsonAssertMarker
 
 @JsonAssertMarker
-internal class MedSøknad private constructor(private val søknad: JsonNode, block: MedSøknad.() -> Unit) {
+class MedSøknad private constructor(private val søknad: JsonNode, block: MedSøknad.() -> Unit) {
     constructor(
         søknadprosess: Søknadprosess,
         block: MedSøknad.() -> Unit
@@ -32,7 +31,7 @@ internal class MedSøknad private constructor(private val søknad: JsonNode, blo
 }
 
 @JsonAssertMarker
-internal class MedSeksjon(private val seksjon: JsonNode) {
+class MedSeksjon(private val seksjon: JsonNode) {
     fun erFerdig() = assertEquals(true, seksjon["ferdig"].asBoolean())
 
     fun fakta(block: MedFakta.() -> Unit) = fakta(sjekkAlle = true, sjekkRekkefølge = true, block = block)
@@ -47,7 +46,7 @@ internal class MedSeksjon(private val seksjon: JsonNode) {
 }
 
 @JsonAssertMarker
-internal class MedFakta(private val fakta: JsonNode) {
+class MedFakta(private val fakta: JsonNode) {
     private val faktumSomIkkeErSjekket = fakta.map { it["beskrivendeId"].asText() }.toMutableSet()
     private val rekkefølge = faktumSomIkkeErSjekket.toMutableList()
     private val verifisertIRekkefølge = mutableListOf<String>()
@@ -132,7 +131,7 @@ internal class MedFakta(private val fakta: JsonNode) {
 }
 
 @JsonAssertMarker
-internal open class MedFaktum(val faktum: JsonNode) {
+open class MedFaktum(val faktum: JsonNode) {
     protected val navn: String = faktum["beskrivendeId"].asText()
 
     fun erBesvart() = erBesvart(true)
@@ -164,7 +163,7 @@ internal open class MedFaktum(val faktum: JsonNode) {
 }
 
 @JsonAssertMarker
-internal class MedGeneratorFaktum(faktum: JsonNode) : MedFaktum(faktum) {
+class MedGeneratorFaktum(faktum: JsonNode) : MedFaktum(faktum) {
     private val svar = faktum["svar"]
     private val templates = faktum["templates"]
     fun svar(i: Int, block: MedFakta.() -> Unit) = MedFakta(svar[i - 1]).also { block(it) }
@@ -177,7 +176,7 @@ internal class MedGeneratorFaktum(faktum: JsonNode) : MedFaktum(faktum) {
 }
 
 @JsonAssertMarker
-internal open class MedLandFaktum(faktum: JsonNode) : MedFaktum(faktum) {
+open class MedLandFaktum(faktum: JsonNode) : MedFaktum(faktum) {
     fun harLand(vararg land: String) {
         val alleLand = faktum.get("gyldigeLand").map { it.asText() }
         land.toList().forEach {
@@ -192,7 +191,7 @@ internal open class MedLandFaktum(faktum: JsonNode) : MedFaktum(faktum) {
     }
 
     @JsonAssertMarker
-    internal inner class MedGruppeLandFaktum(
+    inner class MedGruppeLandFaktum(
         faktum: JsonNode
     ) {
         private val sjekkaGrupper = mutableListOf<String>()
@@ -209,7 +208,7 @@ internal open class MedLandFaktum(faktum: JsonNode) : MedFaktum(faktum) {
 
         internal fun sjekkAlle() = assertEquals(grupper.keys.toList(), sjekkaGrupper, "Landfaktum ${this@MedLandFaktum.navn} mangler sjekk for grupper")
 
-        internal inner class MedGruppeFaktum(
+        inner class MedGruppeFaktum(
             private val gruppeland: List<String>
         ) {
             fun harLand(vararg land: String) {
