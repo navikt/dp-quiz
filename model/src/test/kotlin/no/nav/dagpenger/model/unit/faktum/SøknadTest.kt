@@ -100,7 +100,7 @@ class SøknadTest {
             dato faktum "f5" id 5,
             maks dato "maksdato" av 6 og 7 id 8,
             maks dato "maksdato" av 5 og 7 id 6,
-            maks dato "maksdato" av 3 og 4 id 7,
+            maks dato "maksdato" av 3 og 4 id 7
         )
 
         assertIder(søknad, 3, 4, 5, 7, 6, 8)
@@ -124,13 +124,15 @@ class SøknadTest {
             dato faktum "f3" id 3,
             dato faktum "f4" id 4,
             dato faktum "f5" id 5,
+            heltall faktum "f6" id 6,
             maks dato "maksdato" av 3 og 4 og 5 id 345
         )
 
-        val seksjon1 = søknad.seksjon("f3f4", Rolle.søker, 3, 4)
-        val seksjon2 = søknad.seksjon("f3f4", Rolle.søker, 345, 5)
-        assertEquals("3,4", seksjon1.joinToString(separator = ",") { it.id })
-        assertEquals("5,345", seksjon2.joinToString(separator = ",") { it.id })
+        val seksjon1 = søknad.seksjon("f6f3f4", Rolle.søker, 6, 3, 4)
+        val seksjon2 = søknad.seksjon("f345f5", Rolle.søker, 345, 5)
+        assertThrows<IllegalArgumentException> { søknad.seksjon("faktum finnes ikke", Rolle.søker, -2000) }
+        assertEquals("6,3,4", seksjon1.joinToString(separator = ",") { it.id })
+        assertEquals("345,5", seksjon2.joinToString(separator = ",") { it.id })
     }
 
     private fun assertIder(søknad: Søknad, vararg ider: Int) {

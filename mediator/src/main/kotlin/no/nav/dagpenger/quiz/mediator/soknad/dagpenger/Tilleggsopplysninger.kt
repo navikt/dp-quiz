@@ -13,16 +13,16 @@ import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Tilleggsopplysninger : DslFaktaseksjon {
-    const val `tilleggsopplysninger` = 4001
+    const val tilleggsopplysninger = 4001
     const val `har tilleggsopplysninger` = 4002
 
     override val fakta = listOf(
-        tekst faktum "faktum.tilleggsopplysninger" id `tilleggsopplysninger` avhengerAv `har tilleggsopplysninger`,
+        tekst faktum "faktum.tilleggsopplysninger" id tilleggsopplysninger avhengerAv `har tilleggsopplysninger`,
         boolsk faktum "faktum.tilleggsopplysninger.har-tilleggsopplysninger" id `har tilleggsopplysninger`
     )
 
     override fun seksjon(søknad: Søknad) =
-        listOf(søknad.seksjon("tilleggsopplysninger", Rolle.søker, *this.databaseIder()))
+        listOf(søknad.seksjon("tilleggsopplysninger", Rolle.søker, `har tilleggsopplysninger`, tilleggsopplysninger))
 
     override fun regeltre(søknad: Søknad) = with(søknad) {
         "tilleggsopplysninger".deltre {

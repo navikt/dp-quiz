@@ -38,9 +38,8 @@ class Søknad private constructor(
         fun Søknad.seksjon(navn: String, rolle: Rolle, vararg ider: Int) = Seksjon(
             navn,
             rolle,
-            *(this.filter { faktum -> faktum.reflection { id, _ -> id in ider } }).toTypedArray()
+            *(ider.map { id -> this.id(id) }.toTypedArray())
         )
-
         private fun List<FaktumFactory<*>>.toFaktaMap() =
             tilFakta()
                 .sjekkIder()

@@ -17,7 +17,8 @@ Sentrale begreper i QUIZ:
   * [Faktumtyper i QUIZ](doc/mvp/faktumtyper/README.md) 
 * Subsumsjon - å anvende en rettsregel (lov) på et faktum. Som for et eksempel - søker må være under 67 år der "fødselsdato" anvendes på regelen. (BEGREPSKATALOG - https://jira.adeo.no/browse/BEGREP-817)
   * [Subsumsjonstyper i QUIZ](doc/mvp/subsumsjonstyper/README.md) 
-
+* Seksjoner - Seksjoner i Quiz er en logisk samling av [fakta](doc/mvp/faktumtyper/README.md).
+  * 
 ## Komme i gang
 
 Gradle brukes som byggverktøy og er bundlet inn.
