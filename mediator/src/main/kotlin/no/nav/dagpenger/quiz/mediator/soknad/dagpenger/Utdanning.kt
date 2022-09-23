@@ -21,6 +21,7 @@ object Utdanning : DslFaktaseksjon {
     const val `planlegger utdanning med dagpenger` = 2003
     const val `dokumentasjon på sluttdato` = 2004
     const val `dokumentasjon på sluttdato godkjenning` = 2005
+
     override val fakta = listOf(
         boolsk faktum "faktum.tar-du-utdanning" id `tar du utdanning`,
         boolsk faktum "faktum.avsluttet-utdanning-siste-6-mnd" id `avsluttet utdanning siste 6 mnd` avhengerAv `tar du utdanning`,
@@ -29,7 +30,7 @@ object Utdanning : DslFaktaseksjon {
         boolsk faktum "faktum.dokument-utdanning-sluttdato-godkjenning" id `dokumentasjon på sluttdato godkjenning` avhengerAv `avsluttet utdanning siste 6 mnd`
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("utdanning", Rolle.søker, *this.databaseIder()))
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("utdanning", Rolle.søker, *spørsmålsrekkefølge))
 
     override fun regeltre(søknad: Søknad) = with(søknad) {
         "utdanning".deltre {
@@ -55,4 +56,12 @@ object Utdanning : DslFaktaseksjon {
             )
         }
     }
+
+    val spørsmålsrekkefølge = listOf(
+        `tar du utdanning`,
+        `avsluttet utdanning siste 6 mnd`,
+        `planlegger utdanning med dagpenger`,
+        `dokumentasjon på sluttdato`,
+        `dokumentasjon på sluttdato godkjenning`
+    ).toIntArray()
 }

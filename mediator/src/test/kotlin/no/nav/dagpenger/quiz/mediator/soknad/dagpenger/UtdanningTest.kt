@@ -64,6 +64,12 @@ internal class UtdanningTest {
         erUbesvart(nyligAvsluttetUtdanning, planleggerUtdanning)
     }
 
+    @Test
+    fun `Faktumrekkefølge i seksjon`() {
+        val spørsmålsiderIRekkefølge = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        assertEquals("2001,2002,2003,2004,2005", spørsmålsiderIRekkefølge)
+    }
+
     private fun erBesvart(vararg fakta: Faktum<*>) =
         fakta.forEach { faktum ->
             assertTrue(faktum.erBesvart())
