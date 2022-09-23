@@ -42,7 +42,7 @@ object Bosted : DslFaktaseksjon {
 
         boolsk faktum "faktum.reist-tilbake-en-gang-eller-mer" id `reist tilbake en gang i uka eller mer` avhengerAv `hvilket land bor du i`,
 
-        boolsk faktum "faktum.reist-i-takt-med-rotasjon" id `reist i takt med rotasjon` avhengerAv `reist tilbake en gang i uka eller mer`,
+        boolsk faktum "faktum.reist-i-takt-med-rotasjon" id `reist i takt med rotasjon` avhengerAv `reist tilbake en gang i uka eller mer`
     )
 
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("bostedsland", Rolle.søker, *this.databaseIder()))

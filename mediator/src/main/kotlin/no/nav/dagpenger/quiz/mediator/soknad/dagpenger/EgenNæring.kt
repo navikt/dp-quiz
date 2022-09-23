@@ -69,7 +69,6 @@ object EgenNæring : DslFaktaseksjon {
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("egen-naering", Rolle.søker, *this.databaseIder()))
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
-
         "egennæring".deltre {
             "Egen næring".alle(
                 "driver egen næring eller ikke".minstEnAv(

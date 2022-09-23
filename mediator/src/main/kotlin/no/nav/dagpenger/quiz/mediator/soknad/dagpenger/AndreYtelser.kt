@@ -114,7 +114,7 @@ object AndreYtelser : DslFaktaseksjon {
                         dagpengerFraAnnetEøsLand(),
                         annenYtelse()
                     )
-                },
+                }
             ).hvisOppfylt {
                 "Felles avsluttningsspørsmål".minstEnAv(
                     boolsk(`utbetaling eller økonomisk gode tidligere arbeidsgiver`) er false,

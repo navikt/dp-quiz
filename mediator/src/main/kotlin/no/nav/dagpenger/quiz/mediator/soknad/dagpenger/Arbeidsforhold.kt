@@ -28,7 +28,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 object Arbeidsforhold : DslFaktaseksjon {
     const val `dagpenger søknadsdato` = 8001
     const val `type arbeidstid` = 8002
-    const val `arbeidsforhold` = 8003
+    const val arbeidsforhold = 8003
     const val `arbeidsforhold navn bedrift` = 8004
     const val `arbeidsforhold land` = 8005
     const val `arbeidsforhold endret` = 8006
@@ -146,7 +146,7 @@ object Arbeidsforhold : DslFaktaseksjon {
         boolsk faktum "faktum.arbeidsforhold.rotasjon" id `arbeidsforhold rotasjon` avhengerAv `arbeidsforhold endret`,
         heltall faktum "faktum.arbeidsforhold.arbeidsdager-siste-rotasjon" id `arbeidsforhold arbeidsdager siste rotasjon` avhengerAv `arbeidsforhold rotasjon`,
         heltall faktum "faktum.arbeidsforhold.fridager-siste-rotasjon" id `arbeidsforhold fridager siste rotasjon` avhengerAv `arbeidsforhold rotasjon`,
-        heltall faktum "faktum.arbeidsforhold" id `arbeidsforhold`
+        heltall faktum "faktum.arbeidsforhold" id arbeidsforhold
             genererer `arbeidsforhold navn bedrift`
             og `arbeidsforhold land`
             og `arbeidsforhold endret`
@@ -208,7 +208,7 @@ object Arbeidsforhold : DslFaktaseksjon {
         dato faktum "faktum.arbeidsforhold.gjenopptak.soknadsdato-gjenopptak" id `gjenopptak søknadsdato`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.endringer-i-arbeidsforhold" id `gjenopptak endringer i arbeidsforhold siden sist`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-ny-beregning" id `gjenopptak ønsker ny beregning av dagpenger`,
-        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid" id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
+        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid" id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`
     )
 
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *this.databaseIder()))
