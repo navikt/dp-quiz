@@ -42,8 +42,8 @@ object EgenNæring : DslFaktaseksjon {
         heltall faktum "faktum.egen-naering-organisasjonsnummer-liste" id `egen næring organisasjonsnummer liste`
             genererer `egen næring organisasjonsnummer` avhengerAv `driver du egen næring`,
         heltall faktum "faktum.egen-naering-organisasjonsnummer" id `egen næring organisasjonsnummer`,
-        desimaltall faktum "faktum.egen-naering-arbeidstimer-for" id `egen næring arbeidstimer før`,
-        desimaltall faktum "faktum.egen-naering-arbeidstimer-naa" id `egen næring arbeidstimer nå`,
+        desimaltall faktum "faktum.egen-naering-arbeidstimer-for" id `egen næring arbeidstimer før` avhengerAv `driver du egen næring`,
+        desimaltall faktum "faktum.egen-naering-arbeidstimer-naa" id `egen næring arbeidstimer nå` avhengerAv `driver du egen næring`,
 
         boolsk faktum "faktum.driver-du-eget-gaardsbruk" id `driver du eget gårdsbruk`,
         heltall faktum "faktum.eget-gaardsbruk-organisasjonsnummer" id `eget gårdsbruk organisasjonsnummer` avhengerAv `driver du eget gårdsbruk`,
@@ -66,7 +66,7 @@ object EgenNæring : DslFaktaseksjon {
 
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("egen-naering", Rolle.søker, *this.databaseIder()))
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("egen-naering", Rolle.søker, *spørsmålsrekkefølge))
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "egennæring".deltre {
@@ -135,4 +135,22 @@ object EgenNæring : DslFaktaseksjon {
         desimaltall(`eget gårdsbruk arbeidstimer år`).utfylt(),
         tekst(`eget gårdsbruk arbeidstimer beregning`).utfylt()
     )
+
+    val spørsmålsrekkefølge = listOf(
+        `driver du egen næring`,
+        `egen næring organisasjonsnummer liste`,
+        `egen næring organisasjonsnummer`,
+        `egen næring arbeidstimer nå`,
+        `egen næring arbeidstimer før`,
+        `driver du eget gårdsbruk`,
+        `eget gårdsbruk organisasjonsnummer`,
+        `eget gårdsbruk type gårdsbruk`,
+        `eget gårdsbruk hvem eier`,
+        `eget gårdsbruk jeg andel inntekt`,
+        `eget gårdsbruk ektefelle samboer andel inntekt`,
+        `eget gårdsbruk andre andel inntekt`,
+        `eget gårdsbruk arbeidsår for timer`,
+        `eget gårdsbruk arbeidstimer år`,
+        `eget gårdsbruk arbeidstimer beregning`
+    ).toIntArray()
 }
