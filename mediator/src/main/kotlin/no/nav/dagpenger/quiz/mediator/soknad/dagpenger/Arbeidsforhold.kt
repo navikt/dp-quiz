@@ -161,6 +161,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             og `arbeidsforhold midlertidig arbeidsforhold oppstartsdato`
             og `arbeidsforhold permittert fra fiskeri næring`
             og `arbeidsforhold varighet`
+            og `arbeidsforhold midlertidig arbeidsforhold med sluttdato`
             og `arbeidsforhold vet du antall timer før mistet jobb`
             og `arbeidsforhold vet du antall timer før konkurs`
             og `arbeidsforhold vet du antall timer før kontrakt utgikk`
@@ -186,7 +187,6 @@ object Arbeidsforhold : DslFaktaseksjon {
             og `arbeidsforhold hva er årsak til avskjediget`
             og `arbeidsforhold vet du årsak til sagt opp av arbeidsgiver`
             og `arbeidsforhold vet du årsak til redusert arbeidstid`
-            og `arbeidsforhold midlertidig arbeidsforhold med sluttdato`
             og `arbeidsforhold tilbud om annen stilling eller annet sted i norge`
             og `arbeidsforhold skift eller turnus`
             og `arbeidsforhold rotasjon`
