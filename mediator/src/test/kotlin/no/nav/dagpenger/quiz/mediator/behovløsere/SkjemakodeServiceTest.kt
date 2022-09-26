@@ -11,8 +11,12 @@ internal class SkjemakodeServiceTest {
 
     val søknadPersistence = mockk<SøknadPersistence>(relaxed = true)
 
+    val testSkjemakodeStrategi = SkjemakodeStrategi {
+        Skjemakode("Søknad om dagpenger (ikke permittert)", "04-01.03")
+    }
+
     private val rapid = TestRapid().apply {
-        SkjemakodeService(this, søknadPersistence)
+        SkjemakodeService(this, søknadPersistence, testSkjemakodeStrategi)
     }
 
     @Test

@@ -205,13 +205,14 @@ abstract class SøknadJsonBuilder : SøknadprosessVisitor {
                 Action.NeiAction -> childResultat == false
                 Action.UansettAction -> true
             }
-            )
+            ) {
                 it.addObject().also { subsumsjonNode ->
                     subsumsjonNode.put("lokalt_resultat", godkjenning.all { it.svar() }) // TODO: Bytt ut med subsumsjon
                     subsumsjonNode.put("navn", "Godkjent med")
                     subsumsjonNode.put("forklaring", if (godkjenning.all { it.svar() }) "godkjent" else "ikke godkjent")
                     subsumsjonNode.put("type", "Godkjenningsubsumsjon")
                 }
+            }
         }
     }
 

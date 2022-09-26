@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -9,7 +10,11 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import java.util.UUID
 
-internal class SkjemakodeService(rapidsConnection: RapidsConnection, private val søknadPersistence: SøknadPersistence) : River.PacketListener {
+internal class SkjemakodeService(
+    rapidsConnection: RapidsConnection,
+    private val søknadPersistence: SøknadPersistence,
+    private val skjemakodeStrategi: SkjemakodeStrategi
+) : River.PacketListener {
 
     private companion object {
         val logger = KotlinLogging.logger { }
@@ -28,11 +33,9 @@ internal class SkjemakodeService(rapidsConnection: RapidsConnection, private val
         val søknadId = packet.søknadUUID()
 
         withLoggingContext("søknadId" to søknadId.toString()) {
-
-            val søknadprosess = søknadPersistence.hent(søknadId)
-
+            val skjemakode = skjemakodeStrategi.skjemakode(søknadPersistence.hent(søknadId))
             packet["@løsning"] = mapOf(
-                "Skjemakode" to mapOf("tittel" to "Søknad om dagpenger (ikke permittert)", "skjemakode" to "04-01.03")
+                "Skjemakode" to skjemakode
             )
 
             context.publish(packet.toJson())
@@ -40,5 +43,11 @@ internal class SkjemakodeService(rapidsConnection: RapidsConnection, private val
         }
     }
 }
+
+fun interface SkjemakodeStrategi {
+    fun skjemakode(søknadprosess: Søknadprosess): Skjemakode
+}
+
+data class Skjemakode(val tittel: String, val skjemakode: String)
 
 private fun JsonMessage.søknadUUID() = this["søknad_uuid"].asText().let { UUID.fromString(it) }
