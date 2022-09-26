@@ -1,13 +1,18 @@
 package no.nav.dagpenger.quiz.mediator.behovløsere
 
+import io.mockk.mockk
+import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.util.UUID
 
 internal class SkjemakodeServiceTest {
 
+    val søknadPersistence = mockk<SøknadPersistence>(relaxed = true)
+
     private val rapid = TestRapid().apply {
-        SkjemakodeService(this)
+        SkjemakodeService(this, søknadPersistence)
     }
 
     @Test
@@ -20,7 +25,7 @@ internal class SkjemakodeServiceTest {
           "@behov": [
             "Skjemakode"
           ],
-          "søknad_uuid": "123",
+          "søknad_uuid": "${UUID.randomUUID()}",
           "ident": "12345678913",
           "type": "NY_DIALOG",
           "innsendingId": "999",

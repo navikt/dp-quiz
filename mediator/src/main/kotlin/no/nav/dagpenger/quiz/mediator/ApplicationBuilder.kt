@@ -67,7 +67,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 TerskelFaktorService(rapidsConnection)
                 ManuellBehandlingSink(rapidsConnection, resultatRecord)
                 SøknadSlettetService(rapidsConnection, søknadRecord)
-                SkjemakodeService(rapidsConnection)
+                SkjemakodeService(rapidsConnection, søknadRecord)
             }
     }
 }
