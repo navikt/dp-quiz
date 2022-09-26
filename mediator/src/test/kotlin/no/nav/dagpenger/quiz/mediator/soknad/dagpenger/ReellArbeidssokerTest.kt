@@ -37,7 +37,7 @@ internal class ReellArbeidssokerTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        ReellArbeidssoker.verifiserFeltsammensetting(19, 190)
+        ReellArbeidssoker.verifiserFeltsammensetting(29, 435)
     }
 
     @Test
