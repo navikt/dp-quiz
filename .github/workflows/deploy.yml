@@ -45,6 +45,7 @@ jobs:
           context: mediator
           builder: ${{ steps.buildx.outputs.name }}
           tags: ${{ env.IMAGE }},${{ env.LATEST_IMAGE }}
+          pull: true
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
