@@ -9,17 +9,14 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 class SannsynliggjøringsSubsumsjon private constructor(
     navn: String,
     private val child: Subsumsjon,
-    private val sannsynliggjøringsFaktum: Faktum<*>
+    private val sannsynliggjøringsFakta: Set<Faktum<*>>
 ) : SammensattSubsumsjon(navn, mutableListOf(child), TomSubsumsjon, TomSubsumsjon) {
 
     init {
-        child.alleFakta().forEach { it.sannsynliggjøresAv(mutableSetOf(sannsynliggjøringsFaktum)) }
+        child.alleFakta().forEach { faktum -> faktum.sannsynliggjøresAv(sannsynliggjøringsFakta.toMutableSet()) }
     }
 
-    internal constructor(
-        child: Subsumsjon,
-        sannsynliggjøringsFakta: Faktum<*>
-    ) :
+    internal constructor(child: Subsumsjon, sannsynliggjøringsFakta: Set<Faktum<*>>) :
         this(
             "${child.navn} sannsynligjøring",
             child,
@@ -30,10 +27,15 @@ class SannsynliggjøringsSubsumsjon private constructor(
 
     override fun accept(visitor: SubsumsjonVisitor) {
         lokaltResultat().also { subsumsjon ->
-            visitor.preVisit(this, sannsynliggjøringsFaktum as GrunnleggendeFaktum<*>, subsumsjon)
+            sannsynliggjøringsFakta.forEach { sannsynliggjøringsFaktum ->
+                visitor.preVisit(this, sannsynliggjøringsFaktum as GrunnleggendeFaktum<*>, subsumsjon)
+            }
             super.accept(visitor)
-            sannsynliggjøringsFaktum.accept(visitor)
-            visitor.postVisit(this, sannsynliggjøringsFaktum, subsumsjon)
+            sannsynliggjøringsFakta.forEach { sannsynliggjøringsFaktum -> sannsynliggjøringsFaktum.accept(visitor) }
+
+            sannsynliggjøringsFakta.forEach { sannsynliggjøringsFaktum ->
+                visitor.postVisit(this, sannsynliggjøringsFaktum as GrunnleggendeFaktum<*>, subsumsjon)
+            }
         }
     }
 
@@ -41,7 +43,7 @@ class SannsynliggjøringsSubsumsjon private constructor(
         return SannsynliggjøringsSubsumsjon(
             navn,
             child.deepCopy(),
-            sannsynliggjøringsFaktum
+            sannsynliggjøringsFakta
         )
     }
 
@@ -49,19 +51,19 @@ class SannsynliggjøringsSubsumsjon private constructor(
         return SannsynliggjøringsSubsumsjon(
             "$navn [$indeks]",
             child.deepCopy(indeks, søknad),
-            sannsynliggjøringsFaktum.deepCopy(indeks, søknad)
+            sannsynliggjøringsFakta.map { it.deepCopy(indeks, søknad) }.toSet()
         )
     }
 
     override fun bygg(søknad: Søknad) = SannsynliggjøringsSubsumsjon(
         navn,
         child.bygg(søknad),
-        søknad.dokument(sannsynliggjøringsFaktum.id)
+        sannsynliggjøringsFakta.map { faktum -> søknad.dokument(faktum.id) }.toSet()
     )
 
     override fun deepCopy(søknadprosess: Søknadprosess) = SannsynliggjøringsSubsumsjon(
         navn,
         child.deepCopy(søknadprosess),
-        søknadprosess.dokument(sannsynliggjøringsFaktum.id)
+        sannsynliggjøringsFakta.map { faktum -> søknadprosess.dokument(faktum.id) }.toSet()
     )
 }
