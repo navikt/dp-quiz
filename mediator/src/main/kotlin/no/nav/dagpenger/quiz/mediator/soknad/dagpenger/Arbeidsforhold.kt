@@ -3,6 +3,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
@@ -20,9 +21,11 @@ import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.bareEnAv
 import no.nav.dagpenger.model.subsumsjon.deltre
+import no.nav.dagpenger.model.subsumsjon.godkjentAv
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
+import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Arbeidsforhold : DslFaktaseksjon {
@@ -81,6 +84,19 @@ object Arbeidsforhold : DslFaktaseksjon {
     const val `gjenopptak ønsker ny beregning av dagpenger` = 8053
     const val `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid` = 8054
 
+    const val `dokumentasjon arbeidsavtale` = 8055
+    const val `godkjenning dokumentasjon arbeidsavtale` = 8056
+    const val `dokumentasjon helt eller delvis avsluttet arbeidsforhold` = 8057
+    const val `godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold` = 8058
+    const val `dokumentasjon timeliste for rotasjon` = 8059
+    const val `godkjenning dokumentasjon timeliste for rotasjon` = 8060
+    const val `dokumentasjon brev fra bobestyrer eller konkursforvalter` = 8061
+    const val `godkjenning dokumentasjon brev fra bobestyrer eller konkursforvalter` = 8062
+    const val `dokumentasjon ny arbeidsavtale` = 8063
+    const val `godkjenning dokumentasjon ny arbeidsavtale` = 8064
+    const val `dokumentasjon varsel om permittering` = 8065
+    const val `godkjenning dokumentasjon varsel om permittering` = 8066
+
     override val fakta = listOf(
         dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger søknadsdato`,
         envalg faktum "faktum.type-arbeidstid"
@@ -88,64 +104,105 @@ object Arbeidsforhold : DslFaktaseksjon {
             med "svar.varierende"
             med "svar.kombinasjon"
             med "svar.ingen-passer" id `type arbeidstid`,
-        boolsk faktum "faktum.arbeidsforhold.kjent-antall-timer-jobbet" id `arbeidsforhold kjent antall timer jobbet` avhengerAv `arbeidsforhold endret`,
-        desimaltall faktum "faktum.arbeidsforhold.antall-timer-jobbet" id `arbeidsforhold antall timer jobbet` avhengerAv `arbeidsforhold kjent antall timer jobbet`,
-        boolsk faktum "faktum.arbeidsforhold.har-tilleggsopplysninger" id `arbeidsforhold har tilleggsopplysninger` avhengerAv `arbeidsforhold endret`,
-        tekst faktum "faktum.arbeidsforhold.tilleggsopplysninger" id `arbeidsforhold tilleggsopplysninger` avhengerAv `arbeidsforhold har tilleggsopplysninger`,
-        dato faktum "faktum.arbeidsforhold.startdato-arbeidsforhold" id `arbeidsforhold startdato arbeidsforhold` avhengerAv `arbeidsforhold endret`,
-        dato faktum "faktum.arbeidsforhold.arbeidstid-redusert-fra-dato" id `arbeidsforhold arbeidstid redusert fra dato` avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.kjent-antall-timer-jobbet" id `arbeidsforhold kjent antall timer jobbet`
+            avhengerAv `arbeidsforhold endret`,
+        desimaltall faktum "faktum.arbeidsforhold.antall-timer-jobbet" id `arbeidsforhold antall timer jobbet`
+            avhengerAv `arbeidsforhold kjent antall timer jobbet`,
+        boolsk faktum "faktum.arbeidsforhold.har-tilleggsopplysninger" id `arbeidsforhold har tilleggsopplysninger`
+            avhengerAv `arbeidsforhold endret`,
+        tekst faktum "faktum.arbeidsforhold.tilleggsopplysninger" id `arbeidsforhold tilleggsopplysninger`
+            avhengerAv `arbeidsforhold har tilleggsopplysninger`,
+        dato faktum "faktum.arbeidsforhold.startdato-arbeidsforhold" id `arbeidsforhold startdato arbeidsforhold`
+            avhengerAv `arbeidsforhold endret`,
+        dato faktum "faktum.arbeidsforhold.arbeidstid-redusert-fra-dato" id `arbeidsforhold arbeidstid redusert fra dato`
+            avhengerAv `arbeidsforhold endret`,
         envalg faktum "faktum.arbeidsforhold.midlertidig-med-kontraktfestet-sluttdato"
             med "svar.ja"
             med "svar.nei"
-            med "svar.vet-ikke" id `arbeidsforhold midlertidig med kontraktfestet sluttdato` avhengerAv `arbeidsforhold endret`,
-        dato faktum "faktum.arbeidsforhold.kontraktfestet-sluttdato" id `arbeidsforhold kontraktfestet sluttdato` avhengerAv `arbeidsforhold midlertidig med kontraktfestet sluttdato`,
-        dato faktum "faktum.arbeidsforhold.midlertidig-arbeidsforhold-oppstartsdato" id `arbeidsforhold midlertidig arbeidsforhold oppstartsdato` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.permittertert-fra-fiskeri-naering" id `arbeidsforhold permittert fra fiskeri næring` avhengerAv `arbeidsforhold endret`,
-        periode faktum "faktum.arbeidsforhold.varighet" id `arbeidsforhold varighet` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-mistet-jobb" id `arbeidsforhold vet du antall timer før mistet jobb` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-konkurs" id `arbeidsforhold vet du antall timer før konkurs` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-kontrakt-utgikk" id `arbeidsforhold vet du antall timer før kontrakt utgikk` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-du-sa-opp" id `arbeidsforhold vet du antall timer før du sa opp` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-redusert-arbeidstid" id `arbeidsforhold vet du antall timer før redusert arbeidstid` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-permittert" id `arbeidsforhold vet du antall timer før permittert` avhengerAv `arbeidsforhold endret`,
+            med "svar.vet-ikke" id `arbeidsforhold midlertidig med kontraktfestet sluttdato`
+            avhengerAv `arbeidsforhold endret`,
+        dato faktum "faktum.arbeidsforhold.kontraktfestet-sluttdato" id `arbeidsforhold kontraktfestet sluttdato`
+            avhengerAv `arbeidsforhold midlertidig med kontraktfestet sluttdato`,
+        dato faktum "faktum.arbeidsforhold.midlertidig-arbeidsforhold-oppstartsdato" id `arbeidsforhold midlertidig arbeidsforhold oppstartsdato`
+            avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.permittertert-fra-fiskeri-naering" id `arbeidsforhold permittert fra fiskeri næring`
+            avhengerAv `arbeidsforhold endret`,
+        periode faktum "faktum.arbeidsforhold.varighet" id `arbeidsforhold varighet`
+            avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-mistet-jobb" id `arbeidsforhold vet du antall timer før mistet jobb`
+            avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-konkurs" id `arbeidsforhold vet du antall timer før konkurs`
+            avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-kontrakt-utgikk" id `arbeidsforhold vet du antall timer før kontrakt utgikk`
+            avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-du-sa-opp" id `arbeidsforhold vet du antall timer før du sa opp`
+            avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-redusert-arbeidstid" id `arbeidsforhold vet du antall timer før redusert arbeidstid`
+            avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-antall-timer-foer-permittert" id `arbeidsforhold vet du antall timer før permittert`
+            avhengerAv `arbeidsforhold endret`,
         desimaltall faktum "faktum.arbeidsforhold.antall-timer-dette-arbeidsforhold" id `arbeidsforhold antall timer dette arbeidsforhold`
             avhengerAv `arbeidsforhold endret`,
-        periode faktum "faktum.arbeidsforhold.permittert-periode" id `arbeidsforhold permittert periode` avhengerAv `arbeidsforhold endret`,
-        heltall faktum "faktum.arbeidsforhold.permittert-prosent" id `arbeidsforhold permittert prosent` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.vet-du-lonnsplikt-periode" id `arbeidsforhold vet du lønnsplikt periode` avhengerAv `arbeidsforhold endret`,
-        periode faktum "faktum.arbeidsforhold.naar-var-lonnsplikt-periode" id `arbeidsforhold når var lønnsplikt periode` avhengerAv `arbeidsforhold vet du lønnsplikt periode`,
-        tekst faktum "faktum.arbeidsforhold.aarsak-til-du-sa-opp" id `arbeidsforhold årsak til du sa opp` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.tilbud-om-forlengelse-eller-annen-stilling" id `arbeidsforhold tilbud om forlengelse eller annen stilling` avhengerAv `arbeidsforhold endret`,
+        periode faktum "faktum.arbeidsforhold.permittert-periode" id `arbeidsforhold permittert periode`
+            avhengerAv `arbeidsforhold endret`,
+        heltall faktum "faktum.arbeidsforhold.permittert-prosent" id `arbeidsforhold permittert prosent`
+            avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.vet-du-lonnsplikt-periode" id `arbeidsforhold vet du lønnsplikt periode`
+            avhengerAv `arbeidsforhold endret`,
+        periode faktum "faktum.arbeidsforhold.naar-var-lonnsplikt-periode" id `arbeidsforhold når var lønnsplikt periode`
+            avhengerAv `arbeidsforhold vet du lønnsplikt periode`,
+        tekst faktum "faktum.arbeidsforhold.aarsak-til-du-sa-opp" id `arbeidsforhold årsak til du sa opp`
+            avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.tilbud-om-forlengelse-eller-annen-stilling" id `arbeidsforhold tilbud om forlengelse eller annen stilling`
+            avhengerAv `arbeidsforhold endret`,
         envalg faktum "faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling"
             med "svar.ja"
             med "svar.nei"
-            med "svar.ikke-svart" id `arbeidsforhold svar på forlengelse eller annen stilling` avhengerAv `arbeidsforhold tilbud om forlengelse eller annen stilling`,
-        tekst faktum "faktum.arbeidsforhold.aarsak-til-ikke-akseptert-tilbud" id `arbeidsforhold årsak til ikke akseptert tilbud` avhengerAv `arbeidsforhold svar på forlengelse eller annen stilling`,
-        boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler" id `arbeidsforhold søke forskudd lønnsgarantimidler` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler-i-tillegg-til-dagpenger" id `arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger` avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
-        boolsk faktum "faktum.arbeidsforhold.godta-trekk-fra-nav-av-forskudd-fra-lonnsgarantimidler" id `arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler` avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
+            med "svar.ikke-svart" id `arbeidsforhold svar på forlengelse eller annen stilling`
+            avhengerAv `arbeidsforhold tilbud om forlengelse eller annen stilling`,
+        tekst faktum "faktum.arbeidsforhold.aarsak-til-ikke-akseptert-tilbud" id `arbeidsforhold årsak til ikke akseptert tilbud`
+            avhengerAv `arbeidsforhold svar på forlengelse eller annen stilling`,
+        boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler" id `arbeidsforhold søke forskudd lønnsgarantimidler`
+            avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler-i-tillegg-til-dagpenger" id `arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`
+            avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
+        boolsk faktum "faktum.arbeidsforhold.godta-trekk-fra-nav-av-forskudd-fra-lonnsgarantimidler" id `arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`
+            avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
         envalg faktum "faktum.arbeidsforhold.har-sokt-om-lonnsgarantimidler"
             med "svar.nei"
             med "svar.nei-men-skal"
-            med "svar.ja" id `arbeidsforhold har søkt om lønnsgarantimidler` avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
+            med "svar.ja" id `arbeidsforhold har søkt om lønnsgarantimidler`
+            avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
         envalg faktum "faktum.arbeidsforhold.dekker-lonnsgarantiordningen-lonnskravet-ditt"
             med "svar.ja"
             med "svar.nei"
-            med "svar.vet-ikke" id `arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt` avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
-        boolsk faktum "faktum.arbeidsforhold.utbetalt-lonn-etter-konkurs" id `arbeidsforhold utbetalt lønn etter konkurs` avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
-        dato faktum "faktum.arbeidsforhold.siste-dag-utbetalt-for-konkurs" id `arbeidsforhold siste dag utbetalt for konkurs` avhengerAv `arbeidsforhold utbetalt lønn etter konkurs`,
-        tekst faktum "faktum.arbeidsforhold.hva-er-aarsak-til-avskjediget" id `arbeidsforhold hva er årsak til avskjediget` avhengerAv `arbeidsforhold endret`,
-        tekst faktum "faktum.arbeidsforhold.vet-du-aarsak-til-sagt-opp-av-arbeidsgiver" id `arbeidsforhold vet du årsak til sagt opp av arbeidsgiver` avhengerAv `arbeidsforhold endret`,
-        tekst faktum "faktum.arbeidsforhold.vet-du-aarsak-til-redusert-arbeidstid" id `arbeidsforhold vet du årsak til redusert arbeidstid` avhengerAv `arbeidsforhold endret`,
+            med "svar.vet-ikke" id `arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`
+            avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
+        boolsk faktum "faktum.arbeidsforhold.utbetalt-lonn-etter-konkurs" id `arbeidsforhold utbetalt lønn etter konkurs`
+            avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
+        dato faktum "faktum.arbeidsforhold.siste-dag-utbetalt-for-konkurs" id `arbeidsforhold siste dag utbetalt for konkurs`
+            avhengerAv `arbeidsforhold utbetalt lønn etter konkurs`,
+        tekst faktum "faktum.arbeidsforhold.hva-er-aarsak-til-avskjediget" id `arbeidsforhold hva er årsak til avskjediget`
+            avhengerAv `arbeidsforhold endret`,
+        tekst faktum "faktum.arbeidsforhold.vet-du-aarsak-til-sagt-opp-av-arbeidsgiver" id `arbeidsforhold vet du årsak til sagt opp av arbeidsgiver`
+            avhengerAv `arbeidsforhold endret`,
+        tekst faktum "faktum.arbeidsforhold.vet-du-aarsak-til-redusert-arbeidstid" id `arbeidsforhold vet du årsak til redusert arbeidstid`
+            avhengerAv `arbeidsforhold endret`,
         envalg faktum "faktum.arbeidsforhold.midlertidig-arbeidsforhold-med-sluttdato"
             med "svar.ja"
             med "svar.nei"
-            med "svar.vet-ikke" id `arbeidsforhold midlertidig arbeidsforhold med sluttdato` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.tilbud-om-annen-stilling-eller-annet-sted-i-norge" id `arbeidsforhold tilbud om annen stilling eller annet sted i norge` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.skift-eller-turnus" id `arbeidsforhold skift eller turnus` avhengerAv `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.rotasjon" id `arbeidsforhold rotasjon` avhengerAv `arbeidsforhold endret`,
-        heltall faktum "faktum.arbeidsforhold.arbeidsdager-siste-rotasjon" id `arbeidsforhold arbeidsdager siste rotasjon` avhengerAv `arbeidsforhold rotasjon`,
-        heltall faktum "faktum.arbeidsforhold.fridager-siste-rotasjon" id `arbeidsforhold fridager siste rotasjon` avhengerAv `arbeidsforhold rotasjon`,
+            med "svar.vet-ikke" id `arbeidsforhold midlertidig arbeidsforhold med sluttdato`
+            avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.tilbud-om-annen-stilling-eller-annet-sted-i-norge" id `arbeidsforhold tilbud om annen stilling eller annet sted i norge`
+            avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.skift-eller-turnus" id `arbeidsforhold skift eller turnus`
+            avhengerAv `arbeidsforhold endret`,
+        boolsk faktum "faktum.arbeidsforhold.rotasjon" id `arbeidsforhold rotasjon`
+            avhengerAv `arbeidsforhold endret`,
+        heltall faktum "faktum.arbeidsforhold.arbeidsdager-siste-rotasjon" id `arbeidsforhold arbeidsdager siste rotasjon`
+            avhengerAv `arbeidsforhold rotasjon`,
+        heltall faktum "faktum.arbeidsforhold.fridager-siste-rotasjon" id `arbeidsforhold fridager siste rotasjon`
+            avhengerAv `arbeidsforhold rotasjon`,
         heltall faktum "faktum.arbeidsforhold" id arbeidsforhold
             genererer `arbeidsforhold navn bedrift`
             og `arbeidsforhold land`
@@ -208,7 +265,33 @@ object Arbeidsforhold : DslFaktaseksjon {
         dato faktum "faktum.arbeidsforhold.gjenopptak.soknadsdato-gjenopptak" id `gjenopptak søknadsdato`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.endringer-i-arbeidsforhold" id `gjenopptak endringer i arbeidsforhold siden sist`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-ny-beregning" id `gjenopptak ønsker ny beregning av dagpenger`,
-        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid" id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`
+        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid" id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
+
+        dokument faktum "faktum.dokument-arbeidsavtale" id `dokumentasjon arbeidsavtale`,
+        boolsk faktum "faktum.godkjenning-dokument-arbeidsavtale" id `godkjenning dokumentasjon arbeidsavtale`
+            avhengerAv `dokumentasjon arbeidsavtale`,
+
+        dokument faktum "faktum.dokument-helt-eller-delvis-avsluttet-arbeidsforhold" id `dokumentasjon helt eller delvis avsluttet arbeidsforhold`,
+        boolsk faktum "faktum.godkjenning-dokument-helt-eller-delvis-avsluttet-arbeidsforhold"
+            id `godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold`
+            avhengerAv `dokumentasjon helt eller delvis avsluttet arbeidsforhold`,
+
+        dokument faktum "faktum.dokument-timeliste-for-rotasjon" id `dokumentasjon timeliste for rotasjon`,
+        boolsk faktum "faktum.godkjenning.dokument-timeliste-for-rotasjon" id `godkjenning dokumentasjon timeliste for rotasjon`
+            avhengerAv `dokumentasjon timeliste for rotasjon`,
+
+        dokument faktum "faktum.dokument-brev-fra-bobestyrer-eller-konkursforvalter" id `dokumentasjon brev fra bobestyrer eller konkursforvalter`,
+        boolsk faktum "faktum.godkjenning-dokument-brev-fra-bobestyrer-eller-konkursforvalter" id `godkjenning dokumentasjon brev fra bobestyrer eller konkursforvalter`
+            avhengerAv `dokumentasjon brev fra bobestyrer eller konkursforvalter`,
+
+        dokument faktum "faktum.dokument-ny-arbeidsavtale" id `dokumentasjon ny arbeidsavtale`,
+        boolsk faktum "faktum.godkjenning-dokument-ny-arbeidsavtale" id `godkjenning dokumentasjon ny arbeidsavtale`
+            avhengerAv `dokumentasjon ny arbeidsavtale`,
+
+        dokument faktum "faktum.dokument-varsel-om-permittering" id `dokumentasjon varsel om permittering`,
+        boolsk faktum "faktum.godkjenning-dokument-varsel-om-permittering" id `godkjenning dokumentasjon varsel om permittering`
+            avhengerAv `dokumentasjon varsel om permittering`,
+
     )
 
     override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *this.databaseIder()))
@@ -308,7 +391,14 @@ object Arbeidsforhold : DslFaktaseksjon {
         )
 
     private fun Søknad.avskjediget() =
-        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.avskjediget") hvisOppfylt {
+        (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.avskjediget"))
+            .sannsynliggjøresAv(
+                dokument(`dokumentasjon arbeidsavtale`),
+                dokument(`dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+            ).godkjentAv(
+                boolsk(`godkjenning dokumentasjon arbeidsavtale`),
+                boolsk(`godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+            ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `arbeidstimer før mistet jobb`(),
                 tekst(`arbeidsforhold hva er årsak til avskjediget`).utfylt()
@@ -327,7 +417,14 @@ object Arbeidsforhold : DslFaktaseksjon {
         desimaltall(`arbeidsforhold antall timer dette arbeidsforhold`).utfylt()
 
     private fun Søknad.`sagt opp av arbeidsgiver`() =
-        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver") hvisOppfylt {
+        (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
+            .sannsynliggjøresAv(
+                dokument(`dokumentasjon arbeidsavtale`),
+                dokument(`dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+            ).godkjentAv(
+                boolsk(`godkjenning dokumentasjon arbeidsavtale`),
+                boolsk(`godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+            ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 `arbeidstimer før mistet jobb`(),
@@ -348,7 +445,11 @@ object Arbeidsforhold : DslFaktaseksjon {
             boolsk(`arbeidsforhold skift eller turnus`).utfylt(),
             "rotasjon eller ikke".minstEnAv(
                 boolsk(`arbeidsforhold rotasjon`) er false,
-                boolsk(`arbeidsforhold rotasjon`) er true hvisOppfylt {
+                (boolsk(`arbeidsforhold rotasjon`) er true)
+                    .sannsynliggjøresAv(dokument(`dokumentasjon timeliste for rotasjon`))
+                    .godkjentAv(
+                        boolsk(`godkjenning dokumentasjon timeliste for rotasjon`)
+                    ) hvisOppfylt {
                     "oppfølgingsspørsmål om rotasjonen".alle(
                         heltall(`arbeidsforhold arbeidsdager siste rotasjon`).utfylt(),
                         heltall(`arbeidsforhold fridager siste rotasjon`).utfylt()
@@ -358,7 +459,14 @@ object Arbeidsforhold : DslFaktaseksjon {
         )
 
     private fun Søknad.`arbeidsgiver er konkurs`() =
-        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs") hvisOppfylt {
+        (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs"))
+            .sannsynliggjøresAv(
+                dokument(`dokumentasjon arbeidsavtale`),
+                dokument(`dokumentasjon brev fra bobestyrer eller konkursforvalter`)
+            ).godkjentAv(
+                boolsk(`godkjenning dokumentasjon arbeidsavtale`),
+                boolsk(`godkjenning dokumentasjon brev fra bobestyrer eller konkursforvalter`)
+            ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 envalg(`arbeidsforhold midlertidig arbeidsforhold med sluttdato`).utfylt(),
@@ -399,7 +507,11 @@ object Arbeidsforhold : DslFaktaseksjon {
         )
 
     private fun Søknad.`kontrakten er utgått`() =
-        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt") hvisOppfylt {
+        (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt"))
+            .sannsynliggjøresAv(dokument(`dokumentasjon arbeidsavtale`))
+            .godkjentAv(
+                boolsk(`godkjenning dokumentasjon arbeidsavtale`)
+            ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 `arbeidstimer før utgått kontrakt`(),
@@ -421,16 +533,31 @@ object Arbeidsforhold : DslFaktaseksjon {
             boolsk(`arbeidsforhold tilbud om forlengelse eller annen stilling`) er false,
             boolsk(`arbeidsforhold tilbud om forlengelse eller annen stilling`) er true hvisOppfylt {
                 "svar på tilbud om forlengelse eller annen stilling".minstEnAv(
-                    envalg(`arbeidsforhold svar på forlengelse eller annen stilling`) inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei") hvisOppfylt {
+                    (envalg(`arbeidsforhold svar på forlengelse eller annen stilling`) inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ja"))
+                        .sannsynliggjøresAv(dokument(`dokumentasjon ny arbeidsavtale`))
+                        .godkjentAv(boolsk(`godkjenning dokumentasjon ny arbeidsavtale`)),
+                    (envalg(`arbeidsforhold svar på forlengelse eller annen stilling`) inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei"))
+                        .sannsynliggjøresAv(dokument(`dokumentasjon helt eller delvis avsluttet arbeidsforhold`))
+                        .godkjentAv(
+                            boolsk(`godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+                        ) hvisOppfylt {
                         tekst(`arbeidsforhold årsak til ikke akseptert tilbud`).utfylt()
                     },
-                    envalg(`arbeidsforhold svar på forlengelse eller annen stilling`).utfylt()
+                    envalg(`arbeidsforhold svar på forlengelse eller annen stilling`) inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ikke-svart")
                 )
             }
         )
 
     private fun Søknad.`sagt opp selv`() =
-        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv") hvisOppfylt {
+        (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv"))
+            .sannsynliggjøresAv(
+                dokument(`dokumentasjon arbeidsavtale`),
+                dokument(`dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+            )
+            .godkjentAv(
+                boolsk(`godkjenning dokumentasjon arbeidsavtale`),
+                boolsk(`godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+            ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 `arbeidstimer før sagt opp selv`(),
@@ -448,7 +575,15 @@ object Arbeidsforhold : DslFaktaseksjon {
         )
 
     private fun Søknad.`redusert arbeidstid`() =
-        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid") hvisOppfylt {
+        (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid"))
+            .sannsynliggjøresAv(
+                dokument(`dokumentasjon arbeidsavtale`),
+                dokument(`dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+            )
+            .godkjentAv(
+                boolsk(`godkjenning dokumentasjon arbeidsavtale`),
+                boolsk(`godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+            ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 dato(`arbeidsforhold startdato arbeidsforhold`).utfylt(),
                 dato(`arbeidsforhold arbeidstid redusert fra dato`).utfylt(),
@@ -468,7 +603,11 @@ object Arbeidsforhold : DslFaktaseksjon {
         )
 
     private fun Søknad.permittert() =
-        envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.permittert") hvisOppfylt {
+        (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
+            .sannsynliggjøresAv(dokument(`dokumentasjon varsel om permittering`))
+            .godkjentAv(
+                boolsk(`godkjenning dokumentasjon varsel om permittering`)
+            ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `midlertidig arbeidsforhold med sluttdato`(),
                 dato(`arbeidsforhold midlertidig arbeidsforhold oppstartsdato`).utfylt(),

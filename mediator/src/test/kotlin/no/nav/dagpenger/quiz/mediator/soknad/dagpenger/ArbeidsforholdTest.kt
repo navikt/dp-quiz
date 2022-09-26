@@ -36,7 +36,7 @@ internal class ArbeidsforholdTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        Arbeidsforhold.verifiserFeltsammensetting(54, 433485)
+        Arbeidsforhold.verifiserFeltsammensetting(66, 530211)
     }
 
     @Test

@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningsdatoService
+import no.nav.dagpenger.quiz.mediator.behovløsere.SkjemakodeService
 import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.runMigration
@@ -66,6 +67,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 TerskelFaktorService(rapidsConnection)
                 ManuellBehandlingSink(rapidsConnection, resultatRecord)
                 SøknadSlettetService(rapidsConnection, søknadRecord)
+                SkjemakodeService(rapidsConnection)
             }
     }
 }
