@@ -28,7 +28,8 @@ class SannsynliggjøringsSubsumsjonTest {
         testversjon,
         boolsk faktum "faktum" id 1,
         dokument faktum "dokument" id 2,
-        boolsk faktum "godkjenning" id 3 avhengerAv 2,
+        dokument faktum "dokument2" id 21,
+        boolsk faktum "godkjenning" id 3 avhengerAv 2 og 21,
         heltall faktum "generator" id 4 genererer 5 og 6 og 7,
         boolsk faktum "generert-boolsk1" id 5,
         boolsk faktum "generert-boolsk2" id 6,
@@ -36,7 +37,8 @@ class SannsynliggjøringsSubsumsjonTest {
         boolsk faktum "godkjenning for generator" id 8 avhengerAv 7
     )
     private val faktum = søknad boolsk 1
-    private val dokumentet = søknad dokument 2
+    private val dokument1 = søknad dokument 2
+    private val dokument2 = søknad dokument 21
     private val godkjenning = søknad boolsk 3
     private val generator = søknad generator 4
     private val generatorB1 = søknad boolsk 5
@@ -47,7 +49,7 @@ class SannsynliggjøringsSubsumsjonTest {
     @Test
     fun `Skal lage sannsynliggjøring for en subsumsjon som kan dokumenteres og skal godkjennes `() {
         val subsumsjon = "må svare ja hvis ikke må en dokumentere neiet".minstEnAv(
-            (faktum er false).sannsynliggjøresAv(dokumentet).godkjentAv(godkjenning),
+            (faktum er false).sannsynliggjøresAv(dokument1, dokument2).godkjentAv(godkjenning),
             faktum er true
         )
 
@@ -57,7 +59,8 @@ class SannsynliggjøringsSubsumsjonTest {
 
         assertEquals(true, subsumsjon.resultat())
 
-        dokumentet.besvar(Dokument(LocalDateTime.now(), "urn:sid:1"))
+        dokument1.besvar(Dokument(LocalDateTime.now(), "urn:sid:1"))
+        dokument2.besvar(Dokument(LocalDateTime.now(), "urn:sid:3"))
 
         assertEquals(true, subsumsjon.resultat())
 
@@ -65,7 +68,8 @@ class SannsynliggjøringsSubsumsjonTest {
 
         assertEquals(false, subsumsjon.resultat())
 
-        dokumentet.besvar(Dokument(LocalDateTime.now(), "urn:sid:2"))
+        dokument1.besvar(Dokument(LocalDateTime.now(), "urn:sid:2"))
+        dokument2.besvar(Dokument(LocalDateTime.now(), "urn:sid:4"))
 
         assertEquals(true, subsumsjon.resultat())
 
@@ -77,7 +81,7 @@ class SannsynliggjøringsSubsumsjonTest {
 
         faktum.besvar(true)
         assertEquals(true, subsumsjon.resultat())
-        assertFalse(dokumentet.erBesvart())
+        assertFalse(dokument1.erBesvart())
         assertFalse(godkjenning.erBesvart())
     }
 
