@@ -35,6 +35,7 @@ object Barnetillegg : DslFaktaseksjon {
     const val `barn fødselsdato register` = 1011
     const val `barn statsborgerskap register` = 1012
     const val `forsørger du barnet register` = 1013
+
     override val fakta = listOf(
         heltall faktum "faktum.register.barn-liste" id `barn liste register`
             genererer `barn fornavn mellomnavn register`

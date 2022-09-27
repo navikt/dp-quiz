@@ -149,6 +149,22 @@ internal class AndreYtelserTest {
         }
     }
 
+    @Test
+    fun `Faktumrekkefølge i seksjon`() {
+        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val søknadprosess = søknad.testSøknadprosess(
+            AndreYtelser.regeltre(søknad)
+        ) {
+            AndreYtelser.seksjon(this)
+        }
+        val spørsmålsiderIRekkefølge =
+            søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        assertEquals(
+            "5001,5002,5003,5004,5005,5006,5007,5008,5009,5010,5011,5012,5013,5014,5015,5016,5017,5018,5019,5020,5021,5022,5023,5024,5025,5026,5027,5028,5029",
+            spørsmålsiderIRekkefølge
+        )
+    }
+
     private fun verifiserAnnenYtelseUtenØkonomiskGode(kodeForSpesifikkYtelse: (Søknadprosess) -> Unit) {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = søknad.testSøknadprosess(

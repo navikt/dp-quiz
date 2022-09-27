@@ -11,6 +11,8 @@ import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
@@ -47,7 +49,9 @@ internal class ArbeidsforholdTest {
             faktaISeksjoner.containsAll(
                 alleFakta
             ),
-            "Ikke alle faktum er ikke definert i seksjon.\nMangler seksjon for faktum id: ${alleFakta.toSet().minus(faktaISeksjoner.toSet())}"
+            "Ikke alle faktum er ikke definert i seksjon.\nMangler seksjon for faktum id: ${
+            alleFakta.toSet().minus(faktaISeksjoner.toSet())
+            }"
         )
     }
 
@@ -176,7 +180,7 @@ internal class ArbeidsforholdTest {
             søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før mistet jobb`}.1"),
             søknadprosess.desimaltall("${Arbeidsforhold.`arbeidsforhold antall timer dette arbeidsforhold`}.1"),
             søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold vet du årsak til sagt opp av arbeidsgiver`}.1"),
-            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1"),
+            søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
         )
 
         assertEquals(null, søknadprosess.resultat())
@@ -231,7 +235,7 @@ internal class ArbeidsforholdTest {
             søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold har søkt om lønnsgarantimidler`}.1"),
             søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`}.1"),
             søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold utbetalt lønn etter konkurs`}.1"),
-            søknadprosess.dato("${Arbeidsforhold.`arbeidsforhold siste dag utbetalt for konkurs`}.1"),
+            søknadprosess.dato("${Arbeidsforhold.`arbeidsforhold siste dag utbetalt for konkurs`}.1")
         )
 
         assertEquals(null, søknadprosess.resultat())
@@ -279,7 +283,7 @@ internal class ArbeidsforholdTest {
             søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold varighet`}.1"),
             søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold tilbud om forlengelse eller annen stilling`}.1"),
             søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold svar på forlengelse eller annen stilling`}.1"),
-            søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold årsak til ikke akseptert tilbud`}.1"),
+            søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold årsak til ikke akseptert tilbud`}.1")
         )
 
         assertEquals(null, søknadprosess.resultat())
@@ -393,13 +397,37 @@ internal class ArbeidsforholdTest {
         søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(1)
         søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))
         søknadprosess.land("${Arbeidsforhold.`arbeidsforhold land`}.1").besvar(Land("NOR"))
-        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1").besvar(Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs"))
+        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
+            .besvar(Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs"))
         søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
-        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold midlertidig arbeidsforhold med sluttdato`}.1").besvar(Envalg("faktum.arbeidsforhold.midlertidig-arbeidsforhold-med-sluttdato.svar.ja"))
+        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold midlertidig arbeidsforhold med sluttdato`}.1")
+            .besvar(Envalg("faktum.arbeidsforhold.midlertidig-arbeidsforhold-med-sluttdato.svar.ja"))
 
         val nesteSeksjonAsJsonNode = jacksonObjectMapper().readTree(søknadprosess.nesteSeksjoner()[0].somSpørsmål())
         val arbeidsforholdGeneratorSvar = nesteSeksjonAsJsonNode["seksjoner"][0]["fakta"][2]["svar"][0]
         assertNull(arbeidsforholdGeneratorSvar.last()["svar"], "siste spørsmål i listen skal være ubesvart")
+    }
+
+    @Test
+    fun `Faktumrekkefølge i seksjon`() {
+        val minimaltRegeltreForArbeidsforhold: Subsumsjon = with(søknad) {
+            Gjenopptak.regeltre(this).hvisOppfylt {
+                Arbeidsforhold.regeltre(this)
+            }
+        }
+        val søknadprosessForArbeidsforhold = søknad.testSøknadprosess(minimaltRegeltreForArbeidsforhold) {
+            Gjenopptak.seksjon(søknad) + Arbeidsforhold.seksjon(søknad)
+        }
+
+        val faktaForGjennopptak =
+            søknadprosessForArbeidsforhold.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        assertEquals("10001", faktaForGjennopptak)
+
+        søknadprosessForArbeidsforhold.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
+            .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
+        val faktaForArbeidsforhold =
+            søknadprosessForArbeidsforhold.nesteSeksjoner().first().joinToString(separator = ",\n") { it.id }
+        assertEquals(forventetSpørsmålsrekkefølgeForSøker, faktaForArbeidsforhold)
     }
 
     private fun `besvar innledende spørsmål om arbeidsforhold for gjenopptak`() {
@@ -447,4 +475,72 @@ internal class ArbeidsforholdTest {
         fakta.forEach { faktum ->
             assertFalse(faktum.erBesvart())
         }
+
+    private val forventetSpørsmålsrekkefølgeForSøker = """
+8001,
+8002,
+8003,
+8004,
+8005,
+8006,
+8007,
+8008,
+8009,
+8010,
+8011,
+8012,
+8013,
+8014,
+8015,
+8016,
+8017,
+8018,
+8019,
+8020,
+8021,
+8022,
+8023,
+8024,
+8025,
+8026,
+8027,
+8028,
+8029,
+8030,
+8031,
+8032,
+8033,
+8034,
+8035,
+8036,
+8037,
+8038,
+8039,
+8040,
+8041,
+8042,
+8043,
+8044,
+8045,
+8046,
+8047,
+8048,
+8049,
+8050,
+8051,
+8052,
+8053,
+8054,
+8055,
+8056,
+8057,
+8058,
+8059,
+8060,
+8061,
+8062,
+8063,
+8064,
+8065,
+8066""".trimStart()
 }
