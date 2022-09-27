@@ -65,7 +65,7 @@ internal class UtdanningTest {
     }
 
     @Test
-    fun `Faktumrekkefølge i seksjon`() {
+    fun `Faktarekkefølge i seksjon`() {
         val faktaFraUtdanning = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("2001,2002,2003,2004,2005", faktaFraUtdanning)
     }

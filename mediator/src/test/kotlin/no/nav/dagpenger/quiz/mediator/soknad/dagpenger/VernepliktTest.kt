@@ -42,7 +42,7 @@ internal class VernepliktTest {
     }
 
     @Test
-    fun `Faktumrekkefølge i seksjon`() {
+    fun `Faktarekkefølge i seksjon`() {
         val faktaFraVerneplikt = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("7001,7002,7003", faktaFraVerneplikt)
     }

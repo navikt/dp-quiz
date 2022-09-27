@@ -37,7 +37,7 @@ internal class GjenopptakTest {
     }
 
     @Test
-    fun `Faktumrekkefølge i seksjon`() {
+    fun `Faktarekkefølge i seksjon`() {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Gjenopptak.fakta())
         val søknadprosess = søknad.testSøknadprosess(
             Gjenopptak.regeltre(søknad)

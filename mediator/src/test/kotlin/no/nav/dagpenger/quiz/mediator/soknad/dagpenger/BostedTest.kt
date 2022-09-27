@@ -124,7 +124,7 @@ internal class BostedTest {
     }
 
     @Test
-    fun `Faktumrekkefølge i seksjon`() {
+    fun `Faktarekkefølge i seksjon`() {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = søknad.testSøknadprosess(
             Bosted.regeltre(søknad)

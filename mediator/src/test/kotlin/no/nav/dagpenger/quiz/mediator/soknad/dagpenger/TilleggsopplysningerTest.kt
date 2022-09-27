@@ -58,7 +58,7 @@ internal class TilleggsopplysningerTest {
     }
 
     @Test
-    fun `Faktumrekkefølge i seksjon`() {
+    fun `Faktarekkefølge i seksjon`() {
         assertEquals("4002,4001", søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id })
     }
 }

@@ -63,7 +63,7 @@ internal class EøsArbeidsforholdTest {
     }
 
     @Test
-    fun `Faktumrekkefølge i seksjon`() {
+    fun `Faktarekkefølge i seksjon`() {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *EøsArbeidsforhold.fakta())
         val søknadprosess = søknad.testSøknadprosess(
             EøsArbeidsforhold.regeltre(søknad)

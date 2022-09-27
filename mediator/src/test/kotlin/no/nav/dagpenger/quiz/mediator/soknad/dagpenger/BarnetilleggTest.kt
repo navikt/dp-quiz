@@ -95,7 +95,7 @@ internal class BarnetilleggTest {
     }
 
     @Test
-    fun `Faktumrekkefølge i seksjon`() {
+    fun `Faktarekkefølge i seksjon`() {
         val faktaFraRegister =
             søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("1008,1009,1010,1012,1011", faktaFraRegister)

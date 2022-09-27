@@ -409,7 +409,7 @@ internal class ArbeidsforholdTest {
     }
 
     @Test
-    fun `Faktumrekkefølge i seksjon`() {
+    fun `Faktarekkefølge i seksjon`() {
         val minimaltRegeltreForArbeidsforhold: Subsumsjon = with(søknad) {
             Gjenopptak.regeltre(this).hvisOppfylt {
                 Arbeidsforhold.regeltre(this)
