@@ -7,11 +7,10 @@ import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.Skjemakode
 import no.nav.dagpenger.quiz.mediator.behovløsere.SkjemakodeStrategi
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DagpengerSkjemastrategi
-import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
 import no.nav.dagpenger.quiz.mediator.soknad.innsending.InnsendingSkjemastrategi
 import java.util.UUID
 
-internal class SoknadSkjemakodeStrategi : SkjemakodeStrategi {
+internal class ProsessSkjemakodeStrategi : SkjemakodeStrategi {
 
     override fun skjemakode(søknadprosess: Søknadprosess): Skjemakode {
         return SkjemastrategiVelger(søknadprosess).skjemakodeStrategi()

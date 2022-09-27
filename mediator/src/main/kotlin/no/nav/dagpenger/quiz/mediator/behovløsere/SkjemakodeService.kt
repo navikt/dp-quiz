@@ -18,12 +18,13 @@ internal class SkjemakodeService(
 
     private companion object {
         val logger = KotlinLogging.logger { }
+        val behov = "Skjemakode"
     }
 
     init {
         River(rapidsConnection).apply {
             validate { it.demandValue("@event_name", "behov") }
-            validate { it.demandAll("@behov", listOf("Skjemakode")) }
+            validate { it.demandAll("@behov", listOf(behov)) }
             validate { it.requireKey("søknad_uuid") }
             validate { it.forbid("@løsning") }
         }.register(this)
@@ -35,11 +36,11 @@ internal class SkjemakodeService(
         withLoggingContext("søknadId" to søknadId.toString()) {
             val skjemakode = skjemakodeStrategi.skjemakode(søknadPersistence.hent(søknadId))
             packet["@løsning"] = mapOf(
-                "Skjemakode" to skjemakode
+                behov to skjemakode
             )
 
             context.publish(packet.toJson())
-            logger.info { "Løser behov for skjemakode" }
+            logger.info { "Løser $behov med $skjemakode" }
         }
     }
 }

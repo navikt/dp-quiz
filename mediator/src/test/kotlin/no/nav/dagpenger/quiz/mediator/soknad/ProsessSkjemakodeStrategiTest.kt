@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 
-internal class SoknadSkjemakodeStrategiTest {
+internal class ProsessSkjemakodeStrategiTest {
 
     private lateinit var søknadprosessDagpenger: Søknadprosess
     private lateinit var søknadprosessInnsending: Søknadprosess
@@ -34,9 +34,9 @@ internal class SoknadSkjemakodeStrategiTest {
 
     @Test
     fun `bestemme hvilken prosess skjemastrategi skal gå etter`() {
-        val soknadSkjemakodeStrategi = SoknadSkjemakodeStrategi()
-        assertDoesNotThrow { soknadSkjemakodeStrategi.skjemakode(søknadprosessDagpenger) }
-        assertDoesNotThrow { soknadSkjemakodeStrategi.skjemakode(søknadprosessInnsending) }
-        assertThrows<IllegalArgumentException> { soknadSkjemakodeStrategi.skjemakode(søknadprosessAvslagPåMinsteinntekt) }
+        val prosessSkjemakodeStrategi = ProsessSkjemakodeStrategi()
+        assertDoesNotThrow { prosessSkjemakodeStrategi.skjemakode(søknadprosessDagpenger) }
+        assertDoesNotThrow { prosessSkjemakodeStrategi.skjemakode(søknadprosessInnsending) }
+        assertThrows<IllegalArgumentException> { prosessSkjemakodeStrategi.skjemakode(søknadprosessAvslagPåMinsteinntekt) }
     }
 }

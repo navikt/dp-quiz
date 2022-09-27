@@ -5,7 +5,6 @@ import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningsdatoService
-import no.nav.dagpenger.quiz.mediator.behovløsere.Skjemakode
 import no.nav.dagpenger.quiz.mediator.behovløsere.SkjemakodeService
 import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
@@ -18,6 +17,7 @@ import no.nav.dagpenger.quiz.mediator.meldinger.ManuellBehandlingSink
 import no.nav.dagpenger.quiz.mediator.meldinger.NyProsessBehovLøser
 import no.nav.dagpenger.quiz.mediator.meldinger.SøknadSlettetService
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.ProsessSkjemakodeStrategi
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
@@ -70,8 +70,9 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 SøknadSlettetService(rapidsConnection, søknadRecord)
                 SkjemakodeService(
                     rapidsConnection,
-                    søknadRecord
-                ) { Skjemakode("Søknad om dagpenger (ikke permittert)", "04-01.03") }
+                    søknadRecord,
+                    ProsessSkjemakodeStrategi()
+                )
             }
     }
 }
