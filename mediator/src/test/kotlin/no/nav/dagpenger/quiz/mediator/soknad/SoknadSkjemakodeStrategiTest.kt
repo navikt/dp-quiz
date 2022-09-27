@@ -37,6 +37,6 @@ internal class SoknadSkjemakodeStrategiTest {
         val soknadSkjemakodeStrategi = SoknadSkjemakodeStrategi()
         assertDoesNotThrow { soknadSkjemakodeStrategi.skjemakode(søknadprosessDagpenger) }
         assertDoesNotThrow { soknadSkjemakodeStrategi.skjemakode(søknadprosessInnsending) }
-        assertThrows<IllegalArgumentException>{ soknadSkjemakodeStrategi.skjemakode(søknadprosessAvslagPåMinsteinntekt) }
+        assertThrows<IllegalArgumentException> { soknadSkjemakodeStrategi.skjemakode(søknadprosessAvslagPåMinsteinntekt) }
     }
 }

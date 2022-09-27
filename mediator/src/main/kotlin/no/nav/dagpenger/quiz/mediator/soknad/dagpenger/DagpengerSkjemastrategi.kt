@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
+import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -13,7 +14,7 @@ class DagpengerSkjemastrategi : SkjemakodeStrategi {
         return DagpengerSkjemakodeFinner(søknadprosess).skjemaKode()
     }
 
-    private class DagpengerSkjemakodeFinner(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
+    private class DagpengerSkjemakodeFinner(private val søknadprosess: Søknadprosess) : SøknadprosessVisitor {
 
         private var permittert: Boolean = false
 
@@ -35,6 +36,13 @@ class DagpengerSkjemastrategi : SkjemakodeStrategi {
             lokaltResultat: Boolean?,
             resultat: Boolean?
         ) {
+            if (!permittert) {
+                val arbeidsforholdFakta = fakta.filter { it.id.contains(Arbeidsforhold.`arbeidsforhold endret`.toString()) }
+                    .filter { it.erBesvart() }
+                    .filter { it.svar() == Envalg("faktum.arbeidsforhold.endret.svar.permittert") }
+
+                permittert = arbeidsforholdFakta.isNotEmpty() && lokaltResultat == true
+            }
         }
     }
 }
