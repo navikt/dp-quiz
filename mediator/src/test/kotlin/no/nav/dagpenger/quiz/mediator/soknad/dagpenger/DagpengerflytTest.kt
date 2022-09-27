@@ -39,10 +39,6 @@ class DagpengerflytTest {
         søknadprosess.boolsk("${Barnetillegg.`forsørger du barnet register`}.1").besvar(false)
         søknadprosess.boolsk(`egne barn`).besvar(false)
 
-        søknadprosess.nesteSeksjoner().onEach {
-            it.somSpørsmål()
-        }
-
         søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
         søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
 
