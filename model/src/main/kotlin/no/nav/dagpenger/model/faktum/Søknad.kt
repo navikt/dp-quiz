@@ -35,10 +35,10 @@ class Søknad private constructor(
     }
 
     companion object {
-        fun Søknad.seksjon(navn: String, rolle: Rolle, vararg ider: Int) = Seksjon(
+        fun Søknad.seksjon(navn: String, rolle: Rolle, vararg spørsmålsrekkefølge: Int) = Seksjon(
             navn,
             rolle,
-            *(ider.map { id -> this.id(id) }.toTypedArray())
+            *(spørsmålsrekkefølge.map { id -> this.id(id) }.toTypedArray())
         )
         private fun List<FaktumFactory<*>>.toFaktaMap() =
             tilFakta()
