@@ -123,6 +123,18 @@ internal class BostedTest {
         assertEquals(true, søknadprosess.resultat())
     }
 
+    @Test
+    fun `Faktumrekkefølge i seksjon`() {
+        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
+        val søknadprosess = søknad.testSøknadprosess(
+            Bosted.regeltre(søknad)
+        ) {
+            Bosted.seksjon(this)
+        }
+        val faktaFraBosted = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        assertEquals("6001,6002,6003,6004,6005,6006", faktaFraBosted)
+    }
+
     private fun forventedeEøsLand() = listOf(
         "BEL",
         "BGR",

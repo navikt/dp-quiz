@@ -48,11 +48,6 @@ internal class TilleggsopplysningerTest {
     }
 
     @Test
-    fun `Faktumrekkefølge i seksjon`() {
-        assertEquals("4002,4001", søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id })
-    }
-
-    @Test
     fun avhengigheter() {
         harTilleggsopplysninger.besvar(true)
         tilleggsopplysninger.besvar(Tekst("Tilleggsopplysninger"))
@@ -60,5 +55,10 @@ internal class TilleggsopplysningerTest {
 
         harTilleggsopplysninger.besvar(false)
         assertFalse(tilleggsopplysninger.erBesvart())
+    }
+
+    @Test
+    fun `Faktumrekkefølge i seksjon`() {
+        assertEquals("4002,4001", søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id })
     }
 }

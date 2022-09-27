@@ -207,6 +207,12 @@ internal class ReellArbeidssokerTest {
         søknadprosess.tekst(`kort om hvorfor ikke jobbe hele norge`).besvar(Tekst("Jeg er redd for hai"))
     }
 
+    @Test
+    fun `Faktumrekkefølge i seksjon`() {
+        val faktaFraReellArbeidssøker = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        assertEquals("1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29", faktaFraReellArbeidssøker)
+    }
+
     private fun assertFaktaErBesvart(vararg fakta: Faktum<*>) {
         fakta.forEach { faktum ->
             assertEquals(true, faktum.erBesvart())

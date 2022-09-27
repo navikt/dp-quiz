@@ -127,8 +127,8 @@ internal class EgenNæringTest {
 
     @Test
     fun `Faktumrekkefølge i seksjon`() {
-        val spørsmålsiderIRekkefølge = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
-        assertEquals("3001,3002,3003,3005,3004,3006,3007,3008,3009,3010,3011,3012,3014,3013,3015", spørsmålsiderIRekkefølge)
+        val faktaFraEgenNæring = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        assertEquals("3001,3002,3003,3005,3004,3006,3007,3008,3009,3010,3011,3012,3014,3013,3015", faktaFraEgenNæring)
     }
 
     @Test

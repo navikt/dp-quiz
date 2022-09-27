@@ -61,4 +61,16 @@ internal class EøsArbeidsforholdTest {
         )
         assertEquals(true, søknadprosess.resultat())
     }
+
+    @Test
+    fun `Faktumrekkefølge i seksjon`() {
+        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *EøsArbeidsforhold.fakta())
+        val søknadprosess = søknad.testSøknadprosess(
+            EøsArbeidsforhold.regeltre(søknad)
+        ) {
+            EøsArbeidsforhold.seksjon(this)
+        }
+        val faktaFraEøsArbeidsforhold = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        assertEquals("9001,9002,9003,9004,9005,9006", faktaFraEøsArbeidsforhold)
+    }
 }

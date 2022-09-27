@@ -35,4 +35,16 @@ internal class GjenopptakTest {
         søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.vet-ikke"))
         assertEquals(true, søknadprosess.resultat())
     }
+
+    @Test
+    fun `Faktumrekkefølge i seksjon`() {
+        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Gjenopptak.fakta())
+        val søknadprosess = søknad.testSøknadprosess(
+            Gjenopptak.regeltre(søknad)
+        ) {
+            Gjenopptak.seksjon(this)
+        }
+        val faktaFraGjenopptak = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        assertEquals("10001", faktaFraGjenopptak)
+    }
 }

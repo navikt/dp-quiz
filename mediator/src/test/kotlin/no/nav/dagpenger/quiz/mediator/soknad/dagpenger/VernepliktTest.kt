@@ -40,4 +40,10 @@ internal class VernepliktTest {
         søknadprosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(true)
         assertEquals(true, søknadprosess.resultat())
     }
+
+    @Test
+    fun `Faktumrekkefølge i seksjon`() {
+        val faktaFraVerneplikt = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        assertEquals("7001,7002,7003", faktaFraVerneplikt)
+    }
 }
