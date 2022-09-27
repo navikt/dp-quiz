@@ -19,7 +19,6 @@ interface DslFaktaseksjon {
         .map { heltallsfelter ->
             heltallsfelter.call() as Int
         }
-        .sorted()
         .toIntArray()
 
     fun seksjon(søknad: Søknad): List<Seksjon>
