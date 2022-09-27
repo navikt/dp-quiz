@@ -45,7 +45,7 @@ object Bosted : DslFaktaseksjon {
         boolsk faktum "faktum.reist-i-takt-med-rotasjon" id `reist i takt med rotasjon` avhengerAv `reist tilbake en gang i uka eller mer`
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("bostedsland", Rolle.søker, *this.databaseIder()))
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("bostedsland", Rolle.søker, *spørsmålsrekkefølge))
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "bosted".deltre {
@@ -93,12 +93,12 @@ object Bosted : DslFaktaseksjon {
 
         reistTilbake
     }
+
     private fun Søknad.`utenfor EØS`() = "§ x.x om resten av verden".alle(
         *(norge() + storbritannia() + eøsEllerSveits()).map { `et EØS-land` ->
             land(`hvilket land bor du i`).erIkke(`et EØS-land`)
         }.toTypedArray()
     )
-
     private fun storbritannia() = listOf(Land("GBR"), Land("JEY"), Land("IMN"))
 
     private fun norge() = listOf(Land("NOR"), Land("SJM"))
@@ -137,4 +137,13 @@ object Bosted : DslFaktaseksjon {
     ).map { land ->
         Land(land)
     }
+
+    private val spørsmålsrekkefølge = listOf(
+        `hvilket land bor du i`,
+        `reist tilbake etter arbeidsledig`,
+        `reist tilbake periode`,
+        `reist tilbake årsak`,
+        `reist tilbake en gang i uka eller mer`,
+        `reist i takt med rotasjon`
+    ).toIntArray()
 }
