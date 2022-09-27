@@ -312,5 +312,39 @@ object ReellArbeidssoker : DslFaktaseksjon {
         boolsk(`kan bytte yrke eller gå ned i lønn`).utfylt()
 
     override fun seksjon(søknad: Søknad) =
-        listOf(søknad.seksjon("reell-arbeidssoker", Rolle.søker, *this.databaseIder()))
+        listOf(søknad.seksjon("reell-arbeidssoker", Rolle.søker, *spørsmålsrekkefølge))
+
+    private val spørsmålsrekkefølge = listOf(
+        `kan jobbe heltid`,
+        `årsak til kun deltid`,
+        `skriv kort om situasjonen din`,
+        `antall timer deltid du kan jobbe`,
+        `kan du jobbe i hele Norge`,
+        `årsak kan ikke jobbe i hele Norge`,
+        `kort om hvorfor ikke jobbe hele norge`,
+        `kan ta alle typer arbeid`,
+        `kan bytte yrke eller gå ned i lønn`,
+
+        `dokumentasjon redusert helse - kun deltid`,
+        `godkjenning av dokumentasjon redusert helse - kun deltid`,
+        `dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov - kun deltid`,
+        `godkjenning av dokumentasjon eneansvar eller delt ansvar for barn under 18 år med spesielle behov - kun deltid`,
+        `dokumentasjon annen situasjon - kun deltid`,
+        `godkjenning av dokumentasjon annen situasjon - kun deltid`,
+        `dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klass eller barn med spesielle behov under 18 - kun deltid`,
+        `godkjenning av dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar for barn tom 7 klasse eller barn med spesielle behov under 18 - kun deltid`,
+        `dokumentasjon kan ikke ta alle typer arbeid - kun deltid`,
+        `godkjenning av dokumentasjon kan ikke ta alle typer arbeid - kun deltid`,
+
+        `dokumentasjon redusert helse - ikke jobbe hele Norge`,
+        `godkjenning av dokumentasjon redusert helse - ikke jobbe hele Norge`,
+        `dokumentasjon eneansvar eller delt ansvar barn under 18 år med spesielle behov - ikke jobbe hele Norge`,
+        `godkjenning dokumentasjon eneansvar eller delt ansvar barn under 18 år med spesielle behov - ikke jobbe hele Norge`,
+        `dokumentasjon annen situasjon - ikke jobbe hele Norge`,
+        `godkjenning dokumentasjon annen situasjon - ikke jobbe hele Norge`,
+        `dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar barn tom 7 klass eller barn med spesielle behov under 18 - ikke jobbe hele Norge`,
+        `godkjenning dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar barn tom 7 klasse eller barn med spesielle behov under 18 - ikke jobbe hele Norge`,
+        `dokumentasjon kan ikke ta alle typer arbeid - ikke jobbe hele Norge`,
+        `godkjenning dokumentasjon kan ikke ta alle typer arbeid - ikke jobbe hele Norge`
+    ).toIntArray()
 }
