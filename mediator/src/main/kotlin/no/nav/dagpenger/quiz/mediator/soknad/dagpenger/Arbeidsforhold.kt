@@ -294,7 +294,7 @@ object Arbeidsforhold : DslFaktaseksjon {
 
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *this.databaseIder()))
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *spørsmålsrekkefølge))
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "arbeidsforhold".deltre {
@@ -643,4 +643,74 @@ object Arbeidsforhold : DslFaktaseksjon {
                 periode(`arbeidsforhold når var lønnsplikt periode`).utfylt()
             }
         )
+
+    private val spørsmålsrekkefølge = listOf(
+        `dagpenger søknadsdato`,
+        `type arbeidstid`,
+        arbeidsforhold,
+        `arbeidsforhold navn bedrift`,
+        `arbeidsforhold land`,
+        `arbeidsforhold endret`,
+        `arbeidsforhold kjent antall timer jobbet`,
+        `arbeidsforhold antall timer jobbet`,
+        `arbeidsforhold tilleggsopplysninger`,
+        `arbeidsforhold startdato arbeidsforhold`,
+        `arbeidsforhold arbeidstid redusert fra dato`,
+        `arbeidsforhold midlertidig med kontraktfestet sluttdato`,
+        `arbeidsforhold kontraktfestet sluttdato`,
+        `arbeidsforhold midlertidig arbeidsforhold oppstartsdato`,
+        `arbeidsforhold permittert fra fiskeri næring`,
+        `arbeidsforhold varighet`,
+        `arbeidsforhold vet du antall timer før mistet jobb`,
+        `arbeidsforhold vet du antall timer før konkurs`,
+        `arbeidsforhold vet du antall timer før kontrakt utgikk`,
+        `arbeidsforhold vet du antall timer før du sa opp`,
+        `arbeidsforhold vet du antall timer før redusert arbeidstid`,
+        `arbeidsforhold vet du antall timer før permittert`,
+        `arbeidsforhold antall timer dette arbeidsforhold`,
+        `arbeidsforhold permittert periode`,
+        `arbeidsforhold permittert prosent`,
+        `arbeidsforhold vet du lønnsplikt periode`,
+        `arbeidsforhold når var lønnsplikt periode`,
+        `arbeidsforhold årsak til du sa opp`,
+        `arbeidsforhold tilbud om forlengelse eller annen stilling`,
+        `arbeidsforhold svar på forlengelse eller annen stilling`,
+        `arbeidsforhold årsak til ikke akseptert tilbud`,
+        `arbeidsforhold søke forskudd lønnsgarantimidler`,
+        `arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`,
+        `arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`,
+        `arbeidsforhold har søkt om lønnsgarantimidler`,
+        `arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`,
+        `arbeidsforhold utbetalt lønn etter konkurs`,
+        `arbeidsforhold siste dag utbetalt for konkurs`,
+        `arbeidsforhold hva er årsak til avskjediget`,
+        `arbeidsforhold vet du årsak til sagt opp av arbeidsgiver`,
+        `arbeidsforhold vet du årsak til redusert arbeidstid`,
+        `arbeidsforhold midlertidig arbeidsforhold med sluttdato`,
+        `arbeidsforhold tilbud om annen stilling eller annet sted i norge`,
+        `arbeidsforhold skift eller turnus`,
+        `arbeidsforhold rotasjon`,
+        `arbeidsforhold arbeidsdager siste rotasjon`,
+        `arbeidsforhold fridager siste rotasjon`,
+        `arbeidsforhold har tilleggsopplysninger`,
+        `gjenopptak jobbet siden sist du fikk dagpenger`,
+        `gjenopptak årsak til stans av dagpenger`,
+        `gjenopptak søknadsdato`,
+        `gjenopptak endringer i arbeidsforhold siden sist`,
+        `gjenopptak ønsker ny beregning av dagpenger`,
+        `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
+
+        `dokumentasjon arbeidsavtale`,
+        `godkjenning dokumentasjon arbeidsavtale`,
+        `dokumentasjon helt eller delvis avsluttet arbeidsforhold`,
+        `godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold`,
+        `dokumentasjon timeliste for rotasjon`,
+        `godkjenning dokumentasjon timeliste for rotasjon`,
+        `dokumentasjon brev fra bobestyrer eller konkursforvalter`,
+        `godkjenning dokumentasjon brev fra bobestyrer eller konkursforvalter`,
+        `dokumentasjon ny arbeidsavtale`,
+        `godkjenning dokumentasjon ny arbeidsavtale`,
+        `dokumentasjon varsel om permittering`,
+        `godkjenning dokumentasjon varsel om permittering`
+    ).toIntArray()
 }
