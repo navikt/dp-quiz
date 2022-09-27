@@ -5,7 +5,5 @@ import no.nav.dagpenger.quiz.mediator.behovløsere.Skjemakode
 import no.nav.dagpenger.quiz.mediator.behovløsere.SkjemakodeStrategi
 
 class InnsendingSkjemastrategi : SkjemakodeStrategi {
-    override fun skjemakode(søknadprosess: Søknadprosess): Skjemakode {
-        return Skjemakode("TODO", "VET IKKE!")
-    }
+    override fun skjemakode(søknadprosess: Søknadprosess) = Skjemakode("Annet", "N6")
 }
