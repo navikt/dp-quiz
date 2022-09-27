@@ -19,11 +19,15 @@ object Gjenopptak : DslFaktaseksjon {
             med "svar.vet-ikke" id `mottatt dagpenger siste 12 mnd`
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("gjenopptak", Rolle.søker, *this.databaseIder()))
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("gjenopptak", Rolle.søker, *spørsmålsrekkefølge))
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "gjenopptak".deltre {
             envalg(`mottatt dagpenger siste 12 mnd`).utfylt()
         }
     }
+
+    private val spørsmålsrekkefølge = listOf(
+        `mottatt dagpenger siste 12 mnd`
+    ).toIntArray()
 }
