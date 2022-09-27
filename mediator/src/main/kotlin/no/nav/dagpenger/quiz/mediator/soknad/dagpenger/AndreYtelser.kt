@@ -100,7 +100,7 @@ object AndreYtelser : DslFaktaseksjon {
         boolsk faktum "faktum.godkjenning-dokument-okonomiske-goder-tidligere-arbeidsgiver" id `godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver` avhengerAv `dokumentasjon økonomiske goder fra tidligere arbeidsgiver`
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("andre-ytelser", Rolle.søker, *databaseIder()))
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("andre-ytelser", Rolle.søker, *spørsmålsrekkefølge))
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "andre ytelser".deltre {
             "Har eller har ikke andre ytelser".minstEnAv(
@@ -187,4 +187,37 @@ object AndreYtelser : DslFaktaseksjon {
                 periode(`annen ytelse hvilken periode`).utfylt()
             )
         }
+
+    private val spørsmålsrekkefølge = listOf(
+        `andre ytelser mottatt eller søkt`,
+        `hvilke andre ytelser`,
+        `tjenestepensjon hvem utbetaler`,
+        `tjenestepensjon hvilken periode`,
+        `etterlønn arbeidsgiver hvem utbetaler`,
+        `etterlønn arbeidsgiver hvilken periode`,
+        `dagpenger hvilket eøs land utbetaler`,
+        `dagpenger eøs land hvilken periode`,
+        `hvilken annen ytelse`,
+        `annen ytelse hvem utebetaler`,
+        `annen ytelse hvilken periode`,
+        `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
+        `økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`,
+        `arbeidsløs GFF hvilken periode`,
+        `garantilott fra GFF hvilken periode`,
+
+        `dokumentasjon tjenestepensjon`,
+        `godkjenning dokumentasjon tjenestepensjon`,
+        `dokumentasjon arbeidsløs GFF periode`,
+        `godkjenning dokumentasjon arbeidsløs GFF periode`,
+        `dokumentasjon garantilott fra GFF periode`,
+        `godkjenning dokumentasjon garantilott fra GFF periode`,
+        `dokumentasjon etterlønn`,
+        `godkjenning dokumentasjon etterlønn`,
+        `dokumentasjon dagpenger eøs land`,
+        `godkjenning dokumentasjon dagpenger eøs land`,
+        `dokumentasjon annen ytelse`,
+        `godkjenning dokumentasjon annen ytelse`,
+        `dokumentasjon økonomiske goder fra tidligere arbeidsgiver`,
+        `godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver`
+    ).toIntArray()
 }
