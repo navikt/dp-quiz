@@ -1,0 +1,73 @@
+package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
+
+import no.nav.dagpenger.model.faktum.Envalg
+import no.nav.dagpenger.model.faktum.Land
+import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
+import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
+
+internal class DagpengerSkjemastrategiTest {
+
+    private lateinit var søknadprosess: Søknadprosess
+
+    init {
+        Dagpenger.registrer { prototypeSøknad ->
+            søknadprosess = Versjon.id(Dagpenger.VERSJON_ID)
+                .søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
+        }
+    }
+
+    @Test
+    fun `skjemakode permittering når et arbeidsforhold er permittert`() {
+        søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("NOR"))
+        søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
+            .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
+        søknadprosess.generator(Barnetillegg.`barn liste register`).besvar(0)
+        søknadprosess.boolsk(Barnetillegg.`egne barn`).besvar(false)
+
+        søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
+        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
+
+        søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(2)
+        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("navn"))
+        søknadprosess.land("${Arbeidsforhold.`arbeidsforhold land`}.1").besvar(Land("NOR"))
+        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
+            .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
+
+        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.2").besvar(Tekst("navn"))
+        søknadprosess.land("${Arbeidsforhold.`arbeidsforhold land`}.2").besvar(Land("NOR"))
+        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.2")
+            .besvar(Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
+
+        with(DagpengerSkjemastrategi().skjemakode(søknadprosess)) {
+            assertEquals("04-01.04", this.skjemakode)
+            assertEquals("Søknad om dagpenger ved permittering", this.tittel)
+        }
+    }
+
+    @Test
+    fun `skjemakode ordinær når et arbeidsforhold er ordinær`() {
+        søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("NOR"))
+        søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
+            .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
+        søknadprosess.generator(Barnetillegg.`barn liste register`).besvar(0)
+        søknadprosess.boolsk(Barnetillegg.`egne barn`).besvar(false)
+
+        søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
+        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
+
+        søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(1)
+        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("navn"))
+        søknadprosess.land("${Arbeidsforhold.`arbeidsforhold land`}.1").besvar(Land("NOR"))
+        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
+            .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
+
+        with(DagpengerSkjemastrategi().skjemakode(søknadprosess)) {
+            assertEquals("04-01.03", this.skjemakode)
+            assertEquals("Søknad om dagpenger (ikke permittert)", this.tittel)
+        }
+    }
+}
