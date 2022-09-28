@@ -12,7 +12,7 @@ internal class SkjemakodeServiceTest {
     val søknadPersistence = mockk<SøknadPersistence>(relaxed = true)
 
     val testSkjemakodeStrategi = SkjemakodeStrategi {
-        Skjemakode("Søknad om dagpenger (ikke permittert)", "04-01.03")
+        Skjemakode("04-01.03")
     }
 
     private val rapid = TestRapid().apply {
@@ -42,7 +42,6 @@ internal class SkjemakodeServiceTest {
 
         with(rapid.inspektør) {
             Assertions.assertNotNull(field(0, "@løsning"))
-            Assertions.assertEquals("Søknad om dagpenger (ikke permittert)", field(0, "@løsning")["Skjemakode"]["tittel"].asText())
             Assertions.assertEquals("04-01.03", field(0, "@løsning")["Skjemakode"]["skjemakode"].asText())
         }
     }

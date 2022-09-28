@@ -24,7 +24,6 @@ internal class InnsendingSkjemastrategiTest {
         with(InnsendingSkjemastrategi().skjemakode(søknadprosess)) {
             // TODO: sjekke om det er ettersendelse eller noe annet
             kotlin.test.assertEquals("04-01.03", this.skjemakode)
-            kotlin.test.assertEquals("Ettersendelse til søknad om dagpenger ved arbeidsledighet (ikke permittert)", this.tittel)
         }
     }
 }

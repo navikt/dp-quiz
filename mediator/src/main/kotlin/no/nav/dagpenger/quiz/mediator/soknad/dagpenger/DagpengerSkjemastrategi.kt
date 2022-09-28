@@ -30,13 +30,13 @@ class DagpengerSkjemastrategi : SkjemakodeStrategi {
         fun skjemaKode(): Skjemakode {
             return when (permittert) {
                 true -> when (gjenopptak) {
-                    true -> Skjemakode("Søknad om gjenopptak av dagpenger ved permittering", "04-16.04")
-                    else -> Skjemakode("Søknad om dagpenger ved permittering", "04-01.04")
+                    true -> Skjemakode("04-16.04")
+                    else -> Skjemakode("04-01.04")
                 }
 
                 else -> when (gjenopptak) {
-                    true -> Skjemakode("Søknad om gjenopptak av dagpenger", "04-16.03")
-                    else -> Skjemakode("Søknad om dagpenger (ikke permittert)", "04-01.03")
+                    true -> Skjemakode("04-16.03")
+                    else -> Skjemakode("04-01.03")
                 }
             }
         }

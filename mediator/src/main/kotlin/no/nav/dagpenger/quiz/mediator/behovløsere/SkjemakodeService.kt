@@ -49,6 +49,6 @@ fun interface SkjemakodeStrategi {
     fun skjemakode(søknadprosess: Søknadprosess): Skjemakode
 }
 
-data class Skjemakode(val tittel: String, val skjemakode: String)
+data class Skjemakode(val skjemakode: String)
 
 private fun JsonMessage.søknadUUID() = this["søknad_uuid"].asText().let { UUID.fromString(it) }

@@ -44,7 +44,6 @@ internal class DagpengerSkjemastrategiTest {
 
         with(DagpengerSkjemastrategi().skjemakode(søknadprosess)) {
             assertEquals("04-01.04", this.skjemakode)
-            assertEquals("Søknad om dagpenger ved permittering", this.tittel)
         }
     }
 
@@ -67,7 +66,6 @@ internal class DagpengerSkjemastrategiTest {
 
         with(DagpengerSkjemastrategi().skjemakode(søknadprosess)) {
             assertEquals("04-01.03", this.skjemakode)
-            assertEquals("Søknad om dagpenger (ikke permittert)", this.tittel)
         }
     }
 
@@ -95,7 +93,6 @@ internal class DagpengerSkjemastrategiTest {
 
         with(DagpengerSkjemastrategi().skjemakode(søknadprosess)) {
             assertEquals("04-16.04", this.skjemakode)
-            assertEquals("Søknad om gjenopptak av dagpenger ved permittering", this.tittel)
         }
     }
 
@@ -118,7 +115,6 @@ internal class DagpengerSkjemastrategiTest {
 
         with(DagpengerSkjemastrategi().skjemakode(søknadprosess)) {
             assertEquals("04-16.03", this.skjemakode)
-            assertEquals("Søknad om gjenopptak av dagpenger", this.tittel)
         }
     }
 }
