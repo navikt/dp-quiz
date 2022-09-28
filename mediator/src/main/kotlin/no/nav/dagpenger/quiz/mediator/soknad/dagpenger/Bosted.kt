@@ -45,7 +45,7 @@ object Bosted : DslFaktaseksjon {
         boolsk faktum "faktum.reist-i-takt-med-rotasjon" id `reist i takt med rotasjon` avhengerAv `reist tilbake en gang i uka eller mer`
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("bostedsland", Rolle.søker, *spørsmålsrekkefølge))
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("bostedsland", Rolle.søker, *spørsmålsrekkefølge()))
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "bosted".deltre {
@@ -138,12 +138,12 @@ object Bosted : DslFaktaseksjon {
         Land(land)
     }
 
-    private val spørsmålsrekkefølge = listOf(
+    override val spørsmålsrekkefølge = listOf(
         `hvilket land bor du i`,
         `reist tilbake etter arbeidsledig`,
         `reist tilbake periode`,
         `reist tilbake årsak`,
         `reist tilbake en gang i uka eller mer`,
         `reist i takt med rotasjon`
-    ).toIntArray()
+    )
 }

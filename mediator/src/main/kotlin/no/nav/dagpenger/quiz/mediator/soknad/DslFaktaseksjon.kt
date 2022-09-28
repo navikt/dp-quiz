@@ -8,9 +8,12 @@ import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberProperties
 
 interface DslFaktaseksjon {
-    val fakta: List<FaktumFactory<*>>
 
+    val fakta: List<FaktumFactory<*>>
     fun fakta(): Array<FaktumFactory<*>> = fakta.toTypedArray()
+
+    val spørsmålsrekkefølge: List<Int>
+    fun spørsmålsrekkefølge() = spørsmålsrekkefølge.toIntArray()
 
     fun databaseIder(): IntArray = this::class.declaredMemberProperties
         .filter { felter ->

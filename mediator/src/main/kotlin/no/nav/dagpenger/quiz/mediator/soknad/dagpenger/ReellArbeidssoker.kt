@@ -312,9 +312,9 @@ object ReellArbeidssoker : DslFaktaseksjon {
         boolsk(`kan bytte yrke eller gå ned i lønn`).utfylt()
 
     override fun seksjon(søknad: Søknad) =
-        listOf(søknad.seksjon("reell-arbeidssoker", Rolle.søker, *spørsmålsrekkefølge))
+        listOf(søknad.seksjon("reell-arbeidssoker", Rolle.søker, *spørsmålsrekkefølge()))
 
-    private val spørsmålsrekkefølge = listOf(
+    override val spørsmålsrekkefølge = listOf(
         `kan jobbe heltid`,
         `årsak til kun deltid`,
         `skriv kort om situasjonen din`,
@@ -346,5 +346,5 @@ object ReellArbeidssoker : DslFaktaseksjon {
         `godkjenning dokumentasjon annen forelder jobber skift turnus utenfor nærområdet og ansvar barn tom 7 klasse eller barn med spesielle behov under 18 - ikke jobbe hele Norge`,
         `dokumentasjon kan ikke ta alle typer arbeid - ikke jobbe hele Norge`,
         `godkjenning dokumentasjon kan ikke ta alle typer arbeid - ikke jobbe hele Norge`
-    ).toIntArray()
+    )
 }

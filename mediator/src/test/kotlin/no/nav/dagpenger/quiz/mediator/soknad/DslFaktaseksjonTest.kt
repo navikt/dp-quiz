@@ -21,16 +21,18 @@ internal class DslFaktaseksjonTest {
         override val fakta = listOf(
             dato faktum "faktum 1" id id1,
             tekst faktum "faktum 2" id id2,
-            heltall faktum "faktum 3" id id3,
+            heltall faktum "faktum 3" id id3
         )
 
         override fun seksjon(søknad: Søknad) =
-            listOf(søknad.seksjon("dummy-seksjon", Rolle.søker, *this.databaseIder()))
+            listOf(søknad.seksjon("dummy-seksjon", Rolle.søker, *spørsmålsrekkefølge()))
 
         override fun regeltre(søknad: Søknad): DeltreSubsumsjon =
             "deltre".deltre {
                 søknad.id(id1).utfylt()
             }
+
+        override val spørsmålsrekkefølge: List<Int> = listOf(id1, id2, id3)
     }
 
     @Test

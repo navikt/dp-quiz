@@ -64,7 +64,7 @@ object Barnetillegg : DslFaktaseksjon {
 
     override fun seksjon(søknad: Søknad): List<Seksjon> {
         val barnetilleggRegister = søknad.seksjon("barnetillegg-register", Rolle.nav, *navSpørsmålsrekkefølge)
-        val barnetillegg = søknad.seksjon("barnetillegg", Rolle.søker, *søkerSpørsmålsrekkefølge)
+        val barnetillegg = søknad.seksjon("barnetillegg", Rolle.søker, *spørsmålsrekkefølge())
 
         return listOf(barnetilleggRegister, barnetillegg)
     }
@@ -102,7 +102,7 @@ object Barnetillegg : DslFaktaseksjon {
         land(`barn statsborgerskap`).utfylt()
     )
 
-    private val søkerSpørsmålsrekkefølge = listOf(
+    override val spørsmålsrekkefølge = listOf(
         `forsørger du barnet register`,
         `egne barn`,
         `barn liste`,
@@ -111,7 +111,7 @@ object Barnetillegg : DslFaktaseksjon {
         `barn fødselsdato`,
         `barn statsborgerskap`,
         `forsørger du barnet`
-    ).toIntArray()
+    )
 
     private val navSpørsmålsrekkefølge = listOf(
         `barn liste register`,

@@ -66,7 +66,7 @@ object EgenNæring : DslFaktaseksjon {
 
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("egen-naering", Rolle.søker, *spørsmålsrekkefølge))
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("egen-naering", Rolle.søker, *spørsmålsrekkefølge()))
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "egennæring".deltre {
@@ -136,7 +136,7 @@ object EgenNæring : DslFaktaseksjon {
         tekst(`eget gårdsbruk arbeidstimer beregning`).utfylt()
     )
 
-    val spørsmålsrekkefølge = listOf(
+    override val spørsmålsrekkefølge = listOf(
         `driver du egen næring`,
         `egen næring organisasjonsnummer liste`,
         `egen næring organisasjonsnummer`,
@@ -152,5 +152,5 @@ object EgenNæring : DslFaktaseksjon {
         `eget gårdsbruk arbeidsår for timer`,
         `eget gårdsbruk arbeidstimer år`,
         `eget gårdsbruk arbeidstimer beregning`
-    ).toIntArray()
+    )
 }

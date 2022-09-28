@@ -27,7 +27,7 @@ object Verneplikt : DslFaktaseksjon {
         søknad.seksjon(
             "verneplikt",
             Rolle.søker,
-            *spørsmålsrekkefølge
+            *spørsmålsrekkefølge()
         )
     )
 
@@ -46,9 +46,9 @@ object Verneplikt : DslFaktaseksjon {
         }
     }
 
-    private val spørsmålsrekkefølge = listOf(
+    override val spørsmålsrekkefølge = listOf(
         `avtjent militær sivilforsvar tjeneste siste 12 mnd`,
         `avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon`,
         `avtjent militær sivilforsvar tjeneste siste 12 mnd godkjenning`
-    ).toIntArray()
+    )
 }

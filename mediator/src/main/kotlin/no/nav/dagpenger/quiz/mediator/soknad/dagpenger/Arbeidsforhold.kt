@@ -290,11 +290,11 @@ object Arbeidsforhold : DslFaktaseksjon {
 
         dokument faktum "faktum.dokument-varsel-om-permittering" id `dokumentasjon varsel om permittering`,
         boolsk faktum "faktum.godkjenning-dokument-varsel-om-permittering" id `godkjenning dokumentasjon varsel om permittering`
-            avhengerAv `dokumentasjon varsel om permittering`,
+            avhengerAv `dokumentasjon varsel om permittering`
 
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *spørsmålsrekkefølge))
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *spørsmålsrekkefølge()))
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "arbeidsforhold".deltre {
@@ -644,7 +644,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             }
         )
 
-    private val spørsmålsrekkefølge = listOf(
+    override val spørsmålsrekkefølge = listOf(
         `dagpenger søknadsdato`,
         `type arbeidstid`,
         arbeidsforhold,
@@ -712,5 +712,5 @@ object Arbeidsforhold : DslFaktaseksjon {
         `godkjenning dokumentasjon ny arbeidsavtale`,
         `dokumentasjon varsel om permittering`,
         `godkjenning dokumentasjon varsel om permittering`
-    ).toIntArray()
+    )
 }

@@ -20,6 +20,7 @@ object Hvorfor : DslFaktaseksjon {
     const val `hva sender du oss` = 1002
     const val `dokumentasjon` = 1005
     const val `godkjenning av dokumentasjon` = 1006
+
     override val fakta = listOf(
         envalg faktum "faktum.hvorfor"
             med "svar.klage"
@@ -35,8 +36,7 @@ object Hvorfor : DslFaktaseksjon {
         søknad.seksjon(
             "spørsmål",
             Rolle.søker,
-            `hvorfor vil du sende oss ting`,
-            `hva sender du oss`
+            *spørsmålsrekkefølge()
         ),
         søknad.seksjon(
             "godkjenning",
@@ -54,4 +54,9 @@ object Hvorfor : DslFaktaseksjon {
             }
         }
     }
+
+    override val spørsmålsrekkefølge: List<Int> = listOf(
+        `hvorfor vil du sende oss ting`,
+        `hva sender du oss`
+    )
 }
