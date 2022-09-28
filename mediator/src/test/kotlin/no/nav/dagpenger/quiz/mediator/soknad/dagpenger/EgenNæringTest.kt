@@ -20,11 +20,6 @@ internal class EgenNæringTest {
     private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, versjon = -1), *EgenNæring.fakta())
     private lateinit var søknadprosess: Søknadprosess
 
-    @Test
-    fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        EgenNæring.verifiserFeltsammensetting(15, 45120)
-    }
-
     @BeforeEach
     fun setup() {
         søknadprosess = søknad.testSøknadprosess(
@@ -32,6 +27,11 @@ internal class EgenNæringTest {
         ) {
             EgenNæring.seksjon(this)
         }
+    }
+
+    @Test
+    fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
+        EgenNæring.verifiserFeltsammensetting(15, 45120)
     }
 
     @Test
