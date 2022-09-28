@@ -53,7 +53,7 @@ class DagpengerSkjemastrategi : SkjemakodeStrategi {
             resultat: Boolean?
         ) {
 
-            //TODO: vi vil gjerne identifisere subsumsjoner i stede for å bruke faktaene
+            // TODO: vi vil gjerne identifisere subsumsjoner i stede for å bruke faktaene
             if (!gjenopptak) {
                 val g = fakta.filter { it.id.contains(Gjenopptak.`mottatt dagpenger siste 12 mnd`.toString()) }
                     .filter { it.erBesvart() }
