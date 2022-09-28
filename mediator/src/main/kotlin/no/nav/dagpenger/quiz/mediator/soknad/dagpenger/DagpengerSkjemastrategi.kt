@@ -21,6 +21,7 @@ class DagpengerSkjemastrategi : SkjemakodeStrategi {
     private class DagpengerSkjemakodeFinner(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
 
         private var permittert: Boolean = false
+        private var gjenopptak: Boolean = false
 
         init {
             søknadprosess.accept(this)
@@ -28,8 +29,15 @@ class DagpengerSkjemastrategi : SkjemakodeStrategi {
 
         fun skjemaKode(): Skjemakode {
             return when (permittert) {
-                true -> Skjemakode("Søknad om dagpenger ved permittering", "04-01.04")
-                else -> Skjemakode("Søknad om dagpenger (ikke permittert)", "04-01.03")
+                true -> when (gjenopptak) {
+                    true -> Skjemakode("Søknad om gjenopptak av dagpenger ved permittering", "04-16.04")
+                    else -> Skjemakode("Søknad om dagpenger ved permittering", "04-01.04")
+                }
+
+                else -> when (gjenopptak) {
+                    true -> Skjemakode("Søknad om gjenopptak av dagpenger", "04-16.03")
+                    else -> Skjemakode("Søknad om dagpenger (ikke permittert)", "04-01.03")
+                }
             }
         }
 
@@ -44,6 +52,15 @@ class DagpengerSkjemastrategi : SkjemakodeStrategi {
             lokaltResultat: Boolean?,
             resultat: Boolean?
         ) {
+
+            //TODO: vi vil gjerne identifisere subsumsjoner i stede for å bruke faktaene
+            if (!gjenopptak) {
+                val g = fakta.filter { it.id.contains(Gjenopptak.`mottatt dagpenger siste 12 mnd`.toString()) }
+                    .filter { it.erBesvart() }
+                    .filter { it.svar() == Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja") }
+                gjenopptak = g.isNotEmpty()
+            }
+
             if (!permittert) {
                 val arbeidsforholdFakta = fakta.filter { it.id.contains(Arbeidsforhold.`arbeidsforhold endret`.toString()) }
                     .filter { it.erBesvart() }
