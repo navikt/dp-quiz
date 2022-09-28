@@ -18,12 +18,13 @@ internal class InnsendingSkjemastrategiTest {
     }
 
     @Test
-    fun `Får skjemakode Annet - N6 `() {
+    fun `Får skjemakode Ettersending til søknad `() {
         søknadprosess.envalg(Hvorfor.`hvorfor vil du sende oss ting`).besvar(Envalg("faktum.hvorfor.svar.endring"))
         søknadprosess.tekst(Hvorfor.`hva sender du oss`).besvar(Tekst("En vakker historie om hva jeg vil"))
         with(InnsendingSkjemastrategi().skjemakode(søknadprosess)) {
-            kotlin.test.assertEquals("N6", this.skjemakode)
-            kotlin.test.assertEquals("Annet", this.tittel)
+            // TODO: sjekke om det er ettersendelse eller noe annet
+            kotlin.test.assertEquals("04-01.03", this.skjemakode)
+            kotlin.test.assertEquals("Ettersendelse til søknad om dagpenger ved arbeidsledighet (ikke permittert)", this.tittel)
         }
     }
 }
