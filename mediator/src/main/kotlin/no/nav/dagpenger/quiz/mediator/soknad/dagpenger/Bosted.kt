@@ -4,7 +4,6 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
-import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
@@ -45,7 +44,8 @@ object Bosted : DslFaktaseksjon {
         boolsk faktum "faktum.reist-i-takt-med-rotasjon" id `reist i takt med rotasjon` avhengerAv `reist tilbake en gang i uka eller mer`
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("bostedsland", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
+    override fun seksjon(søknad: Søknad) =
+        listOf(søknad.seksjon("bostedsland", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "bosted".deltre {
@@ -99,44 +99,6 @@ object Bosted : DslFaktaseksjon {
             land(`hvilket land bor du i`).erIkke(`et EØS-land`)
         }.toTypedArray()
     )
-    private fun storbritannia() = listOf(Land("GBR"), Land("JEY"), Land("IMN"))
-
-    private fun norge() = listOf(Land("NOR"), Land("SJM"))
-
-    private fun eøsEllerSveits() = listOf(
-        "BEL",
-        "BGR",
-        "DNK",
-        "EST",
-        "FIN",
-        "FRA",
-        "GRC",
-        "IRL",
-        "ISL",
-        "ITA",
-        "HRV",
-        "CYP",
-        "LVA",
-        "LIE",
-        "LTU",
-        "LUX",
-        "MLT",
-        "NLD",
-        "POL",
-        "PRT",
-        "ROU",
-        "SVK",
-        "SVN",
-        "ESP",
-        "CHE",
-        "SWE",
-        "CZE",
-        "DEU",
-        "HUN",
-        "AUT"
-    ).map { land ->
-        Land(land)
-    }
 
     override val spørsmålsrekkefølgeForSøker = listOf(
         `hvilket land bor du i`,

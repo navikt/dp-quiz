@@ -5,6 +5,8 @@ import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.model.helpers.MedSøknad
+import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eøs arbeidsforhold arbeidsgivernavn`
@@ -13,10 +15,23 @@ import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eøs 
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eøs arbeidsforhold varighet`
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
 internal class EøsArbeidsforholdTest {
+
+    private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, versjon = -1), *EøsArbeidsforhold.fakta())
+    private lateinit var søknadprosess: Søknadprosess
+
+    @BeforeEach
+    fun setup() {
+        søknadprosess = søknad.testSøknadprosess(
+            EøsArbeidsforhold.regeltre(søknad)
+        ) {
+            EøsArbeidsforhold.seksjon(this)
+        }
+    }
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
@@ -25,13 +40,6 @@ internal class EøsArbeidsforholdTest {
 
     @Test
     fun `Har arbeidet innenfor EØS de siste 36 mnd`() {
-        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *EøsArbeidsforhold.fakta())
-        val søknadprosess = søknad.testSøknadprosess(
-            EøsArbeidsforhold.regeltre(søknad)
-        ) {
-            EøsArbeidsforhold.seksjon(this)
-        }
-
         søknadprosess.boolsk(EøsArbeidsforhold.`eøs arbeid siste 36 mnd`).besvar(false)
         assertEquals(true, søknadprosess.resultat())
         søknadprosess.boolsk(EøsArbeidsforhold.`eøs arbeid siste 36 mnd`).besvar(true)
@@ -64,13 +72,35 @@ internal class EøsArbeidsforholdTest {
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *EøsArbeidsforhold.fakta())
-        val søknadprosess = søknad.testSøknadprosess(
-            EøsArbeidsforhold.regeltre(søknad)
-        ) {
-            EøsArbeidsforhold.seksjon(this)
-        }
         val faktaFraEøsArbeidsforhold = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("9001,9002,9003,9004,9005,9006", faktaFraEøsArbeidsforhold)
+    }
+
+    @Test
+    fun `For et EØS-land skal det være en egen gruppe for kun EØS-land`() {
+        søknadprosess.boolsk(EøsArbeidsforhold.`eøs arbeid siste 36 mnd`).besvar(true)
+        søknadprosess.generator(EøsArbeidsforhold.`eøs arbeidsforhold`).besvar(1)
+        søknadprosess.land("$`eøs arbeidsforhold land`.1").besvar(Land("CHE"))
+
+        MedSøknad(søknadprosess) {
+            harAntallSeksjoner(1)
+            seksjon("eos-arbeidsforhold") {
+                fakta(sjekkAlle = false, sjekkRekkefølge = false) {
+                    generator("faktum.eos-arbeidsforhold") {
+                        svar(1) {
+                            land("faktum.eos-arbeidsforhold.land") {
+                                grupper(sjekkAlle = false) {
+                                    gruppe("faktum.eos-arbeidsforhold.land.gruppe.eøs") {
+                                        eøsEllerSveits().forEach { eøsLand ->
+                                            harLand(eøsLand.alpha3Code)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
