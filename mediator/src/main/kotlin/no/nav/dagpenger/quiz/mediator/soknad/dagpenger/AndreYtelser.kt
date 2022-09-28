@@ -82,7 +82,7 @@ object AndreYtelser : DslFaktaseksjon {
         dokument faktum "faktum.dokument-etterlonn" id `dokumentasjon etterlønn`,
         boolsk faktum "faktum.godkjenning-dokument-etterlonn" id `godkjenning dokumentasjon etterlønn` avhengerAv `dokumentasjon etterlønn`,
 
-        land faktum "faktum.dagpenger-hvilket-eos-land-utbetaler" id `dagpenger hvilket eøs land utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
+        land faktum "faktum.dagpenger-hvilket-eos-land-utbetaler" gruppe "eøs" med eøsEllerSveits() id `dagpenger hvilket eøs land utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
         periode faktum "faktum.dagpenger-eos-land-hvilken-periode" id `dagpenger eøs land hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
         dokument faktum "faktum.dokument-dagpenger-eos-land" id `dokumentasjon dagpenger eøs land`,
         boolsk faktum "faktum.godkjenning-dokument-dagpenger-eos-land" id `godkjenning dokumentasjon dagpenger eøs land` avhengerAv `dokumentasjon dagpenger eøs land`,

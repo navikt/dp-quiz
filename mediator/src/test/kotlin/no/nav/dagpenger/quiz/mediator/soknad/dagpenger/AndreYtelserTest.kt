@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.model.helpers.MedSøknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
@@ -162,6 +163,34 @@ internal class AndreYtelserTest {
             "5001,5002,5003,5004,5005,5006,5007,5008,5009,5010,5011,5012,5013,5014,5015,5016,5017,5018,5019,5020,5021,5022,5023,5024,5025,5026,5027,5028,5029",
             faktarekkefølge
         )
+    }
+
+    @Test
+    fun `For et EØS-land skal det være en egen gruppe for kun EØS-land`() {
+        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val søknadprosess = søknad.testSøknadprosess(
+            AndreYtelser.regeltre(søknad)
+        ) {
+            AndreYtelser.seksjon(this)
+        }
+        besvarAlleFaktaForDagpengerFraAnnetEØSLand(søknadprosess)
+
+        MedSøknad(søknadprosess) {
+            harAntallSeksjoner(1)
+            seksjon("andre-ytelser") {
+                fakta(sjekkAlle = false, sjekkRekkefølge = false) {
+                    land("faktum.dagpenger-hvilket-eos-land-utbetaler") {
+                        grupper(sjekkAlle = false) {
+                            gruppe("faktum.dagpenger-hvilket-eos-land-utbetaler.gruppe.eøs") {
+                                eøsEllerSveits().forEach { eøsLand ->
+                                    harLand(eøsLand.alpha3Code)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun verifiserAnnenYtelseUtenØkonomiskGode(kodeForSpesifikkYtelse: (Søknadprosess) -> Unit) {
