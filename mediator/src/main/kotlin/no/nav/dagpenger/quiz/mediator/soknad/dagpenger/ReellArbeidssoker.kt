@@ -312,9 +312,9 @@ object ReellArbeidssoker : DslFaktaseksjon {
         boolsk(`kan bytte yrke eller gå ned i lønn`).utfylt()
 
     override fun seksjon(søknad: Søknad) =
-        listOf(søknad.seksjon("reell-arbeidssoker", Rolle.søker, *spørsmålsrekkefølge()))
+        listOf(søknad.seksjon("reell-arbeidssoker", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
-    override val spørsmålsrekkefølge = listOf(
+    override val spørsmålsrekkefølgeForSøker = listOf(
         `kan jobbe heltid`,
         `årsak til kun deltid`,
         `skriv kort om situasjonen din`,

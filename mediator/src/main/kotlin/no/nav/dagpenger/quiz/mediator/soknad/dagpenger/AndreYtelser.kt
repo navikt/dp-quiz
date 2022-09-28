@@ -100,7 +100,7 @@ object AndreYtelser : DslFaktaseksjon {
         boolsk faktum "faktum.godkjenning-dokument-okonomiske-goder-tidligere-arbeidsgiver" id `godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver` avhengerAv `dokumentasjon økonomiske goder fra tidligere arbeidsgiver`
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("andre-ytelser", Rolle.søker, *spørsmålsrekkefølge()))
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("andre-ytelser", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "andre ytelser".deltre {
             "Har eller har ikke andre ytelser".minstEnAv(
@@ -188,7 +188,7 @@ object AndreYtelser : DslFaktaseksjon {
             )
         }
 
-    override val spørsmålsrekkefølge = listOf(
+    override val spørsmålsrekkefølgeForSøker = listOf(
         `andre ytelser mottatt eller søkt`,
         `hvilke andre ytelser`,
         `tjenestepensjon hvem utbetaler`,

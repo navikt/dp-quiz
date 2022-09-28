@@ -22,7 +22,7 @@ object Tilleggsopplysninger : DslFaktaseksjon {
     )
 
     override fun seksjon(søknad: Søknad) =
-        listOf(søknad.seksjon("tilleggsopplysninger", Rolle.søker, *spørsmålsrekkefølge()))
+        listOf(søknad.seksjon("tilleggsopplysninger", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
     override fun regeltre(søknad: Søknad) = with(søknad) {
         "tilleggsopplysninger".deltre {
@@ -35,7 +35,7 @@ object Tilleggsopplysninger : DslFaktaseksjon {
         }
     }
 
-    override val spørsmålsrekkefølge = listOf(
+    override val spørsmålsrekkefølgeForSøker = listOf(
         `har tilleggsopplysninger`,
         tilleggsopplysninger
     )

@@ -19,7 +19,7 @@ object Gjenopptak : DslFaktaseksjon {
             med "svar.vet-ikke" id `mottatt dagpenger siste 12 mnd`
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("gjenopptak", Rolle.søker, *spørsmålsrekkefølge()))
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("gjenopptak", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "gjenopptak".deltre {
@@ -27,7 +27,7 @@ object Gjenopptak : DslFaktaseksjon {
         }
     }
 
-    override val spørsmålsrekkefølge = listOf(
+    override val spørsmålsrekkefølgeForSøker = listOf(
         `mottatt dagpenger siste 12 mnd`
     )
 }

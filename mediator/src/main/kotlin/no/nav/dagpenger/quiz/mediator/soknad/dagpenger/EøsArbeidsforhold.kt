@@ -61,9 +61,9 @@ object EøsArbeidsforhold : DslFaktaseksjon {
     }
 
     override fun seksjon(søknad: Søknad) =
-        listOf(søknad.seksjon("eos-arbeidsforhold", Rolle.søker, *spørsmålsrekkefølge()))
+        listOf(søknad.seksjon("eos-arbeidsforhold", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
-    override val spørsmålsrekkefølge = listOf(
+    override val spørsmålsrekkefølgeForSøker = listOf(
         `eøs arbeid siste 36 mnd`,
         `eøs arbeidsforhold`,
         `eøs arbeidsforhold arbeidsgivernavn`,

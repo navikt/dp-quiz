@@ -12,8 +12,8 @@ interface DslFaktaseksjon {
     val fakta: List<FaktumFactory<*>>
     fun fakta(): Array<FaktumFactory<*>> = fakta.toTypedArray()
 
-    val spørsmålsrekkefølge: List<Int>
-    fun spørsmålsrekkefølge() = spørsmålsrekkefølge.toIntArray()
+    val spørsmålsrekkefølgeForSøker: List<Int>
+    fun spørsmålsrekkefølgeForSøker() = spørsmålsrekkefølgeForSøker.toIntArray()
 
     fun databaseIder(): IntArray = this::class.declaredMemberProperties
         .filter { felter ->

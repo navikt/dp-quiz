@@ -36,7 +36,7 @@ object Hvorfor : DslFaktaseksjon {
         søknad.seksjon(
             "spørsmål",
             Rolle.søker,
-            *spørsmålsrekkefølge()
+            *spørsmålsrekkefølgeForSøker()
         ),
         søknad.seksjon(
             "godkjenning",
@@ -55,7 +55,7 @@ object Hvorfor : DslFaktaseksjon {
         }
     }
 
-    override val spørsmålsrekkefølge: List<Int> = listOf(
+    override val spørsmålsrekkefølgeForSøker: List<Int> = listOf(
         `hvorfor vil du sende oss ting`,
         `hva sender du oss`
     )

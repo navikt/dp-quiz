@@ -294,7 +294,7 @@ object Arbeidsforhold : DslFaktaseksjon {
 
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *spørsmålsrekkefølge()))
+    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "arbeidsforhold".deltre {
@@ -644,7 +644,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             }
         )
 
-    override val spørsmålsrekkefølge = listOf(
+    override val spørsmålsrekkefølgeForSøker = listOf(
         `dagpenger søknadsdato`,
         `type arbeidstid`,
         arbeidsforhold,
