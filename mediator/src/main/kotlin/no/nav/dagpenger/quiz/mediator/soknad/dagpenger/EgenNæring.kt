@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
@@ -16,8 +17,10 @@ import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
+import no.nav.dagpenger.model.subsumsjon.godkjentAv
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
+import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object EgenNæring : DslFaktaseksjon {
@@ -36,6 +39,9 @@ object EgenNæring : DslFaktaseksjon {
     const val `eget gårdsbruk arbeidstimer år` = 3013
     const val `eget gårdsbruk arbeidsår for timer` = 3014
     const val `eget gårdsbruk arbeidstimer beregning` = 3015
+
+    const val `oversikt over arbeidstimer` = 3016
+    const val `godkjenning av oversikt over arbeidstimer` = 3017
 
     override val fakta = listOf(
         boolsk faktum "faktum.driver-du-egen-naering" id `driver du egen næring`,
@@ -62,24 +68,32 @@ object EgenNæring : DslFaktaseksjon {
         desimaltall faktum "faktum.eget-gaardsbruk-arbeidstimer-aar" id `eget gårdsbruk arbeidstimer år` avhengerAv `driver du eget gårdsbruk`,
         heltall faktum "faktum.eget-gaardsbruk-arbeidsaar-for-timer" id `eget gårdsbruk arbeidsår for timer` avhengerAv `driver du eget gårdsbruk`,
         // @todo: Skal denne være tekst?
-        tekst faktum "faktum.eget-gaardsbruk-arbeidstimer-beregning" id `eget gårdsbruk arbeidstimer beregning` avhengerAv `driver du eget gårdsbruk`
+        tekst faktum "faktum.eget-gaardsbruk-arbeidstimer-beregning" id `eget gårdsbruk arbeidstimer beregning` avhengerAv `driver du eget gårdsbruk`,
+
+        dokument faktum "faktum.dokumentasjon-oversikt-over-arbeidstimer" id `oversikt over arbeidstimer`,
+        boolsk faktum "faktum.godkjenning-dokumentasjon-oversikt-over-arbeidstimer" id `godkjenning av oversikt over arbeidstimer` avhengerAv `oversikt over arbeidstimer`
 
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("egen-naering", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
+    override fun seksjon(søknad: Søknad) =
+        listOf(søknad.seksjon("egen-naering", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "egennæring".deltre {
             "Egen næring".alle(
                 "driver egen næring eller ikke".minstEnAv(
                     boolsk(`driver du egen næring`) er false,
-                    boolsk(`driver du egen næring`) er true hvisOppfylt {
+                    (boolsk(`driver du egen næring`) er true).sannsynliggjøresAv(
+                        dokument(`oversikt over arbeidstimer`)
+                    ).godkjentAv(boolsk(`godkjenning av oversikt over arbeidstimer`)) hvisOppfylt {
                         `næringenes organisasjonsnummer og arbeidstimer`()
                     }
                 ),
                 "driver eget gårdsbruk eller ikke".minstEnAv(
                     boolsk(`driver du eget gårdsbruk`) er false,
-                    boolsk(`driver du eget gårdsbruk`) er true hvisOppfylt {
+                    (boolsk(`driver du eget gårdsbruk`) er true).sannsynliggjøresAv(
+                        dokument(`oversikt over arbeidstimer`)
+                    ).godkjentAv(boolsk(`godkjenning av oversikt over arbeidstimer`)) hvisOppfylt {
                         `organisasjonsnummer, type gårdsbruk og eier`()
                     }
                 )
@@ -151,6 +165,7 @@ object EgenNæring : DslFaktaseksjon {
         `eget gårdsbruk andre andel inntekt`,
         `eget gårdsbruk arbeidsår for timer`,
         `eget gårdsbruk arbeidstimer år`,
-        `eget gårdsbruk arbeidstimer beregning`
+        `eget gårdsbruk arbeidstimer beregning`,
+        `oversikt over arbeidstimer`
     )
 }
