@@ -42,7 +42,7 @@ internal class BarnetilleggTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        Barnetillegg.verifiserFeltsammensetting(13, 13091)
+        Barnetillegg.verifiserFeltsammensetting(15, 15120)
     }
 
     @Test
@@ -103,6 +103,6 @@ internal class BarnetilleggTest {
         søknadprosess.generator(`barn liste register`).besvar(0)
         val faktaForSøker =
             søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
-        assertEquals("1013,1007,1001,1002,1003,1004,1005,1006", faktaForSøker)
+        assertEquals("1013,1007,1001,1002,1003,1004,1005,1006,1014", faktaForSøker)
     }
 }
