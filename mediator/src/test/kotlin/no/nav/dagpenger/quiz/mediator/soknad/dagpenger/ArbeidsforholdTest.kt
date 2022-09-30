@@ -38,7 +38,7 @@ internal class ArbeidsforholdTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        Arbeidsforhold.verifiserFeltsammensetting(66, 530211)
+        Arbeidsforhold.verifiserFeltsammensetting(61, 489891)
     }
 
     @Test
@@ -537,10 +537,5 @@ internal class ArbeidsforholdTest {
 8058,
 8059,
 8060,
-8061,
-8062,
-8063,
-8064,
-8065,
-8066""".trimStart()
+8061""".trimStart()
 }
