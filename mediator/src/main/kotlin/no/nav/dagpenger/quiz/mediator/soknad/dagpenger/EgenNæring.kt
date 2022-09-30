@@ -40,8 +40,9 @@ object EgenNæring : DslFaktaseksjon {
     const val `eget gårdsbruk arbeidsår for timer` = 3014
     const val `eget gårdsbruk arbeidstimer beregning` = 3015
 
-    const val `oversikt over arbeidstimer` = 3016
-    const val `godkjenning av oversikt over arbeidstimer` = 3017
+    const val `egen næring - oversikt over arbeidstimer` = 3016
+    const val `eget gårdsbruk - oversikt over arbeidstimer` = 3017
+    const val `godkjenning av oversikt over arbeidstimer` = 3018
 
     override val fakta = listOf(
         boolsk faktum "faktum.driver-du-egen-naering" id `driver du egen næring`,
@@ -70,8 +71,9 @@ object EgenNæring : DslFaktaseksjon {
         // @todo: Skal denne være tekst?
         tekst faktum "faktum.eget-gaardsbruk-arbeidstimer-beregning" id `eget gårdsbruk arbeidstimer beregning` avhengerAv `driver du eget gårdsbruk`,
 
-        dokument faktum "faktum.dokumentasjon-oversikt-over-arbeidstimer" id `oversikt over arbeidstimer`,
-        boolsk faktum "faktum.godkjenning-dokumentasjon-oversikt-over-arbeidstimer" id `godkjenning av oversikt over arbeidstimer` avhengerAv `oversikt over arbeidstimer`
+        dokument faktum "faktum.egen-naering-dokumentasjon-oversikt-over-arbeidstimer" id `egen næring - oversikt over arbeidstimer`,
+        dokument faktum "faktum.egen-gårdsbruk-dokumentasjon-oversikt-over-arbeidstimer" id `eget gårdsbruk - oversikt over arbeidstimer`,
+        boolsk faktum "faktum.godkjenning-dokumentasjon-oversikt-over-arbeidstimer" id `godkjenning av oversikt over arbeidstimer` avhengerAv `egen næring - oversikt over arbeidstimer` og `eget gårdsbruk - oversikt over arbeidstimer`
 
     )
 
@@ -84,7 +86,7 @@ object EgenNæring : DslFaktaseksjon {
                 "driver egen næring eller ikke".minstEnAv(
                     boolsk(`driver du egen næring`) er false,
                     (boolsk(`driver du egen næring`) er true).sannsynliggjøresAv(
-                        dokument(`oversikt over arbeidstimer`)
+                        dokument(`egen næring - oversikt over arbeidstimer`)
                     ).godkjentAv(boolsk(`godkjenning av oversikt over arbeidstimer`)) hvisOppfylt {
                         `næringenes organisasjonsnummer og arbeidstimer`()
                     }
@@ -92,7 +94,7 @@ object EgenNæring : DslFaktaseksjon {
                 "driver eget gårdsbruk eller ikke".minstEnAv(
                     boolsk(`driver du eget gårdsbruk`) er false,
                     (boolsk(`driver du eget gårdsbruk`) er true).sannsynliggjøresAv(
-                        dokument(`oversikt over arbeidstimer`)
+                        dokument(`eget gårdsbruk - oversikt over arbeidstimer`)
                     ).godkjentAv(boolsk(`godkjenning av oversikt over arbeidstimer`)) hvisOppfylt {
                         `organisasjonsnummer, type gårdsbruk og eier`()
                     }
@@ -166,6 +168,7 @@ object EgenNæring : DslFaktaseksjon {
         `eget gårdsbruk arbeidsår for timer`,
         `eget gårdsbruk arbeidstimer år`,
         `eget gårdsbruk arbeidstimer beregning`,
-        `oversikt over arbeidstimer`
+        `egen næring - oversikt over arbeidstimer`,
+        `eget gårdsbruk - oversikt over arbeidstimer`
     )
 }
