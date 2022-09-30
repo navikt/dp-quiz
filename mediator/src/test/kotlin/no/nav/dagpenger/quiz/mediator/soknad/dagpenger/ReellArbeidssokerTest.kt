@@ -37,7 +37,7 @@ internal class ReellArbeidssokerTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        ReellArbeidssoker.verifiserFeltsammensetting(29, 435)
+        ReellArbeidssoker.verifiserFeltsammensetting(13, 91)
     }
 
     @Test
@@ -210,7 +210,7 @@ internal class ReellArbeidssokerTest {
     @Test
     fun `Faktarekkefølge i seksjon`() {
         val faktaFraReellArbeidssøker = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
-        assertEquals("1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29", faktaFraReellArbeidssøker)
+        assertEquals("1,2,3,4,5,6,7,8,9,10,12", faktaFraReellArbeidssøker)
     }
 
     private fun assertFaktaErBesvart(vararg fakta: Faktum<*>) {

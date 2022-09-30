@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
@@ -16,9 +17,11 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
+import no.nav.dagpenger.model.subsumsjon.godkjentAv
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
+import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Barnetillegg : DslFaktaseksjon {
@@ -35,6 +38,9 @@ object Barnetillegg : DslFaktaseksjon {
     const val `barn fødselsdato register` = 1011
     const val `barn statsborgerskap register` = 1012
     const val `forsørger du barnet register` = 1013
+
+    const val `fødselsattest bostedsbevis for barn under 18år` = 1014
+    const val `godkjenning av fødselsattest bostedsbevis for barn under 18år` = 1015
 
     override val fakta = listOf(
         heltall faktum "faktum.register.barn-liste" id `barn liste register`
@@ -54,12 +60,17 @@ object Barnetillegg : DslFaktaseksjon {
             og `barn etternavn`
             og `barn fødselsdato`
             og `barn statsborgerskap`
-            og `forsørger du barnet`,
+            og `forsørger du barnet`
+            og `fødselsattest bostedsbevis for barn under 18år`,
         tekst faktum "faktum.barn-fornavn-mellomnavn" id `barn fornavn mellomnavn`,
         tekst faktum "faktum.barn-etternavn" id `barn etternavn`,
         dato faktum "faktum.barn-foedselsdato" id `barn fødselsdato`,
         land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap`,
-        boolsk faktum "faktum.forsoerger-du-barnet" id `forsørger du barnet`
+        boolsk faktum "faktum.forsoerger-du-barnet" id `forsørger du barnet`,
+
+        dokument faktum "faktum.dokumentasjon-foedselsattest-bostedsbevis-for-barn-under-18aar" id `fødselsattest bostedsbevis for barn under 18år`,
+        boolsk faktum "faktum.godkjenning-dokumentasjon-foedselsattest-bostedsbevis-for-barn-under-18aar" id `godkjenning av fødselsattest bostedsbevis for barn under 18år`
+            avhengerAv `fødselsattest bostedsbevis for barn under 18år`,
     )
 
     override fun seksjon(søknad: Søknad): List<Seksjon> {
@@ -86,7 +97,12 @@ object Barnetillegg : DslFaktaseksjon {
                             generator(`barn liste`) med "et eller flere barn".deltre {
                                 `barnets navn, fødselsdato og bostedsland`().hvisOppfylt {
                                     boolsk(`forsørger du barnet`).utfylt()
-                                }
+                                }.sannsynliggjøresAv(dokument(`fødselsattest bostedsbevis for barn under 18år`))
+                                    .godkjentAv(
+                                        boolsk(
+                                            `godkjenning av fødselsattest bostedsbevis for barn under 18år`
+                                        )
+                                    )
                             }
                         }
                     )
@@ -110,7 +126,8 @@ object Barnetillegg : DslFaktaseksjon {
         `barn etternavn`,
         `barn fødselsdato`,
         `barn statsborgerskap`,
-        `forsørger du barnet`
+        `forsørger du barnet`,
+        `fødselsattest bostedsbevis for barn under 18år`
     )
 
     private val navSpørsmålsrekkefølge = listOf(

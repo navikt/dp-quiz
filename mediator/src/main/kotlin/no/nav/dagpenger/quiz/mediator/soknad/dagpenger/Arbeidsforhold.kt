@@ -84,18 +84,14 @@ object Arbeidsforhold : DslFaktaseksjon {
     const val `gjenopptak ønsker ny beregning av dagpenger` = 8053
     const val `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid` = 8054
 
-    const val `dokumentasjon arbeidsavtale` = 8055
-    const val `godkjenning dokumentasjon arbeidsavtale` = 8056
-    const val `dokumentasjon helt eller delvis avsluttet arbeidsforhold` = 8057
-    const val `godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold` = 8058
-    const val `dokumentasjon timeliste for rotasjon` = 8059
-    const val `godkjenning dokumentasjon timeliste for rotasjon` = 8060
-    const val `dokumentasjon brev fra bobestyrer eller konkursforvalter` = 8061
-    const val `godkjenning dokumentasjon brev fra bobestyrer eller konkursforvalter` = 8062
-    const val `dokumentasjon ny arbeidsavtale` = 8063
-    const val `godkjenning dokumentasjon ny arbeidsavtale` = 8064
-    const val `dokumentasjon varsel om permittering` = 8065
-    const val `godkjenning dokumentasjon varsel om permittering` = 8066
+    const val arbeidsavtale = 8055
+    const val `dokumentasjon av arbeidsforhold` = 8056
+    const val timelister = 8057
+    const val `brev fra bobestyrer eller konkursforvalter` = 8058
+    const val `ny arbeidsavtale` = 8059
+    const val permitteringsvarsel = 8060
+
+    const val `godkjenning av arbeidsforhold-dokumentasjon` = 8061
 
     override val fakta = listOf(
         dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger søknadsdato`,
@@ -248,7 +244,13 @@ object Arbeidsforhold : DslFaktaseksjon {
             og `arbeidsforhold skift eller turnus`
             og `arbeidsforhold rotasjon`
             og `arbeidsforhold arbeidsdager siste rotasjon`
-            og `arbeidsforhold fridager siste rotasjon`,
+            og `arbeidsforhold fridager siste rotasjon`
+            og arbeidsavtale
+            og `dokumentasjon av arbeidsforhold`
+            og `brev fra bobestyrer eller konkursforvalter`
+            og permitteringsvarsel
+            og timelister
+            og `ny arbeidsavtale`,
         tekst faktum "faktum.arbeidsforhold.navn-bedrift" id `arbeidsforhold navn bedrift`,
         land faktum "faktum.arbeidsforhold.land" id `arbeidsforhold land`,
         envalg faktum "faktum.arbeidsforhold.endret"
@@ -267,34 +269,29 @@ object Arbeidsforhold : DslFaktaseksjon {
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-ny-beregning" id `gjenopptak ønsker ny beregning av dagpenger`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid" id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
 
-        dokument faktum "faktum.dokument-arbeidsavtale" id `dokumentasjon arbeidsavtale`,
-        boolsk faktum "faktum.godkjenning-dokument-arbeidsavtale" id `godkjenning dokumentasjon arbeidsavtale`
-            avhengerAv `dokumentasjon arbeidsavtale`,
+        dokument faktum "faktum.dokument-arbeidsavtale" id arbeidsavtale,
 
-        dokument faktum "faktum.dokument-helt-eller-delvis-avsluttet-arbeidsforhold" id `dokumentasjon helt eller delvis avsluttet arbeidsforhold`,
-        boolsk faktum "faktum.godkjenning-dokument-helt-eller-delvis-avsluttet-arbeidsforhold"
-            id `godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold`
-            avhengerAv `dokumentasjon helt eller delvis avsluttet arbeidsforhold`,
+        dokument faktum "faktum.dokument-dokumentasjon-av-arbeidsforhold" id `dokumentasjon av arbeidsforhold`,
 
-        dokument faktum "faktum.dokument-timeliste-for-rotasjon" id `dokumentasjon timeliste for rotasjon`,
-        boolsk faktum "faktum.godkjenning.dokument-timeliste-for-rotasjon" id `godkjenning dokumentasjon timeliste for rotasjon`
-            avhengerAv `dokumentasjon timeliste for rotasjon`,
+        dokument faktum "faktum.dokument-timelister" id timelister,
 
-        dokument faktum "faktum.dokument-brev-fra-bobestyrer-eller-konkursforvalter" id `dokumentasjon brev fra bobestyrer eller konkursforvalter`,
-        boolsk faktum "faktum.godkjenning-dokument-brev-fra-bobestyrer-eller-konkursforvalter" id `godkjenning dokumentasjon brev fra bobestyrer eller konkursforvalter`
-            avhengerAv `dokumentasjon brev fra bobestyrer eller konkursforvalter`,
+        dokument faktum "faktum.dokument-brev-fra-bobestyrer-eller-konkursforvalter" id `brev fra bobestyrer eller konkursforvalter`,
 
-        dokument faktum "faktum.dokument-ny-arbeidsavtale" id `dokumentasjon ny arbeidsavtale`,
-        boolsk faktum "faktum.godkjenning-dokument-ny-arbeidsavtale" id `godkjenning dokumentasjon ny arbeidsavtale`
-            avhengerAv `dokumentasjon ny arbeidsavtale`,
+        dokument faktum "faktum.dokument-ny-arbeidsavtale" id `ny arbeidsavtale`,
 
-        dokument faktum "faktum.dokument-varsel-om-permittering" id `dokumentasjon varsel om permittering`,
-        boolsk faktum "faktum.godkjenning-dokument-varsel-om-permittering" id `godkjenning dokumentasjon varsel om permittering`
-            avhengerAv `dokumentasjon varsel om permittering`
+        dokument faktum "faktum.dokument-permitteringsvarsel" id permitteringsvarsel,
 
+        boolsk faktum "faktum.godkjenning-arbeidsforhold-dokumentasjon" id `godkjenning av arbeidsforhold-dokumentasjon`
+            avhengerAv permitteringsvarsel
+            og `ny arbeidsavtale`
+            og arbeidsavtale
+            og `dokumentasjon av arbeidsforhold`
+            og timelister
+            og `brev fra bobestyrer eller konkursforvalter`,
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
+    override fun seksjon(søknad: Søknad) =
+        listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "arbeidsforhold".deltre {
@@ -393,11 +390,10 @@ object Arbeidsforhold : DslFaktaseksjon {
     private fun Søknad.avskjediget() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.avskjediget"))
             .sannsynliggjøresAv(
-                dokument(`dokumentasjon arbeidsavtale`),
-                dokument(`dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+                dokument(`arbeidsavtale`),
+                dokument(`dokumentasjon av arbeidsforhold`)
             ).godkjentAv(
-                boolsk(`godkjenning dokumentasjon arbeidsavtale`),
-                boolsk(`godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `arbeidstimer før mistet jobb`(),
@@ -419,11 +415,10 @@ object Arbeidsforhold : DslFaktaseksjon {
     private fun Søknad.`sagt opp av arbeidsgiver`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
             .sannsynliggjøresAv(
-                dokument(`dokumentasjon arbeidsavtale`),
-                dokument(`dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+                dokument(arbeidsavtale),
+                dokument(`dokumentasjon av arbeidsforhold`)
             ).godkjentAv(
-                boolsk(`godkjenning dokumentasjon arbeidsavtale`),
-                boolsk(`godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
@@ -446,9 +441,9 @@ object Arbeidsforhold : DslFaktaseksjon {
             "rotasjon eller ikke".minstEnAv(
                 boolsk(`arbeidsforhold rotasjon`) er false,
                 (boolsk(`arbeidsforhold rotasjon`) er true)
-                    .sannsynliggjøresAv(dokument(`dokumentasjon timeliste for rotasjon`))
+                    .sannsynliggjøresAv(dokument(`timelister`))
                     .godkjentAv(
-                        boolsk(`godkjenning dokumentasjon timeliste for rotasjon`)
+                        boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
                     ) hvisOppfylt {
                     "oppfølgingsspørsmål om rotasjonen".alle(
                         heltall(`arbeidsforhold arbeidsdager siste rotasjon`).utfylt(),
@@ -461,11 +456,10 @@ object Arbeidsforhold : DslFaktaseksjon {
     private fun Søknad.`arbeidsgiver er konkurs`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs"))
             .sannsynliggjøresAv(
-                dokument(`dokumentasjon arbeidsavtale`),
-                dokument(`dokumentasjon brev fra bobestyrer eller konkursforvalter`)
+                dokument(`arbeidsavtale`),
+                dokument(`brev fra bobestyrer eller konkursforvalter`)
             ).godkjentAv(
-                boolsk(`godkjenning dokumentasjon arbeidsavtale`),
-                boolsk(`godkjenning dokumentasjon brev fra bobestyrer eller konkursforvalter`)
+                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
@@ -508,9 +502,9 @@ object Arbeidsforhold : DslFaktaseksjon {
 
     private fun Søknad.`kontrakten er utgått`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt"))
-            .sannsynliggjøresAv(dokument(`dokumentasjon arbeidsavtale`))
+            .sannsynliggjøresAv(dokument(`arbeidsavtale`))
             .godkjentAv(
-                boolsk(`godkjenning dokumentasjon arbeidsavtale`)
+                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
@@ -534,12 +528,12 @@ object Arbeidsforhold : DslFaktaseksjon {
             boolsk(`arbeidsforhold tilbud om forlengelse eller annen stilling`) er true hvisOppfylt {
                 "svar på tilbud om forlengelse eller annen stilling".minstEnAv(
                     (envalg(`arbeidsforhold svar på forlengelse eller annen stilling`) inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ja"))
-                        .sannsynliggjøresAv(dokument(`dokumentasjon ny arbeidsavtale`))
-                        .godkjentAv(boolsk(`godkjenning dokumentasjon ny arbeidsavtale`)),
+                        .sannsynliggjøresAv(dokument(`ny arbeidsavtale`))
+                        .godkjentAv(boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)),
                     (envalg(`arbeidsforhold svar på forlengelse eller annen stilling`) inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei"))
-                        .sannsynliggjøresAv(dokument(`dokumentasjon helt eller delvis avsluttet arbeidsforhold`))
+                        .sannsynliggjøresAv(dokument(`dokumentasjon av arbeidsforhold`))
                         .godkjentAv(
-                            boolsk(`godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+                            boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
                         ) hvisOppfylt {
                         tekst(`arbeidsforhold årsak til ikke akseptert tilbud`).utfylt()
                     },
@@ -551,12 +545,11 @@ object Arbeidsforhold : DslFaktaseksjon {
     private fun Søknad.`sagt opp selv`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv"))
             .sannsynliggjøresAv(
-                dokument(`dokumentasjon arbeidsavtale`),
-                dokument(`dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+                dokument(`arbeidsavtale`),
+                dokument(`dokumentasjon av arbeidsforhold`)
             )
             .godkjentAv(
-                boolsk(`godkjenning dokumentasjon arbeidsavtale`),
-                boolsk(`godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
@@ -577,12 +570,11 @@ object Arbeidsforhold : DslFaktaseksjon {
     private fun Søknad.`redusert arbeidstid`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid"))
             .sannsynliggjøresAv(
-                dokument(`dokumentasjon arbeidsavtale`),
-                dokument(`dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+                dokument(`arbeidsavtale`),
+                dokument(`dokumentasjon av arbeidsforhold`)
             )
             .godkjentAv(
-                boolsk(`godkjenning dokumentasjon arbeidsavtale`),
-                boolsk(`godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold`)
+                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 dato(`arbeidsforhold startdato arbeidsforhold`).utfylt(),
@@ -604,9 +596,9 @@ object Arbeidsforhold : DslFaktaseksjon {
 
     private fun Søknad.permittert() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
-            .sannsynliggjøresAv(dokument(`dokumentasjon varsel om permittering`))
+            .sannsynliggjøresAv(dokument(`permitteringsvarsel`))
             .godkjentAv(
-                boolsk(`godkjenning dokumentasjon varsel om permittering`)
+                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `midlertidig arbeidsforhold med sluttdato`(),
@@ -700,17 +692,12 @@ object Arbeidsforhold : DslFaktaseksjon {
         `gjenopptak ønsker ny beregning av dagpenger`,
         `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
 
-        `dokumentasjon arbeidsavtale`,
-        `godkjenning dokumentasjon arbeidsavtale`,
-        `dokumentasjon helt eller delvis avsluttet arbeidsforhold`,
-        `godkjenning dokumentasjon helt eller delvis avsluttet arbeidsforhold`,
-        `dokumentasjon timeliste for rotasjon`,
-        `godkjenning dokumentasjon timeliste for rotasjon`,
-        `dokumentasjon brev fra bobestyrer eller konkursforvalter`,
-        `godkjenning dokumentasjon brev fra bobestyrer eller konkursforvalter`,
-        `dokumentasjon ny arbeidsavtale`,
-        `godkjenning dokumentasjon ny arbeidsavtale`,
-        `dokumentasjon varsel om permittering`,
-        `godkjenning dokumentasjon varsel om permittering`
+        arbeidsavtale,
+        `dokumentasjon av arbeidsforhold`,
+        timelister,
+        `brev fra bobestyrer eller konkursforvalter`,
+        `ny arbeidsavtale`,
+        permitteringsvarsel,
+        `godkjenning av arbeidsforhold-dokumentasjon`
     )
 }
