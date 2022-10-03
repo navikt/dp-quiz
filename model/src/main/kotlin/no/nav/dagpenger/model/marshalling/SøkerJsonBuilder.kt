@@ -325,7 +325,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
                 .fold(mapper.createArrayNode()) { acc, template ->
                     acc.add(SøknadFaktumVisitor(template, readOnlyStrategy = readOnlyStrategy).root)
                 }
-            this.root.set<ArrayNode>("sannsynliggjøresAv", sannsynliggjøringerAsJson)
+            this.root.set<ArrayNode>("sannsynliggjoresAv", sannsynliggjøringerAsJson)
             this.root.put("readOnly", readOnlyStrategy.readOnly(faktum))
         }
     }
