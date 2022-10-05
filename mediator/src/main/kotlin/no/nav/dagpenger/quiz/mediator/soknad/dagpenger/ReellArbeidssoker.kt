@@ -34,10 +34,10 @@ object ReellArbeidssoker : DslFaktaseksjon {
     const val `kan bytte yrke eller gå ned i lønn` = 9
 
     const val `bekreftelse fra lege eller annen behandler` = 10
-    const val `godkjenning av bekreftelse fra lege eller annen behandler` = 11
-
-    const val `bekreftelse fra relevant fagpersonell` = 12
-    const val `godkjenning av bekreftelse fra relevant fagpersonell` = 13
+    const val `fulltid - bekreftelse fra relevant fagpersonell` = 11
+    const val `hele-norge-bekreftelse fra relevant fagpersonell` = 12
+    const val `alle-typer-bekreftelse fra relevant fagpersonell` = 13
+    const val `godkjenning av bekreftelse` = 14
 
     override val fakta = listOf(
         boolsk faktum "faktum.jobbe-hel-deltid" id `kan jobbe heltid`,
@@ -66,16 +66,17 @@ object ReellArbeidssoker : DslFaktaseksjon {
         boolsk faktum "faktum.alle-typer-arbeid" id `kan ta alle typer arbeid`,
         boolsk faktum "faktum.bytte-yrke-ned-i-lonn" id `kan bytte yrke eller gå ned i lønn`,
 
-        dokument faktum "faktum.dokumentasjon-bekreftelse-fra-lege-eller-annen-behandler" id `bekreftelse fra lege eller annen behandler`,
-        boolsk faktum "faktum.godkjenning-dokumentasjon-bekreftelse-fra-lege-eller-annen-behandler"
-            id `godkjenning av bekreftelse fra lege eller annen behandler`
-            avhengerAv `bekreftelse fra lege eller annen behandler`,
+        dokument faktum "faktum.dokument-bekreftelse-fra-lege-eller-annen-behandler" id `bekreftelse fra lege eller annen behandler`,
 
-        dokument faktum "faktum.dokumentasjon-bekreftelse-fra-relevant-fagpersonell" id `bekreftelse fra relevant fagpersonell`,
-        boolsk faktum "faktum.godkjenning-dokumentasjon-bekreftelse-fra-relevant-fagpersonell"
-            id `godkjenning av bekreftelse fra relevant fagpersonell`
-            avhengerAv `bekreftelse fra relevant fagpersonell`,
+        dokument faktum "faktum.dokument-fulltid-bekreftelse-fra-relevant-fagpersonell" id `fulltid - bekreftelse fra relevant fagpersonell`,
+        dokument faktum "faktum.dokument-hele-norge-bekreftelse-fra-relevant-fagpersonell" id `hele-norge-bekreftelse fra relevant fagpersonell`,
+        dokument faktum "faktum.dokument-alle-typer-bekreftelse-fra-relevant-fagpersonell" id `alle-typer-bekreftelse fra relevant fagpersonell`,
 
+        boolsk faktum "faktum.godkjenning-dokumentasjon-bekreftelse-fra-relevant-fagpersonell" id `godkjenning av bekreftelse`
+            avhengerAv `bekreftelse fra lege eller annen behandler`
+            og `fulltid - bekreftelse fra relevant fagpersonell`
+            og `hele-norge-bekreftelse fra relevant fagpersonell`
+            og `alle-typer-bekreftelse fra relevant fagpersonell`
     )
 
     // https://lovdata.no/lov/1997-02-28-19/§4-5
@@ -121,8 +122,8 @@ object ReellArbeidssoker : DslFaktaseksjon {
 
     private fun Søknad.`årsak bare deltid - redusert helse`() =
         (flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.redusert-helse"))
-            .sannsynliggjøresAv(dokument(`bekreftelse fra relevant fagpersonell`))
-            .godkjentAv(boolsk(`godkjenning av bekreftelse fra relevant fagpersonell`))
+            .sannsynliggjøresAv(dokument(`fulltid - bekreftelse fra relevant fagpersonell`))
+            .godkjentAv(boolsk(`godkjenning av bekreftelse`))
 
     private fun Søknad.`årsak bare deltid - omsorg for barn under ett år`() =
         flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-baby")
@@ -134,12 +135,12 @@ object ReellArbeidssoker : DslFaktaseksjon {
         (flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-barn-spesielle-behov"))
             .sannsynliggjøresAv(
                 dokument(
-                    `bekreftelse fra relevant fagpersonell`
+                    `fulltid - bekreftelse fra relevant fagpersonell`
                 )
             )
             .godkjentAv(
                 boolsk(
-                    `godkjenning av bekreftelse fra relevant fagpersonell`
+                    `godkjenning av bekreftelse`
                 )
             )
 
@@ -147,12 +148,12 @@ object ReellArbeidssoker : DslFaktaseksjon {
         (flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.skift-turnus"))
             .sannsynliggjøresAv(
                 dokument(
-                    `bekreftelse fra relevant fagpersonell`
+                    `fulltid - bekreftelse fra relevant fagpersonell`
                 )
             )
             .godkjentAv(
                 boolsk(
-                    `godkjenning av bekreftelse fra relevant fagpersonell`
+                    `godkjenning av bekreftelse`
                 )
             )
 
@@ -161,8 +162,8 @@ object ReellArbeidssoker : DslFaktaseksjon {
 
     private fun Søknad.`årsak bare deltid - annen situasjon`() =
         (flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon"))
-            .sannsynliggjøresAv(dokument(`bekreftelse fra relevant fagpersonell`))
-            .godkjentAv(boolsk(`godkjenning av bekreftelse fra relevant fagpersonell`)) hvisOppfylt {
+            .sannsynliggjøresAv(dokument(`fulltid - bekreftelse fra relevant fagpersonell`))
+            .godkjentAv(boolsk(`godkjenning av bekreftelse`)) hvisOppfylt {
             tekst(`skriv kort om situasjonen din`).utfylt()
         }
 
@@ -196,7 +197,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
     private fun Søknad.`årsak ikke jobbe i hele Norge - redusert helse`() =
         (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse"))
             .sannsynliggjøresAv(dokument(`bekreftelse fra lege eller annen behandler`))
-            .godkjentAv(boolsk(`godkjenning av bekreftelse fra lege eller annen behandler`))
+            .godkjentAv(boolsk(`godkjenning av bekreftelse`))
 
     private fun Søknad.`årsak ikke jobbe i hele Norge - omsorg for barn under ett år`() =
         flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-baby")
@@ -208,12 +209,12 @@ object ReellArbeidssoker : DslFaktaseksjon {
         (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-barn-spesielle-behov"))
             .sannsynliggjøresAv(
                 dokument(
-                    `bekreftelse fra relevant fagpersonell`
+                    `hele-norge-bekreftelse fra relevant fagpersonell`
                 )
             )
             .godkjentAv(
                 boolsk(
-                    `godkjenning av bekreftelse fra relevant fagpersonell`
+                    `godkjenning av bekreftelse`
                 )
             )
 
@@ -221,12 +222,12 @@ object ReellArbeidssoker : DslFaktaseksjon {
         (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.skift-turnus"))
             .sannsynliggjøresAv(
                 dokument(
-                    `bekreftelse fra relevant fagpersonell`
+                    `hele-norge-bekreftelse fra relevant fagpersonell`
                 )
             )
             .godkjentAv(
                 boolsk(
-                    `godkjenning av bekreftelse fra relevant fagpersonell`
+                    `godkjenning av bekreftelse`
                 )
             )
 
@@ -235,16 +236,16 @@ object ReellArbeidssoker : DslFaktaseksjon {
 
     private fun Søknad.`årsak ikke jobbe i hele Norge - annen situasjon`() =
         (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.annen-situasjon"))
-            .sannsynliggjøresAv(dokument(`bekreftelse fra relevant fagpersonell`))
-            .godkjentAv(boolsk(`godkjenning av bekreftelse fra relevant fagpersonell`)) hvisOppfylt {
+            .sannsynliggjøresAv(dokument(`hele-norge-bekreftelse fra relevant fagpersonell`))
+            .godkjentAv(boolsk(`godkjenning av bekreftelse`)) hvisOppfylt {
             tekst(`kort om hvorfor ikke jobbe hele norge`).utfylt()
         }
 
     private fun Søknad.`kan ta alle typer arbeid`() =
         "Kan ta alle typer arbeid eller ikke".minstEnAv(
             (boolsk(`kan ta alle typer arbeid`) er false)
-                .sannsynliggjøresAv(dokument(`bekreftelse fra relevant fagpersonell`))
-                .godkjentAv(boolsk(`godkjenning av bekreftelse fra relevant fagpersonell`)),
+                .sannsynliggjøresAv(dokument(`alle-typer-bekreftelse fra relevant fagpersonell`))
+                .godkjentAv(boolsk(`godkjenning av bekreftelse`)),
             boolsk(`kan ta alle typer arbeid`) er true
         )
 
@@ -265,6 +266,8 @@ object ReellArbeidssoker : DslFaktaseksjon {
         `kan ta alle typer arbeid`,
         `kan bytte yrke eller gå ned i lønn`,
         `bekreftelse fra lege eller annen behandler`,
-        `bekreftelse fra relevant fagpersonell`
+        `fulltid - bekreftelse fra relevant fagpersonell`,
+        `hele-norge-bekreftelse fra relevant fagpersonell`,
+        `alle-typer-bekreftelse fra relevant fagpersonell`,
     )
 }

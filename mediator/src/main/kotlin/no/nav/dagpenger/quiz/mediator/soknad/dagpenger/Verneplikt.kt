@@ -19,7 +19,7 @@ object Verneplikt : DslFaktaseksjon {
     const val `avtjent militær sivilforsvar tjeneste siste 12 mnd godkjenning` = 7003
     override val fakta = listOf(
         boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd" id `avtjent militær sivilforsvar tjeneste siste 12 mnd`,
-        dokument faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-dokumentasjon" id `avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon`,
+        dokument faktum "faktum.dokument-avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-dokumentasjon" id `avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon`,
         boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-godkjenning" id `avtjent militær sivilforsvar tjeneste siste 12 mnd godkjenning` avhengerAv `avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon`
     )
 

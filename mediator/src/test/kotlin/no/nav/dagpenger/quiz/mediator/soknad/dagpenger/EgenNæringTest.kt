@@ -31,7 +31,7 @@ internal class EgenNæringTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        EgenNæring.verifiserFeltsammensetting(17, 51153)
+        EgenNæring.verifiserFeltsammensetting(15, 45120)
     }
 
     @Test
@@ -128,7 +128,7 @@ internal class EgenNæringTest {
     @Test
     fun `Faktarekkefølge i seksjon`() {
         val faktaFraEgenNæring = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
-        assertEquals("3001,3002,3003,3005,3004,3006,3007,3008,3009,3010,3011,3012,3014,3013,3015,3016", faktaFraEgenNæring)
+        assertEquals("3001,3002,3003,3005,3004,3006,3007,3008,3009,3010,3011,3012,3014,3013,3015", faktaFraEgenNæring)
     }
 
     @Test
