@@ -66,11 +66,11 @@ object ReellArbeidssoker : DslFaktaseksjon {
         boolsk faktum "faktum.alle-typer-arbeid" id `kan ta alle typer arbeid`,
         boolsk faktum "faktum.bytte-yrke-ned-i-lonn" id `kan bytte yrke eller gå ned i lønn`,
 
-        dokument faktum "faktum.dokumentasjon-bekreftelse-fra-lege-eller-annen-behandler" id `bekreftelse fra lege eller annen behandler`,
+        dokument faktum "faktum.dokument-bekreftelse-fra-lege-eller-annen-behandler" id `bekreftelse fra lege eller annen behandler`,
 
-        dokument faktum "faktum.dokumentasjon-fulltid-bekreftelse-fra-relevant-fagpersonell" id `fulltid - bekreftelse fra relevant fagpersonell`,
-        dokument faktum "faktum.dokumentasjon-hele-norge-bekreftelse-fra-relevant-fagpersonell" id `hele-norge-bekreftelse fra relevant fagpersonell`,
-        dokument faktum "faktum.dokumentasjon-alle-typer-bekreftelse-fra-relevant-fagpersonell" id `alle-typer-bekreftelse fra relevant fagpersonell`,
+        dokument faktum "faktum.dokument-fulltid-bekreftelse-fra-relevant-fagpersonell" id `fulltid - bekreftelse fra relevant fagpersonell`,
+        dokument faktum "faktum.dokument-hele-norge-bekreftelse-fra-relevant-fagpersonell" id `hele-norge-bekreftelse fra relevant fagpersonell`,
+        dokument faktum "faktum.dokument-alle-typer-bekreftelse-fra-relevant-fagpersonell" id `alle-typer-bekreftelse fra relevant fagpersonell`,
 
         boolsk faktum "faktum.godkjenning-dokumentasjon-bekreftelse-fra-relevant-fagpersonell" id `godkjenning av bekreftelse`
             avhengerAv `bekreftelse fra lege eller annen behandler`
