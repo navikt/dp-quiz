@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation(Jackson.kotlin)
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.10")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.20")
     implementation("com.github.navikt:pam-geography:2.15")
 
     implementation("guru.nidi:graphviz-java:0.18.1")
