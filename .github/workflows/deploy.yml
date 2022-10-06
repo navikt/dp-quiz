@@ -27,7 +27,7 @@ jobs:
       - name: Publish results (unit test)
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          files: "**/build/test-results/test/TEST-*.xml"
+          junit_files: "**/build/test-results/test/TEST-*.xml"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
