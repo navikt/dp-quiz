@@ -12,7 +12,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending.Subsumsjoner.
 
 internal object Innsending {
     private val logger = KotlinLogging.logger { }
-    val VERSJON_ID = Prosessversjon(Prosess.Innsending, 3)
+    val VERSJON_ID = Prosessversjon(Prosess.Innsending, 4)
 
     fun registrer(registrer: (prototype: Søknad) -> Unit) {
         registrer(prototypeSøknad)
