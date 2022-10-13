@@ -30,11 +30,9 @@ internal class FaktumSvarService(
     private val resultatPersistence: ResultatPersistence,
     rapidsConnection: RapidsConnection
 ) : River.PacketListener {
-
     private companion object {
         private val log = KotlinLogging.logger {}
         private val sikkerlogg = KotlinLogging.logger("tjenestekall")
-
         private val ignorerSøknadUUID =
             setOf("e08c32fd-3941-4d10-b81d-425f67c23598").map {
                 UUID.fromString(it)
@@ -43,7 +41,6 @@ internal class FaktumSvarService(
 
     init {
         River(rapidsConnection).apply {
-
             validate { message ->
                 message.demandValue("@event_name", "faktum_svar")
                 message.requireKey(
@@ -80,13 +77,12 @@ internal class FaktumSvarService(
             ) {
                 log.info { "Mottok ny(e) fakta (${fakta.joinToString(",") { it["id"].asText() }}) for $søknadUuid" }
                 sikkerlogg.info { "Mottok ny(e) fakta: ${packet.toJson()}" }
-
                 val søknadprosess = søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web)
                 besvarFakta(fakta, søknadprosess)
-
                 val prosessnavn = ProsessVersjonVisitor(søknadprosess).prosessnavn
                 if (søknadprosess.erFerdig()) {
-                    if (prosessnavn == Prosess.Dagpenger) {
+                    // TODO: Lag en bedre måte å håndtere disse prosessene
+                    if (prosessnavn == Prosess.Dagpenger || prosessnavn == Prosess.Innsending) {
                         SøkerJsonBuilder(søknadprosess).resultat().also { json ->
                             val message = json.toString().let { JsonMessage(it, MessageProblems(it)) }
                             context.publish(message.toJson())
@@ -173,7 +169,6 @@ internal class FaktumSvarService(
     private fun harSvar() = { faktumNode: JsonNode -> faktumNode.has("svar") }
 
     private class ProsessVersjonVisitor(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
-
         lateinit var prosessnavn: Prosessnavn
 
         init {
