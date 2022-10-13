@@ -30,7 +30,7 @@ class InnsendingflytTest {
         assertTrue(
             søknadprosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig for søker. Mangler svar på ${
-                søknadprosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
+            søknadprosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
             }"
         )
     }
@@ -47,7 +47,7 @@ class InnsendingflytTest {
         assertTrue(
             søknadprosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig for søker. Mangler svar på ${
-                søknadprosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
+            søknadprosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
             }"
         )
     }
