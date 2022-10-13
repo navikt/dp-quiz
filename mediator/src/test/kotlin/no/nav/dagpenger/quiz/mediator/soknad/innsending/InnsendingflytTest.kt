@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -30,7 +31,17 @@ class InnsendingflytTest {
         assertTrue(
             søknadprosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig for søker. Mangler svar på ${
-                søknadprosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
+            søknadprosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
+            }"
+        )
+
+        assertFalse(søknadprosess.erFerdig())
+        søknadprosess.boolsk(Hvorfor.`godkjenning av dokumentasjon`).besvar(true)
+
+        assertTrue(
+            søknadprosess.erFerdig(),
+            "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
+            søknadprosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
             }"
         )
     }
@@ -47,7 +58,17 @@ class InnsendingflytTest {
         assertTrue(
             søknadprosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig for søker. Mangler svar på ${
-                søknadprosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
+            søknadprosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
+            }"
+        )
+
+        assertFalse(søknadprosess.erFerdig())
+        søknadprosess.boolsk(Hvorfor.`godkjenning av dokumentasjon`).besvar(true)
+
+        assertTrue(
+            søknadprosess.erFerdig(),
+            "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
+            søknadprosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
             }"
         )
     }
