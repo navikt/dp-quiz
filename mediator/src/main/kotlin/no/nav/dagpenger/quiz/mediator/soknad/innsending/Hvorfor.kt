@@ -20,7 +20,6 @@ object Hvorfor : DslFaktaseksjon {
     const val `hva sender du oss` = 1002
     const val `dokumentasjon` = 1005
     const val `godkjenning av dokumentasjon` = 1006
-
     override val fakta = listOf(
         envalg faktum "faktum.hvorfor"
             med "svar.klage"
@@ -37,18 +36,13 @@ object Hvorfor : DslFaktaseksjon {
             "spørsmål",
             Rolle.søker,
             *spørsmålsrekkefølgeForSøker()
-        ),
-        søknad.seksjon(
-            "godkjenning",
-            Rolle.saksbehandler,
-            `godkjenning av dokumentasjon`
         )
     )
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "spørsmål".deltre {
             envalg(`hvorfor vil du sende oss ting`).utfylt().hvisOppfylt {
-                tekst(`hva sender du oss`).utfylt().sannsynliggjøresAv(
+                (tekst(`hva sender du oss`).utfylt()).sannsynliggjøresAv(
                     dokument(`dokumentasjon`)
                 ).godkjentAv(boolsk(`godkjenning av dokumentasjon`))
             }
