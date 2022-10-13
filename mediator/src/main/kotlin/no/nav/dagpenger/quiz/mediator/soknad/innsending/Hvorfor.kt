@@ -57,6 +57,7 @@ object Hvorfor : DslFaktaseksjon {
 
     override val spørsmålsrekkefølgeForSøker: List<Int> = listOf(
         `hvorfor vil du sende oss ting`,
-        `hva sender du oss`
+        `hva sender du oss`,
+        `dokumentasjon`
     )
 }
