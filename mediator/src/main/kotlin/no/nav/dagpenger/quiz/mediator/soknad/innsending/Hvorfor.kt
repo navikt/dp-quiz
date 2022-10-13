@@ -28,7 +28,8 @@ object Hvorfor : DslFaktaseksjon {
             med "svar.endring"
             med "svar.vet-ikke" id `hvorfor vil du sende oss ting`,
         tekst faktum "faktum.hva" id `hva sender du oss`,
-        dokument faktum "dokumentasjon" id `dokumentasjon`
+        dokument faktum "dokumentasjon" id `dokumentasjon`,
+        boolsk faktum "dokumentasjon.godkjent" id `godkjenning av dokumentasjon` avhengerAv `dokumentasjon`
     )
 
     override fun seksjon(søknad: Søknad) = listOf(
@@ -36,6 +37,11 @@ object Hvorfor : DslFaktaseksjon {
             "spørsmål",
             Rolle.søker,
             *spørsmålsrekkefølgeForSøker()
+        ),
+        søknad.seksjon(
+            "godkjenning",
+            Rolle.saksbehandler,
+            `godkjenning av dokumentasjon`
         )
     )
 
@@ -44,7 +50,7 @@ object Hvorfor : DslFaktaseksjon {
             envalg(`hvorfor vil du sende oss ting`).utfylt().hvisOppfylt {
                 tekst(`hva sender du oss`).utfylt().sannsynliggjøresAv(
                     dokument(`dokumentasjon`)
-                )
+                ).godkjentAv(boolsk(`godkjenning av dokumentasjon`))
             }
         }
     }
