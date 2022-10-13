@@ -23,7 +23,7 @@ internal class InnsendingSkjemastrategiTest {
         søknadprosess.tekst(Hvorfor.`hva sender du oss`).besvar(Tekst("En vakker historie om hva jeg vil"))
         with(InnsendingSkjemastrategi().skjemakode(søknadprosess)) {
             // TODO: sjekke om det er ettersendelse eller noe annet
-            kotlin.test.assertEquals("04-01.03", this.skjemakode)
+            kotlin.test.assertEquals("N6", this.skjemakode)
         }
     }
 }
