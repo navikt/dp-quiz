@@ -83,16 +83,13 @@ object Arbeidsforhold : DslFaktaseksjon {
     const val `gjenopptak endringer i arbeidsforhold siden sist` = 8052
     const val `gjenopptak ønsker ny beregning av dagpenger` = 8053
     const val `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid` = 8054
-
     const val arbeidsavtale = 8055
     const val `dokumentasjon av arbeidsforhold` = 8056
     const val timelister = 8057
     const val `brev fra bobestyrer eller konkursforvalter` = 8058
     const val `ny arbeidsavtale` = 8059
     const val permitteringsvarsel = 8060
-
     const val `godkjenning av arbeidsforhold-dokumentasjon` = 8061
-
     override val fakta = listOf(
         dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger søknadsdato`,
         envalg faktum "faktum.type-arbeidstid"
@@ -268,26 +265,19 @@ object Arbeidsforhold : DslFaktaseksjon {
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.endringer-i-arbeidsforhold" id `gjenopptak endringer i arbeidsforhold siden sist`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-ny-beregning" id `gjenopptak ønsker ny beregning av dagpenger`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid" id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
-
-        dokument faktum "faktum.dokument-arbeidsavtale" id arbeidsavtale,
-
+        dokument faktum "faktum.dokument-arbeidsavtale" id arbeidsavtale avhengerAv `arbeidsforhold navn bedrift`,
         dokument faktum "faktum.dokument-dokumentasjon-av-arbeidsforhold" id `dokumentasjon av arbeidsforhold`,
-
         dokument faktum "faktum.dokument-timelister" id timelister,
-
         dokument faktum "faktum.dokument-brev-fra-bobestyrer-eller-konkursforvalter" id `brev fra bobestyrer eller konkursforvalter`,
-
         dokument faktum "faktum.dokument-ny-arbeidsavtale" id `ny arbeidsavtale`,
-
         dokument faktum "faktum.dokument-permitteringsvarsel" id permitteringsvarsel,
-
         boolsk faktum "faktum.godkjenning-arbeidsforhold-dokumentasjon" id `godkjenning av arbeidsforhold-dokumentasjon`
             avhengerAv permitteringsvarsel
             og `ny arbeidsavtale`
             og arbeidsavtale
             og `dokumentasjon av arbeidsforhold`
             og timelister
-            og `brev fra bobestyrer eller konkursforvalter`,
+            og `brev fra bobestyrer eller konkursforvalter`
     )
 
     override fun seksjon(søknad: Søknad) =
@@ -691,7 +681,6 @@ object Arbeidsforhold : DslFaktaseksjon {
         `gjenopptak endringer i arbeidsforhold siden sist`,
         `gjenopptak ønsker ny beregning av dagpenger`,
         `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
-
         arbeidsavtale,
         `dokumentasjon av arbeidsforhold`,
         timelister,
