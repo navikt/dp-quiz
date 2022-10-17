@@ -112,8 +112,6 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
         }
     }
 
-    fun faktum(vararg templates: TemplateFaktum<*>) = GeneratorFaktum(faktumId, navn, templates.asList())
-
     @Suppress("UNCHECKED_CAST")
     override fun og(otherId: Int): FaktumFactory<T> =
         if (templateIder.isEmpty()) super.og(otherId)
