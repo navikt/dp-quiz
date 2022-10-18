@@ -93,6 +93,10 @@ class MedFakta(private val fakta: JsonNode) {
         it.erType("int")
     }
 
+    fun tekst(navn: String, block: MedFaktum.() -> Unit) = faktum(navn, block).also {
+        it.erType("tekst")
+    }
+
     fun envalg(navn: String, block: MedFaktum.() -> Unit) = faktum(navn, block).also {
         it.erType("envalg")
     }
@@ -154,6 +158,9 @@ open class MedFaktum(val faktum: JsonNode) {
     open fun erBesvartMed(antallSvar: Int) =
         assertEquals(antallSvar, faktum["svar"].asInt(), "Faktum $navn er besvart med")
 
+    open fun erBesvartMed(tekst: String) =
+        assertEquals(tekst, faktum["svar"].asText(), "Faktum $navn er besvart med")
+
     fun sannsynliggjøresAv(block: MedFakta.() -> Unit) = MedFakta(faktum["sannsynliggjoresAv"]).also { block(it) }
 
     fun harGyldigeValg(vararg valg: String) = harGyldigeValg(valg.toList())
@@ -201,12 +208,19 @@ open class MedLandFaktum(faktum: JsonNode) : MedFaktum(faktum) {
         }
 
         fun gruppe(gruppeNavn: String, block: MedGruppeFaktum.() -> Unit) {
-            assertTrue(grupper.containsKey(gruppeNavn), "Landfaktum ${this@MedLandFaktum.navn} mangler gruppe $gruppeNavn")
+            assertTrue(
+                grupper.containsKey(gruppeNavn),
+                "Landfaktum ${this@MedLandFaktum.navn} mangler gruppe $gruppeNavn"
+            )
             block(MedGruppeFaktum(grupper[gruppeNavn]!!))
             sjekkaGrupper.add(gruppeNavn)
         }
 
-        internal fun sjekkAlle() = assertEquals(grupper.keys.toList(), sjekkaGrupper, "Landfaktum ${this@MedLandFaktum.navn} mangler sjekk for grupper")
+        internal fun sjekkAlle() = assertEquals(
+            grupper.keys.toList(),
+            sjekkaGrupper,
+            "Landfaktum ${this@MedLandFaktum.navn} mangler sjekk for grupper"
+        )
 
         inner class MedGruppeFaktum(
             private val gruppeland: List<String>

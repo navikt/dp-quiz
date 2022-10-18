@@ -8,7 +8,8 @@ class GeneratorFaktum internal constructor(
     private val templates: List<TemplateFaktum<*>>,
     avhengigeFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     avhengerAvFakta: MutableSet<Faktum<*>> = mutableSetOf(),
-    roller: MutableSet<Rolle> = mutableSetOf()
+    roller: MutableSet<Rolle> = mutableSetOf(),
+    private val navngittAv: FaktumId?
 ) : GrunnleggendeFaktum<Int>(
     faktumId = faktumId,
     navn = navn,
@@ -19,6 +20,14 @@ class GeneratorFaktum internal constructor(
     roller = roller
 ) {
     internal lateinit var søknad: Søknad
+
+    fun identitet(faktumId: FaktumId): Faktum<Tekst>? {
+        val identitetInstans = navngittAv?.medIndeks(faktumId.reflection { _, indeks -> indeks })
+
+        return søknad.filter { isT<Faktum<Tekst>>(it) }.find { it.faktumId == identitetInstans } as Faktum<Tekst>?
+    }
+
+    private inline fun <reified T> isT(x: Any) = x is T
 
     override fun besvar(antall: Int, ident: String?): GrunnleggendeFaktum<Int> = this.also {
         if (erBesvart() && svar() != antall) tilbakestill()
@@ -75,7 +84,8 @@ class GeneratorFaktum internal constructor(
             templates,
             mutableSetOf(),
             mutableSetOf(),
-            roller
+            roller,
+            navngittAv
         ).also { nyttFaktum ->
             byggetFakta[faktumId] = nyttFaktum
             this.avhengigeFakta.forEach { nyttFaktum.avhengigeFakta.add(it.bygg(byggetFakta)) }

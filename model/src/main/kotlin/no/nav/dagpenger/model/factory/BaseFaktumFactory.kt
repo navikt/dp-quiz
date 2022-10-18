@@ -22,6 +22,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     private val templateIder = mutableListOf<Int>()
     private val gyldigeValg = mutableSetOf<String>()
     private val landGrupper = mutableMapOf<String, List<Land>>()
+    private var navngittAv: Int? = null
 
     companion object {
         object boolsk {
@@ -75,7 +76,10 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 
     infix fun gruppe(gruppeNavn: String) = LandGruppe(this, gruppeNavn)
 
-    class LandGruppe<T : Comparable<T>>(val baseFaktumFactory: BaseFaktumFactory<T>, private val gruppeNavn: String) {
+    class LandGruppe<T : Comparable<T>>(
+        private val baseFaktumFactory: BaseFaktumFactory<T>,
+        private val gruppeNavn: String
+    ) {
         infix fun med(land: List<Land>): BaseFaktumFactory<T> {
             return baseFaktumFactory.landGruppe(
                 Pair(gruppeNavn, land)
@@ -94,20 +98,23 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
                 faktumId = faktumId,
                 navn = navn,
                 clazz = clazz,
-                gyldigeValg = GyldigeValg(gyldigeValg),
+                gyldigeValg = GyldigeValg(gyldigeValg)
             ) as Faktum<T>
+
             Flervalg::class.java -> GrunnleggendeFaktum(
                 faktumId = faktumId,
                 navn = navn,
                 clazz = clazz,
-                gyldigeValg = GyldigeValg(gyldigeValg),
+                gyldigeValg = GyldigeValg(gyldigeValg)
             ) as Faktum<T>
+
             Land::class.java -> GrunnleggendeFaktum(
                 faktumId = faktumId,
                 navn = navn,
                 clazz = clazz,
-                landGrupper = landGrupper,
+                landGrupper = landGrupper
             ) as Faktum<T>
+
             else -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz)
         }
     }
@@ -129,12 +136,22 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
                 ?.also { template -> faktumMap[FaktumId(otherId)] = template }
                 ?: throw IllegalArgumentException("Faktum $otherId finnes ikke")
         }
+        val navngittAvFaktumId = navngittAv?.let {
+            FaktumId(it).also { faktumId ->
+                require(faktumMap[faktumId]?.type() == Tekst::class.java) { "navngittAv må være av type tekst" }
+            }
+        }
         GeneratorFaktum(
             faktumId,
             navn,
-            templateIder.map { otherId -> faktumMap[FaktumId(otherId)] as TemplateFaktum<*> }
+            templateIder.map { otherId -> faktumMap[FaktumId(otherId)] as TemplateFaktum<*> },
+            navngittAv = navngittAvFaktumId
         )
             .also { generatorfaktum -> faktumMap[faktumId] = generatorfaktum }
+    }
+
+    infix fun navngittAv(otherId: Int): BaseFaktumFactory<*> = this.also {
+        navngittAv = otherId
     }
 
     private val faktumId get() = FaktumId(rootId).also { require(rootId > 0) { "Root id må være positiv" } }

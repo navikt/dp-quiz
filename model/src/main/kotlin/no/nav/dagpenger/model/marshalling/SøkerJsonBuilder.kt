@@ -44,6 +44,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
     private val seksjoner = mapper.createArrayNode()
     private lateinit var gjeldendeFakta: Seksjon
     private lateinit var avhengigheter: MutableSet<Faktum<*>>
+    private val generatorer: MutableSet<GeneratorFaktum> = mutableSetOf()
     private val ferdig = søknadprosess.erFerdigFor(Rolle.søker, Rolle.nav)
     private val avhengigeFaktaErLåst = ReadOnlyStrategy {
         !gjeldendeFakta.contains(it)
@@ -123,6 +124,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
         genererteFaktum: Set<Faktum<*>>
     ) {
         if (!::gjeldendeFakta.isInitialized) return
+        generatorer.add(faktum)
         avhengigheter.addAll(genererteFaktum + faktum)
     }
 
@@ -156,7 +158,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
         fun readOnly(faktum: Faktum<*>): Boolean
     }
 
-    private class SøknadFaktumVisitor(
+    private inner class SøknadFaktumVisitor(
         faktum: Faktum<*>,
         private val besvarteOgNesteGeneratorFakta: Set<Faktum<*>> = emptySet(),
         // TODO: Erstatte dette med noe decoratorish?
@@ -219,7 +221,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
                 repeat(faktum.svar()) { i -> insertArray(i) }
                 // Grupper fakta etter indeks så de kan slås opp i
                 val grupperteFakta =
-                    besvarteOgNesteGeneratorFakta.groupBy { it.faktumId.reflection { _, indeks -> indeks } }
+                    besvarteOgNesteGeneratorFakta.groupBy { fooooo -> fooooo.faktumId.reflection { _, indeks -> indeks } }
                 // Erstatt placeholdere med besvarte eller neste fakta
                 forEachIndexed { indeks, arrayNode ->
                     set(
@@ -323,7 +325,14 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
             val sannsynliggjøringerAsJson = avhengigeFakta.filter { it.type() == Dokument::class.java }
                 .filter { sannsynliggjøringsFaktaListe.contains(it) }
                 .fold(mapper.createArrayNode()) { acc, template ->
-                    acc.add(SøknadFaktumVisitor(template, readOnlyStrategy = readOnlyStrategy).root)
+                    val fakta = SøknadFaktumVisitor(template, readOnlyStrategy = readOnlyStrategy).root
+
+                    if (template.faktumId.harIndeks()) {
+                        generatorer.single { it.harGenerert(template.faktumId) }.identitet(template.faktumId)?.let {
+                            fakta.put("generertAv", it.svar().verdi)
+                        }
+                    }
+                    acc.add(fakta)
                 }
             this.root.set<ArrayNode>("sannsynliggjoresAv", sannsynliggjøringerAsJson)
             this.root.put("readOnly", readOnlyStrategy.readOnly(faktum))

@@ -8,6 +8,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
@@ -15,6 +16,7 @@ import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.MedSøknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
@@ -57,8 +59,8 @@ internal class SøkerJsonBuilderTest {
             boolsk faktum "f4" id 4 avhengerAv 3,
             boolsk faktum "f5" id 5,
             heltall faktum "f6" id 6,
-            boolsk faktum "f7" id 7,
-            heltall faktum "f67" id 67 genererer 6 og 7 og 22,
+            tekst faktum "f7" id 7,
+            heltall faktum "f67" id 67 navngittAv 7 genererer 6 og 7 og 22,
             dato faktum "f8" id 8,
             dato faktum "f9" id 9,
             maks dato "f10" av 8 og 9 id 10,
@@ -79,7 +81,7 @@ internal class SøkerJsonBuilderTest {
             dato faktum "f20" id 20,
             heltall faktum "f21" genererer 20 id 21,
             dokument faktum "f22" id 22,
-            boolsk faktum "f23" id 23 avhengerAv 22,
+            boolsk faktum "f23" id 23 avhengerAv 22
         )
         søknadprosess = søknadprosess(søkerSubsumsjon())
     }
@@ -150,7 +152,7 @@ internal class SøkerJsonBuilderTest {
 
         søknadprosess.generator(67).besvar(2)
         søknadprosess.heltall("6.1").besvar(11)
-        søknadprosess.boolsk("7.1").besvar(true)
+        søknadprosess.tekst("7.1").besvar(Tekst("Hei"))
         MedSøknad(søknadprosess) {
             harAntallSeksjoner(2)
             seksjon("seksjon2") {
@@ -188,7 +190,7 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.boolsk("7.2").besvar(true)
+        søknadprosess.tekst("7.2").besvar(Tekst("Hadet"))
         MedSøknad(søknadprosess) {
             harAntallSeksjoner(2)
             seksjon("seksjon2") { erFerdig() }
@@ -233,11 +235,11 @@ internal class SøkerJsonBuilderTest {
                                     }
                                 }
                             }
-                            boolsk("f7") { erBesvartMed(true) }
+                            tekst("f7") { erBesvartMed("Hei") }
                         }
                         svar(2) {
                             heltall("f6") { erBesvartMed(19) }
-                            boolsk("f7") { erBesvartMed(true) }
+                            tekst("f7") { erBesvartMed("Hadet") }
                         }
                     }
                     dokument("f15") {
@@ -325,19 +327,26 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.boolsk(1).besvar(true)
         MedSøknad(søknadprosess) {
             seksjon("seksjon1") {
-                fakta(sjekkAlle = false, sjekkRekkefølge = false) { boolsk("f1") { harGyldigeValg("f1.svar.ja", "f1.svar.nei") } }
+                fakta(sjekkAlle = false, sjekkRekkefølge = false) {
+                    boolsk("f1") {
+                        harGyldigeValg(
+                            "f1.svar.ja",
+                            "f1.svar.nei"
+                        )
+                    }
+                }
             }
         }
     }
 
     private fun søkerSubsumsjon(): Subsumsjon {
-        val alleBarnMåværeUnder18år = (prototypeSøknad.heltall(6) under 18).sannsynliggjøresAv(prototypeSøknad.dokument(22))
+        val alleBarnMåværeUnder18år =
+            (prototypeSøknad.heltall(6) under 18).sannsynliggjøresAv(prototypeSøknad.dokument(22))
         val deltre = "§ 1.2 har kun ikke myndige barn".deltre {
             alleBarnMåværeUnder18år.hvisIkkeOppfylt {
                 prototypeSøknad.boolsk(7).utfylt()
             }
         }
-
         val generatorSubsumsjon67 = (prototypeSøknad.generator(67) med deltre).godkjentAv(prototypeSøknad.boolsk(23))
         val generatorSubsumsjon1718 = prototypeSøknad.generator(1718) med "Besvarte valg".deltre {
             "alle må være besvarte".alle(
@@ -378,7 +387,6 @@ internal class SøkerJsonBuilderTest {
                     "deltre".deltre {
                         prototypeSøknad.dato(20).utfylt()
                     }
-
             )
         }
         return regeltre
@@ -418,7 +426,7 @@ internal class SøkerJsonBuilderTest {
                 Rolle.søker,
                 prototypeSøknad.generator(1718),
                 prototypeSøknad.envalg(17),
-                prototypeSøknad.flervalg(18),
+                prototypeSøknad.flervalg(18)
             ),
             Seksjon(
                 "saksbehandler godkjenning",
