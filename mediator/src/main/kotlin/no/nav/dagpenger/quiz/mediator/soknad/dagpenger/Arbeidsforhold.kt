@@ -198,6 +198,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             avhengerAv `arbeidsforhold rotasjon`,
         heltall faktum "faktum.arbeidsforhold" id arbeidsforhold
             genererer `arbeidsforhold navn bedrift`
+            navngittAv `arbeidsforhold navn bedrift`
             og `arbeidsforhold land`
             og `arbeidsforhold endret`
             og `arbeidsforhold kjent antall timer jobbet`
@@ -265,7 +266,7 @@ object Arbeidsforhold : DslFaktaseksjon {
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.endringer-i-arbeidsforhold" id `gjenopptak endringer i arbeidsforhold siden sist`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-ny-beregning" id `gjenopptak ønsker ny beregning av dagpenger`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid" id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
-        dokument faktum "faktum.dokument-arbeidsavtale" id arbeidsavtale avhengerAv `arbeidsforhold navn bedrift`,
+        dokument faktum "faktum.dokument-arbeidsavtale" id arbeidsavtale,
         dokument faktum "faktum.dokument-dokumentasjon-av-arbeidsforhold" id `dokumentasjon av arbeidsforhold`,
         dokument faktum "faktum.dokument-timelister" id timelister,
         dokument faktum "faktum.dokument-brev-fra-bobestyrer-eller-konkursforvalter" id `brev fra bobestyrer eller konkursforvalter`,

@@ -38,10 +38,8 @@ object Barnetillegg : DslFaktaseksjon {
     const val `barn fødselsdato register` = 1011
     const val `barn statsborgerskap register` = 1012
     const val `forsørger du barnet register` = 1013
-
     const val `fødselsattest bostedsbevis for barn under 18år` = 1014
     const val `godkjenning av fødselsattest bostedsbevis for barn under 18år` = 1015
-
     override val fakta = listOf(
         heltall faktum "faktum.register.barn-liste" id `barn liste register`
             genererer `barn fornavn mellomnavn register`
@@ -55,8 +53,10 @@ object Barnetillegg : DslFaktaseksjon {
         land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap register`,
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsørger du barnet register` avhengerAv `barn liste register`,
         boolsk faktum "faktum.legge-til-egne-barn" id `egne barn`,
-        heltall faktum "faktum.barn-liste" id `barn liste` avhengerAv `egne barn`
+        heltall faktum "faktum.barn-liste" id `barn liste`
+            avhengerAv `egne barn`
             genererer `barn fornavn mellomnavn`
+            navngittAv `barn fornavn mellomnavn`
             og `barn etternavn`
             og `barn fødselsdato`
             og `barn statsborgerskap`
@@ -67,10 +67,9 @@ object Barnetillegg : DslFaktaseksjon {
         dato faktum "faktum.barn-foedselsdato" id `barn fødselsdato`,
         land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap`,
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsørger du barnet`,
-
         dokument faktum "faktum.dokument-foedselsattest-bostedsbevis-for-barn-under-18aar" id `fødselsattest bostedsbevis for barn under 18år`,
         boolsk faktum "faktum.godkjenning-dokumentasjon-foedselsattest-bostedsbevis-for-barn-under-18aar" id `godkjenning av fødselsattest bostedsbevis for barn under 18år`
-            avhengerAv `fødselsattest bostedsbevis for barn under 18år`,
+            avhengerAv `fødselsattest bostedsbevis for barn under 18år`
     )
 
     override fun seksjon(søknad: Søknad): List<Seksjon> {
@@ -129,7 +128,6 @@ object Barnetillegg : DslFaktaseksjon {
         `forsørger du barnet`,
         `fødselsattest bostedsbevis for barn under 18år`
     )
-
     private val navSpørsmålsrekkefølge = listOf(
         `barn liste register`,
         `barn fornavn mellomnavn register`,
