@@ -12,7 +12,11 @@ import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
 
 class InnsendingMetadataStrategi : MetadataStrategi {
-    private fun Søknadprosess.innsendingSvar() = HenvendelseType(this).hva
+    private fun Søknadprosess.innsendingSvar() = when (HenvendelseType(this).hva) {
+        "faktum.hvorfor.svar.endring" -> "Melding om endring som kan påvirke Dagpenger"
+        else -> "Generell innsending"
+    }
+
     override fun metadata(søknadprosess: Søknadprosess) =
         Metadata("GENERELL_INNSENDING", søknadprosess.innsendingSvar())
 
