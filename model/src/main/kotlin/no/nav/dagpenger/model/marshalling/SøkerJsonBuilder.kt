@@ -38,10 +38,11 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
         private val skalIkkeBesvaresAvSøker = ReadOnlyStrategy { it.harIkkeRolle(Rolle.søker) }
     }
 
+    private val seksjoner: MutableList<Seksjon> = mutableListOf()
     private val sannsynliggjøringsFaktaListe: Set<Faktum<*>> =
         SannsynliggjøringsFaktaFinner(søknadprosess.rootSubsumsjon).fakta
     private val root: ObjectNode = mapper.createObjectNode()
-    private val seksjoner = mapper.createArrayNode()
+    private val gjeldendeSeksjoner = mapper.createArrayNode()
     private lateinit var gjeldendeFakta: Seksjon
     private lateinit var avhengigheter: MutableSet<Faktum<*>>
     private val generatorer: MutableSet<GeneratorFaktum> = mutableSetOf()
@@ -73,10 +74,12 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
     }
 
     override fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
-        root.set<ArrayNode>("seksjoner", seksjoner)
+        root.set<ArrayNode>("seksjoner", gjeldendeSeksjoner)
+        root.put("seksjoner_antall", seksjoner.size)
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
+        seksjoner.add(seksjon)
         avhengigheter = mutableSetOf()
         gjeldendeFakta = seksjon.gjeldendeFakta(søknadprosess.rootSubsumsjon)
     }
@@ -108,7 +111,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
             put("ferdig", gjeldendeFakta.erAlleBesvart())
 
             set<ArrayNode>("fakta", faktaNode)
-            seksjoner.add(this)
+            gjeldendeSeksjoner.add(this)
         }
     }
 

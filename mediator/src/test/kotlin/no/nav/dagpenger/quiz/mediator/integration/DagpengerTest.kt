@@ -63,6 +63,7 @@ internal class DagpengerTest : SøknadBesvarer() {
             søknadsprosess.verifiserAtNesteSeksjonEr(Arbeidsforhold)
 
             assertEquals(false, søknadsprosess.erFerdig())
+            assertEquals(0, testRapid.inspektør.field(testRapid.inspektør.size - 1, "seksjoner_antall").asInt())
         }
     }
 
