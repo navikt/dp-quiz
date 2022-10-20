@@ -12,6 +12,7 @@ import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.LandGrupper
+import no.nav.dagpenger.model.faktum.LandOppslag
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
@@ -119,8 +120,8 @@ object FaktumTilJsonHjelper {
 
     internal fun ObjectNode.leggTilGyldigeLand() {
         this.putArray("gyldigeLand").also { arrayNode ->
-            Land.gyldigeLand.forEach { land ->
-                arrayNode.add(land)
+            LandOppslag.land().forEach { land ->
+                arrayNode.add(land.alpha3Code)
             }
         }
     }

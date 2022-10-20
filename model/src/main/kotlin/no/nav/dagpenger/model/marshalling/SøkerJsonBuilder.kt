@@ -1,8 +1,8 @@
 package no.nav.dagpenger.model.marshalling
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Faktum.Companion.erAlleBesvart
@@ -34,7 +34,7 @@ import java.util.UUID
 
 class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : SøknadprosessVisitor {
     companion object {
-        private val mapper = ObjectMapper()
+        private val mapper = jacksonObjectMapper()
         private val skalIkkeBesvaresAvSøker = ReadOnlyStrategy { it.harIkkeRolle(Rolle.søker) }
     }
 
