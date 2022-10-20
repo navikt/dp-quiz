@@ -5,5 +5,6 @@ import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
 
 class InnsendingMetadataStrategi : MetadataStrategi {
-    override fun metadata(søknadprosess: Søknadprosess) = Metadata("04-01.03")
+    override fun metadata(søknadprosess: Søknadprosess) =
+        Metadata("GENERELL_INNSENDING", "En generell henvendelse om Dagpenger")
 }
