@@ -2,7 +2,6 @@ package no.nav.dagpenger.model.unit.factory
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.alle
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
@@ -29,11 +28,7 @@ internal class UtledetFaktumFactoryTest {
             dato faktum "dato1" id 1,
             dato faktum "dato2" id 2,
             dato faktum "dato3" id 3,
-            maks dato "maks dato" av 1 og 2 og 3 id 123,
-            dato faktum "dato4" id 4,
-            dato faktum "dato5" id 5,
-            maks dato "maks dato 4 og 5" av 4 og 5 id 45,
-            heltall faktum "generator" id 456 genererer 4 og 5 og 45
+            maks dato "maks dato" av 1 og 2 og 3 id 123
         )
 
         val søknadprosess = Søknadprosess(
