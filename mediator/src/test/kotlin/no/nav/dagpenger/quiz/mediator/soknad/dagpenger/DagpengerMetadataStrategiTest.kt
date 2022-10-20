@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-internal class DagpengerSkjemastrategiTest {
+internal class DagpengerMetadataStrategiTest {
 
     private lateinit var søknadprosess: Søknadprosess
 
@@ -42,7 +42,7 @@ internal class DagpengerSkjemastrategiTest {
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.2")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
 
-        with(DagpengerSkjemastrategi().skjemakode(søknadprosess)) {
+        with(DagpengerMetadataStrategi().metadata(søknadprosess)) {
             assertEquals("04-01.04", this.skjemakode)
         }
     }
@@ -64,7 +64,7 @@ internal class DagpengerSkjemastrategiTest {
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
 
-        with(DagpengerSkjemastrategi().skjemakode(søknadprosess)) {
+        with(DagpengerMetadataStrategi().metadata(søknadprosess)) {
             assertEquals("04-01.03", this.skjemakode)
         }
     }
@@ -91,7 +91,7 @@ internal class DagpengerSkjemastrategiTest {
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.2")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
 
-        with(DagpengerSkjemastrategi().skjemakode(søknadprosess)) {
+        with(DagpengerMetadataStrategi().metadata(søknadprosess)) {
             assertEquals("04-16.04", this.skjemakode)
         }
     }
@@ -113,7 +113,7 @@ internal class DagpengerSkjemastrategiTest {
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
 
-        with(DagpengerSkjemastrategi().skjemakode(søknadprosess)) {
+        with(DagpengerMetadataStrategi().metadata(søknadprosess)) {
             assertEquals("04-16.03", this.skjemakode)
         }
     }

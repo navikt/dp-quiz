@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import org.junit.jupiter.api.Test
 
-internal class InnsendingSkjemastrategiTest {
+internal class InnsendingMetadataStrategiTest {
 
     private lateinit var søknadprosess: Søknadprosess
 
@@ -21,7 +21,7 @@ internal class InnsendingSkjemastrategiTest {
     fun `Får skjemakode Ettersending til søknad `() {
         søknadprosess.envalg(Hvorfor.`hvorfor vil du sende oss ting`).besvar(Envalg("faktum.hvorfor.svar.endring"))
         søknadprosess.tekst(Hvorfor.`hva sender du oss`).besvar(Tekst("En vakker historie om hva jeg vil"))
-        with(InnsendingSkjemastrategi().skjemakode(søknadprosess)) {
+        with(InnsendingMetadataStrategi().metadata(søknadprosess)) {
             // TODO: sjekke om det er ettersendelse eller noe annet
             kotlin.test.assertEquals("04-01.03", this.skjemakode)
         }

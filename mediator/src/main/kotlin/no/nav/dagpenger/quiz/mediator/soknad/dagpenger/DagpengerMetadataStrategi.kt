@@ -8,18 +8,17 @@ import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
-import no.nav.dagpenger.quiz.mediator.behovløsere.Skjemakode
-import no.nav.dagpenger.quiz.mediator.behovløsere.SkjemakodeStrategi
+import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
+import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import java.util.UUID
 
-class DagpengerSkjemastrategi : SkjemakodeStrategi {
-    override fun skjemakode(søknadprosess: Søknadprosess): Skjemakode {
+class DagpengerMetadataStrategi : MetadataStrategi {
+    override fun metadata(søknadprosess: Søknadprosess): Metadata {
         return DagpengerSkjemakodeFinner(søknadprosess).skjemaKode()
     }
 
     private class DagpengerSkjemakodeFinner(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
-
         private var permittert: Boolean = false
         private var gjenopptak: Boolean = false
 
@@ -27,16 +26,16 @@ class DagpengerSkjemastrategi : SkjemakodeStrategi {
             søknadprosess.accept(this)
         }
 
-        fun skjemaKode(): Skjemakode {
+        fun skjemaKode(): Metadata {
             return when (permittert) {
                 true -> when (gjenopptak) {
-                    true -> Skjemakode("04-16.04")
-                    else -> Skjemakode("04-01.04")
+                    true -> Metadata("04-16.04")
+                    else -> Metadata("04-01.04")
                 }
 
                 else -> when (gjenopptak) {
-                    true -> Skjemakode("04-16.03")
-                    else -> Skjemakode("04-01.03")
+                    true -> Metadata("04-16.03")
+                    else -> Metadata("04-01.03")
                 }
             }
         }
@@ -52,7 +51,6 @@ class DagpengerSkjemastrategi : SkjemakodeStrategi {
             lokaltResultat: Boolean?,
             resultat: Boolean?
         ) {
-
             // TODO: vi vil gjerne identifisere subsumsjoner i stede for å bruke faktaene
             if (!gjenopptak) {
                 val g = fakta.filter { it.id.contains(Gjenopptak.`mottatt dagpenger siste 12 mnd`.toString()) }
@@ -62,9 +60,10 @@ class DagpengerSkjemastrategi : SkjemakodeStrategi {
             }
 
             if (!permittert) {
-                val arbeidsforholdFakta = fakta.filter { it.id.contains(Arbeidsforhold.`arbeidsforhold endret`.toString()) }
-                    .filter { it.erBesvart() }
-                    .filter { it.svar() == Envalg("faktum.arbeidsforhold.endret.svar.permittert") }
+                val arbeidsforholdFakta =
+                    fakta.filter { it.id.contains(Arbeidsforhold.`arbeidsforhold endret`.toString()) }
+                        .filter { it.erBesvart() }
+                        .filter { it.svar() == Envalg("faktum.arbeidsforhold.endret.svar.permittert") }
 
                 permittert = arbeidsforholdFakta.isNotEmpty() && lokaltResultat == true
             }

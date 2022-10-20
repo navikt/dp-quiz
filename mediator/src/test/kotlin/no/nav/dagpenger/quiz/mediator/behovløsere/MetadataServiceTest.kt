@@ -1,22 +1,20 @@
 package no.nav.dagpenger.quiz.mediator.behovløsere
 
 import io.mockk.mockk
+import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-internal class SkjemakodeServiceTest {
-
+internal class MetadataServiceTest {
     val søknadPersistence = mockk<SøknadPersistence>(relaxed = true)
-
-    val testSkjemakodeStrategi = SkjemakodeStrategi {
-        Skjemakode("04-01.03")
+    val testMetadataStrategi = MetadataStrategi {
+        Metadata("04-01.03")
     }
-
     private val rapid = TestRapid().apply {
-        SkjemakodeService(this, søknadPersistence, testSkjemakodeStrategi)
+        MetadataService(this, søknadPersistence, testMetadataStrategi)
     }
 
     @Test
@@ -27,7 +25,7 @@ internal class SkjemakodeServiceTest {
           "@event_name": "behov",
           "@behovId": "test123",      
           "@behov": [
-            "Skjemakode"
+            "InnsendingMetadata"
           ],
           "søknad_uuid": "${UUID.randomUUID()}",
           "ident": "12345678913",
@@ -42,7 +40,7 @@ internal class SkjemakodeServiceTest {
 
         with(rapid.inspektør) {
             Assertions.assertNotNull(field(0, "@løsning"))
-            Assertions.assertEquals("04-01.03", field(0, "@løsning")["Skjemakode"]["skjemakode"].asText())
+            Assertions.assertEquals("04-01.03", field(0, "@løsning")["InnsendingMetadata"]["skjemakode"].asText())
         }
     }
 }

@@ -10,15 +10,14 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import java.util.UUID
 
-internal class SkjemakodeService(
+internal class MetadataService(
     rapidsConnection: RapidsConnection,
     private val søknadPersistence: SøknadPersistence,
-    private val skjemakodeStrategi: SkjemakodeStrategi
+    private val metadataStrategi: MetadataStrategi
 ) : River.PacketListener {
-
     private companion object {
         val logger = KotlinLogging.logger { }
-        val behov = "Skjemakode"
+        val behov = "InnsendingMetadata"
     }
 
     init {
@@ -34,21 +33,25 @@ internal class SkjemakodeService(
         val søknadId = packet.søknadUUID()
 
         withLoggingContext("søknadId" to søknadId.toString()) {
-            val skjemakode = skjemakodeStrategi.skjemakode(søknadPersistence.hent(søknadId))
+            val metadata = metadataStrategi.metadata(søknadPersistence.hent(søknadId))
             packet["@løsning"] = mapOf(
-                behov to skjemakode
+                behov to metadata
             )
 
             context.publish(packet.toJson())
-            logger.info { "Løser $behov med $skjemakode" }
+            logger.info { "Løser $behov med $metadata" }
         }
     }
 }
 
-fun interface SkjemakodeStrategi {
-    fun skjemakode(søknadprosess: Søknadprosess): Skjemakode
-}
+fun interface MetadataStrategi {
+    fun metadata(søknadprosess: Søknadprosess): Metadata
 
-data class Skjemakode(val skjemakode: String)
+    data class Metadata(val skjemakode: String? = null, val tittel: String? = null) {
+        init {
+            require(listOf(skjemakode, tittel).any { it != null }) { "Metadata må ha enten skjemakode eller tittel" }
+        }
+    }
+}
 
 private fun JsonMessage.søknadUUID() = this["søknad_uuid"].asText().let { UUID.fromString(it) }
