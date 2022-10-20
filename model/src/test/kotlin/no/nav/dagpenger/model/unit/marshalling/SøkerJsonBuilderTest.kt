@@ -90,7 +90,6 @@ internal class SøkerJsonBuilderTest {
     fun `SøkerJsonBuilder returnerer besvarte fakta og neste ubesvarte faktum`() {
         SøkerJsonBuilder(søknadprosess).resultat().also {
             assertMetadata(it)
-            assertEquals(0, it["seksjoner_antall"].asInt())
         }
 
         MedSøknad(søknadprosess) {
