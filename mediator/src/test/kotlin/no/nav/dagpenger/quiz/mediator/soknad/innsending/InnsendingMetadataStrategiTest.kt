@@ -23,7 +23,7 @@ internal class InnsendingMetadataStrategiTest {
         søknadprosess.tekst(Hvorfor.`hva sender du oss`).besvar(Tekst("En vakker historie om hva jeg vil"))
         with(InnsendingMetadataStrategi().metadata(søknadprosess)) {
             assertEquals("GENERELL_INNSENDING", this.skjemakode)
-            assertEquals("faktum.hvorfor.svar.endring", this.tittel)
+            assertEquals("Melding om endring som kan påvirke Dagpenger", this.tittel)
         }
     }
 }
