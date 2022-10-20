@@ -4,10 +4,10 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class InnsendingMetadataStrategiTest {
-
     private lateinit var søknadprosess: Søknadprosess
 
     init {
@@ -22,8 +22,8 @@ internal class InnsendingMetadataStrategiTest {
         søknadprosess.envalg(Hvorfor.`hvorfor vil du sende oss ting`).besvar(Envalg("faktum.hvorfor.svar.endring"))
         søknadprosess.tekst(Hvorfor.`hva sender du oss`).besvar(Tekst("En vakker historie om hva jeg vil"))
         with(InnsendingMetadataStrategi().metadata(søknadprosess)) {
-            // TODO: sjekke om det er ettersendelse eller noe annet
-            kotlin.test.assertEquals("04-01.03", this.skjemakode)
+            assertEquals("GENERELL_INNSENDING", this.skjemakode)
+            assertEquals("faktum.hvorfor.svar.endring", this.tittel)
         }
     }
 }
