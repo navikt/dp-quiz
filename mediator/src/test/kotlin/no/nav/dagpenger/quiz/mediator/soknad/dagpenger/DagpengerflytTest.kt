@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`egne barn`
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class DagpengerflytTest {
@@ -63,6 +64,8 @@ class DagpengerflytTest {
 
         søknadprosess.boolsk(Tilleggsopplysninger.`har tilleggsopplysninger`).besvar(false)
         assertTrue(søknadprosess.erFerdigFor(Rolle.nav, Rolle.søker), "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }}")
-        assertTrue(søknadprosess.erFerdig(), "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }}")
+
+        assertNotNull(søknadprosess.resultat())
+        // assertTrue(søknadprosess.erFerdig(), "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }}")
     }
 }

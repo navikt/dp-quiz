@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
+import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
@@ -20,6 +21,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn statsb
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`egne barn`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`forsørger du barnet`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`forsørger du barnet register`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`fødselsattest bostedsbevis for barn under 18år`
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -69,6 +71,9 @@ internal class BarnetilleggTest {
         søknadprosess.boolsk("${`forsørger du barnet`}.1").besvar(true)
 
         assertEquals(true, søknadprosess.resultat())
+
+        søknadprosess.dokument("${`fødselsattest bostedsbevis for barn under 18år`}.1").besvar(Dokument(LocalDate.now(), "urn:test:test"))
+        assertEquals("godkjenning dokumentasjon barnetillegg", søknadprosess.nesteSeksjoner().first().navn)
     }
 
     @Test

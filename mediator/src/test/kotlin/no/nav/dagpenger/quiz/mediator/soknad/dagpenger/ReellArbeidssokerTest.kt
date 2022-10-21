@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
+import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Prosessversjon
@@ -9,6 +10,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker.`antall timer deltid du kan jobbe`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker.`bekreftelse fra lege eller annen behandler`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker.`kan bytte yrke eller gå ned i lønn`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker.`kan du jobbe i hele Norge`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker.`kan jobbe heltid`
@@ -21,6 +23,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 internal class ReellArbeidssokerTest {
 
@@ -211,6 +214,18 @@ internal class ReellArbeidssokerTest {
     fun `Faktarekkefølge i seksjon`() {
         val faktaFraReellArbeidssøker = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("1,2,3,4,5,6,7,8,9,10,11,12", faktaFraReellArbeidssøker)
+    }
+
+    @Test
+    fun `saksbehandlerseksjon kommer som forventet`() {
+        søknadprosess.boolsk(`kan jobbe heltid`).besvar(true)
+        søknadprosess.boolsk(`kan du jobbe i hele Norge`).besvar(true)
+        søknadprosess.boolsk(`kan ta alle typer arbeid`).besvar(false)
+        søknadprosess.boolsk(`kan bytte yrke eller gå ned i lønn`).besvar(true)
+
+        søknadprosess.dokument(`bekreftelse fra lege eller annen behandler`).besvar(Dokument(LocalDate.now(), "urn:test:test"))
+
+        assertEquals("godkjenning dokumentasjon reell", søknadprosess.nesteSeksjoner().first().navn)
     }
 
     private fun assertFaktaErBesvart(vararg fakta: Faktum<*>) {

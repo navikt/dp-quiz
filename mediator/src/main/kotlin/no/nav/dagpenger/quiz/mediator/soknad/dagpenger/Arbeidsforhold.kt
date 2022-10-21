@@ -282,7 +282,10 @@ object Arbeidsforhold : DslFaktaseksjon {
     )
 
     override fun seksjon(søknad: Søknad) =
-        listOf(søknad.seksjon("arbeidsforhold", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
+        listOf(
+            søknad.seksjon("arbeidsforhold", Rolle.søker, *spørsmålsrekkefølgeForSøker()),
+            søknad.seksjon("godkjenning arbeidsforhold", Rolle.saksbehandler, *spørsmålsrekkefølgeForSaksbehandler)
+        )
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "arbeidsforhold".deltre {
@@ -688,6 +691,9 @@ object Arbeidsforhold : DslFaktaseksjon {
         `brev fra bobestyrer eller konkursforvalter`,
         `ny arbeidsavtale`,
         permitteringsvarsel,
-        `godkjenning av arbeidsforhold-dokumentasjon`
     )
+
+    val spørsmålsrekkefølgeForSaksbehandler = listOf(
+        `godkjenning av arbeidsforhold-dokumentasjon`
+    ).toIntArray()
 }
