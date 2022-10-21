@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
+import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -8,6 +9,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 import kotlin.test.assertEquals
 
 internal class VernepliktTest {
@@ -42,8 +44,18 @@ internal class VernepliktTest {
     }
 
     @Test
+    fun `Godkjenning av dokumentasjon`() {
+        søknadprosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(true)
+        assertEquals(true, søknadprosess.resultat())
+        søknadprosess.dokument(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon`).besvar(
+            Dokument(LocalDate.now(), "urn:test:test")
+        )
+        assertEquals("godkjenning dokumentasjon verneplikt", søknadprosess.nesteSeksjoner().first().navn)
+    }
+
+    @Test
     fun `Faktarekkefølge i seksjon`() {
         val faktaFraVerneplikt = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
-        assertEquals("7001,7002,7003", faktaFraVerneplikt)
+        assertEquals("7001,7002", faktaFraVerneplikt)
     }
 }
