@@ -16,11 +16,11 @@ import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 object Verneplikt : DslFaktaseksjon {
     const val `avtjent militær sivilforsvar tjeneste siste 12 mnd` = 7001
     const val `avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon` = 7002
-    const val `godkjenning avtjent militær sivilforsvar tjeneste siste 12 mnd` = 7003
+    const val `avtjent militær sivilforsvar tjeneste siste 12 mnd godkjenning` = 7003
     override val fakta = listOf(
         boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd" id `avtjent militær sivilforsvar tjeneste siste 12 mnd`,
         dokument faktum "faktum.dokument-avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-dokumentasjon" id `avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon`,
-        boolsk faktum "faktum.godkjenning-avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd" id `godkjenning avtjent militær sivilforsvar tjeneste siste 12 mnd` avhengerAv `avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon`
+        boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-godkjenning" id `avtjent militær sivilforsvar tjeneste siste 12 mnd godkjenning` avhengerAv `avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon`
     )
 
     override fun seksjon(søknad: Søknad) = listOf(
@@ -28,11 +28,6 @@ object Verneplikt : DslFaktaseksjon {
             "verneplikt",
             Rolle.søker,
             *spørsmålsrekkefølgeForSøker()
-        ),
-        søknad.seksjon(
-            "godkjenning dokumentasjon verneplikt",
-            Rolle.saksbehandler,
-            *spørsmålsrekkefølgeForSaksbehandler
         )
     )
 
@@ -45,7 +40,7 @@ object Verneplikt : DslFaktaseksjon {
                     dokument(
                         `avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon`
                     )
-                ).godkjentAv(boolsk(`godkjenning avtjent militær sivilforsvar tjeneste siste 12 mnd`)),
+                ).godkjentAv(boolsk(`avtjent militær sivilforsvar tjeneste siste 12 mnd godkjenning`)),
                 boolsk(`avtjent militær sivilforsvar tjeneste siste 12 mnd`) er false
             )
         }
@@ -54,9 +49,6 @@ object Verneplikt : DslFaktaseksjon {
     override val spørsmålsrekkefølgeForSøker = listOf(
         `avtjent militær sivilforsvar tjeneste siste 12 mnd`,
         `avtjent militær sivilforsvar tjeneste siste 12 mnd dokumentasjon`,
+        `avtjent militær sivilforsvar tjeneste siste 12 mnd godkjenning`
     )
-
-    val spørsmålsrekkefølgeForSaksbehandler = listOf(
-        `godkjenning avtjent militær sivilforsvar tjeneste siste 12 mnd`
-    ).toIntArray()
 }

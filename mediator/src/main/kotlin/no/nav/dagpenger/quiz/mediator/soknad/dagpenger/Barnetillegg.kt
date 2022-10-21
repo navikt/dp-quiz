@@ -75,9 +75,8 @@ object Barnetillegg : DslFaktaseksjon {
     override fun seksjon(søknad: Søknad): List<Seksjon> {
         val barnetilleggRegister = søknad.seksjon("barnetillegg-register", Rolle.nav, *navSpørsmålsrekkefølge)
         val barnetillegg = søknad.seksjon("barnetillegg", Rolle.søker, *spørsmålsrekkefølgeForSøker())
-        val barnetilleggGodkjenning = søknad.seksjon("godkjenning dokumentasjon barnetillegg", Rolle.saksbehandler, *spørsmålsrekkefølgeForSaksbehandler)
 
-        return listOf(barnetilleggRegister, barnetillegg, barnetilleggGodkjenning)
+        return listOf(barnetilleggRegister, barnetillegg)
     }
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
@@ -135,9 +134,5 @@ object Barnetillegg : DslFaktaseksjon {
         `barn etternavn register`,
         `barn statsborgerskap register`,
         `barn fødselsdato register`
-    ).toIntArray()
-
-    private val spørsmålsrekkefølgeForSaksbehandler = listOf(
-        `godkjenning av fødselsattest bostedsbevis for barn under 18år`
     ).toIntArray()
 }

@@ -1,7 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Land
@@ -20,7 +19,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
@@ -432,30 +430,6 @@ internal class ArbeidsforholdTest {
         assertEquals(forventetSpørsmålsrekkefølgeForSøker, faktaForArbeidsforhold)
     }
 
-    @Test
-    fun `Neste seksjon blir godkjenning av dokument`() {
-        besvarFaktaForDokumentasjonskrav(søknadprosess)
-
-        assertEquals("godkjenning arbeidsforhold", søknadprosess.nesteSeksjoner().first().navn)
-    }
-
-    private fun besvarFaktaForDokumentasjonskrav(søknadprosess: Søknadprosess) {
-        søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(LocalDate.now())
-        søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(Envalg(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei")))
-        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
-
-        søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(1)
-        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Navn"))
-        søknadprosess.land("${Arbeidsforhold.`arbeidsforhold land`}.1").besvar(Land("NOR"))
-        søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold endret`}.1")
-            .besvar(Envalg("faktum.arbeidsforhold.endret.svar.avskjediget"))
-        søknadprosess.boolsk("${Arbeidsforhold.`arbeidsforhold vet du antall timer før mistet jobb`}.1").besvar(false)
-        søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold hva er årsak til avskjediget`}.1").besvar(Tekst("En grunn"))
-
-        søknadprosess.dokument("${Arbeidsforhold.arbeidsavtale}.1").besvar(Dokument(LocalDate.now(), "urn:test:test"))
-        søknadprosess.dokument("${Arbeidsforhold.`dokumentasjon av arbeidsforhold`}.1").besvar(Dokument(LocalDate.now(), "urn:test:test"))
-    }
-
     private fun `besvar innledende spørsmål om arbeidsforhold for gjenopptak`() {
         søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja")))
@@ -562,5 +536,6 @@ internal class ArbeidsforholdTest {
 8057,
 8058,
 8059,
-8060""".trimStart()
+8060,
+8061""".trimStart()
 }

@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
-import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
@@ -10,7 +9,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -69,16 +67,7 @@ internal class UtdanningTest {
     @Test
     fun `Faktarekkefølge i seksjon`() {
         val faktaFraUtdanning = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
-        assertEquals("2001,2002,2003,2004", faktaFraUtdanning)
-    }
-
-    @Test
-    fun `Godkjenningsseksjon fungerer`() {
-        tarUtdanning.besvar(true)
-        nyligAvsluttetUtdanning.besvar(true)
-        planleggerUtdanning.besvar(true)
-        søknadprosess.dokument(Utdanning.`dokumentasjon på sluttdato`).besvar(Dokument(LocalDate.now(), "urn:test:test"))
-        assertEquals("godkjenning dokumentasjon utdanning", søknadprosess.nesteSeksjoner().first().navn)
+        assertEquals("2001,2002,2003,2004,2005", faktaFraUtdanning)
     }
 
     private fun erBesvart(vararg fakta: Faktum<*>) =

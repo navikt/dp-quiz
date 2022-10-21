@@ -249,10 +249,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
         boolsk(`kan bytte yrke eller gå ned i lønn`).utfylt()
 
     override fun seksjon(søknad: Søknad) =
-        listOf(
-            søknad.seksjon("reell-arbeidssoker", Rolle.søker, *spørsmålsrekkefølgeForSøker()),
-            søknad.seksjon("godkjenning dokumentasjon reell", Rolle.saksbehandler, *spørsmålsrekkefølgeForSaksbehandler)
-        )
+        listOf(søknad.seksjon("reell-arbeidssoker", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
     override val spørsmålsrekkefølgeForSøker = listOf(
         `kan jobbe heltid`,
@@ -268,8 +265,4 @@ object ReellArbeidssoker : DslFaktaseksjon {
         `fulltid - bekreftelse fra relevant fagpersonell`,
         `hele-norge-bekreftelse fra relevant fagpersonell`,
     )
-
-    val spørsmålsrekkefølgeForSaksbehandler = listOf(
-        `godkjenning av bekreftelse`
-    ).toIntArray()
 }

@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
-import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Land
@@ -18,7 +17,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`annen ytels
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`arbeidsløs GFF hvilken periode`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`dagpenger eøs land hvilken periode`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`dagpenger hvilket eøs land utbetaler`
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`dokumentasjon annen ytelse`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`etterlønn arbeidsgiver hvem utbetaler`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`etterlønn arbeidsgiver hvilken periode`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`garantilott fra GFF hvilken periode`
@@ -38,7 +36,7 @@ internal class AndreYtelserTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        AndreYtelser.verifiserFeltsammensetting(23, 115276)
+        AndreYtelser.verifiserFeltsammensetting(29, 145435)
     }
 
     @Test
@@ -160,22 +158,11 @@ internal class AndreYtelserTest {
         ) {
             AndreYtelser.seksjon(this)
         }
-        val faktarekkefølgeSøker = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        val faktarekkefølge = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals(
-            "5001,5002,5003,5004,5005,5006,5007,5008,5009,5010,5011,5012,5013,5014,5015,5016,5017,5018,5019,5020,5021,5022",
-            faktarekkefølgeSøker
+            "5001,5002,5003,5004,5005,5006,5007,5008,5009,5010,5011,5012,5013,5014,5015,5016,5017,5018,5019,5020,5021,5022,5023,5024,5025,5026,5027,5028,5029",
+            faktarekkefølge
         )
-    }
-
-    @Test
-    fun `Godkjenningsfakta i saksbehandlerseksjon gir rett nesteSeksjon`() {
-
-        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
-        val søknadprosess = søknad.testSøknadprosess(AndreYtelser.regeltre(søknad)) { AndreYtelser.seksjon(this) }
-
-        besvarAlleFaktaForAnnenYtelseMedDokument(søknadprosess)
-
-        assertEquals("godkjenningAndreYtelser", søknadprosess.nesteSeksjoner().first().navn)
     }
 
     @Test
@@ -265,17 +252,6 @@ internal class AndreYtelserTest {
         søknadprosess.tekst(`annen ytelse hvem utebetaler`).besvar(Tekst("Dummy utbetaler"))
         val nå = LocalDate.now()
         søknadprosess.periode(`annen ytelse hvilken periode`).besvar(Periode(nå.minusYears(7), nå))
-    }
-
-    private fun besvarAlleFaktaForAnnenYtelseMedDokument(søknadprosess: Søknadprosess) {
-        søknadprosess.boolsk(`andre ytelser mottatt eller søkt`).besvar(true)
-        søknadprosess.flervalg(`hvilke andre ytelser`).besvar(Flervalg("faktum.hvilke-andre-ytelser.svar.annen-ytelse"))
-        søknadprosess.tekst(`hvilken annen ytelse`).besvar(Tekst("Annen dummy ytelse"))
-        søknadprosess.tekst(`annen ytelse hvem utebetaler`).besvar(Tekst("Dummy utbetaler"))
-        val nå = LocalDate.now()
-        søknadprosess.periode(`annen ytelse hvilken periode`).besvar(Periode(nå.minusYears(7), nå))
-        søknadprosess.boolsk(`utbetaling eller økonomisk gode tidligere arbeidsgiver`).besvar(false)
-        søknadprosess.dokument(`dokumentasjon annen ytelse`).besvar(Dokument(nå, "urn:test:test"))
     }
 
     private fun assertErUbesvarte(vararg fakta: Faktum<*>) =
