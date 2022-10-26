@@ -1,5 +1,10 @@
 app: dp-quiz-mediator
 db_tier: db-custom-4-15360
 db_size: 100
-kafka_pool: nav-prod
+kafka:
+  pool: nav-prod
+  consumer_group_id: dp-quiz-mediator
 point_in_time_recovery_days: 14
+replicas:
+  min: 3
+  max: 10
