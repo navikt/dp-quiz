@@ -3,10 +3,5 @@ namespace: teamdagpenger
 team: teamdagpenger
 db_tier: db-custom-1-3840
 db_size: 10
-kafka:
-  pool: nav-dev
-  consumer_group_id: dp-quiz-mediator
+kafka_pool: nav-dev
 point_in_time_recovery_days: 2
-replicas:
-  min: 2
-  max: 6

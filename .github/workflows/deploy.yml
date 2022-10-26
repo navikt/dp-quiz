@@ -52,7 +52,7 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: mediator/nais/nais.yaml,mediator/nais/hpa.yaml
+          RESOURCE: mediator/nais/nais.yaml
           VARS: mediator/nais/dev/vars.yaml
           PRINT_PAYLOAD: true
 
@@ -66,6 +66,6 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
-          RESOURCE: mediator/nais/nais.yaml,mediator/nais/hpa.yaml
+          RESOURCE: mediator/nais/nais.yaml
           VARS: mediator/nais/prod/vars.yaml
           PRINT_PAYLOAD: true
