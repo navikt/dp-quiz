@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
+import no.nav.dagpenger.quiz.mediator.behovløsere.DokumentkravSvarService
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataService
 import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
@@ -73,6 +74,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                     søknadRecord,
                     ProsessMetadataStrategi()
                 )
+                DokumentkravSvarService(rapidsConnection, søknadRecord)
             }
     }
 }
