@@ -31,12 +31,14 @@ spec:
       memory: 512Mi
     requests:
       cpu: 1000m
-      memory: 256Mi
+      memory: 512Mi
   secureLogs:
     enabled: true
   env:
     - name: PORT
       value: "8080"
+    - name: JAVA_OPTS
+      value: -XX:+UseG1GC -XX:MaxRAMPercentage=75.0 -XX:ActiveProcessorCount=2
   filesFrom:
     - secret: serviceuser-srvdp-quiz-mediator
       mountPath: "/var/run/secrets/nais.io/service_user"
