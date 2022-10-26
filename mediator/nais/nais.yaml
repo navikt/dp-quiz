@@ -1,11 +1,11 @@
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ app }}
+  name: dp-quiz-mediator
   namespace: teamdagpenger
   labels:
     team: teamdagpenger
-    app: {{ app }}
+    app: dp-quiz-mediator
 spec:
   image: {{image}}
   port: 8080
@@ -22,9 +22,9 @@ spec:
   prometheus:
     enabled: false
   replicas:
-    min: 3
-    max: 3
-    cpuThresholdPercentage: 75
+    # Antall partisjoner på Kafka rapid + 1
+    min: {{replicas}}
+    max: {{replicas}}
   resources:
     limits:
       cpu: 1500m
@@ -43,18 +43,18 @@ spec:
     - secret: serviceuser-srvdp-quiz-mediator
       mountPath: "/var/run/secrets/nais.io/service_user"
   kafka:
-    pool: {{ kafka_pool }}
+    pool: { { kafka.pool } }
   gcp:
     sqlInstances:
       - name: dp-quiz-mediator
         type: POSTGRES_12
-        tier:  {{ db_tier }}
+        tier: { { db.tier } }
         diskType: SSD
         highAvailability: false
-        diskSize: {{ db_size }}
+        diskSize: { { db.size } }
         diskAutoresize: true
         pointInTimeRecovery: true
-        retainedBackups: {{ point_in_time_recovery_days }}
+        retainedBackups: { { db.point_in_time_recovery_days } }
         autoBackupTime: "03:00"
         maintenance:
           day: 1

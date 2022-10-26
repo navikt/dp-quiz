@@ -1,7 +1,7 @@
-app: dp-quiz-mediator
-namespace: teamdagpenger
-team: teamdagpenger
-db_tier: db-custom-1-3840
-db_size: 10
-kafka_pool: nav-dev
-point_in_time_recovery_days: 2
+db:
+  tier: db-custom-1-3840
+  size: 10
+  point_in_time_recovery_days: 2
+kafka:
+  pool: nav-dev
+replicas: 4
