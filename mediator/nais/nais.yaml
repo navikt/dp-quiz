@@ -43,18 +43,18 @@ spec:
     - secret: serviceuser-srvdp-quiz-mediator
       mountPath: "/var/run/secrets/nais.io/service_user"
   kafka:
-    pool: { { kafka.pool } }
+    pool: {{kafka.pool}}
   gcp:
     sqlInstances:
       - name: dp-quiz-mediator
         type: POSTGRES_12
-        tier: { { db.tier } }
+        tier: {{db.tier}}
         diskType: SSD
         highAvailability: false
-        diskSize: { { db.size } }
+        diskSize: {{db.size}}
         diskAutoresize: true
         pointInTimeRecovery: true
-        retainedBackups: { { db.point_in_time_recovery_days } }
+        retainedBackups: {{db.point_in_time_recovery_days}}
         autoBackupTime: "03:00"
         maintenance:
           day: 1
