@@ -260,12 +260,12 @@ object Arbeidsforhold : DslFaktaseksjon {
             med "svar.sagt-opp-selv"
             med "svar.redusert-arbeidstid"
             med "svar.permittert" id `arbeidsforhold endret`,
-        boolsk faktum "faktum.arbeidsforhold.gjenopptak.jobbet-siden-sist" id `gjenopptak jobbet siden sist du fikk dagpenger`,
-        tekst faktum "faktum.arbeidsforhold.gjenopptak.aarsak-til-stans" id `gjenopptak årsak til stans av dagpenger`,
-        dato faktum "faktum.arbeidsforhold.gjenopptak.soknadsdato-gjenopptak" id `gjenopptak søknadsdato`,
-        boolsk faktum "faktum.arbeidsforhold.gjenopptak.endringer-i-arbeidsforhold" id `gjenopptak endringer i arbeidsforhold siden sist`,
-        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-ny-beregning" id `gjenopptak ønsker ny beregning av dagpenger`,
-        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid" id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
+        boolsk faktum "faktum.arbeidsforhold.gjenopptak.jobbet-siden-sist" id `gjenopptak jobbet siden sist du fikk dagpenger` avhengerAv Gjenopptak.`mottatt dagpenger siste 12 mnd`,
+        tekst faktum "faktum.arbeidsforhold.gjenopptak.aarsak-til-stans" id `gjenopptak årsak til stans av dagpenger` avhengerAv Gjenopptak.`mottatt dagpenger siste 12 mnd`,
+        dato faktum "faktum.arbeidsforhold.gjenopptak.soknadsdato-gjenopptak" id `gjenopptak søknadsdato` avhengerAv Gjenopptak.`mottatt dagpenger siste 12 mnd`,
+        boolsk faktum "faktum.arbeidsforhold.gjenopptak.endringer-i-arbeidsforhold" id `gjenopptak endringer i arbeidsforhold siden sist` avhengerAv Gjenopptak.`mottatt dagpenger siste 12 mnd`,
+        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-ny-beregning" id `gjenopptak ønsker ny beregning av dagpenger` avhengerAv Gjenopptak.`mottatt dagpenger siste 12 mnd`,
+        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid" id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid` avhengerAv Gjenopptak.`mottatt dagpenger siste 12 mnd`,
         dokument faktum "faktum.dokument-arbeidsavtale" id arbeidsavtale,
         dokument faktum "faktum.dokument-dokumentasjon-av-arbeidsforhold" id `dokumentasjon av arbeidsforhold`,
         dokument faktum "faktum.dokument-timelister" id timelister,
@@ -381,7 +381,7 @@ object Arbeidsforhold : DslFaktaseksjon {
     private fun Søknad.avskjediget() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.avskjediget"))
             .sannsynliggjøresAv(
-                dokument(`arbeidsavtale`),
+                dokument(arbeidsavtale),
                 dokument(`dokumentasjon av arbeidsforhold`)
             ).godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
@@ -432,7 +432,7 @@ object Arbeidsforhold : DslFaktaseksjon {
             "rotasjon eller ikke".minstEnAv(
                 boolsk(`arbeidsforhold rotasjon`) er false,
                 (boolsk(`arbeidsforhold rotasjon`) er true)
-                    .sannsynliggjøresAv(dokument(`timelister`))
+                    .sannsynliggjøresAv(dokument(timelister))
                     .godkjentAv(
                         boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
                     ) hvisOppfylt {
@@ -447,7 +447,7 @@ object Arbeidsforhold : DslFaktaseksjon {
     private fun Søknad.`arbeidsgiver er konkurs`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs"))
             .sannsynliggjøresAv(
-                dokument(`arbeidsavtale`),
+                dokument(arbeidsavtale),
                 dokument(`brev fra bobestyrer eller konkursforvalter`)
             ).godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
@@ -493,7 +493,7 @@ object Arbeidsforhold : DslFaktaseksjon {
 
     private fun Søknad.`kontrakten er utgått`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt"))
-            .sannsynliggjøresAv(dokument(`arbeidsavtale`))
+            .sannsynliggjøresAv(dokument(arbeidsavtale))
             .godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
@@ -536,7 +536,7 @@ object Arbeidsforhold : DslFaktaseksjon {
     private fun Søknad.`sagt opp selv`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv"))
             .sannsynliggjøresAv(
-                dokument(`arbeidsavtale`),
+                dokument(arbeidsavtale),
                 dokument(`dokumentasjon av arbeidsforhold`)
             )
             .godkjentAv(
@@ -561,7 +561,7 @@ object Arbeidsforhold : DslFaktaseksjon {
     private fun Søknad.`redusert arbeidstid`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid"))
             .sannsynliggjøresAv(
-                dokument(`arbeidsavtale`),
+                dokument(arbeidsavtale),
                 dokument(`dokumentasjon av arbeidsforhold`)
             )
             .godkjentAv(
@@ -587,7 +587,7 @@ object Arbeidsforhold : DslFaktaseksjon {
 
     private fun Søknad.permittert() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
-            .sannsynliggjøresAv(dokument(`permitteringsvarsel`))
+            .sannsynliggjøresAv(dokument(permitteringsvarsel))
             .godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {

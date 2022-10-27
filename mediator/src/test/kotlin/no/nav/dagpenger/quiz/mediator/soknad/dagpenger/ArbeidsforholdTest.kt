@@ -73,7 +73,7 @@ internal class ArbeidsforholdTest {
     }
 
     @Test
-    fun `arbeidsforhold ved gjenopptak av dagpenger`() {
+    fun `arbeidsforhold ved gjenopptak av dagpenger og dens avhengigheter`() {
         `besvar innledende spørsmål om arbeidsforhold for gjenopptak`()
         søknadprosess.boolsk(Arbeidsforhold.`gjenopptak endringer i arbeidsforhold siden sist`).besvar(false)
         assertEquals(true, søknadprosess.resultat())
@@ -97,6 +97,19 @@ internal class ArbeidsforholdTest {
 
         søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
         assertEquals(true, søknadprosess.resultat())
+
+        søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
+            .besvar(Envalg(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei")))
+        assertEquals(null, søknadprosess.resultat())
+
+        assertErUbesvarte(
+            søknadprosess.boolsk(Arbeidsforhold.`gjenopptak jobbet siden sist du fikk dagpenger`),
+            søknadprosess.tekst(Arbeidsforhold.`gjenopptak årsak til stans av dagpenger`),
+            søknadprosess.dato(Arbeidsforhold.`gjenopptak søknadsdato`),
+            søknadprosess.boolsk(Arbeidsforhold.`gjenopptak endringer i arbeidsforhold siden sist`),
+            søknadprosess.boolsk(Arbeidsforhold.`gjenopptak ønsker ny beregning av dagpenger`),
+            søknadprosess.boolsk(Arbeidsforhold.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`),
+        )
     }
 
     @Test
