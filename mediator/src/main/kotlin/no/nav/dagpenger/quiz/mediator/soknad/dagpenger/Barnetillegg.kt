@@ -96,12 +96,13 @@ object Barnetillegg : DslFaktaseksjon {
                             generator(`barn liste`) med "et eller flere barn".deltre {
                                 `barnets navn, fødselsdato og bostedsland`().hvisOppfylt {
                                     boolsk(`forsørger du barnet`).utfylt()
-                                }.sannsynliggjøresAv(dokument(`fødselsattest bostedsbevis for barn under 18år`))
-                                    .godkjentAv(
-                                        boolsk(
-                                            `godkjenning av fødselsattest bostedsbevis for barn under 18år`
+                                        .sannsynliggjøresAv(dokument(`fødselsattest bostedsbevis for barn under 18år`))
+                                        .godkjentAv(
+                                            boolsk(
+                                                `godkjenning av fødselsattest bostedsbevis for barn under 18år`
+                                            )
                                         )
-                                    )
+                                }
                             }
                         }
                     )
