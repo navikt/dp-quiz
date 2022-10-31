@@ -44,9 +44,10 @@ class SøknadRecord : SøknadPersistence {
         }
     }
 
+    private data class Prosess(override val id: String) : Prosessnavn
+
     override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?): Søknadprosess {
         data class SoknadRad(val personId: UUID, val navn: String, val versjonId: Int, var typeId: Int)
-        data class Prosess(override val id: String) : Prosessnavn
 
         val rad = using(sessionOf(dataSource)) { session ->
             if (type != null) {
@@ -120,6 +121,30 @@ class SøknadRecord : SøknadPersistence {
             }
         }
         return true
+    }
+
+    override fun migrer(uuid: UUID): Prosessversjon {
+        val sisteVersjon: Prosessversjon = Versjon.siste(hentProsessnavn(uuid))
+        val versjon = prosessversjon(uuid)
+
+        if(versjon == sisteVersjon) return sisteVersjon
+
+        return
+    }
+
+    private fun prosessversjon(uuid: UUID) = using(sessionOf(dataSource)) { session ->
+        session.run(
+            queryOf( // language=PostgreSQL
+                """SELECT V1_PROSESSVERSJON.navn, V1_PROSESSVERSJON.versjon_id 
+                            |FROM soknad, V1_PROSESSVERSJON 
+                            |WHERE uuid = :uuid""".trimMargin(),
+                mapOf("uuid" to uuid)
+            ).map { Prosessversjon(Prosess(it.string("navn")), it.int("versjon_id")) }.asSingle
+        )
+    } ?: throw IllegalArgumentException("Søknad finnes ikke, uuid: $uuid")
+
+    private fun hentProsessnavn(uuid: UUID): Prosessnavn {
+        TODO("Not yet implemented")
     }
 
     private fun skrivNyeFaktum(

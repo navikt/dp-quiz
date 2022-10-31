@@ -24,6 +24,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
+import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -356,6 +357,21 @@ internal class SøknadRecordTest {
             originalSøknadprosess.dato(2).besvar(LocalDate.now())
 
             lagreHentOgSammenlign()
+        }
+    }
+
+    @Test
+    fun `Kan migrere`() {
+        Postgres.withMigratedDb {
+            val søknadUUId = UUID.randomUUID()
+            FaktumTable(SøknadEksempel.prototypeSøknad1)
+            søknadRecord = SøknadRecord()
+            originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel.prosessVersjon, søknadUUId)
+
+            FaktumTable(SøknadEksempel1.prototypeFakta1)
+            val nyProsessVersjon = søknadRecord.migrer(søknadUUId)
+
+            assertEquals(SøknadEksempel1.prosessVersjon, nyProsessVersjon)
         }
     }
 
