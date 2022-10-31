@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.db
 
+import kotliquery.Session
 import kotliquery.TransactionalSession
 import kotliquery.action.ExecuteQueryAction
 import kotliquery.action.UpdateQueryAction
@@ -24,6 +25,7 @@ import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
+import java.math.BigInteger
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -123,20 +125,85 @@ class SøknadRecord : SøknadPersistence {
     }
 
     override fun migrer(uuid: UUID): Prosessversjon {
-        val versjon = prosessversjon(uuid)
-        val sisteVersjon: Prosessversjon = Versjon.siste(versjon.prosessnavn)
+        val gjeldendeVersjon = prosessversjon(uuid)
+        val sisteVersjon = Versjon.siste(gjeldendeVersjon.prosessnavn)
 
-        if (versjon == sisteVersjon) return sisteVersjon
+        if (gjeldendeVersjon == sisteVersjon) return sisteVersjon
+        val gjeldendeFaktum = hentFaktum(gjeldendeVersjon)
+        val nyeFaktum = hentFaktum(sisteVersjon)
+        val manglendeFaktum = nyeFaktum - gjeldendeFaktum
 
-        return
+        using(sessionOf(dataSource)) { session ->
+            session.transaction { tx ->
+                val soknadId = tx.getInternId(uuid)
+                manglendeFaktum.forEach {
+                    tx.run(it.asQuery(soknadId))
+                }
+            }
+        }
+
+        return sisteVersjon
     }
+
+    private fun Session.getInternId(uuid: UUID) = this.run(
+        queryOf("SELECT id FROM soknad WHERE uuid=?", uuid).map {
+            it.bigDecimal("id").toBigInteger()
+        }.asSingle
+    )!!
+
+    private data class DbFaktum(
+        val type: Int,
+        val rootId: Int,
+        val regel: String?
+    ) {
+        var id: Int = 0
+        var navnId: BigInteger = 0.toBigInteger()
+        var internVersjonId: BigInteger = 0.toBigInteger()
+        fun asQuery(soknadId: BigInteger) = queryOf( //language=PostgreSQL
+            """INSERT INTO faktum_verdi
+            |    (soknad_id, indeks, faktum_id)
+            |VALUES (:soknadId, :indeks,
+            |        (SELECT id FROM faktum WHERE versjon_id = :internVersjonId AND root_id = :rootId))
+            """.trimMargin(),
+            mapOf(
+                "soknadId" to soknadId,
+                "indeks" to 0,
+                "internVersjonId" to internVersjonId,
+                "rootId" to rootId
+            )
+        ).asExecute
+    }
+
+    private fun hentFaktum(sisteVersjon: Prosessversjon) = using(sessionOf(dataSource)) { session ->
+        session.run(
+            queryOf(
+                // language=PostgreSQL
+                """SELECT faktum.*, v1_prosessversjon.id AS prosessinternid
+                |FROM faktum, v1_prosessversjon
+                |WHERE faktum.versjon_id = v1_prosessversjon.id AND v1_prosessversjon.navn=? AND v1_prosessversjon.versjon_id=?
+                """.trimMargin(),
+                sisteVersjon.prosessnavn.id,
+                sisteVersjon.versjon
+            ).map {
+                DbFaktum(
+                    type = it.int("faktum_type"),
+                    rootId = it.int("root_id"),
+                    regel = it.stringOrNull("regel")
+                ).apply {
+                    id = it.int("id")
+                    navnId = it.bigDecimal("navn_id").toBigInteger()
+                    internVersjonId = it.bigDecimal("prosessInternId").toBigInteger()
+                }
+            }.asList
+        )
+    }.toSet()
 
     private fun prosessversjon(uuid: UUID) = using(sessionOf(dataSource)) { session ->
         session.run(
             queryOf( // language=PostgreSQL
                 """SELECT v1_prosessversjon.navn, v1_prosessversjon.versjon_id 
-                            |FROM soknad, v1_prosessversjon 
-                            |WHERE uuid = :uuid
+                |FROM soknad, v1_prosessversjon 
+                |WHERE uuid = :uuid
                 """.trimMargin(),
                 mapOf("uuid" to uuid)
             ).map { Prosessversjon(Prosess(it.string("navn")), it.int("versjon_id")) }.asSingle
