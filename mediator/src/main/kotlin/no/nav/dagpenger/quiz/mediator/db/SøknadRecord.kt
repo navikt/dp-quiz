@@ -129,9 +129,15 @@ class SøknadRecord : SøknadPersistence {
         val sisteVersjon = Versjon.siste(gjeldendeVersjon.prosessnavn)
 
         if (gjeldendeVersjon == sisteVersjon) return sisteVersjon
-        val gjeldendeFaktum = hentFaktum(gjeldendeVersjon)
-        val nyeFaktum = hentFaktum(sisteVersjon)
+        val gjeldendeFaktum = hentFaktum(gjeldendeVersjon).associateBy { it.id }
+        val nyeFaktum = hentFaktum(sisteVersjon).associateBy { it.id }
         val manglendeFaktum = nyeFaktum - gjeldendeFaktum
+
+        val nyeFaktumId = nyeFaktum.keys.toSet()
+        val gjeldendeFaktumId = nyeFaktum.keys.toSet()
+
+        val duplikater = gjeldendeFaktumId.intersect(nyeFaktumId)
+        val unike = nyeFaktumId.subtract(gjeldendeFaktumId)
 
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->

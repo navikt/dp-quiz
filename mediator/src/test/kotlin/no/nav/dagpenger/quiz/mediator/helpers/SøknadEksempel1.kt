@@ -89,7 +89,7 @@ internal object SøknadEksempel1 {
             tekst faktum "f23" id 23,
             periode faktum "f24" id 24,
             land faktum "f25" id 25,
-            desimaltall faktum "f26" id 26,
+            heltall faktum "f26" id 26,
             desimaltall faktum "f27" id 27
         )
     }
