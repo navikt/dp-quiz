@@ -1,13 +1,14 @@
 package no.nav.dagpenger.quiz.mediator.behovløsere
 
 import io.mockk.mockk
+import io.mockk.verify
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-internal class FornyVersjonServiceTest {
+internal class MigrerProsessServiceTest {
     val søknadPersistence = mockk<SøknadPersistence>(relaxed = true)
 
     private val rapid = TestRapid().apply {
@@ -15,7 +16,7 @@ internal class FornyVersjonServiceTest {
     }
 
     @Test
-    fun `besvarer dokumentkravSvar`() {
+    fun `besvarer migreringsbehov`() {
         val søknadUUID = UUID.randomUUID()
 
         //language=JSON
@@ -24,7 +25,7 @@ internal class FornyVersjonServiceTest {
           "@event_name": "behov",
           "@behovId": "test123",      
           "@behov": [
-            "FornyVersjon"
+            "MigrerProsess"
           ],
           "søknad_uuid": "$søknadUUID",
           "ident": "12345678913",
@@ -36,12 +37,11 @@ internal class FornyVersjonServiceTest {
 
         with(rapid.inspektør) {
             Assertions.assertNotNull(field(0, "@løsning"))
-            Assertions.assertEquals(søknadUUID.toString(), field(0, "@løsning")["FornyVersjon"].asText())
+            Assertions.assertEquals(søknadUUID.toString(), field(0, "@løsning")["MigrerProsess"].asText())
         }
 
-        /*verify(exactly = 1) {
-            søknadPersistence.hent(søknadUUID, any())
-            søknadPersistence.lagre(any())
-        }*/
+        verify(exactly = 1) {
+            søknadPersistence.migrer(søknadUUID)
+        }
     }
 }

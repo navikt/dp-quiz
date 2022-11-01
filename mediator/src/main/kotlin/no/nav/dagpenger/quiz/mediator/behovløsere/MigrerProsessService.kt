@@ -21,7 +21,7 @@ class MigrerProsessService(
         River(rapidsConnection).apply {
             validate { it.demandValue("@event_name", "behov") }
             validate { it.demandAll("@behov", listOf(behov)) }
-            validate { it.requireKey("søknad_uuid", behov) }
+            validate { it.requireKey("søknad_uuid") }
             validate { it.forbid("@løsning") }
         }.register(this)
     }
