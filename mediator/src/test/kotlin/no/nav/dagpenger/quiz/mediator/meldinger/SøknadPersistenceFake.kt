@@ -39,7 +39,7 @@ internal class SøknadPersistenceFake : SøknadPersistence {
         TODO("Not yet implemented")
     }
 
-    override fun migrer(uuid: UUID): Prosessversjon {
+    override fun migrer(uuid: UUID, tilVersjon: Prosessversjon?): Prosessversjon {
         TODO("Not yet implemented")
     }
 

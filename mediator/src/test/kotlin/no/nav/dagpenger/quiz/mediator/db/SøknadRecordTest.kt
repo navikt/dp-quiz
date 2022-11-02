@@ -368,13 +368,17 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
             val soknadUUID = originalSøknadprosess.søknad.uuid
-            assertEquals(søknadRecord.migrer(soknadUUID), SøknadEksempel1.prosessVersjon, "Migrering til samme versjon")
+            assertEquals(
+                søknadRecord.migrer(soknadUUID, SøknadEksempel1.prosessVersjon),
+                SøknadEksempel1.prosessVersjon,
+                "Migrering til samme versjon"
+            )
 
             originalSøknadprosess.desimaltall("f26").besvar(9.9)
 
             SøknadEksempel1.v2
             FaktumTable(SøknadEksempel1.prototypeFakta2)
-            val nyProsessVersjon = søknadRecord.migrer(soknadUUID)
+            val nyProsessVersjon = søknadRecord.migrer(soknadUUID, SøknadEksempel1.prosessVersjon2)
 
             assertEquals(SøknadEksempel1.prosessVersjon2, nyProsessVersjon)
 

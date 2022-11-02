@@ -22,7 +22,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 
 enum class Testprosess(override val id: String) : Prosessnavn {
-    Test("test")
+    Test("test-r")
 }
 
 internal object SøknadEksempel1 {

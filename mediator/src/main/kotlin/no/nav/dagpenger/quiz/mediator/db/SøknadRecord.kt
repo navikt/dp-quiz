@@ -123,13 +123,14 @@ class SøknadRecord : SøknadPersistence {
         return true
     }
 
-    override fun migrer(uuid: UUID): Prosessversjon {
+    override fun migrer(uuid: UUID, tilVersjon: Prosessversjon?): Prosessversjon {
         val gjeldendeVersjon = prosessversjon(uuid)
-        val sisteVersjon = Versjon.siste(gjeldendeVersjon.prosessnavn)
+        val nyVersjon = tilVersjon ?: Versjon.siste(gjeldendeVersjon.prosessnavn)
 
-        if (gjeldendeVersjon == sisteVersjon) return sisteVersjon
+        if (gjeldendeVersjon == nyVersjon) return nyVersjon
+        if (gjeldendeVersjon.versjon > nyVersjon.versjon) throw IllegalArgumentException("Kan ikke migrere bakover. Gjeldende versjon er ${gjeldendeVersjon.versjon}, forsøkte å migrere til ${nyVersjon.versjon}")
         val gjeldendeTilstand = hentFaktum(gjeldendeVersjon)
-        val ønsketTilstand = hentFaktum(sisteVersjon)
+        val ønsketTilstand = hentFaktum(nyVersjon)
 
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->
@@ -138,11 +139,11 @@ class SøknadRecord : SøknadPersistence {
                     tx.run(faktum.query(gjeldendeTilstand[rootId], soknadId))
                 }
 
-                tx.run(settVersjon(soknadId, sisteVersjon))
+                tx.run(settVersjon(soknadId, nyVersjon))
             }
         }
 
-        return sisteVersjon
+        return nyVersjon
     }
 
     private data class DbFaktum(val id: BigInteger, val rootId: Int) {

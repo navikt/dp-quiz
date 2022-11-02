@@ -41,7 +41,7 @@ internal class MigrerProsessServiceTest {
         }
 
         verify(exactly = 1) {
-            søknadPersistence.migrer(søknadUUID)
+            søknadPersistence.migrer(søknadUUID, any())
         }
     }
 }

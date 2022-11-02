@@ -14,5 +14,5 @@ interface SøknadPersistence {
     fun lagre(søknad: Søknad): Boolean
     fun opprettede(identer: Identer): Map<LocalDateTime, UUID>
     fun slett(uuid: UUID): Boolean
-    fun migrer(uuid: UUID): Prosessversjon
+    fun migrer(uuid: UUID, tilVersjon: Prosessversjon? = null): Prosessversjon
 }
