@@ -490,6 +490,10 @@ internal class ArbeidsforholdTest {
         }
 
     private val forventetSpørsmålsrekkefølgeForSøker = """
+8049,
+8050,
+8051,
+8052,
 8001,
 8002,
 8003,
@@ -538,10 +542,6 @@ internal class ArbeidsforholdTest {
 8046,
 8047,
 8048,
-8049,
-8050,
-8051,
-8052,
 8053,
 8054,
 8055,
