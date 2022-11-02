@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.db
 
-import kotliquery.Session
 import kotliquery.TransactionalSession
 import kotliquery.action.ExecuteQueryAction
 import kotliquery.action.UpdateQueryAction
@@ -129,56 +128,37 @@ class SøknadRecord : SøknadPersistence {
         val sisteVersjon = Versjon.siste(gjeldendeVersjon.prosessnavn)
 
         if (gjeldendeVersjon == sisteVersjon) return sisteVersjon
-        val gjeldendeFaktum = hentFaktum(gjeldendeVersjon).associateBy { it.id }
-        val nyeFaktum = hentFaktum(sisteVersjon).associateBy { it.id }
-        val manglendeFaktum = nyeFaktum - gjeldendeFaktum
-
-        val nyeFaktumId = nyeFaktum.keys.toSet()
-        val gjeldendeFaktumId = nyeFaktum.keys.toSet()
-
-        val duplikater = gjeldendeFaktumId.intersect(nyeFaktumId)
-        val unike = nyeFaktumId.subtract(gjeldendeFaktumId)
+        val gjeldendeTilstand = hentFaktum(gjeldendeVersjon)
+        val ønsketTilstand = hentFaktum(sisteVersjon)
 
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->
-                val soknadId = tx.getInternId(uuid)
-                manglendeFaktum.forEach {
-                    tx.run(it.asQuery(soknadId))
+                val soknadId = tx.run(hentInternSoknadId(uuid))!!
+                ønsketTilstand.forEach { (rootId, faktum) ->
+                    tx.run(faktum.query(gjeldendeTilstand[rootId], soknadId))
                 }
+
+                tx.run(settVersjon(soknadId, sisteVersjon))
             }
         }
 
         return sisteVersjon
     }
 
-    private fun Session.getInternId(uuid: UUID) = this.run(
-        queryOf("SELECT id FROM soknad WHERE uuid=?", uuid).map {
-            it.bigDecimal("id").toBigInteger()
-        }.asSingle
-    )!!
+    private fun hentInternSoknadId(uuid: UUID) =
+        queryOf( // language=PostgreSQL
+            "SELECT id FROM soknad WHERE uuid=?",
+            uuid
+        ).map { it.bigDecimal("id").toBigInteger() }.asSingle
 
-    private data class DbFaktum(
-        val type: Int,
-        val rootId: Int,
-        val regel: String?
-    ) {
-        var id: Int = 0
-        var navnId: BigInteger = 0.toBigInteger()
-        var internVersjonId: BigInteger = 0.toBigInteger()
-        fun asQuery(soknadId: BigInteger) = queryOf( //language=PostgreSQL
-            """INSERT INTO faktum_verdi
-            |    (soknad_id, indeks, faktum_id)
-            |VALUES (:soknadId, :indeks,
-            |        (SELECT id FROM faktum WHERE versjon_id = :internVersjonId AND root_id = :rootId))
+    private fun settVersjon(soknadId: BigInteger, versjon: Prosessversjon) =
+        queryOf( // language=PostgreSQL
+            """UPDATE soknad
+            |SET versjon_id = (SELECT id FROM v1_prosessversjon WHERE navn = :navn AND versjon_id = :versjonId)
+            |WHERE id = :soknadId
             """.trimMargin(),
-            mapOf(
-                "soknadId" to soknadId,
-                "indeks" to 0,
-                "internVersjonId" to internVersjonId,
-                "rootId" to rootId
-            )
-        ).asExecute
-    }
+            mapOf("navn" to versjon.prosessnavn.id, "versjonId" to versjon.versjon, "soknadId" to soknadId)
+        ).asUpdate
 
     private fun hentFaktum(sisteVersjon: Prosessversjon) = using(sessionOf(dataSource)) { session ->
         session.run(
@@ -192,17 +172,32 @@ class SøknadRecord : SøknadPersistence {
                 sisteVersjon.versjon
             ).map {
                 DbFaktum(
-                    type = it.int("faktum_type"),
-                    rootId = it.int("root_id"),
-                    regel = it.stringOrNull("regel")
-                ).apply {
-                    id = it.int("id")
-                    navnId = it.bigDecimal("navn_id").toBigInteger()
-                    internVersjonId = it.bigDecimal("prosessInternId").toBigInteger()
-                }
+                    id = it.bigDecimal("id").toBigInteger(),
+                    rootId = it.int("root_id")
+                )
             }.asList
         )
-    }.toSet()
+    }.associateBy { it.rootId }
+
+    private data class DbFaktum(
+        val id: BigInteger,
+        val rootId: Int
+    ) {
+        private fun opprettQuery(soknadId: BigInteger) = queryOf( //language=PostgreSQL
+            "INSERT INTO faktum_verdi (soknad_id, indeks, faktum_id) VALUES (:soknadId, 0, :id)",
+            mapOf("soknadId" to soknadId, "id" to id)
+        ).asUpdate
+
+        private fun oppdaterQuery(gammelId: BigInteger, nyId: BigInteger) = queryOf( //language=PostgreSQL
+            "UPDATE faktum_verdi SET faktum_id = :nyId WHERE faktum_id = :gammelId",
+            mapOf("nyId" to nyId, "gammelId" to gammelId)
+        ).asUpdate
+
+        fun query(forrigeFaktum: DbFaktum?, soknadId: BigInteger) = when (forrigeFaktum) {
+            null -> opprettQuery(soknadId)
+            else -> oppdaterQuery(forrigeFaktum.id, id)
+        }
+    }
 
     private fun prosessversjon(uuid: UUID) = using(sessionOf(dataSource)) { session ->
         session.run(

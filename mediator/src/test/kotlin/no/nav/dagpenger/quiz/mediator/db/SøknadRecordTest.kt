@@ -388,8 +388,8 @@ internal class SøknadRecordTest {
                 assertTrue(desimaltall("f27").erBesvart())
                 søknadRecord.lagre(this.søknad)
             }
-            with(søknadRecord.hent(soknadUUID)) {
 
+            with(søknadRecord.hent(soknadUUID)) {
                 assertTrue(desimaltall("f27").erBesvart())
             }
         }
