@@ -133,7 +133,7 @@ class SøknadRecord : SøknadPersistence {
 
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->
-                val soknadId = tx.run(hentInternSoknadId(uuid))!!
+                val soknadId = tx.run(internSoknadId(uuid))!!
                 ønsketTilstand.forEach { (rootId, faktum) ->
                     tx.run(faktum.query(gjeldendeTilstand[rootId], soknadId))
                 }
@@ -145,7 +145,24 @@ class SøknadRecord : SøknadPersistence {
         return sisteVersjon
     }
 
-    private fun hentInternSoknadId(uuid: UUID) =
+    private data class DbFaktum(val id: BigInteger, val rootId: Int) {
+        private fun opprettQuery(soknadId: BigInteger) = queryOf( //language=PostgreSQL
+            "INSERT INTO faktum_verdi (soknad_id, indeks, faktum_id) VALUES (:soknadId, 0, :id)",
+            mapOf("soknadId" to soknadId, "id" to id)
+        ).asUpdate
+
+        private fun oppdaterQuery(gammelId: BigInteger, nyId: BigInteger) = queryOf( //language=PostgreSQL
+            "UPDATE faktum_verdi SET faktum_id = :nyId WHERE faktum_id = :gammelId",
+            mapOf("nyId" to nyId, "gammelId" to gammelId)
+        ).asUpdate
+
+        fun query(forrigeFaktum: DbFaktum?, soknadId: BigInteger) = when (forrigeFaktum) {
+            null -> opprettQuery(soknadId)
+            else -> oppdaterQuery(forrigeFaktum.id, id)
+        }
+    }
+
+    private fun internSoknadId(uuid: UUID) =
         queryOf( // language=PostgreSQL
             "SELECT id FROM soknad WHERE uuid=?",
             uuid
@@ -178,26 +195,6 @@ class SøknadRecord : SøknadPersistence {
             }.asList
         )
     }.associateBy { it.rootId }
-
-    private data class DbFaktum(
-        val id: BigInteger,
-        val rootId: Int
-    ) {
-        private fun opprettQuery(soknadId: BigInteger) = queryOf( //language=PostgreSQL
-            "INSERT INTO faktum_verdi (soknad_id, indeks, faktum_id) VALUES (:soknadId, 0, :id)",
-            mapOf("soknadId" to soknadId, "id" to id)
-        ).asUpdate
-
-        private fun oppdaterQuery(gammelId: BigInteger, nyId: BigInteger) = queryOf( //language=PostgreSQL
-            "UPDATE faktum_verdi SET faktum_id = :nyId WHERE faktum_id = :gammelId",
-            mapOf("nyId" to nyId, "gammelId" to gammelId)
-        ).asUpdate
-
-        fun query(forrigeFaktum: DbFaktum?, soknadId: BigInteger) = when (forrigeFaktum) {
-            null -> opprettQuery(soknadId)
-            else -> oppdaterQuery(forrigeFaktum.id, id)
-        }
-    }
 
     private fun prosessversjon(uuid: UUID) = using(sessionOf(dataSource)) { session ->
         session.run(
