@@ -127,8 +127,7 @@ class SøknadRecord : SøknadPersistence {
         val gjeldendeVersjon = prosessversjon(uuid)
         val nyVersjon = tilVersjon ?: gjeldendeVersjon.siste()
 
-        if (gjeldendeVersjon == nyVersjon) return nyVersjon
-        if (gjeldendeVersjon.versjon > nyVersjon.versjon) throw IllegalArgumentException("Kan ikke migrere bakover. Gjeldende versjon er ${gjeldendeVersjon.versjon}, forsøkte å migrere til ${nyVersjon.versjon}")
+        if (!gjeldendeVersjon.kanMigrereTil(nyVersjon)) return gjeldendeVersjon
 
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->
@@ -137,7 +136,7 @@ class SøknadRecord : SøknadPersistence {
                 val soknadId = tx.run(internSoknadId(uuid))!!
 
                 ønsketTilstand.forEach { faktum ->
-                    tx.run(faktum.query(gjeldendeTilstand[faktum.rootId], soknadId))
+                    tx.run(faktum.opprettEllerOppdater(gjeldendeTilstand[faktum.rootId], soknadId))
                 }
 
                 tx.run(settVersjon(soknadId, nyVersjon))
@@ -158,7 +157,7 @@ class SøknadRecord : SøknadPersistence {
             mapOf("nyId" to nyId, "gammelId" to gammelId)
         ).asUpdate
 
-        fun query(forrigeFaktum: DbFaktum?, soknadId: BigInteger) = when (forrigeFaktum) {
+        fun opprettEllerOppdater(forrigeFaktum: DbFaktum?, soknadId: BigInteger) = when (forrigeFaktum) {
             null -> opprettQuery(soknadId)
             else -> oppdaterQuery(forrigeFaktum.id, id)
         }
