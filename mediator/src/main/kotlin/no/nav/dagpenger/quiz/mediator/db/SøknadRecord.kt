@@ -125,18 +125,19 @@ class SøknadRecord : SøknadPersistence {
 
     override fun migrer(uuid: UUID, tilVersjon: Prosessversjon?): Prosessversjon {
         val gjeldendeVersjon = prosessversjon(uuid)
-        val nyVersjon = tilVersjon ?: Versjon.siste(gjeldendeVersjon.prosessnavn)
+        val nyVersjon = tilVersjon ?: gjeldendeVersjon.siste()
 
         if (gjeldendeVersjon == nyVersjon) return nyVersjon
         if (gjeldendeVersjon.versjon > nyVersjon.versjon) throw IllegalArgumentException("Kan ikke migrere bakover. Gjeldende versjon er ${gjeldendeVersjon.versjon}, forsøkte å migrere til ${nyVersjon.versjon}")
-        val gjeldendeTilstand = hentFaktum(gjeldendeVersjon)
-        val ønsketTilstand = hentFaktum(nyVersjon)
 
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->
+                val gjeldendeTilstand = tx.run(hentFaktum(gjeldendeVersjon)).associateBy { it.rootId }
+                val ønsketTilstand = tx.run(hentFaktum(nyVersjon))
                 val soknadId = tx.run(internSoknadId(uuid))!!
-                ønsketTilstand.forEach { (rootId, faktum) ->
-                    tx.run(faktum.query(gjeldendeTilstand[rootId], soknadId))
+
+                ønsketTilstand.forEach { faktum ->
+                    tx.run(faktum.query(gjeldendeTilstand[faktum.rootId], soknadId))
                 }
 
                 tx.run(settVersjon(soknadId, nyVersjon))
@@ -178,24 +179,21 @@ class SøknadRecord : SøknadPersistence {
             mapOf("navn" to versjon.prosessnavn.id, "versjonId" to versjon.versjon, "soknadId" to soknadId)
         ).asUpdate
 
-    private fun hentFaktum(sisteVersjon: Prosessversjon) = using(sessionOf(dataSource)) { session ->
-        session.run(
-            queryOf(
-                // language=PostgreSQL
-                """SELECT faktum.*, v1_prosessversjon.id AS prosessinternid
+    private fun hentFaktum(sisteVersjon: Prosessversjon) =
+        queryOf(
+            // language=PostgreSQL
+            """SELECT faktum.*, v1_prosessversjon.id AS prosessinternid
                 |FROM faktum, v1_prosessversjon
                 |WHERE faktum.versjon_id = v1_prosessversjon.id AND v1_prosessversjon.navn=? AND v1_prosessversjon.versjon_id=?
-                """.trimMargin(),
-                sisteVersjon.prosessnavn.id,
-                sisteVersjon.versjon
-            ).map {
-                DbFaktum(
-                    id = it.bigDecimal("id").toBigInteger(),
-                    rootId = it.int("root_id")
-                )
-            }.asList
-        )
-    }.associateBy { it.rootId }
+            """.trimMargin(),
+            sisteVersjon.prosessnavn.id,
+            sisteVersjon.versjon
+        ).map {
+            DbFaktum(
+                id = it.bigDecimal("id").toBigInteger(),
+                rootId = it.int("root_id")
+            )
+        }.asList
 
     private fun prosessversjon(uuid: UUID) = using(sessionOf(dataSource)) { session ->
         session.run(
