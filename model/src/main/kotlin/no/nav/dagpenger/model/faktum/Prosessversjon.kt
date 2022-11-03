@@ -19,10 +19,10 @@ class Prosessversjon(val prosessnavn: Prosessnavn, val versjon: Int) {
     fun siste() = Versjon.siste(prosessnavn)
 
     fun kanMigrereTil(tilVersjon: Prosessversjon): Boolean {
-        require(tilVersjon?.prosessnavn == prosessnavn) { "Kan ikke migrere til en annen prosesstype." }
-        require(versjon > tilVersjon.versjon) { "Kan ikke migrere bakover. Gjeldende versjon er $versjon, forsøkte å migrere til ${tilVersjon.versjon}" }
+        require(tilVersjon.prosessnavn.id == prosessnavn.id) { "Kan ikke migrere til en annen prosesstype." }
+        require(tilVersjon.versjon >= versjon) { "Kan ikke migrere bakover. Gjeldende versjon er $versjon, forsøkte å migrere til ${tilVersjon.versjon}" }
 
-        return this == tilVersjon
+        return this != tilVersjon
     }
 
     init {
