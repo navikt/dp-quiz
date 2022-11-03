@@ -146,7 +146,7 @@ class SøknadRecord : SøknadPersistence {
         return nyVersjon
     }
 
-    private data class DbFaktum(val id: BigInteger, val rootId: Int) {
+    private data class FaktumMigrering(val id: BigInteger, val rootId: Int) {
         private fun opprettQuery(soknadId: BigInteger) = queryOf( //language=PostgreSQL
             "INSERT INTO faktum_verdi (soknad_id, indeks, faktum_id) VALUES (:soknadId, 0, :id)",
             mapOf("soknadId" to soknadId, "id" to id)
@@ -157,7 +157,7 @@ class SøknadRecord : SøknadPersistence {
             mapOf("nyId" to nyId, "gammelId" to gammelId)
         ).asUpdate
 
-        fun opprettEllerOppdater(forrigeFaktum: DbFaktum?, soknadId: BigInteger) = when (forrigeFaktum) {
+        fun opprettEllerOppdater(forrigeFaktum: FaktumMigrering?, soknadId: BigInteger) = when (forrigeFaktum) {
             null -> opprettQuery(soknadId)
             else -> oppdaterQuery(forrigeFaktum.id, id)
         }
@@ -188,7 +188,7 @@ class SøknadRecord : SøknadPersistence {
             sisteVersjon.prosessnavn.id,
             sisteVersjon.versjon
         ).map {
-            DbFaktum(
+            FaktumMigrering(
                 id = it.bigDecimal("id").toBigInteger(),
                 rootId = it.int("root_id")
             )
