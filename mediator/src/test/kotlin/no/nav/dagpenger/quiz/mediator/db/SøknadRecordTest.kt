@@ -25,6 +25,7 @@ import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
+import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel2
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -376,11 +377,11 @@ internal class SøknadRecordTest {
 
             originalSøknadprosess.desimaltall("f26").besvar(9.9)
 
-            SøknadEksempel1.v2
-            FaktumTable(SøknadEksempel1.prototypeFakta2)
-            val nyProsessVersjon = søknadRecord.migrer(soknadUUID, SøknadEksempel1.prosessVersjon2)
+            SøknadEksempel2.v2
+            FaktumTable(SøknadEksempel2.prototypeFakta)
+            val nyProsessVersjon = søknadRecord.migrer(soknadUUID, SøknadEksempel2.prosessVersjon)
 
-            assertEquals(SøknadEksempel1.prosessVersjon2, nyProsessVersjon)
+            assertEquals(SøknadEksempel2.prosessVersjon, nyProsessVersjon)
 
             with(søknadRecord.hent(soknadUUID)) {
                 assertFalse(heltall("f26").erBesvart())
@@ -388,6 +389,13 @@ internal class SøknadRecordTest {
 
                 heltall("f26").besvar(12)
                 desimaltall("f27").besvar(1.3)
+                envalg("f28").besvar(Envalg("f28.valg1"))
+                tekst("f20").besvar(Tekst("Foo"))
+
+                assertThrows<IllegalArgumentException> {
+                    // Slettet og finnes ikke lenger
+                    tekst("f23").besvar(Tekst("Foo"))
+                }
 
                 assertTrue(desimaltall("f27").erBesvart())
                 søknadRecord.lagre(this.søknad)
