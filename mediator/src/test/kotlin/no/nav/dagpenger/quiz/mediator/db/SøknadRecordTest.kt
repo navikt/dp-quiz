@@ -25,9 +25,12 @@ import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
+import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel2
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
@@ -120,7 +123,6 @@ internal class SøknadRecordTest {
     fun `Skal kun slette besvarer hvis den ikke refererer til andre søknader`() = Postgres.withMigratedDb {
         FaktumTable(SøknadEksempel1.prototypeFakta1)
         søknadRecord = SøknadRecord()
-
         val søknadProsess1 = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon)
         val søknadProsess2 = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon)
         val besvarer = "123"
@@ -134,7 +136,8 @@ internal class SøknadRecordTest {
         assertRecordCount(1, "besvarer")
     }
 
-    @Test fun `Lagring og henting av fakta med kotliquery spesial tegn`() {
+    @Test
+    fun `Lagring og henting av fakta med kotliquery spesial tegn`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
             originalSøknadprosess.tekst(23).besvar(Tekst("? tekst1 asdfas?"))
@@ -144,7 +147,8 @@ internal class SøknadRecordTest {
         }
     }
 
-    @Test fun `lagring og henting av fakta`() {
+    @Test
+    fun `lagring og henting av fakta`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
@@ -321,7 +325,6 @@ internal class SøknadRecordTest {
     fun `Skal kunne lagre pågående perioder, mao sette feltet fom til NULL`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
-
             val pågåendePeriode = Periode(17.mai())
             originalSøknadprosess.periode(24).besvar(pågåendePeriode)
 
@@ -350,12 +353,57 @@ internal class SøknadRecordTest {
             val søknadUUId = UUID.randomUUID()
             FaktumTable(SøknadEksempel1.prototypeFakta1)
             søknadRecord = SøknadRecord()
-            originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon, søknadUUId)
-            originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon, søknadUUId)
+            originalSøknadprosess =
+                søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon, søknadUUId)
+            originalSøknadprosess =
+                søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon, søknadUUId)
 
             originalSøknadprosess.dato(2).besvar(LocalDate.now())
 
             lagreHentOgSammenlign()
+        }
+    }
+
+    @Test
+    fun `Kan migrere`() {
+        Postgres.withMigratedDb {
+            byggOriginalSøknadprosess()
+            val soknadUUID = originalSøknadprosess.søknad.uuid
+            assertEquals(
+                søknadRecord.migrer(soknadUUID, SøknadEksempel1.prosessVersjon),
+                SøknadEksempel1.prosessVersjon,
+                "Migrering til samme versjon"
+            )
+
+            originalSøknadprosess.desimaltall("f26").besvar(9.9)
+
+            SøknadEksempel2.v2
+            FaktumTable(SøknadEksempel2.prototypeFakta)
+            val nyProsessVersjon = søknadRecord.migrer(soknadUUID, SøknadEksempel2.prosessVersjon)
+
+            assertEquals(SøknadEksempel2.prosessVersjon, nyProsessVersjon)
+
+            with(søknadRecord.hent(soknadUUID)) {
+                assertFalse(heltall("f26").erBesvart())
+                assertFalse(desimaltall("f27").erBesvart())
+
+                heltall("f26").besvar(12)
+                desimaltall("f27").besvar(1.3)
+                envalg("f28").besvar(Envalg("f28.valg1"))
+                tekst("f20").besvar(Tekst("Foo"))
+
+                assertThrows<IllegalArgumentException> {
+                    // Slettet og finnes ikke lenger
+                    tekst("f23").besvar(Tekst("Foo"))
+                }
+
+                assertTrue(desimaltall("f27").erBesvart())
+                søknadRecord.lagre(this.søknad)
+            }
+
+            with(søknadRecord.hent(soknadUUID)) {
+                assertTrue(desimaltall("f27").erBesvart())
+            }
         }
     }
 

@@ -22,11 +22,10 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 
 enum class Testprosess(override val id: String) : Prosessnavn {
-    Test("test")
+    Test("test-r")
 }
 
 internal object SøknadEksempel1 {
-
     val prosessVersjon = Prosessversjon(Testprosess.Test, 888)
     internal val prototypeFakta1 = Søknad(
         prosessVersjon,
@@ -58,9 +57,7 @@ internal object SøknadEksempel1 {
         periode faktum "f24" id 24,
         land faktum "f25" id 25,
         desimaltall faktum "f26" id 26
-
     )
-
     private val webPrototypeSøknad = Søknadprosess(
         Seksjon(
             "seksjon",
@@ -68,7 +65,6 @@ internal object SøknadEksempel1 {
             *(prototypeFakta1.map { it }.toTypedArray())
         )
     )
-
     private val mobilePrototypeSøknad = Søknadprosess(
         Seksjon(
             "seksjon",
@@ -82,7 +78,6 @@ internal object SøknadEksempel1 {
             prototypeFakta1.boolsk(17)
         )
     )
-
     val v = Versjon.Bygger(
         prototypeFakta1,
         prototypeFakta1 boolsk 1 er true,
