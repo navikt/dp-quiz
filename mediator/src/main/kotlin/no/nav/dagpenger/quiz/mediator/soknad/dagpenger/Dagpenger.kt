@@ -22,13 +22,13 @@ internal object Dagpenger {
     private val faktaseksjoner = listOf(
         Bosted,
         Gjenopptak,
-        Barnetillegg,
         Arbeidsforhold,
         EøsArbeidsforhold,
         EgenNæring,
         Verneplikt,
         AndreYtelser,
         Utdanning,
+        Barnetillegg,
         ReellArbeidssoker,
         Tilleggsopplysninger
     )
