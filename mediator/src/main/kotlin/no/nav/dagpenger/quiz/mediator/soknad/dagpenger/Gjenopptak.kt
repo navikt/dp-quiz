@@ -42,7 +42,7 @@ object Gjenopptak : DslFaktaseksjon {
         dato faktum "faktum.arbeidsforhold.gjenopptak.soknadsdato-gjenopptak" id `gjenopptak søknadsdato` avhengerAv `mottatt dagpenger siste 12 mnd`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.endringer-i-arbeidsforhold" id `gjenopptak endringer i arbeidsforhold siden sist` avhengerAv `mottatt dagpenger siste 12 mnd`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-ny-beregning" id `gjenopptak ønsker ny beregning av dagpenger` avhengerAv `mottatt dagpenger siste 12 mnd`,
-        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid" id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid` avhengerAv `mottatt dagpenger siste 12 mnd`
+        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid" id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid` avhengerAv `mottatt dagpenger siste 12 mnd` og `gjenopptak ønsker ny beregning av dagpenger`
     )
 
     override fun seksjon(søknad: Søknad) =
