@@ -6,6 +6,8 @@ import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Gjenopptak.`dagpenger søknadsdato`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Gjenopptak.`type arbeidstid`
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -28,8 +30,8 @@ internal class DagpengerMetadataStrategiTest {
         søknadprosess.generator(Barnetillegg.`barn liste register`).besvar(0)
         søknadprosess.boolsk(Barnetillegg.`egne barn`).besvar(false)
 
-        søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
-        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
+        søknadprosess.dato(`dagpenger søknadsdato`).besvar(1.januar)
+        søknadprosess.envalg(`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
 
         søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(2)
         søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("navn"))
@@ -55,8 +57,8 @@ internal class DagpengerMetadataStrategiTest {
         søknadprosess.generator(Barnetillegg.`barn liste register`).besvar(0)
         søknadprosess.boolsk(Barnetillegg.`egne barn`).besvar(false)
 
-        søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
-        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
+        søknadprosess.dato(`dagpenger søknadsdato`).besvar(1.januar)
+        søknadprosess.envalg(`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
 
         søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(1)
         søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("navn"))
@@ -77,8 +79,8 @@ internal class DagpengerMetadataStrategiTest {
         søknadprosess.generator(Barnetillegg.`barn liste register`).besvar(0)
         søknadprosess.boolsk(Barnetillegg.`egne barn`).besvar(false)
 
-        søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
-        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
+        søknadprosess.dato(`dagpenger søknadsdato`).besvar(1.januar)
+        søknadprosess.envalg(`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
 
         søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(2)
         søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("navn"))
@@ -104,8 +106,8 @@ internal class DagpengerMetadataStrategiTest {
         søknadprosess.generator(Barnetillegg.`barn liste register`).besvar(0)
         søknadprosess.boolsk(Barnetillegg.`egne barn`).besvar(false)
 
-        søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
-        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
+        søknadprosess.dato(`dagpenger søknadsdato`).besvar(1.januar)
+        søknadprosess.envalg(`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
 
         søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(1)
         søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("navn"))

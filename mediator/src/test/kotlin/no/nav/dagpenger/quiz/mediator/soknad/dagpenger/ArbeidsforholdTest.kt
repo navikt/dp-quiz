@@ -15,6 +15,8 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Gjenopptak.`dagpenger søknadsdato`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Gjenopptak.`type arbeidstid`
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -38,7 +40,7 @@ internal class ArbeidsforholdTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        Arbeidsforhold.verifiserFeltsammensetting(61, 489891)
+        Arbeidsforhold.verifiserFeltsammensetting(53, 425579)
     }
 
     @Test
@@ -56,8 +58,9 @@ internal class ArbeidsforholdTest {
     }
 
     @Test
+    @Disabled("MÅ FLYTTES TIL GJENOPPTAK")
     fun `Trenger ikke fylle inn arbeidsforhold når type arbeidstid er besvart med Ingen alternativer passer og det ikke er gjenopptak`() {
-        søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
+        /*søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
         søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
 
@@ -69,12 +72,13 @@ internal class ArbeidsforholdTest {
 
         søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`)
             .besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, søknadprosess.resultat())*/
     }
 
     @Test
+    @Disabled("MÅ FLYTTES TIL GJENOPPTAK")
     fun `arbeidsforhold ved gjenopptak av dagpenger og dens avhengigheter`() {
-        `besvar innledende spørsmål om arbeidsforhold for gjenopptak`()
+        /*`besvar innledende spørsmål om arbeidsforhold for gjenopptak`()
         søknadprosess.boolsk(Arbeidsforhold.`gjenopptak endringer i arbeidsforhold siden sist`).besvar(false)
         assertEquals(true, søknadprosess.resultat())
 
@@ -102,14 +106,14 @@ internal class ArbeidsforholdTest {
             .besvar(Envalg(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei")))
         assertEquals(null, søknadprosess.resultat())
 
-        assertErUbesvarte(
-            søknadprosess.boolsk(Arbeidsforhold.`gjenopptak jobbet siden sist du fikk dagpenger`),
-            søknadprosess.tekst(Arbeidsforhold.`gjenopptak årsak til stans av dagpenger`),
-            søknadprosess.dato(Arbeidsforhold.`gjenopptak søknadsdato`),
-            søknadprosess.boolsk(Arbeidsforhold.`gjenopptak endringer i arbeidsforhold siden sist`),
-            søknadprosess.boolsk(Arbeidsforhold.`gjenopptak ønsker ny beregning av dagpenger`),
-            søknadprosess.boolsk(Arbeidsforhold.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`),
-        )
+                assertErUbesvarte(
+                    søknadprosess.boolsk(Arbeidsforhold.`gjenopptak jobbet siden sist du fikk dagpenger`),
+                    søknadprosess.tekst(Arbeidsforhold.`gjenopptak årsak til stans av dagpenger`),
+                    søknadprosess.dato(Arbeidsforhold.`gjenopptak søknadsdato`),
+                    søknadprosess.boolsk(Arbeidsforhold.`gjenopptak endringer i arbeidsforhold siden sist`),
+                    søknadprosess.boolsk(Arbeidsforhold.`gjenopptak ønsker ny beregning av dagpenger`),
+                    søknadprosess.boolsk(Arbeidsforhold.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`),
+                )*/
     }
 
     @Test
@@ -403,10 +407,6 @@ internal class ArbeidsforholdTest {
     @Disabled
     @Test
     fun `Bug - rekkefølgen på spørsmålene blir feil`() {
-        søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
-            .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
-        søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
-        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
         søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(1)
         søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))
         søknadprosess.land("${Arbeidsforhold.`arbeidsforhold land`}.1").besvar(Land("NOR"))
@@ -415,7 +415,6 @@ internal class ArbeidsforholdTest {
         søknadprosess.periode("${Arbeidsforhold.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
         søknadprosess.envalg("${Arbeidsforhold.`arbeidsforhold midlertidig arbeidsforhold med sluttdato`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.midlertidig-arbeidsforhold-med-sluttdato.svar.ja"))
-
         val nesteSeksjonAsJsonNode = jacksonObjectMapper().readTree(søknadprosess.nesteSeksjoner()[0].somSpørsmål())
         val arbeidsforholdGeneratorSvar = nesteSeksjonAsJsonNode["seksjoner"][0]["fakta"][2]["svar"][0]
         assertNull(arbeidsforholdGeneratorSvar.last()["svar"], "siste spørsmål i listen skal være ubesvart")
@@ -431,10 +430,10 @@ internal class ArbeidsforholdTest {
         val søknadprosessForArbeidsforhold = søknad.testSøknadprosess(minimaltRegeltreForArbeidsforhold) {
             Gjenopptak.seksjon(søknad) + Arbeidsforhold.seksjon(søknad)
         }
-
         val faktaForGjennopptak =
             søknadprosessForArbeidsforhold.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
-        assertEquals("10001", faktaForGjennopptak)
+        // TODO: MÅ FLYTTES TIL GJENOPPTAK
+        assertEquals("10001,8050,8051,8049,8052,8053,8054,8001,8002", faktaForGjennopptak)
 
         søknadprosessForArbeidsforhold.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
@@ -444,11 +443,11 @@ internal class ArbeidsforholdTest {
     }
 
     private fun `besvar innledende spørsmål om arbeidsforhold for gjenopptak`() {
-        søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
+        /*søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja")))
         søknadprosess.boolsk(Arbeidsforhold.`gjenopptak jobbet siden sist du fikk dagpenger`).besvar(true)
         søknadprosess.tekst(Arbeidsforhold.`gjenopptak årsak til stans av dagpenger`).besvar(Tekst("Årsak"))
-        søknadprosess.dato(Arbeidsforhold.`gjenopptak søknadsdato`).besvar(1.januar)
+        søknadprosess.dato(Arbeidsforhold.`gjenopptak søknadsdato`).besvar(1.januar)*/
     }
 
     private fun `besvar spørsmål for et arbeidsforhold`() {
@@ -464,8 +463,8 @@ internal class ArbeidsforholdTest {
     private fun `besvar innledende spørsmål om arbeidsforhold`() {
         søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
-        søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
-        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
+        søknadprosess.dato(`dagpenger søknadsdato`).besvar(1.januar)
+        søknadprosess.envalg(`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
         søknadprosess.generator(Arbeidsforhold.arbeidsforhold).besvar(1)
         søknadprosess.tekst("${Arbeidsforhold.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))
         søknadprosess.land("${Arbeidsforhold.`arbeidsforhold land`}.1").besvar(Land("NOR"))
@@ -490,65 +489,14 @@ internal class ArbeidsforholdTest {
         }
 
     private val forventetSpørsmålsrekkefølgeForSøker = """
-8049,
-8050,
-8051,
-8052,
-8001,
-8002,
-8003,
-8004,
-8005,
-8006,
-8007,
-8008,
-8009,
-8010,
-8011,
-8012,
-8013,
-8014,
-8015,
-8016,
-8017,
-8018,
-8019,
-8020,
-8021,
-8022,
-8023,
-8024,
-8025,
-8026,
-8027,
-8028,
-8029,
-8030,
-8031,
-8032,
-8033,
-8034,
-8035,
-8036,
-8037,
-8038,
-8039,
-8040,
-8041,
-8042,
-8043,
-8044,
-8045,
-8046,
-8047,
-8048,
-8053,
-8054,
-8055,
-8056,
-8057,
-8058,
-8059,
-8060,
-8061""".trimStart()
+        10001,
+        8050,
+        8051,
+        8049,
+        8052,
+        8053,
+        8054,
+        8001,
+        8002
+    """.trimIndent()
 }
