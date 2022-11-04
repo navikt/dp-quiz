@@ -7,16 +7,18 @@ import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 internal class GjenopptakTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        Gjenopptak.verifiserFeltsammensetting(1, 10001)
+        Gjenopptak.verifiserFeltsammensetting(9, 74313)
     }
 
     @Test
+    @Disabled("MÅ FLYTTES TIL GJENOPPTAK")
     fun `Det må svares på om man har mottat dagpenger det siste året`() {
         val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Gjenopptak.fakta())
         val søknadprosess = søknad.testSøknadprosess(
@@ -27,7 +29,7 @@ internal class GjenopptakTest {
 
         assertEquals(null, søknadprosess.resultat())
         søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(null, søknadprosess.resultat())
 
         søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
         assertEquals(true, søknadprosess.resultat())
@@ -45,6 +47,6 @@ internal class GjenopptakTest {
             Gjenopptak.seksjon(this)
         }
         val faktaFraGjenopptak = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
-        assertEquals("10001", faktaFraGjenopptak)
+        assertEquals("10001,8049,8050,8051,8052,8053,8054,8001,8002", faktaFraGjenopptak)
     }
 }

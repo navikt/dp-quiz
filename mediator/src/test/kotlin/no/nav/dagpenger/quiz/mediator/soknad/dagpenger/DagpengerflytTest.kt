@@ -8,12 +8,13 @@ import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`egne barn`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Gjenopptak.`dagpenger søknadsdato`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Gjenopptak.`type arbeidstid`
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertTrue
 
 class DagpengerflytTest {
-
     private lateinit var søknadprosess: Søknadprosess
 
     init {
@@ -27,20 +28,20 @@ class DagpengerflytTest {
     fun `dagpenger flyt - letteste vei til ferdig`() {
         søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("NOR"))
 
-        søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`).besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
+        søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
+            .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
 
         søknadprosess.generator(Barnetillegg.`barn liste register`).besvar(1)
         søknadprosess.tekst("${Barnetillegg.`barn fornavn mellomnavn register`}.1").besvar(Tekst("test testen"))
         søknadprosess.tekst("${Barnetillegg.`barn etternavn register`}.1").besvar(Tekst("TTTT"))
         søknadprosess.dato("${Barnetillegg.`barn fødselsdato register`}.1").besvar(LocalDate.now().minusYears(10))
         søknadprosess.land("${Barnetillegg.`barn statsborgerskap register`}.1").besvar(Land("NOR"))
-
         // Besvares av bruker
         søknadprosess.boolsk("${Barnetillegg.`forsørger du barnet register`}.1").besvar(false)
         søknadprosess.boolsk(`egne barn`).besvar(false)
 
-        søknadprosess.dato(Arbeidsforhold.`dagpenger søknadsdato`).besvar(1.januar)
-        søknadprosess.envalg(Arbeidsforhold.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
+        søknadprosess.dato(`dagpenger søknadsdato`).besvar(1.januar)
+        søknadprosess.envalg(`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
 
         søknadprosess.boolsk(EøsArbeidsforhold.`eøs arbeid siste 36 mnd`).besvar(false)
 
@@ -62,7 +63,17 @@ class DagpengerflytTest {
         søknadprosess.boolsk(ReellArbeidssoker.`kan bytte yrke eller gå ned i lønn`).besvar(true)
 
         søknadprosess.boolsk(Tilleggsopplysninger.`har tilleggsopplysninger`).besvar(false)
-        assertTrue(søknadprosess.erFerdigFor(Rolle.nav, Rolle.søker), "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }}")
-        assertTrue(søknadprosess.erFerdig(), "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }}")
+        assertTrue(
+            søknadprosess.erFerdigFor(Rolle.nav, Rolle.søker),
+            "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
+            søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+            }"
+        )
+        assertTrue(
+            søknadprosess.erFerdig(),
+            "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
+            søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+            }"
+        )
     }
 }
