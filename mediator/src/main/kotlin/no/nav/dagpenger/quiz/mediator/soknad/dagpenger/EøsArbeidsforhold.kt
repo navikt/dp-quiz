@@ -5,19 +5,16 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
-import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
-import no.nav.dagpenger.model.regel.inneholder
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
-import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
@@ -29,6 +26,7 @@ object EøsArbeidsforhold : DslFaktaseksjon {
     const val `eøs arbeidsforhold land` = 9004
     const val `eøs arbeidsforhold personnummer` = 9005
     const val `eøs arbeidsforhold varighet` = 9006
+
     override val fakta = listOf(
         boolsk faktum "faktum.eos-arbeid-siste-36-mnd" id `eøs arbeid siste 36 mnd`,
         heltall faktum "faktum.eos-arbeidsforhold" id `eøs arbeidsforhold` avhengerAv `eøs arbeid siste 36 mnd`
@@ -44,24 +42,22 @@ object EøsArbeidsforhold : DslFaktaseksjon {
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "arbeidsforhold eøs".deltre {
-            envalg(Gjenopptak.`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.ingen-passer") hvisIkkeOppfylt {
-                "Arbeidsforhold i EØS området".minstEnAv(
-                    boolsk(`eøs arbeid siste 36 mnd`) er false,
-                    boolsk(`eøs arbeid siste 36 mnd`) er true hvisOppfylt {
-                        "Hvis ja, må det oppgi arbeidsforhold".alle(
-                            generator(`eøs arbeidsforhold`) minst 1,
-                            generator(`eøs arbeidsforhold`) har "En til flere EØS arbeidsforhold".deltre {
-                                "alt må være utfylt".alle(
-                                    tekst(`eøs arbeidsforhold arbeidsgivernavn`).utfylt(),
-                                    land(`eøs arbeidsforhold land`).utfylt(),
-                                    tekst(`eøs arbeidsforhold personnummer`).utfylt(),
-                                    periode(`eøs arbeidsforhold varighet`).utfylt()
-                                )
-                            }
-                        )
-                    }
-                )
-            }
+            "Arbeidsforhold i EØS området".minstEnAv(
+                boolsk(`eøs arbeid siste 36 mnd`) er false,
+                boolsk(`eøs arbeid siste 36 mnd`) er true hvisOppfylt {
+                    "Hvis ja, må det oppgi arbeidsforhold".alle(
+                        generator(`eøs arbeidsforhold`) minst 1,
+                        generator(`eøs arbeidsforhold`) har "En til flere EØS arbeidsforhold".deltre {
+                            "alt må være utfylt".alle(
+                                tekst(`eøs arbeidsforhold arbeidsgivernavn`).utfylt(),
+                                land(`eøs arbeidsforhold land`).utfylt(),
+                                tekst(`eøs arbeidsforhold personnummer`).utfylt(),
+                                periode(`eøs arbeidsforhold varighet`).utfylt()
+                            )
+                        }
+                    )
+                }
+            )
         }
     }
 
