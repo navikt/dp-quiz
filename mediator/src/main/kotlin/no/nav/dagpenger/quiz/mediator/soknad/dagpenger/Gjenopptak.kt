@@ -63,17 +63,18 @@ object Gjenopptak : DslFaktaseksjon {
 
     private fun Søknad.`arbeidsforhold gjenopptak`() =
         "spørsmål om gjenopptaket".alle(
-            boolsk(`gjenopptak jobbet siden sist du fikk dagpenger`).utfylt(),
             tekst(`gjenopptak årsak til stans av dagpenger`).utfylt(),
             dato(`gjenopptak søknadsdato`).utfylt(),
-            "hatt endringer i arbeidsforhold siden sist eller ikke".minstEnAv(
-                boolsk(`gjenopptak endringer i arbeidsforhold siden sist`) er false,
-                boolsk(`gjenopptak endringer i arbeidsforhold siden sist`) er true hvisOppfylt {
-                    "arbeidsforhold og spørsmål om beregning og fastsatt ny arbeidstid".alle(
-                        `ønsker ny beregning og fastsatt ny arbeidstid eller ikke`()
-                    )
-                }
-            )
+            (boolsk(`gjenopptak jobbet siden sist du fikk dagpenger`).er(true)).hvisOppfylt {
+                "hatt endringer i arbeidsforhold siden sist eller ikke".minstEnAv(
+                    boolsk(`gjenopptak endringer i arbeidsforhold siden sist`) er false,
+                    boolsk(`gjenopptak endringer i arbeidsforhold siden sist`) er true hvisOppfylt {
+                        "arbeidsforhold og spørsmål om beregning og fastsatt ny arbeidstid".alle(
+                            `ønsker ny beregning og fastsatt ny arbeidstid eller ikke`()
+                        )
+                    }
+                )
+            }
         )
 
     private fun Søknad.`ønsker ny beregning og fastsatt ny arbeidstid eller ikke`() =
