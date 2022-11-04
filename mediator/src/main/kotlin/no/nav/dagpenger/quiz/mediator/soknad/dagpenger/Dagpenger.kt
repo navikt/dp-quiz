@@ -8,6 +8,7 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
+import no.nav.dagpenger.model.subsumsjon.uansett
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger.Subsumsjoner.regeltre
 
@@ -44,7 +45,7 @@ internal object Dagpenger {
     object Subsumsjoner {
         val regeltre: Subsumsjon = with(prototypeSøknad) {
             Bosted.regeltre(this).hvisOppfylt {
-                Gjenopptak.regeltre(this).hvisOppfylt {
+                Gjenopptak.regeltre(this).uansett {
                     Arbeidsforhold.regeltre(this).hvisOppfylt {
                         EøsArbeidsforhold.regeltre(this).hvisOppfylt {
                             EgenNæring.regeltre(this).hvisOppfylt {
