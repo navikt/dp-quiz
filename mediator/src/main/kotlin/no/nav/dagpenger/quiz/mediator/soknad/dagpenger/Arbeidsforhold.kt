@@ -286,32 +286,11 @@ object Arbeidsforhold : DslFaktaseksjon {
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "arbeidsforhold".deltre {
-            `har mottat dagpenger siste 12 mnd`() hvisOppfylt {
-                `arbeidsforhold gjenopptak`()
-            } hvisIkkeOppfylt {
-                arbeidsforhold()
+            envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.ingen-passer") hvisIkkeOppfylt {
+                `alle arbeidsforhold`()
             }
         }
     }
-
-    private fun Søknad.`har mottat dagpenger siste 12 mnd`() =
-        envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`) inneholder Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja")
-
-    private fun Søknad.`arbeidsforhold gjenopptak`() =
-        "spørsmål om gjenopptaket".alle(
-            boolsk(`gjenopptak jobbet siden sist du fikk dagpenger`).utfylt(),
-            tekst(`gjenopptak årsak til stans av dagpenger`).utfylt(),
-            dato(`gjenopptak søknadsdato`).utfylt(),
-            "hatt endringer i arbeidsforhold siden sist eller ikke".minstEnAv(
-                boolsk(`gjenopptak endringer i arbeidsforhold siden sist`) er false,
-                boolsk(`gjenopptak endringer i arbeidsforhold siden sist`) er true hvisOppfylt {
-                    "arbeidsforhold og spørsmål om beregning og fastsatt ny arbeidstid".alle(
-                        `alle arbeidsforhold`(),
-                        `ønsker ny beregning og fastsatt ny arbeidstid eller ikke`()
-                    )
-                }
-            )
-        )
 
     private fun Søknad.`alle arbeidsforhold`() =
         generator(arbeidsforhold) med "en eller flere arbeidsforhold".deltre {
@@ -345,17 +324,6 @@ object Arbeidsforhold : DslFaktaseksjon {
         )
 
     private fun Søknad.`type arbeidstid`() = envalg(`type arbeidstid`).utfylt()
-
-    private fun Søknad.arbeidsforhold() =
-        "søknadsdato, type arbeidstid og alle arbeidsforhold".alle(
-            søknadsdato(),
-            `type arbeidstid`(),
-            envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.ingen-passer") hvisIkkeOppfylt {
-                `alle arbeidsforhold`()
-            }
-        )
-
-    private fun Søknad.søknadsdato() = dato(`dagpenger søknadsdato`).utfylt()
 
     private fun Søknad.`ikke endret`() =
         envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret") hvisOppfylt {
