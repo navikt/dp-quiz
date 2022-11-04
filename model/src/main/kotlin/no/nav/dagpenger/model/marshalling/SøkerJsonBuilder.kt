@@ -23,6 +23,7 @@ import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilGyldigeLan
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilLandGrupper
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder.ReadOnlyStrategy
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Seksjon.Companion.brukerSeksjoner
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.SannsynliggjøringsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -78,7 +79,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
     }
 
     override fun postVisit(søknadprosess: Søknadprosess) {
-        root.put("antallSeksjoner", seksjonerTotalt.size)
+        root.put("antallSeksjoner", seksjonerTotalt.brukerSeksjoner().size)
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {

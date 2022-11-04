@@ -33,6 +33,9 @@ class Seksjon private constructor(
                 it.filtrertSeksjon(relevanteFakta)
             }
 
+        internal fun Collection<Seksjon>.brukerSeksjoner() =
+            this.filter { it.rolle == Rolle.søker }
+
         internal fun List<Seksjon>.medSøknadprosess() = filter { it::_søknadprosess.isInitialized }
     }
 
