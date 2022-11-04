@@ -432,7 +432,8 @@ internal class ArbeidsforholdTest {
         }
         val faktaForGjennopptak =
             søknadprosessForArbeidsforhold.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
-        assertEquals("10001,8049,8050,8051,8052,8053,8054,8001,8002", faktaForGjennopptak)
+        // TODO: MÅ FLYTTES TIL GJENOPPTAK
+        assertEquals("10001,8050,8051,8049,8052,8053,8054,8001,8002", faktaForGjennopptak)
 
         søknadprosessForArbeidsforhold.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
@@ -489,9 +490,9 @@ internal class ArbeidsforholdTest {
 
     private val forventetSpørsmålsrekkefølgeForSøker = """
         10001,
-        8049,
         8050,
         8051,
+        8049,
         8052,
         8053,
         8054,

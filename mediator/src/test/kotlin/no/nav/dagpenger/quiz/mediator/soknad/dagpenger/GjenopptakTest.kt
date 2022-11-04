@@ -47,6 +47,6 @@ internal class GjenopptakTest {
             Gjenopptak.seksjon(this)
         }
         val faktaFraGjenopptak = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
-        assertEquals("10001,8049,8050,8051,8052,8053,8054,8001,8002", faktaFraGjenopptak)
+        assertEquals("10001,8050,8051,8049,8052,8053,8054,8001,8002", faktaFraGjenopptak)
     }
 }
