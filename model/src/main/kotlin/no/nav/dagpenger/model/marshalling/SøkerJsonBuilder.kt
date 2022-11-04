@@ -42,6 +42,7 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
         SannsynliggjøringsFaktaFinner(søknadprosess.rootSubsumsjon).fakta
     private val root: ObjectNode = mapper.createObjectNode()
     private val seksjoner = mapper.createArrayNode()
+    private val seksjonerTotalt = mutableSetOf<Seksjon>()
     private lateinit var gjeldendeFakta: Seksjon
     private lateinit var avhengigheter: MutableSet<Faktum<*>>
     private val generatorer: MutableSet<GeneratorFaktum> = mutableSetOf()
@@ -76,9 +77,14 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
         root.set<ArrayNode>("seksjoner", seksjoner)
     }
 
+    override fun postVisit(søknadprosess: Søknadprosess) {
+        root.put("antallSeksjoner", seksjonerTotalt.size)
+    }
+
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
         avhengigheter = mutableSetOf()
         gjeldendeFakta = seksjon.gjeldendeFakta(søknadprosess.rootSubsumsjon)
+        seksjonerTotalt.add(seksjon)
     }
 
     override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
