@@ -34,8 +34,8 @@ object Gjenopptak : DslFaktaseksjon {
             med "svar.fast"
             med "svar.varierende"
             med "svar.kombinasjon"
-            med "svar.ingen-passer" id `type arbeidstid`,
-        dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger søknadsdato`,
+            med "svar.ingen-passer" id `type arbeidstid` avhengerAv `mottatt dagpenger siste 12 mnd`,
+        dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger søknadsdato` avhengerAv `mottatt dagpenger siste 12 mnd`,
         envalg faktum "faktum.mottatt-dagpenger-siste-12-mnd" med "svar.ja" med "svar.nei" med "svar.vet-ikke" id `mottatt dagpenger siste 12 mnd`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.jobbet-siden-sist" id `gjenopptak jobbet siden sist du fikk dagpenger` avhengerAv `mottatt dagpenger siste 12 mnd`,
         tekst faktum "faktum.arbeidsforhold.gjenopptak.aarsak-til-stans" id `gjenopptak årsak til stans av dagpenger` avhengerAv `mottatt dagpenger siste 12 mnd`,
