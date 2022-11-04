@@ -96,9 +96,9 @@ object Gjenopptak : DslFaktaseksjon {
 
     override val spørsmålsrekkefølgeForSøker = listOf(
         `mottatt dagpenger siste 12 mnd`,
-        `gjenopptak jobbet siden sist du fikk dagpenger`,
         `gjenopptak årsak til stans av dagpenger`,
         `gjenopptak søknadsdato`,
+        `gjenopptak jobbet siden sist du fikk dagpenger`,
         `gjenopptak endringer i arbeidsforhold siden sist`,
         `gjenopptak ønsker ny beregning av dagpenger`,
         `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
