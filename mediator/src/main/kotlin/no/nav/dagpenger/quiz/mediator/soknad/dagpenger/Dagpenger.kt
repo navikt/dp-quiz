@@ -8,13 +8,12 @@ import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
-import no.nav.dagpenger.model.subsumsjon.uansett
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger.Subsumsjoner.regeltre
 
 internal object Dagpenger {
     private val logger = KotlinLogging.logger { }
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 236)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 237)
 
     fun registrer(registrer: (prototype: Søknad) -> Unit) {
         registrer(prototypeSøknad)
@@ -22,8 +21,7 @@ internal object Dagpenger {
 
     private val faktaseksjoner = listOf(
         Bosted,
-        Gjenopptak,
-        Arbeidsforhold,
+        DinSituasjon,
         EøsArbeidsforhold,
         EgenNæring,
         Verneplikt,
@@ -45,17 +43,15 @@ internal object Dagpenger {
     object Subsumsjoner {
         val regeltre: Subsumsjon = with(prototypeSøknad) {
             Bosted.regeltre(this).hvisOppfylt {
-                Gjenopptak.regeltre(this).uansett {
-                    Arbeidsforhold.regeltre(this).hvisOppfylt {
-                        EøsArbeidsforhold.regeltre(this).hvisOppfylt {
-                            EgenNæring.regeltre(this).hvisOppfylt {
-                                Verneplikt.regeltre(this).hvisOppfylt {
-                                    AndreYtelser.regeltre(this).hvisOppfylt {
-                                        Utdanning.regeltre(this).hvisOppfylt {
-                                            Barnetillegg.regeltre(this).hvisOppfylt {
-                                                ReellArbeidssoker.regeltre(this).hvisOppfylt {
-                                                    Tilleggsopplysninger.regeltre(this)
-                                                }
+                DinSituasjon.regeltre(this).hvisOppfylt {
+                    EøsArbeidsforhold.regeltre(this).hvisOppfylt {
+                        EgenNæring.regeltre(this).hvisOppfylt {
+                            Verneplikt.regeltre(this).hvisOppfylt {
+                                AndreYtelser.regeltre(this).hvisOppfylt {
+                                    Utdanning.regeltre(this).hvisOppfylt {
+                                        Barnetillegg.regeltre(this).hvisOppfylt {
+                                            ReellArbeidssoker.regeltre(this).hvisOppfylt {
+                                                Tilleggsopplysninger.regeltre(this)
                                             }
                                         }
                                     }

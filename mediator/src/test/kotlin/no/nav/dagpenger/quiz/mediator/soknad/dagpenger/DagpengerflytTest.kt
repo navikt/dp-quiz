@@ -8,8 +8,8 @@ import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`egne barn`
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Gjenopptak.`dagpenger søknadsdato`
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Gjenopptak.`type arbeidstid`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DinSituasjon.`dagpenger søknadsdato`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DinSituasjon.`type arbeidstid`
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertTrue
@@ -28,7 +28,7 @@ class DagpengerflytTest {
     fun `dagpenger flyt - letteste vei til ferdig`() {
         søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("NOR"))
 
-        søknadprosess.envalg(Gjenopptak.`mottatt dagpenger siste 12 mnd`)
+        søknadprosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
 
         søknadprosess.generator(Barnetillegg.`barn liste register`).besvar(1)

@@ -53,7 +53,7 @@ class DagpengerMetadataStrategi : MetadataStrategi {
         ) {
             // TODO: vi vil gjerne identifisere subsumsjoner i stede for å bruke faktaene
             if (!gjenopptak) {
-                val g = fakta.filter { it.id.contains(Gjenopptak.`mottatt dagpenger siste 12 mnd`.toString()) }
+                val g = fakta.filter { it.id.contains(DinSituasjon.`mottatt dagpenger siste 12 mnd`.toString()) }
                     .filter { it.erBesvart() }
                     .filter { it.svar() == Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja") }
                 gjenopptak = g.isNotEmpty()
@@ -61,7 +61,7 @@ class DagpengerMetadataStrategi : MetadataStrategi {
 
             if (!permittert) {
                 val arbeidsforholdFakta =
-                    fakta.filter { it.id.contains(Arbeidsforhold.`arbeidsforhold endret`.toString()) }
+                    fakta.filter { it.id.contains(DinSituasjon.`arbeidsforhold endret`.toString()) }
                         .filter { it.erBesvart() }
                         .filter { it.svar() == Envalg("faktum.arbeidsforhold.endret.svar.permittert") }
 

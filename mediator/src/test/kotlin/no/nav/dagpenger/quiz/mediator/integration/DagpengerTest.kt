@@ -13,7 +13,7 @@ import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Bosted
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Gjenopptak
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DinSituasjon
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.BeforeEach
@@ -50,9 +50,9 @@ internal class DagpengerTest : SøknadBesvarer() {
             søknadsprosess.verifiserAtNesteSeksjonEr(Bosted)
             besvar(Bosted.`hvilket land bor du i`, Land("NOR"))
 
-            søknadsprosess.verifiserAtNesteSeksjonEr(Gjenopptak)
+            søknadsprosess.verifiserAtNesteSeksjonEr(DinSituasjon)
             val harMottattDagpenger = Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja")
-            besvar(Gjenopptak.`mottatt dagpenger siste 12 mnd`, harMottattDagpenger)
+            besvar(DinSituasjon.`mottatt dagpenger siste 12 mnd`, harMottattDagpenger)
             // søknadsprosess.verifiserAtNesteSeksjonEr(Arbeidsforhold)
             assertEquals(false, søknadsprosess.erFerdig())
         }
