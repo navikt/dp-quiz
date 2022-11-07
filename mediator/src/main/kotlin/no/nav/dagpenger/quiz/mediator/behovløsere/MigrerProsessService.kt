@@ -2,9 +2,11 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
+import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
@@ -32,6 +34,11 @@ class MigrerProsessService(
         withLoggingContext("søknadId" to søknadId.toString()) {
 
             val prosessversjon = søknadPersistence.migrer(søknadId)
+            val søknad = søknadPersistence.hent(søknadId)
+
+            SøkerJsonBuilder(søknad).resultat().toString().let {
+                context.publish(JsonMessage(it, MessageProblems(it)).toJson())
+            }
 
             packet["@løsning"] = mapOf(
                 behov to søknadId,

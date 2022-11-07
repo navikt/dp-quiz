@@ -36,12 +36,13 @@ internal class MigrerProsessServiceTest {
         )
 
         with(rapid.inspektør) {
-            Assertions.assertNotNull(field(0, "@løsning"))
-            Assertions.assertEquals(søknadUUID.toString(), field(0, "@løsning")["MigrerProsess"].asText())
+            Assertions.assertNotNull(field(1, "@løsning"))
+            Assertions.assertEquals(søknadUUID.toString(), field(1, "@løsning")["MigrerProsess"].asText())
         }
 
         verify(exactly = 1) {
             søknadPersistence.migrer(søknadUUID, any())
+            søknadPersistence.hent(søknadUUID)
         }
     }
 }
