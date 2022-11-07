@@ -470,14 +470,14 @@ internal class DinSituasjonTest {
 
     private val forventetSpørsmålsrekkefølgeForSøker = """
     101,
-    102,
     103,
     104,
+    102,
     105,
     106,
     107,
-    108,
     109,
+    108,
     110,
     111,
     112,
