@@ -106,18 +106,18 @@ object DinSituasjon : DslFaktaseksjon {
             id `gjenopptak søknadsdato` avhengerAv `mottatt dagpenger siste 12 mnd`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.endringer-i-arbeidsforhold"
             id `gjenopptak endringer i arbeidsforhold siden sist`
-            avhengerAv `mottatt dagpenger siste 12 mnd`,
+            avhengerAv `gjenopptak jobbet siden sist du fikk dagpenger`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-ny-beregning"
             id `gjenopptak ønsker ny beregning av dagpenger`
-            avhengerAv `mottatt dagpenger siste 12 mnd`,
+            avhengerAv `gjenopptak endringer i arbeidsforhold siden sist`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid"
             id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`
-            avhengerAv `mottatt dagpenger siste 12 mnd` og `gjenopptak ønsker ny beregning av dagpenger`,
+            avhengerAv `gjenopptak ønsker ny beregning av dagpenger`,
         envalg faktum "faktum.type-arbeidstid"
             med "svar.fast"
             med "svar.varierende"
             med "svar.kombinasjon"
-            med "svar.ingen-passer" id `type arbeidstid` avhengerAv `mottatt dagpenger siste 12 mnd`,
+            med "svar.ingen-passer" id `type arbeidstid` avhengerAv `mottatt dagpenger siste 12 mnd` og `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
         dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger søknadsdato` avhengerAv `mottatt dagpenger siste 12 mnd`,
         heltall faktum "faktum.arbeidsforhold" id arbeidsforhold
             genererer `arbeidsforhold navn bedrift`
