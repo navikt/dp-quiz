@@ -134,6 +134,7 @@ internal class FaktumSvarService(
         type: String,
         besvartAv: String?
     ) {
+        if (svar.isNull) return søknadprosess.id(faktumId).tilUbesvart()
         when (type) {
             "land" -> søknadprosess.land(faktumId).besvar(svar.asLand(), besvartAv)
             "boolean" -> søknadprosess.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)

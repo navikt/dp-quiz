@@ -87,7 +87,7 @@ internal class MediatorTest {
         testRapid.sendTestMessage(
             meldingsfabrikk.besvarFaktum(
                 uuid,
-                FaktumSvar(1, "boolean", null),
+                FaktumSvar(1, "boolean", null)
             )
         )
         assertEquals(1, testRapid.inspektør.size)
@@ -111,6 +111,15 @@ internal class MediatorTest {
         )
         assertEquals(3, testRapid.inspektør.size)
         assertEquals(2, grupperer.hentet, "Fakta hvor minst ett faktum har svar laster søknaden")
+
+        testRapid.sendTestMessage(
+            meldingsfabrikk.besvarFaktumMedNull(
+                uuid,
+                FaktumSvar(1, "boolean", null)
+            )
+        )
+        assertEquals(4, testRapid.inspektør.size)
+        assertEquals(3, grupperer.hentet, "Faktum med null som svar laster søknaden")
     }
 }
 
@@ -157,10 +166,29 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
                                         "urn" to urn
                                     )
                                 }
+
                                 else -> throw IllegalArgumentException("Ustøtta svar-type")
-                            },
+                            }
                         )
                     }.orEmpty()
+                }
+            }
+        )
+    )
+
+    fun besvarFaktumMedNull(søknadUuid: UUID, vararg faktumSvarListe: FaktumSvar) = nyHendelse(
+        "faktum_svar",
+        mapOf(
+            "opprettet" to LocalDateTime.now(),
+            "søknad_uuid" to søknadUuid,
+            "fakta" to faktumSvarListe.asList().map { faktumSvar ->
+                mapOf(
+                    "id" to faktumSvar.faktumId,
+                    "type" to faktumSvar.type
+                ).let { fakta ->
+                    fakta + mapOf(
+                        "svar" to null
+                    )
                 }
             }
         )
