@@ -371,7 +371,7 @@ object DinSituasjon : DslFaktaseksjon {
             }
         )
 
-    private fun Søknad.`har hatt arbeidstid`() = "fast, varierende eller kombinasjon".minstEnAv(
+    private fun Søknad.`har hatt arbeidstid`() = "fast, varierende eller kombinert".minstEnAv(
         envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.fast"),
         envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.varierende"),
         envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.kombinasjon")
