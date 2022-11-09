@@ -322,7 +322,7 @@ object DinSituasjon : DslFaktaseksjon {
     )
 
     override fun seksjon(søknad: Søknad) =
-        listOf(søknad.seksjon("gjenopptak", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
+        listOf(søknad.seksjon("din-situasjon", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "din situasjon".deltre {
