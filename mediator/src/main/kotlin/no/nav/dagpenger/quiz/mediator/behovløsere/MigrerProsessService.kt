@@ -31,6 +31,7 @@ class MigrerProsessService(
         val søknadId = packet.søknadUUID()
 
         withLoggingContext("søknadId" to søknadId.toString()) {
+            logger.info { "Løser $behov" }
             val prosessversjon = søknadPersistence.migrer(søknadId)
             val søknad = søknadPersistence.hent(søknadId)
             val søknadData = SøkerJsonBuilder(søknad).resultat().toString()
@@ -43,8 +44,9 @@ class MigrerProsessService(
                 )
             )
 
-            context.publish(packet.toJson())
-            logger.info { "Løser $behov" }
+            context.publish(packet.toJson()).also {
+                logger.info { "Publiserer løsning for $behov med prosessversjon=$prosessversjon" }
+            }
         }
     }
 }
