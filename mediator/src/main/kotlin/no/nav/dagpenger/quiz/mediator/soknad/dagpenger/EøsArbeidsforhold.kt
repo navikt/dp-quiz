@@ -46,7 +46,7 @@ object EøsArbeidsforhold : DslFaktaseksjon {
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "arbeidsforhold eøs".deltre {
             `er gjenopptak`() hvisOppfylt {
-                `har jobbet siden sist`() hvisOppfylt { `eøs arbeidsforhold`() }
+                `har jobbet siden sist eller hatt endringer i arbeidsforhold`() hvisOppfylt { `eøs arbeidsforhold`() }
             } hvisIkkeOppfylt {
                 `hatt fast, varierende eller kombinert arbeidstid`() hvisOppfylt { `eøs arbeidsforhold`() }
             }
@@ -73,8 +73,8 @@ object EøsArbeidsforhold : DslFaktaseksjon {
     private fun Søknad.`er gjenopptak`() =
         envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`) inneholder Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja")
 
-    private fun Søknad.`har jobbet siden sist`() =
-        boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger`) er true
+    private fun Søknad.`har jobbet siden sist eller hatt endringer i arbeidsforhold`() =
+        boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`) er true
 
     private fun Søknad.`hatt fast, varierende eller kombinert arbeidstid`() =
         "har hatt fast, varierende eller kombinasjon arbeidstid".minstEnAv(

@@ -14,7 +14,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger.Subsumsjoner.re
 
 internal object Dagpenger {
     private val logger = KotlinLogging.logger { }
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 238)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 239)
 
     fun registrer(registrer: (prototype: Søknad) -> Unit) {
         registrer(prototypeSøknad)

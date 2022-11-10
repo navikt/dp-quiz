@@ -30,10 +30,9 @@ import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object DinSituasjon : DslFaktaseksjon {
     const val `mottatt dagpenger siste 12 mnd` = 101
-    const val `gjenopptak jobbet siden sist du fikk dagpenger` = 102
+    const val `gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold` = 102
     const val `gjenopptak årsak til stans av dagpenger` = 103
     const val `gjenopptak søknadsdato` = 104
-    const val `gjenopptak endringer i arbeidsforhold siden sist` = 105
     const val `gjenopptak ønsker ny beregning av dagpenger` = 106
     const val `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid` = 107
     const val `type arbeidstid` = 108
@@ -97,19 +96,16 @@ object DinSituasjon : DslFaktaseksjon {
             med "svar.ja"
             med "svar.nei"
             med "svar.vet-ikke" id `mottatt dagpenger siste 12 mnd`,
-        boolsk faktum "faktum.arbeidsforhold.gjenopptak.jobbet-siden-sist"
-            id `gjenopptak jobbet siden sist du fikk dagpenger`
-            avhengerAv `mottatt dagpenger siste 12 mnd`,
         tekst faktum "faktum.arbeidsforhold.gjenopptak.aarsak-til-stans" id `gjenopptak årsak til stans av dagpenger`
             avhengerAv `mottatt dagpenger siste 12 mnd`,
         dato faktum "faktum.arbeidsforhold.gjenopptak.soknadsdato-gjenopptak"
             id `gjenopptak søknadsdato` avhengerAv `mottatt dagpenger siste 12 mnd`,
-        boolsk faktum "faktum.arbeidsforhold.gjenopptak.endringer-i-arbeidsforhold"
-            id `gjenopptak endringer i arbeidsforhold siden sist`
-            avhengerAv `gjenopptak jobbet siden sist du fikk dagpenger`,
+        boolsk faktum "faktum.arbeidsforhold.gjenopptak.jobbet-siden-sist-eller-endring-i-arbeidsforhold"
+            id `gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`
+            avhengerAv `mottatt dagpenger siste 12 mnd`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-ny-beregning"
             id `gjenopptak ønsker ny beregning av dagpenger`
-            avhengerAv `gjenopptak endringer i arbeidsforhold siden sist`,
+            avhengerAv `gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`,
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid"
             id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`
             avhengerAv `gjenopptak ønsker ny beregning av dagpenger`,
@@ -341,41 +337,33 @@ object DinSituasjon : DslFaktaseksjon {
         "spørsmål om gjenopptaket".alle(
             tekst(`gjenopptak årsak til stans av dagpenger`).utfylt(),
             dato(`gjenopptak søknadsdato`).utfylt(),
-            "jobbet siden sist eller ikke".minstEnAv(
-                boolsk(`gjenopptak jobbet siden sist du fikk dagpenger`) er false,
-                boolsk(`gjenopptak jobbet siden sist du fikk dagpenger`) er true hvisOppfylt {
-                    "hatt endringer i arbeidsforhold siden sist eller ikke".minstEnAv(
-                        boolsk(`gjenopptak endringer i arbeidsforhold siden sist`) er false,
-                        boolsk(`gjenopptak endringer i arbeidsforhold siden sist`) er true hvisOppfylt {
-                            `ønske om ny beregning og fastsatt ny arbeidstid eller ikke`()
-                        }
-                    )
+            "jobbet siden sist/hatt endringer i arbeidsforhold siden sist eller ikke".minstEnAv(
+                boolsk(`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`) er false,
+                boolsk(`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`) er true hvisOppfylt {
+                    `ønske om ny beregning og fastsatt ny arbeidstid eller ikke`()
                 }
             )
         )
 
     private fun Søknad.`ønske om ny beregning og fastsatt ny arbeidstid eller ikke`() =
         "ønsker ny beregning av dagpenger eller ikke".minstEnAv(
-            boolsk(`gjenopptak ønsker ny beregning av dagpenger`) er false,
+            boolsk(`gjenopptak ønsker ny beregning av dagpenger`) er false hvisOppfylt {
+                `alle arbeidsforhold`()
+            },
             boolsk(`gjenopptak ønsker ny beregning av dagpenger`) er true hvisOppfylt {
                 "ønsker å få fastsatt ny vanlig arbeidstid eller ikke".minstEnAv(
-                    boolsk(`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`) er false,
+                    boolsk(`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`) er false hvisOppfylt {
+                        `alle arbeidsforhold`()
+                    },
                     boolsk(`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`) er true hvisOppfylt {
-                        `har hatt arbeidstid`() hvisOppfylt {
+                        "type arbeidstid og arbeidsforhold".alle(
+                            envalg(`type arbeidstid`).utfylt(),
                             `alle arbeidsforhold`()
-                        } hvisIkkeOppfylt {
-                            envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.ingen-passer")
-                        }
+                        )
                     }
                 )
             }
         )
-
-    private fun Søknad.`har hatt arbeidstid`() = "fast, varierende eller kombinert".minstEnAv(
-        envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.fast"),
-        envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.varierende"),
-        envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.kombinasjon")
-    )
 
     private fun Søknad.`ny søknad`() = "søknadsdato, type arbeidstid og arbeidsforhold".alle(
         dato(`dagpenger søknadsdato`).utfylt(),
@@ -384,6 +372,12 @@ object DinSituasjon : DslFaktaseksjon {
         } hvisIkkeOppfylt {
             envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.ingen-passer")
         }
+    )
+
+    private fun Søknad.`har hatt arbeidstid`() = "fast, varierende eller kombinert".minstEnAv(
+        envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.fast"),
+        envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.varierende"),
+        envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.kombinasjon")
     )
 
     private fun Søknad.`alle arbeidsforhold`() =
@@ -679,8 +673,7 @@ object DinSituasjon : DslFaktaseksjon {
         `mottatt dagpenger siste 12 mnd`,
         `gjenopptak årsak til stans av dagpenger`,
         `gjenopptak søknadsdato`,
-        `gjenopptak jobbet siden sist du fikk dagpenger`,
-        `gjenopptak endringer i arbeidsforhold siden sist`,
+        `gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`,
         `gjenopptak ønsker ny beregning av dagpenger`,
         `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
         `dagpenger søknadsdato`,
