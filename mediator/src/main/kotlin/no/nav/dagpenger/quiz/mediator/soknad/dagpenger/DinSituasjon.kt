@@ -434,6 +434,7 @@ object DinSituasjon : DslFaktaseksjon {
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
+                `varighet på arbeidsforholdet`(),
                 `arbeidstimer før mistet jobb`(),
                 tekst(`arbeidsforhold hva er årsak til avskjediget`).utfylt()
             )

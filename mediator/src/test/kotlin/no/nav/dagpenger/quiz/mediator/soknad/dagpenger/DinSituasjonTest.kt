@@ -168,6 +168,7 @@ internal class DinSituasjonTest {
 
         søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.avskjediget"))
+        søknadprosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
         søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før mistet jobb`}.1").besvar(true)
         søknadprosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1").besvar(40.5)
         søknadprosess.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til avskjediget`}.1").besvar(Tekst("Årsak"))
