@@ -10,29 +10,34 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class MigrerProsessServiceTest {
-    val søknadPersistence = mockk<SøknadPersistence>(relaxed = true)
-
+    private val søknadPersistence = mockk<SøknadPersistence>(relaxed = true)
+    private val søknadUUID = UUID.randomUUID()
     private val rapid = TestRapid().apply {
         MigrerProsessService(this, søknadPersistence)
     }
 
     @Test
     fun `besvarer migreringsbehov`() {
-        val søknadUUID = UUID.randomUUID()
-
-        //language=JSON
-        rapid.sendTestMessage(
-            """{
-          "@event_name": "behov",
-          "@behovId": "test123",      
-          "@behov": [
-            "MigrerProsess"
-          ],
-          "søknad_uuid": "$søknadUUID",
-          "ident": "12345678913",
-          "@id": "12345",
-          "@opprettet": "2022-09-26T09:47:15.296036"
-        }
+        rapid.sendTestMessage( //language=JSON
+            """
+            {
+              "@event_name": "behov",
+              "@behovId": "5f9d8703-03f5-483e-983b-170dda083371",
+              "@behov": [
+                "MigrerProsess"
+              ],
+              "søknad_uuid": "$søknadUUID",
+              "ident": "123123123",
+              "@id": "5cde6016-7f38-47fc-9424-01f605498877",
+              "@opprettet": "2022-11-10T16:22:27.490863",
+              "system_read_count": 0,
+              "system_participating_services": [
+                {
+                  "id": "5cde6016-7f38-47fc-9424-01f605498877",
+                  "time": "2022-11-10T16:22:27.490863"
+                }
+              ]
+            }
             """.trimIndent()
         )
 
