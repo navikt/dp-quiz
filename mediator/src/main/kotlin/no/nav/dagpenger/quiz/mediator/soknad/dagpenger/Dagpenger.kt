@@ -20,7 +20,7 @@ internal object Dagpenger {
      *
      * Dette for at innsendte søknader fortsatt skal kunne lastes, uten å bli migrert fram.
      */
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 240)
+    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 241)
 
     fun registrer(registrer: (prototype: Søknad) -> Unit) {
         registrer(prototypeSøknad)
