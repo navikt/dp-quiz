@@ -14,6 +14,12 @@ import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger.Subsumsjoner.re
 
 internal object Dagpenger {
     private val logger = KotlinLogging.logger { }
+
+    /**
+     * PS! Når vi går ut i prod må vi begynne å kopiere hele oppsettet hver gang vi øker denne variabelen.
+     *
+     * Dette for at innsendte søknader fortsatt skal kunne lastes, uten å bli migrert fram.
+     */
     val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 239)
 
     fun registrer(registrer: (prototype: Søknad) -> Unit) {
