@@ -46,18 +46,19 @@ internal class NyProsessBehovLøserTest : SøknadBesvarer() {
     fun `Hent alle fakta happy path`() {
         withSøknad(nySøknadBehov("Dagpenger")) { _ ->
             assertEquals(2, testRapid.inspektør.size)
-            melding(0).let {
-                assertEquals("søker_oppgave", it["@event_name"].asText())
-                assertFalse { it.toString().contains(""""svar":""") }
-            }
 
-            melding(1).let {
+            melding(0).let {
                 assertEquals("behov", it["@event_name"].asText())
                 assertEquals(
                     listOf("NySøknad"),
                     it["@behov"].map { it.asText() }
                 )
                 assertFalse(it["@løsning"]["NySøknad"].isNull, "NySøknad behov skal besvares med søknad id")
+            }
+
+            melding(1).let {
+                assertEquals("søker_oppgave", it["@event_name"].asText())
+                assertFalse { it.toString().contains(""""svar":""") }
             }
         }
     }
@@ -70,7 +71,7 @@ internal class NyProsessBehovLøserTest : SøknadBesvarer() {
             UUID.fromString(uuid)
         }
 
-        assertEquals("faktum.hvorfor", testRapid.inspektør.message(0)["seksjoner"][0]["fakta"][0]["beskrivendeId"].asText())
+        assertEquals("faktum.hvorfor", testRapid.inspektør.message(1)["seksjoner"][0]["fakta"][0]["beskrivendeId"].asText())
     }
 
     @Test

@@ -52,8 +52,6 @@ internal class NyProsessBehovLøser(
                 søknadPersistence.lagre(søknadsprosess.søknad)
                 log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid}" }
 
-                søknadsprosess.sendNesteSeksjon(context)
-
                 packet["@løsning"] = mapOf(
                     behovNavn to mapOf(
                         "prosessversjon" to mapOf(
@@ -63,6 +61,8 @@ internal class NyProsessBehovLøser(
                     )
                 )
                 context.publish(packet.toJson())
+
+                søknadsprosess.sendNesteSeksjon(context)
             }
         }
     }
