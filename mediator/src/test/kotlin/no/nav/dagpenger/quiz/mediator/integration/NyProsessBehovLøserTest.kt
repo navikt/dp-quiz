@@ -44,7 +44,7 @@ internal class NyProsessBehovLøserTest : SøknadBesvarer() {
 
     @Test
     fun `Hent alle fakta happy path`() {
-        withSøknad(nySøknadBehov()) { _ ->
+        withSøknad(nySøknadBehov("Dagpenger")) { _ ->
             assertEquals(2, testRapid.inspektør.size)
             melding(0).let {
                 assertEquals("søker_oppgave", it["@event_name"].asText())
@@ -64,7 +64,7 @@ internal class NyProsessBehovLøserTest : SøknadBesvarer() {
 
     @Test
     fun `Oppretter ny prosess for innsending`() {
-        val uuid = triggNySøknadsprosess(nySøknadBehov("NyInnsending"))
+        val uuid = triggNySøknadsprosess(nySøknadBehov("Innsending"))
         assertEquals(2, testRapid.inspektør.size)
         assertDoesNotThrow {
             UUID.fromString(uuid)
@@ -97,16 +97,17 @@ internal class NyProsessBehovLøserTest : SøknadBesvarer() {
         
         """.trimIndent()
 
-    private fun nySøknadBehov(behov: String = "NySøknad") =
+    private fun nySøknadBehov(prosessnavn: String) =
         //language=JSON
         """
         {
           "@event_name": "behov",
-          "@behov" : ["$behov"],
+          "@behov" : ["NySøknad"],
           "@opprettet": "${LocalDateTime.now()}",
           "@id": "${UUID.randomUUID()}",
           "søknad_uuid": "$søknadUUID",
-          "ident": "123456789"
+          "ident": "123456789",
+          "prosessnavn": "$prosessnavn"
         }
         
         """.trimIndent()
