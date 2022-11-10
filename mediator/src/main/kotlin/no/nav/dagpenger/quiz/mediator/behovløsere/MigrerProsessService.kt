@@ -6,7 +6,6 @@ import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
@@ -36,13 +35,14 @@ class MigrerProsessService(
             val prosessversjon = søknadPersistence.migrer(søknadId)
             val søknad = søknadPersistence.hent(søknadId)
 
-            SøkerJsonBuilder(søknad).resultat().toString().let {
-                context.publish(JsonMessage(it, MessageProblems(it)).toJson())
-            }
+            val søknadData = SøkerJsonBuilder(søknad).resultat().toString()
 
             packet["@løsning"] = mapOf(
-                behov to søknadId,
-                "NyVersjon" to prosessversjon.versjon
+                behov to mapOf(
+                    "prosessnavn" to prosessversjon.prosessnavn,
+                    "versjon" to prosessversjon.versjon,
+                    "data" to søknadData
+                )
             )
 
             context.publish(packet.toJson())

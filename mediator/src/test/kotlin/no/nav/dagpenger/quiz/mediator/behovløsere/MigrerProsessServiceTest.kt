@@ -4,7 +4,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
@@ -36,8 +37,10 @@ internal class MigrerProsessServiceTest {
         )
 
         with(rapid.inspektør) {
-            Assertions.assertNotNull(field(1, "@løsning"))
-            Assertions.assertEquals(søknadUUID.toString(), field(1, "@løsning")["MigrerProsess"].asText())
+            assertNotNull(field(0, "@løsning"))
+            assertNotNull(field(0, "@løsning")["MigrerProsess"]["prosessnavn"].asText())
+            assertNotNull(field(0, "@løsning")["MigrerProsess"]["versjon"].asInt())
+            assertFalse(field(0, "@løsning")["MigrerProsess"]["data"].isNull)
         }
 
         verify(exactly = 1) {
