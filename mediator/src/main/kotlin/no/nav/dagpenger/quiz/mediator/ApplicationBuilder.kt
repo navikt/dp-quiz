@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.DokumentkravSvarService
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataService
+import no.nav.dagpenger.quiz.mediator.behovløsere.MigrerProsessService
 import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
@@ -75,6 +76,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                     ProsessMetadataStrategi()
                 )
                 DokumentkravSvarService(rapidsConnection, søknadRecord)
+                MigrerProsessService(rapidsConnection, søknadRecord)
             }
     }
 }
