@@ -21,6 +21,7 @@ import no.nav.dagpenger.quiz.mediator.meldinger.SøknadSlettetService
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.ProsessMetadataStrategi
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.prototypeSøknad
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -51,8 +52,8 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
 
                 Dagpenger.registrer { prototypeSøknad ->
                     FaktumTable(prototypeSøknad)
-                    val sisteDagpengerVersjon = Versjon.siste(Prosess.Dagpenger)
-                    Versjon.id(sisteDagpengerVersjon).also { versjon ->
+
+                    Versjon.id(Versjon.siste(Prosess.Dagpenger)).also { versjon ->
                         val søknadsprosess = versjon.søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
                         val malJson = SøknadsmalJsonBuilder(søknadsprosess).resultat().toString()
                         rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
@@ -61,6 +62,12 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
 
                 Innsending.registrer { prototype: Søknad ->
                     FaktumTable(prototype)
+
+                    Versjon.id(Versjon.siste(Prosess.Innsending)).also { versjon ->
+                        val søknadsprosess = versjon.søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
+                        val malJson = SøknadsmalJsonBuilder(søknadsprosess).resultat().toString()
+                        rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
+                    }
                 }
 
                 NyProsessBehovLøser(søknadRecord, rapidsConnection)
