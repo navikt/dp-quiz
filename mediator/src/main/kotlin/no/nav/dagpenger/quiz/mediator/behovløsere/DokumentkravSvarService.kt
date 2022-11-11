@@ -13,7 +13,7 @@ import no.nav.helse.rapids_rivers.asLocalDateTime
 
 class DokumentkravSvarService(
     rapidsConnection: RapidsConnection,
-    private val søknadPersistence: SøknadPersistence,
+    private val søknadPersistence: SøknadPersistence
 ) : River.PacketListener {
     private companion object {
         val logger = KotlinLogging.logger { }
@@ -31,21 +31,24 @@ class DokumentkravSvarService(
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val søknadId = packet.søknadUUID()
-
         withLoggingContext("søknadId" to søknadId.toString()) {
-            val faktumId = packet.faktumId()
-            val svar = packet.dokumentsvar()
-            søknadPersistence.hent(søknadId, Web).let { søknadprosess ->
-                søknadprosess.dokument(faktumId).besvar(svar)
-                søknadPersistence.lagre(søknadprosess.søknad)
+            try {
+                val faktumId = packet.faktumId()
+                val svar = packet.dokumentsvar()
+                søknadPersistence.hent(søknadId, Web).let { søknadprosess ->
+                    søknadprosess.dokument(faktumId).besvar(svar)
+                    søknadPersistence.lagre(søknadprosess.søknad)
+                }
+
+                packet["@løsning"] = mapOf(
+                    behov to søknadId
+                )
+
+                context.publish(packet.toJson())
+                logger.info { "Løser $behov" }
+            } catch (e: java.lang.IllegalArgumentException) {
+                logger.error(e) { "Hopper over pakker med gammel prosessversjon" }
             }
-
-            packet["@løsning"] = mapOf(
-                behov to søknadId
-            )
-
-            context.publish(packet.toJson())
-            logger.info { "Løser $behov" }
         }
     }
 
