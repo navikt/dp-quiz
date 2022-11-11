@@ -33,7 +33,7 @@ internal class DinSituasjonTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        DinSituasjon.verifiserFeltsammensetting(61, 8048)
+        DinSituasjon.verifiserFeltsammensetting(60, 7888)
     }
 
     @Test
@@ -526,7 +526,6 @@ internal class DinSituasjonTest {
     157,
     158,
     159,
-    160,
     161,
     162
     """.trimIndent()

@@ -87,7 +87,6 @@ object DinSituasjon : DslFaktaseksjon {
     const val `dokumentasjon av arbeidsforhold` = 157
     const val timelister = 158
     const val `brev fra bobestyrer eller konkursforvalter` = 159
-    const val `ny arbeidsavtale` = 160
     const val permitteringsvarsel = 161
     const val `godkjenning av arbeidsforhold-dokumentasjon` = 162
 
@@ -166,8 +165,7 @@ object DinSituasjon : DslFaktaseksjon {
             og `dokumentasjon av arbeidsforhold`
             og `brev fra bobestyrer eller konkursforvalter`
             og permitteringsvarsel
-            og timelister
-            og `ny arbeidsavtale`,
+            og timelister,
         tekst faktum "faktum.arbeidsforhold.navn-bedrift" id `arbeidsforhold navn bedrift`,
         land faktum "faktum.arbeidsforhold.land" id `arbeidsforhold land`,
         envalg faktum "faktum.arbeidsforhold.endret"
@@ -305,11 +303,9 @@ object DinSituasjon : DslFaktaseksjon {
         dokument faktum "faktum.dokument-timelister" id timelister,
         dokument faktum "faktum.dokument-brev-fra-bobestyrer-eller-konkursforvalter"
             id `brev fra bobestyrer eller konkursforvalter`,
-        dokument faktum "faktum.dokument-ny-arbeidsavtale" id `ny arbeidsavtale`,
         dokument faktum "faktum.dokument-permitteringsvarsel" id permitteringsvarsel,
         boolsk faktum "faktum.godkjenning-arbeidsforhold-dokumentasjon" id `godkjenning av arbeidsforhold-dokumentasjon`
             avhengerAv permitteringsvarsel
-            og `ny arbeidsavtale`
             og arbeidsavtale
             og `dokumentasjon av arbeidsforhold`
             og timelister
@@ -560,14 +556,10 @@ object DinSituasjon : DslFaktaseksjon {
             boolsk(`arbeidsforhold tilbud om forlengelse eller annen stilling`) er false,
             boolsk(`arbeidsforhold tilbud om forlengelse eller annen stilling`) er true hvisOppfylt {
                 "svar på tilbud om forlengelse eller annen stilling".minstEnAv(
-                    (envalg(`arbeidsforhold svar på forlengelse eller annen stilling`) inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ja"))
-                        .sannsynliggjøresAv(dokument(`ny arbeidsavtale`))
-                        .godkjentAv(boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)),
-                    (envalg(`arbeidsforhold svar på forlengelse eller annen stilling`) inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei"))
-                        .sannsynliggjøresAv(dokument(`dokumentasjon av arbeidsforhold`))
-                        .godkjentAv(
-                            boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
-                        ) hvisOppfylt {
+                    envalg(`arbeidsforhold svar på forlengelse eller annen stilling`)
+                        inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ja"),
+                    envalg(`arbeidsforhold svar på forlengelse eller annen stilling`)
+                        inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei") hvisOppfylt {
                         tekst(`arbeidsforhold årsak til ikke akseptert tilbud`).utfylt()
                     },
                     envalg(`arbeidsforhold svar på forlengelse eller annen stilling`) inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ikke-svart")
@@ -728,7 +720,6 @@ object DinSituasjon : DslFaktaseksjon {
         `dokumentasjon av arbeidsforhold`,
         timelister,
         `brev fra bobestyrer eller konkursforvalter`,
-        `ny arbeidsavtale`,
         permitteringsvarsel,
         `godkjenning av arbeidsforhold-dokumentasjon`
     )

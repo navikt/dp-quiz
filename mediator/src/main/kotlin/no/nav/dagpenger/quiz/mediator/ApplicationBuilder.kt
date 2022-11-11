@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator
 
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
@@ -21,7 +20,6 @@ import no.nav.dagpenger.quiz.mediator.meldinger.SøknadSlettetService
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.ProsessMetadataStrategi
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.prototypeSøknad
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
 import no.nav.helse.rapids_rivers.JsonMessage

@@ -239,7 +239,6 @@ internal class EøsArbeidsforholdTest {
     157,
     158,
     159,
-    160,
     161,
     162
     """.trimIndent()
