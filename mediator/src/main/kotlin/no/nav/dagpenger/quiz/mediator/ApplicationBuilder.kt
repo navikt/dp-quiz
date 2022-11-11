@@ -50,21 +50,21 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 AvslagPåMinsteinntektOppsett.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
                 AvslagPåMinsteinntektService(søknadRecord, rapidsConnection)
 
-                Dagpenger.registrer { prototypeSøknad ->
-                    FaktumTable(prototypeSøknad)
+                Dagpenger.registrer { prototype ->
+                    FaktumTable(prototype)
 
                     Versjon.id(Versjon.siste(Prosess.Dagpenger)).also { versjon ->
-                        val søknadsprosess = versjon.søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
+                        val søknadsprosess = versjon.søknadprosess(prototype, Versjon.UserInterfaceType.Web)
                         val malJson = SøknadsmalJsonBuilder(søknadsprosess).resultat().toString()
                         rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
                     }
                 }
 
-                Innsending.registrer { prototype: Søknad ->
+                Innsending.registrer { prototype ->
                     FaktumTable(prototype)
 
                     Versjon.id(Versjon.siste(Prosess.Innsending)).also { versjon ->
-                        val søknadsprosess = versjon.søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
+                        val søknadsprosess = versjon.søknadprosess(prototype, Versjon.UserInterfaceType.Web)
                         val malJson = SøknadsmalJsonBuilder(søknadsprosess).resultat().toString()
                         rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
                     }
