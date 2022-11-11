@@ -19,7 +19,7 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
     //language=PostgreSQL
     private val whereClause = """
                WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, soknad, faktum
-                WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id
+                WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id AND soknad.versjon_id = faktum.versjon_id
                 AND soknad.uuid = :uuid AND faktum_verdi.indeks = :indeks AND faktum.root_id = :rootId)
             """
     private val whereClauseParameters = mapOf(
