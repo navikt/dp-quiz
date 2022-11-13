@@ -33,62 +33,66 @@ object DinSituasjon : DslFaktaseksjon {
     const val `gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold` = 102
     const val `gjenopptak årsak til stans av dagpenger` = 103
     const val `gjenopptak søknadsdato` = 104
-    const val `gjenopptak ønsker ny beregning av dagpenger` = 106
-    const val `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid` = 107
-    const val `type arbeidstid` = 108
-    const val `dagpenger søknadsdato` = 109
-    const val arbeidsforhold = 110
-    const val `arbeidsforhold navn bedrift` = 111
-    const val `arbeidsforhold land` = 112
-    const val `arbeidsforhold endret` = 113
-    const val `arbeidsforhold kjent antall timer jobbet` = 114
-    const val `arbeidsforhold antall timer jobbet` = 115
-    const val `arbeidsforhold har tilleggsopplysninger` = 116
-    const val `arbeidsforhold tilleggsopplysninger` = 117
-    const val `arbeidsforhold startdato arbeidsforhold` = 118
-    const val `arbeidsforhold arbeidstid redusert fra dato` = 119
-    const val `arbeidsforhold midlertidig med kontraktfestet sluttdato` = 120
-    const val `arbeidsforhold kontraktfestet sluttdato` = 121
-    const val `arbeidsforhold midlertidig arbeidsforhold oppstartsdato` = 122
-    const val `arbeidsforhold permittert fra fiskeri næring` = 123
-    const val `arbeidsforhold varighet` = 124
-    const val `arbeidsforhold vet du antall timer før mistet jobb` = 125
-    const val `arbeidsforhold vet du antall timer før konkurs` = 126
-    const val `arbeidsforhold vet du antall timer før kontrakt utgikk` = 127
-    const val `arbeidsforhold vet du antall timer før du sa opp` = 128
-    const val `arbeidsforhold vet du antall timer før redusert arbeidstid` = 129
-    const val `arbeidsforhold vet du antall timer før permittert` = 130
-    const val `arbeidsforhold antall timer dette arbeidsforhold` = 131
-    const val `arbeidsforhold permittert periode` = 132
-    const val `arbeidsforhold permittert prosent` = 133
-    const val `arbeidsforhold vet du lønnsplikt periode` = 134
-    const val `arbeidsforhold når var lønnsplikt periode` = 135
-    const val `arbeidsforhold årsak til du sa opp` = 136
-    const val `arbeidsforhold tilbud om forlengelse eller annen stilling` = 137
-    const val `arbeidsforhold svar på forlengelse eller annen stilling` = 138
-    const val `arbeidsforhold årsak til ikke akseptert tilbud` = 139
-    const val `arbeidsforhold søke forskudd lønnsgarantimidler` = 140
-    const val `arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger` = 141
-    const val `arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler` = 142
-    const val `arbeidsforhold har søkt om lønnsgarantimidler` = 143
-    const val `arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt` = 144
-    const val `arbeidsforhold utbetalt lønn etter konkurs` = 145
-    const val `arbeidsforhold siste dag utbetalt for konkurs` = 146
-    const val `arbeidsforhold hva er årsak til avskjediget` = 147
-    const val `arbeidsforhold hva er årsak til sagt opp av arbeidsgiver` = 148
-    const val `arbeidsforhold hva er årsak til redusert arbeidstid` = 149
-    const val `arbeidsforhold midlertidig arbeidsforhold med sluttdato` = 150
-    const val `arbeidsforhold tilbud om annen stilling eller annet sted i norge` = 151
-    const val `arbeidsforhold skift eller turnus` = 152
-    const val `arbeidsforhold rotasjon` = 153
-    const val `arbeidsforhold arbeidsdager siste rotasjon` = 154
-    const val `arbeidsforhold fridager siste rotasjon` = 155
-    const val arbeidsavtale = 156
-    const val `dokumentasjon av arbeidsforhold` = 157
-    const val timelister = 158
-    const val `brev fra bobestyrer eller konkursforvalter` = 159
-    const val `dokumentasjon arbeidsforhold permittert` = 161
-    const val `godkjenning av arbeidsforhold-dokumentasjon` = 162
+    const val `gjenopptak ønsker ny beregning av dagpenger` = 105
+    const val `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid` = 106
+    const val `type arbeidstid` = 107
+    const val `dagpenger søknadsdato` = 108
+    const val arbeidsforhold = 109
+    const val `arbeidsforhold navn bedrift` = 110
+    const val `arbeidsforhold land` = 111
+    const val `arbeidsforhold endret` = 112
+    const val `arbeidsforhold kjent antall timer jobbet` = 113
+    const val `arbeidsforhold antall timer jobbet` = 114
+    const val `arbeidsforhold har tilleggsopplysninger` = 115
+    const val `arbeidsforhold tilleggsopplysninger` = 116
+    const val `arbeidsforhold startdato arbeidsforhold` = 117
+    const val `arbeidsforhold arbeidstid redusert fra dato` = 118
+    const val `arbeidsforhold midlertidig med kontraktfestet sluttdato` = 119
+    const val `arbeidsforhold kontraktfestet sluttdato` = 120
+    const val `arbeidsforhold midlertidig arbeidsforhold oppstartsdato` = 121
+    const val `arbeidsforhold permittert fra fiskeri næring` = 122
+    const val `arbeidsforhold varighet` = 123
+    const val `arbeidsforhold vet du antall timer før mistet jobb` = 124
+    const val `arbeidsforhold vet du antall timer før konkurs` = 125
+    const val `arbeidsforhold vet du antall timer før kontrakt utgikk` = 126
+    const val `arbeidsforhold vet du antall timer før du sa opp` = 127
+    const val `arbeidsforhold vet du antall timer før redusert arbeidstid` = 128
+    const val `arbeidsforhold vet du antall timer før permittert` = 129
+    const val `arbeidsforhold antall timer dette arbeidsforhold` = 130
+    const val `arbeidsforhold permittert periode` = 131
+    const val `arbeidsforhold permittert prosent` = 132
+    const val `arbeidsforhold vet du lønnsplikt periode` = 133
+    const val `arbeidsforhold når var lønnsplikt periode` = 134
+    const val `arbeidsforhold årsak til du sa opp` = 135
+    const val `arbeidsforhold tilbud om forlengelse eller annen stilling` = 136
+    const val `arbeidsforhold svar på forlengelse eller annen stilling` = 137
+    const val `arbeidsforhold årsak til ikke akseptert tilbud` = 138
+    const val `arbeidsforhold søke forskudd lønnsgarantimidler` = 139
+    const val `arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger` = 140
+    const val `arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler` = 141
+    const val `arbeidsforhold har søkt om lønnsgarantimidler` = 142
+    const val `arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt` = 143
+    const val `arbeidsforhold utbetalt lønn etter konkurs` = 144
+    const val `arbeidsforhold siste dag utbetalt for konkurs` = 145
+    const val `arbeidsforhold hva er årsak til avskjediget` = 146
+    const val `arbeidsforhold hva er årsak til sagt opp av arbeidsgiver` = 147
+    const val `arbeidsforhold hva er årsak til redusert arbeidstid` = 148
+    const val `arbeidsforhold midlertidig arbeidsforhold med sluttdato` = 149
+    const val `arbeidsforhold tilbud om annen stilling eller annet sted i norge` = 150
+    const val `arbeidsforhold skift eller turnus` = 151
+    const val `arbeidsforhold rotasjon` = 152
+    const val `arbeidsforhold arbeidsdager siste rotasjon` = 153
+    const val `arbeidsforhold fridager siste rotasjon` = 154
+    const val `dokumentasjon arbeidsavtale` = 155
+
+    const val `dokumentasjon arbeidsforhold avskjediget` = 156
+    const val `dokumentasjon arbeidsforhold blitt sagt opp` = 157
+    const val `dokumentasjon timelister` = 158
+    const val `dokumentasjon brev fra bobestyrer eller konkursforvalter` = 159
+    const val `dokumentasjon arbeidsforhold sagt opp selv` = 160
+    const val `dokumentasjon arbeidsforhold redusert arbeidstid` = 161
+    const val `dokumentasjon arbeidsforhold permittert` = 162
+    const val `godkjenning av arbeidsforhold-dokumentasjon` = 163
 
     override val fakta = listOf(
         envalg faktum "faktum.mottatt-dagpenger-siste-12-mnd"
@@ -161,11 +165,14 @@ object DinSituasjon : DslFaktaseksjon {
             og `arbeidsforhold rotasjon`
             og `arbeidsforhold arbeidsdager siste rotasjon`
             og `arbeidsforhold fridager siste rotasjon`
-            og arbeidsavtale
-            og `dokumentasjon av arbeidsforhold`
-            og `brev fra bobestyrer eller konkursforvalter`
-            og `dokumentasjon arbeidsforhold permittert`
-            og timelister,
+            og `dokumentasjon arbeidsavtale`
+            og `dokumentasjon arbeidsforhold avskjediget`
+            og `dokumentasjon arbeidsforhold blitt sagt opp`
+            og `dokumentasjon timelister`
+            og `dokumentasjon brev fra bobestyrer eller konkursforvalter`
+            og `dokumentasjon arbeidsforhold sagt opp selv`
+            og `dokumentasjon arbeidsforhold redusert arbeidstid`
+            og `dokumentasjon arbeidsforhold permittert`,
         tekst faktum "faktum.arbeidsforhold.navn-bedrift" id `arbeidsforhold navn bedrift`,
         land faktum "faktum.arbeidsforhold.land" id `arbeidsforhold land`,
         envalg faktum "faktum.arbeidsforhold.endret"
@@ -298,18 +305,25 @@ object DinSituasjon : DslFaktaseksjon {
             avhengerAv `arbeidsforhold rotasjon`,
         heltall faktum "faktum.arbeidsforhold.fridager-siste-rotasjon" id `arbeidsforhold fridager siste rotasjon`
             avhengerAv `arbeidsforhold rotasjon`,
-        dokument faktum "faktum.dokument-arbeidsavtale" id arbeidsavtale,
-        dokument faktum "faktum.dokument-dokumentasjon-av-arbeidsforhold" id `dokumentasjon av arbeidsforhold`,
-        dokument faktum "faktum.dokument-timelister" id timelister,
-        dokument faktum "faktum.dokument-brev-fra-bobestyrer-eller-konkursforvalter"
-            id `brev fra bobestyrer eller konkursforvalter`,
+
+        dokument faktum "faktum.dokument-arbeidsavtale" id `dokumentasjon arbeidsavtale`,
+        dokument faktum "faktum.dokument-arbeidsforhold-avskjediget" id `dokumentasjon arbeidsforhold avskjediget`,
+        dokument faktum "faktum.dokument-arbeidsforhold-blitt-sagt-opp" id `dokumentasjon arbeidsforhold blitt sagt opp`,
+        dokument faktum "faktum.dokument-timelister" id `dokumentasjon timelister`,
+        dokument faktum "faktum.dokument-brev-fra-bobestyrer-eller-konkursforvalter" id `dokumentasjon brev fra bobestyrer eller konkursforvalter`,
+        dokument faktum "faktum.dokument-arbeidsforhold-sagt-opp-selv" id `dokumentasjon arbeidsforhold sagt opp selv`,
+        dokument faktum "faktum.dokument-arbeidsforhold-redusert" id `dokumentasjon arbeidsforhold redusert arbeidstid`,
         dokument faktum "faktum.dokument-arbeidsforhold-permittert" id `dokumentasjon arbeidsforhold permittert`,
+
         boolsk faktum "faktum.godkjenning-arbeidsforhold-dokumentasjon" id `godkjenning av arbeidsforhold-dokumentasjon`
-            avhengerAv `dokumentasjon arbeidsforhold permittert`
-            og arbeidsavtale
-            og `dokumentasjon av arbeidsforhold`
-            og timelister
-            og `brev fra bobestyrer eller konkursforvalter`
+            avhengerAv `dokumentasjon arbeidsavtale`
+            og `dokumentasjon arbeidsforhold avskjediget`
+            og `dokumentasjon arbeidsforhold blitt sagt opp`
+            og `dokumentasjon timelister`
+            og `dokumentasjon brev fra bobestyrer eller konkursforvalter`
+            og `dokumentasjon arbeidsforhold sagt opp selv`
+            og `dokumentasjon arbeidsforhold redusert arbeidstid`
+            og `dokumentasjon arbeidsforhold permittert`
 
     )
 
@@ -418,8 +432,8 @@ object DinSituasjon : DslFaktaseksjon {
     private fun Søknad.avskjediget() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.avskjediget"))
             .sannsynliggjøresAv(
-                dokument(arbeidsavtale),
-                dokument(`dokumentasjon av arbeidsforhold`)
+                dokument(`dokumentasjon arbeidsavtale`),
+                dokument(`dokumentasjon arbeidsforhold avskjediget`)
             ).godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
@@ -444,8 +458,8 @@ object DinSituasjon : DslFaktaseksjon {
     private fun Søknad.`sagt opp av arbeidsgiver`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
             .sannsynliggjøresAv(
-                dokument(arbeidsavtale),
-                dokument(`dokumentasjon av arbeidsforhold`)
+                dokument(`dokumentasjon arbeidsavtale`),
+                dokument(`dokumentasjon arbeidsforhold blitt sagt opp`)
             ).godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
@@ -470,7 +484,7 @@ object DinSituasjon : DslFaktaseksjon {
             "rotasjon eller ikke".minstEnAv(
                 boolsk(`arbeidsforhold rotasjon`) er false,
                 (boolsk(`arbeidsforhold rotasjon`) er true)
-                    .sannsynliggjøresAv(dokument(timelister))
+                    .sannsynliggjøresAv(dokument(`dokumentasjon timelister`))
                     .godkjentAv(
                         boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
                     ) hvisOppfylt {
@@ -485,8 +499,8 @@ object DinSituasjon : DslFaktaseksjon {
     private fun Søknad.`arbeidsgiver er konkurs`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs"))
             .sannsynliggjøresAv(
-                dokument(arbeidsavtale),
-                dokument(`brev fra bobestyrer eller konkursforvalter`)
+                dokument(`dokumentasjon arbeidsavtale`),
+                dokument(`dokumentasjon brev fra bobestyrer eller konkursforvalter`)
             ).godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
@@ -531,7 +545,7 @@ object DinSituasjon : DslFaktaseksjon {
 
     private fun Søknad.`kontrakten er utgått`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt"))
-            .sannsynliggjøresAv(dokument(arbeidsavtale))
+            .sannsynliggjøresAv(dokument(`dokumentasjon arbeidsavtale`))
             .godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
@@ -570,8 +584,8 @@ object DinSituasjon : DslFaktaseksjon {
     private fun Søknad.`sagt opp selv`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv"))
             .sannsynliggjøresAv(
-                dokument(arbeidsavtale),
-                dokument(`dokumentasjon av arbeidsforhold`)
+                dokument(`dokumentasjon arbeidsavtale`),
+                dokument(`dokumentasjon arbeidsforhold sagt opp selv`)
             )
             .godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
@@ -595,8 +609,8 @@ object DinSituasjon : DslFaktaseksjon {
     private fun Søknad.`redusert arbeidstid`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid"))
             .sannsynliggjøresAv(
-                dokument(arbeidsavtale),
-                dokument(`dokumentasjon av arbeidsforhold`)
+                dokument(`dokumentasjon arbeidsavtale`),
+                dokument(`dokumentasjon arbeidsforhold redusert arbeidstid`)
             )
             .godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
@@ -716,10 +730,13 @@ object DinSituasjon : DslFaktaseksjon {
         `arbeidsforhold rotasjon`,
         `arbeidsforhold arbeidsdager siste rotasjon`,
         `arbeidsforhold fridager siste rotasjon`,
-        arbeidsavtale,
-        `dokumentasjon av arbeidsforhold`,
-        timelister,
-        `brev fra bobestyrer eller konkursforvalter`,
+        `dokumentasjon arbeidsavtale`,
+        `dokumentasjon arbeidsforhold avskjediget`,
+        `dokumentasjon arbeidsforhold blitt sagt opp`,
+        `dokumentasjon timelister`,
+        `dokumentasjon brev fra bobestyrer eller konkursforvalter`,
+        `dokumentasjon arbeidsforhold sagt opp selv`,
+        `dokumentasjon arbeidsforhold redusert arbeidstid`,
         `dokumentasjon arbeidsforhold permittert`,
         `godkjenning av arbeidsforhold-dokumentasjon`
     )

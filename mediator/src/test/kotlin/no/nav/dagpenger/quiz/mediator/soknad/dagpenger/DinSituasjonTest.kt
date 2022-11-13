@@ -33,7 +33,7 @@ internal class DinSituasjonTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        DinSituasjon.verifiserFeltsammensetting(60, 7888)
+        DinSituasjon.verifiserFeltsammensetting(63, 8316)
     }
 
     @Test
@@ -56,7 +56,8 @@ internal class DinSituasjonTest {
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
         søknadprosess.tekst(DinSituasjon.`gjenopptak årsak til stans av dagpenger`).besvar(Tekst("Årsak"))
         søknadprosess.dato(DinSituasjon.`gjenopptak søknadsdato`).besvar(1.januar)
-        søknadprosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`).besvar(false)
+        søknadprosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
+            .besvar(false)
         assertEquals(true, søknadprosess.resultat())
 
         // Avhengigheter
@@ -77,7 +78,8 @@ internal class DinSituasjonTest {
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
         søknadprosess.tekst(DinSituasjon.`gjenopptak årsak til stans av dagpenger`).besvar(Tekst("Årsak"))
         søknadprosess.dato(DinSituasjon.`gjenopptak søknadsdato`).besvar(1.januar)
-        søknadprosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`).besvar(true)
+        søknadprosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
+            .besvar(true)
 
         søknadprosess.boolsk(DinSituasjon.`gjenopptak ønsker ny beregning av dagpenger`).besvar(false)
         `besvar spørsmål for et arbeidsforhold`()
@@ -458,8 +460,8 @@ internal class DinSituasjonTest {
         ) {
             DinSituasjon.seksjon(this)
         }
-        val faktaFraGjenopptak = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",\n") { it.id }
-        assertEquals(forventetSpørsmålsrekkefølgeForSøker, faktaFraGjenopptak)
+        val faktaFraDinSituasjon = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",\n") { it.id }
+        assertEquals(forventetSpørsmålsrekkefølgeForSøker, faktaFraDinSituasjon)
     }
 
     private fun assertErUbesvarte(vararg fakta: Faktum<*>) =
@@ -468,65 +470,68 @@ internal class DinSituasjonTest {
         }
 
     private val forventetSpørsmålsrekkefølgeForSøker = """
-    101,
-    103,
-    104,
-    102,
-    106,
-    107,
-    109,
-    108,
-    110,
-    111,
-    112,
-    113,
-    114,
-    115,
-    116,
-    117,
-    118,
-    119,
-    120,
-    121,
-    122,
-    123,
-    124,
-    125,
-    126,
-    127,
-    128,
-    129,
-    130,
-    131,
-    132,
-    133,
-    134,
-    135,
-    136,
-    137,
-    138,
-    139,
-    140,
-    141,
-    142,
-    143,
-    144,
-    145,
-    146,
-    147,
-    148,
-    149,
-    150,
-    151,
-    152,
-    153,
-    154,
-    155,
-    156,
-    157,
-    158,
-    159,
-    161,
-    162
+101,
+103,
+104,
+102,
+105,
+106,
+108,
+107,
+109,
+110,
+111,
+112,
+113,
+114,
+115,
+116,
+117,
+118,
+119,
+120,
+121,
+122,
+123,
+124,
+125,
+126,
+127,
+128,
+129,
+130,
+131,
+132,
+133,
+134,
+135,
+136,
+137,
+138,
+139,
+140,
+141,
+142,
+143,
+144,
+145,
+146,
+147,
+148,
+149,
+150,
+151,
+152,
+153,
+154,
+155,
+156,
+157,
+158,
+159,
+160,
+161,
+162,
+163
     """.trimIndent()
 }
