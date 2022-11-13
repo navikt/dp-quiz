@@ -87,7 +87,7 @@ object DinSituasjon : DslFaktaseksjon {
     const val `dokumentasjon av arbeidsforhold` = 157
     const val timelister = 158
     const val `brev fra bobestyrer eller konkursforvalter` = 159
-    const val permitteringsvarsel = 161
+    const val `dokumentasjon arbeidsforhold permittert` = 161
     const val `godkjenning av arbeidsforhold-dokumentasjon` = 162
 
     override val fakta = listOf(
@@ -164,7 +164,7 @@ object DinSituasjon : DslFaktaseksjon {
             og arbeidsavtale
             og `dokumentasjon av arbeidsforhold`
             og `brev fra bobestyrer eller konkursforvalter`
-            og permitteringsvarsel
+            og `dokumentasjon arbeidsforhold permittert`
             og timelister,
         tekst faktum "faktum.arbeidsforhold.navn-bedrift" id `arbeidsforhold navn bedrift`,
         land faktum "faktum.arbeidsforhold.land" id `arbeidsforhold land`,
@@ -303,9 +303,9 @@ object DinSituasjon : DslFaktaseksjon {
         dokument faktum "faktum.dokument-timelister" id timelister,
         dokument faktum "faktum.dokument-brev-fra-bobestyrer-eller-konkursforvalter"
             id `brev fra bobestyrer eller konkursforvalter`,
-        dokument faktum "faktum.dokument-permitteringsvarsel" id permitteringsvarsel,
+        dokument faktum "faktum.dokument-arbeidsforhold-permittert" id `dokumentasjon arbeidsforhold permittert`,
         boolsk faktum "faktum.godkjenning-arbeidsforhold-dokumentasjon" id `godkjenning av arbeidsforhold-dokumentasjon`
-            avhengerAv permitteringsvarsel
+            avhengerAv `dokumentasjon arbeidsforhold permittert`
             og arbeidsavtale
             og `dokumentasjon av arbeidsforhold`
             og timelister
@@ -621,7 +621,7 @@ object DinSituasjon : DslFaktaseksjon {
 
     private fun Søknad.permittert() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
-            .sannsynliggjøresAv(dokument(permitteringsvarsel))
+            .sannsynliggjøresAv(dokument(`dokumentasjon arbeidsforhold permittert`))
             .godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
@@ -720,7 +720,7 @@ object DinSituasjon : DslFaktaseksjon {
         `dokumentasjon av arbeidsforhold`,
         timelister,
         `brev fra bobestyrer eller konkursforvalter`,
-        permitteringsvarsel,
+        `dokumentasjon arbeidsforhold permittert`,
         `godkjenning av arbeidsforhold-dokumentasjon`
     )
 }
