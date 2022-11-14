@@ -116,7 +116,7 @@ object DinSituasjon : DslFaktaseksjon {
             med "svar.fast"
             med "svar.varierende"
             med "svar.kombinasjon"
-            med "svar.ingen-passer" id `type arbeidstid` avhengerAv `mottatt dagpenger siste 12 mnd`,
+            med "svar.ingen-passer" id `type arbeidstid` avhengerAv `mottatt dagpenger siste 12 mnd` og `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
         dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger søknadsdato` avhengerAv `mottatt dagpenger siste 12 mnd`,
         heltall faktum "faktum.arbeidsforhold" id arbeidsforhold
             genererer `arbeidsforhold navn bedrift`
