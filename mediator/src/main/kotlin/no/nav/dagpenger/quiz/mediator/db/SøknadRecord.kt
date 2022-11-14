@@ -136,7 +136,9 @@ class SøknadRecord : SøknadPersistence {
                 val soknadId = tx.run(internSoknadId(uuid))!!
 
                 ønsketTilstand.forEach { faktum ->
-                    tx.run(faktum.opprettEllerOppdater(gjeldendeTilstand[faktum.rootId], soknadId))
+                    tx.run(faktum.opprettEllerOppdater(gjeldendeTilstand[faktum.rootId], soknadId)).also {
+                        require(it == 1) { "Migrering av faktum feilet, rootId=${faktum.rootId}, soknadId=$uuid, prosessnavn=${gjeldendeVersjon.prosessnavn}, gjeldendeVersjon=${gjeldendeVersjon.versjon}, nyVersjon=${nyVersjon.versjon}" }
+                    }
                 }
 
                 tx.run(settVersjon(soknadId, nyVersjon))
