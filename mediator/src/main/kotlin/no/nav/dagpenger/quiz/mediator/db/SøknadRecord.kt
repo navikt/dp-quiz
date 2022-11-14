@@ -233,7 +233,9 @@ class SøknadRecord : SøknadPersistence {
                 if (originaltFaktum?.erBesvart() == true) {
                     transactionalSession.run(arkiverFaktum(søknad, rootId, indeks))
                 }
-                transactionalSession.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId))
+                transactionalSession.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId)).also {
+                    require(it > 0) { "Fant ikke faktum som skal oppdateres i faktum_verdi, for faktumId=$id, root_id=$rootId, indeks=$indeks, søknadId=${søknad.uuid}" }
+                }
             }
     }
 
