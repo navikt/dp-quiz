@@ -32,14 +32,19 @@ object EøsArbeidsforhold : DslFaktaseksjon {
 
     override val fakta = listOf(
         boolsk faktum "faktum.eos-arbeid-siste-36-mnd" id `eøs arbeid siste 36 mnd`,
+
         heltall faktum "faktum.eos-arbeidsforhold" id `eøs arbeidsforhold` avhengerAv `eøs arbeid siste 36 mnd`
             genererer `eøs arbeidsforhold arbeidsgivernavn`
             og `eøs arbeidsforhold land`
             og `eøs arbeidsforhold personnummer`
             og `eøs arbeidsforhold varighet`,
+
         tekst faktum "faktum.eos-arbeidsforhold.arbeidsgivernavn" id `eøs arbeidsforhold arbeidsgivernavn`,
+
         land faktum "faktum.eos-arbeidsforhold.land" gruppe "eøs" med eøsEllerSveits() id `eøs arbeidsforhold land`,
+
         tekst faktum "faktum.eos-arbeidsforhold.personnummer" id `eøs arbeidsforhold personnummer`,
+
         periode faktum "faktum.eos-arbeidsforhold.varighet" id `eøs arbeidsforhold varighet`
     )
 

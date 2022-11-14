@@ -39,30 +39,51 @@ object EgenNæring : DslFaktaseksjon {
 
     override val fakta = listOf(
         boolsk faktum "faktum.driver-du-egen-naering" id `driver du egen næring`,
+
         heltall faktum "faktum.egen-naering-organisasjonsnummer-liste" id `egen næring organisasjonsnummer liste`
             genererer `egen næring organisasjonsnummer` avhengerAv `driver du egen næring`,
+
         heltall faktum "faktum.egen-naering-organisasjonsnummer" id `egen næring organisasjonsnummer`,
-        desimaltall faktum "faktum.egen-naering-arbeidstimer-for" id `egen næring arbeidstimer før` avhengerAv `driver du egen næring`,
-        desimaltall faktum "faktum.egen-naering-arbeidstimer-naa" id `egen næring arbeidstimer nå` avhengerAv `driver du egen næring`,
+
+        desimaltall faktum "faktum.egen-naering-arbeidstimer-for" id `egen næring arbeidstimer før`
+            avhengerAv `driver du egen næring`,
+
+        desimaltall faktum "faktum.egen-naering-arbeidstimer-naa" id `egen næring arbeidstimer nå`
+            avhengerAv `driver du egen næring`,
 
         boolsk faktum "faktum.driver-du-eget-gaardsbruk" id `driver du eget gårdsbruk`,
-        heltall faktum "faktum.eget-gaardsbruk-organisasjonsnummer" id `eget gårdsbruk organisasjonsnummer` avhengerAv `driver du eget gårdsbruk`,
+
+        heltall faktum "faktum.eget-gaardsbruk-organisasjonsnummer" id `eget gårdsbruk organisasjonsnummer`
+            avhengerAv `driver du eget gårdsbruk`,
+
         flervalg faktum "faktum.eget-gaardsbruk-type-gaardsbruk"
             med "svar.dyr"
             med "svar.jord"
             med "svar.skog"
             med "svar.annet" id `eget gårdsbruk type gårdsbruk` avhengerAv `driver du eget gårdsbruk`,
+
         flervalg faktum "faktum.eget-gaardsbruk-hvem-eier"
             med "svar.selv"
             med "svar.ektefelle-samboer"
             med "svar.andre" id `eget gårdsbruk hvem eier` avhengerAv `driver du eget gårdsbruk`,
-        desimaltall faktum "faktum.eget-gaardsbruk-jeg-andel-inntekt" id `eget gårdsbruk jeg andel inntekt` avhengerAv `eget gårdsbruk hvem eier`,
-        desimaltall faktum "faktum.eget-gaardsbruk-ektefelle-samboer-andel-inntekt" id `eget gårdsbruk ektefelle samboer andel inntekt` avhengerAv `eget gårdsbruk hvem eier`,
-        desimaltall faktum "faktum.eget-gaardsbruk-andre-andel-inntekt" id `eget gårdsbruk andre andel inntekt` avhengerAv `eget gårdsbruk hvem eier`,
-        desimaltall faktum "faktum.eget-gaardsbruk-arbeidstimer-aar" id `eget gårdsbruk arbeidstimer år` avhengerAv `driver du eget gårdsbruk`,
-        heltall faktum "faktum.eget-gaardsbruk-arbeidsaar-for-timer" id `eget gårdsbruk arbeidsår for timer` avhengerAv `driver du eget gårdsbruk`,
+
+        desimaltall faktum "faktum.eget-gaardsbruk-jeg-andel-inntekt" id `eget gårdsbruk jeg andel inntekt`
+            avhengerAv `eget gårdsbruk hvem eier`,
+
+        desimaltall faktum "faktum.eget-gaardsbruk-ektefelle-samboer-andel-inntekt" id `eget gårdsbruk ektefelle samboer andel inntekt`
+            avhengerAv `eget gårdsbruk hvem eier`,
+
+        desimaltall faktum "faktum.eget-gaardsbruk-andre-andel-inntekt" id `eget gårdsbruk andre andel inntekt`
+            avhengerAv `eget gårdsbruk hvem eier`,
+
+        desimaltall faktum "faktum.eget-gaardsbruk-arbeidstimer-aar" id `eget gårdsbruk arbeidstimer år`
+            avhengerAv `driver du eget gårdsbruk`,
+
+        heltall faktum "faktum.eget-gaardsbruk-arbeidsaar-for-timer" id `eget gårdsbruk arbeidsår for timer`
+            avhengerAv `driver du eget gårdsbruk`,
         // @todo: Skal denne være tekst?
-        tekst faktum "faktum.eget-gaardsbruk-arbeidstimer-beregning" id `eget gårdsbruk arbeidstimer beregning` avhengerAv `driver du eget gårdsbruk`,
+        tekst faktum "faktum.eget-gaardsbruk-arbeidstimer-beregning" id `eget gårdsbruk arbeidstimer beregning`
+            avhengerAv `driver du eget gårdsbruk`,
     )
 
     override fun seksjon(søknad: Søknad) =

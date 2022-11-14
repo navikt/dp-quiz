@@ -32,16 +32,20 @@ object Bosted : DslFaktaseksjon {
             gruppe "norge-jan-mayen" med norge()
             gruppe "storbritannia" med storbritannia() id `hvilket land bor du i`,
 
-        boolsk faktum "faktum.reist-tilbake-etter-arbeidsledig" id `reist tilbake etter arbeidsledig` avhengerAv `hvilket land bor du i`,
+        boolsk faktum "faktum.reist-tilbake-etter-arbeidsledig" id `reist tilbake etter arbeidsledig`
+            avhengerAv `hvilket land bor du i`,
 
-        periode faktum "faktum.reist-tilbake-periode" id `reist tilbake periode` avhengerAv `reist tilbake etter arbeidsledig`,
+        periode faktum "faktum.reist-tilbake-periode" id `reist tilbake periode`
+            avhengerAv `reist tilbake etter arbeidsledig`,
 
-        // @todo: Skal denne være tekst?
-        tekst faktum "faktum.reist-tilbake-aarsak" id `reist tilbake årsak` avhengerAv `reist tilbake etter arbeidsledig`,
+        tekst faktum "faktum.reist-tilbake-aarsak" id `reist tilbake årsak`
+            avhengerAv `reist tilbake etter arbeidsledig`,
 
-        boolsk faktum "faktum.reist-tilbake-en-gang-eller-mer" id `reist tilbake en gang i uka eller mer` avhengerAv `hvilket land bor du i`,
+        boolsk faktum "faktum.reist-tilbake-en-gang-eller-mer" id `reist tilbake en gang i uka eller mer`
+            avhengerAv `hvilket land bor du i`,
 
-        boolsk faktum "faktum.reist-i-takt-med-rotasjon" id `reist i takt med rotasjon` avhengerAv `reist tilbake en gang i uka eller mer`
+        boolsk faktum "faktum.reist-i-takt-med-rotasjon" id `reist i takt med rotasjon`
+            avhengerAv `reist tilbake en gang i uka eller mer`
     )
 
     override fun seksjon(søknad: Søknad) =

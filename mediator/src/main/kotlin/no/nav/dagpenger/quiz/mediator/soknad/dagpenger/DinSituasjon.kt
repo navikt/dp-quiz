@@ -314,7 +314,6 @@ object DinSituasjon : DslFaktaseksjon {
         dokument faktum "faktum.dokument-arbeidsforhold-sagt-opp-selv" id `dokumentasjon arbeidsforhold sagt opp selv`,
         dokument faktum "faktum.dokument-arbeidsforhold-redusert" id `dokumentasjon arbeidsforhold redusert arbeidstid`,
         dokument faktum "faktum.dokument-arbeidsforhold-permittert" id `dokumentasjon arbeidsforhold permittert`,
-
         boolsk faktum "faktum.godkjenning-arbeidsforhold-dokumentasjon" id `godkjenning av arbeidsforhold-dokumentasjon`
             avhengerAv `dokumentasjon arbeidsavtale`
             og `dokumentasjon arbeidsforhold avskjediget`

@@ -19,18 +19,27 @@ object Utdanning : DslFaktaseksjon {
     const val `tar du utdanning` = 2001
     const val `avsluttet utdanning siste 6 mnd` = 2002
     const val `planlegger utdanning med dagpenger` = 2003
+
     const val `dokumentasjon på sluttdato` = 2004
-    const val `dokumentasjon på sluttdato godkjenning` = 2005
+    const val `godkjenning dokumentasjon på sluttdato` = 2005
 
     override val fakta = listOf(
         boolsk faktum "faktum.tar-du-utdanning" id `tar du utdanning`,
-        boolsk faktum "faktum.avsluttet-utdanning-siste-6-mnd" id `avsluttet utdanning siste 6 mnd` avhengerAv `tar du utdanning`,
-        boolsk faktum "faktum.planlegger-utdanning-med-dagpenger" id `planlegger utdanning med dagpenger` avhengerAv `tar du utdanning`,
-        dokument faktum "faktum.dokument-utdanning-sluttdato" id `dokumentasjon på sluttdato` avhengerAv `avsluttet utdanning siste 6 mnd`,
-        boolsk faktum "faktum.dokument-utdanning-sluttdato-godkjenning" id `dokumentasjon på sluttdato godkjenning` avhengerAv `avsluttet utdanning siste 6 mnd`
+
+        boolsk faktum "faktum.avsluttet-utdanning-siste-6-mnd" id `avsluttet utdanning siste 6 mnd`
+            avhengerAv `tar du utdanning`,
+
+        boolsk faktum "faktum.planlegger-utdanning-med-dagpenger" id `planlegger utdanning med dagpenger`
+            avhengerAv `tar du utdanning`,
+
+        dokument faktum "faktum.dokument-utdanning-sluttdato" id `dokumentasjon på sluttdato`
+            avhengerAv `avsluttet utdanning siste 6 mnd`,
+        boolsk faktum "faktum.dokument-utdanning-sluttdato-godkjenning" id `godkjenning dokumentasjon på sluttdato`
+            avhengerAv `avsluttet utdanning siste 6 mnd`
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("utdanning", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
+    override fun seksjon(søknad: Søknad) =
+        listOf(søknad.seksjon("utdanning", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
     override fun regeltre(søknad: Søknad) = with(søknad) {
         "utdanning".deltre {
@@ -45,7 +54,7 @@ object Utdanning : DslFaktaseksjon {
                                     dokument(`dokumentasjon på sluttdato`)
                                 ).godkjentAv(
                                     boolsk(
-                                        `dokumentasjon på sluttdato godkjenning`
+                                        `godkjenning dokumentasjon på sluttdato`
                                     )
                                 )
                             ),
@@ -62,6 +71,6 @@ object Utdanning : DslFaktaseksjon {
         `avsluttet utdanning siste 6 mnd`,
         `planlegger utdanning med dagpenger`,
         `dokumentasjon på sluttdato`,
-        `dokumentasjon på sluttdato godkjenning`
+        `godkjenning dokumentasjon på sluttdato`
     )
 }

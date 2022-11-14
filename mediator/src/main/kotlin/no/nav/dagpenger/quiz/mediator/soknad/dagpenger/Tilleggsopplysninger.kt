@@ -18,6 +18,7 @@ object Tilleggsopplysninger : DslFaktaseksjon {
 
     override val fakta = listOf(
         tekst faktum "faktum.tilleggsopplysninger" id tilleggsopplysninger avhengerAv `har tilleggsopplysninger`,
+
         boolsk faktum "faktum.tilleggsopplysninger.har-tilleggsopplysninger" id `har tilleggsopplysninger`
     )
 

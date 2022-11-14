@@ -87,7 +87,6 @@ object AndreYtelser : DslFaktaseksjon {
         dokument faktum "faktum.dokument-dagpenger-eos-land" id `dokumentasjon dagpenger eøs land`,
         boolsk faktum "faktum.godkjenning-dokument-dagpenger-eos-land" id `godkjenning dokumentasjon dagpenger eøs land` avhengerAv `dokumentasjon dagpenger eøs land`,
 
-        // @todo: Skal denne være tekst?
         tekst faktum "faktum.hvilken-annen-ytelse" id `hvilken annen ytelse` avhengerAv `andre ytelser mottatt eller søkt`,
         tekst faktum "faktum.annen-ytelse-hvem-utebetaler" id `annen ytelse hvem utebetaler` avhengerAv `andre ytelser mottatt eller søkt`,
         periode faktum "faktum.annen-ytelse-hvilken-periode" id `annen ytelse hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
