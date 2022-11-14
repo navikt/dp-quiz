@@ -54,7 +54,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     open fun rehydrer(r: R, besvarer: String?): Faktum<R> = this
 
-    protected open fun tilUbesvart() {
+    open fun tilUbesvart() {
         throw IllegalStateException("Kan ikke sette utleda faktum til ubesvart")
     }
 
