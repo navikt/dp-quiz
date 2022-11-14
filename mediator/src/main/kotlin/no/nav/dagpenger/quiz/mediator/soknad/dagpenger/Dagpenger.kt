@@ -50,7 +50,7 @@ internal object Dagpenger {
     object Subsumsjoner {
         val regeltre: Subsumsjon = with(prototypeSøknad) {
             Bosted.regeltre(this).hvisOppfylt {
-                DinSituasjon.regeltre(this).hvisOppfylt {
+                DinSituasjon.regeltre(this).uansett {
                     EøsArbeidsforhold.regeltre(this).uansett {
                         EgenNæring.regeltre(this).hvisOppfylt {
                             Verneplikt.regeltre(this).hvisOppfylt {
