@@ -634,7 +634,10 @@ object DinSituasjon : DslFaktaseksjon {
 
     private fun Søknad.permittert() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
-            .sannsynliggjøresAv(dokument(`dokumentasjon arbeidsforhold permittert`))
+            .sannsynliggjøresAv(
+                dokument(`dokumentasjon arbeidsavtale`),
+                dokument(`dokumentasjon arbeidsforhold permittert`)
+            )
             .godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
             ) hvisOppfylt {
