@@ -1,9 +1,9 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Rolle
@@ -49,7 +49,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
             med "svar.har-fylt-60"
             med "svar.annen-situasjon" id `årsak til kun deltid` avhengerAv `kan jobbe heltid`,
 
-        heltall faktum "faktum.kun-deltid-aarsak-antall-timer" id `antall timer deltid du kan jobbe`
+        desimaltall faktum "faktum.kun-deltid-aarsak-antall-timer" id `antall timer deltid du kan jobbe`
             avhengerAv `kan jobbe heltid`,
 
         tekst faktum "faktum.kort-om-hvorfor-kun-deltid" id `skriv kort om situasjonen din`

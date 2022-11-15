@@ -55,7 +55,7 @@ internal class ReellArbeidssokerTest {
         søknadprosess.tekst(`skriv kort om situasjonen din`).besvar(Tekst("Jeg er omringet av maur"))
         assertEquals(null, søknadprosess.resultat())
 
-        søknadprosess.heltall(`antall timer deltid du kan jobbe`).besvar(30)
+        søknadprosess.desimaltall(`antall timer deltid du kan jobbe`).besvar(30.0)
         assertEquals(null, søknadprosess.resultat())
 
         søknadprosess.boolsk(`kan du jobbe i hele Norge`).besvar(false)
@@ -79,7 +79,7 @@ internal class ReellArbeidssokerTest {
             søknadprosess.boolsk(`kan jobbe heltid`),
             søknadprosess.flervalg(`årsak til kun deltid`),
             søknadprosess.tekst(`skriv kort om situasjonen din`),
-            søknadprosess.heltall(`antall timer deltid du kan jobbe`),
+            søknadprosess.desimaltall(`antall timer deltid du kan jobbe`),
             søknadprosess.boolsk(`kan du jobbe i hele Norge`),
             søknadprosess.flervalg(`årsak kan ikke jobbe i hele Norge`),
             søknadprosess.tekst(`kort om hvorfor ikke jobbe hele norge`),
@@ -118,7 +118,7 @@ internal class ReellArbeidssokerTest {
             søknadprosess.boolsk(`kan jobbe heltid`),
             søknadprosess.flervalg(`årsak til kun deltid`),
             søknadprosess.tekst(`skriv kort om situasjonen din`),
-            søknadprosess.heltall(`antall timer deltid du kan jobbe`)
+            søknadprosess.desimaltall(`antall timer deltid du kan jobbe`)
         )
     }
 
@@ -130,7 +130,7 @@ internal class ReellArbeidssokerTest {
         assertAvhengigeFaktaInvalideres(
             søknadprosess.flervalg(`årsak til kun deltid`),
             søknadprosess.tekst(`skriv kort om situasjonen din`),
-            søknadprosess.heltall(`antall timer deltid du kan jobbe`)
+            søknadprosess.desimaltall(`antall timer deltid du kan jobbe`)
         )
 
         `Besvar alle fakta hvorfor deltid`()
@@ -195,7 +195,7 @@ internal class ReellArbeidssokerTest {
             Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon")
         )
         søknadprosess.tekst(`skriv kort om situasjonen din`).besvar(Tekst("Jeg er omringet av maur"))
-        søknadprosess.heltall(`antall timer deltid du kan jobbe`).besvar(20)
+        søknadprosess.desimaltall(`antall timer deltid du kan jobbe`).besvar(20.5)
     }
 
     private fun `Besvar alle fakta hvorfor ikke jobbe i hele Norge`() {
