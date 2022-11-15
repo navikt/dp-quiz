@@ -37,8 +37,8 @@ object GenerellInnsending : DslFaktaseksjon {
 
         tekst faktum "faktum.generell-innsending.tittel-paa-dokument" id `tittel på dokument`,
 
-        dokument faktum "dokumentasjon" id dokumentasjon,
-        boolsk faktum "dokumentasjon.godkjent" id `godkjenning av dokumentasjon` avhengerAv dokumentasjon
+        dokument faktum "faktum.generell-innsending.dokumentasjon" id dokumentasjon,
+        boolsk faktum "faktum.generell-innsending.godkjenning-dokumentasjon" id `godkjenning av dokumentasjon` avhengerAv dokumentasjon
     )
 
     override fun seksjon(søknad: Søknad) = listOf(
