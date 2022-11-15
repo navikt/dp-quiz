@@ -98,6 +98,9 @@ internal class DinSituasjonTest {
         assertEquals(true, søknadprosess.resultat())
 
         // Avhengigheter
+        søknadprosess.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`).besvar(false)
+        assertErUbesvarte(søknadprosess.envalg(DinSituasjon.`type arbeidstid`))
+
         søknadprosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.vet-ikke"))
         assertEquals(null, søknadprosess.resultat())
@@ -107,8 +110,7 @@ internal class DinSituasjonTest {
             søknadprosess.dato(DinSituasjon.`gjenopptak søknadsdato`),
             søknadprosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`),
             søknadprosess.boolsk(DinSituasjon.`gjenopptak ønsker ny beregning av dagpenger`),
-            søknadprosess.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`),
-            søknadprosess.envalg(DinSituasjon.`type arbeidstid`)
+            søknadprosess.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`)
         )
     }
 
