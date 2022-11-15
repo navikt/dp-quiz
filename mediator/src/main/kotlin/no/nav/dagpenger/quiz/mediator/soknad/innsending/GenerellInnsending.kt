@@ -31,8 +31,12 @@ object GenerellInnsending : DslFaktaseksjon {
             med "svar.ettersending"
             med "svar.endring"
             med "svar.annet" id `hvorfor sender du inn dokumentasjon`,
-        tekst faktum "faktum.generell-innsending.skriv-hvorfor" id `skriv kort hvorfor du sender inn dokumentasjon`,
+
+        tekst faktum "faktum.generell-innsending.skriv-hvorfor" id `skriv kort hvorfor du sender inn dokumentasjon`
+            avhengerAv `hvorfor sender du inn dokumentasjon`,
+
         tekst faktum "faktum.generell-innsending.tittel-paa-dokument" id `tittel på dokument`,
+
         dokument faktum "dokumentasjon" id dokumentasjon,
         boolsk faktum "dokumentasjon.godkjent" id `godkjenning av dokumentasjon` avhengerAv dokumentasjon
     )
