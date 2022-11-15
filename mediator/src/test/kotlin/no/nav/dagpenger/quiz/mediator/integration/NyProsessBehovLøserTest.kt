@@ -71,7 +71,7 @@ internal class NyProsessBehovLøserTest : SøknadBesvarer() {
             UUID.fromString(uuid)
         }
 
-        assertEquals("faktum.hvorfor", testRapid.inspektør.message(1)["seksjoner"][0]["fakta"][0]["beskrivendeId"].asText())
+        assertEquals("faktum.generell-innsending.hvorfor", testRapid.inspektør.message(1)["seksjoner"][0]["fakta"][0]["beskrivendeId"].asText())
     }
 
     @Test

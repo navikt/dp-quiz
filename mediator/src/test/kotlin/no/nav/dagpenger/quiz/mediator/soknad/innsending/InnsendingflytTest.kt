@@ -20,8 +20,8 @@ class InnsendingflytTest {
 
     @Test
     fun `Innsending flyt - letteste vei til ferdig`() {
-        søknadprosess.envalg(Hvorfor.`hvorfor vil du sende oss ting`).besvar(Envalg("faktum.hvorfor.svar.endring"))
-        søknadprosess.tekst(Hvorfor.tittel).besvar(Tekst("En vakker historie om hva jeg vil"))
+        søknadprosess.envalg(GenerellInnsending.`hvorfor sender du inn dokumentasjon`).besvar(Envalg("faktum.generell-innsending.hvorfor.svar.endring"))
+        søknadprosess.tekst(GenerellInnsending.`tittel på dokument`).besvar(Tekst("En vakker historie om hva jeg vil"))
 
         søknadprosess.nesteSeksjoner().onEach {
             it.somSpørsmål()
@@ -50,8 +50,8 @@ class InnsendingflytTest {
 
     @Test
     fun `Innsending flyt - uten dokumentasjon`() {
-        søknadprosess.envalg(Hvorfor.`hvorfor vil du sende oss ting`).besvar(Envalg("faktum.hvorfor.svar.endring"))
-        søknadprosess.tekst(Hvorfor.tittel).besvar(Tekst("En vakker historie om hva jeg vil"))
+        søknadprosess.envalg(GenerellInnsending.`hvorfor sender du inn dokumentasjon`).besvar(Envalg("faktum.generell-innsending.hvorfor.svar.endring"))
+        søknadprosess.tekst(GenerellInnsending.`tittel på dokument`).besvar(Tekst("En vakker historie om hva jeg vil"))
 
         søknadprosess.nesteSeksjoner().onEach {
             it.somSpørsmål()
@@ -80,9 +80,9 @@ class InnsendingflytTest {
 
     @Test
     fun `Innsending flyt - svar vet-ikke`() {
-        søknadprosess.envalg(Hvorfor.`hvorfor vil du sende oss ting`).besvar(Envalg("faktum.hvorfor.svar.vet-ikke"))
-        søknadprosess.tekst(Hvorfor.`hva sender du oss`).besvar(Tekst("HVA"))
-        søknadprosess.tekst(Hvorfor.tittel).besvar(Tekst("En vakker historie om hva jeg vil"))
+        søknadprosess.envalg(GenerellInnsending.`hvorfor sender du inn dokumentasjon`).besvar(Envalg("faktum.generell-innsending.hvorfor.svar.annet"))
+        søknadprosess.tekst(GenerellInnsending.`skriv kort hvorfor du sender inn dokumentasjon`).besvar(Tekst("Derfor"))
+        søknadprosess.tekst(GenerellInnsending.`tittel på dokument`).besvar(Tekst("En vakker historie om hva jeg vil"))
 
         søknadprosess.nesteSeksjoner().onEach {
             it.somSpørsmål()

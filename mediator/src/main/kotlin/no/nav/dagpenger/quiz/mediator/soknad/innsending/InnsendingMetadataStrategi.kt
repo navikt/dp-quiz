@@ -55,7 +55,7 @@ class InnsendingMetadataStrategi : MetadataStrategi {
                 gyldigeValg,
                 landGrupper
             )
-            if (id != Hvorfor.`hvorfor vil du sende oss ting`.toString()) return
+            if (id != GenerellInnsending.`hvorfor sender du inn dokumentasjon`.toString()) return
             hva = (svar as Envalg).single()
         }
     }

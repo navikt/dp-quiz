@@ -19,8 +19,8 @@ internal class InnsendingMetadataStrategiTest {
 
     @Test
     fun `Får skjemakode Ettersending til søknad `() {
-        søknadprosess.envalg(Hvorfor.`hvorfor vil du sende oss ting`).besvar(Envalg("faktum.hvorfor.svar.endring"))
-        søknadprosess.tekst(Hvorfor.`hva sender du oss`).besvar(Tekst("En vakker historie om hva jeg vil"))
+        søknadprosess.envalg(GenerellInnsending.`hvorfor sender du inn dokumentasjon`).besvar(Envalg("faktum.generell-innsending.hvorfor.svar.endring"))
+        søknadprosess.tekst(GenerellInnsending.`skriv kort hvorfor du sender inn dokumentasjon`).besvar(Tekst("En vakker historie om hva jeg vil"))
         with(InnsendingMetadataStrategi().metadata(søknadprosess)) {
             assertEquals("GENERELL_INNSENDING", this.skjemakode)
             assertEquals("Generell innsending", this.tittel)

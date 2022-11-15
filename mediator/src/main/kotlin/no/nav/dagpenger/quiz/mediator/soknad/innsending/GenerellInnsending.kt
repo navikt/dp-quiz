@@ -18,28 +18,28 @@ import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
-object Hvorfor : DslFaktaseksjon {
-    const val `hvorfor vil du sende oss ting` = 1001
-    const val `hva sender du oss` = 1002
-    const val tittel = 1003
+object GenerellInnsending : DslFaktaseksjon {
+    const val `hvorfor sender du inn dokumentasjon` = 1001
+    const val `skriv kort hvorfor du sender inn dokumentasjon` = 1002
+    const val `tittel på dokument` = 1003
     const val dokumentasjon = 1005
     const val `godkjenning av dokumentasjon` = 1006
 
     override val fakta = listOf(
-        envalg faktum "faktum.hvorfor"
+        envalg faktum "faktum.generell-innsending.hvorfor"
             med "svar.klage"
             med "svar.ettersending"
             med "svar.endring"
-            med "svar.vet-ikke" id `hvorfor vil du sende oss ting`,
-        tekst faktum "faktum.hva" id `hva sender du oss`,
-        tekst faktum "faktum.tittel" id tittel,
+            med "svar.annet" id `hvorfor sender du inn dokumentasjon`,
+        tekst faktum "faktum.generell-innsending.skriv-hvorfor" id `skriv kort hvorfor du sender inn dokumentasjon`,
+        tekst faktum "faktum.generell-innsending.tittel-paa-dokument" id `tittel på dokument`,
         dokument faktum "dokumentasjon" id dokumentasjon,
         boolsk faktum "dokumentasjon.godkjent" id `godkjenning av dokumentasjon` avhengerAv dokumentasjon
     )
 
     override fun seksjon(søknad: Søknad) = listOf(
         søknad.seksjon(
-            "spørsmål",
+            "generell-innsending",
             Rolle.søker,
             *spørsmålsrekkefølgeForSøker()
         )
@@ -48,10 +48,10 @@ object Hvorfor : DslFaktaseksjon {
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
         "spørsmål".deltre {
             "alle spørsmålene må være besvart".alle(
-                (envalg(`hvorfor vil du sende oss ting`) inneholder Envalg("faktum.hvorfor.svar.vet-ikke")) hvisOppfylt {
-                    tekst(`hva sender du oss`).utfylt()
+                (envalg(`hvorfor sender du inn dokumentasjon`) inneholder Envalg("faktum.generell-innsending.hvorfor.svar.annet")) hvisOppfylt {
+                    tekst(`skriv kort hvorfor du sender inn dokumentasjon`).utfylt()
                 },
-                tekst(tittel).utfylt()
+                tekst(`tittel på dokument`).utfylt()
                     .sannsynliggjøresAv(dokument(dokumentasjon)).godkjentAv(
                         boolsk(
                             `godkjenning av dokumentasjon`
@@ -62,9 +62,9 @@ object Hvorfor : DslFaktaseksjon {
     }
 
     override val spørsmålsrekkefølgeForSøker: List<Int> = listOf(
-        `hvorfor vil du sende oss ting`,
-        `hva sender du oss`,
-        tittel,
+        `hvorfor sender du inn dokumentasjon`,
+        `skriv kort hvorfor du sender inn dokumentasjon`,
+        `tittel på dokument`,
         dokumentasjon
     )
 }

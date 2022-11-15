@@ -19,7 +19,7 @@ internal object Innsending {
     }
 
     private val faktaseksjoner = listOf(
-        Hvorfor
+        GenerellInnsending
     )
     private val alleFakta = flatMapAlleFakta()
     private val alleSeksjoner = flatMapAlleSeksjoner()
@@ -32,7 +32,7 @@ internal object Innsending {
 
     object Subsumsjoner {
         val regeltre: Subsumsjon = with(prototypeSøknad) {
-            Hvorfor.regeltre(this)
+            GenerellInnsending.regeltre(this)
         }
     }
 
