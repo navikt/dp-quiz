@@ -20,7 +20,7 @@ spec:
     path: /isready
     timeout: 1
   prometheus:
-    enabled: false
+    enabled: true
   replicas:
     # Antall partisjoner på Kafka rapid + 1
     min: {{replicas}}
