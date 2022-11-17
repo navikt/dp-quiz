@@ -336,7 +336,13 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
 
                     if (template.faktumId.harIndeks()) {
                         generatorer.single { it.harGenerert(template.faktumId) }.identitet(template.faktumId)?.let {
-                            fakta.put("generertAv", it.svar().verdi)
+                            fakta.put(
+                                "generertAv",
+                                when (it.erBesvart()) {
+                                    true -> it.svar().verdi
+                                    false -> "Ubesvart"
+                                }
+                            )
                         }
                     }
                     acc.add(fakta)
