@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.Faktum.Companion.deepCopy
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -83,7 +84,7 @@ open class GodkjenningsSubsumsjon private constructor(
             "$navn [$indeks]",
             action,
             child.deepCopy(indeks, søknad),
-            godkjenningsfakta,
+            godkjenningsfakta.deepCopy(indeks, søknad) as List<GrunnleggendeFaktum<Boolean>>,
             oppfyltSubsumsjon.deepCopy(indeks, søknad),
             ikkeOppfyltSubsumsjon.deepCopy(indeks, søknad)
         )
