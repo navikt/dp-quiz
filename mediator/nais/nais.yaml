@@ -19,6 +19,9 @@ spec:
   readiness:
     path: /isready
     timeout: 1
+  preStopHook:
+    http:
+      path: /stop
   prometheus:
     enabled: true
   replicas:
@@ -27,17 +30,17 @@ spec:
     max: {{replicas}}
   resources:
     limits:
-      cpu: 1500m
-      memory: 1024Mi
+      cpu: 3000m
+      memory: 2024Mi
     requests:
-      cpu: 1000m
-      memory: 1024Mi
+      cpu: 2000m
+      memory: 2024Mi
   secureLogs:
     enabled: true
   env:
     - name: PORT
       value: "8080"
-    #- name: JAVA_OPTS
+    - name: JAVA_OPTS
     #  value: -XX:+UseZGC -XX:ActiveProcessorCount=2
     #  value: -XX:+UseG1GC -XX:MaxRAMPercentage=75.0 -XX:ActiveProcessorCount=2
   filesFrom:
