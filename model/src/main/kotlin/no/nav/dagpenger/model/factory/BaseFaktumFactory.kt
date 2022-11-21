@@ -5,6 +5,7 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.Flervalg
+import no.nav.dagpenger.model.faktum.Flervalg2
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
@@ -57,6 +58,10 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
             infix fun faktum(navn: String) = BaseFaktumFactory(Flervalg::class.java, navn)
         }
 
+        object flervalg2 {
+            infix fun faktum(navn: String) = BaseFaktumFactory(Flervalg2::class.java, navn)
+        }
+
         object tekst {
             infix fun faktum(navn: String) = BaseFaktumFactory(Tekst::class.java, navn)
         }
@@ -73,6 +78,8 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     infix fun id(rootId: Int) = this.apply { this.rootId = rootId }
 
     infix fun med(valg: String) = this.apply { gyldigeValg.add("$navn.$valg") }
+
+    infix fun med(faktumId: Int) = this.apply { gyldigeValg.add("$navn.$faktumId") }
 
     infix fun gruppe(gruppeNavn: String) = LandGruppe(this, gruppeNavn)
 

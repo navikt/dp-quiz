@@ -2,8 +2,11 @@ package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg2
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.faktum.Flervalg2
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
@@ -22,6 +25,36 @@ import java.time.LocalDate
 import kotlin.test.assertEquals
 
 internal class AvhengigFaktumTest {
+
+    @Test
+    @Disabled
+    fun `Andre faktum kan være avhengig av svaralternativene til et flervalgfaktum`() {
+        val `svaralternativ 1` = 2
+        val `svaralternativ 2` = 3
+
+        val søknad = Søknad(
+            testversjon,
+            boolsk faktum "faktum-1" id 1 avhengerAv `svaralternativ 1`,
+
+            tekst faktum "honey badger" id `svaralternativ 1`,
+            tekst faktum "norsk grevling" id `svaralternativ 2`,
+
+            flervalg2 faktum "Kryss av for dine favorittgrevlinger:"
+                med `svaralternativ 1`
+                med `svaralternativ 2` id 4
+        )
+
+        søknad.flervalg2(4).besvar(
+            Flervalg2(`svaralternativ 1`, `svaralternativ 2`)
+        )
+
+        søknad.boolsk(1).besvar(true)
+
+        søknad.flervalg2(4).besvar(Flervalg2(`svaralternativ 2`))
+
+        assertFalse(søknad.boolsk(1).erBesvart())
+    }
+
     @Test
     fun `Resetter avhengige faktum`() {
         val søknad = Søknad(
@@ -102,7 +135,8 @@ internal class AvhengigFaktumTest {
         }
     }
 
-    @Test @Disabled
+    @Test
+    @Disabled
     fun `faktum som er avhengigAv et templatefaktum`() {
         val søknad = Søknad(
             testversjon,

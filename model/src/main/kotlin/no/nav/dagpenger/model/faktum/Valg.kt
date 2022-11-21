@@ -17,6 +17,27 @@ abstract class Valg internal constructor(protected val valgteverdier: Set<String
     }
 }
 
+abstract class Valg2 internal constructor(protected val valgteverdier: Set<Int>) :
+    Comparable<Valg2>,
+    Set<Int> by valgteverdier {
+
+    init {
+        require(isNotEmpty()) { "Minst en verdi må være valgt" }
+    }
+
+    override fun compareTo(other: Valg2): Int {
+        return valgteverdier.size.compareTo(other.valgteverdier.size)
+    }
+
+    override fun toString(): String {
+        return "Valg(verdier=$valgteverdier)"
+    }
+}
+
 interface ValgteVerdier {
     fun sjekkMot(gyldigeValg: GyldigeValg)
+}
+
+interface ValgteVerdier2 {
+    fun sjekkMot(gyldigeValg: GyldigeValg2)
 }

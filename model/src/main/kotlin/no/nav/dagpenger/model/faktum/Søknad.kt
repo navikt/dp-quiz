@@ -126,6 +126,10 @@ class Søknad private constructor(
     override fun flervalg(id: String): Faktum<Flervalg> = flervalg(FaktumId(id))
     private infix fun flervalg(faktumId: FaktumId) = id(faktumId) as Faktum<Flervalg>
 
+    override fun flervalg2(rootId: Int) = flervalg2(FaktumId(rootId))
+    override fun flervalg2(id: String): Faktum<Flervalg2> = flervalg2(FaktumId(id))
+    private infix fun flervalg2(faktumId: FaktumId) = id(faktumId) as Faktum<Flervalg2>
+
     override fun tekst(rootId: Int): Faktum<Tekst> = tekst(FaktumId(rootId))
     override fun tekst(id: String): Faktum<Tekst> = tekst(FaktumId(id))
     private infix fun tekst(faktumId: FaktumId) = id(faktumId) as Faktum<Tekst>
