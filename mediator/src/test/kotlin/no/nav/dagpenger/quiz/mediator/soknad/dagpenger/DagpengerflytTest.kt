@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.model.helpers.MedSøknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -50,7 +51,16 @@ class DagpengerflytTest {
         søknadprosess.land("${Barnetillegg.`barn statsborgerskap register`}.1").besvar(Land("NOR"))
         // Besvares av bruker
         søknadprosess.boolsk("${Barnetillegg.`forsørger du barnet register`}.1").besvar(false)
-        søknadprosess.boolsk(`egne barn`).besvar(false)
+        // Egne barn
+        søknadprosess.boolsk(`egne barn`).besvar(true)
+        søknadprosess.generator(Barnetillegg.`barn liste`).besvar(1)
+        søknadprosess.tekst("${Barnetillegg.`barn fornavn mellomnavn`}.1").besvar(Tekst("test testen"))
+        søknadprosess.tekst("${Barnetillegg.`barn etternavn`}.1").besvar(Tekst("TTTT"))
+        søknadprosess.dato("${Barnetillegg.`barn fødselsdato`}.1").besvar(LocalDate.now().minusYears(10))
+        søknadprosess.land("${Barnetillegg.`barn statsborgerskap`}.1").besvar(Land("NOR"))
+        søknadprosess.boolsk("${Barnetillegg.`forsørger du barnet`}.1").besvar(true)
+
+        egneBarnMåDokumenteres(søknadprosess)
 
         søknadprosess.boolsk(ReellArbeidssoker.`kan jobbe heltid`).besvar(true)
         søknadprosess.boolsk(ReellArbeidssoker.`kan du jobbe i hele Norge`).besvar(true)
@@ -71,5 +81,43 @@ class DagpengerflytTest {
             søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }"
         )
+    }
+
+    private fun vernepliktMåDokumenteres(søknadprosess: Søknadprosess) {
+        MedSøknad(søknadprosess) {
+            seksjon("verneplikt") {
+                fakta {
+                    boolsk("faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd") {
+                        erBesvart()
+                        sannsynliggjøresAv {
+                            dokument("faktum.dokument-avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-dokumentasjon") {
+                                erIkkeBesvart()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun egneBarnMåDokumenteres(søknadprosess: Søknadprosess) {
+        MedSøknad(søknadprosess) {
+            seksjon("barnetillegg") {
+                fakta(false, false) {
+                    generator("faktum.barn-liste") {
+                        svar(1) {
+                            boolsk("faktum.forsoerger-du-barnet") {
+                                erBesvartMed(true)
+                                sannsynliggjøresAv {
+                                    dokument("faktum.dokument-foedselsattest-bostedsbevis-for-barn-under-18aar") {
+                                        erIkkeBesvart()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

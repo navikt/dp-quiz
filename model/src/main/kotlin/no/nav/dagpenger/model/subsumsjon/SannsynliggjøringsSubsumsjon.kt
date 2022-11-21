@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 class SannsynliggjøringsSubsumsjon private constructor(
     navn: String,
     private val child: Subsumsjon,
-    private val sannsynliggjøringsFakta: Set<Faktum<*>>
+    private val sannsynliggjøringsFakta: Collection<Faktum<*>>
 ) : SammensattSubsumsjon(navn, mutableListOf(child), TomSubsumsjon, TomSubsumsjon) {
 
     init {
