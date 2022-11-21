@@ -50,11 +50,20 @@ class SannsynliggjøringsSubsumsjon private constructor(
         )
     }
 
-    override fun bygg(søknad: Søknad) = SannsynliggjøringsSubsumsjon(
-        navn,
-        child.bygg(søknad),
-        sannsynliggjøringsFakta.map { faktum -> søknad.dokument(faktum.id) }.toSet()
-    )
+    override fun bygg(søknad: Søknad): SannsynliggjøringsSubsumsjon {
+        val kopierteSannsynliggjøringsFakta =
+            sannsynliggjøringsFakta.map { faktum -> søknad.dokument(faktum.id) }.toSet()
+        val kopiertSubsumsjon = child.bygg(søknad)
+
+        kopiertSubsumsjon.alleFakta().forEach { faktum ->
+            faktum.sannsynliggjøresAv(kopierteSannsynliggjøringsFakta)
+        }
+        return SannsynliggjøringsSubsumsjon(
+            navn,
+            kopiertSubsumsjon,
+            kopierteSannsynliggjøringsFakta
+        )
+    }
 
     override fun deepCopy(søknadprosess: Søknadprosess) = SannsynliggjøringsSubsumsjon(
         navn,
