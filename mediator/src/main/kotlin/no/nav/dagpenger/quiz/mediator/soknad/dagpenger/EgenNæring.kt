@@ -68,13 +68,13 @@ object EgenNæring : DslFaktaseksjon {
             med "svar.andre" id `eget gårdsbruk hvem eier` avhengerAv `driver du eget gårdsbruk`,
 
         desimaltall faktum "faktum.eget-gaardsbruk-jeg-andel-inntekt" id `eget gårdsbruk jeg andel inntekt`
-            avhengerAv `eget gårdsbruk hvem eier`,
+            avhengerAv `driver du eget gårdsbruk`,
 
         desimaltall faktum "faktum.eget-gaardsbruk-ektefelle-samboer-andel-inntekt" id `eget gårdsbruk ektefelle samboer andel inntekt`
-            avhengerAv `eget gårdsbruk hvem eier`,
+            avhengerAv `driver du eget gårdsbruk`,
 
         desimaltall faktum "faktum.eget-gaardsbruk-andre-andel-inntekt" id `eget gårdsbruk andre andel inntekt`
-            avhengerAv `eget gårdsbruk hvem eier`,
+            avhengerAv `driver du eget gårdsbruk`,
 
         desimaltall faktum "faktum.eget-gaardsbruk-arbeidstimer-aar" id `eget gårdsbruk arbeidstimer år`
             avhengerAv `driver du eget gårdsbruk`,

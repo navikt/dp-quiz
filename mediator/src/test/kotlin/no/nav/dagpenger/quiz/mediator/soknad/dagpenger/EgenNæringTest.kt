@@ -102,6 +102,9 @@ internal class EgenNæringTest {
         val gårdsbrukOrgnummer = søknadprosess.heltall(EgenNæring.`eget gårdsbruk organisasjonsnummer`)
         val typeGårdsbruk = søknadprosess.flervalg(EgenNæring.`eget gårdsbruk type gårdsbruk`)
         val eier = søknadprosess.flervalg(EgenNæring.`eget gårdsbruk hvem eier`)
+        val andelInntektSelv = søknadprosess.desimaltall(EgenNæring.`eget gårdsbruk jeg andel inntekt`)
+        val andelInntektSamboerEktefelle =
+            søknadprosess.desimaltall(EgenNæring.`eget gårdsbruk ektefelle samboer andel inntekt`)
         val årForArbeidstimer = søknadprosess.heltall(EgenNæring.`eget gårdsbruk arbeidsår for timer`)
         val arbeidstimer = søknadprosess.desimaltall(EgenNæring.`eget gårdsbruk arbeidstimer år`)
         val hvordanBeregnet = søknadprosess.tekst(EgenNæring.`eget gårdsbruk arbeidstimer beregning`)
@@ -115,6 +118,8 @@ internal class EgenNæringTest {
                 "faktum.eget-gaardsbruk-hvem-eier.svar.ektefelle-samboer"
             )
         )
+        andelInntektSelv.besvar(60.0)
+        andelInntektSamboerEktefelle.besvar(40.0)
         årForArbeidstimer.besvar(2021)
         arbeidstimer.besvar(40.5)
         hvordanBeregnet.besvar(Tekst("forklaring"))
@@ -122,34 +127,13 @@ internal class EgenNæringTest {
         assertErBesvarte(gårdsbrukOrgnummer, typeGårdsbruk, eier, årForArbeidstimer, arbeidstimer, hvordanBeregnet)
 
         driverEgetGårdsbruk.besvar(false)
-        assertErUbesvarte(gårdsbrukOrgnummer, typeGårdsbruk, eier, årForArbeidstimer, arbeidstimer, hvordanBeregnet)
+        assertErUbesvarte(gårdsbrukOrgnummer, typeGårdsbruk, eier, andelInntektSelv, andelInntektSamboerEktefelle, årForArbeidstimer, arbeidstimer, hvordanBeregnet)
     }
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
         val faktaFraEgenNæring = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("3001,3002,3003,3005,3004,3006,3007,3008,3009,3010,3011,3012,3014,3013,3015", faktaFraEgenNæring)
-    }
-
-    @Test
-    fun `Avhengigheter ved eier av gårdsbruket`() {
-        val eier = søknadprosess.flervalg(EgenNæring.`eget gårdsbruk hvem eier`)
-        val andelInntektSelv = søknadprosess.desimaltall(EgenNæring.`eget gårdsbruk jeg andel inntekt`)
-        val andelInntektSamboerEktefelle =
-            søknadprosess.desimaltall(EgenNæring.`eget gårdsbruk ektefelle samboer andel inntekt`)
-
-        eier.besvar(
-            Flervalg(
-                "faktum.eget-gaardsbruk-hvem-eier.svar.selv",
-                "faktum.eget-gaardsbruk-hvem-eier.svar.ektefelle-samboer"
-            )
-        )
-        andelInntektSelv.besvar(60.0)
-        andelInntektSamboerEktefelle.besvar(40.0)
-        assertErBesvarte(andelInntektSelv, andelInntektSamboerEktefelle)
-
-        eier.besvar(Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.andre"))
-        assertErUbesvarte(andelInntektSelv, andelInntektSamboerEktefelle)
     }
 
     private fun assertErBesvarte(vararg fakta: Faktum<*>) =
