@@ -66,36 +66,36 @@ object AndreYtelser : DslFaktaseksjon {
 
         tekst faktum "faktum.tjenestepensjon-hvem-utbetaler" id `tjenestepensjon hvem utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
         periode faktum "faktum.tjenestepensjon-hvilken-periode" id `tjenestepensjon hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
-        dokument faktum "faktum.dokument-tjenestepensjon" id `dokumentasjon tjenestepensjon`,
+        dokument faktum "faktum.dokument-tjenestepensjon" id `dokumentasjon tjenestepensjon` avhengerAv `hvilke andre ytelser`,
         boolsk faktum "faktum.godkjenning-dokument-tjenestepensjon" id `godkjenning dokumentasjon tjenestepensjon` avhengerAv `dokumentasjon tjenestepensjon`,
 
         periode faktum "faktum.arbeidslos-GFF-hvilken-periode" id `arbeidsløs GFF hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
-        dokument faktum "faktum.dokument-arbeidslos-GFF-hvilken-periode" id `dokumentasjon arbeidsløs GFF periode`,
+        dokument faktum "faktum.dokument-arbeidslos-GFF-hvilken-periode" id `dokumentasjon arbeidsløs GFF periode` avhengerAv `hvilke andre ytelser`,
         boolsk faktum "faktum.godkjenning-dokument-arbeidslos-GFF-hvilken-periode" id `godkjenning dokumentasjon arbeidsløs GFF periode` avhengerAv `dokumentasjon arbeidsløs GFF periode`,
 
         periode faktum "faktum.garantilott-GFF-hvilken-periode" id `garantilott fra GFF hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
-        dokument faktum "faktum.dokument-garantilott-GFF-hvilken-periode" id `dokumentasjon garantilott fra GFF periode`,
+        dokument faktum "faktum.dokument-garantilott-GFF-hvilken-periode" id `dokumentasjon garantilott fra GFF periode` avhengerAv `hvilke andre ytelser`,
         boolsk faktum "faktum.godkjenning-dokument-garantilott-GFF-hvilken-periode" id `godkjenning dokumentasjon garantilott fra GFF periode` avhengerAv `dokumentasjon garantilott fra GFF periode`,
 
         tekst faktum "faktum.etterlonn-arbeidsgiver-hvem-utbetaler" id `etterlønn arbeidsgiver hvem utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
         periode faktum "faktum.etterlonn-arbeidsgiver-hvilken-periode" id `etterlønn arbeidsgiver hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
-        dokument faktum "faktum.dokument-etterlonn" id `dokumentasjon etterlønn`,
+        dokument faktum "faktum.dokument-etterlonn" id `dokumentasjon etterlønn` avhengerAv `hvilke andre ytelser`,
         boolsk faktum "faktum.godkjenning-dokument-etterlonn" id `godkjenning dokumentasjon etterlønn` avhengerAv `dokumentasjon etterlønn`,
 
         land faktum "faktum.dagpenger-hvilket-eos-land-utbetaler" gruppe "eøs" med eøsEllerSveits() id `dagpenger hvilket eøs land utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
         periode faktum "faktum.dagpenger-eos-land-hvilken-periode" id `dagpenger eøs land hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
-        dokument faktum "faktum.dokument-dagpenger-eos-land" id `dokumentasjon dagpenger eøs land`,
+        dokument faktum "faktum.dokument-dagpenger-eos-land" id `dokumentasjon dagpenger eøs land` avhengerAv `hvilke andre ytelser`,
         boolsk faktum "faktum.godkjenning-dokument-dagpenger-eos-land" id `godkjenning dokumentasjon dagpenger eøs land` avhengerAv `dokumentasjon dagpenger eøs land`,
 
         tekst faktum "faktum.hvilken-annen-ytelse" id `hvilken annen ytelse` avhengerAv `andre ytelser mottatt eller søkt`,
         tekst faktum "faktum.annen-ytelse-hvem-utebetaler" id `annen ytelse hvem utebetaler` avhengerAv `andre ytelser mottatt eller søkt`,
         periode faktum "faktum.annen-ytelse-hvilken-periode" id `annen ytelse hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
-        dokument faktum "faktum.dokument-annen-ytelse" id `dokumentasjon annen ytelse`,
+        dokument faktum "faktum.dokument-annen-ytelse" id `dokumentasjon annen ytelse` avhengerAv `hvilke andre ytelser`,
         boolsk faktum "faktum.godkjenning-dokument-annen-ytelse" id `godkjenning dokumentasjon annen ytelse` avhengerAv `dokumentasjon annen ytelse`,
 
         boolsk faktum "faktum.utbetaling-eller-okonomisk-gode-tidligere-arbeidsgiver" id `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
         tekst faktum "faktum.okonomisk-gode-tidligere-arbeidsgiver-hva-omfatter-avtalen" id `økonomisk gode tidligere arbeidsgiver hva omfatter avtalen` avhengerAv `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
-        dokument faktum "faktum.dokument-okonomiske-goder-tidligere-arbeidsgiver" id `dokumentasjon økonomiske goder fra tidligere arbeidsgiver`,
+        dokument faktum "faktum.dokument-okonomiske-goder-tidligere-arbeidsgiver" id `dokumentasjon økonomiske goder fra tidligere arbeidsgiver` avhengerAv `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
         boolsk faktum "faktum.godkjenning-dokument-okonomiske-goder-tidligere-arbeidsgiver" id `godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver` avhengerAv `dokumentasjon økonomiske goder fra tidligere arbeidsgiver`
     )
 

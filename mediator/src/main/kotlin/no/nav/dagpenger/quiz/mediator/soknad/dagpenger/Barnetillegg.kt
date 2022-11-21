@@ -83,7 +83,8 @@ object Barnetillegg : DslFaktaseksjon {
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsørger du barnet`,
 
         dokument faktum "faktum.dokument-foedselsattest-bostedsbevis-for-barn-under-18aar"
-            id `dokumentasjon fødselsattest bostedsbevis for barn under 18år`,
+            id `dokumentasjon fødselsattest bostedsbevis for barn under 18år` avhengerAv `forsørger du barnet`,
+
         boolsk faktum "faktum.godkjenning-dokumentasjon-foedselsattest-bostedsbevis-for-barn-under-18aar"
             id `godkjenning av fødselsattest bostedsbevis for barn under 18år`
             avhengerAv `dokumentasjon fødselsattest bostedsbevis for barn under 18år`
