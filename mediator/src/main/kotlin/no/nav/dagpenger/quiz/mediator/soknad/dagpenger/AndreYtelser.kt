@@ -192,6 +192,8 @@ object AndreYtelser : DslFaktaseksjon {
         `hvilke andre ytelser`,
         `tjenestepensjon hvem utbetaler`,
         `tjenestepensjon hvilken periode`,
+        `arbeidsløs GFF hvilken periode`,
+        `garantilott fra GFF hvilken periode`,
         `etterlønn arbeidsgiver hvem utbetaler`,
         `etterlønn arbeidsgiver hvilken periode`,
         `dagpenger hvilket eøs land utbetaler`,
@@ -199,8 +201,6 @@ object AndreYtelser : DslFaktaseksjon {
         `hvilken annen ytelse`,
         `annen ytelse hvem utebetaler`,
         `annen ytelse hvilken periode`,
-        `arbeidsløs GFF hvilken periode`,
-        `garantilott fra GFF hvilken periode`,
         `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
         `økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`,
 
