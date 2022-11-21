@@ -255,8 +255,12 @@ infix fun Subsumsjon.uansett(block: SubsumsjonGenerator): Subsumsjon {
 }
 
 fun Subsumsjon.sannsynliggjøresAv(vararg sannsynliggjøringsFaktum: Faktum<*>) = SannsynliggjøringsSubsumsjon(
-    this,
-    sannsynliggjøringsFaktum.toSet()
+    this.apply {
+        alleFakta().forEach {
+            it.sannsynliggjøresAv(sannsynliggjøringsFaktum.toList())
+        }
+    },
+    sannsynliggjøringsFaktum.toList()
 )
 typealias SubsumsjonGenerator = () -> Subsumsjon
 

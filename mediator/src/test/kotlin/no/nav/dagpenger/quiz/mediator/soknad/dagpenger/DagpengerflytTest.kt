@@ -35,7 +35,9 @@ class DagpengerflytTest {
         søknadprosess.boolsk(EgenNæring.`driver du egen næring`).besvar(false)
         søknadprosess.boolsk(EgenNæring.`driver du eget gårdsbruk`).besvar(false)
 
-        søknadprosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(false)
+        søknadprosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(true)
+
+        vernepliktMåDokumenteres(søknadprosess)
 
         søknadprosess.boolsk(AndreYtelser.`andre ytelser mottatt eller søkt`).besvar(false)
         søknadprosess.boolsk(AndreYtelser.`utbetaling eller økonomisk gode tidligere arbeidsgiver`).besvar(false)

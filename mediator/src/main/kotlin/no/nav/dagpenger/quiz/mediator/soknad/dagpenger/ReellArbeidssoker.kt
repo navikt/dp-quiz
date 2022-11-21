@@ -73,9 +73,9 @@ object ReellArbeidssoker : DslFaktaseksjon {
 
         boolsk faktum "faktum.bytte-yrke-ned-i-lonn" id `kan bytte yrke eller gå ned i lønn`,
 
-        dokument faktum "faktum.dokument-bekreftelse-fra-lege-eller-annen-behandler" id `dokumentasjon bekreftelse fra lege eller annen behandler`,
-        dokument faktum "faktum.dokument-fulltid-bekreftelse-fra-relevant-fagpersonell" id `dokumentasjon fulltid - bekreftelse fra relevant fagpersonell`,
-        dokument faktum "faktum.dokument-hele-norge-bekreftelse-fra-relevant-fagpersonell" id `dokumentasjon hele norge - bekreftelse fra relevant fagpersonell`,
+        dokument faktum "faktum.dokument-bekreftelse-fra-lege-eller-annen-behandler" id `dokumentasjon bekreftelse fra lege eller annen behandler` avhengerAv `årsak til kun deltid` og `kan ta alle typer arbeid`,
+        dokument faktum "faktum.dokument-fulltid-bekreftelse-fra-relevant-fagpersonell" id `dokumentasjon fulltid - bekreftelse fra relevant fagpersonell` avhengerAv `årsak til kun deltid`,
+        dokument faktum "faktum.dokument-hele-norge-bekreftelse-fra-relevant-fagpersonell" id `dokumentasjon hele norge - bekreftelse fra relevant fagpersonell` avhengerAv `årsak kan ikke jobbe i hele Norge`,
         boolsk faktum "faktum.godkjenning-dokumentasjon-bekreftelse-fra-relevant-fagpersonell" id `godkjenning av bekreftelse`
             avhengerAv `dokumentasjon bekreftelse fra lege eller annen behandler`
             og `dokumentasjon fulltid - bekreftelse fra relevant fagpersonell`

@@ -23,7 +23,8 @@ object Verneplikt : DslFaktaseksjon {
         boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd" id `avtjent militær sivilforsvar tjeneste siste 12 mnd`,
 
         dokument faktum "faktum.dokument-avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-dokumentasjon"
-            id `dokumentasjon avtjent militær sivilforsvar tjeneste siste 12 mnd`,
+            id `dokumentasjon avtjent militær sivilforsvar tjeneste siste 12 mnd` avhengerAv `avtjent militær sivilforsvar tjeneste siste 12 mnd`,
+
         boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-godkjenning"
             id `godkjenning avtjent militær sivilforsvar tjeneste siste 12 mnd`
             avhengerAv `dokumentasjon avtjent militær sivilforsvar tjeneste siste 12 mnd`

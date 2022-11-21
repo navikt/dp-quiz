@@ -11,12 +11,7 @@ class SannsynliggjøringsSubsumsjon private constructor(
     private val child: Subsumsjon,
     private val sannsynliggjøringsFakta: Collection<Faktum<*>>
 ) : SammensattSubsumsjon(navn, mutableListOf(child), TomSubsumsjon, TomSubsumsjon) {
-
-    init {
-        child.alleFakta().forEach { faktum -> faktum.sannsynliggjøresAv(sannsynliggjøringsFakta.toMutableSet()) }
-    }
-
-    internal constructor(child: Subsumsjon, sannsynliggjøringsFakta: Set<Faktum<*>>) :
+    internal constructor(child: Subsumsjon, sannsynliggjøringsFakta: Collection<Faktum<*>>) :
         this(
             "${child.navn} sannsynligjøring",
             child,

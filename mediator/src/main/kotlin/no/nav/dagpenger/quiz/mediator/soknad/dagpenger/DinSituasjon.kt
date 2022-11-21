@@ -306,14 +306,14 @@ object DinSituasjon : DslFaktaseksjon {
         heltall faktum "faktum.arbeidsforhold.fridager-siste-rotasjon" id `arbeidsforhold fridager siste rotasjon`
             avhengerAv `arbeidsforhold rotasjon`,
 
-        dokument faktum "faktum.dokument-arbeidsavtale" id `dokumentasjon arbeidsavtale`,
-        dokument faktum "faktum.dokument-arbeidsforhold-avskjediget" id `dokumentasjon arbeidsforhold avskjediget`,
-        dokument faktum "faktum.dokument-arbeidsforhold-blitt-sagt-opp" id `dokumentasjon arbeidsforhold blitt sagt opp`,
-        dokument faktum "faktum.dokument-timelister" id `dokumentasjon timelister`,
-        dokument faktum "faktum.dokument-brev-fra-bobestyrer-eller-konkursforvalter" id `dokumentasjon brev fra bobestyrer eller konkursforvalter`,
-        dokument faktum "faktum.dokument-arbeidsforhold-sagt-opp-selv" id `dokumentasjon arbeidsforhold sagt opp selv`,
-        dokument faktum "faktum.dokument-arbeidsforhold-redusert" id `dokumentasjon arbeidsforhold redusert arbeidstid`,
-        dokument faktum "faktum.dokument-arbeidsforhold-permittert" id `dokumentasjon arbeidsforhold permittert`,
+        dokument faktum "faktum.dokument-arbeidsavtale" id `dokumentasjon arbeidsavtale` avhengerAv 112,
+        dokument faktum "faktum.dokument-arbeidsforhold-avskjediget" id `dokumentasjon arbeidsforhold avskjediget` avhengerAv 112,
+        dokument faktum "faktum.dokument-arbeidsforhold-blitt-sagt-opp" id `dokumentasjon arbeidsforhold blitt sagt opp` avhengerAv 112,
+        dokument faktum "faktum.dokument-timelister" id `dokumentasjon timelister` avhengerAv 112 og 152,
+        dokument faktum "faktum.dokument-brev-fra-bobestyrer-eller-konkursforvalter" id `dokumentasjon brev fra bobestyrer eller konkursforvalter` avhengerAv 112,
+        dokument faktum "faktum.dokument-arbeidsforhold-sagt-opp-selv" id `dokumentasjon arbeidsforhold sagt opp selv` avhengerAv 112,
+        dokument faktum "faktum.dokument-arbeidsforhold-redusert" id `dokumentasjon arbeidsforhold redusert arbeidstid` avhengerAv 112,
+        dokument faktum "faktum.dokument-arbeidsforhold-permittert" id `dokumentasjon arbeidsforhold permittert` avhengerAv 112,
         boolsk faktum "faktum.godkjenning-arbeidsforhold-dokumentasjon" id `godkjenning av arbeidsforhold-dokumentasjon`
             avhengerAv `dokumentasjon arbeidsavtale`
             og `dokumentasjon arbeidsforhold avskjediget`
