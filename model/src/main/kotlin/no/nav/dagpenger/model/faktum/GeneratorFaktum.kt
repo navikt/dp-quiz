@@ -29,10 +29,15 @@ class GeneratorFaktum internal constructor(
 
     private inline fun <reified T> isT(x: Any) = x is T
 
-    override fun besvar(antall: Int, ident: String?): GrunnleggendeFaktum<Int> = this.also {
-        if (erBesvart() && svar() != antall) tilbakestill()
+    override fun besvar(antall: Int, ident: String?): GrunnleggendeFaktum<Int> {
+        if (erBesvart() && svar() == antall) {
+            return this
+        }
+
+        tilbakestill()
         super.besvar(antall, ident)
         templates.forEach { template -> template.generate(antall, søknad) }
+        return this
     }
 
     internal fun harGenerert(other: FaktumId) = this.templates.any {

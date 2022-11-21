@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
+import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Søknadprosess
@@ -15,6 +16,7 @@ import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertEquals
@@ -69,8 +71,58 @@ internal class AvhengigFaktumTest {
         søknadprosess.dato("2.1").besvar(LocalDate.now().plusDays(1))
 
         assertFalse(søknadprosess.dato("3.1").erBesvart())
-        val visitor = AvhengigheterVisitor(søknadprosess.dato("2.1"))
-        assertEquals(1, visitor.avhengigheter.size)
+        AvhengigheterVisitor(søknadprosess.dato("2.1")).also {
+            assertEquals(1, it.avhengigheter.size)
+        }
+
+        søknadprosess.generator(1).besvar(1)
+
+        AvhengigheterVisitor(søknadprosess.dato("2.1")).also {
+            println(it.avhengigheter)
+            assertEquals(1, it.avhengigheter.size)
+        }
+
+        søknadprosess.generator(1).besvar(2)
+
+        søknadprosess.dato("2.1").besvar(LocalDate.now())
+        søknadprosess.dato("2.2").besvar(LocalDate.now())
+
+        søknadprosess.dato("3.1").besvar(LocalDate.now())
+        søknadprosess.dato("3.2").besvar(LocalDate.now())
+
+        søknadprosess.dato("2.2").besvar(LocalDate.now().plusDays(1))
+        assertFalse(søknadprosess.dato("3.2").erBesvart())
+
+        AvhengigheterVisitor(søknadprosess.dato("2.2")).also {
+            assertEquals(1, it.avhengigheter.size)
+        }
+
+        AvhengigheterVisitor(søknadprosess.dato("2.1")).also {
+            assertEquals(1, it.avhengigheter.size)
+        }
+    }
+
+    @Test @Disabled
+    fun `faktum som er avhengigAv et templatefaktum`() {
+        val søknad = Søknad(
+            testversjon,
+            heltall faktum "periode antall" id 1 genererer 2 og 3,
+            dato faktum "fom" id 2,
+            dato faktum "tom" id 3,
+            boolsk faktum "boolsk" id 4 avhengerAv 3
+        )
+        val søknadprosess = søknad.testSøknadprosess()
+
+        søknadprosess.generator(1).besvar(1)
+        søknadprosess.dato("2.1").besvar(LocalDate.now())
+        søknadprosess.dato("3.1").besvar(LocalDate.now())
+
+        søknadprosess.boolsk(4).besvar(true)
+
+        assertTrue(søknadprosess.boolsk(4).erBesvart())
+        søknadprosess.dato("3.1").besvar(LocalDate.now().plusDays(2))
+
+        assertFalse(søknadprosess.boolsk(4).erBesvart())
     }
 }
 

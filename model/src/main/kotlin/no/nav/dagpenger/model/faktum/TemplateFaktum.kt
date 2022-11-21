@@ -74,7 +74,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
             generator.forHvertSvar { indeks: Int ->
                 // Sjekker om seksjonen er *kun* templates, og skal dermed klones før vi lager instanser av template i den
                 val seksjon = instansiertSeksjon(originalSeksjon, indeks)
-                deepCopy(indeks).also { lagdFaktum ->
+                deepCopy(indeks).also { lagdFaktum: GrunnleggendeFaktum<R> ->
                     seksjon.add(lagdFaktum)
                     leggTilAvhengighet(søknad, indeks, lagdFaktum)
                 }
@@ -86,16 +86,17 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
         søknad: Søknad,
         indeks: Int,
         lagdFaktum: GrunnleggendeFaktum<R>
+
     ) {
         avhengerAvFakta.map { avhengighet ->
-            søknad.finnEksisterende(avhengighet) ?: avhengighet.deepCopy(indeks, søknad)
+            søknad.finnEksisterende(avhengighet, indeks) ?: avhengighet.deepCopy(indeks, søknad)
         }.forEach { it.leggTilAvhengighet(lagdFaktum) }
     }
 
     // Finner et allerede instansiert faktum, eller lager ett nytt
-    private fun Søknad.finnEksisterende(avhengighet: Faktum<*>) = when (avhengighet) {
+    private fun Søknad.finnEksisterende(avhengighet: Faktum<*>, indeks: Int) = when (avhengighet) {
         is TemplateFaktum<*> -> singleOrNull {
-            it.faktumId.generertFra(avhengighet.faktumId)
+            it.faktumId == avhengighet.faktumId medIndeks indeks
         }
         else -> idOrNull(avhengighet.faktumId)
     }
