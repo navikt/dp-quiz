@@ -114,6 +114,6 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     fun harRolle(rolle: Rolle) = rolle in roller
     fun harIkkeRolle(rolle: Rolle) = !harRolle(rolle)
-    internal fun sannsynliggjøresAv(sannsynliggjøringer: MutableSet<Faktum<*>>) =
+    internal fun sannsynliggjøresAv(sannsynliggjøringer: Collection<Faktum<*>>) =
         sannsynliggjøringer.forEach { this.leggTilAvhengighet(it) }
 }
