@@ -40,6 +40,8 @@ spec:
   env:
     - name: PORT
       value: "8080"
+    - name: JAVA_OPTS
+      value: -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp
     #- name: JAVA_OPTS
     #  value: -XX:+UseZGC -XX:ActiveProcessorCount=2
     #  value: -XX:+UseG1GC -XX:MaxRAMPercentage=75.0 -XX:ActiveProcessorCount=2
