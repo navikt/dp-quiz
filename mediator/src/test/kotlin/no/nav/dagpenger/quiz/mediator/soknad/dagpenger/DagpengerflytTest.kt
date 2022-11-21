@@ -4,7 +4,6 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
-import no.nav.dagpenger.model.helpers.MedSøknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -35,9 +34,7 @@ class DagpengerflytTest {
         søknadprosess.boolsk(EgenNæring.`driver du egen næring`).besvar(false)
         søknadprosess.boolsk(EgenNæring.`driver du eget gårdsbruk`).besvar(false)
 
-        søknadprosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(true)
-
-        vernepliktMåDokumenteres(søknadprosess)
+        søknadprosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(false)
 
         søknadprosess.boolsk(AndreYtelser.`andre ytelser mottatt eller søkt`).besvar(false)
         søknadprosess.boolsk(AndreYtelser.`utbetaling eller økonomisk gode tidligere arbeidsgiver`).besvar(false)
@@ -74,22 +71,5 @@ class DagpengerflytTest {
             søknadprosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }"
         )
-    }
-
-    private fun vernepliktMåDokumenteres(søknadprosess: Søknadprosess) {
-        MedSøknad(søknadprosess) {
-            seksjon("verneplikt") {
-                fakta {
-                    boolsk("faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd") {
-                        erBesvart()
-                        sannsynliggjøresAv {
-                            dokument("faktum.dokument-avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-dokumentasjon") {
-                                erIkkeBesvart()
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }
