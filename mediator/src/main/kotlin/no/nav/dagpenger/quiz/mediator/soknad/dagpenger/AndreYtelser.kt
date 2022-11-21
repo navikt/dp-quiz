@@ -199,10 +199,10 @@ object AndreYtelser : DslFaktaseksjon {
         `hvilken annen ytelse`,
         `annen ytelse hvem utebetaler`,
         `annen ytelse hvilken periode`,
-        `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
-        `økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`,
         `arbeidsløs GFF hvilken periode`,
         `garantilott fra GFF hvilken periode`,
+        `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
+        `økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`,
 
         `dokumentasjon tjenestepensjon`,
         `godkjenning dokumentasjon tjenestepensjon`,
