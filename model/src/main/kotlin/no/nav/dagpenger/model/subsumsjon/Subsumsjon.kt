@@ -81,10 +81,12 @@ abstract class Subsumsjon protected constructor(
                 copy.ikkeOppfylt(TomSubsumsjon)
                 copy.oppfyltSubsumsjon._mulige()
             }
+
             false -> {
                 copy.oppfylt(TomSubsumsjon)
                 copy.ikkeOppfyltSubsumsjon._mulige()
             }
+
             null -> {
                 copy.oppfyltSubsumsjon._mulige()
                 copy.ikkeOppfyltSubsumsjon._mulige()
@@ -255,8 +257,12 @@ infix fun Subsumsjon.uansett(block: SubsumsjonGenerator): Subsumsjon {
 }
 
 fun Subsumsjon.sannsynliggjøresAv(vararg sannsynliggjøringsFaktum: Faktum<*>) = SannsynliggjøringsSubsumsjon(
-    this,
-    sannsynliggjøringsFaktum.toSet()
+    this.also {
+        it.alleFakta().forEach { faktum ->
+            faktum.sannsynliggjøresAv(sannsynliggjøringsFaktum.toList())
+        }
+    },
+    sannsynliggjøringsFaktum.toList()
 )
 typealias SubsumsjonGenerator = () -> Subsumsjon
 
