@@ -4,24 +4,19 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
-import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.med
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.godkjentAv
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -142,52 +137,6 @@ class SannsynliggjøringsSubsumsjonTest {
         with(søknadprosess) {
             assertTrue(dokument("7.1").erBesvart())
             assertFalse(dokument("7.2").erBesvart())
-        }
-    }
-
-    @Test
-    fun `Lager bare avhengigheter til fakta som sannsynligjøres en gang`() {
-        val subsumsjon = generator.med(
-            "deltre".deltre {
-                "generator".alle(generatorB1 er true, generatorB2 er true).sannsynliggjøresAv(generatorDokument)
-            }
-        ).godkjentAv(generatorGodkjenning)
-        val prosess = søknad.testSøknadprosess(subsumsjon) {
-            listOf(
-                søknad.seksjon("bruker", Rolle.søker, 4, 5, 6),
-                søknad.seksjon("bruker", Rolle.saksbehandler, 7, 8)
-            )
-        }
-        repeat(10) {
-            søknad.testSøknadprosess(subsumsjon) {
-                listOf(
-                    søknad.seksjon("bruker", Rolle.søker, 4, 5, 6),
-                    søknad.seksjon("bruker", Rolle.saksbehandler, 7, 8)
-                )
-            }
-        }
-
-        assertEquals(2, DuplikatVisitor(prosess).avhengigheter)
-    }
-
-    class DuplikatVisitor(søknad: Søknadprosess) : SøknadprosessVisitor {
-        var avhengigheter = 0
-
-        init {
-            søknad.accept(this)
-        }
-
-        override fun <R : Comparable<R>> visit(
-            faktum: TemplateFaktum<R>,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFakta: Set<Faktum<*>>,
-            roller: Set<Rolle>,
-            clazz: Class<R>,
-            gyldigeValg: GyldigeValg?
-        ) {
-            if (id != "7") return
-            avhengigheter = avhengerAvFakta.size
         }
     }
 }

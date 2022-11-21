@@ -9,9 +9,14 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 class SannsynliggjøringsSubsumsjon private constructor(
     navn: String,
     private val child: Subsumsjon,
-    private val sannsynliggjøringsFakta: Collection<Faktum<*>>
+    private val sannsynliggjøringsFakta: Set<Faktum<*>>
 ) : SammensattSubsumsjon(navn, mutableListOf(child), TomSubsumsjon, TomSubsumsjon) {
-    internal constructor(child: Subsumsjon, sannsynliggjøringsFakta: Collection<Faktum<*>>) :
+
+    init {
+        child.alleFakta().forEach { faktum -> faktum.sannsynliggjøresAv(sannsynliggjøringsFakta.toMutableSet()) }
+    }
+
+    internal constructor(child: Subsumsjon, sannsynliggjøringsFakta: Set<Faktum<*>>) :
         this(
             "${child.navn} sannsynligjøring",
             child,
