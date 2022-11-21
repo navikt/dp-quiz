@@ -36,7 +36,6 @@ import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.godkjentAv
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
-import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -82,10 +81,7 @@ internal class SøkerJsonBuilderTest {
             dato faktum "f20" id 20,
             heltall faktum "f21" genererer 20 id 21,
             dokument faktum "f22" id 22,
-            boolsk faktum "f23" id 23 avhengerAv 22,
-            boolsk faktum "f24" id 24,
-            dokument faktum "f25" id 25,
-            boolsk faktum "f26" id 26 avhengerAv 25
+            boolsk faktum "f23" id 23 avhengerAv 22
         )
         søknadprosess = søknadprosess(søkerSubsumsjon())
     }
@@ -314,25 +310,6 @@ internal class SøkerJsonBuilderTest {
         søknadprosess.generator(21).besvar(1)
         søknadprosess.dato("20.1").besvar(LocalDate.now())
 
-        søknadprosess.boolsk(24).besvar(true)
-
-        MedSøknad(søknadprosess) {
-            seksjon("grunnleggende med dokumentasjon") {
-                fakta {
-                    boolsk("f24") {
-                        erBesvart()
-                        sannsynliggjøresAv {
-                            dokument("f25") {
-                                erIkkeBesvart()
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        søknadprosess.dokument(24).besvar(Dokument(LocalDateTime.now(), "urn:nav:12345"))
-
         MedSøknad(søknadprosess) { erFerdig() }
     }
 
@@ -409,12 +386,7 @@ internal class SøkerJsonBuilderTest {
                 prototypeSøknad.generator(21) har
                     "deltre".deltre {
                         prototypeSøknad.dato(20).utfylt()
-                    },
-                "Grunnleggende med dokumentasjon".minstEnAv(
-                    (prototypeSøknad.boolsk(24) er true).sannsynliggjøresAv(prototypeSøknad.dokument(25))
-                        .godkjentAv(prototypeSøknad.boolsk(26)),
-                    prototypeSøknad.boolsk(24) er false
-                )
+                    }
             )
         }
         return regeltre
@@ -473,16 +445,9 @@ internal class SøkerJsonBuilderTest {
                 prototypeSøknad.dato(20)
             ),
             Seksjon(
-                "grunnleggende med dokumentasjon",
-                Rolle.søker,
-                prototypeSøknad.boolsk(24),
-                prototypeSøknad.dokument(25)
-            ),
-            Seksjon(
                 "godkjenner seksjon",
                 Rolle.saksbehandler,
                 prototypeSøknad.boolsk(23),
-                prototypeSøknad.boolsk(26),
                 prototypeSøknad.dokument(22)
             )
         )
