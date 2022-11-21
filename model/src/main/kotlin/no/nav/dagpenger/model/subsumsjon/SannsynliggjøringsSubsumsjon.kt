@@ -3,7 +3,6 @@ package no.nav.dagpenger.model.subsumsjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
@@ -52,12 +51,11 @@ class SannsynliggjøringsSubsumsjon private constructor(
     }
 
     override fun bygg(søknad: Søknad): SannsynliggjøringsSubsumsjon {
-        val kopiertSubsumsjon = child.bygg(søknad)
         val kopierteSannsynliggjøringsFakta =
             sannsynliggjøringsFakta.map { faktum -> søknad.dokument(faktum.id) }.toSet()
+        val kopiertSubsumsjon = child.bygg(søknad)
 
-        kopiertSubsumsjon.alleFakta().filterNot { it is TemplateFaktum<*> }.forEach { faktum ->
-            // TODO: Templates blir klonet og får med seg avhengigheter fra første runde, mens grunnleggende må legges til eksplsitt
+        kopiertSubsumsjon.alleFakta().forEach { faktum ->
             faktum.sannsynliggjøresAv(kopierteSannsynliggjøringsFakta)
         }
         return SannsynliggjøringsSubsumsjon(
