@@ -35,7 +35,7 @@ object Utdanning : DslFaktaseksjon {
         dokument faktum "faktum.dokument-utdanning-sluttdato" id `dokumentasjon på sluttdato`
             avhengerAv `avsluttet utdanning siste 6 mnd`,
         boolsk faktum "faktum.dokument-utdanning-sluttdato-godkjenning" id `godkjenning dokumentasjon på sluttdato`
-            avhengerAv `avsluttet utdanning siste 6 mnd`
+            avhengerAv `dokumentasjon på sluttdato`
     )
 
     override fun seksjon(søknad: Søknad) =
