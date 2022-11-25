@@ -33,7 +33,7 @@ internal class DinSituasjonTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        DinSituasjon.verifiserFeltsammensetting(63, 8316)
+        DinSituasjon.verifiserFeltsammensetting(64, 8480)
     }
 
     @Test
@@ -234,6 +234,7 @@ internal class DinSituasjonTest {
         søknadprosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1").besvar(40.5)
 
         søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler`}.1").besvar(false)
+        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold godta trekk direkte fra konkursboet`}.1").besvar(true)
         `besvar spørsmål om skift, turnus og rotasjon`()
         assertEquals(true, søknadprosess.resultat())
 
@@ -242,6 +243,7 @@ internal class DinSituasjonTest {
 
         søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`}.1")
             .besvar(true)
+        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold godta trekk direkte fra konkursboet`}.1").besvar(true)
         søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`}.1")
             .besvar(true)
         søknadprosess.envalg("${DinSituasjon.`arbeidsforhold har søkt om lønnsgarantimidler`}.1")
@@ -267,6 +269,7 @@ internal class DinSituasjonTest {
             søknadprosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1"),
             søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler`}.1"),
             søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`}.1"),
+            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold godta trekk direkte fra konkursboet`}.1"),
             søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`}.1"),
             søknadprosess.envalg("${DinSituasjon.`arbeidsforhold har søkt om lønnsgarantimidler`}.1"),
             søknadprosess.envalg("${DinSituasjon.`arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`}.1"),
@@ -512,6 +515,7 @@ internal class DinSituasjonTest {
 138,
 139,
 140,
+164,
 141,
 142,
 143,

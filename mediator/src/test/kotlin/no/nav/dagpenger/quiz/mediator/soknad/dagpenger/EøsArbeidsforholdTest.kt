@@ -221,6 +221,7 @@ internal class EøsArbeidsforholdTest {
 138,
 139,
 140,
+164,
 141,
 142,
 143,

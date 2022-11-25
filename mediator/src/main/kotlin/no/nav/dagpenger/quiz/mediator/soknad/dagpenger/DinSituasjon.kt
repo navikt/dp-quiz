@@ -83,8 +83,8 @@ object DinSituasjon : DslFaktaseksjon {
     const val `arbeidsforhold rotasjon` = 152
     const val `arbeidsforhold arbeidsdager siste rotasjon` = 153
     const val `arbeidsforhold fridager siste rotasjon` = 154
-    const val `dokumentasjon arbeidsavtale` = 155
 
+    const val `dokumentasjon arbeidsavtale` = 155
     const val `dokumentasjon arbeidsforhold avskjediget` = 156
     const val `dokumentasjon arbeidsforhold blitt sagt opp` = 157
     const val `dokumentasjon timelister` = 158
@@ -93,6 +93,8 @@ object DinSituasjon : DslFaktaseksjon {
     const val `dokumentasjon arbeidsforhold redusert arbeidstid` = 161
     const val `dokumentasjon arbeidsforhold permittert` = 162
     const val `godkjenning av arbeidsforhold-dokumentasjon` = 163
+
+    const val `arbeidsforhold godta trekk direkte fra konkursboet` = 164
 
     override val fakta = listOf(
         envalg faktum "faktum.mottatt-dagpenger-siste-12-mnd"
@@ -152,6 +154,7 @@ object DinSituasjon : DslFaktaseksjon {
             og `arbeidsforhold årsak til ikke akseptert tilbud`
             og `arbeidsforhold søke forskudd lønnsgarantimidler`
             og `arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`
+            og `arbeidsforhold godta trekk direkte fra konkursboet`
             og `arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`
             og `arbeidsforhold har søkt om lønnsgarantimidler`
             og `arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`
@@ -260,6 +263,10 @@ object DinSituasjon : DslFaktaseksjon {
         boolsk faktum "faktum.arbeidsforhold.soke-forskudd-lonnsgarantimidler-i-tillegg-til-dagpenger"
             id `arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`
             avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
+        boolsk faktum "faktum.arbeidsforhold.godta-trekk-fra-konkursbo"
+            id `arbeidsforhold godta trekk direkte fra konkursboet`
+            avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`
+            og `arbeidsforhold søke forskudd lønnsgarantimidler`,
         boolsk faktum "faktum.arbeidsforhold.godta-trekk-fra-nav-av-forskudd-fra-lonnsgarantimidler"
             id `arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`
             avhengerAv `arbeidsforhold søke forskudd lønnsgarantimidler`,
@@ -522,7 +529,9 @@ object DinSituasjon : DslFaktaseksjon {
 
     private fun Søknad.lønnsgarantimidler() =
         "ønsker å søke om forskudd på lønnsgarantimidler eller ikke".minstEnAv(
-            boolsk(`arbeidsforhold søke forskudd lønnsgarantimidler`) er false,
+            boolsk(`arbeidsforhold søke forskudd lønnsgarantimidler`) er false hvisOppfylt {
+                boolsk(`arbeidsforhold godta trekk direkte fra konkursboet`).utfylt()
+            },
             boolsk(`arbeidsforhold søke forskudd lønnsgarantimidler`) er true hvisOppfylt {
                 `oppfølgingsspørsmål om lønnsgarantimidler`()
             }
@@ -530,7 +539,12 @@ object DinSituasjon : DslFaktaseksjon {
 
     private fun Søknad.`oppfølgingsspørsmål om lønnsgarantimidler`() =
         "spørsmål om lønnsgarantimidler".alle(
-            boolsk(`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`).utfylt(),
+            "søker om dagpenger i tillegg eller ikke".minstEnAv(
+                boolsk(`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`) er false,
+                boolsk(`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`) er true hvisOppfylt {
+                    boolsk(`arbeidsforhold godta trekk direkte fra konkursboet`).utfylt()
+                }
+            ),
             boolsk(`arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`).utfylt(),
             envalg(`arbeidsforhold har søkt om lønnsgarantimidler`).utfylt(),
             envalg(`arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`).utfylt(),
@@ -718,6 +732,7 @@ object DinSituasjon : DslFaktaseksjon {
         `arbeidsforhold årsak til ikke akseptert tilbud`,
         `arbeidsforhold søke forskudd lønnsgarantimidler`,
         `arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`,
+        `arbeidsforhold godta trekk direkte fra konkursboet`,
         `arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`,
         `arbeidsforhold har søkt om lønnsgarantimidler`,
         `arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`,
