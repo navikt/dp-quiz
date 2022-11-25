@@ -148,7 +148,7 @@ class SøknadRecord : SøknadPersistence {
                                 "Migrering av faktum feilet, rootId=${faktum.rootId}, soknadId=$uuid, prosessnavn=${gjeldendeVersjon.prosessnavn}, gjeldendeVersjon=${gjeldendeVersjon.versjon}, nyVersjon=${nyVersjon.versjon}"
                             }
                         } catch (e: Exception) {
-                            if (it != 1) sikkerlogg.error(e) { "Feil ved migrering query=$query" }
+                            sikkerlogg.error(e) { "Feil ved migrering query=$query" }
                             throw e
                         }
                     }
