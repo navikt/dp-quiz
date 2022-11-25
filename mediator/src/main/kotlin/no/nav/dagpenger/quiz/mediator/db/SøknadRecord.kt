@@ -6,6 +6,7 @@ import kotliquery.action.UpdateQueryAction
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Faktum
@@ -32,6 +33,10 @@ import java.util.UUID
 // Understands a relational representation of a Søknad
 class SøknadRecord : SøknadPersistence {
     private val personRecord = PersonRecord()
+
+    private companion object {
+        val sikkerlogg = KotlinLogging.logger("tjenestekall")
+    }
 
     override fun ny(
         identer: Identer,
@@ -136,8 +141,16 @@ class SøknadRecord : SøknadPersistence {
                 val soknadId = tx.run(internSoknadId(uuid))!!
 
                 ønsketTilstand.forEach { faktum ->
-                    tx.run(faktum.opprettEllerOppdater(gjeldendeTilstand[faktum.rootId], soknadId)).also {
-                        require(it == 1) { "Migrering av faktum feilet, rootId=${faktum.rootId}, soknadId=$uuid, prosessnavn=${gjeldendeVersjon.prosessnavn}, gjeldendeVersjon=${gjeldendeVersjon.versjon}, nyVersjon=${nyVersjon.versjon}" }
+                    val query = faktum.opprettEllerOppdater(gjeldendeTilstand[faktum.rootId], soknadId)
+                    tx.run(query).also {
+                        try {
+                            require(it == 1) {
+                                "Migrering av faktum feilet, rootId=${faktum.rootId}, soknadId=$uuid, prosessnavn=${gjeldendeVersjon.prosessnavn}, gjeldendeVersjon=${gjeldendeVersjon.versjon}, nyVersjon=${nyVersjon.versjon}"
+                            }
+                        } catch (e: Exception) {
+                            if (it != 1) sikkerlogg.error(e) { "Feil ved migrering query=$query" }
+                            throw e
+                        }
                     }
                 }
 
