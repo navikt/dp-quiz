@@ -168,7 +168,7 @@ class SøknadRecord : SøknadPersistence {
         ).asUpdate
 
         private fun oppdaterQuery(gammelId: BigInteger, nyId: BigInteger) = queryOf( //language=PostgreSQL
-            "UPDATE faktum_verdi SET faktum_id = :nyId WHERE faktum_id = :gammelId",
+            "UPDATE faktum_verdi SET faktum_id = :nyId WHERE id = :gammelId",
             mapOf("nyId" to nyId, "gammelId" to gammelId)
         ).asUpdate
 
