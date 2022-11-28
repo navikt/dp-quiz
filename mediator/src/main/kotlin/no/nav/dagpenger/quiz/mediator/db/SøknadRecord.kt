@@ -212,9 +212,10 @@ class SøknadRecord : SøknadPersistence {
     private fun prosessversjon(uuid: UUID) = using(sessionOf(dataSource)) { session ->
         session.run(
             queryOf( // language=PostgreSQL
-                """SELECT v1_prosessversjon.navn, v1_prosessversjon.versjon_id 
-                |FROM soknad, v1_prosessversjon 
-                |WHERE uuid = :uuid
+                """SELECT v.navn, v.versjon_id 
+                |FROM v1_prosessversjon v
+                |LEFT JOIN soknad s  ON v.versjon_id=s.versjon_id
+                |WHERE s.uuid = :uuid
                 """.trimMargin(),
                 mapOf("uuid" to uuid)
             ).map { Prosessversjon(Prosess(it.string("navn")), it.int("versjon_id")) }.asSingle
