@@ -65,7 +65,7 @@ class SøknadRecord : SøknadPersistence {
                     SoknadRad(UUID.fromString(row.string(1)), row.string(2), row.int(3), row.int(4))
                 }.asSingle
             )
-        } ?: throw IllegalArgumentException("Søknad finnes ikke, uuid: $uuid")
+        } ?: throw IllegalArgumentException("Kan ikke hente en søknad som ikke finnes, uuid: $uuid")
 
         return Versjon.id(Prosessversjon(Prosess(rad.navn), rad.versjonId)).søknadprosess(
             person = personRecord.hentPerson(rad.personId),
@@ -206,7 +206,7 @@ class SøknadRecord : SøknadPersistence {
                 mapOf("uuid" to uuid)
             ).map { Prosessversjon(Prosess(it.string("navn")), it.int("versjon_id")) }.asSingle
         )
-    } ?: throw IllegalArgumentException("Søknad finnes ikke, uuid: $uuid")
+    } ?: throw IllegalArgumentException("Kan ikke finne prosessversjon for en søknad som ikke finnes, uuid: $uuid")
 
     private fun skrivNyeFaktum(
         nyeSvar: MutableMap<String, Faktum<*>?>,
