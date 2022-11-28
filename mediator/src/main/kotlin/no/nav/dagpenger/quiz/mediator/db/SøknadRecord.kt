@@ -144,7 +144,7 @@ class SøknadRecord : SøknadPersistence {
                     val query = faktum.opprettEllerOppdater(gjeldendeTilstand[faktum.rootId], soknadId)
                     tx.run(query).also {
                         try {
-                            require(it == 1) {
+                            require(it >= 1) {
                                 "Migrering av faktum feilet, rootId=${faktum.rootId}, soknadId=$uuid, prosessnavn=${gjeldendeVersjon.prosessnavn}, gjeldendeVersjon=${gjeldendeVersjon.versjon}, nyVersjon=${nyVersjon.versjon}"
                             }
                         } catch (e: Exception) {
