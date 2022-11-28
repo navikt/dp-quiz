@@ -161,20 +161,21 @@ class SøknadRecord : SøknadPersistence {
         return nyVersjon
     }
 
-    private data class FaktumMigrering(val id: BigInteger, val rootId: Int) {
+    private data class FaktumMigrering(val faktumId: BigInteger, val rootId: Int) {
         private fun opprettQuery(soknadId: BigInteger) = queryOf( //language=PostgreSQL
             "INSERT INTO faktum_verdi (soknad_id, indeks, faktum_id) VALUES (:soknadId, 0, :id)",
-            mapOf("soknadId" to soknadId, "id" to id)
+            mapOf("soknadId" to soknadId, "id" to faktumId)
         ).asUpdate
 
-        private fun oppdaterQuery(gammelId: BigInteger, nyId: BigInteger) = queryOf( //language=PostgreSQL
-            "UPDATE faktum_verdi SET faktum_id = :nyId WHERE id = :gammelId",
-            mapOf("nyId" to nyId, "gammelId" to gammelId)
-        ).asUpdate
+        private fun oppdaterQuery(soknadId: BigInteger, gammelFaktumId: BigInteger, nyFaktumId: BigInteger) =
+            queryOf( //language=PostgreSQL
+                "UPDATE faktum_verdi SET faktum_id = :nyFaktumId WHERE id = :gammelFaktumId AND soknad_id=:soknadId",
+                mapOf("soknadId" to soknadId, "gammelFaktumId" to gammelFaktumId, "nyFaktumId" to nyFaktumId)
+            ).asUpdate
 
         fun opprettEllerOppdater(forrigeFaktum: FaktumMigrering?, soknadId: BigInteger) = when (forrigeFaktum) {
             null -> opprettQuery(soknadId)
-            else -> oppdaterQuery(forrigeFaktum.id, id)
+            else -> oppdaterQuery(soknadId, forrigeFaktum.faktumId, faktumId)
         }
     }
 
@@ -196,15 +197,16 @@ class SøknadRecord : SøknadPersistence {
     private fun hentFaktum(sisteVersjon: Prosessversjon) =
         queryOf(
             // language=PostgreSQL
-            """SELECT faktum.*, v1_prosessversjon.id AS prosessinternid
-                |FROM faktum, v1_prosessversjon
-                |WHERE faktum.versjon_id = v1_prosessversjon.id AND v1_prosessversjon.navn=? AND v1_prosessversjon.versjon_id=?
+            """
+            |SELECT faktum.*, v1_prosessversjon.id AS prosessinternid
+            |FROM faktum, v1_prosessversjon
+            |WHERE faktum.versjon_id = v1_prosessversjon.id AND v1_prosessversjon.navn=? AND v1_prosessversjon.versjon_id=?
             """.trimMargin(),
             sisteVersjon.prosessnavn.id,
             sisteVersjon.versjon
         ).map {
             FaktumMigrering(
-                id = it.bigDecimal("id").toBigInteger(),
+                faktumId = it.bigDecimal("id").toBigInteger(),
                 rootId = it.int("root_id")
             )
         }.asList

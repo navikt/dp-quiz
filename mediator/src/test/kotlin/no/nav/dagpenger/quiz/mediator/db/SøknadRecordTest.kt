@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.db
 
+import kotliquery.Query
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
@@ -367,6 +368,9 @@ internal class SøknadRecordTest {
     @Test
     fun `Kan migrere`() {
         Postgres.withMigratedDb {
+            using(sessionOf(dataSource)) {
+                it.run(Query("ALTER SEQUENCE faktum_id_seq INCREMENT 2").asExecute)
+            }
             byggOriginalSøknadprosess()
             val soknadUUID = originalSøknadprosess.søknad.uuid
             assertEquals(
