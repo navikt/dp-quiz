@@ -74,9 +74,4 @@ internal class NyProsessBehovLøser(
                 }
         }
     }
-
-    override fun onError(problems: MessageProblems, context: MessageContext) {
-        log.error { problems.toString() }
-        sikkerlogg.error { problems.toExtendedReport() }
-    }
 }
