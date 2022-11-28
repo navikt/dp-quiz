@@ -43,6 +43,10 @@ internal class SøknadPersistenceFake : SøknadPersistence {
         TODO("Not yet implemented")
     }
 
+    override fun eksisterer(uuid: UUID): Boolean {
+        TODO("Not yet implemented")
+    }
+
     fun reset() {
         søknadprosess = null
         hentet = 0

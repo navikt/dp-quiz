@@ -46,7 +46,19 @@ class SøknadRecord : SøknadPersistence {
     ): Søknadprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
         return Versjon.id(prosessVersjon).søknadprosess(person, type, uuid).also { søknadprosess ->
+            if (eksisterer(uuid)) return søknadprosess
             NySøknad(søknadprosess.søknad, type)
+        }
+    }
+    override fun eksisterer(uuid: UUID): Boolean {
+        val query = queryOf( //language=PostgreSQL
+            "SELECT id FROM soknad WHERE uuid = :uuid",
+            mapOf("uuid" to uuid)
+        )
+        return using(sessionOf(dataSource)) { session ->
+            session.run(
+                query.map { true }.asSingle
+            ) ?: false
         }
     }
 

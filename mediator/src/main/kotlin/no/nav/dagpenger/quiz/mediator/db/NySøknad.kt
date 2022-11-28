@@ -31,9 +31,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
     private val faktumParametre = mutableListOf<Map<String, Any>>()
 
     init {
-        if (SøknadUuid(søknad).ikkeEksisterer()) {
-            søknad.accept(this)
-        }
+        søknad.accept(this)
     }
 
     override fun preVisit(person: Person, uuid: UUID) {
@@ -42,7 +40,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
 
     private fun hentInternId(prosessVersjon: Prosessversjon): Int {
         val query = queryOf( //language=PostgreSQL
-            "SELECT id FROM V1_PROSESSVERSJON WHERE navn = :navn AND versjon_id = :versjon_id",
+            "SELECT id FROM v1_prosessversjon WHERE navn = :navn AND versjon_id = :versjon_id",
             mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon)
         )
         return using(sessionOf(dataSource)) { session ->
@@ -86,7 +84,6 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
                         )
                     ).map { it.long(1) }.asSingle
                 )
-
                 val params = faktumParametre.map { originalParameter -> mapOf("soknadId" to id) + originalParameter }
                 transactionalSession.batchPreparedNamedStatement(faktumInsertStatement, params)
             }
@@ -153,34 +150,5 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
                 "rootId" to rootId
             )
         )
-    }
-
-    private class SøknadUuid(søknad: Søknad) : SøknadVisitor {
-
-        init {
-            søknad.accept(this)
-        }
-
-        private var eksisterer = false
-
-        fun ikkeEksisterer() = !eksisterer
-
-        override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
-            eksisterer = eksisterer(uuid)
-        }
-
-        private companion object {
-            private fun eksisterer(uuid: UUID): Boolean {
-                val query = queryOf( //language=PostgreSQL
-                    "SELECT id FROM soknad WHERE uuid = :uuid",
-                    mapOf("uuid" to uuid)
-                )
-                return using(sessionOf(dataSource)) { session ->
-                    session.run(
-                        query.map { true }.asSingle
-                    ) ?: false
-                }
-            }
-        }
     }
 }

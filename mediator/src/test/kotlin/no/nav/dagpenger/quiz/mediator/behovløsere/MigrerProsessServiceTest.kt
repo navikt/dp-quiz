@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.behovløsere
 
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
@@ -18,6 +19,9 @@ internal class MigrerProsessServiceTest {
 
     @Test
     fun `besvarer migreringsbehov`() {
+        every {
+            søknadPersistence.eksisterer(søknadUUID)
+        } returns true
         rapid.sendTestMessage( //language=JSON
             """
             {

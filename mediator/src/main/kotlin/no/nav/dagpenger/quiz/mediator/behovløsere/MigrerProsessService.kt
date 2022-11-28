@@ -29,10 +29,14 @@ class MigrerProsessService(
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val søknadId = packet.søknadUUID()
-        if (søknadId.toString() == "ca8a04c2-0acf-4d51-b3af-b83adf47b312") return
 
         withLoggingContext("søknadId" to søknadId.toString()) {
             logger.info { "Løser $behov" }
+
+            if (!søknadPersistence.eksisterer(søknadId)) {
+                logger.warn { "Migrering av søknadId=$søknadId kunne ikke migreres siden den ikke eksisterer" }
+                return
+            }
             val prosessversjon = søknadPersistence.migrer(søknadId)
             val søknad = søknadPersistence.hent(søknadId)
             val søknadData = SøkerJsonBuilder(søknad).resultat().toString()
