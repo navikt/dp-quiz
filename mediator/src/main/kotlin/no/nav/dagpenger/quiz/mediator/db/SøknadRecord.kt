@@ -214,7 +214,7 @@ class SøknadRecord : SøknadPersistence {
             queryOf( // language=PostgreSQL
                 """SELECT v.navn, v.versjon_id 
                 |FROM v1_prosessversjon v
-                |LEFT JOIN soknad s  ON v.versjon_id=s.versjon_id
+                |LEFT JOIN soknad s  ON v.id=s.versjon_id
                 |WHERE s.uuid = :uuid
                 """.trimMargin(),
                 mapOf("uuid" to uuid)
