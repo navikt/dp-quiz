@@ -29,6 +29,7 @@ class MigrerProsessService(
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val søknadId = packet.søknadUUID()
+        if (søknadId.toString() == "1fdffaaf-7a45-4fc1-9f6b-d978c822e651") return
 
         withLoggingContext("søknadId" to søknadId.toString()) {
             logger.info { "Løser $behov" }
