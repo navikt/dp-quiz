@@ -147,10 +147,10 @@ class SøknadRecord : SøknadPersistence {
         val nyVersjon = tilVersjon ?: gjeldendeVersjon.siste()
 
         if (!gjeldendeVersjon.kanMigrereTil(nyVersjon)) return gjeldendeVersjon
-        val insertQuery =
+        val insertQuery = //language=PostgreSQL
             "INSERT INTO faktum_verdi (soknad_id, indeks, faktum_id) VALUES (:soknadId, 0, :id)"
-        val updateQuery =
-            "UPDATE faktum_verdi SET faktum_id = :nyFaktumId WHERE soknad_id = :soknadId AND faktum_id = :gammelFaktumId"
+        val updateQuery = //language=PostgreSQL
+            "UPDATE faktum_verdi SET faktum_id = :nyFaktumId WHERE id = (SELECT id FROM faktum_verdi WHERE soknad_id = :soknadId AND faktum_id = :gammelFaktumId)"
         val inserts = mutableListOf<Map<String, Any>>()
         val updates = mutableListOf<Map<String, Any>>()
 
