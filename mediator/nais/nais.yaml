@@ -56,7 +56,7 @@ spec:
         type: POSTGRES_12
         tier: {{db.tier}}
         diskType: SSD
-        highAvailability: false
+        highAvailability: true
         diskSize: {{db.size}}
         diskAutoresize: true
         pointInTimeRecovery: true
