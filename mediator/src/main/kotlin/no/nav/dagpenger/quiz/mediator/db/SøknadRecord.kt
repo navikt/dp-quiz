@@ -150,7 +150,7 @@ class SøknadRecord : SøknadPersistence {
         val insertQuery = //language=PostgreSQL
             "INSERT INTO faktum_verdi (soknad_id, indeks, faktum_id) VALUES (:soknadId, 0, :id)"
         val updateQuery = //language=PostgreSQL
-            "UPDATE faktum_verdi SET faktum_id = :nyFaktumId WHERE soknad_id = :soknadId AND faktum_id = :gammelFaktumId"
+            "UPDATE faktum_verdi SET faktum_id = :nyFaktumId WHERE soknad_id = :soknadId::bigint AND faktum_id = :gammelFaktumId::bigint"
         val inserts = mutableListOf<Map<String, Any>>()
         val updates = mutableListOf<Map<String, Any>>()
         var first = true
@@ -167,9 +167,9 @@ class SøknadRecord : SøknadPersistence {
                         queryOf(
                             "EXPLAIN ANALYZE $updateQuery",
                             mapOf(
-                                "soknadId" to soknadId.toInt(),
-                                "gammelFaktumId" to forrigeFaktum?.faktumId?.toInt(),
-                                "nyFaktumId" to faktum.faktumId.toInt()
+                                "soknadId" to soknadId,
+                                "gammelFaktumId" to forrigeFaktum?.faktumId,
+                                "nyFaktumId" to faktum.faktumId
                             )
                         ).map { it.string(1) }.asList
                     ).also {
@@ -182,9 +182,9 @@ class SøknadRecord : SøknadPersistence {
                     null -> inserts.add(mapOf("soknadId" to soknadId, "id" to faktum.faktumId))
                     else -> updates.add(
                         mapOf(
-                            "soknadId" to soknadId.toInt(),
-                            "gammelFaktumId" to forrigeFaktum.faktumId.toInt(),
-                            "nyFaktumId" to faktum.faktumId.toInt()
+                            "soknadId" to soknadId,
+                            "gammelFaktumId" to forrigeFaktum.faktumId,
+                            "nyFaktumId" to faktum.faktumId
                         )
                     )
                 }
