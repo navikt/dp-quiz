@@ -181,7 +181,7 @@ class SøknadRecord : SøknadPersistence {
 
         private fun oppdaterQuery(soknadId: BigInteger, gammelFaktumId: BigInteger, nyFaktumId: BigInteger) =
             queryOf( //language=PostgreSQL
-                "UPDATE faktum_verdi SET faktum_id = :nyFaktumId WHERE faktum_id = :gammelFaktumId AND soknad_id = :soknadId",
+                "UPDATE faktum_verdi SET faktum_id = :nyFaktumId WHERE soknad_id = :soknadId AND faktum_id = :gammelFaktumId ",
                 mapOf("soknadId" to soknadId, "gammelFaktumId" to gammelFaktumId, "nyFaktumId" to nyFaktumId)
             ).asUpdate
 
@@ -228,7 +228,7 @@ class SøknadRecord : SøknadPersistence {
             queryOf( // language=PostgreSQL
                 """SELECT v.navn, v.versjon_id 
                 |FROM v1_prosessversjon v
-                |LEFT JOIN soknad s  ON v.id=s.versjon_id
+                |LEFT JOIN soknad s ON v.id=s.versjon_id
                 |WHERE s.uuid = :uuid
                 """.trimMargin(),
                 mapOf("uuid" to uuid)
