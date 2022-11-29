@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator
 
+import mu.KotlinLogging
 import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
@@ -26,12 +27,17 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.v248.Dagpenger as Dagpenger248
 
 // Understands how to build our application server
 internal class ApplicationBuilder : RapidsConnection.StatusListener {
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(Configuration.config)
     ).build()
+
+    private companion object {
+        val logger = KotlinLogging.logger {}
+    }
 
     init {
         rapidsConnection.register(this)
@@ -48,6 +54,9 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 AvslagPåMinsteinntektOppsett.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
                 AvslagPåMinsteinntektService(søknadRecord, rapidsConnection)
 
+                Dagpenger248.registrer {
+                    logger.info("Sørger for å støtte gamle versjoner, registrerer dagpenger versjon 248")
+                }
                 Dagpenger.registrer { prototype ->
                     FaktumTable(prototype)
 
