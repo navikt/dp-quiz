@@ -27,7 +27,6 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.v248.Dagpenger as Dagpenger248
 
 // Understands how to build our application server
 internal class ApplicationBuilder : RapidsConnection.StatusListener {
@@ -53,10 +52,9 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 val resultatRecord = ResultatRecord()
                 AvslagPåMinsteinntektOppsett.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
                 AvslagPåMinsteinntektService(søknadRecord, rapidsConnection)
-
-                Dagpenger248.registrer {
+                /*Dagpenger248.registrer {
                     logger.info("Sørger for å støtte gamle versjoner, registrerer dagpenger versjon 248")
-                }
+                }*/
                 Dagpenger.registrer { prototype ->
                     FaktumTable(prototype)
 

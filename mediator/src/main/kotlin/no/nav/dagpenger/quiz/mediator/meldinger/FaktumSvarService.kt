@@ -77,8 +77,10 @@ internal class FaktumSvarService(
             ) {
                 log.info { "Mottok ny(e) fakta (${fakta.joinToString(",") { it["id"].asText() }}) for $søknadUuid" }
                 sikkerlogg.info { "Mottok ny(e) fakta: ${packet.toJson()}" }
+
                 val søknadprosess = søknadPersistence.hent(søknadUuid, Versjon.UserInterfaceType.Web)
                 besvarFakta(fakta, søknadprosess)
+
                 val prosessnavn = ProsessVersjonVisitor(søknadprosess).prosessnavn
                 if (søknadprosess.erFerdig()) {
                     // TODO: Lag en bedre måte å håndtere disse prosessene
