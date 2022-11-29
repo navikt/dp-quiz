@@ -153,7 +153,7 @@ class SøknadRecord : SøknadPersistence {
             "UPDATE faktum_verdi SET faktum_id = :nyFaktumId WHERE soknad_id = :soknadId AND faktum_id = :gammelFaktumId"
         val inserts = mutableListOf<Map<String, Any>>()
         val updates = mutableListOf<Map<String, Any>>()
-
+        var first = true
         using(sessionOf(dataSource)) { session ->
             val gjeldendeTilstand = session.run(hentFaktum(gjeldendeVersjon)).associateBy { it.rootId }
             val ønsketTilstand = session.run(hentFaktum(nyVersjon))
@@ -162,6 +162,22 @@ class SøknadRecord : SøknadPersistence {
             ønsketTilstand.forEach { faktum ->
                 val forrigeFaktum = gjeldendeTilstand[faktum.rootId]
 
+                if (first) {
+                    session.run(
+                        queryOf(
+                            "EXPLAIN ANALYZE $updateQuery",
+                            mapOf(
+                                "soknadId" to soknadId,
+                                "gammelFaktumId" to forrigeFaktum?.faktumId,
+                                "nyFaktumId" to faktum.faktumId
+                            )
+                        ).map { it.string(1) }.asList
+                    ).also {
+                        logger.info { it.joinToString() }
+                    }
+                    first = false
+                    return@forEach
+                }
                 when (forrigeFaktum) {
                     null -> inserts.add(mapOf("soknadId" to soknadId, "id" to faktum.faktumId))
                     else -> updates.add(
