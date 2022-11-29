@@ -150,7 +150,7 @@ class SøknadRecord : SøknadPersistence {
         val insertQuery = //language=PostgreSQL
             "INSERT INTO faktum_verdi (soknad_id, indeks, faktum_id) VALUES (:soknadId, 0, :id)"
         val updateQuery = //language=PostgreSQL
-            "UPDATE faktum_verdi SET faktum_id = :nyFaktumId WHERE id = (SELECT id FROM faktum_verdi WHERE soknad_id = :soknadId AND faktum_id = :gammelFaktumId)"
+            "UPDATE faktum_verdi SET faktum_id = :nyFaktumId WHERE soknad_id = :soknadId AND faktum_id = :gammelFaktumId"
         val inserts = mutableListOf<Map<String, Any>>()
         val updates = mutableListOf<Map<String, Any>>()
 
