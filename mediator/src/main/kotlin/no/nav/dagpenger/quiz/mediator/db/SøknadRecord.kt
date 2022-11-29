@@ -167,9 +167,9 @@ class SøknadRecord : SøknadPersistence {
                         queryOf(
                             "EXPLAIN ANALYZE $updateQuery",
                             mapOf(
-                                "soknadId" to soknadId,
-                                "gammelFaktumId" to forrigeFaktum?.faktumId,
-                                "nyFaktumId" to faktum.faktumId
+                                "soknadId" to soknadId.toInt(),
+                                "gammelFaktumId" to forrigeFaktum?.faktumId?.toInt(),
+                                "nyFaktumId" to faktum.faktumId.toInt()
                             )
                         ).map { it.string(1) }.asList
                     ).also {
@@ -182,9 +182,9 @@ class SøknadRecord : SøknadPersistence {
                     null -> inserts.add(mapOf("soknadId" to soknadId, "id" to faktum.faktumId))
                     else -> updates.add(
                         mapOf(
-                            "soknadId" to soknadId,
-                            "gammelFaktumId" to forrigeFaktum.faktumId,
-                            "nyFaktumId" to faktum.faktumId
+                            "soknadId" to soknadId.toInt(),
+                            "gammelFaktumId" to forrigeFaktum.faktumId.toInt(),
+                            "nyFaktumId" to faktum.faktumId.toInt()
                         )
                     )
                 }
