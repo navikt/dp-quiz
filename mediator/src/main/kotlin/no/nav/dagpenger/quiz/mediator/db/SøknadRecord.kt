@@ -35,6 +35,7 @@ class SøknadRecord : SøknadPersistence {
     private val personRecord = PersonRecord()
 
     private companion object {
+        val logger = KotlinLogging.logger {}
         val sikkerlogg = KotlinLogging.logger("tjenestekall")
     }
 
@@ -146,6 +147,12 @@ class SøknadRecord : SøknadPersistence {
         val nyVersjon = tilVersjon ?: gjeldendeVersjon.siste()
 
         if (!gjeldendeVersjon.kanMigrereTil(nyVersjon)) return gjeldendeVersjon
+        val insertQuery =
+            "INSERT INTO faktum_verdi (soknad_id, indeks, faktum_id) VALUES (:soknadId, 0, :id)"
+        val updateQuery =
+            "UPDATE faktum_verdi SET faktum_id = :nyFaktumId WHERE soknad_id = :soknadId AND faktum_id = :gammelFaktumId"
+        val inserts = mutableListOf<Map<String, Any>>()
+        val updates = mutableListOf<Map<String, Any>>()
 
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->
@@ -153,19 +160,27 @@ class SøknadRecord : SøknadPersistence {
                 val gjeldendeTilstand = tx.run(hentFaktum(gjeldendeVersjon)).associateBy { it.rootId }
                 val ønsketTilstand = tx.run(hentFaktum(nyVersjon))
                 val soknadId = tx.run(internSoknadId(uuid))!!
-
+                logger.info { "Migrerer søknadId=$soknadId fra $gjeldendeVersjon til $nyVersjon" }
                 ønsketTilstand.forEach { faktum ->
-                    val query = faktum.opprettEllerOppdater(gjeldendeTilstand[faktum.rootId], soknadId)
-                    tx.run(query).also {
-                        try {
-                            require(it >= 1) {
-                                "Migrering av faktum feilet, rootId=${faktum.rootId}, soknadId=$uuid, prosessnavn=${gjeldendeVersjon.prosessnavn}, gjeldendeVersjon=${gjeldendeVersjon.versjon}, nyVersjon=${nyVersjon.versjon}"
-                            }
-                        } catch (e: Exception) {
-                            sikkerlogg.error(e) { "Feil ved migrering query=$query, antall resultater: $it" }
-                            throw e
-                        }
+                    val forrigeFaktum = gjeldendeTilstand[faktum.rootId]
+
+                    when (forrigeFaktum) {
+                        null -> inserts.add(mapOf("soknadId" to soknadId, "id" to faktum.faktumId))
+                        else -> updates.add(
+                            mapOf(
+                                "soknadId" to soknadId,
+                                "gammelFaktumId" to forrigeFaktum.faktumId,
+                                "nyFaktumId" to faktum.faktumId
+                            )
+                        )
                     }
+                }
+
+                tx.batchPreparedNamedStatement(insertQuery, inserts).also {
+                    logger.info { "Kjørte batched insert med ${it.size} inserts" }
+                }
+                tx.batchPreparedNamedStatement(updateQuery, updates).also {
+                    logger.info { "Kjørte batched update med ${it.size} updates" }
                 }
 
                 tx.run(settVersjon(soknadId, nyVersjon))
@@ -176,12 +191,12 @@ class SøknadRecord : SøknadPersistence {
     }
 
     private data class FaktumMigrering(val faktumId: BigInteger, val rootId: Int) {
-        private fun opprettQuery(soknadId: BigInteger) = queryOf( //language=PostgreSQL
+        fun opprettQuery(soknadId: BigInteger) = queryOf( //language=PostgreSQL
             "INSERT INTO faktum_verdi (soknad_id, indeks, faktum_id) VALUES (:soknadId, 0, :id)",
             mapOf("soknadId" to soknadId, "id" to faktumId)
         ).asUpdate
 
-        private fun oppdaterQuery(soknadId: BigInteger, gammelFaktumId: BigInteger, nyFaktumId: BigInteger) =
+        fun oppdaterQuery(soknadId: BigInteger, gammelFaktumId: BigInteger, nyFaktumId: BigInteger) =
             queryOf( //language=PostgreSQL
                 "UPDATE faktum_verdi SET faktum_id = :nyFaktumId WHERE soknad_id = :soknadId AND faktum_id = :gammelFaktumId ",
                 mapOf("soknadId" to soknadId, "gammelFaktumId" to gammelFaktumId, "nyFaktumId" to nyFaktumId)
