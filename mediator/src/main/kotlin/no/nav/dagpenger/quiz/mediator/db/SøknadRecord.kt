@@ -155,36 +155,34 @@ class SøknadRecord : SøknadPersistence {
         val updates = mutableListOf<Map<String, Any>>()
 
         using(sessionOf(dataSource)) { session ->
-            session.transaction { tx ->
-                tx.run(queryOf("set enable_seqscan = off").asExecute)
-                val gjeldendeTilstand = tx.run(hentFaktum(gjeldendeVersjon)).associateBy { it.rootId }
-                val ønsketTilstand = tx.run(hentFaktum(nyVersjon))
-                val soknadId = tx.run(internSoknadId(uuid))!!
-                logger.info { "Migrerer søknadId=$soknadId fra $gjeldendeVersjon til $nyVersjon" }
-                ønsketTilstand.forEach { faktum ->
-                    val forrigeFaktum = gjeldendeTilstand[faktum.rootId]
+            session.run(queryOf("set enable_seqscan = off").asExecute)
+            val gjeldendeTilstand = session.run(hentFaktum(gjeldendeVersjon)).associateBy { it.rootId }
+            val ønsketTilstand = session.run(hentFaktum(nyVersjon))
+            val soknadId = session.run(internSoknadId(uuid))!!
+            logger.info { "Migrerer søknadId=$soknadId fra $gjeldendeVersjon til $nyVersjon" }
+            ønsketTilstand.forEach { faktum ->
+                val forrigeFaktum = gjeldendeTilstand[faktum.rootId]
 
-                    when (forrigeFaktum) {
-                        null -> inserts.add(mapOf("soknadId" to soknadId, "id" to faktum.faktumId))
-                        else -> updates.add(
-                            mapOf(
-                                "soknadId" to soknadId,
-                                "gammelFaktumId" to forrigeFaktum.faktumId,
-                                "nyFaktumId" to faktum.faktumId
-                            )
+                when (forrigeFaktum) {
+                    null -> inserts.add(mapOf("soknadId" to soknadId, "id" to faktum.faktumId))
+                    else -> updates.add(
+                        mapOf(
+                            "soknadId" to soknadId,
+                            "gammelFaktumId" to forrigeFaktum.faktumId,
+                            "nyFaktumId" to faktum.faktumId
                         )
-                    }
+                    )
                 }
-
-                tx.batchPreparedNamedStatement(insertQuery, inserts).also {
-                    logger.info { "Kjørte batched insert med ${it.size} inserts" }
-                }
-                tx.batchPreparedNamedStatement(updateQuery, updates).also {
-                    logger.info { "Kjørte batched update med ${it.size} updates" }
-                }
-
-                tx.run(settVersjon(soknadId, nyVersjon))
             }
+
+            session.batchPreparedNamedStatement(insertQuery, inserts).also {
+                logger.info { "Kjørte batched insert med ${it.size} inserts" }
+            }
+            session.batchPreparedNamedStatement(updateQuery, updates).also {
+                logger.info { "Kjørte batched update med ${it.size} updates" }
+            }
+
+            session.run(settVersjon(soknadId, nyVersjon))
         }
 
         return nyVersjon
