@@ -50,6 +50,7 @@ class SøknadRecord : SøknadPersistence {
             NySøknad(søknadprosess.søknad, type)
         }
     }
+
     override fun eksisterer(uuid: UUID): Boolean {
         val query = queryOf( //language=PostgreSQL
             "SELECT id FROM soknad WHERE uuid = :uuid",
@@ -148,6 +149,7 @@ class SøknadRecord : SøknadPersistence {
 
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->
+                tx.run(queryOf("set enable_seqscan = off").asExecute)
                 val gjeldendeTilstand = tx.run(hentFaktum(gjeldendeVersjon)).associateBy { it.rootId }
                 val ønsketTilstand = tx.run(hentFaktum(nyVersjon))
                 val soknadId = tx.run(internSoknadId(uuid))!!
