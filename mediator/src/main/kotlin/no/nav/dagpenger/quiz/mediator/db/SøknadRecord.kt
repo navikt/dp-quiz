@@ -155,8 +155,6 @@ class SøknadRecord : SøknadPersistence {
         val updates = mutableListOf<Map<String, Any>>()
 
         using(sessionOf(dataSource)) { session ->
-            session.run(queryOf("set enable_seqscan = off").asExecute)
-            session.run(queryOf("SET random_page_cost = 1.1").asExecute)
             val gjeldendeTilstand = session.run(hentFaktum(gjeldendeVersjon)).associateBy { it.rootId }
             val ønsketTilstand = session.run(hentFaktum(nyVersjon))
             val soknadId = session.run(internSoknadId(uuid))!!
