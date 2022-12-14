@@ -40,5 +40,13 @@ internal class LandTest {
     fun `Må tillate PDL sin kode for ukjent land`() {
         assertDoesNotThrow { Land(Land.pdlKodeForUkjentLand) }
         assertDoesNotThrow { Land(Land.pdlKodeForUkjentLand.lowercase()) }
+        assertDoesNotThrow { Land("xUk") }
+    }
+
+    @Test
+    fun `Må tillate PDL sin kode for statsløs`() {
+        assertDoesNotThrow { Land(Land.pdlKodeForStatsløs) }
+        assertDoesNotThrow { Land(Land.pdlKodeForStatsløs.lowercase()) }
+        assertDoesNotThrow { Land("xXx") }
     }
 }
