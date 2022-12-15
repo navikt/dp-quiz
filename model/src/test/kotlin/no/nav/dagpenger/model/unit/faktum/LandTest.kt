@@ -49,4 +49,11 @@ internal class LandTest {
         assertDoesNotThrow { Land(Land.pdlKodeForStatsløs.lowercase()) }
         assertDoesNotThrow { Land("xXx") }
     }
+
+    @Test
+    fun `Må tillate den uoffisielle koden for Kosovo, siden PDL kan returnere den`() {
+        assertDoesNotThrow { Land(Land.landkodeForKosovo) }
+        assertDoesNotThrow { Land(Land.landkodeForKosovo.lowercase()) }
+        assertDoesNotThrow { Land("XXK") }
+    }
 }
