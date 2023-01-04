@@ -133,7 +133,7 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
             "aktørId" to aktørId,
             "type" to "NySøknad",
             "journalpostId" to "493389306",
-            "søknadsData" to mapOf("brukerBehandlingId" to "mf68etellerannet")
+            "søknadsData" to mapOf("søknad_uuid" to "mf68etellerannet")
         )
     )
 
