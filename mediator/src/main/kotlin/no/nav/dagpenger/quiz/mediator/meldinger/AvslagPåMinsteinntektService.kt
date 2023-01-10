@@ -25,7 +25,7 @@ internal class AvslagPåMinsteinntektService(
 
     private companion object {
         private val log = KotlinLogging.logger {}
-        private val sikkerlogg = KotlinLogging.logger("tjenestekall")
+        private val sikkerlogg = KotlinLogging.logger("tjenestekall.AvslagPåMinsteinntekt")
     }
 
     init {
