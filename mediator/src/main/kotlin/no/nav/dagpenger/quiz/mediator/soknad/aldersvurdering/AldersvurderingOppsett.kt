@@ -5,10 +5,8 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 
 internal object AldersvurderingOppsett {
 
@@ -18,10 +16,10 @@ internal object AldersvurderingOppsett {
         registrer(prototypeSøknad)
     }
 
-    private val faktaseksjoner = listOf<DslFaktaseksjon>()
+    private val faktaseksjoner = listOf<DslFaktaseksjon>(Aldersvurdering)
     private val alleFakta = flatMapAlleFakta()
     private val alleSeksjoner = flatMapAlleSeksjoner()
-    private val prototypeSøknad: Søknad
+    internal val prototypeSøknad: Søknad
         get() = Søknad(
             VERSJON_ID,
             *alleFakta
@@ -31,19 +29,13 @@ internal object AldersvurderingOppsett {
 
     object Subsumsjoner {
         val regeltre: Subsumsjon = with(prototypeSøknad) {
-            Aldersvurdering.regeltre(this).hvisOppfylt {
-
-            }
+            Aldersvurdering.regeltre(this)
         }
     }
 
     private val faktumNavBehov =
         FaktumNavBehov(
-            mapOf(
-                AvslagPåMinsteinntektOppsett.ønsketDato to "ØnskerDagpengerFraDato",
-                AvslagPåMinsteinntektOppsett.virkningsdato to "Virkningstidspunkt",
-                AvslagPåMinsteinntektOppsett.over67årFradato to "ForGammelGrensedato",
-            )
+            mapOf()
         )
 
     private fun flatMapAlleFakta() = faktaseksjoner.flatMap { seksjon ->
