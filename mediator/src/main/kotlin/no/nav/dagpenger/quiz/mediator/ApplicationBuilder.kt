@@ -54,6 +54,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 AvslagPåMinsteinntektOppsett.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
                 AvslagPåMinsteinntektService(søknadRecord, rapidsConnection)
 
+
                 Dagpenger248.registrer {
                     logger.info("Sørger for å støtte gamle versjoner, registrerer dagpenger versjon 248")
                 }
