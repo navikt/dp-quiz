@@ -2,9 +2,11 @@ package no.nav.dagpenger.model.unit.factory
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
+import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.alle
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.plussÅr
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
@@ -148,5 +150,19 @@ internal class UtledetFaktumFactoryTest {
         assertTrue(søknad.boolsk(4).erBesvart())
         søknad.dato(3).besvar(4.januar)
         assertFalse(søknad.boolsk(4).erBesvart())
+    }
+
+    @Test
+    fun `pluss år på dato`() {
+        val søknad = Søknad(
+            testversjon,
+            dato faktum "dato1" id 1,
+            heltall faktum "år" id 2,
+            plussÅr dato "utledetDato" av 1 og 2 id 3
+        ).testSøknadprosess()
+
+        søknad.dato(1).besvar(1.januar(2000))
+        søknad.heltall(2).besvar(10)
+        assertEquals(1.januar(2010), søknad.id(3).svar())
     }
 }

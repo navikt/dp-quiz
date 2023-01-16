@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.visitor.FaktumVisitor
+import java.time.LocalDate
 
 class UtledetFaktum<R : Comparable<R>> internal constructor(
     faktumId: FaktumId,
@@ -14,6 +15,7 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
     internal fun min(): R = underordnede.minOf { it.svar() }
     internal fun multiplikasjon(): Inntekt = underordnede.first().svar() as Number * underordnede.last().svar() as Inntekt
     internal fun alle(): Boolean = underordnede.all { it.svar() as Boolean }
+    internal fun plussÅr(): LocalDate = (underordnede.first().svar() as LocalDate).plusYears((underordnede.last().svar() as Int).toLong())
 
     override fun type() = underordnede.toList().first().type()
 
