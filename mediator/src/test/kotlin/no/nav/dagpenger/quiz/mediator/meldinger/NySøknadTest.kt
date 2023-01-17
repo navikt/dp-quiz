@@ -44,25 +44,7 @@ internal class NySøknadTest {
           "aktørId": "1000000000000",
           "fagsakId": "237504895",
           "søknadsData": {
-            "soknadId": 11724,
-            "soknadsType": "dagpenger.ordinaer",
-            "skjemaNummer": "NAV 04-01.03",
-            "versjon": null,
-            "uuid": "b529c315-0176-4554-a41a-925f89c94079",
-            "brukerBehandlingId": "10010WQMW",
-            "behandlingskjedeId": null,
-            "fakta": [],
-            "status": "UNDER_ARBEID",
-            "aktoerId": "12345678910",
-            "opprettetDato": "2021-05-03T11:14:22.362Z",
-            "sistLagret": "2021-05-07T09:13:37.004Z",
-            "delstegStatus": "VEDLEGG_VALIDERT",
-            "vedlegg": [],
-            "journalforendeEnhet": null,
-            "soknadPrefix": "dagpenger.ordinaer",
-            "soknadUrl": "/soknaddagpenger/NAV04-01.03",
-            "fortsettSoknadUrl": "/soknaddagpenger/utslagskriterier",
-            "erEttersending": false
+            "søknad_uuid": "5d58d882-2d6a-4479-b561-ac60041b6b65"
           },
           "@event_name": "innsending_ferdigstilt"
         }"""
