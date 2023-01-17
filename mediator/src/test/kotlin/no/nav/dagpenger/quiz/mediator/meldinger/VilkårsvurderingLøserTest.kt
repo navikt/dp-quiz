@@ -6,12 +6,17 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class VilkårsvurderingLøserTest {
-    private val testRapid = TestRapid()
+    private val testRapid = TestRapid().also {
+        VilkårsvurderingLøser(
+            rapidsConnection = it
+        )
+    }
 
     @Test
     fun `mottar behov om vilkårsvurdering av alder`() {
         testRapid.sendTestMessage(innsendingFerdigstiltJson)
         assertEquals(1, testRapid.inspektør.size)
+        assertEquals(true, testRapid.inspektør.field(0, "@løsning")["øvreAldersgrense"].asBoolean())
     }
 
     @Language("JSON")

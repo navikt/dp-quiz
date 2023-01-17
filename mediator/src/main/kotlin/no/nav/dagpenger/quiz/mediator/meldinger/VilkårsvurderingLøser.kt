@@ -1,10 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
-import no.nav.dagpenger.quiz.mediator.behovløsere.DokumentkravSvarService
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.helse.rapids_rivers.River
+import no.nav.helse.rapids_rivers.*
 
 class VilkårsvurderingLøser(rapidsConnection: RapidsConnection) : River.PacketListener {
     init {
@@ -15,6 +11,8 @@ class VilkårsvurderingLøser(rapidsConnection: RapidsConnection) : River.Packet
         }.register(this)
     }
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        TODO("Not yet implemented")
+        val hei = 1
+        packet["@løsning"] = mapOf("øvreAldersgrense" to true)
+        context.publish(packet.toJson())
     }
 }
