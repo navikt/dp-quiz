@@ -1,11 +1,11 @@
 package no.nav.dagpenger.model.factory
 
+import no.nav.dagpenger.model.factory.FaktaRegel.Companion.`67_ÅR_GRENSEDATO`
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.ALLE_JA
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MAKS_DATO
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MAKS_INNTEKT
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MIN_DATO
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MULTIPLIKASJON_INNTEKT
-import no.nav.dagpenger.model.factory.FaktaRegel.Companion.PLUSS_ÅR
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.Inntekt
@@ -37,8 +37,8 @@ class UtledetFaktumFactory<T : Comparable<T>>(
             infix fun ja(navn: String) = UtledetFaktumFactory(navn, ALLE_JA)
         }
 
-        object plussÅr {
-            infix fun dato(navn: String) = UtledetFaktumFactory(navn, PLUSS_ÅR)
+        object grensedato67år {
+            infix fun dato(navn: String) = UtledetFaktumFactory(navn, `67_ÅR_GRENSEDATO`)
         }
     }
 
@@ -72,8 +72,9 @@ class FaktaRegel<R : Comparable<R>> private constructor(
         internal val MAKS_DATO = FaktaRegel("MAKS_DATO", UtledetFaktum<LocalDate>::max)
         internal val MIN_DATO = FaktaRegel("MIN_DATO", UtledetFaktum<LocalDate>::min)
         internal val MAKS_INNTEKT = FaktaRegel("MAKS_INNTEKT", UtledetFaktum<Inntekt>::max)
-        internal val MULTIPLIKASJON_INNTEKT = FaktaRegel("MULTIPLIKASJON_INNTEKT", UtledetFaktum<Inntekt>::multiplikasjon)
+        internal val MULTIPLIKASJON_INNTEKT =
+            FaktaRegel("MULTIPLIKASJON_INNTEKT", UtledetFaktum<Inntekt>::multiplikasjon)
         internal val ALLE_JA = FaktaRegel("ALLE_JA", UtledetFaktum<Boolean>::alle)
-        internal val PLUSS_ÅR = FaktaRegel("PLUSS_ÅR", UtledetFaktum<LocalDate>::plussÅr)
+        internal val `67_ÅR_GRENSEDATO` = FaktaRegel("67_ÅR_GRENSEDATO", UtledetFaktum<LocalDate>::grensedato67år)
     }
 }

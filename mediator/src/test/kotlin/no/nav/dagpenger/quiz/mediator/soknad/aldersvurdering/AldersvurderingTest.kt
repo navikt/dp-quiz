@@ -29,7 +29,6 @@ internal class AldersvurderingTest {
     fun `Aldersvurder bruker 67 år`() {
         val virkningsdato = 15.januar(2023)
 
-        aldersvurderingsprosess.heltall(Aldersvurdering.aldersgrense).besvar(67)
         aldersvurderingsprosess.dato(Aldersvurdering.virkningsdato).besvar(virkningsdato)
         aldersvurderingsprosess.dato(Aldersvurdering.fødselsdato).besvar(virkningsdato.minusYears(66))
         assertTrue(aldersvurderingsprosess.resultat()!!)
