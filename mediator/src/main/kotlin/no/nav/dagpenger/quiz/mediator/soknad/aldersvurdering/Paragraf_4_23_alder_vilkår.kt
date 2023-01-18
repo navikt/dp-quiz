@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
-object Aldersvurdering : DslFaktaseksjon {
+object Paragraf_4_23_alder_vilkår : DslFaktaseksjon {
 
     const val virkningsdato = 1
     const val fødselsdato = 2
@@ -31,7 +31,7 @@ object Aldersvurdering : DslFaktaseksjon {
 
     override fun regeltre(søknad: Søknad): DeltreSubsumsjon {
         return "søkeren må være under aldersgrense ved virkningstidspunkt".deltre {
-            with(AldersvurderingOppsett.prototypeSøknad) {
+            with(Paragraf_4_23_alder_oppsett.prototypeSøknad) {
                 "under aldersgrense" deltre {
                     dato(virkningsdato) før dato(grensedato)
                 }
