@@ -16,7 +16,7 @@ class VilkårsvurderingLøserTest {
     fun `mottar behov om vilkårsvurdering av alder`() {
         testRapid.sendTestMessage(innsendingFerdigstiltJson)
         assertEquals(1, testRapid.inspektør.size)
-        assertEquals(true, testRapid.inspektør.field(0, "@løsning")["øvreAldersgrense"].asBoolean())
+        assertEquals(true, testRapid.inspektør.field(0, "@løsning")["Paragraf_4_23_alder"].asBoolean())
     }
 
     @Language("JSON")
@@ -25,6 +25,6 @@ class VilkårsvurderingLøserTest {
           "@id": "3b85fff6-dee8-4ea2-a13b-096b85d8b592",
           "@opprettet": "2021-05-07T11:14:11.502435",
           "@event_name": "vilkårsvurdering",
-          "@vilkår": ["øvreAldersgrense"]
+          "@vilkår": ["Paragraf_4_23_alder"]
         }"""
 }

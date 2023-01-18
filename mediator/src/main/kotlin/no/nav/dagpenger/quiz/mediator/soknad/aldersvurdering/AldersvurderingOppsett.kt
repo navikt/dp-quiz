@@ -10,7 +10,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 
 internal object AldersvurderingOppsett {
 
-    val VERSJON_ID = Prosessversjon(Prosess.Aldersvurdering, 1)
+    val VERSJON_ID = Prosessversjon(Prosess.Paragraf_4_23_alder, 1)
 
     fun registrer(registrer: (prototype: Søknad) -> Unit) {
         registrer(prototypeSøknad)
