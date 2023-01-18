@@ -34,8 +34,8 @@ class VilkårsvurderingLøserTest {
 
         testRapid = TestRapid().also {
             VilkårsvurderingLøser(
-                prosessPersistence = prosessPersistens,
-                rapidsConnection = it
+                rapidsConnection = it,
+                prosessPersistence = prosessPersistens
             )
         }
     }

@@ -11,7 +11,7 @@ import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
-class VilkårsvurderingLøser(private val prosessPersistence: SøknadPersistence, rapidsConnection: RapidsConnection) :
+internal class VilkårsvurderingLøser(rapidsConnection: RapidsConnection, private val prosessPersistence: SøknadPersistence) :
     River.PacketListener {
     val behov = "Paragraf_4_23_alder"
 
