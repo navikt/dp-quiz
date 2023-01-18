@@ -13,9 +13,12 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
 
     internal fun max(): R = underordnede.maxOf { it.svar() }
     internal fun min(): R = underordnede.minOf { it.svar() }
-    internal fun multiplikasjon(): Inntekt = underordnede.first().svar() as Number * underordnede.last().svar() as Inntekt
+    internal fun multiplikasjon(): Inntekt =
+        underordnede.first().svar() as Number * underordnede.last().svar() as Inntekt
+
     internal fun alle(): Boolean = underordnede.all { it.svar() as Boolean }
-    internal fun plussÅr(): LocalDate = (underordnede.first().svar() as LocalDate).plusYears((underordnede.last().svar() as Int).toLong())
+    internal fun grensedato67år(): LocalDate =
+        (underordnede.first().svar() as LocalDate).plusYears(67).plusMonths(1).withDayOfMonth(1)
 
     override fun type() = underordnede.toList().first().type()
 

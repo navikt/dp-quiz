@@ -2,15 +2,16 @@ package no.nav.dagpenger.model.unit.factory
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
-import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.alle
+import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.grensedato67år
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.plussÅr
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.helpers.mars
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -153,16 +154,20 @@ internal class UtledetFaktumFactoryTest {
     }
 
     @Test
-    fun `pluss år på dato`() {
+    fun `grensedato for 67 år`() {
         val søknad = Søknad(
             testversjon,
             dato faktum "dato1" id 1,
-            heltall faktum "år" id 2,
-            plussÅr dato "utledetDato" av 1 og 2 id 3
+            grensedato67år dato "utledetDato" av 1 id 2
         ).testSøknadprosess()
 
-        søknad.dato(1).besvar(1.januar(2000))
-        søknad.heltall(2).besvar(10)
-        assertEquals(1.januar(2010), søknad.id(3).svar())
+        søknad.dato(1).besvar(1.januar(1950))
+        assertEquals(1.februar(2017), søknad.id(2).svar())
+
+        søknad.dato(1).besvar(31.januar(1950))
+        assertEquals(1.februar(2017), søknad.id(2).svar())
+
+        søknad.dato(1).besvar(1.februar(1950))
+        assertEquals(1.mars(2017), søknad.id(2).svar())
     }
 }
