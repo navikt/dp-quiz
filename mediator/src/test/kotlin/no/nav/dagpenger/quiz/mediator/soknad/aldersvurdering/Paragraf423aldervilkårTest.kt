@@ -11,17 +11,17 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class AldersvurderingTest {
+internal class Paragraf423aldervilkårTest {
 
-    private val søknad = Søknad(Prosessversjon(Prosess.Aldersvurdering, -1), *Aldersvurdering.fakta())
+    private val søknad = Søknad(Prosessversjon(Prosess.Paragraf_4_23_alder, -1), *Paragraf_4_23_alder_vilkår.fakta())
     private lateinit var aldersvurderingsprosess: Søknadprosess
 
     @BeforeEach
     fun setup() {
         aldersvurderingsprosess = søknad.testSøknadprosess(
-            Aldersvurdering.regeltre(søknad)
+            Paragraf_4_23_alder_vilkår.regeltre(søknad)
         ) {
-            Aldersvurdering.seksjon(this)
+            Paragraf_4_23_alder_vilkår.seksjon(this)
         }
     }
 
@@ -29,11 +29,11 @@ internal class AldersvurderingTest {
     fun `Aldersvurder bruker 67 år`() {
         val virkningsdato = 15.januar(2023)
 
-        aldersvurderingsprosess.dato(Aldersvurdering.virkningsdato).besvar(virkningsdato)
-        aldersvurderingsprosess.dato(Aldersvurdering.fødselsdato).besvar(virkningsdato.minusYears(66))
+        aldersvurderingsprosess.dato(Paragraf_4_23_alder_vilkår.virkningsdato).besvar(virkningsdato)
+        aldersvurderingsprosess.dato(Paragraf_4_23_alder_vilkår.fødselsdato).besvar(virkningsdato.minusYears(66))
         assertTrue(aldersvurderingsprosess.resultat()!!)
 
-        aldersvurderingsprosess.dato(Aldersvurdering.fødselsdato).besvar(virkningsdato.minusYears(68))
+        aldersvurderingsprosess.dato(Paragraf_4_23_alder_vilkår.fødselsdato).besvar(virkningsdato.minusYears(68))
         assertFalse(aldersvurderingsprosess.resultat()!!)
     }
 }

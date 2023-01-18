@@ -1,0 +1,63 @@
+package no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering
+
+import mu.KotlinLogging
+import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
+import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
+import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+
+internal object Paragraf_4_23_alder_oppsett {
+    val VERSJON_ID = Prosessversjon(Prosess.Paragraf_4_23_alder, 1)
+    private val logger = KotlinLogging.logger { }
+    private val faktaseksjoner = listOf<DslFaktaseksjon>(Paragraf_4_23_alder_vilkår)
+    private val alleFakta = flatMapAlleFakta()
+    private val alleSeksjoner = flatMapAlleSeksjoner()
+    private val søknadsprosess: Søknadprosess = Søknadprosess(*alleSeksjoner)
+    private val faktumNavBehov = FaktumNavBehov(
+        mapOf(
+            Paragraf_4_23_alder_vilkår.virkningsdato to "Virkningsdato",
+            Paragraf_4_23_alder_vilkår.fødselsdato to "Fødselsdato"
+        )
+    )
+
+    internal val prototypeSøknad: Søknad
+        get() = Søknad(
+            VERSJON_ID,
+            *alleFakta
+        )
+
+    fun registrer(registrer: (prototype: Søknad) -> Unit) {
+        registrer(prototypeSøknad)
+    }
+
+    object Subsumsjoner {
+        val regeltre: Subsumsjon = with(prototypeSøknad) {
+            Paragraf_4_23_alder_vilkår.regeltre(this)
+        }
+    }
+
+    private fun flatMapAlleFakta() = faktaseksjoner.flatMap { seksjon ->
+        seksjon.fakta().toList()
+    }.toTypedArray()
+
+    private fun flatMapAlleSeksjoner() = faktaseksjoner.map { faktaSeksjon ->
+        faktaSeksjon.seksjon(prototypeSøknad)
+    }.flatten().toTypedArray()
+
+    init {
+        Versjon.Bygger(
+            prototypeSøknad = prototypeSøknad,
+            prototypeSubsumsjon = Subsumsjoner.regeltre,
+            prototypeUserInterfaces = mapOf(
+                Versjon.UserInterfaceType.Web to søknadsprosess
+            ),
+            faktumNavBehov = faktumNavBehov
+        ).registrer().also {
+            logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID} \n\n\n\n" }
+        }
+    }
+}
