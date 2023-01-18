@@ -18,8 +18,10 @@ import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.ManuellBehandlingSink
 import no.nav.dagpenger.quiz.mediator.meldinger.NyProsessBehovLøser
 import no.nav.dagpenger.quiz.mediator.meldinger.SøknadSlettetService
+import no.nav.dagpenger.quiz.mediator.meldinger.VilkårsvurderingLøser
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.ProsessMetadataStrategi
+import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
@@ -77,6 +79,10 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                     }
                 }
 
+                Paragraf_4_23_alder_oppsett.registrer { prototype ->
+                    FaktumTable(prototype)
+                }
+
                 NyProsessBehovLøser(søknadRecord, rapidsConnection)
                 FaktumSvarService(søknadRecord, resultatRecord, rapidsConnection)
                 BehandlingsdatoService(rapidsConnection)
@@ -84,6 +90,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 TerskelFaktorService(rapidsConnection)
                 ManuellBehandlingSink(rapidsConnection, resultatRecord)
                 SøknadSlettetService(rapidsConnection, søknadRecord)
+                VilkårsvurderingLøser(rapidsConnection, søknadRecord)
                 MetadataService(
                     rapidsConnection,
                     søknadRecord,
