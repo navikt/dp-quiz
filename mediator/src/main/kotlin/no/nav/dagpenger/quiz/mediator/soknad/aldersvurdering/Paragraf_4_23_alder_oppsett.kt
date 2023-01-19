@@ -26,8 +26,10 @@ internal object Paragraf_4_23_alder_oppsett {
     private val søknadsprosess: Søknadprosess = Søknadprosess(*alleSeksjoner)
     private val faktumNavBehov = FaktumNavBehov(
         mapOf(
-            Paragraf_4_23_alder_vilkår.virkningsdato to "Virkningsdato",
-            Paragraf_4_23_alder_vilkår.fødselsdato to "Fødselsdato"
+            Paragraf_4_23_alder_vilkår.ønskerDagpengerFraDato to "ØnskerDagpengerFraDato",
+            Paragraf_4_23_alder_vilkår.søknadInnsendtDato to "Søknadstidspunkt",
+            Paragraf_4_23_alder_vilkår.fødselsdato to "Fødselsdato",
+            Paragraf_4_23_alder_vilkår.innsendtSøknadId to "InnsendtSøknadsId"
         )
     )
 

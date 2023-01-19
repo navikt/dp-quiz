@@ -64,7 +64,8 @@ class VilkårsvurderingLøserTest {
           "@event_name": "vilkårsvurdering",
           "@behov": ["Paragraf_4_23_alder"],
           "vilkårsvurderingId" : "$vilkårsvurderingId",
+          "søknad_uuid" : "${randomUUID()}",
           "ident": "12345123456",
-          "behandlingId": "${UUID.randomUUID()}"
+          "behandlingId": "${randomUUID()}"
         }"""
 }
