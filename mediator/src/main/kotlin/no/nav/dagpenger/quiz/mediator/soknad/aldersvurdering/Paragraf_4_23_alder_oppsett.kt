@@ -10,6 +10,14 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 
+/**
+ *  POC - dele opp vilkårsvurdering i kap 4
+ *
+ * Denne blir brukt av dp-behandling for til å løse "vilkårsvurderingsbehov"
+ * Vi er pt. usikre på formen på det enda, så denne blir borte/endret
+ */
+
+
 internal object Paragraf_4_23_alder_oppsett {
     val VERSJON_ID = Prosessversjon(Prosess.Paragraf_4_23_alder, 1)
     private val logger = KotlinLogging.logger { }

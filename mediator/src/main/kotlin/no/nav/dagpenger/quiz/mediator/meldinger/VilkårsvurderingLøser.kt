@@ -10,6 +10,7 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
+import java.util.UUID
 
 internal class VilkårsvurderingLøser(rapidsConnection: RapidsConnection, private val prosessPersistence: SøknadPersistence) :
     River.PacketListener {
@@ -23,13 +24,14 @@ internal class VilkårsvurderingLøser(rapidsConnection: RapidsConnection, priva
         River(rapidsConnection).apply {
             validate { it.demandValue("@event_name", "vilkårsvurdering") }
             validate { it.demandAll("@behov", listOf(behov)) }
-            validate { it.requireKey("ident", "behandlingId") }
+            validate { it.requireKey("ident", "behandlingId", "vilkårsvurderingId") }
             validate { it.forbid("@løsning") }
         }.register(this)
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
 
+        val vilkårsvurderingId = packet["vilkårsvurderingId"].asText().let { UUID.fromString(it) }
         withLoggingContext(
             "behandlingId" to packet["behandlingId"].asText(),
         ) {
@@ -48,7 +50,12 @@ internal class VilkårsvurderingLøser(rapidsConnection: RapidsConnection, priva
                 .build()
 
             val Paragraf_4_23_alder_prosess =
-                prosessPersistence.ny(identer, Versjon.UserInterfaceType.Web, prosessversjon)
+                prosessPersistence.ny(
+                    identer = identer,
+                    type = Versjon.UserInterfaceType.Web,
+                    prosessVersjon = prosessversjon,
+                    uuid = vilkårsvurderingId
+                )
             prosessPersistence.lagre(Paragraf_4_23_alder_prosess.søknad)
 
             val prosessUuid = Paragraf_4_23_alder_prosess.søknad.uuid.toString()
