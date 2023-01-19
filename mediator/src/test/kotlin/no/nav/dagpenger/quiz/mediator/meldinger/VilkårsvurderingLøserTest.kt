@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -14,11 +15,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.util.UUID
+import java.util.UUID.randomUUID
+import kotlin.test.assertTrue
 
 class VilkårsvurderingLøserTest {
 
     private lateinit var søknadsprosess: Søknadprosess
     private lateinit var testRapid: TestRapid
+    private val vilkårsvurderingIdSlot = slot<UUID>()
 
     @BeforeEach
     fun setup() {
@@ -28,7 +32,7 @@ class VilkårsvurderingLøserTest {
         }
 
         val prosessPersistens = mockk<SøknadPersistence>().also {
-            every { it.ny(any(), any(), any(), any()) } returns søknadsprosess
+            every { it.ny(any(), any(), any(), capture(vilkårsvurderingIdSlot)) } returns søknadsprosess
             every { it.lagre(any() as Søknad) } returns true
         }
 
@@ -42,7 +46,10 @@ class VilkårsvurderingLøserTest {
 
     @Test
     fun `mottar behov om vilkårsvurdering av alder`() {
-        testRapid.sendTestMessage(`behov om vurdering av paragraf 4-23 alder`)
+        val vilkårsvurderingId = randomUUID()
+        testRapid.sendTestMessage(`behov om vurdering av paragraf 4-23 alder`(vilkårsvurderingId = vilkårsvurderingId))
+        assertTrue { vilkårsvurderingIdSlot.isCaptured }
+        assertEquals(vilkårsvurderingId, vilkårsvurderingIdSlot.captured)
         assertEquals(2, testRapid.inspektør.size)
         assertDoesNotThrow {
             testRapid.inspektør.field(1, "@løsning")["Paragraf_4_23_alder"].asText().let { UUID.fromString(it) }
@@ -50,12 +57,13 @@ class VilkårsvurderingLøserTest {
     }
 
     @Language("JSON")
-    val `behov om vurdering av paragraf 4-23 alder` =
+    fun `behov om vurdering av paragraf 4-23 alder`(vilkårsvurderingId: UUID) =
         """{
           "@id": "3b85fff6-dee8-4ea2-a13b-096b85d8b592",
           "@opprettet": "2021-05-07T11:14:11.502435",
           "@event_name": "vilkårsvurdering",
           "@behov": ["Paragraf_4_23_alder"],
+          "vilkårsvurderingId" : "$vilkårsvurderingId",
           "ident": "12345123456",
           "behandlingId": "${UUID.randomUUID()}"
         }"""
