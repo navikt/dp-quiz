@@ -56,6 +56,8 @@ internal class ResultatJsonBuilderTest {
         søknadprosess.boolsk(1).besvar(false)
         ResultatJsonBuilder(søknadprosess).resultat().also {
             assertFalse(it["resultat"].asBoolean())
+            assertEquals(0, it["versjon_id"].asInt())
+            assertEquals("test", it["versjon_navn"].asText())
         }
     }
 
