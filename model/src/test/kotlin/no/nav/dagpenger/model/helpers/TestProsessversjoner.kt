@@ -7,4 +7,6 @@ enum class Testprosess(override val id: String) : Prosessnavn {
     PrototypeSøknad("prototypeSøknad"),
     Test("test"),
 }
-internal val testversjon = Prosessversjon(Testprosess.Test, 0)
+
+const val testprosessversjon = 0
+internal val testversjon = Prosessversjon(Testprosess.Test, testprosessversjon)

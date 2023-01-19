@@ -17,7 +17,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosess
  * Vi er pt. usikre på formen på det enda, så denne blir borte/endret
  */
 
-
 internal object Paragraf_4_23_alder_oppsett {
     val VERSJON_ID = Prosessversjon(Prosess.Paragraf_4_23_alder, 1)
     private val logger = KotlinLogging.logger { }
