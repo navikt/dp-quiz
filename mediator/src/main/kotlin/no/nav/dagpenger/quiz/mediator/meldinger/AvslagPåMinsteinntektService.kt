@@ -33,7 +33,7 @@ internal class AvslagPåMinsteinntektService(
             validate {
                 it.demandValue("@event_name", "innsending_ferdigstilt")
                 it.demandValue("type", "NySøknad")
-                it.requireKey("søknadsData.brukerBehandlingId")
+                it.requireKey("søknadsData.søknad_uuid")
                 it.requireKey("fødselsnummer")
                 it.requireKey("aktørId")
                 it.requireKey("journalpostId")
@@ -43,14 +43,14 @@ internal class AvslagPåMinsteinntektService(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        log.info { "Mottok søknad med id ${packet["søknadsData.brukerBehandlingId"].asText()}" }
+        val søknadsId = packet["søknadsData.søknad_uuid"].asText()
         val identer = Identer.Builder()
             .folkeregisterIdent(packet["fødselsnummer"].asText())
             .aktørId(packet["aktørId"].asText())
             .build()
-        val søknadsId = packet["søknadsData.brukerBehandlingId"].asText()
         val faktagrupperType = Versjon.UserInterfaceType.Web
         val journalpostId = packet["journalpostId"].asText()
+        log.info { "Mottok søknad med id $søknadsId " }
 
         søknadPersistence.ny(identer, faktagrupperType, prosessVersjon)
             .also { søknadprosess ->
