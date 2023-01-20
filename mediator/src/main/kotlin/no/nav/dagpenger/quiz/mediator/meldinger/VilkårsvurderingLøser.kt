@@ -42,37 +42,41 @@ internal class VilkårsvurderingLøser(
         withLoggingContext(
             "behandlingId" to packet["behandlingId"].asText(),
         ) {
-            val vilkår = packet["@behov"].map { it.asText() }.first()
-            logger.info { "Mottok behov om vurdering av $vilkår" }
-            val prosessversjon = when (vilkår) {
-                behov -> Versjon.siste(Prosess.Paragraf_4_23_alder)
-                else -> {
-                    logger.error { "Det er ikke støtte for vurdering av $vilkår enda." }
-                    null
-                }
-            } ?: return
+            try {
+                val vilkår = packet["@behov"].map { it.asText() }.first()
+                logger.info { "Mottok behov om vurdering av $vilkår" }
+                val prosessversjon = when (vilkår) {
+                    behov -> Versjon.siste(Prosess.Paragraf_4_23_alder)
+                    else -> {
+                        logger.error { "Det er ikke støtte for vurdering av $vilkår enda." }
+                        null
+                    }
+                } ?: return
 
-            val identer = Identer.Builder().folkeregisterIdent(packet["ident"].asText()).build()
+                val identer = Identer.Builder().folkeregisterIdent(packet["ident"].asText()).build()
 
-            val paragraf_4_23_alder_prosess =
-                prosessPersistence.ny(
-                    identer = identer,
-                    type = Versjon.UserInterfaceType.Web,
-                    prosessVersjon = prosessversjon,
-                    uuid = vilkårsvurderingId
-                )
+                val paragraf_4_23_alder_prosess =
+                    prosessPersistence.ny(
+                        identer = identer,
+                        type = Versjon.UserInterfaceType.Web,
+                        prosessVersjon = prosessversjon,
+                        uuid = vilkårsvurderingId
+                    )
 
-            paragraf_4_23_alder_prosess.dokument(Paragraf_4_23_alder_vilkår.innsendtSøknadId)
-                .besvar(Dokument(LocalDateTime.now(), "urn:soknadid:$søknadUuid"))
+                paragraf_4_23_alder_prosess.dokument(Paragraf_4_23_alder_vilkår.innsendtSøknadId)
+                    .besvar(Dokument(LocalDateTime.now(), "urn:soknadid:$søknadUuid"))
 
-            prosessPersistence.lagre(paragraf_4_23_alder_prosess.søknad)
+                prosessPersistence.lagre(paragraf_4_23_alder_prosess.søknad)
 
-            val prosessUuid = paragraf_4_23_alder_prosess.søknad.uuid.toString()
-            packet["@løsning"] = mapOf(behov to prosessUuid)
-            paragraf_4_23_alder_prosess.sendNesteSeksjon(context)
+                val prosessUuid = paragraf_4_23_alder_prosess.søknad.uuid.toString()
+                packet["@løsning"] = mapOf(behov to prosessUuid)
+                paragraf_4_23_alder_prosess.sendNesteSeksjon(context)
 
-            context.publish(packet.toJson())
-            logger.info { "Løste $vilkår med prosessId $prosessUuid" }
+                context.publish(packet.toJson())
+                logger.info { "Løste $vilkår med prosessId $prosessUuid" }
+            } catch (e: Exception) {
+                logger.error(e) { "Klarte ikke å håndtere $behov" }
+            }
         }
     }
 }
