@@ -79,12 +79,19 @@ internal object Seksjoner {
         )
     }
 
+    private val dataFraSøknadLivssyklus = with(prototypeSøknad) {
+        Seksjon(
+            "dataFraSøknadLivssyklus",
+            Rolle.nav,
+            dato(søknadstidspunkt)
+        )
+    }
+
     private val dataFraSøknad = with(prototypeSøknad) {
         Seksjon(
             "datafrasøknad",
             Rolle.nav,
             dato(ønsketDato),
-            dato(søknadstidspunkt),
             boolsk(verneplikt),
             boolsk(eøsArbeid),
             boolsk(kanJobbeDeltid),
@@ -295,6 +302,7 @@ internal object Seksjoner {
             senesteMuligeVirkningsdatoSeksjon,
             minsteinntektKonstanter,
             grunnbeløpSeksjon,
+            dataFraSøknadLivssyklus,
             dataFraSøknad,
             arbeidsøkerPerioder,
             dagpengehistorikk,

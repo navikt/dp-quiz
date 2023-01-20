@@ -115,13 +115,15 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
             besvar(behandlingsdato, 5.januar)
             besvar(senesteMuligeVirkningsdato, 19.januar)
 
+            assertGjeldendeSeksjon("dataFraSøknadLivssyklus")
+            besvar(søknadstidspunkt, 2.januar)
+
             assertGjeldendeSeksjon("datafrasøknad")
             besvar(eøsArbeid, false)
             besvar(jobbetUtenforNorge, false)
             besvar(fangstOgFiskInntektSiste36mnd, false)
             besvar(verneplikt, false)
             besvar(ønsketDato, 5.januar)
-            besvar(søknadstidspunkt, 2.januar)
             besvar(harInntektNesteKalendermåned, false)
             besvar(kanJobbeDeltid, true)
             besvar(helseTilAlleTyperJobb, true)
