@@ -28,7 +28,7 @@ internal class VilkårsvurderingLøser(
 
     init {
         River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "vilkårsvurdering") }
+            validate { it.demandValue("@event_name", "behov") }
             validate { it.demandAll("@behov", listOf(behov)) }
             validate { it.requireKey("ident", "behandlingId", "vilkårsvurderingId", "søknad_uuid") }
             validate { it.forbid("@løsning") }

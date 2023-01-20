@@ -57,15 +57,31 @@ class VilkårsvurderingLøserTest {
     }
 
     @Language("JSON")
-    fun `behov om vurdering av paragraf 4-23 alder`(vilkårsvurderingId: UUID) =
-        """{
-          "@id": "3b85fff6-dee8-4ea2-a13b-096b85d8b592",
-          "@opprettet": "2021-05-07T11:14:11.502435",
-          "@event_name": "vilkårsvurdering",
-          "@behov": ["Paragraf_4_23_alder"],
-          "vilkårsvurderingId" : "$vilkårsvurderingId",
-          "søknad_uuid" : "${randomUUID()}",
-          "ident": "12345123456",
-          "behandlingId": "${randomUUID()}"
-        }"""
+    fun `behov om vurdering av paragraf 4-23 alder`(vilkårsvurderingId: UUID) = """
+        {
+          "@event_name": "behov",
+          "@behovId": "ee6d82f4-fad0-4d61-8d54-de57db2c0b73",
+          "@behov": [
+            "Paragraf_4_23_alder"
+          ],
+          "ident": "12345678911",
+          "behandlingId": "c13f867d-0346-4e22-959b-0dfd9deab882",
+          "type": "NyRettighetsbehandling",
+          "søknad_uuid": "2a1a430c-2579-4a11-9793-0ec7266c9f78",
+          "vilkårsvurderingId": "$vilkårsvurderingId",
+          "Paragraf_4_23_alder": {},
+          "@id": "1b28392d-2623-4d4a-bb90-6f130d724725",
+          "@opprettet": "2023-01-20T08:58:47.706275552",
+          "system_read_count": 0,
+          "system_participating_services": [
+            {
+              "id": "1b28392d-2623-4d4a-bb90-6f130d724725",
+              "time": "2023-01-20T08:58:47.706275552",
+              "service": "dp-behandling",
+              "instance": "dp-behandling-8579b578db-n5bsz",
+              "image": "ghcr.io/navikt/dp-behandling:06f9ecd4ef2c8a0f6cb49055b3535fd096951ebc"
+            }
+          ]
+        }
+    """.trimIndent()
 }
