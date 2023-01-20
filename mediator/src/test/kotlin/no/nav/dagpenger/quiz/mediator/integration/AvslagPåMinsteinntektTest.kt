@@ -180,7 +180,7 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
               "journalpostId": "493389306",
               "type": "NySøknad",
               "søknadsData": {
-            "søknad_uuid": "10010WQMW"
+            "brukerBehandlingId": "10010WQMW"
           }
             }
         """.trimIndent()
