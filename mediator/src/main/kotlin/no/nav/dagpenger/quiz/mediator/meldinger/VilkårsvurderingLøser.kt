@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
-import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_vilkår
+import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -63,7 +63,7 @@ internal class VilkårsvurderingLøser(
                         uuid = vilkårsvurderingId
                     )
 
-                paragraf_4_23_alder_prosess.dokument(Paragraf_4_23_alder_vilkår.innsendtSøknadId)
+                paragraf_4_23_alder_prosess.dokument(Paragraf_4_23_alder_oppsett.innsendtSøknadId)
                     .besvar(Dokument(LocalDateTime.now(), "urn:soknadid:$søknadUuid"))
 
                 prosessPersistence.lagre(paragraf_4_23_alder_prosess.søknad)
