@@ -79,8 +79,11 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                     }
                 }
 
-                Paragraf_4_23_alder_oppsett.registrer { prototype ->
-                    FaktumTable(prototype)
+                if (Cluster.DEV_GCP == Cluster.current) {
+                    Paragraf_4_23_alder_oppsett.registrer { prototype ->
+                        FaktumTable(prototype)
+                    }
+                    VilkårsvurderingLøser(rapidsConnection, søknadRecord)
                 }
 
                 NyProsessBehovLøser(søknadRecord, rapidsConnection)
@@ -90,7 +93,6 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 TerskelFaktorService(rapidsConnection)
                 ManuellBehandlingSink(rapidsConnection, resultatRecord)
                 SøknadSlettetService(rapidsConnection, søknadRecord)
-                VilkårsvurderingLøser(rapidsConnection, søknadRecord)
                 MetadataService(
                     rapidsConnection,
                     søknadRecord,
