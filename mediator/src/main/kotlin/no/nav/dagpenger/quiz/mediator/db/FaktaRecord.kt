@@ -30,8 +30,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-// Understands a relational representation of a Søknad
-class SøknadRecord : SøknadPersistence {
+// Understands a relational representation of a Fakta
+class FaktaRecord : FaktaPersistence {
     private val personRecord = PersonRecord()
 
     private companion object {
@@ -47,7 +47,7 @@ class SøknadRecord : SøknadPersistence {
         val person = personRecord.hentEllerOpprettPerson(identer)
         return Versjon.id(prosessVersjon).utredningsprosess(person, uuid).also { søknadprosess ->
             if (eksisterer(uuid)) return søknadprosess
-            NyFakta(søknadprosess.fakta)
+            OpprettNyFaktaVisitor(søknadprosess.fakta)
         }
     }
 
@@ -90,7 +90,7 @@ class SøknadRecord : SøknadPersistence {
 
         return Versjon.id(HenvendelsesType(Prosess(rad.navn), rad.versjonId)).utredningsprosess(
             person = personRecord.hentPerson(rad.personId),
-            uuid = uuid,
+            faktaUUID = uuid,
         ).also { søknadprosess ->
             svarList(uuid).onEach { row ->
                 søknadprosess.fakta.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }

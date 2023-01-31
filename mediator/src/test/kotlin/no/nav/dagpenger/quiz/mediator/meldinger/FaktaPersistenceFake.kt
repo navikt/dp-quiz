@@ -6,12 +6,12 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class SøknadPersistenceFake : SøknadPersistence {
+internal class FaktaPersistenceFake : FaktaPersistence {
     var utredningsprosess: Utredningsprosess? = null
     var hentet: Int = 0
 

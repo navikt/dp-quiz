@@ -7,8 +7,8 @@ import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.MinimalSøknadsprosess
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
@@ -23,7 +23,7 @@ internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
     val henvendelsesType = HenvendelsesType(Prosess.Dagpenger, -2313)
     private val dagpengerSøknadsprosess = MinimalSøknadsprosess(henvendelsesType, Rolle.søker)
 
-    private val faktaPersistence = mockk<SøknadPersistence>().also {
+    private val faktaPersistence = mockk<FaktaPersistence>().also {
         every { it.hent(any()) } returns Versjon.id(henvendelsesType)
             .utredningsprosess(dagpengerSøknadsprosess.fakta)
         every { it.lagre(any() as Fakta) } returns true
@@ -35,7 +35,7 @@ internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
     fun setup() {
         testRapid = TestRapid().also {
             FaktumSvarService(
-                søknadPersistence = faktaPersistence,
+                faktaPersistence = faktaPersistence,
                 resultatPersistence = resultatPersistence,
                 rapidsConnection = it
             )
@@ -66,7 +66,7 @@ internal class AvslagPåMinsteinntektFaktumSvarflytTest : SøknadBesvarer() {
     val henvendelsesType = HenvendelsesType(Prosess.AvslagPåMinsteinntekt, -2313)
     private val dagpengerSøknadsprosess = MinimalSøknadsprosess(henvendelsesType, Rolle.nav)
 
-    private val faktaPersistence = mockk<SøknadPersistence>().also {
+    private val faktaPersistence = mockk<FaktaPersistence>().also {
         every { it.hent(any()) } returns Versjon.id(henvendelsesType)
             .utredningsprosess(dagpengerSøknadsprosess.fakta)
         every { it.lagre(any() as Fakta) } returns true
@@ -78,7 +78,7 @@ internal class AvslagPåMinsteinntektFaktumSvarflytTest : SøknadBesvarer() {
     fun setup() {
         testRapid = TestRapid().also {
             FaktumSvarService(
-                søknadPersistence = faktaPersistence,
+                faktaPersistence = faktaPersistence,
                 resultatPersistence = resultatPersistence,
                 rapidsConnection = it
             )

@@ -5,7 +5,7 @@ import mu.withLoggingContext
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -17,7 +17,7 @@ import java.util.UUID
 
 internal class VilkårsvurderingLøser(
     rapidsConnection: RapidsConnection,
-    private val prosessPersistence: SøknadPersistence
+    private val prosessPersistence: FaktaPersistence
 ) :
     River.PacketListener {
     val behov = "Paragraf_4_23_alder"

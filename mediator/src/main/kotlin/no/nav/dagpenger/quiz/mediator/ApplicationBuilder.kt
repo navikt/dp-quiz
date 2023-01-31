@@ -9,10 +9,10 @@ import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataService
 import no.nav.dagpenger.quiz.mediator.behovløsere.MigrerProsessService
 import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
+import no.nav.dagpenger.quiz.mediator.db.FaktaRecord
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
-import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.ManuellBehandlingSink
@@ -51,10 +51,10 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
     override fun onStartup(rapidsConnection: RapidsConnection) {
         runMigration()
             .also {
-                val søknadRecord = SøknadRecord()
+                val faktaRecord = FaktaRecord()
                 val resultatRecord = ResultatRecord()
                 AvslagPåMinsteinntektOppsett.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
-                AvslagPåMinsteinntektService(søknadRecord, rapidsConnection)
+                AvslagPåMinsteinntektService(faktaRecord, rapidsConnection)
 
                 Dagpenger248.registrer {
                     logger.info("Sørger for å støtte gamle versjoner, registrerer dagpenger versjon 248")
@@ -83,23 +83,23 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                     Paragraf_4_23_alder_oppsett.registrer { prototype ->
                         FaktumTable(prototype)
                     }
-                    VilkårsvurderingLøser(rapidsConnection, søknadRecord)
+                    VilkårsvurderingLøser(rapidsConnection, faktaRecord)
                 }
 
-                NyProsessBehovLøser(søknadRecord, rapidsConnection)
-                FaktumSvarService(søknadRecord, resultatRecord, rapidsConnection)
+                NyProsessBehovLøser(faktaRecord, rapidsConnection)
+                FaktumSvarService(faktaRecord, resultatRecord, rapidsConnection)
                 BehandlingsdatoService(rapidsConnection)
                 SenesteMuligeVirkningsdatoService(rapidsConnection)
                 TerskelFaktorService(rapidsConnection)
                 ManuellBehandlingSink(rapidsConnection, resultatRecord)
-                SøknadSlettetService(rapidsConnection, søknadRecord)
+                SøknadSlettetService(rapidsConnection, faktaRecord)
                 MetadataService(
                     rapidsConnection,
-                    søknadRecord,
+                    faktaRecord,
                     ProsessMetadataStrategi()
                 )
-                DokumentkravSvarService(rapidsConnection, søknadRecord)
-                MigrerProsessService(rapidsConnection, søknadRecord)
+                DokumentkravSvarService(rapidsConnection, faktaRecord)
+                MigrerProsessService(rapidsConnection, faktaRecord)
             }
     }
 }

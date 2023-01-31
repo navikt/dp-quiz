@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class NyFaktaTest {
+internal class OpprettNyFaktaVisitorTest {
 
     @BeforeEach
     internal fun reset() {
@@ -18,7 +18,7 @@ internal class NyFaktaTest {
 
     private companion object {
         private val testRapid = TestRapid()
-        private val søknadPersistance = SøknadPersistenceFake()
+        private val søknadPersistance = FaktaPersistenceFake()
 
         init {
             AvslagPåMinsteinntektService(søknadPersistance, testRapid, SøknadEksempel.prosessVersjon)

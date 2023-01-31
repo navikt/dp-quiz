@@ -45,7 +45,7 @@ internal class FaktaRecordTest {
 
     private lateinit var originalUtredningsprosess: Utredningsprosess
     private lateinit var rehydrertUtredningsprosess: Utredningsprosess
-    private lateinit var søknadRecord: SøknadRecord
+    private lateinit var faktaRecord: FaktaRecord
 
     @Test
     fun `ny søknadprosess`() {
@@ -54,7 +54,7 @@ internal class FaktaRecordTest {
 
             assertRecordCount(1, "soknad")
             assertRecordCount(expectedFaktaCount, "faktum_verdi")
-            SøknadRecord().ny(UNG_PERSON_FNR_2018, HenvendelsesType(Testprosess.Test, 888))
+            FaktaRecord().ny(UNG_PERSON_FNR_2018, HenvendelsesType(Testprosess.Test, 888))
             assertRecordCount(2, "soknad")
             assertRecordCount(expectedFaktaCount * 2, "faktum_verdi")
             lagreHentOgSammenlign()
@@ -106,7 +106,7 @@ internal class FaktaRecordTest {
 
             lagreHentOgSammenlign()
 
-            søknadRecord.slett(originalUtredningsprosess.fakta.uuid)
+            faktaRecord.slett(originalUtredningsprosess.fakta.uuid)
 
             assertRecordCount(0, "soknad")
             assertRecordCount(0, "faktum_verdi")
@@ -122,16 +122,16 @@ internal class FaktaRecordTest {
     @Disabled("Sletting av besvarer for hver søknad er tungt, det må flyttes til en cronjob")
     fun `Skal kun slette besvarer hvis den ikke refererer til andre søknader`() = Postgres.withMigratedDb {
         FaktumTable(SøknadEksempel1.prototypeFakta1)
-        søknadRecord = SøknadRecord()
-        val søknadProsess1 = søknadRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon)
-        val søknadProsess2 = søknadRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon)
+        faktaRecord = FaktaRecord()
+        val søknadProsess1 = faktaRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon)
+        val søknadProsess2 = faktaRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon)
         val besvarer = "123"
         søknadProsess1.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
-        søknadRecord.lagre(søknadProsess1.fakta)
+        faktaRecord.lagre(søknadProsess1.fakta)
         søknadProsess2.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
-        søknadRecord.lagre(søknadProsess2.fakta)
+        faktaRecord.lagre(søknadProsess2.fakta)
 
-        søknadRecord.slett(søknadProsess1.fakta.uuid)
+        faktaRecord.slett(søknadProsess1.fakta.uuid)
 
         assertRecordCount(1, "besvarer")
     }
@@ -352,11 +352,11 @@ internal class FaktaRecordTest {
         Postgres.withMigratedDb {
             val søknadUUId = UUID.randomUUID()
             FaktumTable(SøknadEksempel1.prototypeFakta1)
-            søknadRecord = SøknadRecord()
+            faktaRecord = FaktaRecord()
             originalUtredningsprosess =
-                søknadRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon, søknadUUId)
+                faktaRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon, søknadUUId)
             originalUtredningsprosess =
-                søknadRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon, søknadUUId)
+                faktaRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon, søknadUUId)
 
             originalUtredningsprosess.dato(2).besvar(LocalDate.now())
 
@@ -373,7 +373,7 @@ internal class FaktaRecordTest {
             byggOriginalSøknadprosess()
             val soknadUUID = originalUtredningsprosess.fakta.uuid
             assertEquals(
-                søknadRecord.migrer(soknadUUID, SøknadEksempel1.prosessVersjon),
+                faktaRecord.migrer(soknadUUID, SøknadEksempel1.prosessVersjon),
                 SøknadEksempel1.prosessVersjon,
                 "Migrering til samme versjon",
             )
@@ -382,11 +382,11 @@ internal class FaktaRecordTest {
 
             SøknadEksempel2.v2
             FaktumTable(SøknadEksempel2.prototypeFakta)
-            val nyProsessVersjon = søknadRecord.migrer(soknadUUID, SøknadEksempel2.prosessVersjon)
+            val nyProsessVersjon = faktaRecord.migrer(soknadUUID, SøknadEksempel2.prosessVersjon)
 
             assertEquals(SøknadEksempel2.prosessVersjon, nyProsessVersjon)
 
-            with(søknadRecord.hent(soknadUUID)) {
+            with(faktaRecord.hent(soknadUUID)) {
                 assertFalse(heltall("f26").erBesvart())
                 assertFalse(desimaltall("f27").erBesvart())
 
@@ -401,28 +401,28 @@ internal class FaktaRecordTest {
                 }
 
                 assertTrue(desimaltall("f27").erBesvart())
-                søknadRecord.lagre(this.fakta)
+                faktaRecord.lagre(this.fakta)
             }
 
-            with(søknadRecord.hent(soknadUUID)) {
+            with(faktaRecord.hent(soknadUUID)) {
                 assertTrue(desimaltall("f27").erBesvart())
             }
         }
     }
 
     private fun lagreHentOgSammenlign() {
-        søknadRecord.lagre(originalUtredningsprosess.fakta)
-        val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
-        søknadRecord = SøknadRecord()
-        rehydrertUtredningsprosess = søknadRecord.hent(uuid)
+        faktaRecord.lagre(originalUtredningsprosess.fakta)
+        val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
+        faktaRecord = FaktaRecord()
+        rehydrertUtredningsprosess = faktaRecord.hent(uuid)
         assertJsonEquals(originalUtredningsprosess, rehydrertUtredningsprosess)
         assertDeepEquals(originalUtredningsprosess, rehydrertUtredningsprosess)
     }
 
     private fun byggOriginalSøknadprosess() {
         FaktumTable(SøknadEksempel1.prototypeFakta1)
-        søknadRecord = SøknadRecord()
-        originalUtredningsprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon)
+        faktaRecord = FaktaRecord()
+        originalUtredningsprosess = faktaRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

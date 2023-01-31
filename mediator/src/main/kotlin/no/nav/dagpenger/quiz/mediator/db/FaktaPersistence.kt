@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import java.time.LocalDateTime
 import java.util.UUID
 
-interface SøknadPersistence {
+interface FaktaPersistence {
     fun ny(identer: Identer, prosessVersjon: HenvendelsesType, uuid: UUID = UUID.randomUUID()): Utredningsprosess
     fun hent(uuid: UUID): Utredningsprosess
     fun lagre(fakta: Fakta): Boolean

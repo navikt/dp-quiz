@@ -6,7 +6,7 @@ import io.mockk.slot
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
 import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.intellij.lang.annotations.Language
@@ -31,7 +31,7 @@ class VilkårsvurderingLøserTest {
                 .utredningsprosess(prototypeSøknad)
         }
 
-        val prosessPersistens = mockk<SøknadPersistence>().also {
+        val prosessPersistens = mockk<FaktaPersistence>().also {
             every { it.ny(any(), any(), capture(vilkårsvurderingIdSlot)) } returns søknadsprosess
             every { it.lagre(any() as Fakta) } returns true
         }

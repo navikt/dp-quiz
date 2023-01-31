@@ -16,8 +16,8 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
+import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
@@ -53,14 +53,14 @@ internal class FaktumSvarServiceTest {
         ).registrer()
     }
 
-    val faktaPersistence = mockk<SøknadPersistence>().also {
+    val faktaPersistence = mockk<FaktaPersistence>().also {
         every { it.hent(any()) } returns Versjon.id(prosessVersjon).utredningsprosess(prototypeFakta)
         every { it.lagre(any() as Fakta) } returns true
     }
     val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
     val testRapid = TestRapid().also {
         FaktumSvarService(
-            søknadPersistence = faktaPersistence,
+            faktaPersistence = faktaPersistence,
             resultatPersistence = resultatPersistence,
             rapidsConnection = it
         )

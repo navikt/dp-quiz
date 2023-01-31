@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -11,7 +11,7 @@ import no.nav.helse.rapids_rivers.River
 
 internal class MetadataService(
     rapidsConnection: RapidsConnection,
-    private val søknadPersistence: SøknadPersistence,
+    private val faktaPersistence: FaktaPersistence,
     private val metadataStrategi: MetadataStrategi
 ) : River.PacketListener {
     private companion object {
@@ -32,7 +32,7 @@ internal class MetadataService(
         val søknadId = packet.søknadUUID()
 
         withLoggingContext("søknadId" to søknadId.toString()) {
-            val metadata = metadataStrategi.metadata(søknadPersistence.hent(søknadId))
+            val metadata = metadataStrategi.metadata(faktaPersistence.hent(søknadId))
             packet["@løsning"] = mapOf(
                 behov to metadata
             )

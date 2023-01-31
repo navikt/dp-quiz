@@ -25,7 +25,7 @@ internal class ResultatTest {
     }
 
     private lateinit var utredningsprosess: Utredningsprosess
-    private lateinit var søknadRecord: SøknadRecord
+    private lateinit var faktaRecord: FaktaRecord
     private lateinit var resultatRecord: ResultatRecord
 
     private fun setup(prosessVersjon: HenvendelsesType) {
@@ -48,10 +48,10 @@ internal class ResultatTest {
 
         Postgres.withMigratedDb {
             FaktumTable(prototypeFakta)
-            søknadRecord = SøknadRecord()
+            faktaRecord = FaktaRecord()
             resultatRecord = ResultatRecord()
 
-            utredningsprosess = søknadRecord.ny(
+            utredningsprosess = faktaRecord.ny(
                 IDENT,
                 prosessVersjon
             )

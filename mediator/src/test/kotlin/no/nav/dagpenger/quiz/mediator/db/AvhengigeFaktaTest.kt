@@ -49,7 +49,7 @@ internal class AvhengigeFaktaTest {
 
     private lateinit var originalUtredningsprosess: Utredningsprosess
     private lateinit var rehydrertUtredningsprosess: Utredningsprosess
-    private lateinit var søknadRecord: SøknadRecord
+    private lateinit var faktaRecord: FaktaRecord
 
     @Test
     fun `Avhengig faktum reset`() {
@@ -73,8 +73,8 @@ internal class AvhengigeFaktaTest {
                 )
             ).registrer()
             FaktumTable(prototypeFakta)
-            søknadRecord = SøknadRecord()
-            originalUtredningsprosess = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
+            faktaRecord = FaktaRecord()
+            originalUtredningsprosess = faktaRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
 
             originalUtredningsprosess.dato(2).besvar(2.januar)
             originalUtredningsprosess.dato(13).besvar(13.januar)
@@ -115,8 +115,8 @@ internal class AvhengigeFaktaTest {
             ).registrer()
             FaktumTable(prototypeFakta)
 
-            søknadRecord = SøknadRecord()
-            originalUtredningsprosess = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
+            faktaRecord = FaktaRecord()
+            originalUtredningsprosess = faktaRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
 
             originalUtredningsprosess.boolsk(2).besvar(true)
             originalUtredningsprosess.boolsk(5).besvar(true)
@@ -125,9 +125,9 @@ internal class AvhengigeFaktaTest {
             originalUtredningsprosess.boolsk(3).besvar(true)
 
             assertEquals(5, originalUtredningsprosess.fakta.count { it.erBesvart() })
-            søknadRecord.lagre(originalUtredningsprosess.fakta)
+            faktaRecord.lagre(originalUtredningsprosess.fakta)
 
-            rehydrertUtredningsprosess = søknadRecord.hent(originalUtredningsprosess.fakta.uuid)
+            rehydrertUtredningsprosess = faktaRecord.hent(originalUtredningsprosess.fakta.uuid)
             assertEquals(5, rehydrertUtredningsprosess.fakta.count { it.erBesvart() })
         }
     }
@@ -158,8 +158,8 @@ internal class AvhengigeFaktaTest {
             ).registrer()
             FaktumTable(prototypeFakta)
 
-            søknadRecord = SøknadRecord()
-            originalUtredningsprosess = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
+            faktaRecord = FaktaRecord()
+            originalUtredningsprosess = faktaRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
 
             originalUtredningsprosess.dato(2).besvar(1.januar)
             originalUtredningsprosess.dato(3).besvar(10.januar)
@@ -167,9 +167,9 @@ internal class AvhengigeFaktaTest {
             originalUtredningsprosess.boolsk(5).besvar(true)
 
             assertEquals(5, originalUtredningsprosess.fakta.count { it.erBesvart() })
-            søknadRecord.lagre(originalUtredningsprosess.fakta)
+            faktaRecord.lagre(originalUtredningsprosess.fakta)
 
-            rehydrertUtredningsprosess = søknadRecord.hent(originalUtredningsprosess.fakta.uuid)
+            rehydrertUtredningsprosess = faktaRecord.hent(originalUtredningsprosess.fakta.uuid)
             assertEquals(5, rehydrertUtredningsprosess.fakta.count { it.erBesvart() })
         }
     }
@@ -209,8 +209,8 @@ internal class AvhengigeFaktaTest {
             ).registrer()
             FaktumTable(prototypeFakta)
 
-            søknadRecord = SøknadRecord()
-            originalUtredningsprosess = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
+            faktaRecord = FaktaRecord()
+            originalUtredningsprosess = faktaRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
 
             originalUtredningsprosess.boolsk(1).besvar(true)
             originalUtredningsprosess.dato(2).besvar(10.januar)
@@ -229,24 +229,24 @@ internal class AvhengigeFaktaTest {
             originalUtredningsprosess.land(15).besvar(Land("SWE"))
 
             assertEquals(15, originalUtredningsprosess.fakta.count { it.erBesvart() })
-            søknadRecord.lagre(originalUtredningsprosess.fakta)
+            faktaRecord.lagre(originalUtredningsprosess.fakta)
 
             assertRecordCount(0, "gammel_faktum_verdi")
-            rehydrertUtredningsprosess = søknadRecord.hent(originalUtredningsprosess.fakta.uuid)
+            rehydrertUtredningsprosess = faktaRecord.hent(originalUtredningsprosess.fakta.uuid)
             assertEquals(15, rehydrertUtredningsprosess.fakta.count { it.erBesvart() })
 
             originalUtredningsprosess.boolsk(1).besvar(false)
-            søknadRecord.lagre(originalUtredningsprosess.fakta)
+            faktaRecord.lagre(originalUtredningsprosess.fakta)
             assertRecordCount(15, "gammel_faktum_verdi")
-            rehydrertUtredningsprosess = søknadRecord.hent(originalUtredningsprosess.fakta.uuid)
+            rehydrertUtredningsprosess = faktaRecord.hent(originalUtredningsprosess.fakta.uuid)
             assertEquals(1, rehydrertUtredningsprosess.fakta.count { it.erBesvart() })
         }
     }
 
     private fun lagreHentOgSammenlign() {
-        søknadRecord.lagre(originalUtredningsprosess.fakta)
-        val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
-        rehydrertUtredningsprosess = søknadRecord.hent(uuid)
+        faktaRecord.lagre(originalUtredningsprosess.fakta)
+        val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
+        rehydrertUtredningsprosess = faktaRecord.hent(uuid)
         assertDeepEquals(originalUtredningsprosess, rehydrertUtredningsprosess)
     }
 

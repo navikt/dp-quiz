@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -11,16 +11,16 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class MigrerProsessServiceTest {
-    private val søknadPersistence = mockk<SøknadPersistence>(relaxed = true)
+    private val faktaPersistence = mockk<FaktaPersistence>(relaxed = true)
     private val søknadUUID = UUID.randomUUID()
     private val rapid = TestRapid().apply {
-        MigrerProsessService(this, søknadPersistence)
+        MigrerProsessService(this, faktaPersistence)
     }
 
     @Test
     fun `besvarer migreringsbehov`() {
         every {
-            søknadPersistence.eksisterer(søknadUUID)
+            faktaPersistence.eksisterer(søknadUUID)
         } returns true
         rapid.sendTestMessage( //language=JSON
             """
@@ -53,8 +53,8 @@ internal class MigrerProsessServiceTest {
         }
 
         verify(exactly = 1) {
-            søknadPersistence.migrer(søknadUUID, any())
-            søknadPersistence.hent(søknadUUID)
+            faktaPersistence.migrer(søknadUUID, any())
+            faktaPersistence.hent(søknadUUID)
         }
     }
 }

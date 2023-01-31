@@ -20,7 +20,7 @@ import no.nav.dagpenger.model.visitor.FaktaVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.util.UUID
 
-class NyFakta(fakta: Fakta) : FaktaVisitor {
+class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
     private var internVersjonId = 0
     private var rootId = 0
     private var indeks = 0

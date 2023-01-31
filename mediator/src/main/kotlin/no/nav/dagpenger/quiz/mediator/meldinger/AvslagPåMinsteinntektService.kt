@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.arenaFagsakId
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.innsendtSøknadsId
@@ -18,7 +18,7 @@ import no.nav.helse.rapids_rivers.isMissingOrNull
 import java.time.LocalDateTime
 
 internal class AvslagPåMinsteinntektService(
-    private val søknadPersistence: SøknadPersistence,
+    private val faktaPersistence: FaktaPersistence,
     rapidsConnection: RapidsConnection,
     private val prosessVersjon: HenvendelsesType = Versjon.siste(Prosess.AvslagPåMinsteinntekt)
 ) : River.PacketListener {
@@ -51,7 +51,7 @@ internal class AvslagPåMinsteinntektService(
         val journalpostId = packet["journalpostId"].asText()
         log.info { "Mottok søknad med id $søknadsId " }
 
-        søknadPersistence.ny(identer, prosessVersjon)
+        faktaPersistence.ny(identer, prosessVersjon)
             .also { søknadprosess ->
                 // Arena-fagsakId for at arena-sink skal kunne lage vedtak på riktig sak
                 val fagsakIdNode = packet["fagsakId"]
@@ -71,7 +71,7 @@ internal class AvslagPåMinsteinntektService(
                     )
                 )
 
-                søknadPersistence.lagre(søknadprosess.fakta)
+                faktaPersistence.lagre(søknadprosess.fakta)
                 log.info { "Opprettet ny søknadprosess ${søknadprosess.fakta.uuid} på grunn av journalføring $journalpostId for søknad $søknadsId" }
 
                 søknadprosess.nesteSeksjoner()

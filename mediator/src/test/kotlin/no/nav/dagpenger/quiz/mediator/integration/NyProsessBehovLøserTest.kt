@@ -1,8 +1,8 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
+import no.nav.dagpenger.quiz.mediator.db.FaktaRecord
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
-import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.NyProsessBehovLøser
@@ -24,11 +24,11 @@ internal class NyProsessBehovLøserTest : SøknadBesvarer() {
         Postgres.withMigratedDb {
             Dagpenger.registrer(::FaktumTable)
             Innsending.registrer(::FaktumTable)
-            val søknadPersistence = SøknadRecord()
+            val søknadPersistence = FaktaRecord()
             val resultatPersistence = ResultatRecord()
             testRapid = TestRapid().also {
                 FaktumSvarService(
-                    søknadPersistence = søknadPersistence,
+                    faktaPersistence = søknadPersistence,
                     resultatPersistence = resultatPersistence,
                     rapidsConnection = it
                 )

@@ -3,9 +3,9 @@ package no.nav.dagpenger.quiz.mediator.integration
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.quiz.mediator.db.FaktaRecord
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
-import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
@@ -52,11 +52,11 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
     fun setup() {
         Postgres.withMigratedDb {
             AvslagPåMinsteinntektOppsett.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
-            val søknadPersistence = SøknadRecord()
+            val søknadPersistence = FaktaRecord()
             val resultatPersistence = ResultatRecord()
             testRapid = TestRapid().also {
                 FaktumSvarService(
-                    søknadPersistence = søknadPersistence,
+                    faktaPersistence = søknadPersistence,
                     resultatPersistence = resultatPersistence,
                     rapidsConnection = it
                 )
