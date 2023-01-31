@@ -28,7 +28,7 @@ class VilkårsvurderingLøserTest {
     fun setup() {
         Paragraf_4_23_alder_oppsett.registrer { prototypeSøknad ->
             søknadsprosess = Versjon.id(Paragraf_4_23_alder_oppsett.VERSJON_ID)
-                .søknadprosess(prototypeSøknad)
+                .utredningsprosess(prototypeSøknad)
         }
 
         val prosessPersistens = mockk<SøknadPersistence>().also {

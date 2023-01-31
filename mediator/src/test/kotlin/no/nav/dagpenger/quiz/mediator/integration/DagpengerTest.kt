@@ -28,7 +28,7 @@ internal class DagpengerTest : SøknadBesvarer() {
     fun setup() {
         Dagpenger.registrer { prototypeSøknad ->
             søknadsprosess = Versjon.id(Dagpenger.VERSJON_ID)
-                .søknadprosess(prototypeSøknad)
+                .utredningsprosess(prototypeSøknad)
         }
         val faktaPersistence = mockk<SøknadPersistence>().also {
             every { it.hent(any()) } returns søknadsprosess

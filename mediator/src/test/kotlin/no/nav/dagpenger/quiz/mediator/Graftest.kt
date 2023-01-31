@@ -126,7 +126,7 @@ class Graftest {
             prototypeFakta,
             prototypeSubsumsjon,
             prototypeWebSøknad
-        ).søknadprosess(
+        ).utredningsprosess(
             Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build())
         )
 
@@ -142,7 +142,7 @@ class Graftest {
             AvslagPåMinsteinntekt.regeltre,
             Seksjoner.utredningsprosess
         )
-            .søknadprosess(
+            .utredningsprosess(
                 Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build())
             )
 

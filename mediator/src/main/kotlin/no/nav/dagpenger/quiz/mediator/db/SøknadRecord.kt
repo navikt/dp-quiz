@@ -45,9 +45,9 @@ class SøknadRecord : SøknadPersistence {
         uuid: UUID,
     ): Utredningsprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
-        return Versjon.id(prosessVersjon).søknadprosess(person, uuid).also { søknadprosess ->
+        return Versjon.id(prosessVersjon).utredningsprosess(person, uuid).also { søknadprosess ->
             if (eksisterer(uuid)) return søknadprosess
-            NySøknad(søknadprosess.fakta)
+            NyFakta(søknadprosess.fakta)
         }
     }
 
@@ -88,7 +88,7 @@ class SøknadRecord : SøknadPersistence {
             )
         } ?: throw IllegalArgumentException("Kan ikke hente en søknad som ikke finnes, uuid: $uuid")
 
-        return Versjon.id(HenvendelsesType(Prosess(rad.navn), rad.versjonId)).søknadprosess(
+        return Versjon.id(HenvendelsesType(Prosess(rad.navn), rad.versjonId)).utredningsprosess(
             person = personRecord.hentPerson(rad.personId),
             uuid = uuid,
         ).also { søknadprosess ->

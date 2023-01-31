@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
 
@@ -20,7 +20,7 @@ class InnsendingMetadataStrategi : MetadataStrategi {
     override fun metadata(utredningsprosess: Utredningsprosess) =
         Metadata("GENERELL_INNSENDING", utredningsprosess.innsendingSvar())
 
-    private class HenvendelseType(utredningsprosess: Utredningsprosess) : SøknadprosessVisitor {
+    private class HenvendelseType(utredningsprosess: Utredningsprosess) : UtredningsprosessVisitor {
         var hva: String? = null
 
         init {

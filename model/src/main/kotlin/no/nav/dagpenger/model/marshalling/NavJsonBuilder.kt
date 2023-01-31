@@ -18,11 +18,11 @@ import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.putR
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
 
-class NavJsonBuilder(utredningsprosess: Utredningsprosess, private val seksjonNavn: String, indeks: Int = 0) : SøknadprosessVisitor {
+class NavJsonBuilder(utredningsprosess: Utredningsprosess, private val seksjonNavn: String, indeks: Int = 0) : UtredningsprosessVisitor {
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
@@ -39,7 +39,7 @@ class NavJsonBuilder(utredningsprosess: Utredningsprosess, private val seksjonNa
     }
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
         root.put("@event_name", "faktum_svar")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
@@ -50,7 +50,7 @@ class NavJsonBuilder(utredningsprosess: Utredningsprosess, private val seksjonNa
         root.set<ArrayNode>("@behov", behovNode)
         root.set<ArrayNode>("identer", identerNode)
 
-        faktumNavBehov = Versjon.id(prosessVersjon).faktumNavBehov ?: throw IllegalArgumentException("Finner ikke oversettelse til navbehov, versjon: $prosessVersjon")
+        faktumNavBehov = Versjon.id(henvendelsesType).faktumNavBehov ?: throw IllegalArgumentException("Finner ikke oversettelse til navbehov, versjon: $henvendelsesType")
     }
 
     override fun visit(type: Type, id: String, historisk: Boolean) {

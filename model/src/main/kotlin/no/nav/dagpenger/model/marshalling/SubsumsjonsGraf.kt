@@ -36,11 +36,11 @@ import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.SammensattSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import java.io.File
 
 class SubsumsjonsGraf(utredningsprosess: Utredningsprosess) :
-    SøknadprosessVisitor {
+    UtredningsprosessVisitor {
 
     var index = 0
     private var currentKanttype = OPPFYLT

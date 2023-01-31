@@ -21,10 +21,10 @@ import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilLandGruppe
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.visitor.FaktumVisitor
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import java.util.UUID
 
-class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : SøknadprosessVisitor {
+class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : UtredningsprosessVisitor {
     companion object {
         private val mapper = ObjectMapper()
     }
@@ -40,10 +40,10 @@ class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : Søknadpros
 
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
         root.put("@event_name", "Søknadsmal")
-        root.put("versjon_id", prosessVersjon.versjon)
-        root.put("versjon_navn", prosessVersjon.prosessnavn.id)
+        root.put("versjon_id", henvendelsesType.versjon)
+        root.put("versjon_navn", henvendelsesType.prosessnavn.id)
     }
 
     override fun postVisit(fakta: Fakta, uuid: UUID) {

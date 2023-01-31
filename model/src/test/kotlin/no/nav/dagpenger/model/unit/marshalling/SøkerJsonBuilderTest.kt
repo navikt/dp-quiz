@@ -495,7 +495,7 @@ internal class SøkerJsonBuilderTest {
             prototypeFakta,
             prototypeSubsumsjon,
             prototypeUtredningsprosess
-        ).søknadprosess(testPerson)
+        ).utredningsprosess(testPerson)
     }
 
     private fun assertMetadata(søkerJson: ObjectNode) {

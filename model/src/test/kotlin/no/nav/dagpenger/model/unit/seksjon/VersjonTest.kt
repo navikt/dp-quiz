@@ -40,7 +40,7 @@ internal class VersjonTest {
 
     @BeforeEach
     fun setup() {
-        utredningsprosess = versjon.søknadprosess(testPerson)
+        utredningsprosess = versjon.utredningsprosess(testPerson)
     }
 
     @Test

@@ -54,7 +54,7 @@ internal class FaktumSvarServiceTest {
     }
 
     val faktaPersistence = mockk<SøknadPersistence>().also {
-        every { it.hent(any()) } returns Versjon.id(prosessVersjon).søknadprosess(prototypeFakta)
+        every { it.hent(any()) } returns Versjon.id(prosessVersjon).utredningsprosess(prototypeFakta)
         every { it.lagre(any() as Fakta) } returns true
     }
     val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)

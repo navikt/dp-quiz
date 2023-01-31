@@ -66,7 +66,7 @@ internal class AvslagPåMinsteinntektTest {
             regeltre,
             utredningsprosess
         )
-            .søknadprosess(
+            .utredningsprosess(
                 Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build())
             )
 

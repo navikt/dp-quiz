@@ -109,7 +109,7 @@ internal class SøknadsmalJsonBuilderTest {
             prototypeFakta,
             prototypeSubsumsjon,
             prototypeUtredningsprosess
-        ).søknadprosess(testPerson)
+        ).utredningsprosess(testPerson)
     }
 
     private fun søkerSubsumsjon() = "regel" deltre {

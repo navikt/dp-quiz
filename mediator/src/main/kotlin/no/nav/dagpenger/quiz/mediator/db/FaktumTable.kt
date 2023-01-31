@@ -34,14 +34,14 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.model.visitor.FaktaVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import org.postgresql.util.PGobject
 import java.time.LocalDate
 import java.util.UUID
 
 // Forstår initialisering av faktum tabellen
-class FaktumTable(fakta: Fakta) : SøknadVisitor {
+class FaktumTable(fakta: Fakta) : FaktaVisitor {
 
     private var rootId: Int = 0
     private var indeks: Int = 0
@@ -53,7 +53,7 @@ class FaktumTable(fakta: Fakta) : SøknadVisitor {
         if (Versjonsjekker(fakta).ikkeEksisterer()) fakta.accept(this)
     }
 
-    private class Versjonsjekker(fakta: Fakta) : SøknadVisitor {
+    private class Versjonsjekker(fakta: Fakta) : FaktaVisitor {
 
         init {
             fakta.accept(this)
@@ -63,8 +63,8 @@ class FaktumTable(fakta: Fakta) : SøknadVisitor {
 
         fun ikkeEksisterer() = !eksisterer
 
-        override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
-            eksisterer = exists(prosessVersjon)
+        override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+            eksisterer = exists(henvendelsesType)
         }
 
         private companion object {
@@ -82,15 +82,15 @@ class FaktumTable(fakta: Fakta) : SøknadVisitor {
         }
     }
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
         val query = queryOf( //language=PostgreSQL
             "INSERT INTO V1_PROSESSVERSJON (navn, versjon_id) VALUES (:navn, :versjon_id) RETURNING id",
-            mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon)
+            mapOf("navn" to henvendelsesType.prosessnavn.id, "versjon_id" to henvendelsesType.versjon)
         )
         prosessVersjonId = using(sessionOf(dataSource)) { session ->
             session.run(
                 query.map { rad -> rad.int("id") }.asSingle
-            ) ?: throw IllegalStateException("Klarte ikke å opprette prosessversjon, $prosessVersjon")
+            ) ?: throw IllegalStateException("Klarte ikke å opprette prosessversjon, $henvendelsesType")
         }
     }
 

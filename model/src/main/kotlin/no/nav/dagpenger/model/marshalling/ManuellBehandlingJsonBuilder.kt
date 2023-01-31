@@ -17,12 +17,12 @@ import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.putR
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
 
 class ManuellBehandlingJsonBuilder(utredningsprosess: Utredningsprosess, private val seksjonNavn: String, indeks: Int = 0) :
-    SøknadprosessVisitor {
+    UtredningsprosessVisitor {
 
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
@@ -39,7 +39,7 @@ class ManuellBehandlingJsonBuilder(utredningsprosess: Utredningsprosess, private
 
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
         root.put("@event_name", "manuell_behandling")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")

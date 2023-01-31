@@ -63,7 +63,7 @@ internal class SaksbehandlerSeksjonerTest {
 
     @BeforeEach
     internal fun setup() {
-        seksjoner = søknadprosessTestBygger.søknadprosess(testPerson, uuid)
+        seksjoner = søknadprosessTestBygger.utredningsprosess(testPerson, uuid)
         f1 = seksjoner.boolsk(1)
         f3 = seksjoner.boolsk(3)
         f5 = seksjoner.boolsk(5)

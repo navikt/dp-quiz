@@ -421,6 +421,6 @@ internal class SaksbehandlerJsonBuilderTest {
             prototypeFakta,
             prototypeSubsumsjon,
             prototypeUtredningsprosess
-        ).søknadprosess(testPerson)
+        ).utredningsprosess(testPerson)
     }
 }

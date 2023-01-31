@@ -13,7 +13,7 @@ internal class InnsendingMetadataStrategiTest {
     init {
         Innsending.registrer { prototypeSøknad ->
             utredningsprosess = Versjon.id(Innsending.VERSJON_ID)
-                .søknadprosess(prototypeSøknad)
+                .utredningsprosess(prototypeSøknad)
         }
     }
 

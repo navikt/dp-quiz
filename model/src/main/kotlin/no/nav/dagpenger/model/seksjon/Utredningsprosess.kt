@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.faktum.TypedFaktum
 import no.nav.dagpenger.model.seksjon.Seksjon.Companion.saksbehandlerSeksjoner
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 
 class Utredningsprosess private constructor(
     val fakta: Fakta,
@@ -58,7 +58,7 @@ class Utredningsprosess private constructor(
             )
         }
 
-    fun accept(visitor: SøknadprosessVisitor) {
+    fun accept(visitor: UtredningsprosessVisitor) {
         visitor.preVisit(this)
         fakta.accept(visitor)
         seksjoner.forEach { it.accept(visitor) }

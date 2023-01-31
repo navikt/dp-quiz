@@ -29,11 +29,11 @@ import no.nav.dagpenger.model.subsumsjon.SannsynliggjøringsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
 
-class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : SøknadprosessVisitor {
+class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : UtredningsprosessVisitor {
     companion object {
         private val mapper = jacksonObjectMapper()
         private val skalIkkeBesvaresAvSøker = ReadOnlyStrategy { it.harIkkeRolle(Rolle.søker) }
@@ -58,10 +58,10 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Søk
 
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
         root.put("@event_name", "søker_oppgave")
-        root.put("versjon_id", prosessVersjon.versjon)
-        root.put("versjon_navn", prosessVersjon.prosessnavn.id)
+        root.put("versjon_id", henvendelsesType.versjon)
+        root.put("versjon_navn", henvendelsesType.prosessnavn.id)
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("søknad_uuid", "$uuid")

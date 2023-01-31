@@ -16,11 +16,11 @@ import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.model.visitor.FaktaVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.util.UUID
 
-class NySøknad(fakta: Fakta) : SøknadVisitor {
+class NyFakta(fakta: Fakta) : FaktaVisitor {
     private var internVersjonId = 0
     private var rootId = 0
     private var indeks = 0
@@ -49,8 +49,8 @@ class NySøknad(fakta: Fakta) : SøknadVisitor {
         }
     }
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
-        this.internVersjonId = hentInternId(prosessVersjon)
+    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+        this.internVersjonId = hentInternId(henvendelsesType)
         this.søknadUUID = uuid
     }
 

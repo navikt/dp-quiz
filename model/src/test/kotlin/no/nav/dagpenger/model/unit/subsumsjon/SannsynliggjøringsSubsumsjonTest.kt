@@ -21,7 +21,7 @@ import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.godkjentAv
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -159,7 +159,7 @@ class SannsynliggjøringsSubsumsjonTest {
         assertEquals(2, DuplikatVisitor(prosess).avhengigheter)
     }
 
-    class DuplikatVisitor(søknad: Utredningsprosess) : SøknadprosessVisitor {
+    class DuplikatVisitor(søknad: Utredningsprosess) : UtredningsprosessVisitor {
         var avhengigheter = 0
 
         init {

@@ -24,9 +24,9 @@ import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 
-abstract class SøknadJsonBuilder : SøknadprosessVisitor {
+abstract class FaktaJsonBuilder : UtredningsprosessVisitor {
     private val mapper = ObjectMapper()
     protected val root: ObjectNode = mapper.createObjectNode()
     protected val faktaNode = mapper.createArrayNode()

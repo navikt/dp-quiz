@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
@@ -18,7 +18,7 @@ class DagpengerMetadataStrategi : MetadataStrategi {
         return DagpengerSkjemakodeFinner(utredningsprosess).skjemaKode()
     }
 
-    private class DagpengerSkjemakodeFinner(utredningsprosess: Utredningsprosess) : SøknadprosessVisitor {
+    private class DagpengerSkjemakodeFinner(utredningsprosess: Utredningsprosess) : UtredningsprosessVisitor {
         private var permittert: Boolean = false
         private var gjenopptak: Boolean = false
 
@@ -40,8 +40,8 @@ class DagpengerMetadataStrategi : MetadataStrategi {
             }
         }
 
-        override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
-            require(prosessVersjon.prosessnavn == Prosess.Dagpenger) { "Kan kun håndtere ${Prosess.Dagpenger.name}, var ${prosessVersjon.prosessnavn}" }
+        override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+            require(henvendelsesType.prosessnavn == Prosess.Dagpenger) { "Kan kun håndtere ${Prosess.Dagpenger.name}, var ${henvendelsesType.prosessnavn}" }
         }
 
         override fun preVisit(

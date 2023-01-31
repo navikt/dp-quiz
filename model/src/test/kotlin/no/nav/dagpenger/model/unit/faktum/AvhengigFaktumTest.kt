@@ -64,7 +64,7 @@ internal class AvhengigFaktumTest {
                 TomSubsumsjon,
                 prototypeUtredningsprosess
             )
-                .søknadprosess(testPerson)
+                .utredningsprosess(testPerson)
 
         søknadprosess.generator(1).besvar(1)
         søknadprosess.dato("2.1").besvar(LocalDate.now())

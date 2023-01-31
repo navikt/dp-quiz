@@ -20,13 +20,13 @@ internal class SøknadPersistenceFake : SøknadPersistence {
         prosessVersjon: HenvendelsesType,
         uuid: UUID
     ): Utredningsprosess =
-        Versjon.id(SøknadEksempel.prosessVersjon).søknadprosess(Person(identer))
+        Versjon.id(SøknadEksempel.prosessVersjon).utredningsprosess(Person(identer))
             .also { utredningsprosess = it }
 
     override fun hent(uuid: UUID) = utredningsprosess!!.also { hentet++ }
 
     override fun lagre(fakta: Fakta): Boolean {
-        utredningsprosess = Versjon.id(SøknadEksempel.prosessVersjon).søknadprosess(fakta)
+        utredningsprosess = Versjon.id(SøknadEksempel.prosessVersjon).utredningsprosess(fakta)
         return true
     }
 

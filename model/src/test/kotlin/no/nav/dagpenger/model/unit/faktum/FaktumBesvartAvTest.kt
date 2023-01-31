@@ -10,7 +10,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
-import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.model.visitor.FaktaVisitor
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -28,7 +28,7 @@ internal class FaktumBesvartAvTest {
         assertEquals("A123456", BesvartAvVisitor(fakta).identer.first())
     }
 
-    private class BesvartAvVisitor(utredningsprosess: Utredningsprosess) : SøknadVisitor {
+    private class BesvartAvVisitor(utredningsprosess: Utredningsprosess) : FaktaVisitor {
 
         val identer = mutableListOf<String>()
         init {

@@ -2,30 +2,30 @@ package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.model.visitor.FaktaVisitor
 import java.time.LocalDate
 import java.util.UUID
 
 @Suppress("UNCHECKED_CAST")
 class Fakta private constructor(
     private val person: Person,
-    internal val prosessVersjon: HenvendelsesType,
+    internal val henvendelsesType: HenvendelsesType,
     val uuid: UUID,
     private val faktaMap: MutableMap<FaktumId, Faktum<*>>
 ) : TypedFaktum, Iterable<Faktum<*>> {
 
     internal val size get() = faktaMap.size
 
-    constructor(prosessVersjon: HenvendelsesType, vararg factories: FaktumFactory<*>) : this(
+    constructor(henvendelsesType: HenvendelsesType, vararg factories: FaktumFactory<*>) : this(
         Person.prototype,
-        prosessVersjon,
+        henvendelsesType,
         UUID.randomUUID(),
         factories.toList()
     )
 
-    constructor(person: Person, prosessVersjon: HenvendelsesType, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
+    constructor(person: Person, henvendelsesType: HenvendelsesType, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
         person,
-        prosessVersjon,
+        henvendelsesType,
         uuid,
         factories.toFaktaMap()
     )
@@ -170,9 +170,9 @@ class Fakta private constructor(
         }
     }
 
-    fun accept(visitor: SøknadVisitor) {
+    fun accept(visitor: FaktaVisitor) {
         person.accept(visitor)
-        visitor.preVisit(this, prosessVersjon, uuid)
+        visitor.preVisit(this, henvendelsesType, uuid)
         this.forEach { it.accept(visitor) }
         visitor.postVisit(this, uuid)
     }

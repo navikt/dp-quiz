@@ -19,7 +19,7 @@ class DagpengerflytTest {
     init {
         Dagpenger.registrer { prototypeSøknad ->
             utredningsprosess = Versjon.id(Dagpenger.VERSJON_ID)
-                .søknadprosess(prototypeSøknad)
+                .utredningsprosess(prototypeSøknad)
         }
     }
 

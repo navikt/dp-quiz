@@ -25,18 +25,18 @@ class Versjon private constructor(
     }
 
     init {
-        require(bygger.prosessVersjon() !in versjoner.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider" }
-        versjoner[bygger.prosessVersjon()] = this
+        require(bygger.prosessversjon() !in versjoner.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider" }
+        versjoner[bygger.prosessversjon()] = this
     }
 
-    fun søknadprosess(
+    fun utredningsprosess(
         person: Person,
         uuid: UUID = UUID.randomUUID()
     ): Utredningsprosess =
-        bygger.søknadprosess(person, uuid)
+        bygger.utredningsprosess(person, uuid)
 
-    fun søknadprosess(fakta: Fakta) =
-        bygger.søknadprosess(fakta)
+    fun utredningsprosess(fakta: Fakta) =
+        bygger.utredningsprosess(fakta)
 
     class Bygger(
         private val prototypeFakta: Fakta,
@@ -44,20 +44,20 @@ class Versjon private constructor(
         private val utredningsprosess: Utredningsprosess,
         internal val faktumNavBehov: FaktumNavBehov? = null
     ) {
-        fun søknadprosess(
+        fun utredningsprosess(
             person: Person,
             uuid: UUID = UUID.randomUUID()
         ): Utredningsprosess =
-            søknadprosess(prototypeFakta.bygg(person, prototypeFakta.prosessVersjon, uuid))
+            utredningsprosess(prototypeFakta.bygg(person, prototypeFakta.henvendelsesType, uuid))
 
-        fun søknadprosess(
+        fun utredningsprosess(
             fakta: Fakta
         ): Utredningsprosess {
             val subsumsjon = prototypeSubsumsjon.bygg(fakta)
             return utredningsprosess.bygg(fakta, subsumsjon)
         }
 
-        internal fun prosessVersjon() = prototypeFakta.prosessVersjon
+        internal fun prosessversjon() = prototypeFakta.henvendelsesType
         fun registrer() = Versjon(this)
     }
 }

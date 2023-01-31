@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.soknad
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DagpengerMetadataStrategi
@@ -15,18 +15,18 @@ internal class ProsessMetadataStrategi : MetadataStrategi {
         return SkjemastrategiVelger(utredningsprosess).skjemakodeStrategi()
     }
 
-    private class SkjemastrategiVelger(private val utredningsprosess: Utredningsprosess) : SøknadprosessVisitor {
+    private class SkjemastrategiVelger(private val utredningsprosess: Utredningsprosess) : UtredningsprosessVisitor {
         private lateinit var metadata: Metadata
 
         init {
             utredningsprosess.accept(this)
         }
 
-        override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
-            metadata = when (prosessVersjon.prosessnavn) {
+        override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+            metadata = when (henvendelsesType.prosessnavn) {
                 Prosess.Dagpenger -> DagpengerMetadataStrategi().metadata(utredningsprosess)
                 Prosess.Innsending -> InnsendingMetadataStrategi().metadata(utredningsprosess)
-                else -> throw IllegalArgumentException("Har ikke laget skjemakodestrategi for ${prosessVersjon.prosessnavn}")
+                else -> throw IllegalArgumentException("Har ikke laget skjemakodestrategi for ${henvendelsesType.prosessnavn}")
             }
         }
 

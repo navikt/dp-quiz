@@ -22,7 +22,7 @@ import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -72,7 +72,7 @@ class GeneratorFaktumTest {
 
     @Test
     fun ` periode faktum `() {
-        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson)
+        val søknadprosess = søknadprosessTestBygger.utredningsprosess(testPerson)
         søknadprosess.generator(1).besvar(2)
         søknadprosess.dato(4).besvar(5.januar)
         søknadprosess.dato("2.1").besvar(1.januar)
@@ -91,14 +91,14 @@ class GeneratorFaktumTest {
 
     @Test
     fun ` har med tom generator blir false `() {
-        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson)
+        val søknadprosess = søknadprosessTestBygger.utredningsprosess(testPerson)
         søknadprosess.generator(1).besvar(0)
         assertEquals(false, søknadprosess.rootSubsumsjon.resultat())
     }
 
     @Test
     fun ` har med en oppfylt generert subsumsjon blir true `() {
-        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson)
+        val søknadprosess = søknadprosessTestBygger.utredningsprosess(testPerson)
         søknadprosess.generator(1).besvar(1)
         søknadprosess.dato("2.1").besvar(1.januar)
         søknadprosess.dato("3.1").besvar(8.januar)
@@ -108,7 +108,7 @@ class GeneratorFaktumTest {
 
     @Test
     fun ` har med en ikke oppfylt generert subsumsjon blir false `() {
-        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson)
+        val søknadprosess = søknadprosessTestBygger.utredningsprosess(testPerson)
         søknadprosess.generator(1).besvar(1)
         søknadprosess.dato("2.1").besvar(1.desember)
         søknadprosess.dato("3.1").besvar(8.desember)
@@ -118,7 +118,7 @@ class GeneratorFaktumTest {
 
     @Test
     fun ` har med oppfylt og ikke oppfylt genererte subsumsjoner blir true `() {
-        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson)
+        val søknadprosess = søknadprosessTestBygger.utredningsprosess(testPerson)
         søknadprosess.generator(1).besvar(2)
         søknadprosess.dato("2.1").besvar(1.desember)
         søknadprosess.dato("3.1").besvar(8.desember)
@@ -176,14 +176,14 @@ class GeneratorFaktumTest {
                 prototypeSubsumsjon,
                 prototypeUtredningsprosess
             )
-        return søknadprosessTestBygger.søknadprosess(testPerson)
+        return søknadprosessTestBygger.utredningsprosess(testPerson)
     }
 
     private class GeneratorVisitor(
         utredningsprosess: Utredningsprosess,
         private val generatorer: MutableSet<GeneratorFaktum> = mutableSetOf()
     ) :
-        SøknadprosessVisitor,
+        UtredningsprosessVisitor,
         MutableSet<GeneratorFaktum> by generatorer {
 
         init {

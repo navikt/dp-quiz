@@ -35,7 +35,7 @@ class NesteSeksjonTest {
             prototypeSubsumsjon,
             prototypeUtredningsprosess
         )
-            .søknadprosess(testPerson)
+            .utredningsprosess(testPerson)
 
         assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
     }
@@ -62,7 +62,7 @@ class NesteSeksjonTest {
             prototypeSubsumsjon,
             prototypeUtredningsprosess
         )
-            .søknadprosess(testPerson).also { fakta ->
+            .utredningsprosess(testPerson).also { fakta ->
                 assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
             }
     }

@@ -10,7 +10,7 @@ import java.util.UUID
 
 class ResultatJsonBuilder(
     private val utredningsprosess: Utredningsprosess,
-) : SøknadJsonBuilder() {
+) : FaktaJsonBuilder() {
 
     init {
         utredningsprosess.fakta.accept(this)
@@ -25,13 +25,13 @@ class ResultatJsonBuilder(
         return super.resultat()
     }
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
-        super.preVisit(fakta, prosessVersjon, uuid)
+    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+        super.preVisit(fakta, henvendelsesType, uuid)
         root.put("@event_name", "prosess_resultat")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
-        root.put("versjon_id", prosessVersjon.versjon)
-        root.put("versjon_navn", prosessVersjon.prosessnavn.id)
+        root.put("versjon_id", henvendelsesType.versjon)
+        root.put("versjon_navn", henvendelsesType.prosessnavn.id)
         root.put("søknad_uuid", "$uuid")
         root.put("resultat", utredningsprosess.resultat())
         root.set<ArrayNode>("identer", identerNode)

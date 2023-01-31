@@ -37,7 +37,7 @@ class GenerertEndreTest {
             prototypeFakta,
             TomSubsumsjon,
             prototypeUtredningsprosess
-        ).søknadprosess(testPerson)
+        ).utredningsprosess(testPerson)
     }
 
     @Test

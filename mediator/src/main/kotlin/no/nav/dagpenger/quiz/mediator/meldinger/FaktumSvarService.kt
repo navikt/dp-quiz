@@ -10,7 +10,7 @@ import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
@@ -170,15 +170,15 @@ internal class FaktumSvarService(
 
     private fun harSvar() = { faktumNode: JsonNode -> faktumNode.has("svar") }
 
-    private class ProsessVersjonVisitor(utredningsprosess: Utredningsprosess) : SøknadprosessVisitor {
+    private class ProsessVersjonVisitor(utredningsprosess: Utredningsprosess) : UtredningsprosessVisitor {
         lateinit var prosessnavn: Prosessnavn
 
         init {
             utredningsprosess.accept(this)
         }
 
-        override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
-            prosessnavn = prosessVersjon.prosessnavn
+        override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+            prosessnavn = henvendelsesType.prosessnavn
         }
     }
 }

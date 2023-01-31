@@ -147,12 +147,12 @@ interface PersonVisitor : IdentVisitor {
     fun postVisit(person: Person, uuid: UUID) {}
 }
 
-interface SøknadVisitor : PersonVisitor, FaktumVisitor {
-    fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {}
+interface FaktaVisitor : PersonVisitor, FaktumVisitor {
+    fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {}
     fun postVisit(fakta: Fakta, uuid: UUID) {}
 }
 
-interface SøknadprosessVisitor : SubsumsjonVisitor, SøknadVisitor {
+interface UtredningsprosessVisitor : SubsumsjonVisitor, FaktaVisitor {
     fun preVisit(utredningsprosess: Utredningsprosess) {}
     fun postVisit(utredningsprosess: Utredningsprosess) {}
     fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {}

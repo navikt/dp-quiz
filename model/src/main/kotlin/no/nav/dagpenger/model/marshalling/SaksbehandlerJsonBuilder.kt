@@ -20,7 +20,7 @@ class SaksbehandlerJsonBuilder(
     private val utredningsprosess: Utredningsprosess,
     private val seksjonNavn: String,
     private val indeks: Int = 0
-) : SøknadJsonBuilder() {
+) : FaktaJsonBuilder() {
     private val relevanteFakta = mutableSetOf<String>()
     private val genererteFakta = mutableSetOf<Faktum<*>>()
 
@@ -33,8 +33,8 @@ class SaksbehandlerJsonBuilder(
         genererteFakta.forEach { it.accept(this) }
     }
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
-        super.preVisit(fakta, prosessVersjon, uuid)
+    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+        super.preVisit(fakta, henvendelsesType, uuid)
         root.put("@event_name", "oppgave")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")

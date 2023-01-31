@@ -25,7 +25,7 @@ internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
 
     private val faktaPersistence = mockk<SøknadPersistence>().also {
         every { it.hent(any()) } returns Versjon.id(henvendelsesType)
-            .søknadprosess(dagpengerSøknadsprosess.fakta)
+            .utredningsprosess(dagpengerSøknadsprosess.fakta)
         every { it.lagre(any() as Fakta) } returns true
     }
 
@@ -68,7 +68,7 @@ internal class AvslagPåMinsteinntektFaktumSvarflytTest : SøknadBesvarer() {
 
     private val faktaPersistence = mockk<SøknadPersistence>().also {
         every { it.hent(any()) } returns Versjon.id(henvendelsesType)
-            .søknadprosess(dagpengerSøknadsprosess.fakta)
+            .utredningsprosess(dagpengerSøknadsprosess.fakta)
         every { it.lagre(any() as Fakta) } returns true
     }
 

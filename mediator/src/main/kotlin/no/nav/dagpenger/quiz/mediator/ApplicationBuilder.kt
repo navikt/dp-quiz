@@ -63,7 +63,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                     FaktumTable(prototype)
 
                     Versjon.id(Versjon.siste(Prosess.Dagpenger)).also { versjon ->
-                        val søknadsprosess = versjon.søknadprosess(prototype)
+                        val søknadsprosess = versjon.utredningsprosess(prototype)
                         val malJson = SøknadsmalJsonBuilder(søknadsprosess).resultat().toString()
                         rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
                     }
@@ -73,7 +73,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                     FaktumTable(prototype)
 
                     Versjon.id(Versjon.siste(Prosess.Innsending)).also { versjon ->
-                        val søknadsprosess = versjon.søknadprosess(prototype)
+                        val søknadsprosess = versjon.utredningsprosess(prototype)
                         val malJson = SøknadsmalJsonBuilder(søknadsprosess).resultat().toString()
                         rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
                     }

@@ -110,7 +110,7 @@ private val søknadprosessTestBygger = Versjon.Bygger(
 )
 
 /* ktlint-disable parameter-list-wrapping */
-internal fun eksempelSøknad() = søknadprosessTestBygger.søknadprosess(testPerson).also { søknadprosess ->
+internal fun eksempelSøknad() = søknadprosessTestBygger.utredningsprosess(testPerson).also { søknadprosess ->
     bursdag67 = søknadprosess.dato(1) as GrunnleggendeFaktum<LocalDate>
     søknadsdato = søknadprosess.dato(2) as GrunnleggendeFaktum<LocalDate>
     ønsketdato = søknadprosess.dato(3) as GrunnleggendeFaktum<LocalDate>

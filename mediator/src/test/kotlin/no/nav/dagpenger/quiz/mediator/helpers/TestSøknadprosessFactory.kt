@@ -18,7 +18,7 @@ internal fun Fakta.testSøknadprosess(
         Utredningsprosess(
             *seksjon().toTypedArray()
         )
-    ).søknadprosess(testPerson)
+    ).utredningsprosess(testPerson)
 }
 
 internal val testPerson = Person(Identer.Builder().folkeregisterIdent("12020052345").aktørId("aktørId").build())

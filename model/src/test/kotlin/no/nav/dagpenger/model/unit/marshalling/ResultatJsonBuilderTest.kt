@@ -116,6 +116,6 @@ internal class ResultatJsonBuilderTest {
             prototypeFakta,
             prototypeSubsumsjon,
             prototypeUtredningsprosess
-        ).søknadprosess(testPerson)
+        ).utredningsprosess(testPerson)
     }
 }

@@ -140,7 +140,7 @@ private val søknadprosessTestBygger =
 
 internal class NyttEksempel() {
     internal val utredningsprosess: Utredningsprosess by lazy {
-        søknadprosessTestBygger.søknadprosess(testPerson).also {
+        søknadprosessTestBygger.utredningsprosess(testPerson).also {
             seksjon1 = it[0]
             seksjon2 = it[1]
             seksjon3 = it[2]
