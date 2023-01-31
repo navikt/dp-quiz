@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.februar
@@ -21,7 +21,7 @@ import kotlin.test.assertTrue
 
 internal class DinSituasjonTest {
     private val fakta = DinSituasjon.fakta()
-    private val søknad = Fakta(Prosessversjon(Prosess.Dagpenger, -1), *fakta)
+    private val søknad = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *fakta)
     private lateinit var faktagrupper: Faktagrupper
 
     @BeforeEach
@@ -459,7 +459,7 @@ internal class DinSituasjonTest {
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val fakta = Fakta(Prosessversjon(Prosess.Dagpenger, -1), *DinSituasjon.fakta())
+        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *DinSituasjon.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             DinSituasjon.regeltre(fakta)
         ) {

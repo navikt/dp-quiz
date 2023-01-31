@@ -28,7 +28,7 @@ import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
@@ -63,12 +63,12 @@ class FaktumTable(fakta: Fakta) : SøknadVisitor {
 
         fun ikkeEksisterer() = !eksisterer
 
-        override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+        override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
             eksisterer = exists(prosessVersjon)
         }
 
         private companion object {
-            private fun exists(prosessVersjon: Prosessversjon): Boolean {
+            private fun exists(prosessVersjon: HenvendelsesType): Boolean {
                 val query = queryOf( //language=PostgreSQL
                     "SELECT id FROM V1_PROSESSVERSJON WHERE navn = :navn AND versjon_id = :versjon_id",
                     mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon)
@@ -82,7 +82,7 @@ class FaktumTable(fakta: Fakta) : SøknadVisitor {
         }
     }
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
         val query = queryOf( //language=PostgreSQL
             "INSERT INTO V1_PROSESSVERSJON (navn, versjon_id) VALUES (:navn, :versjon_id) RETURNING id",
             mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon)
@@ -159,7 +159,7 @@ class FaktumTable(fakta: Fakta) : SøknadVisitor {
         avhengigheter[faktum] = avhengigeFakta
     }
 
-    override fun postVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun postVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
         avhengigheter.forEach { (parent, children) -> faktumFaktum(dbIder[parent]!!, children, "avhengig_faktum") }
     }
 

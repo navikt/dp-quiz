@@ -1,6 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 
 internal class VernepliktTest {
 
-    private val fakta = Fakta(Prosessversjon(Prosess.Dagpenger, -1), *Verneplikt.fakta())
+    private val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *Verneplikt.fakta())
     private lateinit var faktagrupper: Faktagrupper
 
     @Test

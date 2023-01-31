@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.seksjon
 
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Prosessnavn
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -14,13 +14,13 @@ class Versjon private constructor(
     val faktumNavBehov get() = bygger.faktumNavBehov
 
     companion object {
-        val versjoner = mutableMapOf<Prosessversjon, Versjon>()
-        fun siste(prosessnavn: Prosessnavn): Prosessversjon {
+        val versjoner = mutableMapOf<HenvendelsesType, Versjon>()
+        fun siste(prosessnavn: Prosessnavn): HenvendelsesType {
             return versjoner.keys.filter { it.prosessnavn.id == prosessnavn.id }.maxByOrNull { it.versjon }
                 ?: throw IllegalArgumentException("Det finnes ingen versjoner!")
         }
 
-        fun id(versjonId: Prosessversjon) =
+        fun id(versjonId: HenvendelsesType) =
             versjoner[versjonId] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $versjonId")
     }
 

@@ -7,7 +7,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.regel.er
@@ -35,7 +35,7 @@ internal class FaktumSvarServiceTest {
 
     companion object {
 
-        private val prosessVersjon = Prosessversjon(Testprosess.Test, -3000)
+        private val prosessVersjon = HenvendelsesType(Testprosess.Test, -3000)
         val prototypeFakta = Fakta(
             prosessVersjon,
             heltall faktum "generator" id 10 genererer 11 og 12,

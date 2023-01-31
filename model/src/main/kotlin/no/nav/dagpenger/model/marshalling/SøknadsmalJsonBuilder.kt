@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.LandGrupper
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -40,13 +40,13 @@ class SøknadsmalJsonBuilder(faktagrupper: Faktagrupper) : SøknadprosessVisitor
 
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
         root.put("@event_name", "Søknadsmal")
         root.put("versjon_id", prosessVersjon.versjon)
         root.put("versjon_navn", prosessVersjon.prosessnavn.id)
     }
 
-    override fun postVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun postVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
         root.set<ArrayNode>("seksjoner", seksjoner)
     }
 

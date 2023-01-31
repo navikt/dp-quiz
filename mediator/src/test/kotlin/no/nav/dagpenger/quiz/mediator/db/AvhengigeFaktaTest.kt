@@ -22,7 +22,7 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
@@ -54,7 +54,7 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig faktum reset`() {
-        val prosessVersjon = Prosessversjon(Testprosess.Test, 634)
+        val prosessVersjon = HenvendelsesType(Testprosess.Test, 634)
         Postgres.withMigratedDb {
             val prototypeFakta = Fakta(
                 prosessVersjon,
@@ -95,7 +95,7 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig faktum rehydreres`() {
-        val prosessVersjon = Prosessversjon(Testprosess.Test, 635)
+        val prosessVersjon = HenvendelsesType(Testprosess.Test, 635)
 
         Postgres.withMigratedDb {
             val prototypeFakta = Fakta(
@@ -140,7 +140,7 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig av utledet faktum rehydreres`() {
-        val prosessVersjon = Prosessversjon(Testprosess.Test, 636)
+        val prosessVersjon = HenvendelsesType(Testprosess.Test, 636)
 
         Postgres.withMigratedDb {
             val prototypeFakta = Fakta(
@@ -184,7 +184,7 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Alle avhengige faktumtyper resettes`() {
-        val prosessVersjon = Prosessversjon(Testprosess.Test, 637)
+        val prosessVersjon = HenvendelsesType(Testprosess.Test, 637)
         Postgres.withMigratedDb {
             val prototypeFakta = Fakta(
                 prosessVersjon,

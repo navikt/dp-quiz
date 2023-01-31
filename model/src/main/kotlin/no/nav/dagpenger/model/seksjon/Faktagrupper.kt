@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.seksjon
 
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.TypedFaktum
@@ -17,7 +17,7 @@ class Faktagrupper private constructor(
     private val seksjoner: MutableList<Seksjon>
 ) : TypedFaktum by fakta, MutableList<Seksjon> by seksjoner {
     constructor(vararg seksjoner: Seksjon) : this(
-        Fakta(Prosessversjon.prototypeversjon),
+        Fakta(HenvendelsesType.prototypeversjon),
         TomSubsumsjon,
         seksjoner.toMutableList()
     )

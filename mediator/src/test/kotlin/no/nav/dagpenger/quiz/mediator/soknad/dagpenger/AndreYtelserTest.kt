@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.MedSøknad
@@ -41,7 +41,7 @@ internal class AndreYtelserTest {
 
     @Test
     fun `Hvis bruker ikke får noen andre ytelser`() {
-        val fakta = Fakta(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             AndreYtelser.regeltre(fakta)
         ) {
@@ -152,7 +152,7 @@ internal class AndreYtelserTest {
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val fakta = Fakta(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             AndreYtelser.regeltre(fakta)
         ) {
@@ -167,7 +167,7 @@ internal class AndreYtelserTest {
 
     @Test
     fun `For et EØS-land skal det være en egen gruppe for kun EØS-land`() {
-        val fakta = Fakta(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             AndreYtelser.regeltre(fakta)
         ) {
@@ -194,7 +194,7 @@ internal class AndreYtelserTest {
     }
 
     private fun verifiserAnnenYtelseUtenØkonomiskGode(kodeForSpesifikkYtelse: (Faktagrupper) -> Unit) {
-        val fakta = Fakta(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             AndreYtelser.regeltre(fakta)
         ) {

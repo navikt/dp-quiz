@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Prosessnavn
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
@@ -178,7 +178,7 @@ internal class FaktumSvarService(
             faktagrupper.accept(this)
         }
 
-        override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+        override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
             prosessnavn = prosessVersjon.prosessnavn
         }
     }

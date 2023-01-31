@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import java.time.LocalDateTime
@@ -25,7 +25,7 @@ class ResultatJsonBuilder(
         return super.resultat()
     }
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
         super.preVisit(fakta, prosessVersjon, uuid)
         root.put("@event_name", "prosess_resultat")
         root.put("@opprettet", "${LocalDateTime.now()}")

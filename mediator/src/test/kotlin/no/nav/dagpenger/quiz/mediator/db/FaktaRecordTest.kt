@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.april
 import no.nav.dagpenger.model.helpers.assertDeepEquals
@@ -57,7 +57,7 @@ internal class FaktaRecordTest {
 
             assertRecordCount(1, "soknad")
             assertRecordCount(expectedFaktaCount, "faktum_verdi")
-            SøknadRecord().ny(UNG_PERSON_FNR_2018, Web, Prosessversjon(Testprosess.Test, 888))
+            SøknadRecord().ny(UNG_PERSON_FNR_2018, Web, HenvendelsesType(Testprosess.Test, 888))
             assertRecordCount(2, "soknad")
             assertRecordCount(expectedFaktaCount * 2, "faktum_verdi")
             lagreHentOgSammenlign()

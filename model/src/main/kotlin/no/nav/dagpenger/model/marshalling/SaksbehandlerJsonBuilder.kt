@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -33,7 +33,7 @@ class SaksbehandlerJsonBuilder(
         genererteFakta.forEach { it.accept(this) }
     }
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
         super.preVisit(fakta, prosessVersjon, uuid)
         root.put("@event_name", "oppgave")
         root.put("@opprettet", "${LocalDateTime.now()}")

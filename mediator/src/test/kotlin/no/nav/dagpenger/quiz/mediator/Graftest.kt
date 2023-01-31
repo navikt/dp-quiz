@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf
@@ -52,7 +52,7 @@ class Graftest {
         val registrertArbeidssøkerPeriodeTom = 15
 
         val prototypeFakta = Fakta(
-            Prosessversjon(Testprosess.Test, 509),
+            HenvendelsesType(Testprosess.Test, 509),
             dato faktum "Datoen du fyller 67" id bursdag67,
             dato faktum "Datoen du søker om dagpenger" id søknadsdato,
             dato faktum "Datoen du ønsker dagpenger fra" id ønsketdato,

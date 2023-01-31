@@ -1,7 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import mu.KotlinLogging
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -20,7 +20,7 @@ internal object Dagpenger {
      *
      * Dette for at innsendte søknader fortsatt skal kunne lastes, uten å bli migrert fram.
      */
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 249)
+    val VERSJON_ID = HenvendelsesType(Prosess.Dagpenger, 249)
 
     fun registrer(registrer: (prototype: Fakta) -> Unit) {
         registrer(prototypeFakta)

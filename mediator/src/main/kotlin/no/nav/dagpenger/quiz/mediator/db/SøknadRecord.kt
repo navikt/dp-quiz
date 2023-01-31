@@ -19,7 +19,7 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessnavn
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -42,7 +42,7 @@ class SøknadRecord : SøknadPersistence {
     override fun ny(
         identer: Identer,
         type: Versjon.UserInterfaceType,
-        prosessVersjon: Prosessversjon,
+        prosessVersjon: HenvendelsesType,
         uuid: UUID,
     ): Faktagrupper {
         val person = personRecord.hentEllerOpprettPerson(identer)
@@ -89,7 +89,7 @@ class SøknadRecord : SøknadPersistence {
             )
         } ?: throw IllegalArgumentException("Kan ikke hente en søknad som ikke finnes, uuid: $uuid")
 
-        return Versjon.id(Prosessversjon(Prosess(rad.navn), rad.versjonId)).søknadprosess(
+        return Versjon.id(HenvendelsesType(Prosess(rad.navn), rad.versjonId)).søknadprosess(
             person = personRecord.hentPerson(rad.personId),
             type = Versjon.UserInterfaceType.fromId(rad.typeId),
             uuid = uuid,
@@ -126,7 +126,7 @@ class SøknadRecord : SøknadPersistence {
         return true
     }
 
-    override fun migrer(uuid: UUID, tilVersjon: Prosessversjon?): Prosessversjon {
+    override fun migrer(uuid: UUID, tilVersjon: HenvendelsesType?): HenvendelsesType {
         val gjeldendeVersjon = prosessversjon(uuid)
         val nyVersjon = tilVersjon ?: gjeldendeVersjon.siste()
 
@@ -198,7 +198,7 @@ class SøknadRecord : SøknadPersistence {
             uuid,
         ).map { it.bigDecimal("id").toBigInteger() }.asSingle
 
-    private fun settVersjon(soknadId: BigInteger, versjon: Prosessversjon) =
+    private fun settVersjon(soknadId: BigInteger, versjon: HenvendelsesType) =
         queryOf(
             // language=PostgreSQL
             """UPDATE soknad
@@ -208,7 +208,7 @@ class SøknadRecord : SøknadPersistence {
             mapOf("navn" to versjon.prosessnavn.id, "versjonId" to versjon.versjon, "soknadId" to soknadId),
         ).asUpdate
 
-    private fun hentFaktum(sisteVersjon: Prosessversjon) =
+    private fun hentFaktum(sisteVersjon: HenvendelsesType) =
         queryOf(
             // language=PostgreSQL
             """
@@ -235,7 +235,7 @@ class SøknadRecord : SøknadPersistence {
                 |WHERE s.uuid = :uuid
                 """.trimMargin(),
                 mapOf("uuid" to uuid),
-            ).map { Prosessversjon(Prosess(it.string("navn")), it.int("versjon_id")) }.asSingle,
+            ).map { HenvendelsesType(Prosess(it.string("navn")), it.int("versjon_id")) }.asSingle,
         )
     } ?: throw IllegalArgumentException("Kan ikke finne prosessversjon for en søknad som ikke finnes, uuid: $uuid")
 

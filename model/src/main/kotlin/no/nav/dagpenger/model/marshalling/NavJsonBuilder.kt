@@ -10,7 +10,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer.Ident.Type
 import no.nav.dagpenger.model.faktum.LandGrupper
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -39,7 +39,7 @@ class NavJsonBuilder(faktagrupper: Faktagrupper, private val seksjonNavn: String
     }
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
         root.put("@event_name", "faktum_svar")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")

@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -148,8 +148,8 @@ interface PersonVisitor : IdentVisitor {
 }
 
 interface SøknadVisitor : PersonVisitor, FaktumVisitor {
-    fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {}
-    fun postVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {}
+    fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {}
+    fun postVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {}
 }
 
 interface SøknadprosessVisitor : SubsumsjonVisitor, SøknadVisitor {

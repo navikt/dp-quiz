@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.grensedato67år
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
@@ -26,7 +26,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 
 internal object Paragraf_4_23_alder_oppsett {
 
-    val VERSJON_ID = Prosessversjon(Prosess.Paragraf_4_23_alder, 2)
+    val VERSJON_ID = HenvendelsesType(Prosess.Paragraf_4_23_alder, 2)
 
     const val virkningsdato = 1
     const val fødselsdato = 2

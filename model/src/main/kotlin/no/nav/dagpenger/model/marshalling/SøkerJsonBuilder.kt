@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.LandGrupper
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -58,7 +58,7 @@ class SøkerJsonBuilder(private val faktagrupper: Faktagrupper) : Søknadprosess
 
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
         root.put("@event_name", "søker_oppgave")
         root.put("versjon_id", prosessVersjon.versjon)
         root.put("versjon_navn", prosessVersjon.prosessnavn.id)
@@ -74,7 +74,7 @@ class SøkerJsonBuilder(private val faktagrupper: Faktagrupper) : Søknadprosess
         }
     }
 
-    override fun postVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun postVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
         root.set<ArrayNode>("seksjoner", seksjoner)
     }
 

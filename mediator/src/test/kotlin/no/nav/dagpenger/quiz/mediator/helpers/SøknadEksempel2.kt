@@ -12,7 +12,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.regel.er
@@ -21,7 +21,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
 
 internal object SøknadEksempel2 {
-    val prosessVersjon = Prosessversjon(Testprosess.Test, 889)
+    val prosessVersjon = HenvendelsesType(Testprosess.Test, 889)
     internal val prototypeFakta by lazy {
         Fakta(
             prosessVersjon,

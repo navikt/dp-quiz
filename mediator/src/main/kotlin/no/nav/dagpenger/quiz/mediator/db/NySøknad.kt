@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -38,7 +38,7 @@ class NySøknad(fakta: Fakta, private val type: Versjon.UserInterfaceType) : Sø
         personId = uuid
     }
 
-    private fun hentInternId(prosessVersjon: Prosessversjon): Int {
+    private fun hentInternId(prosessVersjon: HenvendelsesType): Int {
         val query = queryOf( //language=PostgreSQL
             "SELECT id FROM v1_prosessversjon WHERE navn = :navn AND versjon_id = :versjon_id",
             mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon)
@@ -50,7 +50,7 @@ class NySøknad(fakta: Fakta, private val type: Versjon.UserInterfaceType) : Sø
         }
     }
 
-    override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
         this.internVersjonId = hentInternId(prosessVersjon)
         this.søknadUUID = uuid
     }
@@ -60,7 +60,7 @@ class NySøknad(fakta: Fakta, private val type: Versjon.UserInterfaceType) : Sø
         this.indeks = indeks
     }
 
-    override fun postVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun postVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
         val faktumInsertStatement = //language=PostgreSQL
             """INSERT INTO faktum_verdi
                                 (soknad_id, indeks, faktum_id)

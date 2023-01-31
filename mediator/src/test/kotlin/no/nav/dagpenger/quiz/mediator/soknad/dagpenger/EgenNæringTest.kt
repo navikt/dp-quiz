@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Flervalg
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -17,7 +17,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class EgenNæringTest {
-    private val fakta = Fakta(Prosessversjon(Prosess.Dagpenger, versjon = -1), *EgenNæring.fakta())
+    private val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, versjon = -1), *EgenNæring.fakta())
     private lateinit var faktagrupper: Faktagrupper
 
     @BeforeEach

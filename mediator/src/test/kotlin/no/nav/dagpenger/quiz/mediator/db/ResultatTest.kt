@@ -5,7 +5,7 @@ import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
@@ -28,7 +28,7 @@ internal class ResultatTest {
     private lateinit var søknadRecord: SøknadRecord
     private lateinit var resultatRecord: ResultatRecord
 
-    private fun setup(prosessVersjon: Prosessversjon) {
+    private fun setup(prosessVersjon: HenvendelsesType) {
         val prototypeFakta = Fakta(
             prosessVersjon,
             boolsk faktum "f1" id 19
@@ -63,7 +63,7 @@ internal class ResultatTest {
 
     @Test
     fun `Lagre resultat`() {
-        setup(Prosessversjon(Testprosess.Test, 935))
+        setup(HenvendelsesType(Testprosess.Test, 935))
         faktagrupper.boolsk(19).besvar(false)
 
         val resultat = faktagrupper.resultat()
@@ -80,7 +80,7 @@ internal class ResultatTest {
 
     @Test
     fun `Lagrer sendt til manuell behandling`() {
-        setup(Prosessversjon(Testprosess.Test, 936))
+        setup(HenvendelsesType(Testprosess.Test, 936))
         val seksjonsnavn = "manuell seksjon"
         resultatRecord.lagreManuellBehandling(faktagrupper.fakta.uuid, seksjonsnavn)
 
