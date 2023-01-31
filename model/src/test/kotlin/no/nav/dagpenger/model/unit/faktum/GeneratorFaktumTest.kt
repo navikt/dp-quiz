@@ -17,8 +17,8 @@ import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.utfylt
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -46,7 +46,7 @@ class GeneratorFaktumTest {
             søknadPrototype.dato(4) mellom søknadPrototype.dato(2) og søknadPrototype.dato(3)
         }
 
-        val prototypeSøknadprosess = Søknadprosess(
+        val prototypeFaktagrupper = Faktagrupper(
             Seksjon(
                 "periode antall",
                 Rolle.nav,
@@ -64,7 +64,7 @@ class GeneratorFaktumTest {
                 søknadPrototype dato 4,
             ),
         )
-        søknadprosessTestBygger = Versjon.Bygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
+        søknadprosessTestBygger = Versjon.Bygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
     }
 
     @Test
@@ -163,24 +163,24 @@ class GeneratorFaktumTest {
         søknadPrototype: Søknad,
         prototypeSubsumsjon: Subsumsjon,
         vararg seksjoner: Seksjon
-    ): Søknadprosess {
-        val prototypeSøknadprosess = Søknadprosess(
+    ): Faktagrupper {
+        val prototypeFaktagrupper = Faktagrupper(
             *seksjoner
         )
         val søknadprosessTestBygger =
-            Versjon.Bygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
+            Versjon.Bygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
         return søknadprosessTestBygger.søknadprosess(testPerson, Web)
     }
 
     private class GeneratorVisitor(
-        søknadprosess: Søknadprosess,
+        faktagrupper: Faktagrupper,
         private val generatorer: MutableSet<GeneratorFaktum> = mutableSetOf()
     ) :
         SøknadprosessVisitor,
         MutableSet<GeneratorFaktum> by generatorer {
 
         init {
-            søknadprosess.accept(this)
+            faktagrupper.accept(this)
         }
 
         override fun <R : Comparable<R>> visitMedSvar(

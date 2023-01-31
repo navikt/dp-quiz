@@ -16,7 +16,7 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt.regeltre
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.Seksjoner.søknadprosess
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.Seksjoner.faktagrupper
 
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
@@ -173,7 +173,7 @@ internal object AvslagPåMinsteinntektOppsett {
             prototypeSøknad = prototypeSøknad,
             prototypeSubsumsjon = regeltre,
             prototypeUserInterfaces = mapOf(
-                Versjon.UserInterfaceType.Web to søknadprosess
+                Versjon.UserInterfaceType.Web to faktagrupper
             ),
             faktumNavBehov = faktumNavBehov
         ).registrer().also {

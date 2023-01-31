@@ -16,7 +16,7 @@ class Seksjon private constructor(
     private val avhengerAvFakta: MutableSet<Faktum<*>>,
     val indeks: Int = 0
 ) : MutableSet<Faktum<*>> by seksjonFakta {
-    private lateinit var _søknadprosess: Søknadprosess
+    private lateinit var _faktagrupper: Faktagrupper
     private val genererteSeksjoner = mutableListOf<Seksjon>()
 
     init {
@@ -36,7 +36,7 @@ class Seksjon private constructor(
         internal fun Collection<Seksjon>.brukerSeksjoner() =
             this.filter { it.rolle == Rolle.søker }
 
-        internal fun List<Seksjon>.medSøknadprosess() = filter { it::_søknadprosess.isInitialized }
+        internal fun List<Seksjon>.medSøknadprosess() = filter { it::_faktagrupper.isInitialized }
     }
 
     constructor(navn: String, rolle: Rolle, vararg fakta: Faktum<*>) : this(
@@ -54,15 +54,15 @@ class Seksjon private constructor(
             rolle,
             seksjonFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet(),
             avhengerAvFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet()
-        ).also { it.søknadprosess(_søknadprosess) }
+        ).also { it.søknadprosess(_faktagrupper) }
 
     internal fun gjeldendeFakta(subsumsjon: Subsumsjon) = filtrertSeksjon(subsumsjon.nesteFakta())
 
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>) =
         nesteFakta.any { it in seksjonFakta }
 
-    internal fun søknadprosess(søknadprosess: Søknadprosess) {
-        this._søknadprosess = søknadprosess
+    internal fun søknadprosess(faktagrupper: Faktagrupper) {
+        this._faktagrupper = faktagrupper
     }
 
     internal fun bareTemplates() = seksjonFakta.all { it is TemplateFaktum }
@@ -70,9 +70,9 @@ class Seksjon private constructor(
     internal fun deepCopy(indeks: Int): Seksjon {
         return if (indeks <= genererteSeksjoner.size) genererteSeksjoner[indeks - 1]
         else Seksjon(navn, rolle, mutableSetOf(), avhengerAvFakta.toMutableSet(), indeks).also {
-            _søknadprosess.add(_søknadprosess.indexOf(this) + indeks, it)
+            _faktagrupper.add(_faktagrupper.indexOf(this) + indeks, it)
             genererteSeksjoner.add(it)
-            it.søknadprosess(_søknadprosess)
+            it.søknadprosess(_faktagrupper)
         }
     }
 
@@ -86,11 +86,11 @@ class Seksjon private constructor(
     }
 
     internal fun add(faktum: GrunnleggendeFaktum<*>): Boolean =
-        _søknadprosess.idOrNull(faktum.faktumId).let { eksisterendeFaktum ->
+        _faktagrupper.idOrNull(faktum.faktumId).let { eksisterendeFaktum ->
             (eksisterendeFaktum == null).also {
                 if (it) { // Use existing Faktum
                     seksjonFakta.add(faktum)
-                    _søknadprosess.add(faktum)
+                    _faktagrupper.add(faktum)
                 } else { // Use new Faktum
                     seksjonFakta.add(eksisterendeFaktum as GrunnleggendeFaktum<*>)
                 }
@@ -114,8 +114,8 @@ class Seksjon private constructor(
             it.tilbakestill(templateFaktumId)
             if (it.isEmpty()) genererteSeksjoner.remove(it)
         }
-        _søknadprosess.removeIf { it.isEmpty() }
+        _faktagrupper.removeIf { it.isEmpty() }
     }
 
-    fun somSpørsmål() = rolle.spørsmål(_søknadprosess, navn)
+    fun somSpørsmål() = rolle.spørsmål(_faktagrupper, navn)
 }

@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class BareEnAvSubsumsjon private constructor(
@@ -18,11 +18,11 @@ class BareEnAvSubsumsjon private constructor(
         TomSubsumsjon
     )
 
-    override fun deepCopy(søknadprosess: Søknadprosess) = BareEnAvSubsumsjon(
+    override fun deepCopy(faktagrupper: Faktagrupper) = BareEnAvSubsumsjon(
         navn,
-        subsumsjoner.map { it.deepCopy(søknadprosess) },
-        oppfyltSubsumsjon.deepCopy(søknadprosess),
-        ikkeOppfyltSubsumsjon.deepCopy(søknadprosess)
+        subsumsjoner.map { it.deepCopy(faktagrupper) },
+        oppfyltSubsumsjon.deepCopy(faktagrupper),
+        ikkeOppfyltSubsumsjon.deepCopy(faktagrupper)
     )
 
     override fun bygg(søknad: Søknad) = BareEnAvSubsumsjon(

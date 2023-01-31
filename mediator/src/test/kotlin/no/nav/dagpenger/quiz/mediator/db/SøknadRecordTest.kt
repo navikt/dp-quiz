@@ -20,7 +20,7 @@ import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.mai
 import no.nav.dagpenger.model.helpers.mars
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
@@ -45,8 +45,8 @@ internal class SøknadRecordTest {
         private const val expectedFaktaCount = 28
     }
 
-    private lateinit var originalSøknadprosess: Søknadprosess
-    private lateinit var rehydrertSøknadprosess: Søknadprosess
+    private lateinit var originalFaktagrupper: Faktagrupper
+    private lateinit var rehydrertFaktagrupper: Faktagrupper
     private lateinit var søknadRecord: SøknadRecord
 
     @Test
@@ -69,17 +69,17 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
-            originalSøknadprosess.dato(2).besvar(LocalDate.now())
-            originalSøknadprosess.inntekt(6).besvar(10000.årlig)
-            originalSøknadprosess.boolsk(10).besvar(true)
-            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sid:sse"))
-            originalSøknadprosess.envalg(20).besvar(Envalg("f20.envalg1"))
-            originalSøknadprosess.flervalg(21).besvar(Flervalg("f21.flervalg1"))
-            originalSøknadprosess.heltall(22).besvar(123)
-            originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
-            originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
-            originalSøknadprosess.land(25).besvar(Land("SWE"))
-            originalSøknadprosess.desimaltall(26).besvar(2.5)
+            originalFaktagrupper.dato(2).besvar(LocalDate.now())
+            originalFaktagrupper.inntekt(6).besvar(10000.årlig)
+            originalFaktagrupper.boolsk(10).besvar(true)
+            originalFaktagrupper.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sid:sse"))
+            originalFaktagrupper.envalg(20).besvar(Envalg("f20.envalg1"))
+            originalFaktagrupper.flervalg(21).besvar(Flervalg("f21.flervalg1"))
+            originalFaktagrupper.heltall(22).besvar(123)
+            originalFaktagrupper.tekst(23).besvar(Tekst("tekst1"))
+            originalFaktagrupper.periode(24).besvar(Periode(1.januar(), 1.februar()))
+            originalFaktagrupper.land(25).besvar(Land("SWE"))
+            originalFaktagrupper.desimaltall(26).besvar(2.5)
 
             lagreHentOgSammenlign()
 
@@ -95,21 +95,21 @@ internal class SøknadRecordTest {
             assertNull(gammelVerdiForKolonnen("land"))
             assertNull(gammelVerdiForKolonnen("desimaltall"))
 
-            originalSøknadprosess.dato(2).besvar(LocalDate.now().minusDays(3))
-            originalSøknadprosess.inntekt(6).besvar(19999.årlig)
-            originalSøknadprosess.boolsk(10).besvar(false)
-            originalSøknadprosess.dokument(11).besvar(Dokument(2.januar.atStartOfDay(), "urn:sid:sse"))
-            originalSøknadprosess.envalg(20).besvar(Envalg("f20.envalg2"))
-            originalSøknadprosess.flervalg(21).besvar(Flervalg("f21.flervalg2"))
-            originalSøknadprosess.heltall(22).besvar(456)
-            originalSøknadprosess.tekst(23).besvar(Tekst("tekst2"))
-            originalSøknadprosess.periode(24).besvar(Periode(1.mars(), 1.april()))
-            originalSøknadprosess.land(25).besvar(Land("NOR"))
-            originalSøknadprosess.desimaltall(26).besvar(1.5, besvarer = "123")
+            originalFaktagrupper.dato(2).besvar(LocalDate.now().minusDays(3))
+            originalFaktagrupper.inntekt(6).besvar(19999.årlig)
+            originalFaktagrupper.boolsk(10).besvar(false)
+            originalFaktagrupper.dokument(11).besvar(Dokument(2.januar.atStartOfDay(), "urn:sid:sse"))
+            originalFaktagrupper.envalg(20).besvar(Envalg("f20.envalg2"))
+            originalFaktagrupper.flervalg(21).besvar(Flervalg("f21.flervalg2"))
+            originalFaktagrupper.heltall(22).besvar(456)
+            originalFaktagrupper.tekst(23).besvar(Tekst("tekst2"))
+            originalFaktagrupper.periode(24).besvar(Periode(1.mars(), 1.april()))
+            originalFaktagrupper.land(25).besvar(Land("NOR"))
+            originalFaktagrupper.desimaltall(26).besvar(1.5, besvarer = "123")
 
             lagreHentOgSammenlign()
 
-            søknadRecord.slett(originalSøknadprosess.søknad.uuid)
+            søknadRecord.slett(originalFaktagrupper.søknad.uuid)
 
             assertRecordCount(0, "soknad")
             assertRecordCount(0, "faktum_verdi")
@@ -143,9 +143,9 @@ internal class SøknadRecordTest {
     fun `Lagring og henting av fakta med kotliquery spesial tegn`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
-            originalSøknadprosess.tekst(23).besvar(Tekst("? tekst1 asdfas?"))
-            originalSøknadprosess.tekst(23).besvar(Tekst(":tekst1"))
-            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sse:ssi"))
+            originalFaktagrupper.tekst(23).besvar(Tekst("? tekst1 asdfas?"))
+            originalFaktagrupper.tekst(23).besvar(Tekst(":tekst1"))
+            originalFaktagrupper.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sse:ssi"))
             lagreHentOgSammenlign()
         }
     }
@@ -155,17 +155,17 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
-            originalSøknadprosess.boolsk("1").besvar(true)
-            originalSøknadprosess.dato(2).besvar(LocalDate.now())
-            originalSøknadprosess.inntekt(6).besvar(10000.årlig)
-            originalSøknadprosess.heltall(16).besvar(123)
-            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sid:sse"))
-            originalSøknadprosess.envalg(20).besvar(Envalg("f20.envalg1"))
-            originalSøknadprosess.flervalg(21).besvar(Flervalg("f21.flervalg1"))
-            originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
-            originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
-            originalSøknadprosess.land(25).besvar(Land("NOR"))
-            originalSøknadprosess.desimaltall(26).besvar(1.5)
+            originalFaktagrupper.boolsk("1").besvar(true)
+            originalFaktagrupper.dato(2).besvar(LocalDate.now())
+            originalFaktagrupper.inntekt(6).besvar(10000.årlig)
+            originalFaktagrupper.heltall(16).besvar(123)
+            originalFaktagrupper.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sid:sse"))
+            originalFaktagrupper.envalg(20).besvar(Envalg("f20.envalg1"))
+            originalFaktagrupper.flervalg(21).besvar(Flervalg("f21.flervalg1"))
+            originalFaktagrupper.tekst(23).besvar(Tekst("tekst1"))
+            originalFaktagrupper.periode(24).besvar(Periode(1.januar(), 1.februar()))
+            originalFaktagrupper.land(25).besvar(Land("NOR"))
+            originalFaktagrupper.desimaltall(26).besvar(1.5)
 
             lagreHentOgSammenlign()
         }
@@ -175,11 +175,11 @@ internal class SøknadRecordTest {
     fun `lagre nye envalg og flervalg verdier`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
-            originalSøknadprosess.envalg(20).besvar(Envalg("f20.envalg1"))
-            originalSøknadprosess.flervalg(21).besvar(Flervalg("f21.flervalg1"))
+            originalFaktagrupper.envalg(20).besvar(Envalg("f20.envalg1"))
+            originalFaktagrupper.flervalg(21).besvar(Flervalg("f21.flervalg1"))
             lagreHentOgSammenlign()
-            originalSøknadprosess.envalg(20).besvar(Envalg("f20.envalg2"))
-            originalSøknadprosess.flervalg(21).besvar(Flervalg("f21.flervalg1", "f21.flervalg2"))
+            originalFaktagrupper.envalg(20).besvar(Envalg("f20.envalg2"))
+            originalFaktagrupper.flervalg(21).besvar(Flervalg("f21.flervalg1", "f21.flervalg2"))
             lagreHentOgSammenlign()
         }
     }
@@ -189,17 +189,17 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
-            originalSøknadprosess.dato(2).besvar(LocalDate.now())
-            originalSøknadprosess.inntekt(6).besvar(10000.årlig)
-            originalSøknadprosess.boolsk(10).besvar(true)
-            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sid:sse"))
-            originalSøknadprosess.envalg(20).besvar(Envalg("f20.envalg1"))
-            originalSøknadprosess.flervalg(21).besvar(Flervalg("f21.flervalg1"))
-            originalSøknadprosess.heltall(22).besvar(123)
-            originalSøknadprosess.tekst(23).besvar(Tekst("tekst1"))
-            originalSøknadprosess.periode(24).besvar(Periode(1.januar(), 1.februar()))
-            originalSøknadprosess.land(25).besvar(Land("SWE"))
-            originalSøknadprosess.desimaltall(26).besvar(2.5)
+            originalFaktagrupper.dato(2).besvar(LocalDate.now())
+            originalFaktagrupper.inntekt(6).besvar(10000.årlig)
+            originalFaktagrupper.boolsk(10).besvar(true)
+            originalFaktagrupper.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sid:sse"))
+            originalFaktagrupper.envalg(20).besvar(Envalg("f20.envalg1"))
+            originalFaktagrupper.flervalg(21).besvar(Flervalg("f21.flervalg1"))
+            originalFaktagrupper.heltall(22).besvar(123)
+            originalFaktagrupper.tekst(23).besvar(Tekst("tekst1"))
+            originalFaktagrupper.periode(24).besvar(Periode(1.januar(), 1.februar()))
+            originalFaktagrupper.land(25).besvar(Land("SWE"))
+            originalFaktagrupper.desimaltall(26).besvar(2.5)
 
             lagreHentOgSammenlign()
 
@@ -215,17 +215,17 @@ internal class SøknadRecordTest {
             assertNull(gammelVerdiForKolonnen("land"))
             assertNull(gammelVerdiForKolonnen("desimaltall"))
 
-            originalSøknadprosess.dato(2).besvar(LocalDate.now().minusDays(3))
-            originalSøknadprosess.inntekt(6).besvar(19999.årlig)
-            originalSøknadprosess.boolsk(10).besvar(false)
-            originalSøknadprosess.dokument(11).besvar(Dokument(2.januar.atStartOfDay(), "urn:sid:sse"))
-            originalSøknadprosess.envalg(20).besvar(Envalg("f20.envalg2"))
-            originalSøknadprosess.flervalg(21).besvar(Flervalg("f21.flervalg2"))
-            originalSøknadprosess.heltall(22).besvar(456)
-            originalSøknadprosess.tekst(23).besvar(Tekst("tekst2"))
-            originalSøknadprosess.periode(24).besvar(Periode(1.mars(), 1.april()))
-            originalSøknadprosess.land(25).besvar(Land("NOR"))
-            originalSøknadprosess.desimaltall(26).besvar(1.5)
+            originalFaktagrupper.dato(2).besvar(LocalDate.now().minusDays(3))
+            originalFaktagrupper.inntekt(6).besvar(19999.årlig)
+            originalFaktagrupper.boolsk(10).besvar(false)
+            originalFaktagrupper.dokument(11).besvar(Dokument(2.januar.atStartOfDay(), "urn:sid:sse"))
+            originalFaktagrupper.envalg(20).besvar(Envalg("f20.envalg2"))
+            originalFaktagrupper.flervalg(21).besvar(Flervalg("f21.flervalg2"))
+            originalFaktagrupper.heltall(22).besvar(456)
+            originalFaktagrupper.tekst(23).besvar(Tekst("tekst2"))
+            originalFaktagrupper.periode(24).besvar(Periode(1.mars(), 1.april()))
+            originalFaktagrupper.land(25).besvar(Land("NOR"))
+            originalFaktagrupper.desimaltall(26).besvar(1.5)
 
             lagreHentOgSammenlign()
 
@@ -247,16 +247,16 @@ internal class SøknadRecordTest {
     fun `Genererte template faktum`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
-            assertEquals(expectedFaktaCount, originalSøknadprosess.søknad.map { it }.size)
+            assertEquals(expectedFaktaCount, originalFaktagrupper.søknad.map { it }.size)
             lagreHentOgSammenlign()
-            originalSøknadprosess = rehydrertSøknadprosess
+            originalFaktagrupper = rehydrertFaktagrupper
 
-            originalSøknadprosess.heltall(15).besvar(3)
-            originalSøknadprosess.heltall("16.1").besvar(5)
-            assertEquals(expectedFaktaCount + 9, originalSøknadprosess.søknad.map { it }.size)
+            originalFaktagrupper.heltall(15).besvar(3)
+            originalFaktagrupper.heltall("16.1").besvar(5)
+            assertEquals(expectedFaktaCount + 9, originalFaktagrupper.søknad.map { it }.size)
 
             lagreHentOgSammenlign()
-            assertEquals(expectedFaktaCount + 9, rehydrertSøknadprosess.søknad.map { it }.size)
+            assertEquals(expectedFaktaCount + 9, rehydrertFaktagrupper.søknad.map { it }.size)
         }
     }
 
@@ -264,23 +264,23 @@ internal class SøknadRecordTest {
     fun `redusert template faktum`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
-            assertEquals(expectedFaktaCount, originalSøknadprosess.søknad.map { it }.size)
+            assertEquals(expectedFaktaCount, originalFaktagrupper.søknad.map { it }.size)
             lagreHentOgSammenlign()
             assertRecordCount(0, "gammel_faktum_verdi")
-            originalSøknadprosess = rehydrertSøknadprosess
+            originalFaktagrupper = rehydrertFaktagrupper
 
-            originalSøknadprosess.heltall(15).besvar(3)
-            originalSøknadprosess.heltall("16.2").besvar(162)
-            originalSøknadprosess.heltall("16.3").besvar(163)
+            originalFaktagrupper.heltall(15).besvar(3)
+            originalFaktagrupper.heltall("16.2").besvar(162)
+            originalFaktagrupper.heltall("16.3").besvar(163)
             lagreHentOgSammenlign()
             assertRecordCount(0, "gammel_faktum_verdi")
-            originalSøknadprosess = rehydrertSøknadprosess
-            originalSøknadprosess.heltall(15).besvar(2)
-            originalSøknadprosess.heltall("16.1").besvar(161)
-            originalSøknadprosess.heltall("16.2").besvar(1622)
+            originalFaktagrupper = rehydrertFaktagrupper
+            originalFaktagrupper.heltall(15).besvar(2)
+            originalFaktagrupper.heltall("16.1").besvar(161)
+            originalFaktagrupper.heltall("16.2").besvar(1622)
             lagreHentOgSammenlign()
             assertRecordCount(3, "gammel_faktum_verdi")
-            assertThrows<IllegalArgumentException> { rehydrertSøknadprosess.heltall("16.3") }
+            assertThrows<IllegalArgumentException> { rehydrertFaktagrupper.heltall("16.3") }
         }
     }
 
@@ -289,11 +289,11 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
-            originalSøknadprosess.dato(3).besvar(3.januar)
-            originalSøknadprosess.dato(4).besvar(4.januar)
-            originalSøknadprosess.dato(5).besvar(5.januar)
+            originalFaktagrupper.dato(3).besvar(3.januar)
+            originalFaktagrupper.dato(4).besvar(4.januar)
+            originalFaktagrupper.dato(5).besvar(5.januar)
             lagreHentOgSammenlign()
-            assertEquals(5.januar, rehydrertSøknadprosess.dato(345).svar())
+            assertEquals(5.januar, rehydrertFaktagrupper.dato(345).svar())
         }
     }
 
@@ -302,9 +302,9 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
-            originalSøknadprosess.dato(3).besvar(LocalDate.MAX)
+            originalFaktagrupper.dato(3).besvar(LocalDate.MAX)
             lagreHentOgSammenlign()
-            assertEquals(LocalDate.MAX, rehydrertSøknadprosess.dato(3).svar())
+            assertEquals(LocalDate.MAX, rehydrertFaktagrupper.dato(3).svar())
         }
     }
 
@@ -314,11 +314,11 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
 
-            originalSøknadprosess.dato(2).besvar(LocalDate.now(), ident)
-            originalSøknadprosess.inntekt(6).besvar(10000.årlig, ident)
-            originalSøknadprosess.heltall(16).besvar(123, ident)
-            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sid:sse"), ident)
-            originalSøknadprosess.boolsk(1).besvar(true, ident)
+            originalFaktagrupper.dato(2).besvar(LocalDate.now(), ident)
+            originalFaktagrupper.inntekt(6).besvar(10000.årlig, ident)
+            originalFaktagrupper.heltall(16).besvar(123, ident)
+            originalFaktagrupper.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sid:sse"), ident)
+            originalFaktagrupper.boolsk(1).besvar(true, ident)
 
             lagreHentOgSammenlign()
         }
@@ -329,7 +329,7 @@ internal class SøknadRecordTest {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
             val pågåendePeriode = Periode(17.mai())
-            originalSøknadprosess.periode(24).besvar(pågåendePeriode)
+            originalFaktagrupper.periode(24).besvar(pågåendePeriode)
 
             lagreHentOgSammenlign()
         }
@@ -339,11 +339,11 @@ internal class SøknadRecordTest {
     fun `BUGFIX - dokument lagret flere ganger selvom det ikke er endringer `() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
-            originalSøknadprosess.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sid:sse"))
+            originalFaktagrupper.dokument(11).besvar(Dokument(1.januar.atStartOfDay(), "urn:sid:sse"))
             lagreHentOgSammenlign()
             lagreHentOgSammenlign()
             assertRecordCount(0, "gammel_faktum_verdi")
-            originalSøknadprosess.dokument(11).besvar(Dokument(2.januar.atStartOfDay(), "urn:sid:sse"))
+            originalFaktagrupper.dokument(11).besvar(Dokument(2.januar.atStartOfDay(), "urn:sid:sse"))
             lagreHentOgSammenlign()
             lagreHentOgSammenlign()
             assertRecordCount(1, "gammel_faktum_verdi")
@@ -356,12 +356,12 @@ internal class SøknadRecordTest {
             val søknadUUId = UUID.randomUUID()
             FaktumTable(SøknadEksempel1.prototypeFakta1)
             søknadRecord = SøknadRecord()
-            originalSøknadprosess =
+            originalFaktagrupper =
                 søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon, søknadUUId)
-            originalSøknadprosess =
+            originalFaktagrupper =
                 søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon, søknadUUId)
 
-            originalSøknadprosess.dato(2).besvar(LocalDate.now())
+            originalFaktagrupper.dato(2).besvar(LocalDate.now())
 
             lagreHentOgSammenlign()
         }
@@ -374,14 +374,14 @@ internal class SøknadRecordTest {
                 it.run(Query("ALTER SEQUENCE faktum_id_seq INCREMENT 2").asExecute)
             }
             byggOriginalSøknadprosess()
-            val soknadUUID = originalSøknadprosess.søknad.uuid
+            val soknadUUID = originalFaktagrupper.søknad.uuid
             assertEquals(
                 søknadRecord.migrer(soknadUUID, SøknadEksempel1.prosessVersjon),
                 SøknadEksempel1.prosessVersjon,
                 "Migrering til samme versjon",
             )
 
-            originalSøknadprosess.desimaltall("f26").besvar(9.9)
+            originalFaktagrupper.desimaltall("f26").besvar(9.9)
 
             SøknadEksempel2.v2
             FaktumTable(SøknadEksempel2.prototypeFakta)
@@ -414,18 +414,18 @@ internal class SøknadRecordTest {
     }
 
     private fun lagreHentOgSammenlign(userInterfaceType: Versjon.UserInterfaceType = Web) {
-        søknadRecord.lagre(originalSøknadprosess.søknad)
+        søknadRecord.lagre(originalFaktagrupper.søknad)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         søknadRecord = SøknadRecord()
-        rehydrertSøknadprosess = søknadRecord.hent(uuid, userInterfaceType)
-        assertJsonEquals(originalSøknadprosess, rehydrertSøknadprosess)
-        assertDeepEquals(originalSøknadprosess, rehydrertSøknadprosess)
+        rehydrertFaktagrupper = søknadRecord.hent(uuid, userInterfaceType)
+        assertJsonEquals(originalFaktagrupper, rehydrertFaktagrupper)
+        assertDeepEquals(originalFaktagrupper, rehydrertFaktagrupper)
     }
 
     private fun byggOriginalSøknadprosess() {
         FaktumTable(SøknadEksempel1.prototypeFakta1)
         søknadRecord = SøknadRecord()
-        originalSøknadprosess = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon)
+        originalFaktagrupper = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

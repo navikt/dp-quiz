@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
@@ -22,11 +22,11 @@ import kotlin.test.assertTrue
 internal class DinSituasjonTest {
     private val fakta = DinSituasjon.fakta()
     private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *fakta)
-    private lateinit var søknadprosess: Søknadprosess
+    private lateinit var faktagrupper: Faktagrupper
 
     @BeforeEach
     fun setup() {
-        søknadprosess = søknad.testSøknadprosess(DinSituasjon.regeltre(søknad)) {
+        faktagrupper = søknad.testSøknadprosess(DinSituasjon.regeltre(søknad)) {
             DinSituasjon.seksjon(this)
         }
     }
@@ -38,7 +38,7 @@ internal class DinSituasjonTest {
 
     @Test
     fun `Sjekk at alle fakta er definert i en seksjon`() {
-        val faktaISeksjoner = søknadprosess.flatten().map { it.id.toInt() }
+        val faktaISeksjoner = faktagrupper.flatten().map { it.id.toInt() }
         val alleFakta = DinSituasjon.databaseIder().toList()
         assertTrue(
             faktaISeksjoner.containsAll(
@@ -52,84 +52,84 @@ internal class DinSituasjonTest {
 
     @Test
     fun `Gjenopptak søknad - har ikke jobbet siden sist eller hatt noen endring i arbeidsforhold`() {
-        søknadprosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        faktagrupper.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
-        søknadprosess.tekst(DinSituasjon.`gjenopptak årsak til stans av dagpenger`).besvar(Tekst("Årsak"))
-        søknadprosess.dato(DinSituasjon.`gjenopptak søknadsdato`).besvar(1.januar)
-        søknadprosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
+        faktagrupper.tekst(DinSituasjon.`gjenopptak årsak til stans av dagpenger`).besvar(Tekst("Årsak"))
+        faktagrupper.dato(DinSituasjon.`gjenopptak søknadsdato`).besvar(1.januar)
+        faktagrupper.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
             .besvar(false)
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, faktagrupper.resultat())
 
         // Avhengigheter
-        søknadprosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        faktagrupper.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
         assertErUbesvarte(
-            søknadprosess.tekst(DinSituasjon.`gjenopptak årsak til stans av dagpenger`),
-            søknadprosess.dato(DinSituasjon.`gjenopptak søknadsdato`),
-            søknadprosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
+            faktagrupper.tekst(DinSituasjon.`gjenopptak årsak til stans av dagpenger`),
+            faktagrupper.dato(DinSituasjon.`gjenopptak søknadsdato`),
+            faktagrupper.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
         )
     }
 
     @Test
     fun `Gjenopptak søknad - har jobbet siden sist eller hatt endring i arbeidsforhold`() {
-        søknadprosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        faktagrupper.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
-        søknadprosess.tekst(DinSituasjon.`gjenopptak årsak til stans av dagpenger`).besvar(Tekst("Årsak"))
-        søknadprosess.dato(DinSituasjon.`gjenopptak søknadsdato`).besvar(1.januar)
-        søknadprosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
+        faktagrupper.tekst(DinSituasjon.`gjenopptak årsak til stans av dagpenger`).besvar(Tekst("Årsak"))
+        faktagrupper.dato(DinSituasjon.`gjenopptak søknadsdato`).besvar(1.januar)
+        faktagrupper.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
             .besvar(true)
 
-        søknadprosess.boolsk(DinSituasjon.`gjenopptak ønsker ny beregning av dagpenger`).besvar(false)
+        faktagrupper.boolsk(DinSituasjon.`gjenopptak ønsker ny beregning av dagpenger`).besvar(false)
         `besvar spørsmål for et arbeidsforhold`()
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, faktagrupper.resultat())
 
-        søknadprosess.boolsk(DinSituasjon.`gjenopptak ønsker ny beregning av dagpenger`).besvar(true)
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.boolsk(DinSituasjon.`gjenopptak ønsker ny beregning av dagpenger`).besvar(true)
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`).besvar(false)
-        assertEquals(true, søknadprosess.resultat())
+        faktagrupper.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`).besvar(false)
+        assertEquals(true, faktagrupper.resultat())
 
-        søknadprosess.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`).besvar(true)
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`).besvar(true)
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
-        assertEquals(true, søknadprosess.resultat())
+        faktagrupper.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
+        assertEquals(true, faktagrupper.resultat())
 
         // Avhengigheter
-        søknadprosess.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`).besvar(false)
-        assertErUbesvarte(søknadprosess.envalg(DinSituasjon.`type arbeidstid`))
+        faktagrupper.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`).besvar(false)
+        assertErUbesvarte(faktagrupper.envalg(DinSituasjon.`type arbeidstid`))
 
-        søknadprosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        faktagrupper.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.vet-ikke"))
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
         assertErUbesvarte(
-            søknadprosess.tekst(DinSituasjon.`gjenopptak årsak til stans av dagpenger`),
-            søknadprosess.dato(DinSituasjon.`gjenopptak søknadsdato`),
-            søknadprosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`),
-            søknadprosess.boolsk(DinSituasjon.`gjenopptak ønsker ny beregning av dagpenger`),
-            søknadprosess.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`)
+            faktagrupper.tekst(DinSituasjon.`gjenopptak årsak til stans av dagpenger`),
+            faktagrupper.dato(DinSituasjon.`gjenopptak søknadsdato`),
+            faktagrupper.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`),
+            faktagrupper.boolsk(DinSituasjon.`gjenopptak ønsker ny beregning av dagpenger`),
+            faktagrupper.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`)
         )
     }
 
     @Test
     fun `Ny søknad - type arbeidstid er besvart med Ingen alternativer passer`() {
-        søknadprosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        faktagrupper.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
-        søknadprosess.dato(DinSituasjon.`dagpenger søknadsdato`).besvar(1.januar)
-        søknadprosess.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
-        assertEquals(true, søknadprosess.resultat())
+        faktagrupper.dato(DinSituasjon.`dagpenger søknadsdato`).besvar(1.januar)
+        faktagrupper.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
+        assertEquals(true, faktagrupper.resultat())
 
         // Avhengigheter
-        søknadprosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        faktagrupper.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
         assertErUbesvarte(
-            søknadprosess.dato(DinSituasjon.`dagpenger søknadsdato`),
-            søknadprosess.envalg(DinSituasjon.`type arbeidstid`)
+            faktagrupper.dato(DinSituasjon.`dagpenger søknadsdato`),
+            faktagrupper.envalg(DinSituasjon.`type arbeidstid`)
         )
     }
 
@@ -137,30 +137,30 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - ikke endret`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret"))
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold kjent antall timer jobbet`}.1").besvar(true)
-        søknadprosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer jobbet`}.1").besvar(40.5)
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold har tilleggsopplysninger`}.1").besvar(false)
-        assertEquals(true, søknadprosess.resultat())
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold kjent antall timer jobbet`}.1").besvar(true)
+        faktagrupper.desimaltall("${DinSituasjon.`arbeidsforhold antall timer jobbet`}.1").besvar(40.5)
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold har tilleggsopplysninger`}.1").besvar(false)
+        assertEquals(true, faktagrupper.resultat())
 
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold har tilleggsopplysninger`}.1").besvar(true)
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold har tilleggsopplysninger`}.1").besvar(true)
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.tekst("${DinSituasjon.`arbeidsforhold tilleggsopplysninger`}.1")
+        faktagrupper.tekst("${DinSituasjon.`arbeidsforhold tilleggsopplysninger`}.1")
             .besvar(Tekst("Tilleggsopplysninger"))
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, faktagrupper.resultat())
 
         // Avhengigheter
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.avskjediget"))
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
         assertErUbesvarte(
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold kjent antall timer jobbet`}.1"),
-            søknadprosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer jobbet`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold har tilleggsopplysninger`}.1"),
-            søknadprosess.tekst("${DinSituasjon.`arbeidsforhold tilleggsopplysninger`}.1")
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold kjent antall timer jobbet`}.1"),
+            faktagrupper.desimaltall("${DinSituasjon.`arbeidsforhold antall timer jobbet`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold har tilleggsopplysninger`}.1"),
+            faktagrupper.tekst("${DinSituasjon.`arbeidsforhold tilleggsopplysninger`}.1")
         )
     }
 
@@ -168,23 +168,23 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - avskjediget`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.avskjediget"))
-        søknadprosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før mistet jobb`}.1").besvar(true)
-        søknadprosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1").besvar(40.5)
-        søknadprosess.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til avskjediget`}.1").besvar(Tekst("Årsak"))
-        assertEquals(true, søknadprosess.resultat())
+        faktagrupper.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før mistet jobb`}.1").besvar(true)
+        faktagrupper.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1").besvar(40.5)
+        faktagrupper.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til avskjediget`}.1").besvar(Tekst("Årsak"))
+        assertEquals(true, faktagrupper.resultat())
 
         // Avhengigheter
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
         assertErUbesvarte(
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før mistet jobb`}.1"),
-            søknadprosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1"),
-            søknadprosess.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til avskjediget`}.1")
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før mistet jobb`}.1"),
+            faktagrupper.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1"),
+            faktagrupper.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til avskjediget`}.1")
         )
     }
 
@@ -192,31 +192,31 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - sagt opp av arbeidsgiver`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
 
-        søknadprosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før mistet jobb`}.1").besvar(true)
-        søknadprosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1").besvar(40.5)
-        søknadprosess.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til sagt opp av arbeidsgiver`}.1")
+        faktagrupper.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før mistet jobb`}.1").besvar(true)
+        faktagrupper.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1").besvar(40.5)
+        faktagrupper.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til sagt opp av arbeidsgiver`}.1")
             .besvar(Tekst("Årsak"))
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
             .besvar(true)
 
         `besvar spørsmål om skift, turnus og rotasjon`()
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, faktagrupper.resultat())
 
         // Avhengigheter
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs"))
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
         assertErUbesvarte(
-            søknadprosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før mistet jobb`}.1"),
-            søknadprosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1"),
-            søknadprosess.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til sagt opp av arbeidsgiver`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
+            faktagrupper.periode("${DinSituasjon.`arbeidsforhold varighet`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før mistet jobb`}.1"),
+            faktagrupper.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1"),
+            faktagrupper.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til sagt opp av arbeidsgiver`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
         )
     }
 
@@ -224,57 +224,57 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - arbeidsgiver er konkurs`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs"))
 
-        søknadprosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold midlertidig arbeidsforhold med sluttdato`}.1")
+        faktagrupper.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold midlertidig arbeidsforhold med sluttdato`}.1")
             .besvar(true)
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før konkurs`}.1").besvar(true)
-        søknadprosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1").besvar(40.5)
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før konkurs`}.1").besvar(true)
+        faktagrupper.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1").besvar(40.5)
 
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler`}.1").besvar(false)
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold godta trekk direkte fra konkursboet`}.1").besvar(true)
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler`}.1").besvar(false)
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold godta trekk direkte fra konkursboet`}.1").besvar(true)
         `besvar spørsmål om skift, turnus og rotasjon`()
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, faktagrupper.resultat())
 
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler`}.1").besvar(true)
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler`}.1").besvar(true)
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`}.1")
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`}.1")
             .besvar(true)
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold godta trekk direkte fra konkursboet`}.1").besvar(true)
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`}.1")
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold godta trekk direkte fra konkursboet`}.1").besvar(true)
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`}.1")
             .besvar(true)
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold har søkt om lønnsgarantimidler`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold har søkt om lønnsgarantimidler`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.har-sokt-om-lonnsgarantimidler.svar.ja"))
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`}.1")
             .besvar(
                 Envalg("faktum.arbeidsforhold.dekker-lonnsgarantiordningen-lonnskravet-ditt.svar.ja")
             )
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold utbetalt lønn etter konkurs`}.1").besvar(true)
-        søknadprosess.dato("${DinSituasjon.`arbeidsforhold siste dag utbetalt for konkurs`}.1").besvar(1.januar)
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold utbetalt lønn etter konkurs`}.1").besvar(true)
+        faktagrupper.dato("${DinSituasjon.`arbeidsforhold siste dag utbetalt for konkurs`}.1").besvar(1.januar)
 
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, faktagrupper.resultat())
 
         // Avhengigheter
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt"))
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
         assertErUbesvarte(
-            søknadprosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold midlertidig arbeidsforhold med sluttdato`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før konkurs`}.1"),
-            søknadprosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold godta trekk direkte fra konkursboet`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`}.1"),
-            søknadprosess.envalg("${DinSituasjon.`arbeidsforhold har søkt om lønnsgarantimidler`}.1"),
-            søknadprosess.envalg("${DinSituasjon.`arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold utbetalt lønn etter konkurs`}.1"),
-            søknadprosess.dato("${DinSituasjon.`arbeidsforhold siste dag utbetalt for konkurs`}.1")
+            faktagrupper.periode("${DinSituasjon.`arbeidsforhold varighet`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold midlertidig arbeidsforhold med sluttdato`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før konkurs`}.1"),
+            faktagrupper.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold godta trekk direkte fra konkursboet`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`}.1"),
+            faktagrupper.envalg("${DinSituasjon.`arbeidsforhold har søkt om lønnsgarantimidler`}.1"),
+            faktagrupper.envalg("${DinSituasjon.`arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold utbetalt lønn etter konkurs`}.1"),
+            faktagrupper.dato("${DinSituasjon.`arbeidsforhold siste dag utbetalt for konkurs`}.1")
         )
     }
 
@@ -282,47 +282,47 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - utgått kontrakt`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt"))
 
-        søknadprosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før kontrakt utgikk`}.1")
+        faktagrupper.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før kontrakt utgikk`}.1")
             .besvar(false)
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om forlengelse eller annen stilling`}.1")
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold tilbud om forlengelse eller annen stilling`}.1")
             .besvar(false)
         `besvar spørsmål om skift, turnus og rotasjon`()
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, faktagrupper.resultat())
 
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om forlengelse eller annen stilling`}.1")
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold tilbud om forlengelse eller annen stilling`}.1")
             .besvar(true)
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ja"))
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, faktagrupper.resultat())
 
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ikke-svart"))
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, faktagrupper.resultat())
 
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei"))
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.tekst("${DinSituasjon.`arbeidsforhold årsak til ikke akseptert tilbud`}.1")
+        faktagrupper.tekst("${DinSituasjon.`arbeidsforhold årsak til ikke akseptert tilbud`}.1")
             .besvar(Tekst("Årsak"))
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, faktagrupper.resultat())
 
         // Avhengigheter
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv"))
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
         assertErUbesvarte(
-            søknadprosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om forlengelse eller annen stilling`}.1"),
-            søknadprosess.envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1"),
-            søknadprosess.tekst("${DinSituasjon.`arbeidsforhold årsak til ikke akseptert tilbud`}.1")
+            faktagrupper.periode("${DinSituasjon.`arbeidsforhold varighet`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold tilbud om forlengelse eller annen stilling`}.1"),
+            faktagrupper.envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1"),
+            faktagrupper.tekst("${DinSituasjon.`arbeidsforhold årsak til ikke akseptert tilbud`}.1")
         )
     }
 
@@ -330,24 +330,24 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - sagt opp selv`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv"))
-        søknadprosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før du sa opp`}.1").besvar(false)
-        søknadprosess.tekst("${DinSituasjon.`arbeidsforhold årsak til du sa opp`}.1").besvar(Tekst("Årsak"))
+        faktagrupper.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før du sa opp`}.1").besvar(false)
+        faktagrupper.tekst("${DinSituasjon.`arbeidsforhold årsak til du sa opp`}.1").besvar(Tekst("Årsak"))
 
         `besvar spørsmål om skift, turnus og rotasjon`()
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, faktagrupper.resultat())
 
         // Avhengigheter
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid"))
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
         assertErUbesvarte(
-            søknadprosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før du sa opp`}.1"),
-            søknadprosess.tekst("${DinSituasjon.`arbeidsforhold årsak til du sa opp`}.1")
+            faktagrupper.periode("${DinSituasjon.`arbeidsforhold varighet`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før du sa opp`}.1"),
+            faktagrupper.tekst("${DinSituasjon.`arbeidsforhold årsak til du sa opp`}.1")
         )
     }
 
@@ -355,31 +355,31 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - redusert arbeidstid`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid"))
-        søknadprosess.dato("${DinSituasjon.`arbeidsforhold startdato arbeidsforhold`}.1").besvar(1.januar)
-        søknadprosess.dato("${DinSituasjon.`arbeidsforhold arbeidstid redusert fra dato`}.1").besvar(1.februar)
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før redusert arbeidstid`}.1")
+        faktagrupper.dato("${DinSituasjon.`arbeidsforhold startdato arbeidsforhold`}.1").besvar(1.januar)
+        faktagrupper.dato("${DinSituasjon.`arbeidsforhold arbeidstid redusert fra dato`}.1").besvar(1.februar)
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før redusert arbeidstid`}.1")
             .besvar(false)
-        søknadprosess.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til redusert arbeidstid`}.1")
+        faktagrupper.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til redusert arbeidstid`}.1")
             .besvar(Tekst("Årsak"))
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
             .besvar(true)
 
         `besvar spørsmål om skift, turnus og rotasjon`()
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, faktagrupper.resultat())
 
         // Avhengigheter
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
         assertErUbesvarte(
-            søknadprosess.dato("${DinSituasjon.`arbeidsforhold startdato arbeidsforhold`}.1"),
-            søknadprosess.dato("${DinSituasjon.`arbeidsforhold arbeidstid redusert fra dato`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før redusert arbeidstid`}.1"),
-            søknadprosess.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til redusert arbeidstid`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
+            faktagrupper.dato("${DinSituasjon.`arbeidsforhold startdato arbeidsforhold`}.1"),
+            faktagrupper.dato("${DinSituasjon.`arbeidsforhold arbeidstid redusert fra dato`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før redusert arbeidstid`}.1"),
+            faktagrupper.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til redusert arbeidstid`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
         )
     }
 
@@ -387,74 +387,74 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - permittert`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold midlertidig med kontraktfestet sluttdato`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold midlertidig med kontraktfestet sluttdato`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.midlertidig-med-kontraktfestet-sluttdato.svar.ja"))
-        søknadprosess.dato("${DinSituasjon.`arbeidsforhold kontraktfestet sluttdato`}.1").besvar(1.februar)
-        søknadprosess.dato("${DinSituasjon.`arbeidsforhold midlertidig arbeidsforhold oppstartsdato`}.1")
+        faktagrupper.dato("${DinSituasjon.`arbeidsforhold kontraktfestet sluttdato`}.1").besvar(1.februar)
+        faktagrupper.dato("${DinSituasjon.`arbeidsforhold midlertidig arbeidsforhold oppstartsdato`}.1")
             .besvar(1.januar)
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold permittert fra fiskeri næring`}.1").besvar(true)
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før permittert`}.1").besvar(false)
-        søknadprosess.periode("${DinSituasjon.`arbeidsforhold permittert periode`}.1").besvar(Periode(5.januar))
-        søknadprosess.heltall("${DinSituasjon.`arbeidsforhold permittert prosent`}.1").besvar(40)
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du lønnsplikt periode`}.1").besvar(true)
-        søknadprosess.periode("${DinSituasjon.`arbeidsforhold når var lønnsplikt periode`}.1")
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold permittert fra fiskeri næring`}.1").besvar(true)
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før permittert`}.1").besvar(false)
+        faktagrupper.periode("${DinSituasjon.`arbeidsforhold permittert periode`}.1").besvar(Periode(5.januar))
+        faktagrupper.heltall("${DinSituasjon.`arbeidsforhold permittert prosent`}.1").besvar(40)
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du lønnsplikt periode`}.1").besvar(true)
+        faktagrupper.periode("${DinSituasjon.`arbeidsforhold når var lønnsplikt periode`}.1")
             .besvar(Periode(6.januar, 20.januar))
 
         `besvar spørsmål om skift, turnus og rotasjon`()
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, faktagrupper.resultat())
 
         // Avhengigheter
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid"))
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
         assertErUbesvarte(
-            søknadprosess.envalg("${DinSituasjon.`arbeidsforhold midlertidig med kontraktfestet sluttdato`}.1"),
-            søknadprosess.dato("${DinSituasjon.`arbeidsforhold kontraktfestet sluttdato`}.1"),
-            søknadprosess.dato("${DinSituasjon.`arbeidsforhold midlertidig arbeidsforhold oppstartsdato`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold permittert fra fiskeri næring`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før permittert`}.1"),
-            søknadprosess.periode("${DinSituasjon.`arbeidsforhold permittert periode`}.1"),
-            søknadprosess.heltall("${DinSituasjon.`arbeidsforhold permittert prosent`}.1"),
-            søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du lønnsplikt periode`}.1"),
-            søknadprosess.periode("${DinSituasjon.`arbeidsforhold når var lønnsplikt periode`}.1")
+            faktagrupper.envalg("${DinSituasjon.`arbeidsforhold midlertidig med kontraktfestet sluttdato`}.1"),
+            faktagrupper.dato("${DinSituasjon.`arbeidsforhold kontraktfestet sluttdato`}.1"),
+            faktagrupper.dato("${DinSituasjon.`arbeidsforhold midlertidig arbeidsforhold oppstartsdato`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold permittert fra fiskeri næring`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før permittert`}.1"),
+            faktagrupper.periode("${DinSituasjon.`arbeidsforhold permittert periode`}.1"),
+            faktagrupper.heltall("${DinSituasjon.`arbeidsforhold permittert prosent`}.1"),
+            faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold vet du lønnsplikt periode`}.1"),
+            faktagrupper.periode("${DinSituasjon.`arbeidsforhold når var lønnsplikt periode`}.1")
         )
     }
 
     private fun `besvar spørsmål for et arbeidsforhold`() {
-        søknadprosess.generator(DinSituasjon.arbeidsforhold).besvar(1)
-        søknadprosess.tekst("${DinSituasjon.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))
-        søknadprosess.land("${DinSituasjon.`arbeidsforhold land`}.1").besvar(Land("NOR"))
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.generator(DinSituasjon.arbeidsforhold).besvar(1)
+        faktagrupper.tekst("${DinSituasjon.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))
+        faktagrupper.land("${DinSituasjon.`arbeidsforhold land`}.1").besvar(Land("NOR"))
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret"))
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold kjent antall timer jobbet`}.1").besvar(false)
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold har tilleggsopplysninger`}.1").besvar(false)
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold kjent antall timer jobbet`}.1").besvar(false)
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold har tilleggsopplysninger`}.1").besvar(false)
     }
 
     private fun `besvar innledende spørsmål om situasjon og arbeidsforhold`() {
-        søknadprosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        faktagrupper.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
-        søknadprosess.dato(DinSituasjon.`dagpenger søknadsdato`).besvar(1.januar)
-        søknadprosess.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
+        faktagrupper.dato(DinSituasjon.`dagpenger søknadsdato`).besvar(1.januar)
+        faktagrupper.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
 
-        søknadprosess.generator(DinSituasjon.arbeidsforhold).besvar(1)
-        søknadprosess.tekst("${DinSituasjon.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))
-        søknadprosess.land("${DinSituasjon.`arbeidsforhold land`}.1").besvar(Land("NOR"))
+        faktagrupper.generator(DinSituasjon.arbeidsforhold).besvar(1)
+        faktagrupper.tekst("${DinSituasjon.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))
+        faktagrupper.land("${DinSituasjon.`arbeidsforhold land`}.1").besvar(Land("NOR"))
     }
 
     private fun `besvar spørsmål om skift, turnus og rotasjon`() {
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold skift eller turnus`}.1").besvar(true)
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold skift eller turnus`}.1").besvar(true)
 
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold rotasjon`}.1").besvar(false)
-        assertEquals(true, søknadprosess.resultat())
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold rotasjon`}.1").besvar(false)
+        assertEquals(true, faktagrupper.resultat())
 
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold rotasjon`}.1").besvar(true)
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold rotasjon`}.1").besvar(true)
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.heltall("${DinSituasjon.`arbeidsforhold arbeidsdager siste rotasjon`}.1").besvar(20)
-        søknadprosess.heltall("${DinSituasjon.`arbeidsforhold fridager siste rotasjon`}.1").besvar(2)
+        faktagrupper.heltall("${DinSituasjon.`arbeidsforhold arbeidsdager siste rotasjon`}.1").besvar(20)
+        faktagrupper.heltall("${DinSituasjon.`arbeidsforhold fridager siste rotasjon`}.1").besvar(2)
     }
 
     @Test

@@ -9,8 +9,8 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
@@ -53,13 +53,13 @@ internal class AvhengigFaktumTest {
             dato faktum "tom" id 3 avhengerAv 2,
             dato faktum "ønsket dato" id 4
         )
-        val prototypeSøknadprosess = Søknadprosess(
+        val prototypeFaktagrupper = Faktagrupper(
             Seksjon("periode antall", Rolle.nav, søknad generator 1),
             Seksjon("periode", Rolle.nav, søknad dato 2, søknad dato 3),
             Seksjon("søknadsdato", Rolle.søker, søknad dato 4)
         )
         val søknadprosess =
-            Versjon.Bygger(søknad, TomSubsumsjon, mapOf(Versjon.UserInterfaceType.Web to prototypeSøknadprosess))
+            Versjon.Bygger(søknad, TomSubsumsjon, mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper))
                 .søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
 
         søknadprosess.generator(1).besvar(1)

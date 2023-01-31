@@ -22,7 +22,7 @@ import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.math.BigInteger
@@ -44,7 +44,7 @@ class SøknadRecord : SøknadPersistence {
         type: Versjon.UserInterfaceType,
         prosessVersjon: Prosessversjon,
         uuid: UUID,
-    ): Søknadprosess {
+    ): Faktagrupper {
         val person = personRecord.hentEllerOpprettPerson(identer)
         return Versjon.id(prosessVersjon).søknadprosess(person, type, uuid).also { søknadprosess ->
             if (eksisterer(uuid)) return søknadprosess
@@ -67,7 +67,7 @@ class SøknadRecord : SøknadPersistence {
 
     private data class Prosess(override val id: String) : Prosessnavn
 
-    override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?): Søknadprosess {
+    override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?): Faktagrupper {
         data class SoknadRad(val personId: UUID, val navn: String, val versjonId: Int, var typeId: Int)
 
         val rad = using(sessionOf(dataSource)) { session ->

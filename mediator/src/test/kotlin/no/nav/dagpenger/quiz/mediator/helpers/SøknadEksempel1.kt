@@ -17,8 +17,8 @@ import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 
 enum class Testprosess(override val id: String) : Prosessnavn {
@@ -58,14 +58,14 @@ internal object SøknadEksempel1 {
         land faktum "f25" id 25,
         desimaltall faktum "f26" id 26
     )
-    private val webPrototypeSøknad = Søknadprosess(
+    private val webPrototypeSøknad = Faktagrupper(
         Seksjon(
             "seksjon",
             Rolle.søker,
             *(prototypeFakta1.map { it }.toTypedArray())
         )
     )
-    private val mobilePrototypeSøknad = Søknadprosess(
+    private val mobilePrototypeSøknad = Faktagrupper(
         Seksjon(
             "seksjon",
             Rolle.søker,

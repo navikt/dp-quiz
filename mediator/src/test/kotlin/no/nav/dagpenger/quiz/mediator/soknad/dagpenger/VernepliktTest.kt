@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 internal class VernepliktTest {
 
     private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Verneplikt.fakta())
-    private lateinit var søknadprosess: Søknadprosess
+    private lateinit var faktagrupper: Faktagrupper
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
@@ -22,7 +22,7 @@ internal class VernepliktTest {
 
     @BeforeEach
     fun setup() {
-        søknadprosess = søknad.testSøknadprosess(
+        faktagrupper = søknad.testSøknadprosess(
             Verneplikt.regeltre(søknad)
         ) {
             Verneplikt.seksjon(this)
@@ -31,19 +31,19 @@ internal class VernepliktTest {
 
     @Test
     fun `Har ikke avtjent verneplikt`() {
-        søknadprosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(false)
-        assertEquals(true, søknadprosess.resultat())
+        faktagrupper.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(false)
+        assertEquals(true, faktagrupper.resultat())
     }
 
     @Test
     fun `Har avtjent verneplikt`() {
-        søknadprosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(true)
-        assertEquals(true, søknadprosess.resultat())
+        faktagrupper.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(true)
+        assertEquals(true, faktagrupper.resultat())
     }
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val faktaFraVerneplikt = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        val faktaFraVerneplikt = faktagrupper.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("7001,7002,7003", faktaFraVerneplikt)
     }
 }

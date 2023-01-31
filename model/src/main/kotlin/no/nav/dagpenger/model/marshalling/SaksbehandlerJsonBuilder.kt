@@ -10,14 +10,14 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.time.LocalDateTime
 import java.util.UUID
 
 class SaksbehandlerJsonBuilder(
-    private val søknadprosess: Søknadprosess,
+    private val faktagrupper: Faktagrupper,
     private val seksjonNavn: String,
     private val indeks: Int = 0
 ) : SøknadJsonBuilder() {
@@ -25,10 +25,10 @@ class SaksbehandlerJsonBuilder(
     private val genererteFakta = mutableSetOf<Faktum<*>>()
 
     init {
-        søknadprosess.søknad.accept(this)
-        søknadprosess.rootSubsumsjon.mulige().accept(this)
-        søknadprosess.first { seksjonNavn == it.navn && indeks == it.indeks }
-            .filtrertSeksjon(søknadprosess.rootSubsumsjon).accept(this)
+        faktagrupper.søknad.accept(this)
+        faktagrupper.rootSubsumsjon.mulige().accept(this)
+        faktagrupper.first { seksjonNavn == it.navn && indeks == it.indeks }
+            .filtrertSeksjon(faktagrupper.rootSubsumsjon).accept(this)
         ignore = false
         genererteFakta.forEach { it.accept(this) }
     }
@@ -105,7 +105,7 @@ class SaksbehandlerJsonBuilder(
         genererteFaktum: Set<Faktum<*>>
     ) {
         if (!ignore) {
-            val genererte = søknadprosess.flatMap {
+            val genererte = faktagrupper.flatMap {
                 it.filter { faktum ->
                     templates.any { template ->
                         faktum.faktumId.generertFra(template.faktumId)

@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 // Evalueres til resultatet av det underliggende subsumsjonstreet
@@ -14,11 +14,11 @@ class DeltreSubsumsjon private constructor(
 
     internal constructor(navn: String, child: Subsumsjon) : this(navn, child, TomSubsumsjon, TomSubsumsjon)
 
-    override fun deepCopy(søknadprosess: Søknadprosess) = DeltreSubsumsjon(
+    override fun deepCopy(faktagrupper: Faktagrupper) = DeltreSubsumsjon(
         navn,
-        child.deepCopy(søknadprosess),
-        oppfyltSubsumsjon.deepCopy(søknadprosess),
-        ikkeOppfyltSubsumsjon.deepCopy(søknadprosess)
+        child.deepCopy(faktagrupper),
+        oppfyltSubsumsjon.deepCopy(faktagrupper),
+        ikkeOppfyltSubsumsjon.deepCopy(faktagrupper)
     )
 
     override fun bygg(søknad: Søknad) = DeltreSubsumsjon(

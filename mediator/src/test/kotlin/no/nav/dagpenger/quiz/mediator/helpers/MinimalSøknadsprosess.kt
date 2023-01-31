@@ -11,8 +11,8 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.utfylt
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -55,7 +55,7 @@ internal class MinimalSøknadsprosess(private val prosessversjon: Prosessversjon
         registrer(søknad)
     }
 
-    private val søknadsprosess: Søknadprosess = Søknadprosess(seksjoner)
+    private val søknadsprosess: Faktagrupper = Faktagrupper(seksjoner)
 
     private val faktumNavBehov = FaktumNavBehov(
         mapOf(

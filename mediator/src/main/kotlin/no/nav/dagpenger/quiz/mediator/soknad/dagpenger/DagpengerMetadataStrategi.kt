@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.Regel
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
@@ -14,16 +14,16 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import java.util.UUID
 
 class DagpengerMetadataStrategi : MetadataStrategi {
-    override fun metadata(søknadprosess: Søknadprosess): Metadata {
-        return DagpengerSkjemakodeFinner(søknadprosess).skjemaKode()
+    override fun metadata(faktagrupper: Faktagrupper): Metadata {
+        return DagpengerSkjemakodeFinner(faktagrupper).skjemaKode()
     }
 
-    private class DagpengerSkjemakodeFinner(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
+    private class DagpengerSkjemakodeFinner(faktagrupper: Faktagrupper) : SøknadprosessVisitor {
         private var permittert: Boolean = false
         private var gjenopptak: Boolean = false
 
         init {
-            søknadprosess.accept(this)
+            faktagrupper.accept(this)
         }
 
         fun skjemaKode(): Metadata {

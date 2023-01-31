@@ -27,8 +27,8 @@ import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.under
 import no.nav.dagpenger.model.regel.utfylt
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -48,7 +48,7 @@ import java.util.UUID
 
 internal class SøkerJsonBuilderTest {
     private lateinit var prototypeSøknad: Søknad
-    private lateinit var søknadprosess: Søknadprosess
+    private lateinit var faktagrupper: Faktagrupper
 
     @BeforeEach
     fun setup() {
@@ -87,16 +87,16 @@ internal class SøkerJsonBuilderTest {
             dokument faktum "f25" id 25 avhengerAv 24,
             boolsk faktum "f26" id 26 avhengerAv 25
         )
-        søknadprosess = søknadprosess(søkerSubsumsjon())
+        faktagrupper = søknadprosess(søkerSubsumsjon())
     }
 
     @Test
     fun `SøkerJsonBuilder returnerer besvarte fakta og neste ubesvarte faktum`() {
-        SøkerJsonBuilder(søknadprosess).resultat().also {
+        SøkerJsonBuilder(faktagrupper).resultat().also {
             assertMetadata(it)
         }
 
-        MedSøknad(søknadprosess) {
+        MedSøknad(faktagrupper) {
             harAntallSeksjoner(1)
             seksjon("seksjon1") {
                 fakta {
@@ -108,8 +108,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.boolsk(1).besvar(true)
-        MedSøknad(søknadprosess) {
+        faktagrupper.boolsk(1).besvar(true)
+        MedSøknad(faktagrupper) {
             harAntallSeksjoner(1)
             seksjon("seksjon1") {
                 fakta {
@@ -121,8 +121,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.boolsk(3).besvar(true)
-        MedSøknad(søknadprosess) {
+        faktagrupper.boolsk(3).besvar(true)
+        MedSøknad(faktagrupper) {
             harAntallSeksjoner(1)
             seksjon("seksjon1") {
                 fakta {
@@ -134,8 +134,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.boolsk(5).besvar(true)
-        MedSøknad(søknadprosess) {
+        faktagrupper.boolsk(5).besvar(true)
+        MedSøknad(faktagrupper) {
             harAntallSeksjoner(2)
             seksjon("seksjon1") {
                 erFerdig()
@@ -154,10 +154,10 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.generator(67).besvar(2)
-        søknadprosess.heltall("6.1").besvar(11)
-        søknadprosess.tekst("7.1").besvar(Tekst("Hei"))
-        MedSøknad(søknadprosess) {
+        faktagrupper.generator(67).besvar(2)
+        faktagrupper.heltall("6.1").besvar(11)
+        faktagrupper.tekst("7.1").besvar(Tekst("Hei"))
+        MedSøknad(faktagrupper) {
             harAntallSeksjoner(2)
             seksjon("seksjon2") {
                 fakta {
@@ -178,8 +178,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.heltall("6.2").besvar(19)
-        MedSøknad(søknadprosess) {
+        faktagrupper.heltall("6.2").besvar(19)
+        MedSøknad(faktagrupper) {
             harAntallSeksjoner(2)
             seksjon("seksjon2") {
                 fakta {
@@ -194,8 +194,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.tekst("7.2").besvar(Tekst("Hadet"))
-        MedSøknad(søknadprosess) {
+        faktagrupper.tekst("7.2").besvar(Tekst("Hadet"))
+        MedSøknad(faktagrupper) {
             harAntallSeksjoner(2)
             seksjon("seksjon2") { erFerdig() }
             seksjon("seksjon2") {
@@ -210,10 +210,10 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.dato("8").besvar(LocalDate.now())
-        søknadprosess.dato("9").besvar(LocalDate.now())
+        faktagrupper.dato("8").besvar(LocalDate.now())
+        faktagrupper.dato("9").besvar(LocalDate.now())
 
-        MedSøknad(søknadprosess) {
+        MedSøknad(faktagrupper) {
             seksjon("dokumentasjon") {
                 fakta {
                     harAntallFakta(4)
@@ -253,10 +253,10 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.dokument(15).besvar(Dokument(LocalDate.now(), "urn:nav:1234"))
-        søknadprosess.generator(1718).besvar(1)
+        faktagrupper.dokument(15).besvar(Dokument(LocalDate.now(), "urn:nav:1234"))
+        faktagrupper.generator(1718).besvar(1)
 
-        MedSøknad(søknadprosess) {
+        MedSøknad(faktagrupper) {
             harAntallSeksjoner(4)
             seksjon("seksjon3") {
                 fakta {
@@ -287,10 +287,10 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.envalg("17.1").besvar(Envalg("f17.envalg1"))
-        søknadprosess.flervalg("18.1").besvar(Flervalg("f18.flervalg2"))
+        faktagrupper.envalg("17.1").besvar(Envalg("f17.envalg1"))
+        faktagrupper.flervalg("18.1").besvar(Flervalg("f18.flervalg2"))
 
-        MedSøknad(søknadprosess) {
+        MedSøknad(faktagrupper) {
             harAntallSeksjoner(5)
             seksjon("Gyldige land") {
                 fakta {
@@ -309,13 +309,13 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.land(19).besvar(Land("NOR"))
+        faktagrupper.land(19).besvar(Land("NOR"))
 
-        søknadprosess.generator(21).besvar(1)
-        søknadprosess.dato("20.1").besvar(LocalDate.now())
-        søknadprosess.boolsk(24).besvar(true)
+        faktagrupper.generator(21).besvar(1)
+        faktagrupper.dato("20.1").besvar(LocalDate.now())
+        faktagrupper.boolsk(24).besvar(true)
 
-        MedSøknad(søknadprosess) {
+        MedSøknad(faktagrupper) {
             seksjon("grunnleggende med dokumentasjon") {
                 fakta {
                     boolsk("f24") {
@@ -330,9 +330,9 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.dokument(24).besvar(Dokument(LocalDateTime.now(), "urn:nav:12345"))
+        faktagrupper.dokument(24).besvar(Dokument(LocalDateTime.now(), "urn:nav:12345"))
 
-        MedSøknad(søknadprosess) { erFerdig() }
+        MedSøknad(faktagrupper) { erFerdig() }
     }
 
     @Test
@@ -419,7 +419,7 @@ internal class SøkerJsonBuilderTest {
         return regeltre
     }
 
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Søknadprosess {
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Faktagrupper {
         val seksjoner = listOf(
             Seksjon(
                 "seksjon1",
@@ -485,7 +485,7 @@ internal class SøkerJsonBuilderTest {
                 prototypeSøknad.dokument(22)
             )
         )
-        val prototypeFaktagrupper = Søknadprosess(
+        val prototypeFaktagrupper = Faktagrupper(
             prototypeSøknad,
             seksjoner = seksjoner.toTypedArray(),
             rootSubsumsjon = prototypeSubsumsjon

@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.faktum.Faktum.Companion.deepCopy
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.Regel
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class GeneratorSubsumsjon internal constructor(
@@ -37,11 +37,11 @@ class GeneratorSubsumsjon internal constructor(
         visitor.postVisit(this, deltre)
     }
 
-    override fun deepCopy(søknadprosess: Søknadprosess) = GeneratorSubsumsjon(
+    override fun deepCopy(faktagrupper: Faktagrupper) = GeneratorSubsumsjon(
         regel,
-        listOf(faktum).deepCopy(søknadprosess).first() as GeneratorFaktum,
-        deltre.deepCopy(søknadprosess),
-        resultatSubsumsjon.deepCopy(søknadprosess) as SammensattSubsumsjon
+        listOf(faktum).deepCopy(faktagrupper).first() as GeneratorFaktum,
+        deltre.deepCopy(faktagrupper),
+        resultatSubsumsjon.deepCopy(faktagrupper) as SammensattSubsumsjon
 
     )
 

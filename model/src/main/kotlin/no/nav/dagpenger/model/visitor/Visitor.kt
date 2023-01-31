@@ -15,8 +15,8 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.regel.Regel
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.BareEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
@@ -153,8 +153,8 @@ interface SøknadVisitor : PersonVisitor, FaktumVisitor {
 }
 
 interface SøknadprosessVisitor : SubsumsjonVisitor, SøknadVisitor {
-    fun preVisit(søknadprosess: Søknadprosess) {}
-    fun postVisit(søknadprosess: Søknadprosess) {}
+    fun preVisit(faktagrupper: Faktagrupper) {}
+    fun postVisit(faktagrupper: Faktagrupper) {}
     fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {}
     fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {}
     fun preVisitAvhengerAv(seksjon: Seksjon, avhengerAvFakta: Set<Faktum<*>>) {}

@@ -6,25 +6,25 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
 
 class InnsendingMetadataStrategi : MetadataStrategi {
-    private fun Søknadprosess.innsendingSvar() = when (HenvendelseType(this).hva) {
+    private fun Faktagrupper.innsendingSvar() = when (HenvendelseType(this).hva) {
         // "faktum.hvorfor.svar.endring" -> "Melding om endring som kan påvirke Dagpenger"
         else -> "Generell innsending"
     }
 
-    override fun metadata(søknadprosess: Søknadprosess) =
-        Metadata("GENERELL_INNSENDING", søknadprosess.innsendingSvar())
+    override fun metadata(faktagrupper: Faktagrupper) =
+        Metadata("GENERELL_INNSENDING", faktagrupper.innsendingSvar())
 
-    private class HenvendelseType(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
+    private class HenvendelseType(faktagrupper: Faktagrupper) : SøknadprosessVisitor {
         var hva: String? = null
 
         init {
-            søknadprosess.accept(this)
+            faktagrupper.accept(this)
         }
 
         override fun <R : Comparable<R>> visitMedSvar(

@@ -6,8 +6,8 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
@@ -25,13 +25,13 @@ class NesteSeksjonTest {
         val prototypeSubsumsjon = prototypesøknad.boolsk(1) er true hvisOppfylt {
             prototypesøknad.boolsk(2) er true
         }
-        val prototypeSøknadprosess = Søknadprosess(
+        val prototypeFaktagrupper = Faktagrupper(
             prototypesøknad,
             Seksjon("nav", Rolle.nav, prototypesøknad.boolsk(2)),
             Seksjon("søker", Rolle.søker, prototypesøknad.boolsk(1)),
             rootSubsumsjon = prototypeSubsumsjon
         )
-        val fakta = Versjon.Bygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
+        val fakta = Versjon.Bygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
             .søknadprosess(testPerson, Web)
 
         assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
@@ -47,14 +47,14 @@ class NesteSeksjonTest {
         val prototypeSubsumsjon = prototypesøknad.boolsk(1) er true hvisOppfylt {
             prototypesøknad.boolsk(2) er true
         }
-        val prototypeSøknadprosess = Søknadprosess(
+        val prototypeFaktagrupper = Faktagrupper(
             prototypesøknad,
             Seksjon("søker1", Rolle.søker, prototypesøknad.boolsk(2)),
             Seksjon("søker2", Rolle.søker, prototypesøknad.boolsk(1)),
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        Versjon.Bygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeSøknadprosess))
+        Versjon.Bygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
             .søknadprosess(testPerson, Web).also { fakta ->
                 assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
             }

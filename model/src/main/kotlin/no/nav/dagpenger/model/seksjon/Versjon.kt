@@ -33,7 +33,7 @@ class Versjon private constructor(
         person: Person,
         type: UserInterfaceType,
         uuid: UUID = UUID.randomUUID()
-    ): Søknadprosess =
+    ): Faktagrupper =
         bygger.søknadprosess(person, type, uuid)
 
     fun søknadprosess(søknad: Søknad, type: UserInterfaceType) =
@@ -51,20 +51,20 @@ class Versjon private constructor(
     class Bygger(
         private val prototypeSøknad: Søknad,
         private val prototypeSubsumsjon: Subsumsjon,
-        private val prototypeUserInterfaces: Map<UserInterfaceType, Søknadprosess>,
+        private val prototypeUserInterfaces: Map<UserInterfaceType, Faktagrupper>,
         internal val faktumNavBehov: FaktumNavBehov? = null
     ) {
         fun søknadprosess(
             person: Person,
             type: UserInterfaceType,
             uuid: UUID = UUID.randomUUID()
-        ): Søknadprosess =
+        ): Faktagrupper =
             søknadprosess(prototypeSøknad.bygg(person, prototypeSøknad.prosessVersjon, uuid), type)
 
         fun søknadprosess(
             søknad: Søknad,
             type: UserInterfaceType
-        ): Søknadprosess {
+        ): Faktagrupper {
             val subsumsjon = prototypeSubsumsjon.bygg(søknad)
             return prototypeUserInterfaces[type]?.bygg(søknad, subsumsjon)
                 ?: throw IllegalArgumentException("Kan ikke finne søknadprosess av type $type")

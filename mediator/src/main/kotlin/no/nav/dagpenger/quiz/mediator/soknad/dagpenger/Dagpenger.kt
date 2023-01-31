@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
@@ -45,7 +45,7 @@ internal object Dagpenger {
             VERSJON_ID,
             *alleFakta
         )
-    private val søknadsprosess: Søknadprosess = Søknadprosess(*alleSeksjoner)
+    private val søknadsprosess: Faktagrupper = Faktagrupper(*alleSeksjoner)
 
     object Subsumsjoner {
         val regeltre: Subsumsjon = with(prototypeSøknad) {

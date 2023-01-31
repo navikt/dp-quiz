@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker.`antall timer deltid du kan jobbe`
@@ -25,12 +25,12 @@ import org.junit.jupiter.api.Test
 internal class ReellArbeidssokerTest {
 
     private lateinit var søknad: Søknad
-    private lateinit var søknadprosess: Søknadprosess
+    private lateinit var faktagrupper: Faktagrupper
 
     @BeforeEach
     fun setup() {
         søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *ReellArbeidssoker.fakta())
-        søknadprosess = søknad.testSøknadprosess(ReellArbeidssoker.regeltre(søknad)) {
+        faktagrupper = søknad.testSøknadprosess(ReellArbeidssoker.regeltre(søknad)) {
             ReellArbeidssoker.seksjon(this)
         }
     }
@@ -42,71 +42,71 @@ internal class ReellArbeidssokerTest {
 
     @Test
     fun `Kan kun jobbe deltid og ikke i hele Norge, ikke villig til å ta alle jobber eller gå ned i lønn`() {
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.boolsk(`kan jobbe heltid`).besvar(false)
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.boolsk(`kan jobbe heltid`).besvar(false)
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.flervalg(`årsak til kun deltid`).besvar(
+        faktagrupper.flervalg(`årsak til kun deltid`).besvar(
             Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-baby", "faktum.kun-deltid-aarsak.svar.annen-situasjon")
         )
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.tekst(`skriv kort om situasjonen din`).besvar(Tekst("Jeg er omringet av maur"))
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.tekst(`skriv kort om situasjonen din`).besvar(Tekst("Jeg er omringet av maur"))
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.desimaltall(`antall timer deltid du kan jobbe`).besvar(30.0)
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.desimaltall(`antall timer deltid du kan jobbe`).besvar(30.0)
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.boolsk(`kan du jobbe i hele Norge`).besvar(false)
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.boolsk(`kan du jobbe i hele Norge`).besvar(false)
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.flervalg(`årsak kan ikke jobbe i hele Norge`).besvar(
+        faktagrupper.flervalg(`årsak kan ikke jobbe i hele Norge`).besvar(
             Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse", "faktum.ikke-jobbe-hele-norge.svar.annen-situasjon")
         )
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.tekst(`kort om hvorfor ikke jobbe hele norge`).besvar(Tekst("Jeg er redd for hai"))
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.tekst(`kort om hvorfor ikke jobbe hele norge`).besvar(Tekst("Jeg er redd for hai"))
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.boolsk(`kan ta alle typer arbeid`).besvar(false)
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.boolsk(`kan ta alle typer arbeid`).besvar(false)
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.boolsk(`kan bytte yrke eller gå ned i lønn`).besvar(false)
-        assertEquals(true, søknadprosess.resultat())
+        faktagrupper.boolsk(`kan bytte yrke eller gå ned i lønn`).besvar(false)
+        assertEquals(true, faktagrupper.resultat())
 
         assertFaktaErBesvart(
-            søknadprosess.boolsk(`kan jobbe heltid`),
-            søknadprosess.flervalg(`årsak til kun deltid`),
-            søknadprosess.tekst(`skriv kort om situasjonen din`),
-            søknadprosess.desimaltall(`antall timer deltid du kan jobbe`),
-            søknadprosess.boolsk(`kan du jobbe i hele Norge`),
-            søknadprosess.flervalg(`årsak kan ikke jobbe i hele Norge`),
-            søknadprosess.tekst(`kort om hvorfor ikke jobbe hele norge`),
-            søknadprosess.boolsk(`kan ta alle typer arbeid`),
-            søknadprosess.boolsk(`kan bytte yrke eller gå ned i lønn`)
+            faktagrupper.boolsk(`kan jobbe heltid`),
+            faktagrupper.flervalg(`årsak til kun deltid`),
+            faktagrupper.tekst(`skriv kort om situasjonen din`),
+            faktagrupper.desimaltall(`antall timer deltid du kan jobbe`),
+            faktagrupper.boolsk(`kan du jobbe i hele Norge`),
+            faktagrupper.flervalg(`årsak kan ikke jobbe i hele Norge`),
+            faktagrupper.tekst(`kort om hvorfor ikke jobbe hele norge`),
+            faktagrupper.boolsk(`kan ta alle typer arbeid`),
+            faktagrupper.boolsk(`kan bytte yrke eller gå ned i lønn`)
         )
     }
 
     @Test
     fun `Kan jobbe heltid i hele Norge, jobbe med hva som helst, og gå ned i lønn`() {
-        søknadprosess.boolsk(`kan jobbe heltid`).besvar(true)
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.boolsk(`kan jobbe heltid`).besvar(true)
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.boolsk(`kan du jobbe i hele Norge`).besvar(true)
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.boolsk(`kan du jobbe i hele Norge`).besvar(true)
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.boolsk(`kan ta alle typer arbeid`).besvar(true)
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.boolsk(`kan ta alle typer arbeid`).besvar(true)
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.boolsk(`kan bytte yrke eller gå ned i lønn`).besvar(true)
-        assertEquals(true, søknadprosess.resultat())
+        faktagrupper.boolsk(`kan bytte yrke eller gå ned i lønn`).besvar(true)
+        assertEquals(true, faktagrupper.resultat())
 
         assertFaktaErBesvart(
-            søknadprosess.boolsk(`kan jobbe heltid`),
-            søknadprosess.boolsk(`kan du jobbe i hele Norge`),
-            søknadprosess.boolsk(`kan ta alle typer arbeid`),
-            søknadprosess.boolsk(`kan bytte yrke eller gå ned i lønn`)
+            faktagrupper.boolsk(`kan jobbe heltid`),
+            faktagrupper.boolsk(`kan du jobbe i hele Norge`),
+            faktagrupper.boolsk(`kan ta alle typer arbeid`),
+            faktagrupper.boolsk(`kan bytte yrke eller gå ned i lønn`)
         )
     }
 
@@ -115,33 +115,33 @@ internal class ReellArbeidssokerTest {
         `Besvar alle fakta hvorfor deltid`()
 
         assertFaktaErBesvart(
-            søknadprosess.boolsk(`kan jobbe heltid`),
-            søknadprosess.flervalg(`årsak til kun deltid`),
-            søknadprosess.tekst(`skriv kort om situasjonen din`),
-            søknadprosess.desimaltall(`antall timer deltid du kan jobbe`)
+            faktagrupper.boolsk(`kan jobbe heltid`),
+            faktagrupper.flervalg(`årsak til kun deltid`),
+            faktagrupper.tekst(`skriv kort om situasjonen din`),
+            faktagrupper.desimaltall(`antall timer deltid du kan jobbe`)
         )
     }
 
     @Test
     fun `Fakta om deltid blir riktig invalidert`() {
         `Besvar alle fakta hvorfor deltid`()
-        søknadprosess.boolsk(`kan jobbe heltid`).besvar(true)
+        faktagrupper.boolsk(`kan jobbe heltid`).besvar(true)
 
         assertAvhengigeFaktaInvalideres(
-            søknadprosess.flervalg(`årsak til kun deltid`),
-            søknadprosess.tekst(`skriv kort om situasjonen din`),
-            søknadprosess.desimaltall(`antall timer deltid du kan jobbe`)
+            faktagrupper.flervalg(`årsak til kun deltid`),
+            faktagrupper.tekst(`skriv kort om situasjonen din`),
+            faktagrupper.desimaltall(`antall timer deltid du kan jobbe`)
         )
 
         `Besvar alle fakta hvorfor deltid`()
-        søknadprosess.flervalg(`årsak til kun deltid`).besvar(Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon"))
+        faktagrupper.flervalg(`årsak til kun deltid`).besvar(Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon"))
 
         assertAvhengigeFaktaInvalideres(
-            søknadprosess.tekst(`skriv kort om situasjonen din`)
+            faktagrupper.tekst(`skriv kort om situasjonen din`)
         )
 
         `Besvar alle fakta hvorfor deltid`()
-        søknadprosess.tekst(`skriv kort om situasjonen din`).besvar(Tekst("Noe greier"))
+        faktagrupper.tekst(`skriv kort om situasjonen din`).besvar(Tekst("Noe greier"))
     }
 
     @Test
@@ -149,9 +149,9 @@ internal class ReellArbeidssokerTest {
         `Besvar alle fakta hvorfor ikke jobbe i hele Norge`()
 
         assertFaktaErBesvart(
-            søknadprosess.boolsk(`kan du jobbe i hele Norge`),
-            søknadprosess.flervalg(`årsak kan ikke jobbe i hele Norge`),
-            søknadprosess.tekst(`kort om hvorfor ikke jobbe hele norge`)
+            faktagrupper.boolsk(`kan du jobbe i hele Norge`),
+            faktagrupper.flervalg(`årsak kan ikke jobbe i hele Norge`),
+            faktagrupper.tekst(`kort om hvorfor ikke jobbe hele norge`)
         )
     }
 
@@ -159,57 +159,57 @@ internal class ReellArbeidssokerTest {
     fun `Fakta om hvorfor ikke jobbe i hele Norge blir riktig invalidert`() {
         `Besvar alle fakta hvorfor ikke jobbe i hele Norge`()
 
-        søknadprosess.boolsk(`kan du jobbe i hele Norge`).besvar(true)
+        faktagrupper.boolsk(`kan du jobbe i hele Norge`).besvar(true)
 
         assertAvhengigeFaktaInvalideres(
-            søknadprosess.flervalg(`årsak kan ikke jobbe i hele Norge`),
-            søknadprosess.tekst(`kort om hvorfor ikke jobbe hele norge`)
+            faktagrupper.flervalg(`årsak kan ikke jobbe i hele Norge`),
+            faktagrupper.tekst(`kort om hvorfor ikke jobbe hele norge`)
         )
 
         `Besvar alle fakta hvorfor ikke jobbe i hele Norge`()
 
-        søknadprosess.flervalg(`årsak kan ikke jobbe i hele Norge`).besvar(
+        faktagrupper.flervalg(`årsak kan ikke jobbe i hele Norge`).besvar(
             Flervalg("faktum.ikke-jobbe-hele-norge.svar.har-fylt-60")
         )
 
         assertAvhengigeFaktaInvalideres(
-            søknadprosess.tekst(`kort om hvorfor ikke jobbe hele norge`)
+            faktagrupper.tekst(`kort om hvorfor ikke jobbe hele norge`)
         )
     }
 
     @Test
     fun `Faktum kan ta alle typer arbeid blir besvart`() {
-        søknadprosess.boolsk(`kan ta alle typer arbeid`).besvar(true)
-        assertEquals(true, søknadprosess.boolsk(`kan ta alle typer arbeid`).erBesvart())
+        faktagrupper.boolsk(`kan ta alle typer arbeid`).besvar(true)
+        assertEquals(true, faktagrupper.boolsk(`kan ta alle typer arbeid`).erBesvart())
     }
 
     @Test
     fun `Faktum kan bytte yrke og gå ned i lønn blir besvart`() {
-        søknadprosess.boolsk(`kan bytte yrke eller gå ned i lønn`).besvar(true)
-        assertEquals(true, søknadprosess.boolsk(`kan bytte yrke eller gå ned i lønn`).erBesvart())
+        faktagrupper.boolsk(`kan bytte yrke eller gå ned i lønn`).besvar(true)
+        assertEquals(true, faktagrupper.boolsk(`kan bytte yrke eller gå ned i lønn`).erBesvart())
     }
 
     private fun `Besvar alle fakta hvorfor deltid`() {
-        søknadprosess.boolsk(`kan jobbe heltid`).besvar(false)
-        søknadprosess.flervalg(`årsak til kun deltid`).besvar(
+        faktagrupper.boolsk(`kan jobbe heltid`).besvar(false)
+        faktagrupper.flervalg(`årsak til kun deltid`).besvar(
             Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon")
         )
-        søknadprosess.tekst(`skriv kort om situasjonen din`).besvar(Tekst("Jeg er omringet av maur"))
-        søknadprosess.desimaltall(`antall timer deltid du kan jobbe`).besvar(20.5)
+        faktagrupper.tekst(`skriv kort om situasjonen din`).besvar(Tekst("Jeg er omringet av maur"))
+        faktagrupper.desimaltall(`antall timer deltid du kan jobbe`).besvar(20.5)
     }
 
     private fun `Besvar alle fakta hvorfor ikke jobbe i hele Norge`() {
         `Besvar alle fakta hvorfor deltid`()
-        søknadprosess.boolsk(`kan du jobbe i hele Norge`).besvar(false)
-        søknadprosess.flervalg(`årsak kan ikke jobbe i hele Norge`).besvar(
+        faktagrupper.boolsk(`kan du jobbe i hele Norge`).besvar(false)
+        faktagrupper.flervalg(`årsak kan ikke jobbe i hele Norge`).besvar(
             Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse", "faktum.ikke-jobbe-hele-norge.svar.annen-situasjon")
         )
-        søknadprosess.tekst(`kort om hvorfor ikke jobbe hele norge`).besvar(Tekst("Jeg er redd for hai"))
+        faktagrupper.tekst(`kort om hvorfor ikke jobbe hele norge`).besvar(Tekst("Jeg er redd for hai"))
     }
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val faktaFraReellArbeidssøker = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        val faktaFraReellArbeidssøker = faktagrupper.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("1,2,3,4,5,6,7,8,9,10,11,12", faktaFraReellArbeidssøker)
     }
 

@@ -6,8 +6,8 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 
 class GenerertEndreTest {
 
-    private lateinit var søknadprosess: Søknadprosess
+    private lateinit var faktagrupper: Faktagrupper
 
     @BeforeEach
     fun setup() {
@@ -28,27 +28,27 @@ class GenerertEndreTest {
             boolsk faktum "template2" id 2,
             boolsk faktum "template3" id 3
         )
-        val prototypeSøknadprosess = Søknadprosess(
+        val prototypeFaktagrupper = Faktagrupper(
             prototypeSøknad,
             Seksjon("seksjon14", Rolle.søker, prototypeSøknad.boolsk(1), prototypeSøknad.generator(4)),
             Seksjon("template23", Rolle.søker, prototypeSøknad.boolsk(2), prototypeSøknad.boolsk(3))
         )
 
-        søknadprosess = Versjon.Bygger(prototypeSøknad, TomSubsumsjon, mapOf(Web to prototypeSøknadprosess)).søknadprosess(testPerson, Web)
+        faktagrupper = Versjon.Bygger(prototypeSøknad, TomSubsumsjon, mapOf(Web to prototypeFaktagrupper)).søknadprosess(testPerson, Web)
     }
 
     @Test
     fun ` endre generert faktum `() {
-        søknadprosess.generator(4).besvar(3)
-        assertEquals(4 + 9, søknadprosess.søknad.size)
-        assertEquals(5, søknadprosess.size)
+        faktagrupper.generator(4).besvar(3)
+        assertEquals(4 + 9, faktagrupper.søknad.size)
+        assertEquals(5, faktagrupper.size)
 
-        søknadprosess.generator(4).besvar(2)
-        assertEquals(4 + 6, søknadprosess.søknad.size)
-        assertEquals(4, søknadprosess.size)
+        faktagrupper.generator(4).besvar(2)
+        assertEquals(4 + 6, faktagrupper.søknad.size)
+        assertEquals(4, faktagrupper.size)
 
-        søknadprosess.generator(4).besvar(0)
-        assertEquals(4, søknadprosess.søknad.size)
-        assertEquals(2, søknadprosess.size)
+        faktagrupper.generator(4).besvar(0)
+        assertEquals(4, faktagrupper.søknad.size)
+        assertEquals(2, faktagrupper.size)
     }
 }

@@ -7,8 +7,8 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.godkjentAv
@@ -43,7 +43,7 @@ internal class SaksbehandlerSeksjonerTest {
         } hvisIkkeOppfylt {
             (prototypeSøknad.boolsk(5) er true).godkjentAv(prototypeSøknad.boolsk(6))
         }
-    private val prototypeSøknadprosess = Søknadprosess(
+    private val prototypeFaktagrupper = Faktagrupper(
         prototypeSøknad,
         Seksjon("søker", Rolle.søker, prototypeSøknad.boolsk(1), prototypeSøknad.boolsk(3), prototypeSøknad.boolsk(5)),
         Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeSøknad.boolsk(2)),
@@ -52,9 +52,9 @@ internal class SaksbehandlerSeksjonerTest {
     private val søknadprosessTestBygger = Versjon.Bygger(
         prototypeSøknad,
         prototypeSubsumsjon,
-        mapOf(Web to prototypeSøknadprosess)
+        mapOf(Web to prototypeFaktagrupper)
     )
-    private lateinit var seksjoner: Søknadprosess
+    private lateinit var seksjoner: Faktagrupper
     private lateinit var f1: Faktum<Boolean>
     private lateinit var f3: Faktum<Boolean>
     private lateinit var f5: Faktum<Boolean>

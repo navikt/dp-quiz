@@ -22,9 +22,9 @@ import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.lagFaktumNode
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilGyldigeLand
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilLandGrupper
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder.ReadOnlyStrategy
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Seksjon.Companion.brukerSeksjoner
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.SannsynliggjøringsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
@@ -33,27 +33,27 @@ import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
 
-class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : SøknadprosessVisitor {
+class SøkerJsonBuilder(private val faktagrupper: Faktagrupper) : SøknadprosessVisitor {
     companion object {
         private val mapper = jacksonObjectMapper()
         private val skalIkkeBesvaresAvSøker = ReadOnlyStrategy { it.harIkkeRolle(Rolle.søker) }
     }
 
     private val sannsynliggjøringsFaktaListe: Set<Faktum<*>> =
-        SannsynliggjøringsFaktaFinner(søknadprosess.rootSubsumsjon).fakta
+        SannsynliggjøringsFaktaFinner(faktagrupper.rootSubsumsjon).fakta
     private val root: ObjectNode = mapper.createObjectNode()
     private val seksjoner = mapper.createArrayNode()
     private val seksjonerTotalt = mutableSetOf<Seksjon>()
     private lateinit var gjeldendeFakta: Seksjon
     private lateinit var avhengigheter: MutableSet<Faktum<*>>
     private val generatorer: MutableSet<GeneratorFaktum> = mutableSetOf()
-    private val ferdig = søknadprosess.erFerdigFor(Rolle.søker, Rolle.nav)
+    private val ferdig = faktagrupper.erFerdigFor(Rolle.søker, Rolle.nav)
     private val avhengigeFaktaErLåst = ReadOnlyStrategy {
         !gjeldendeFakta.contains(it)
     }
 
     init {
-        søknadprosess.accept(this)
+        faktagrupper.accept(this)
     }
 
     fun resultat() = root
@@ -78,13 +78,13 @@ class SøkerJsonBuilder(private val søknadprosess: Søknadprosess) : Søknadpro
         root.set<ArrayNode>("seksjoner", seksjoner)
     }
 
-    override fun postVisit(søknadprosess: Søknadprosess) {
+    override fun postVisit(faktagrupper: Faktagrupper) {
         root.put("antallSeksjoner", seksjonerTotalt.brukerSeksjoner().size)
     }
 
     override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
         avhengigheter = mutableSetOf()
-        gjeldendeFakta = seksjon.gjeldendeFakta(søknadprosess.rootSubsumsjon)
+        gjeldendeFakta = seksjon.gjeldendeFakta(faktagrupper.rootSubsumsjon)
         seksjonerTotalt.add(seksjon)
     }
 

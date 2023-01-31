@@ -12,8 +12,8 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
@@ -47,7 +47,7 @@ internal class FaktumSvarServiceTest {
             prototypeFakta,
             prototypeFakta heltall 10 er 1 hvisOppfylt { prototypeFakta dato 11 etter (prototypeFakta dato 12) },
             mapOf(
-                Versjon.UserInterfaceType.Web to Søknadprosess(
+                Versjon.UserInterfaceType.Web to Faktagrupper(
                     Seksjon(
                         "seksjon",
                         Rolle.nav,

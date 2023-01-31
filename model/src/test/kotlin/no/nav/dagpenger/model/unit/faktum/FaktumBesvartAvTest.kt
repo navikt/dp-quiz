@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -28,11 +28,11 @@ internal class FaktumBesvartAvTest {
         assertEquals("A123456", BesvartAvVisitor(søknad).identer.first())
     }
 
-    private class BesvartAvVisitor(søknadprosess: Søknadprosess) : SøknadVisitor {
+    private class BesvartAvVisitor(faktagrupper: Faktagrupper) : SøknadVisitor {
 
         val identer = mutableListOf<String>()
         init {
-            søknadprosess.søknad.accept(this)
+            faktagrupper.søknad.accept(this)
         }
 
         override fun <R : Comparable<R>> visitMedSvar(

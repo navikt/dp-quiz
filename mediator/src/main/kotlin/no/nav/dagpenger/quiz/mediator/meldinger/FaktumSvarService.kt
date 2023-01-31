@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
@@ -103,25 +103,25 @@ internal class FaktumSvarService(
         }
     }
 
-    private fun besvarFakta(fakta: List<JsonNode>, søknadprosess: Søknadprosess) {
+    private fun besvarFakta(fakta: List<JsonNode>, faktagrupper: Faktagrupper) {
         fakta.forEach { faktumNode ->
             val faktumId = faktumNode["id"].asText()
             val svar = faktumNode["svar"]
             val type = faktumNode["type"].asText()
             val besvartAv = faktumNode["besvartAv"]?.asText()
 
-            besvar(søknadprosess, faktumId, svar, type, besvartAv)
+            besvar(faktagrupper, faktumId, svar, type, besvartAv)
         }
-        søknadPersistence.lagre(søknadprosess.søknad)
+        søknadPersistence.lagre(faktagrupper.søknad)
     }
 
-    private fun sendResultat(søknadprosess: Søknadprosess, context: MessageContext) {
-        ResultatJsonBuilder(søknadprosess).resultat().also { json ->
-            resultatPersistence.lagreResultat(søknadprosess.resultat()!!, søknadprosess.søknad.uuid, json)
+    private fun sendResultat(faktagrupper: Faktagrupper, context: MessageContext) {
+        ResultatJsonBuilder(faktagrupper).resultat().also { json ->
+            resultatPersistence.lagreResultat(faktagrupper.resultat()!!, faktagrupper.søknad.uuid, json)
             context.publish(json.toString())
             sikkerlogg.info { "Send ut resultat: $json" }
         }
-        log.info { "Ferdig med søknad ${søknadprosess.søknad.uuid}. Resultatet er: ${søknadprosess.resultat()}" }
+        log.info { "Ferdig med søknad ${faktagrupper.søknad.uuid}. Resultatet er: ${faktagrupper.resultat()}" }
     }
 
     override fun onError(problems: MessageProblems, context: MessageContext) {
@@ -130,33 +130,33 @@ internal class FaktumSvarService(
     }
 
     private fun besvar(
-        søknadprosess: Søknadprosess,
+        faktagrupper: Faktagrupper,
         faktumId: String,
         svar: JsonNode,
         type: String,
         besvartAv: String?
     ) {
-        if (svar.isNull) return søknadprosess.id(faktumId).tilUbesvart()
+        if (svar.isNull) return faktagrupper.id(faktumId).tilUbesvart()
         when (type) {
-            "land" -> søknadprosess.land(faktumId).besvar(svar.asLand(), besvartAv)
-            "boolean" -> søknadprosess.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)
-            "int" -> søknadprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv) // todo: remove?
-            "integer" -> søknadprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv)
-            "double" -> søknadprosess.desimaltall(faktumId).besvar(svar.asDouble(), besvartAv)
-            "localdate" -> søknadprosess.dato(faktumId).besvar(svar.asLocalDate(), besvartAv)
-            "inntekt" -> søknadprosess.inntekt(faktumId).besvar(svar.asDouble().årlig, besvartAv)
-            "envalg" -> søknadprosess.envalg(faktumId).besvar(svar.asEnvalg(), besvartAv)
-            "flervalg" -> søknadprosess.flervalg(faktumId).besvar(svar.asFlervalg(), besvartAv)
-            "tekst" -> søknadprosess.tekst(faktumId).besvar(svar.asTekst(), besvartAv)
-            "periode" -> søknadprosess.periode(faktumId).besvar(svar.asPeriode(), besvartAv)
-            "dokument" -> søknadprosess.dokument(faktumId).besvar(svar.asDokument(), besvartAv)
+            "land" -> faktagrupper.land(faktumId).besvar(svar.asLand(), besvartAv)
+            "boolean" -> faktagrupper.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)
+            "int" -> faktagrupper.heltall(faktumId).besvar(svar.asInt(), besvartAv) // todo: remove?
+            "integer" -> faktagrupper.heltall(faktumId).besvar(svar.asInt(), besvartAv)
+            "double" -> faktagrupper.desimaltall(faktumId).besvar(svar.asDouble(), besvartAv)
+            "localdate" -> faktagrupper.dato(faktumId).besvar(svar.asLocalDate(), besvartAv)
+            "inntekt" -> faktagrupper.inntekt(faktumId).besvar(svar.asDouble().årlig, besvartAv)
+            "envalg" -> faktagrupper.envalg(faktumId).besvar(svar.asEnvalg(), besvartAv)
+            "flervalg" -> faktagrupper.flervalg(faktumId).besvar(svar.asFlervalg(), besvartAv)
+            "tekst" -> faktagrupper.tekst(faktumId).besvar(svar.asTekst(), besvartAv)
+            "periode" -> faktagrupper.periode(faktumId).besvar(svar.asPeriode(), besvartAv)
+            "dokument" -> faktagrupper.dokument(faktumId).besvar(svar.asDokument(), besvartAv)
             "generator" -> {
                 val svarene = svar as ArrayNode
-                søknadprosess.generator(faktumId).besvar(svarene.size(), besvartAv)
+                faktagrupper.generator(faktumId).besvar(svarene.size(), besvartAv)
                 svarene.forEachIndexed { index, genererteSvar ->
                     genererteSvar.filter(harSvar()).forEach {
                         besvar(
-                            søknadprosess,
+                            faktagrupper,
                             "${it["id"].asText()}.${index + 1}}",
                             it["svar"],
                             it["type"].asText(),
@@ -171,11 +171,11 @@ internal class FaktumSvarService(
 
     private fun harSvar() = { faktumNode: JsonNode -> faktumNode.has("svar") }
 
-    private class ProsessVersjonVisitor(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
+    private class ProsessVersjonVisitor(faktagrupper: Faktagrupper) : SøknadprosessVisitor {
         lateinit var prosessnavn: Prosessnavn
 
         init {
-            søknadprosess.accept(this)
+            faktagrupper.accept(this)
         }
 
         override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {

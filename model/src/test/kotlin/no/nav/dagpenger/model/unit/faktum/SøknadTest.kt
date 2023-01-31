@@ -13,8 +13,8 @@ import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -40,7 +40,7 @@ class SøknadTest {
             boolsk faktum "f12" id 12 avhengerAv 11
         )
 
-        Søknadprosess(Seksjon("seksjon", Rolle.søker, søknad id 11, søknad id 12))
+        Faktagrupper(Seksjon("seksjon", Rolle.søker, søknad id 11, søknad id 12))
         assertEquals(2, søknad.size)
         søknad.dokument(11).besvar(Dokument(1.januar, "urn:nid:sse"))
         søknad.boolsk(12).besvar(true)
@@ -60,7 +60,7 @@ class SøknadTest {
             maks dato "maksdato" av 3 og 4 og 5 id 345
         )
 
-        Søknadprosess(Seksjon("seksjon", Rolle.søker, søknad id 345, søknad id 3, søknad id 4, søknad id 5))
+        Faktagrupper(Seksjon("seksjon", Rolle.søker, søknad id 345, søknad id 3, søknad id 4, søknad id 5))
         assertEquals(4, søknad.size)
         søknad.dato(3).besvar(3.januar)
         søknad.dato(4).besvar(4.januar)
@@ -82,7 +82,7 @@ class SøknadTest {
             boolsk faktum "annen forelder får støtte" id 18
         )
         val barneSeksjon = Seksjon("barneseksjon", Rolle.søker, søknad id 15, søknad id 16, søknad id 17, søknad id 18)
-        Søknadprosess(søknad, barneSeksjon)
+        Faktagrupper(søknad, barneSeksjon)
         assertEquals(TemplateFaktum::class, søknad.id(16)::class)
         assertEquals(GeneratorFaktum::class, søknad.id(15)::class)
         assertEquals(4, søknad.size)

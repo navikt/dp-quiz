@@ -5,8 +5,8 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
@@ -25,9 +25,9 @@ internal class GenerertFaktumTest {
         )
 
         val seksjon = Seksjon("seksjon", Rolle.søker, søknad boolsk 1, søknad generator 2)
-        val søknadprosess = Søknadprosess(søknad, seksjon)
+        val faktagrupper = Faktagrupper(søknad, seksjon)
         val originalSize = seksjon.size
-        søknadprosess.generator(2).besvar(5)
+        faktagrupper.generator(2).besvar(5)
 
         assertEquals(5, seksjon.size - originalSize)
         assertEquals("1.1", seksjon[1].id)
@@ -49,10 +49,10 @@ internal class GenerertFaktumTest {
 
         val seksjon1 = Seksjon("seksjon", Rolle.søker, søknad boolsk 1, søknad generator 4)
         val seksjon2 = Seksjon("seksjon", Rolle.søker, søknad boolsk 2, søknad boolsk 3, søknad boolsk 5)
-        val søknadprosess = Søknadprosess(søknad, seksjon1, seksjon2)
+        val faktagrupper = Faktagrupper(søknad, seksjon1, seksjon2)
         val originalSize1 = seksjon1.size
         val originalSize2 = seksjon2.size
-        søknadprosess.generator(4).besvar(3)
+        faktagrupper.generator(4).besvar(3)
 
         assertEquals(3, seksjon1.size - originalSize1)
         assertEquals(6, seksjon2.size - originalSize2)
@@ -75,26 +75,26 @@ internal class GenerertFaktumTest {
 
         val seksjon1 = Seksjon("seksjon", Rolle.søker, søknad boolsk 1, søknad generator 4)
         val seksjon2 = Seksjon("seksjon", Rolle.søker, søknad boolsk 2, søknad boolsk 3, søknad boolsk 5)
-        val søknadprosess = Søknadprosess(søknad, seksjon1, seksjon2)
+        val faktagrupper = Faktagrupper(søknad, seksjon1, seksjon2)
 
-        søknadprosess.boolsk(5).besvar(true)
+        faktagrupper.boolsk(5).besvar(true)
 
-        søknadprosess.heltall(4).besvar(1)
-        søknadprosess.boolsk("1.1").besvar(true)
-        søknadprosess.boolsk("2.1").besvar(true)
-        søknadprosess.boolsk("3.1").besvar(true)
+        faktagrupper.heltall(4).besvar(1)
+        faktagrupper.boolsk("1.1").besvar(true)
+        faktagrupper.boolsk("2.1").besvar(true)
+        faktagrupper.boolsk("3.1").besvar(true)
 
-        assertTrue("1.1 skal være besvart") { søknadprosess.boolsk("1.1").erBesvart() }
-        assertTrue("2.1 skal være besvart") { søknadprosess.boolsk("2.1").erBesvart() }
-        assertTrue("3.1 skal være besvart") { søknadprosess.boolsk("3.1").erBesvart() }
-        assertTrue("4 skal være besvart") { søknadprosess.boolsk(4).erBesvart() }
+        assertTrue("1.1 skal være besvart") { faktagrupper.boolsk("1.1").erBesvart() }
+        assertTrue("2.1 skal være besvart") { faktagrupper.boolsk("2.1").erBesvart() }
+        assertTrue("3.1 skal være besvart") { faktagrupper.boolsk("3.1").erBesvart() }
+        assertTrue("4 skal være besvart") { faktagrupper.boolsk(4).erBesvart() }
 
-        søknadprosess.boolsk(5).besvar(false)
+        faktagrupper.boolsk(5).besvar(false)
 
-        assertFalse("4 skal ikke være besvart") { søknadprosess.boolsk(4).erBesvart() }
-        assertNull(søknadprosess.søknad.find { it.id == "1.1" }, "1.1 skal ikke være besvart")
-        assertNull(søknadprosess.søknad.find { it.id == "2.1" }, "2.1 skal ikke være besvart")
-        assertNull(søknadprosess.søknad.find { it.id == "3.1" }, "3.1 skal ikke være besvart")
+        assertFalse("4 skal ikke være besvart") { faktagrupper.boolsk(4).erBesvart() }
+        assertNull(faktagrupper.søknad.find { it.id == "1.1" }, "1.1 skal ikke være besvart")
+        assertNull(faktagrupper.søknad.find { it.id == "2.1" }, "2.1 skal ikke være besvart")
+        assertNull(faktagrupper.søknad.find { it.id == "3.1" }, "3.1 skal ikke være besvart")
     }
 
     @Test
@@ -106,13 +106,13 @@ internal class GenerertFaktumTest {
         )
         val generatorSeksjon = Seksjon("seksjon", Rolle.søker, søknad generator 2)
         val templateSeksjon = Seksjon("seksjon", Rolle.søker, søknad boolsk 1)
-        val søknadprosess = Søknadprosess(søknad, generatorSeksjon, templateSeksjon)
-        søknadprosess.generator(2).besvar(3)
-        assertEquals(5, søknadprosess.size)
+        val faktagrupper = Faktagrupper(søknad, generatorSeksjon, templateSeksjon)
+        faktagrupper.generator(2).besvar(3)
+        assertEquals(5, faktagrupper.size)
         assertEquals(1, generatorSeksjon.size)
         assertEquals(1, templateSeksjon.size)
-        assertEquals(1, søknadprosess[4].size)
-        assertEquals("1.3", søknadprosess[4][0].id)
+        assertEquals(1, faktagrupper[4].size)
+        assertEquals("1.3", faktagrupper[4][0].id)
     }
 
     @Test
@@ -128,16 +128,16 @@ internal class GenerertFaktumTest {
         val generatorSeksjon = Seksjon("seksjon", Rolle.søker, søknad generator 4)
         val templateSeksjon1 = Seksjon("seksjon", Rolle.søker, søknad boolsk 1, søknad boolsk 2)
         val templateSeksjon2 = Seksjon("seksjon", Rolle.søker, søknad boolsk 3)
-        val søknadprosess = Søknadprosess(søknad, generatorSeksjon, templateSeksjon1, templateSeksjon2)
-        søknadprosess.generator(4).besvar(3)
+        val faktagrupper = Faktagrupper(søknad, generatorSeksjon, templateSeksjon1, templateSeksjon2)
+        faktagrupper.generator(4).besvar(3)
 
-        assertEquals(9, søknadprosess.size)
+        assertEquals(9, faktagrupper.size)
         assertEquals(1, generatorSeksjon.size)
         assertEquals(2, templateSeksjon1.size)
         assertEquals(1, templateSeksjon2.size)
-        assertEquals(2, søknadprosess[4].size)
-        assertEquals("2.3", søknadprosess[4][1].id)
-        assertEquals("3.3", søknadprosess[8][0].id)
+        assertEquals(2, faktagrupper[4].size)
+        assertEquals("2.3", faktagrupper[4][1].id)
+        assertEquals("3.3", faktagrupper[8][0].id)
     }
 
     private operator fun Seksjon.get(indeks: Int) = this.sortedBy { it.id }[indeks]

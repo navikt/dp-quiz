@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.MedSøknad
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
@@ -27,11 +27,11 @@ internal class EøsArbeidsforholdTest {
     private val fakta = EøsArbeidsforhold.fakta() + DinSituasjon.fakta()
 
     private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, versjon = -1), *fakta)
-    private lateinit var søknadprosess: Søknadprosess
+    private lateinit var faktagrupper: Faktagrupper
 
     @BeforeEach
     fun setup() {
-        søknadprosess = søknad.testSøknadprosess(
+        faktagrupper = søknad.testSøknadprosess(
             EøsArbeidsforhold.regeltre(søknad)
         ) {
             EøsArbeidsforhold.seksjon(søknad)
@@ -46,45 +46,45 @@ internal class EøsArbeidsforholdTest {
     @Test
     fun `Trenger ikke svare på spørsmål om EØS dersom man ikke har vært i jobb eller ikke har hatt endringer i arbeidsforhold`() {
         `ny søknad men har ikke vært i jobb`()
-        assertEquals(true, søknadprosess.erFerdig())
+        assertEquals(true, faktagrupper.erFerdig())
 
         `gjenopptak men har ikke jobbet siden sist eller hatt endringer i arbeidsforhold`()
-        assertEquals(true, søknadprosess.erFerdig())
+        assertEquals(true, faktagrupper.erFerdig())
     }
 
     @Test
     fun `Har arbeidet innenfor EØS de siste 36 mnd`() {
         `har vært i jobb`()
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.boolsk(EøsArbeidsforhold.`eøs arbeid siste 36 mnd`).besvar(false)
-        assertEquals(true, søknadprosess.resultat())
-        søknadprosess.boolsk(EøsArbeidsforhold.`eøs arbeid siste 36 mnd`).besvar(true)
-        assertEquals(null, søknadprosess.resultat())
+        faktagrupper.boolsk(EøsArbeidsforhold.`eøs arbeid siste 36 mnd`).besvar(false)
+        assertEquals(true, faktagrupper.resultat())
+        faktagrupper.boolsk(EøsArbeidsforhold.`eøs arbeid siste 36 mnd`).besvar(true)
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.generator(EøsArbeidsforhold.`eøs arbeidsforhold`).besvar(2)
-        søknadprosess.tekst("$`eøs arbeidsforhold arbeidsgivernavn`.1").besvar(Tekst("CERN"))
-        søknadprosess.land("$`eøs arbeidsforhold land`.1").besvar(Land("CHE"))
-        søknadprosess.tekst("$`eøs arbeidsforhold personnummer`.1").besvar(Tekst("12345678901"))
-        søknadprosess.periode("$`eøs arbeidsforhold varighet`.1").besvar(
+        faktagrupper.generator(EøsArbeidsforhold.`eøs arbeidsforhold`).besvar(2)
+        faktagrupper.tekst("$`eøs arbeidsforhold arbeidsgivernavn`.1").besvar(Tekst("CERN"))
+        faktagrupper.land("$`eøs arbeidsforhold land`.1").besvar(Land("CHE"))
+        faktagrupper.tekst("$`eøs arbeidsforhold personnummer`.1").besvar(Tekst("12345678901"))
+        faktagrupper.periode("$`eøs arbeidsforhold varighet`.1").besvar(
             Periode(
                 fom = LocalDate.now().minusDays(50),
                 tom = LocalDate.now()
             )
         )
 
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, faktagrupper.resultat())
 
-        søknadprosess.tekst("$`eøs arbeidsforhold arbeidsgivernavn`.2").besvar(Tekst("CERN"))
-        søknadprosess.land("$`eøs arbeidsforhold land`.2").besvar(Land("CHE"))
-        søknadprosess.tekst("$`eøs arbeidsforhold personnummer`.2").besvar(Tekst("12345678901"))
-        søknadprosess.periode("$`eøs arbeidsforhold varighet`.2").besvar(
+        faktagrupper.tekst("$`eøs arbeidsforhold arbeidsgivernavn`.2").besvar(Tekst("CERN"))
+        faktagrupper.land("$`eøs arbeidsforhold land`.2").besvar(Land("CHE"))
+        faktagrupper.tekst("$`eøs arbeidsforhold personnummer`.2").besvar(Tekst("12345678901"))
+        faktagrupper.periode("$`eøs arbeidsforhold varighet`.2").besvar(
             Periode(
                 fom = LocalDate.now().minusDays(50),
                 tom = LocalDate.now()
             )
         )
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, faktagrupper.resultat())
     }
 
     @Test
@@ -148,36 +148,36 @@ internal class EøsArbeidsforholdTest {
     }
 
     private fun `gjenopptak men har ikke jobbet siden sist eller hatt endringer i arbeidsforhold`() {
-        søknadprosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        faktagrupper.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
-        søknadprosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`).besvar(false)
+        faktagrupper.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`).besvar(false)
     }
 
     private fun `ny søknad men har ikke vært i jobb`() {
-        søknadprosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        faktagrupper.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
-        søknadprosess.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
+        faktagrupper.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
     }
 
     private fun `har vært i jobb`() {
-        søknadprosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        faktagrupper.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
-        søknadprosess.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
+        faktagrupper.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
     }
 
-    private fun `besvar DinSituasjon`(søknadprosess: Søknadprosess) {
-        søknadprosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+    private fun `besvar DinSituasjon`(faktagrupper: Faktagrupper) {
+        faktagrupper.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
-        søknadprosess.dato(DinSituasjon.`dagpenger søknadsdato`).besvar(1.januar)
+        faktagrupper.dato(DinSituasjon.`dagpenger søknadsdato`).besvar(1.januar)
 
-        søknadprosess.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
-        søknadprosess.generator(DinSituasjon.arbeidsforhold).besvar(1)
-        søknadprosess.tekst("${DinSituasjon.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))
-        søknadprosess.land("${DinSituasjon.`arbeidsforhold land`}.1").besvar(Land("NOR"))
-        søknadprosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        faktagrupper.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
+        faktagrupper.generator(DinSituasjon.arbeidsforhold).besvar(1)
+        faktagrupper.tekst("${DinSituasjon.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))
+        faktagrupper.land("${DinSituasjon.`arbeidsforhold land`}.1").besvar(Land("NOR"))
+        faktagrupper.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret"))
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold kjent antall timer jobbet`}.1").besvar(false)
-        søknadprosess.boolsk("${DinSituasjon.`arbeidsforhold har tilleggsopplysninger`}.1").besvar(false)
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold kjent antall timer jobbet`}.1").besvar(false)
+        faktagrupper.boolsk("${DinSituasjon.`arbeidsforhold har tilleggsopplysninger`}.1").besvar(false)
     }
 
     private val forventetSpørsmålsrekkefølgeForDinSituasjon = """

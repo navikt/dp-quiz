@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class SøknadPersistenceFake : SøknadPersistence {
-    var søknadprosess: Søknadprosess? = null
+    var faktagrupper: Faktagrupper? = null
     var hentet: Int = 0
 
     override fun ny(
@@ -20,14 +20,14 @@ internal class SøknadPersistenceFake : SøknadPersistence {
         type: Versjon.UserInterfaceType,
         prosessVersjon: Prosessversjon,
         uuid: UUID
-    ): Søknadprosess =
+    ): Faktagrupper =
         Versjon.id(SøknadEksempel.prosessVersjon).søknadprosess(Person(identer), type)
-            .also { søknadprosess = it }
+            .also { faktagrupper = it }
 
-    override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?) = søknadprosess!!.also { hentet++ }
+    override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?) = faktagrupper!!.also { hentet++ }
 
     override fun lagre(søknad: Søknad): Boolean {
-        søknadprosess = Versjon.id(SøknadEksempel.prosessVersjon).søknadprosess(søknad, Versjon.UserInterfaceType.Web)
+        faktagrupper = Versjon.id(SøknadEksempel.prosessVersjon).søknadprosess(søknad, Versjon.UserInterfaceType.Web)
         return true
     }
 
@@ -48,7 +48,7 @@ internal class SøknadPersistenceFake : SøknadPersistence {
     }
 
     fun reset() {
-        søknadprosess = null
+        faktagrupper = null
         hentet = 0
     }
 }

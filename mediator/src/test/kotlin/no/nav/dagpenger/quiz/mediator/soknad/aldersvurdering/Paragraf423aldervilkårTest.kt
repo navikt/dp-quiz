@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering
 
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -14,7 +14,7 @@ import java.util.UUID.randomUUID
 internal class Paragraf423aldervilkårTest {
 
     private val søknad = Paragraf_4_23_alder_oppsett.prototypeSøknad
-    private lateinit var aldersvurderingsprosess: Søknadprosess
+    private lateinit var aldersvurderingsprosess: Faktagrupper
 
     @BeforeEach
     fun setup() {

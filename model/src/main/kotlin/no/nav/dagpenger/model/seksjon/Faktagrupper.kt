@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 
-class Søknadprosess private constructor(
+class Faktagrupper private constructor(
     val søknad: Søknad,
     internal val rootSubsumsjon: Subsumsjon,
     private val seksjoner: MutableList<Seksjon>
@@ -71,7 +71,7 @@ class Søknadprosess private constructor(
     fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
 
     internal fun bygg(søknad: Søknad, subsumsjon: Subsumsjon) =
-        Søknadprosess(søknad, subsumsjon, seksjoner.map { it.bygg(søknad) }.toMutableList())
+        Faktagrupper(søknad, subsumsjon, seksjoner.map { it.bygg(søknad) }.toMutableList())
 
     internal fun nesteFakta() = rootSubsumsjon.nesteFakta()
 

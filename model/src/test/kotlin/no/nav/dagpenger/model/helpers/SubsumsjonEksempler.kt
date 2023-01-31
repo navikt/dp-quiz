@@ -12,8 +12,8 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.minst
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -83,7 +83,7 @@ private val prototypeSubsumsjon = "inngangsvilkår".alle(
         ønsketdato ikkeFør sisteDagMedLønn
     )
 }
-private val prototypeWebSøknad = Søknadprosess(
+private val prototypeWebSøknad = Faktagrupper(
     Seksjon(
         "seksjon1",
         Rolle.søker,

@@ -15,8 +15,8 @@ import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.med
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -377,7 +377,7 @@ internal class SaksbehandlerJsonBuilderTest {
 
     @Test
     fun `Genererte seksjoner kan bli sendt`() {
-        val fakta = NyttEksempel().søknadprosess
+        val fakta = NyttEksempel().faktagrupper
         fakta.heltall(15).besvar(3)
         var json = SaksbehandlerJsonBuilder(fakta, "seksjon8").resultat()
         assertEquals(8, json["fakta"].size())
@@ -389,12 +389,12 @@ internal class SaksbehandlerJsonBuilderTest {
     }
 
     private fun assertFaktaStørrelseISeksjon(expected: Int, seksjonNavn: String) {
-        val json = SaksbehandlerJsonBuilder(NyttEksempel().søknadprosess, seksjonNavn).resultat()
+        val json = SaksbehandlerJsonBuilder(NyttEksempel().faktagrupper, seksjonNavn).resultat()
         assertEquals(expected, json["fakta"].size())
     }
 
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Søknadprosess {
-        val prototypeFaktagrupper = Søknadprosess(
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Faktagrupper {
+        val prototypeFaktagrupper = Faktagrupper(
             prototypeSøknad,
             Seksjon(
                 "søker",

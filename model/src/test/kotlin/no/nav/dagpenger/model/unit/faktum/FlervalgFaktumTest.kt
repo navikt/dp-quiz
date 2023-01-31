@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.inneholder
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import org.junit.jupiter.api.BeforeEach
@@ -31,7 +31,7 @@ class FlervalgFaktumTest {
 
     )
 
-    lateinit var søknad: Søknadprosess
+    lateinit var søknad: Faktagrupper
 
     @BeforeEach
     fun setup() {

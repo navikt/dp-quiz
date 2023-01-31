@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.før
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -82,14 +82,14 @@ internal object Paragraf_4_23_alder_oppsett {
         )
     }
 
-    internal val søknadprosess: Søknadprosess = Søknadprosess(seksjon)
+    internal val faktagrupper: Faktagrupper = Faktagrupper(seksjon)
 
     init {
         Versjon.Bygger(
             prototypeSøknad = prototypeSøknad,
             prototypeSubsumsjon = Subsumsjoner.regeltre,
             prototypeUserInterfaces = mapOf(
-                Versjon.UserInterfaceType.Web to søknadprosess
+                Versjon.UserInterfaceType.Web to faktagrupper
             ),
             faktumNavBehov = faktumNavBehov
         ).registrer().also {
