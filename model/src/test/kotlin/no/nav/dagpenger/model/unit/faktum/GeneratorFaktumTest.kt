@@ -3,10 +3,10 @@ package no.nav.dagpenger.model.unit.faktum
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.desember
@@ -20,7 +20,6 @@ import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
@@ -64,12 +63,16 @@ class GeneratorFaktumTest {
                 faktaPrototype dato 4,
             ),
         )
-        søknadprosessTestBygger = Versjon.Bygger(faktaPrototype, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
+        søknadprosessTestBygger = Versjon.Bygger(
+            faktaPrototype,
+            prototypeSubsumsjon,
+            prototypeFaktagrupper
+        )
     }
 
     @Test
     fun ` periode faktum `() {
-        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
+        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson)
         søknadprosess.generator(1).besvar(2)
         søknadprosess.dato(4).besvar(5.januar)
         søknadprosess.dato("2.1").besvar(1.januar)
@@ -88,14 +91,14 @@ class GeneratorFaktumTest {
 
     @Test
     fun ` har med tom generator blir false `() {
-        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
+        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson)
         søknadprosess.generator(1).besvar(0)
         assertEquals(false, søknadprosess.rootSubsumsjon.resultat())
     }
 
     @Test
     fun ` har med en oppfylt generert subsumsjon blir true `() {
-        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
+        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson)
         søknadprosess.generator(1).besvar(1)
         søknadprosess.dato("2.1").besvar(1.januar)
         søknadprosess.dato("3.1").besvar(8.januar)
@@ -105,7 +108,7 @@ class GeneratorFaktumTest {
 
     @Test
     fun ` har med en ikke oppfylt generert subsumsjon blir false `() {
-        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
+        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson)
         søknadprosess.generator(1).besvar(1)
         søknadprosess.dato("2.1").besvar(1.desember)
         søknadprosess.dato("3.1").besvar(8.desember)
@@ -115,7 +118,7 @@ class GeneratorFaktumTest {
 
     @Test
     fun ` har med oppfylt og ikke oppfylt genererte subsumsjoner blir true `() {
-        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson, Web)
+        val søknadprosess = søknadprosessTestBygger.søknadprosess(testPerson)
         søknadprosess.generator(1).besvar(2)
         søknadprosess.dato("2.1").besvar(1.desember)
         søknadprosess.dato("3.1").besvar(8.desember)
@@ -168,8 +171,12 @@ class GeneratorFaktumTest {
             *seksjoner
         )
         val søknadprosessTestBygger =
-            Versjon.Bygger(faktaPrototype, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
-        return søknadprosessTestBygger.søknadprosess(testPerson, Web)
+            Versjon.Bygger(
+                faktaPrototype,
+                prototypeSubsumsjon,
+                prototypeFaktagrupper
+            )
+        return søknadprosessTestBygger.søknadprosess(testPerson)
     }
 
     private class GeneratorVisitor(

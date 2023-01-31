@@ -6,9 +6,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
@@ -19,7 +19,6 @@ import no.nav.dagpenger.model.regel.under
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -133,11 +132,15 @@ internal lateinit var seksjon7: Seksjon
 internal lateinit var seksjon8: Seksjon
 internal lateinit var rootSubsumsjon: Subsumsjon
 private val søknadprosessTestBygger =
-    Versjon.Bygger(prototypeFakta1, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
+    Versjon.Bygger(
+        prototypeFakta1,
+        prototypeSubsumsjon,
+        webPrototypeFaktagrupper
+    )
 
 internal class NyttEksempel() {
     internal val faktagrupper: Faktagrupper by lazy {
-        søknadprosessTestBygger.søknadprosess(testPerson, Web).also {
+        søknadprosessTestBygger.søknadprosess(testPerson).also {
             seksjon1 = it[0]
             seksjon2 = it[1]
             seksjon3 = it[2]

@@ -3,7 +3,6 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -35,7 +34,7 @@ class DokumentkravSvarService(
             try {
                 val faktumId = packet.faktumId()
                 val svar = packet.dokumentsvar()
-                søknadPersistence.hent(søknadId, Web).let { søknadprosess ->
+                søknadPersistence.hent(søknadId).let { søknadprosess ->
                     søknadprosess.dokument(faktumId).besvar(svar)
                     søknadPersistence.lagre(søknadprosess.fakta)
                 }

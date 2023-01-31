@@ -61,10 +61,13 @@ internal class AvslagPåMinsteinntektTest {
 
     @BeforeEach
     fun setup() {
-        manglerInntekt = Versjon.Bygger(prototypeFakta, regeltre, mapOf(Versjon.UserInterfaceType.Web to faktagrupper))
+        manglerInntekt = Versjon.Bygger(
+            prototypeFakta,
+            regeltre,
+            faktagrupper
+        )
             .søknadprosess(
-                Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
-                Versjon.UserInterfaceType.Web
+                Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build())
             )
 
         manglerInntekt.apply {

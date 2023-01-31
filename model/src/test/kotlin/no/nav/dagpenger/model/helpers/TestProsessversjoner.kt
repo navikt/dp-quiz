@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.helpers
 
-import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Prosessnavn
 
 enum class Testprosess(override val id: String) : Prosessnavn {
     PrototypeSøknad("prototypeSøknad"),

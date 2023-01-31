@@ -18,7 +18,7 @@ internal class DagpengerMetadataStrategiTest {
     init {
         Dagpenger.registrer { prototypeSøknad ->
             faktagrupper = Versjon.id(Dagpenger.VERSJON_ID)
-                .søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
+                .søknadprosess(prototypeSøknad)
         }
     }
 

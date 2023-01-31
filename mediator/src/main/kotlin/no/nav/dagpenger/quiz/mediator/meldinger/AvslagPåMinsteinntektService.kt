@@ -2,8 +2,8 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
@@ -48,11 +48,10 @@ internal class AvslagPåMinsteinntektService(
             .folkeregisterIdent(packet["fødselsnummer"].asText())
             .aktørId(packet["aktørId"].asText())
             .build()
-        val faktagrupperType = Versjon.UserInterfaceType.Web
         val journalpostId = packet["journalpostId"].asText()
         log.info { "Mottok søknad med id $søknadsId " }
 
-        søknadPersistence.ny(identer, faktagrupperType, prosessVersjon)
+        søknadPersistence.ny(identer, prosessVersjon)
             .also { søknadprosess ->
                 // Arena-fagsakId for at arena-sink skal kunne lage vedtak på riktig sak
                 val fagsakIdNode = packet["fagsakId"]

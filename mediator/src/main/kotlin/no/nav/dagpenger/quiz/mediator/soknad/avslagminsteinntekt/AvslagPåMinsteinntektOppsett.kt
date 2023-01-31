@@ -10,13 +10,12 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.min
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.multiplikasjon
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt.regeltre
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.Seksjoner.faktagrupper
 
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
@@ -172,9 +171,7 @@ internal object AvslagPåMinsteinntektOppsett {
         Versjon.Bygger(
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = regeltre,
-            prototypeUserInterfaces = mapOf(
-                Versjon.UserInterfaceType.Web to faktagrupper
-            ),
+            faktagrupper = Seksjoner.faktagrupper,
             faktumNavBehov = faktumNavBehov
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }

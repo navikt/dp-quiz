@@ -7,11 +7,11 @@ import kotliquery.using
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.april
 import no.nav.dagpenger.model.helpers.assertDeepEquals
@@ -21,8 +21,6 @@ import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.mai
 import no.nav.dagpenger.model.helpers.mars
 import no.nav.dagpenger.model.seksjon.Faktagrupper
-import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
@@ -53,11 +51,10 @@ internal class FaktaRecordTest {
     fun `ny søknadprosess`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
-            assertSesjonType(Web)
 
             assertRecordCount(1, "soknad")
             assertRecordCount(expectedFaktaCount, "faktum_verdi")
-            SøknadRecord().ny(UNG_PERSON_FNR_2018, Web, HenvendelsesType(Testprosess.Test, 888))
+            SøknadRecord().ny(UNG_PERSON_FNR_2018, HenvendelsesType(Testprosess.Test, 888))
             assertRecordCount(2, "soknad")
             assertRecordCount(expectedFaktaCount * 2, "faktum_verdi")
             lagreHentOgSammenlign()
@@ -126,8 +123,8 @@ internal class FaktaRecordTest {
     fun `Skal kun slette besvarer hvis den ikke refererer til andre søknader`() = Postgres.withMigratedDb {
         FaktumTable(SøknadEksempel1.prototypeFakta1)
         søknadRecord = SøknadRecord()
-        val søknadProsess1 = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon)
-        val søknadProsess2 = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon)
+        val søknadProsess1 = søknadRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon)
+        val søknadProsess2 = søknadRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon)
         val besvarer = "123"
         søknadProsess1.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
         søknadRecord.lagre(søknadProsess1.fakta)
@@ -357,9 +354,9 @@ internal class FaktaRecordTest {
             FaktumTable(SøknadEksempel1.prototypeFakta1)
             søknadRecord = SøknadRecord()
             originalFaktagrupper =
-                søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon, søknadUUId)
+                søknadRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon, søknadUUId)
             originalFaktagrupper =
-                søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon, søknadUUId)
+                søknadRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon, søknadUUId)
 
             originalFaktagrupper.dato(2).besvar(LocalDate.now())
 
@@ -413,11 +410,11 @@ internal class FaktaRecordTest {
         }
     }
 
-    private fun lagreHentOgSammenlign(userInterfaceType: Versjon.UserInterfaceType = Web) {
+    private fun lagreHentOgSammenlign() {
         søknadRecord.lagre(originalFaktagrupper.fakta)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         søknadRecord = SøknadRecord()
-        rehydrertFaktagrupper = søknadRecord.hent(uuid, userInterfaceType)
+        rehydrertFaktagrupper = søknadRecord.hent(uuid)
         assertJsonEquals(originalFaktagrupper, rehydrertFaktagrupper)
         assertDeepEquals(originalFaktagrupper, rehydrertFaktagrupper)
     }
@@ -425,7 +422,7 @@ internal class FaktaRecordTest {
     private fun byggOriginalSøknadprosess() {
         FaktumTable(SøknadEksempel1.prototypeFakta1)
         søknadRecord = SøknadRecord()
-        originalFaktagrupper = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon)
+        originalFaktagrupper = søknadRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

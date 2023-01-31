@@ -12,9 +12,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -80,10 +80,7 @@ internal object SøknadEksempel2 {
         Versjon.Bygger(
             prototypeFakta,
             prototypeFakta boolsk 1 er true,
-            mapOf(
-                Versjon.UserInterfaceType.Web to webPrototypeSøknad,
-                Versjon.UserInterfaceType.Mobile to mobilePrototypeSøknad
-            )
+            webPrototypeSøknad
         ).registrer()
     }
 }

@@ -9,9 +9,11 @@ import kotliquery.using
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.Flervalg
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Identer.Ident
 import no.nav.dagpenger.model.faktum.Inntekt
@@ -19,8 +21,6 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessnavn
-import no.nav.dagpenger.model.faktum.HenvendelsesType
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -41,14 +41,13 @@ class SøknadRecord : SøknadPersistence {
 
     override fun ny(
         identer: Identer,
-        type: Versjon.UserInterfaceType,
         prosessVersjon: HenvendelsesType,
         uuid: UUID,
     ): Faktagrupper {
         val person = personRecord.hentEllerOpprettPerson(identer)
-        return Versjon.id(prosessVersjon).søknadprosess(person, type, uuid).also { søknadprosess ->
+        return Versjon.id(prosessVersjon).søknadprosess(person, uuid).also { søknadprosess ->
             if (eksisterer(uuid)) return søknadprosess
-            NySøknad(søknadprosess.fakta, type)
+            NySøknad(søknadprosess.fakta)
         }
     }
 
@@ -67,8 +66,8 @@ class SøknadRecord : SøknadPersistence {
 
     private data class Prosess(override val id: String) : Prosessnavn
 
-    override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?): Faktagrupper {
-        data class SoknadRad(val personId: UUID, val navn: String, val versjonId: Int, var typeId: Int)
+    override fun hent(uuid: UUID): Faktagrupper {
+        data class SoknadRad(val personId: UUID, val navn: String, val versjonId: Int)
 
         val rad = using(sessionOf(dataSource)) { session ->
             if (type != null) {
@@ -81,17 +80,16 @@ class SøknadRecord : SøknadPersistence {
             session.run(
                 queryOf(
                     //language=PostgreSQL
-                    "SELECT soknad.person_id, versjon.navn , versjon.versjon_id, soknad.sesjon_type_id FROM soknad JOIN v1_prosessversjon AS versjon ON (versjon.id = soknad.versjon_id) WHERE uuid = ?",
+                    "SELECT soknad.person_id, versjon.navn , versjon.versjon_id FROM soknad JOIN v1_prosessversjon AS versjon ON (versjon.id = soknad.versjon_id) WHERE uuid = ?",
                     uuid,
                 ).map { row ->
-                    SoknadRad(UUID.fromString(row.string(1)), row.string(2), row.int(3), row.int(4))
+                    SoknadRad(UUID.fromString(row.string(1)), row.string(2), row.int(3))
                 }.asSingle,
             )
         } ?: throw IllegalArgumentException("Kan ikke hente en søknad som ikke finnes, uuid: $uuid")
 
         return Versjon.id(HenvendelsesType(Prosess(rad.navn), rad.versjonId)).søknadprosess(
             person = personRecord.hentPerson(rad.personId),
-            type = Versjon.UserInterfaceType.fromId(rad.typeId),
             uuid = uuid,
         ).also { søknadprosess ->
             svarList(uuid).onEach { row ->

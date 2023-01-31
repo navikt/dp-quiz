@@ -1,15 +1,14 @@
 package no.nav.dagpenger.model.unit.seksjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
-import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -31,8 +30,12 @@ class NesteSeksjonTest {
             Seksjon("søker", Rolle.søker, prototypesøknad.boolsk(1)),
             rootSubsumsjon = prototypeSubsumsjon
         )
-        val fakta = Versjon.Bygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
-            .søknadprosess(testPerson, Web)
+        val fakta = Versjon.Bygger(
+            prototypesøknad,
+            prototypeSubsumsjon,
+            prototypeFaktagrupper
+        )
+            .søknadprosess(testPerson)
 
         assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
     }
@@ -54,8 +57,12 @@ class NesteSeksjonTest {
             rootSubsumsjon = prototypeSubsumsjon
         )
 
-        Versjon.Bygger(prototypesøknad, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
-            .søknadprosess(testPerson, Web).also { fakta ->
+        Versjon.Bygger(
+            prototypesøknad,
+            prototypeSubsumsjon,
+            prototypeFaktagrupper
+        )
+            .søknadprosess(testPerson).also { fakta ->
                 assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
             }
     }

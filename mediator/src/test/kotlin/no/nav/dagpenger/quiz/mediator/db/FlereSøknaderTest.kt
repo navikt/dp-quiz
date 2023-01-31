@@ -1,7 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.db
 
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
@@ -19,12 +18,10 @@ internal class FlereSøknaderTest {
 
             val søknad1 = søknadRecord.ny(
                 Identer.Builder().folkeregisterIdent("10987654321").build(),
-                Versjon.UserInterfaceType.Web,
                 SøknadEksempel1.prosessVersjon
             )
             val søknad2 = søknadRecord.ny(
                 Identer.Builder().folkeregisterIdent("12345678910").build(),
-                Versjon.UserInterfaceType.Web,
                 SøknadEksempel.prosessVersjon
             )
 

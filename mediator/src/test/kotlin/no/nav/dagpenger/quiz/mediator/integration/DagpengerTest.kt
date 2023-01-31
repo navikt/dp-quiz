@@ -3,8 +3,8 @@ package no.nav.dagpenger.quiz.mediator.integration
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktum.Envalg
-import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
@@ -28,10 +28,10 @@ internal class DagpengerTest : SøknadBesvarer() {
     fun setup() {
         Dagpenger.registrer { prototypeSøknad ->
             søknadsprosess = Versjon.id(Dagpenger.VERSJON_ID)
-                .søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
+                .søknadprosess(prototypeSøknad)
         }
         val faktaPersistence = mockk<SøknadPersistence>().also {
-            every { it.hent(any(), any()) } returns søknadsprosess
+            every { it.hent(any()) } returns søknadsprosess
             every { it.lagre(any() as Fakta) } returns true
         }
 

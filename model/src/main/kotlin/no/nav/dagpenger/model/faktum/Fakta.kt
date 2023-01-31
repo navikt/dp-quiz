@@ -174,6 +174,6 @@ class Fakta private constructor(
         person.accept(visitor)
         visitor.preVisit(this, prosessVersjon, uuid)
         this.forEach { it.accept(visitor) }
-        visitor.postVisit(this, prosessVersjon, uuid)
+        visitor.postVisit(this, uuid)
     }
 }

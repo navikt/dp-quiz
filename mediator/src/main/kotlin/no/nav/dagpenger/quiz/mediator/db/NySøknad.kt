@@ -4,24 +4,23 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.factory.FaktaRegel
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.visitor.SøknadVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.util.UUID
 
-class NySøknad(fakta: Fakta, private val type: Versjon.UserInterfaceType) : SøknadVisitor {
+class NySøknad(fakta: Fakta) : SøknadVisitor {
     private var internVersjonId = 0
     private var rootId = 0
     private var indeks = 0
@@ -60,7 +59,7 @@ class NySøknad(fakta: Fakta, private val type: Versjon.UserInterfaceType) : Sø
         this.indeks = indeks
     }
 
-    override fun postVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {
+    override fun postVisit(fakta: Fakta, uuid: UUID) {
         val faktumInsertStatement = //language=PostgreSQL
             """INSERT INTO faktum_verdi
                                 (soknad_id, indeks, faktum_id)
@@ -72,15 +71,14 @@ class NySøknad(fakta: Fakta, private val type: Versjon.UserInterfaceType) : Sø
                 val id = transactionalSession.run(
                     queryOf( //language=PostgreSQL
                         """
-                         INSERT INTO soknad(uuid, versjon_id, person_id, sesjon_type_id) 
-                         VALUES (:uuid, :versjon_id, :person_id, :sesjon_type_id) 
+                         INSERT INTO soknad(uuid, versjon_id, person_id) 
+                         VALUES (:uuid, :versjon_id, :person_id) 
                          RETURNING id                        
                         """.trimIndent(),
                         mapOf(
                             "uuid" to søknadUUID,
                             "versjon_id" to internVersjonId,
-                            "person_id" to personId,
-                            "sesjon_type_id" to type.id
+                            "person_id" to personId
                         )
                     ).map { it.long(1) }.asSingle
                 )

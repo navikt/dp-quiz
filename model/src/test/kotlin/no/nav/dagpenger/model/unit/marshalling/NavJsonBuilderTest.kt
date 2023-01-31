@@ -5,8 +5,8 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
@@ -100,9 +100,9 @@ class NavJsonBuilderTest {
         val fakta = Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
-            mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper),
+            prototypeFaktagrupper,
             faktumNavBehov
-        ).registrer().søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
+        ).registrer().søknadprosess(testPerson)
 
         fakta.boolsk(1).besvar(true)
         fakta.dato(5).besvar(1.januar)

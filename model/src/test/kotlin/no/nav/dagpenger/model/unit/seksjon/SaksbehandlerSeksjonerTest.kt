@@ -1,16 +1,15 @@
 package no.nav.dagpenger.model.unit.seksjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.godkjentAv
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
@@ -52,7 +51,7 @@ internal class SaksbehandlerSeksjonerTest {
     private val søknadprosessTestBygger = Versjon.Bygger(
         prototypeFakta,
         prototypeSubsumsjon,
-        mapOf(Web to prototypeFaktagrupper)
+        prototypeFaktagrupper
     )
     private lateinit var seksjoner: Faktagrupper
     private lateinit var f1: Faktum<Boolean>
@@ -64,7 +63,7 @@ internal class SaksbehandlerSeksjonerTest {
 
     @BeforeEach
     internal fun setup() {
-        seksjoner = søknadprosessTestBygger.søknadprosess(testPerson, Web, uuid)
+        seksjoner = søknadprosessTestBygger.søknadprosess(testPerson, uuid)
         f1 = seksjoner.boolsk(1)
         f3 = seksjoner.boolsk(3)
         f5 = seksjoner.boolsk(5)

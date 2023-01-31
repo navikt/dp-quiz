@@ -7,9 +7,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -27,45 +27,37 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class FaktumSvarServiceTest {
-
     @AfterEach
     fun resetSvar() {
         prototypeFakta.generator(10).besvar(0)
     }
 
     companion object {
-
         private val prosessVersjon = HenvendelsesType(Testprosess.Test, -3000)
         val prototypeFakta = Fakta(
             prosessVersjon,
             heltall faktum "generator" id 10 genererer 11 og 12,
             dato faktum "fom" id 11,
-            dato faktum "tom" id 12,
-
+            dato faktum "tom" id 12
         )
         val versjon = Versjon.Bygger(
             prototypeFakta,
             prototypeFakta heltall 10 er 1 hvisOppfylt { prototypeFakta dato 11 etter (prototypeFakta dato 12) },
-            mapOf(
-                Versjon.UserInterfaceType.Web to Faktagrupper(
-                    Seksjon(
-                        "seksjon",
-                        Rolle.nav,
-                        *(prototypeFakta.map { it }.toTypedArray())
-                    )
+            Faktagrupper(
+                Seksjon(
+                    "seksjon",
+                    Rolle.nav,
+                    *(prototypeFakta.map { it }.toTypedArray())
                 )
             )
         ).registrer()
     }
 
     val faktaPersistence = mockk<SøknadPersistence>().also {
-        every { it.hent(any(), any()) } returns Versjon.id(prosessVersjon)
-            .søknadprosess(prototypeFakta, Versjon.UserInterfaceType.Web)
+        every { it.hent(any()) } returns Versjon.id(prosessVersjon).søknadprosess(prototypeFakta)
         every { it.lagre(any() as Fakta) } returns true
     }
-
     val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
-
     val testRapid = TestRapid().also {
         FaktumSvarService(
             søknadPersistence = faktaPersistence,
@@ -89,7 +81,7 @@ internal class FaktumSvarServiceTest {
         assertTrue(prototypeFakta.dato("12.2").erBesvart())
         assertEquals("2020-01-16", prototypeFakta.dato("12.2").svar().toString())
 
-        verify(exactly = 1) { faktaPersistence.hent(any(), any()) }
+        verify(exactly = 1) { faktaPersistence.hent(any()) }
         verify(exactly = 1) { faktaPersistence.lagre(any() as Fakta) }
         verify(exactly = 1) { resultatPersistence.lagreResultat(any(), any(), any()) }
     }
@@ -103,8 +95,7 @@ internal class FaktumSvarServiceTest {
     }
 
     //language=json
-    private val faktumSvarMedGeneratorFaktum =
-        """{
+    private val faktumSvarMedGeneratorFaktum = """{
   "@event_name": "faktum_svar",
   "@opprettet": "2020-11-18T11:04:32.867824",
   "@id": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
@@ -179,5 +170,5 @@ internal class FaktumSvarServiceTest {
   "system_read_count": 0,
   "@final": true
 }
-        """.trimIndent()
+    """.trimIndent()
 }

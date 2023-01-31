@@ -5,9 +5,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.dokumenteresAv
@@ -96,7 +96,7 @@ internal object SøknadEksempel {
     val versjon = Versjon.Bygger(
         prototypeFakta1,
         subsumsjon,
-        mapOf(Versjon.UserInterfaceType.Web to webPrototypeSøknad),
+        webPrototypeSøknad,
         faktumNavBehov
     ).registrer()
 }

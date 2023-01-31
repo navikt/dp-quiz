@@ -1,8 +1,8 @@
 package no.nav.dagpenger.quiz.mediator.helpers
 
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -15,12 +15,10 @@ internal fun Fakta.testSøknadprosess(
     return Versjon.Bygger(
         this,
         subsumsjon,
-        mapOf(
-            Versjon.UserInterfaceType.Web to Faktagrupper(
-                *seksjon().toTypedArray()
-            )
+        Faktagrupper(
+            *seksjon().toTypedArray()
         )
-    ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
+    ).søknadprosess(testPerson)
 }
 
 internal val testPerson = Person(Identer.Builder().folkeregisterIdent("12020052345").aktørId("aktørId").build())

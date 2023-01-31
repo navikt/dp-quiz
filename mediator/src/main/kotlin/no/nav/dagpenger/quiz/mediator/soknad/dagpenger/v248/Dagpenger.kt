@@ -1,8 +1,8 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger.v248
 
 import mu.KotlinLogging
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.uansett
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.v248.Dagpenger.Subsumsjoner.regeltre
 
 internal object Dagpenger {
@@ -82,9 +83,7 @@ internal object Dagpenger {
         Versjon.Bygger(
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = regeltre,
-            prototypeUserInterfaces = mapOf(
-                Versjon.UserInterfaceType.Web to søknadsprosess
-            ),
+            faktagrupper = søknadsprosess,
             faktumNavBehov = faktumNavBehov
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }

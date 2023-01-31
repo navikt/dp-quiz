@@ -5,10 +5,10 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.grensedato67år
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.faktum.HenvendelsesType
-import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -23,11 +23,8 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosess
  * Denne blir brukt av dp-behandling for til å løse "vilkårsvurderingsbehov"
  * Vi er pt. usikre på formen på det enda, så denne blir borte/endret
  */
-
 internal object Paragraf_4_23_alder_oppsett {
-
     val VERSJON_ID = HenvendelsesType(Prosess.Paragraf_4_23_alder, 2)
-
     const val virkningsdato = 1
     const val fødselsdato = 2
     const val grensedato = 3
@@ -44,9 +41,7 @@ internal object Paragraf_4_23_alder_oppsett {
             dato faktum "fødselsdato" id fødselsdato,
             grensedato67år dato "grensedato" av fødselsdato id grensedato
         )
-
     private val logger = KotlinLogging.logger { }
-
     private val faktumNavBehov = FaktumNavBehov(
         mapOf(
             ønskerDagpengerFraDato to "ØnskerDagpengerFraDato",
@@ -69,6 +64,7 @@ internal object Paragraf_4_23_alder_oppsett {
             }
         }
     }
+
     internal val seksjon = with(prototypeFakta) {
         this.seksjon(
             "alder",
@@ -81,16 +77,13 @@ internal object Paragraf_4_23_alder_oppsett {
             grensedato
         )
     }
-
     internal val faktagrupper: Faktagrupper = Faktagrupper(seksjon)
 
     init {
         Versjon.Bygger(
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = Subsumsjoner.regeltre,
-            prototypeUserInterfaces = mapOf(
-                Versjon.UserInterfaceType.Web to faktagrupper
-            ),
+            faktagrupper = faktagrupper,
             faktumNavBehov = faktumNavBehov
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID} \n\n\n\n" }

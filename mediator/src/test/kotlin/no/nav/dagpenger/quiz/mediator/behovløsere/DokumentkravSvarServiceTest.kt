@@ -47,7 +47,7 @@ internal class DokumentkravSvarServiceTest {
         }
 
         verify(exactly = 1) {
-            søknadPersistence.hent(søknadUUID, any())
+            søknadPersistence.hent(søknadUUID)
             søknadPersistence.lagre(any())
         }
     }

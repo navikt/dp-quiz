@@ -4,10 +4,10 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
-import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.HenvendelsesType
-import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Identer
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -37,13 +37,11 @@ internal class ResultatTest {
         Versjon.Bygger(
             prototypeFakta,
             prototypeFakta boolsk 19 er true,
-            mapOf(
-                Versjon.UserInterfaceType.Web to Faktagrupper(
-                    Seksjon(
-                        "seksjon",
-                        Rolle.nav,
-                        *(prototypeFakta.map { it }.toTypedArray())
-                    )
+            Faktagrupper(
+                Seksjon(
+                    "seksjon",
+                    Rolle.nav,
+                    *(prototypeFakta.map { it }.toTypedArray())
                 )
             )
         ).registrer()
@@ -55,7 +53,6 @@ internal class ResultatTest {
 
             faktagrupper = søknadRecord.ny(
                 IDENT,
-                Versjon.UserInterfaceType.Web,
                 prosessVersjon
             )
         }
@@ -65,14 +62,12 @@ internal class ResultatTest {
     fun `Lagre resultat`() {
         setup(HenvendelsesType(Testprosess.Test, 935))
         faktagrupper.boolsk(19).besvar(false)
-
         val resultat = faktagrupper.resultat()
         resultatRecord.lagreResultat(
             resultat!!,
             faktagrupper.fakta.uuid,
             ResultatJsonBuilder(faktagrupper).resultat()
         )
-
         val hentaResultat = resultatRecord.hentResultat(faktagrupper.fakta.uuid)
 
         assertEquals(resultat, hentaResultat)
@@ -83,7 +78,6 @@ internal class ResultatTest {
         setup(HenvendelsesType(Testprosess.Test, 936))
         val seksjonsnavn = "manuell seksjon"
         resultatRecord.lagreManuellBehandling(faktagrupper.fakta.uuid, seksjonsnavn)
-
         val grunn = using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL

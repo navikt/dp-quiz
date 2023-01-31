@@ -3,9 +3,9 @@ package no.nav.dagpenger.model.unit.faktum
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
@@ -59,8 +59,12 @@ internal class AvhengigFaktumTest {
             Seksjon("søknadsdato", Rolle.søker, fakta dato 4)
         )
         val søknadprosess =
-            Versjon.Bygger(fakta, TomSubsumsjon, mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper))
-                .søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
+            Versjon.Bygger(
+                fakta,
+                TomSubsumsjon,
+                prototypeFaktagrupper
+            )
+                .søknadprosess(testPerson)
 
         søknadprosess.generator(1).besvar(1)
         søknadprosess.dato("2.1").besvar(LocalDate.now())

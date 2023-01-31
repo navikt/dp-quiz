@@ -1,14 +1,15 @@
 package no.nav.dagpenger.quiz.mediator
+
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.før
@@ -32,7 +33,6 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class Graftest {
-
     @Test
     @Disabled
     fun `tegne subsumsjonsgraf`() {
@@ -50,7 +50,6 @@ class Graftest {
         val registrertArbeidssøker = 12
         val registrertArbeidssøkerPerioder = 13
         val registrertArbeidssøkerPeriodeTom = 15
-
         val prototypeFakta = Fakta(
             HenvendelsesType(Testprosess.Test, 509),
             dato faktum "Datoen du fyller 67" id bursdag67,
@@ -68,7 +67,6 @@ class Graftest {
             heltall faktum "Antall arbeidsøker registeringsperioder" id registrertArbeidssøkerPerioder genererer registrertArbeidssøkerPeriodeTom,
             dato faktum "arbeidssøker til" id registrertArbeidssøkerPeriodeTom
         )
-
         val prototypeWebSøknad =
             with(prototypeFakta) {
                 Faktagrupper(
@@ -94,7 +92,6 @@ class Graftest {
                     )
                 )
             }
-
         val prototypeSubsumsjon = with(prototypeFakta) {
             boolsk(registrertArbeidssøker) er true hvisOppfylt {
                 generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
@@ -125,14 +122,12 @@ class Graftest {
                 }
             }
         }
-
         val søknadprosess = Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
-            mapOf(Versjon.UserInterfaceType.Web to prototypeWebSøknad)
+            prototypeWebSøknad
         ).søknadprosess(
-            Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
-            Versjon.UserInterfaceType.Web,
+            Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build())
         )
 
         SubsumsjonsGraf(søknadprosess).skrivTilFil("grafer/ex2.png")
@@ -142,15 +137,13 @@ class Graftest {
     @Test
     @Disabled
     fun `avslag`() {
-
         val manglerInntekt = Versjon.Bygger(
             AvslagPåMinsteinntektOppsett.prototypeFakta,
             AvslagPåMinsteinntekt.regeltre,
-            mapOf(Versjon.UserInterfaceType.Web to Seksjoner.faktagrupper)
+            Seksjoner.faktagrupper
         )
             .søknadprosess(
-                Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
-                Versjon.UserInterfaceType.Web
+                Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build())
             )
 
         SubsumsjonsGraf(manglerInntekt).skrivTilFil("grafer/ex2.png")

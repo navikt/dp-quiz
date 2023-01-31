@@ -1,8 +1,8 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import mu.KotlinLogging
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -45,7 +45,7 @@ internal object Dagpenger {
             VERSJON_ID,
             *alleFakta
         )
-    private val søknadsprosess: Faktagrupper = Faktagrupper(*alleSeksjoner)
+    private val faktagrupper: Faktagrupper = Faktagrupper(*alleSeksjoner)
 
     object Subsumsjoner {
         val regeltre: Subsumsjon = with(prototypeFakta) {
@@ -82,9 +82,7 @@ internal object Dagpenger {
         Versjon.Bygger(
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = regeltre,
-            prototypeUserInterfaces = mapOf(
-                Versjon.UserInterfaceType.Web to søknadsprosess
-            ),
+            faktagrupper = faktagrupper,
             faktumNavBehov = faktumNavBehov
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }

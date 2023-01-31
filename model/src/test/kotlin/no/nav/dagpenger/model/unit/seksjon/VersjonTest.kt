@@ -2,10 +2,10 @@ package no.nav.dagpenger.model.unit.seksjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.Testprosess
 import no.nav.dagpenger.model.helpers.testPerson
@@ -13,7 +13,6 @@ import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -32,12 +31,16 @@ internal class VersjonTest {
         val prototypeSeksjon = Seksjon("seksjon", Rolle.søker, prototypeFakta id 15, prototypeFakta id 16, prototypeFakta id 17, prototypeFakta id 18)
         val prototypeFaktagrupper = Faktagrupper(prototypeSeksjon)
         val prototypeSubsumsjon = prototypeFakta heltall 15 er 6
-        val versjon = Versjon.Bygger(prototypeFakta, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper)).registrer()
+        val versjon = Versjon.Bygger(
+            prototypeFakta,
+            prototypeSubsumsjon,
+            prototypeFaktagrupper
+        ).registrer()
     }
 
     @BeforeEach
     fun setup() {
-        faktagrupper = versjon.søknadprosess(testPerson, Web)
+        faktagrupper = versjon.søknadprosess(testPerson)
     }
 
     @Test

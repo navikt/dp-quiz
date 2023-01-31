@@ -14,7 +14,6 @@ import java.util.UUID
 import kotlin.test.assertTrue
 
 class Paragraf_43_alderIntegrasjonsTest {
-
     @Test
     fun `test at vi kan opprettet Paragraf_4_23_alder i databasen og lagre faktum`() {
         Postgres.withMigratedDb {
@@ -22,14 +21,16 @@ class Paragraf_43_alderIntegrasjonsTest {
             val søknadPersistence = SøknadRecord()
             val identer = Identer.Builder().folkeregisterIdent("12345678910").build()
             val søknadsprosess = søknadPersistence.ny(
-                identer, type = Versjon.UserInterfaceType.Web, Versjon.siste(Prosess.Paragraf_4_23_alder)
+                identer,
+                Versjon.siste(Prosess.Paragraf_4_23_alder)
             )
 
             søknadsprosess.dokument(Paragraf_4_23_alder_oppsett.innsendtSøknadId)
                 .besvar(Dokument(LocalDateTime.now(), "urn:soknadid:${UUID.randomUUID()}"))
 
             søknadPersistence.lagre(søknadsprosess.fakta)
-            val rehydrertSøknadsprosess = søknadPersistence.hent(søknadsprosess.fakta.uuid, Versjon.UserInterfaceType.Web)
+            val rehydrertSøknadsprosess =
+                søknadPersistence.hent(søknadsprosess.fakta.uuid)
 
             assertTrue(rehydrertSøknadsprosess.dokument(Paragraf_4_23_alder_oppsett.innsendtSøknadId).erBesvart())
         }

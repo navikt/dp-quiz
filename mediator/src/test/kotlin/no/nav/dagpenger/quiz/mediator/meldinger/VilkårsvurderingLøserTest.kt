@@ -28,11 +28,11 @@ class VilkårsvurderingLøserTest {
     fun setup() {
         Paragraf_4_23_alder_oppsett.registrer { prototypeSøknad ->
             søknadsprosess = Versjon.id(Paragraf_4_23_alder_oppsett.VERSJON_ID)
-                .søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
+                .søknadprosess(prototypeSøknad)
         }
 
         val prosessPersistens = mockk<SøknadPersistence>().also {
-            every { it.ny(any(), any(), any(), capture(vilkårsvurderingIdSlot)) } returns søknadsprosess
+            every { it.ny(any(), any(), capture(vilkårsvurderingIdSlot)) } returns søknadsprosess
             every { it.lagre(any() as Fakta) } returns true
         }
 

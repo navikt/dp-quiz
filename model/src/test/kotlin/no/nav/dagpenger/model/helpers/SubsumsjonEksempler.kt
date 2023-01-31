@@ -3,19 +3,18 @@ package no.nav.dagpenger.model.helpers
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
@@ -107,11 +106,11 @@ private val prototypeWebSøknad = Faktagrupper(
 private val søknadprosessTestBygger = Versjon.Bygger(
     prototypeFakta,
     prototypeSubsumsjon,
-    mapOf(Web to prototypeWebSøknad)
+    prototypeWebSøknad
 )
 
 /* ktlint-disable parameter-list-wrapping */
-internal fun eksempelSøknad() = søknadprosessTestBygger.søknadprosess(testPerson, Web).also { søknadprosess ->
+internal fun eksempelSøknad() = søknadprosessTestBygger.søknadprosess(testPerson).also { søknadprosess ->
     bursdag67 = søknadprosess.dato(1) as GrunnleggendeFaktum<LocalDate>
     søknadsdato = søknadprosess.dato(2) as GrunnleggendeFaktum<LocalDate>
     ønsketdato = søknadprosess.dato(3) as GrunnleggendeFaktum<LocalDate>

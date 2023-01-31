@@ -17,14 +17,14 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Flervalg
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.assertDeepEquals
 import no.nav.dagpenger.model.helpers.januar
@@ -32,7 +32,6 @@ import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
@@ -60,25 +59,22 @@ internal class AvhengigeFaktaTest {
                 prosessVersjon,
                 boolsk faktum "f1" id 19 avhengerAv 2 og 13,
                 dato faktum "f2" id 2,
-                dato faktum "f3" id 13,
-
+                dato faktum "f3" id 13
             )
             Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta boolsk 19 er true,
-                mapOf(
-                    Web to Faktagrupper(
-                        Seksjon(
-                            "seksjon",
-                            Rolle.nav,
-                            *(prototypeFakta.map { it }.toTypedArray())
-                        )
+                Faktagrupper(
+                    Seksjon(
+                        "seksjon",
+                        Rolle.nav,
+                        *(prototypeFakta.map { it }.toTypedArray())
                     )
                 )
             ).registrer()
             FaktumTable(prototypeFakta)
             søknadRecord = SøknadRecord()
-            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
+            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
 
             originalFaktagrupper.dato(2).besvar(2.januar)
             originalFaktagrupper.dato(13).besvar(13.januar)
@@ -104,25 +100,23 @@ internal class AvhengigeFaktaTest {
                 boolsk faktum "f2" id 2,
                 boolsk faktum "f3" id 3 avhengerAv 1,
                 boolsk faktum "f4" id 4 avhengerAv 5,
-                boolsk faktum "f5" id 5,
+                boolsk faktum "f5" id 5
             )
             Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta boolsk 1 er true,
-                mapOf(
-                    Web to Faktagrupper(
-                        Seksjon(
-                            "seksjon",
-                            Rolle.nav,
-                            *(prototypeFakta.map { it }.toTypedArray())
-                        )
+                Faktagrupper(
+                    Seksjon(
+                        "seksjon",
+                        Rolle.nav,
+                        *(prototypeFakta.map { it }.toTypedArray())
                     )
                 )
             ).registrer()
             FaktumTable(prototypeFakta)
 
             søknadRecord = SøknadRecord()
-            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
+            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
 
             originalFaktagrupper.boolsk(2).besvar(true)
             originalFaktagrupper.boolsk(5).besvar(true)
@@ -149,25 +143,23 @@ internal class AvhengigeFaktaTest {
                 dato faktum "f2" id 2,
                 dato faktum "f3" id 3,
                 maks dato "f4" av 2 og 3 id 4,
-                boolsk faktum "f1" id 5 avhengerAv 4,
+                boolsk faktum "f1" id 5 avhengerAv 4
             )
             Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta boolsk 1 er true,
-                mapOf(
-                    Web to Faktagrupper(
-                        Seksjon(
-                            "seksjon",
-                            Rolle.nav,
-                            *(prototypeFakta.map { it }.toTypedArray())
-                        )
+                Faktagrupper(
+                    Seksjon(
+                        "seksjon",
+                        Rolle.nav,
+                        *(prototypeFakta.map { it }.toTypedArray())
                     )
                 )
             ).registrer()
             FaktumTable(prototypeFakta)
 
             søknadRecord = SøknadRecord()
-            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
+            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
 
             originalFaktagrupper.dato(2).besvar(1.januar)
             originalFaktagrupper.dato(3).besvar(10.januar)
@@ -202,25 +194,23 @@ internal class AvhengigeFaktaTest {
                 inntekt faktum "f12" id 12 avhengerAv 1,
                 periode faktum "f13" id 13 avhengerAv 1,
                 tekst faktum "f14" id 14 avhengerAv 1,
-                land faktum "f15" id 15 avhengerAv 1,
+                land faktum "f15" id 15 avhengerAv 1
             )
             Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta boolsk 1 er true,
-                mapOf(
-                    Web to Faktagrupper(
-                        Seksjon(
-                            "seksjon",
-                            Rolle.nav,
-                            *(prototypeFakta.map { it }.toTypedArray())
-                        )
+                Faktagrupper(
+                    Seksjon(
+                        "seksjon",
+                        Rolle.nav,
+                        *(prototypeFakta.map { it }.toTypedArray())
                     )
                 )
             ).registrer()
             FaktumTable(prototypeFakta)
 
             søknadRecord = SøknadRecord()
-            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
+            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
 
             originalFaktagrupper.boolsk(1).besvar(true)
             originalFaktagrupper.dato(2).besvar(10.januar)
@@ -253,10 +243,10 @@ internal class AvhengigeFaktaTest {
         }
     }
 
-    private fun lagreHentOgSammenlign(userInterfaceType: Versjon.UserInterfaceType = Web) {
+    private fun lagreHentOgSammenlign() {
         søknadRecord.lagre(originalFaktagrupper.fakta)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
-        rehydrertFaktagrupper = søknadRecord.hent(uuid, userInterfaceType)
+        rehydrertFaktagrupper = søknadRecord.hent(uuid)
         assertDeepEquals(originalFaktagrupper, rehydrertFaktagrupper)
     }
 

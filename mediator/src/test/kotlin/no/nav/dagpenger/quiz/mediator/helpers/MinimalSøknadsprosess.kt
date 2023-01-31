@@ -4,9 +4,9 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.minst
@@ -68,9 +68,7 @@ internal class MinimalSøknadsprosess(private val henvendelsesType: Henvendelses
     private val versjon = Versjon.Bygger(
         prototypeFakta = fakta,
         prototypeSubsumsjon = regeltre,
-        prototypeUserInterfaces = mapOf(
-            Versjon.UserInterfaceType.Web to søknadsprosess
-        ),
+        faktagrupper = søknadsprosess,
         faktumNavBehov = faktumNavBehov
     ).registrer().also {
         logger.info { "\n\n\nREGISTRERT versjon id $henvendelsesType \n\n\n\n" }

@@ -2,8 +2,8 @@ package no.nav.dagpenger.model.marshalling
 
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import java.time.LocalDateTime
 import java.util.UUID

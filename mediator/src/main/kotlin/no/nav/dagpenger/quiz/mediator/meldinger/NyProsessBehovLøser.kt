@@ -50,7 +50,7 @@ internal class NyProsessBehovLøser(
                 // @todo: Aktør id?
                 .build()
 
-            søknadPersistence.ny(identer, Versjon.UserInterfaceType.Web, prosessversjon, søknadUuid)
+            søknadPersistence.ny(identer, prosessversjon, søknadUuid)
                 .also { søknadsprosess ->
                     søknadPersistence.lagre(søknadsprosess.fakta)
                     log.info { "Opprettet ny søknadprosess ${søknadsprosess.fakta.uuid}" }

@@ -13,7 +13,7 @@ internal class InnsendingMetadataStrategiTest {
     init {
         Innsending.registrer { prototypeSøknad ->
             faktagrupper = Versjon.id(Innsending.VERSJON_ID)
-                .søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
+                .søknadprosess(prototypeSøknad)
         }
     }
 

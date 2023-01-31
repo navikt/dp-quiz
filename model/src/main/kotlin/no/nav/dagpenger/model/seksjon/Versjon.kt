@@ -1,9 +1,9 @@
 package no.nav.dagpenger.model.seksjon
 
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Prosessnavn
-import no.nav.dagpenger.model.faktum.HenvendelsesType
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
@@ -31,43 +31,30 @@ class Versjon private constructor(
 
     fun søknadprosess(
         person: Person,
-        type: UserInterfaceType,
         uuid: UUID = UUID.randomUUID()
     ): Faktagrupper =
-        bygger.søknadprosess(person, type, uuid)
+        bygger.søknadprosess(person, uuid)
 
-    fun søknadprosess(fakta: Fakta, type: UserInterfaceType) =
-        bygger.søknadprosess(fakta, type)
-
-    enum class UserInterfaceType(val id: Int) {
-        Web(1),
-        Mobile(2);
-
-        companion object {
-            fun fromId(id: Int): UserInterfaceType = values().first { it.id == id }
-        }
-    }
+    fun søknadprosess(fakta: Fakta) =
+        bygger.søknadprosess(fakta)
 
     class Bygger(
         private val prototypeFakta: Fakta,
         private val prototypeSubsumsjon: Subsumsjon,
-        private val prototypeUserInterfaces: Map<UserInterfaceType, Faktagrupper>,
+        private val faktagrupper: Faktagrupper,
         internal val faktumNavBehov: FaktumNavBehov? = null
     ) {
         fun søknadprosess(
             person: Person,
-            type: UserInterfaceType,
             uuid: UUID = UUID.randomUUID()
         ): Faktagrupper =
-            søknadprosess(prototypeFakta.bygg(person, prototypeFakta.prosessVersjon, uuid), type)
+            søknadprosess(prototypeFakta.bygg(person, prototypeFakta.prosessVersjon, uuid))
 
         fun søknadprosess(
-            fakta: Fakta,
-            type: UserInterfaceType
+            fakta: Fakta
         ): Faktagrupper {
             val subsumsjon = prototypeSubsumsjon.bygg(fakta)
-            return prototypeUserInterfaces[type]?.bygg(fakta, subsumsjon)
-                ?: throw IllegalArgumentException("Kan ikke finne søknadprosess av type $type")
+            return faktagrupper.bygg(fakta, subsumsjon)
         }
 
         internal fun prosessVersjon() = prototypeFakta.prosessVersjon

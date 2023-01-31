@@ -18,17 +18,17 @@ internal class ProsessMetadataStrategiTest {
     init {
         Dagpenger.registrer { prototypeSøknad ->
             faktagrupperDagpenger = Versjon.id(Dagpenger.VERSJON_ID)
-                .søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
+                .søknadprosess(prototypeSøknad)
         }
 
         Innsending.registrer { prototypeSøknad ->
             faktagrupperInnsending = Versjon.id(Innsending.VERSJON_ID)
-                .søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
+                .søknadprosess(prototypeSøknad)
         }
 
         AvslagPåMinsteinntektOppsett.registrer { prototype ->
             faktagrupperAvslagPåMinsteinntekt = Versjon.id(AvslagPåMinsteinntektOppsett.VERSJON_ID)
-                .søknadprosess(prototype, Versjon.UserInterfaceType.Web)
+                .søknadprosess(prototype)
         }
     }
 

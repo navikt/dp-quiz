@@ -58,7 +58,6 @@ internal class VilkårsvurderingLøser(
                 val paragraf_4_23_alder_prosess =
                     prosessPersistence.ny(
                         identer = identer,
-                        type = Versjon.UserInterfaceType.Web,
                         prosessVersjon = prosessversjon,
                         uuid = vilkårsvurderingId
                     )
