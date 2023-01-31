@@ -153,7 +153,7 @@ interface SøknadVisitor : PersonVisitor, FaktumVisitor {
 }
 
 interface SøknadprosessVisitor : SubsumsjonVisitor, SøknadVisitor {
-    fun preVisit(søknadprosess: Søknadprosess, uuid: UUID) {}
+    fun preVisit(søknadprosess: Søknadprosess) {}
     fun postVisit(søknadprosess: Søknadprosess) {}
     fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {}
     fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {}

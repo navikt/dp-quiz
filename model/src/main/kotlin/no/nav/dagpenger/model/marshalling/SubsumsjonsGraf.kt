@@ -38,7 +38,6 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.io.File
-import java.util.UUID
 
 class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
     SøknadprosessVisitor {
@@ -68,7 +67,7 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
         rotGraf.toGraphviz().scale(5.0).render(Format.PNG).toFile(File(filnavn))
     }
 
-    override fun preVisit(søknadprosess: Søknadprosess, uuid: UUID) {
+    override fun preVisit(søknadprosess: Søknadprosess) {
         noder.add(søknadprosess.rootSubsumsjon)
     }
 

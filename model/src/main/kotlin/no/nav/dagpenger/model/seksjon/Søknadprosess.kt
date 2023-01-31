@@ -10,25 +10,21 @@ import no.nav.dagpenger.model.seksjon.Seksjon.Companion.saksbehandlerSeksjoner
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
-import java.util.UUID
 
 class Søknadprosess private constructor(
     val søknad: Søknad,
     internal val rootSubsumsjon: Subsumsjon,
-    private val uuid: UUID,
     private val seksjoner: MutableList<Seksjon>
 ) : TypedFaktum by søknad, MutableList<Seksjon> by seksjoner {
     constructor(vararg seksjoner: Seksjon) : this(
         Søknad(Prosessversjon.prototypeversjon),
         TomSubsumsjon,
-        UUID.randomUUID(),
         seksjoner.toMutableList()
     )
 
     internal constructor(søknad: Søknad, vararg seksjoner: Seksjon, rootSubsumsjon: Subsumsjon = TomSubsumsjon) : this(
         søknad,
         rootSubsumsjon,
-        UUID.randomUUID(),
         seksjoner.toMutableList()
     )
 
@@ -63,7 +59,7 @@ class Søknadprosess private constructor(
         }
 
     fun accept(visitor: SøknadprosessVisitor) {
-        visitor.preVisit(this, uuid)
+        visitor.preVisit(this)
         søknad.accept(visitor)
         seksjoner.forEach { it.accept(visitor) }
         rootSubsumsjon.accept(visitor)
@@ -75,7 +71,7 @@ class Søknadprosess private constructor(
     fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
 
     internal fun bygg(søknad: Søknad, subsumsjon: Subsumsjon) =
-        Søknadprosess(søknad, subsumsjon, UUID.randomUUID(), seksjoner.map { it.bygg(søknad) }.toMutableList())
+        Søknadprosess(søknad, subsumsjon, seksjoner.map { it.bygg(søknad) }.toMutableList())
 
     internal fun nesteFakta() = rootSubsumsjon.nesteFakta()
 
