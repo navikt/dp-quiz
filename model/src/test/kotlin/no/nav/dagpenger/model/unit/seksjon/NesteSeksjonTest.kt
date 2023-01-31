@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.unit.seksjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 class NesteSeksjonTest {
     @Test
     fun ` neste seksjon bug - rolle ble kopiert fra avehengig faktum til seksjon `() {
-        val prototypesøknad = Søknad(
+        val prototypesøknad = Fakta(
             testversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1
@@ -39,7 +39,7 @@ class NesteSeksjonTest {
 
     @Test
     fun ` bug-fiks read-only fakta i seksjonen`() {
-        val prototypesøknad = Søknad(
+        val prototypesøknad = Fakta(
             testversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1

@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.seksjon
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
@@ -36,8 +36,8 @@ class Versjon private constructor(
     ): Faktagrupper =
         bygger.søknadprosess(person, type, uuid)
 
-    fun søknadprosess(søknad: Søknad, type: UserInterfaceType) =
-        bygger.søknadprosess(søknad, type)
+    fun søknadprosess(fakta: Fakta, type: UserInterfaceType) =
+        bygger.søknadprosess(fakta, type)
 
     enum class UserInterfaceType(val id: Int) {
         Web(1),
@@ -49,7 +49,7 @@ class Versjon private constructor(
     }
 
     class Bygger(
-        private val prototypeSøknad: Søknad,
+        private val prototypeFakta: Fakta,
         private val prototypeSubsumsjon: Subsumsjon,
         private val prototypeUserInterfaces: Map<UserInterfaceType, Faktagrupper>,
         internal val faktumNavBehov: FaktumNavBehov? = null
@@ -59,18 +59,18 @@ class Versjon private constructor(
             type: UserInterfaceType,
             uuid: UUID = UUID.randomUUID()
         ): Faktagrupper =
-            søknadprosess(prototypeSøknad.bygg(person, prototypeSøknad.prosessVersjon, uuid), type)
+            søknadprosess(prototypeFakta.bygg(person, prototypeFakta.prosessVersjon, uuid), type)
 
         fun søknadprosess(
-            søknad: Søknad,
+            fakta: Fakta,
             type: UserInterfaceType
         ): Faktagrupper {
-            val subsumsjon = prototypeSubsumsjon.bygg(søknad)
-            return prototypeUserInterfaces[type]?.bygg(søknad, subsumsjon)
+            val subsumsjon = prototypeSubsumsjon.bygg(fakta)
+            return prototypeUserInterfaces[type]?.bygg(fakta, subsumsjon)
                 ?: throw IllegalArgumentException("Kan ikke finne søknadprosess av type $type")
         }
 
-        internal fun prosessVersjon() = prototypeSøknad.prosessVersjon
+        internal fun prosessVersjon() = prototypeFakta.prosessVersjon
         fun registrer() = Versjon(this)
     }
 }

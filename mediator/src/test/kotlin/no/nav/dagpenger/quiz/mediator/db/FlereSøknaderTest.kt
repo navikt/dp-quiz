@@ -13,7 +13,7 @@ internal class FlereSøknaderTest {
     fun `takler flere søknader samtidig`() {
         Postgres.withMigratedDb {
             FaktumTable(SøknadEksempel1.prototypeFakta1)
-            FaktumTable(SøknadEksempel.prototypeSøknad1)
+            FaktumTable(SøknadEksempel.prototypeFakta1)
 
             val søknadRecord = SøknadRecord()
 
@@ -29,16 +29,16 @@ internal class FlereSøknaderTest {
             )
 
             søknad1.boolsk(10).besvar(true)
-            søknadRecord.lagre(søknad1.søknad)
+            søknadRecord.lagre(søknad1.fakta)
 
             søknad2.boolsk(8).besvar(false)
-            søknadRecord.lagre(søknad2.søknad)
+            søknadRecord.lagre(søknad2.fakta)
 
-            val rehydrertSøknadprosess1 = søknadRecord.hent(søknad1.søknad.uuid)
-            val rehydrertSøknadprosess2 = søknadRecord.hent(søknad2.søknad.uuid)
+            val rehydrertSøknadprosess1 = søknadRecord.hent(søknad1.fakta.uuid)
+            val rehydrertSøknadprosess2 = søknadRecord.hent(søknad2.fakta.uuid)
 
-            assertEquals(true, rehydrertSøknadprosess1.søknad.boolsk(10).svar())
-            assertEquals(false, rehydrertSøknadprosess2.søknad.boolsk(8).svar())
+            assertEquals(true, rehydrertSøknadprosess1.fakta.boolsk(10).svar())
+            assertEquals(false, rehydrertSøknadprosess2.fakta.boolsk(8).svar())
         }
     }
 }

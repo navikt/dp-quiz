@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
@@ -97,14 +97,14 @@ class Seksjon private constructor(
             }
         }
 
-    internal fun bygg(søknad: Søknad) = Seksjon(
+    internal fun bygg(fakta: Fakta) = Seksjon(
         navn,
         rolle,
         seksjonFakta
-            .map { søknad.id(it.faktumId) }
+            .map { fakta.id(it.faktumId) }
             .toMutableSet(),
         avhengerAvFakta
-            .map { søknad.id(it.faktumId) }
+            .map { fakta.id(it.faktumId) }
             .toMutableSet()
     )
 

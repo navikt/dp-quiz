@@ -11,8 +11,8 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.inneholder
 import no.nav.dagpenger.model.regel.med
@@ -333,10 +333,10 @@ object DinSituasjon : DslFaktaseksjon {
 
     )
 
-    override fun seksjon(søknad: Søknad) =
-        listOf(søknad.seksjon("din-situasjon", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
+    override fun seksjon(fakta: Fakta) =
+        listOf(fakta.seksjon("din-situasjon", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
-    override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
+    override fun regeltre(fakta: Fakta): DeltreSubsumsjon = with(fakta) {
         "din situasjon".deltre {
             `har mottatt dagpenger siste tolv måneder`() hvisOppfylt {
                 gjenopptak()
@@ -346,10 +346,10 @@ object DinSituasjon : DslFaktaseksjon {
         }
     }
 
-    private fun Søknad.`har mottatt dagpenger siste tolv måneder`() =
+    private fun Fakta.`har mottatt dagpenger siste tolv måneder`() =
         (envalg(`mottatt dagpenger siste 12 mnd`) inneholder Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
 
-    private fun Søknad.gjenopptak() =
+    private fun Fakta.gjenopptak() =
         "spørsmål om gjenopptaket".alle(
             tekst(`gjenopptak årsak til stans av dagpenger`).utfylt(),
             dato(`gjenopptak søknadsdato`).utfylt(),
@@ -361,7 +361,7 @@ object DinSituasjon : DslFaktaseksjon {
             )
         )
 
-    private fun Søknad.`ønske om ny beregning og fastsatt ny arbeidstid eller ikke`() =
+    private fun Fakta.`ønske om ny beregning og fastsatt ny arbeidstid eller ikke`() =
         "ønsker ny beregning av dagpenger eller ikke".minstEnAv(
             boolsk(`gjenopptak ønsker ny beregning av dagpenger`) er false hvisOppfylt {
                 `alle arbeidsforhold`()
@@ -381,7 +381,7 @@ object DinSituasjon : DslFaktaseksjon {
             }
         )
 
-    private fun Søknad.`ny søknad`() = "søknadsdato, type arbeidstid og arbeidsforhold".alle(
+    private fun Fakta.`ny søknad`() = "søknadsdato, type arbeidstid og arbeidsforhold".alle(
         dato(`dagpenger søknadsdato`).utfylt(),
         `har hatt arbeidstid`() hvisOppfylt {
             `alle arbeidsforhold`()
@@ -390,13 +390,13 @@ object DinSituasjon : DslFaktaseksjon {
         }
     )
 
-    private fun Søknad.`har hatt arbeidstid`() = "fast, varierende eller kombinert".minstEnAv(
+    private fun Fakta.`har hatt arbeidstid`() = "fast, varierende eller kombinert".minstEnAv(
         envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.fast"),
         envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.varierende"),
         envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.kombinasjon")
     )
 
-    private fun Søknad.`alle arbeidsforhold`() =
+    private fun Fakta.`alle arbeidsforhold`() =
         generator(arbeidsforhold) med "en eller flere arbeidsforhold".deltre {
             "spørsmål om arbeidsforholdet".alle(
                 tekst(`arbeidsforhold navn bedrift`).utfylt(),
@@ -414,7 +414,7 @@ object DinSituasjon : DslFaktaseksjon {
             )
         }
 
-    private fun Søknad.`ikke endret`() =
+    private fun Fakta.`ikke endret`() =
         envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret") hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `antall arbeidstimer ved ikke endret arbeidsforhold`(),
@@ -427,7 +427,7 @@ object DinSituasjon : DslFaktaseksjon {
             )
         }
 
-    private fun Søknad.`antall arbeidstimer ved ikke endret arbeidsforhold`() =
+    private fun Fakta.`antall arbeidstimer ved ikke endret arbeidsforhold`() =
         "antall arbeidstimer kjent eller ikke".minstEnAv(
             boolsk(`arbeidsforhold kjent antall timer jobbet`) er false,
             boolsk(`arbeidsforhold kjent antall timer jobbet`) er true hvisOppfylt {
@@ -435,7 +435,7 @@ object DinSituasjon : DslFaktaseksjon {
             }
         )
 
-    private fun Søknad.avskjediget() =
+    private fun Fakta.avskjediget() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.avskjediget"))
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
@@ -450,7 +450,7 @@ object DinSituasjon : DslFaktaseksjon {
             )
         }
 
-    private fun Søknad.`arbeidstimer før mistet jobb`() =
+    private fun Fakta.`arbeidstimer før mistet jobb`() =
         "antall arbeidstimer før mistet jobb kjent eller ikke".minstEnAv(
             boolsk(`arbeidsforhold vet du antall timer før mistet jobb`) er false,
             boolsk(`arbeidsforhold vet du antall timer før mistet jobb`) er true hvisOppfylt {
@@ -458,10 +458,10 @@ object DinSituasjon : DslFaktaseksjon {
             }
         )
 
-    private fun Søknad.`antall timer jobbet`() =
+    private fun Fakta.`antall timer jobbet`() =
         desimaltall(`arbeidsforhold antall timer dette arbeidsforhold`).utfylt()
 
-    private fun Søknad.`sagt opp av arbeidsgiver`() =
+    private fun Fakta.`sagt opp av arbeidsgiver`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
@@ -478,13 +478,13 @@ object DinSituasjon : DslFaktaseksjon {
             )
         }
 
-    private fun Søknad.`varighet på arbeidsforholdet`() =
+    private fun Fakta.`varighet på arbeidsforholdet`() =
         periode(`arbeidsforhold varighet`).utfylt()
 
-    private fun Søknad.`tilbud om annen stilling eller annet sted i Norge`() =
+    private fun Fakta.`tilbud om annen stilling eller annet sted i Norge`() =
         boolsk(`arbeidsforhold tilbud om annen stilling eller annet sted i norge`).utfylt()
 
-    private fun Søknad.`skift, turnus og rotasjon`() =
+    private fun Fakta.`skift, turnus og rotasjon`() =
         "spørsmål om skift, turnus og rotasjon".alle(
             boolsk(`arbeidsforhold skift eller turnus`).utfylt(),
             "rotasjon eller ikke".minstEnAv(
@@ -502,7 +502,7 @@ object DinSituasjon : DslFaktaseksjon {
             )
         )
 
-    private fun Søknad.`arbeidsgiver er konkurs`() =
+    private fun Fakta.`arbeidsgiver er konkurs`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs"))
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
@@ -519,7 +519,7 @@ object DinSituasjon : DslFaktaseksjon {
             )
         }
 
-    private fun Søknad.`arbeidstimer før konkurs`() =
+    private fun Fakta.`arbeidstimer før konkurs`() =
         "antall arbeidstimer før konkurs kjent eller ikke".minstEnAv(
             boolsk(`arbeidsforhold vet du antall timer før konkurs`) er false,
             boolsk(`arbeidsforhold vet du antall timer før konkurs`) er true hvisOppfylt {
@@ -527,7 +527,7 @@ object DinSituasjon : DslFaktaseksjon {
             }
         )
 
-    private fun Søknad.lønnsgarantimidler() =
+    private fun Fakta.lønnsgarantimidler() =
         "ønsker å søke om forskudd på lønnsgarantimidler eller ikke".minstEnAv(
             boolsk(`arbeidsforhold søke forskudd lønnsgarantimidler`) er false hvisOppfylt {
                 boolsk(`arbeidsforhold godta trekk direkte fra konkursboet`).utfylt()
@@ -537,7 +537,7 @@ object DinSituasjon : DslFaktaseksjon {
             }
         )
 
-    private fun Søknad.`oppfølgingsspørsmål om lønnsgarantimidler`() =
+    private fun Fakta.`oppfølgingsspørsmål om lønnsgarantimidler`() =
         "spørsmål om lønnsgarantimidler".alle(
             "søker om dagpenger i tillegg eller ikke".minstEnAv(
                 boolsk(`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`) er false,
@@ -556,7 +556,7 @@ object DinSituasjon : DslFaktaseksjon {
             )
         )
 
-    private fun Søknad.`kontrakten er utgått`() =
+    private fun Fakta.`kontrakten er utgått`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt"))
             .sannsynliggjøresAv(dokument(`dokumentasjon arbeidsavtale`))
             .godkjentAv(
@@ -570,7 +570,7 @@ object DinSituasjon : DslFaktaseksjon {
             )
         }
 
-    private fun Søknad.`arbeidstimer før utgått kontrakt`() =
+    private fun Fakta.`arbeidstimer før utgått kontrakt`() =
         "antall arbeidstimer før kontrakten utgikk kjent eller ikke".minstEnAv(
             boolsk(`arbeidsforhold vet du antall timer før kontrakt utgikk`) er false,
             boolsk(`arbeidsforhold vet du antall timer før kontrakt utgikk`) er true hvisOppfylt {
@@ -578,7 +578,7 @@ object DinSituasjon : DslFaktaseksjon {
             }
         )
 
-    private fun Søknad.`tilbud om forlengelse eller annen stilling`() =
+    private fun Fakta.`tilbud om forlengelse eller annen stilling`() =
         "tilbud om forlengelse av kontrakt eller annen stilling eller ikke".minstEnAv(
             boolsk(`arbeidsforhold tilbud om forlengelse eller annen stilling`) er false,
             boolsk(`arbeidsforhold tilbud om forlengelse eller annen stilling`) er true hvisOppfylt {
@@ -594,7 +594,7 @@ object DinSituasjon : DslFaktaseksjon {
             }
         )
 
-    private fun Søknad.`sagt opp selv`() =
+    private fun Fakta.`sagt opp selv`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv"))
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
@@ -611,7 +611,7 @@ object DinSituasjon : DslFaktaseksjon {
             )
         }
 
-    private fun Søknad.`arbeidstimer før sagt opp selv`() =
+    private fun Fakta.`arbeidstimer før sagt opp selv`() =
         "antall arbeidstimer før sagt opp selv kjent eller ikke".minstEnAv(
             boolsk(`arbeidsforhold vet du antall timer før du sa opp`) er false,
             boolsk(`arbeidsforhold vet du antall timer før du sa opp`) er true hvisOppfylt {
@@ -619,7 +619,7 @@ object DinSituasjon : DslFaktaseksjon {
             }
         )
 
-    private fun Søknad.`redusert arbeidstid`() =
+    private fun Fakta.`redusert arbeidstid`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid"))
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
@@ -638,7 +638,7 @@ object DinSituasjon : DslFaktaseksjon {
             )
         }
 
-    private fun Søknad.`arbeidstimer før redusert arbeidstid`() =
+    private fun Fakta.`arbeidstimer før redusert arbeidstid`() =
         "antall arbeidstimer før arbedstiden ble redusert kjent eller ikke".minstEnAv(
             boolsk(`arbeidsforhold vet du antall timer før redusert arbeidstid`) er false,
             boolsk(`arbeidsforhold vet du antall timer før redusert arbeidstid`) er true hvisOppfylt {
@@ -646,7 +646,7 @@ object DinSituasjon : DslFaktaseksjon {
             }
         )
 
-    private fun Søknad.permittert() =
+    private fun Fakta.permittert() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
@@ -667,7 +667,7 @@ object DinSituasjon : DslFaktaseksjon {
             )
         }
 
-    private fun Søknad.`midlertidig arbeidsforhold med sluttdato`() =
+    private fun Fakta.`midlertidig arbeidsforhold med sluttdato`() =
         "midlertidig arbeidsforhold med sluttdato eller ikke".minstEnAv(
             envalg(`arbeidsforhold midlertidig med kontraktfestet sluttdato`) inneholder Envalg("faktum.arbeidsforhold.midlertidig-med-kontraktfestet-sluttdato.svar.ja") hvisOppfylt {
                 dato(`arbeidsforhold kontraktfestet sluttdato`).utfylt()
@@ -675,7 +675,7 @@ object DinSituasjon : DslFaktaseksjon {
             envalg(`arbeidsforhold midlertidig med kontraktfestet sluttdato`).utfylt()
         )
 
-    private fun Søknad.`arbeidstimer før permittert`() =
+    private fun Fakta.`arbeidstimer før permittert`() =
         "antall arbeidstimer før permittert kjent eller ikke".minstEnAv(
             boolsk(`arbeidsforhold vet du antall timer før permittert`) er false,
             boolsk(`arbeidsforhold vet du antall timer før permittert`) er true hvisOppfylt {
@@ -683,7 +683,7 @@ object DinSituasjon : DslFaktaseksjon {
             }
         )
 
-    private fun Søknad.lønnspliktsperiode() =
+    private fun Fakta.lønnspliktsperiode() =
         "vet hva lønnspliktsperioden er eller ikke".minstEnAv(
             boolsk(`arbeidsforhold vet du lønnsplikt periode`) er false,
             boolsk(`arbeidsforhold vet du lønnsplikt periode`) er true hvisOppfylt {

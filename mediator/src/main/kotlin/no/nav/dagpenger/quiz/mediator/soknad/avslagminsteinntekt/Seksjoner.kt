@@ -33,7 +33,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.periodeOppbruktManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.permittert
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.prototypeSøknad
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.prototypeFakta
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.reellArbeidssøkerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeFom
@@ -50,11 +50,11 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 
 internal object Seksjoner {
 
-    private val behandlingsdatoSeksjon = with(prototypeSøknad) {
+    private val behandlingsdatoSeksjon = with(prototypeFakta) {
         Seksjon("behandlingsdato", Rolle.nav, dato(behandlingsdato))
     }
 
-    private val senesteMuligeVirkningsdatoSeksjon = with(prototypeSøknad) {
+    private val senesteMuligeVirkningsdatoSeksjon = with(prototypeFakta) {
         Seksjon(
             "senesteMuligeVirkningstidspunkt",
             Rolle.nav,
@@ -62,7 +62,7 @@ internal object Seksjoner {
         )
     }
 
-    private val minsteinntektKonstanter = with(prototypeSøknad) {
+    private val minsteinntektKonstanter = with(prototypeFakta) {
         Seksjon(
             "minsteinntektKonstanter",
             Rolle.nav,
@@ -71,7 +71,7 @@ internal object Seksjoner {
         )
     }
 
-    private val grunnbeløpSeksjon = with(prototypeSøknad) {
+    private val grunnbeløpSeksjon = with(prototypeFakta) {
         Seksjon(
             "grunnbeløp",
             Rolle.nav,
@@ -87,7 +87,7 @@ internal object Seksjoner {
         )
     }
 
-    private val dataFraSøknad = with(prototypeSøknad) {
+    private val dataFraSøknad = with(prototypeFakta) {
         Seksjon(
             "datafrasøknad",
             Rolle.nav,
@@ -102,7 +102,7 @@ internal object Seksjoner {
         )
     }
 
-    private val arbeidsøkerPerioder = with(prototypeSøknad) {
+    private val arbeidsøkerPerioder = with(prototypeFakta) {
         Seksjon(
             "arbeidsøkerperioder",
             Rolle.nav,
@@ -112,7 +112,7 @@ internal object Seksjoner {
         )
     }
 
-    private val dagpengehistorikk = with(prototypeSøknad) {
+    private val dagpengehistorikk = with(prototypeFakta) {
         Seksjon(
             "dagpengehistorikk",
             Rolle.nav,
@@ -120,7 +120,7 @@ internal object Seksjoner {
         )
     }
 
-    private val lukkedeSaker = with(prototypeSøknad) {
+    private val lukkedeSaker = with(prototypeFakta) {
         Seksjon(
             "lukkedeSaker",
             Rolle.nav,
@@ -128,7 +128,7 @@ internal object Seksjoner {
         )
     }
 
-    private val inntektshistorikk = with(prototypeSøknad) {
+    private val inntektshistorikk = with(prototypeFakta) {
         Seksjon(
             "inntektshistorikk",
             Rolle.nav,
@@ -136,7 +136,7 @@ internal object Seksjoner {
         )
     }
 
-    private val sykepengehistorikk = with(prototypeSøknad) {
+    private val sykepengehistorikk = with(prototypeFakta) {
         Seksjon(
             "sykepengehistorikk",
             Rolle.nav,
@@ -144,7 +144,7 @@ internal object Seksjoner {
         )
     }
 
-    private val inntekter = with(prototypeSøknad) {
+    private val inntekter = with(prototypeFakta) {
         Seksjon(
             "inntekter",
             Rolle.nav,
@@ -153,7 +153,7 @@ internal object Seksjoner {
         )
     }
 
-    private val inntektNesteKalendermåned = with(prototypeSøknad) {
+    private val inntektNesteKalendermåned = with(prototypeFakta) {
         Seksjon(
             "inntekt neste kalendermåned",
             Rolle.nav,
@@ -172,7 +172,7 @@ internal object Seksjoner {
     }
      */
 
-    private val endredeArbeidsforhold = with(prototypeSøknad) {
+    private val endredeArbeidsforhold = with(prototypeFakta) {
         Seksjon(
             "arbeidsforhold",
             Rolle.nav,
@@ -184,7 +184,7 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellGjenopptak = with(prototypeSøknad) {
+    private val manuellGjenopptak = with(prototypeFakta) {
         Seksjon(
             "mulig gjenopptak",
             Rolle.manuell,
@@ -192,7 +192,7 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellHattLukkedeSakerSiste8Uker = with(prototypeSøknad) {
+    private val manuellHattLukkedeSakerSiste8Uker = with(prototypeFakta) {
         Seksjon(
             "har hatt lukkede saker siste 8 uker",
             Rolle.manuell,
@@ -200,7 +200,7 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellSykepenger = with(prototypeSøknad) {
+    private val manuellSykepenger = with(prototypeFakta) {
         Seksjon(
             "svangerskapsrelaterte sykepenger",
             Rolle.manuell,
@@ -208,7 +208,7 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellFangstOgFisk = with(prototypeSøknad) {
+    private val manuellFangstOgFisk = with(prototypeFakta) {
         Seksjon(
             "mulige inntekter fra fangst og fisk",
             Rolle.manuell,
@@ -216,7 +216,7 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellEøs = with(prototypeSøknad) {
+    private val manuellEøs = with(prototypeFakta) {
         Seksjon(
             "EØS-arbeid",
             Rolle.manuell,
@@ -224,7 +224,7 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellJobbetUtenforNorge = with(prototypeSøknad) {
+    private val manuellJobbetUtenforNorge = with(prototypeFakta) {
         Seksjon(
             "jobbet utenfor Norge",
             Rolle.manuell,
@@ -232,7 +232,7 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellDatoer = with(prototypeSøknad) {
+    private val manuellDatoer = with(prototypeFakta) {
         Seksjon(
             "virkningstidspunkt vi ikke kan håndtere",
             Rolle.manuell,
@@ -240,7 +240,7 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellOppfyllerKraveneTilMinsteArbeidsinntekt = with(prototypeSøknad) {
+    private val manuellOppfyllerKraveneTilMinsteArbeidsinntekt = with(prototypeFakta) {
         Seksjon(
             "kravene til minste arbeidsinntekt er oppfylt så",
             Rolle.manuell,
@@ -248,7 +248,7 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellHarInntektNesteKalendermåned = with(prototypeSøknad) {
+    private val manuellHarInntektNesteKalendermåned = with(prototypeFakta) {
         Seksjon(
             "det er inntekt neste kalendermåned",
             Rolle.manuell,
@@ -256,7 +256,7 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellErIkkeReellArbeidssøker = with(prototypeSøknad) {
+    private val manuellErIkkeReellArbeidssøker = with(prototypeFakta) {
         Seksjon(
             "ikke reell arbeidssøker",
             Rolle.manuell,
@@ -264,7 +264,7 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellErIkkeRegistrertArbeidssøker = with(prototypeSøknad) {
+    private val manuellErIkkeRegistrertArbeidssøker = with(prototypeFakta) {
         Seksjon(
             "ikke registrert arbeidssøker",
             Rolle.manuell,
@@ -272,7 +272,7 @@ internal object Seksjoner {
         )
     }
 
-    private val manuellOver67år = with(prototypeSøknad) {
+    private val manuellOver67år = with(prototypeFakta) {
         Seksjon(
             "over 67 år",
             Rolle.manuell,
@@ -280,7 +280,7 @@ internal object Seksjoner {
         )
     }
 
-    private val inntektsrapporteringsperioder = with(prototypeSøknad) {
+    private val inntektsrapporteringsperioder = with(prototypeFakta) {
         Seksjon(
             "inntektsrapporteringsperioder",
             Rolle.nav,
@@ -288,7 +288,7 @@ internal object Seksjoner {
         )
     }
 
-    private val alder = with(prototypeSøknad) {
+    private val alder = with(prototypeFakta) {
         Seksjon(
             "alder",
             Rolle.nav,

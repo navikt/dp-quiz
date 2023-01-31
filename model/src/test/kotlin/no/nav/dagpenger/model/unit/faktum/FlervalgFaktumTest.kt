@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Flervalg
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.inneholder
@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
 
 class FlervalgFaktumTest {
 
-    val prototypeSøknad = Søknad(
+    val prototypeFakta = Fakta(
         testversjon,
         flervalg faktum "flervalg1" med "valg1" med "valg2" med "valg3" id 1,
         flervalg faktum "flervalg2" med "valg1" med "valg2" med "valg3" id 2,
@@ -35,7 +35,7 @@ class FlervalgFaktumTest {
 
     @BeforeEach
     fun setup() {
-        søknad = prototypeSøknad.testSøknadprosess(TomSubsumsjon)
+        søknad = prototypeFakta.testSøknadprosess(TomSubsumsjon)
     }
 
     @Test
@@ -50,7 +50,7 @@ class FlervalgFaktumTest {
     fun `Skal ikke kunne opprette et tomt Valg`() {
         assertThrows<IllegalArgumentException> { Flervalg() }
         assertThrows<IllegalArgumentException> {
-            Søknad(
+            Fakta(
                 testversjon,
                 flervalg faktum "flervalg" id 1
             ).testSøknadprosess(TomSubsumsjon)

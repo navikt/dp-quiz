@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class NySøknadTest {
+internal class NyFaktaTest {
 
     @BeforeEach
     internal fun reset() {

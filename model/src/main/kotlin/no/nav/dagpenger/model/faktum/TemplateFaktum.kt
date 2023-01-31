@@ -46,12 +46,12 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     override fun add(seksjon: Seksjon) =
         seksjoner.add(seksjon)
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Faktum<*> {
-        return søknad.idOrNull(faktumId medIndeks indeks)
+    override fun deepCopy(indeks: Int, fakta: Fakta): Faktum<*> {
+        return fakta.idOrNull(faktumId medIndeks indeks)
             ?: deepCopy(indeks)
                 .also { lagdFaktum ->
-                    søknad.add(lagdFaktum)
-                    leggTilAvhengighet(søknad, indeks, lagdFaktum)
+                    fakta.add(lagdFaktum)
+                    leggTilAvhengighet(fakta, indeks, lagdFaktum)
                 }
     }
 
@@ -68,7 +68,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     )
 
     // Lag instans av template faktum ved besvar eller rehydrering av søknad
-    internal fun generate(generator: Int, søknad: Søknad) {
+    internal fun generate(generator: Int, fakta: Fakta) {
         // Seksjoner dette templatet ligger i
         seksjoner.forEach { originalSeksjon ->
             generator.forHvertSvar { indeks: Int ->
@@ -76,25 +76,25 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
                 val seksjon = instansiertSeksjon(originalSeksjon, indeks)
                 deepCopy(indeks).also { lagdFaktum: GrunnleggendeFaktum<R> ->
                     seksjon.add(lagdFaktum)
-                    leggTilAvhengighet(søknad, indeks, lagdFaktum)
+                    leggTilAvhengighet(fakta, indeks, lagdFaktum)
                 }
             }
         }
     }
 
     private fun leggTilAvhengighet(
-        søknad: Søknad,
+        fakta: Fakta,
         indeks: Int,
         lagdFaktum: GrunnleggendeFaktum<R>
 
     ) {
         avhengerAvFakta.map { avhengighet ->
-            søknad.finnEksisterende(avhengighet, indeks) ?: avhengighet.deepCopy(indeks, søknad)
+            fakta.finnEksisterende(avhengighet, indeks) ?: avhengighet.deepCopy(indeks, fakta)
         }.forEach { it.leggTilAvhengighet(lagdFaktum) }
     }
 
     // Finner et allerede instansiert faktum, eller lager ett nytt
-    private fun Søknad.finnEksisterende(avhengighet: Faktum<*>, indeks: Int) = when (avhengighet) {
+    private fun Fakta.finnEksisterende(avhengighet: Faktum<*>, indeks: Int) = when (avhengighet) {
         is TemplateFaktum<*> -> singleOrNull {
             it.faktumId == avhengighet.faktumId medIndeks indeks
         }

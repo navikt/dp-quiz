@@ -7,7 +7,7 @@ import java.time.LocalDate
 import java.util.UUID
 
 @Suppress("UNCHECKED_CAST")
-class Søknad private constructor(
+class Fakta private constructor(
     private val person: Person,
     internal val prosessVersjon: Prosessversjon,
     val uuid: UUID,
@@ -31,11 +31,11 @@ class Søknad private constructor(
     )
 
     init {
-        this.forEach { if (it is GeneratorFaktum) it.søknad = this }
+        this.forEach { if (it is GeneratorFaktum) it.fakta = this }
     }
 
     companion object {
-        fun Søknad.seksjon(navn: String, rolle: Rolle, vararg spørsmålsrekkefølge: Int) = Seksjon(
+        fun Fakta.seksjon(navn: String, rolle: Rolle, vararg spørsmålsrekkefølge: Int) = Seksjon(
             navn,
             rolle,
             *(spørsmålsrekkefølge.map { id -> this.id(id) }.toTypedArray())
@@ -138,10 +138,10 @@ class Søknad private constructor(
     override fun periode(id: String): Faktum<Periode> = periode(FaktumId(id))
     private infix fun periode(faktumId: FaktumId) = id(faktumId) as Faktum<Periode>
 
-    fun bygg(person: Person, prosessVersjon: Prosessversjon, uuid: UUID = UUID.randomUUID()): Søknad {
+    fun bygg(person: Person, prosessVersjon: Prosessversjon, uuid: UUID = UUID.randomUUID()): Fakta {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktaMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
-        return Søknad(person, prosessVersjon, uuid, mapOfFakta)
+        return Fakta(person, prosessVersjon, uuid, mapOfFakta)
     }
 
     override fun iterator(): MutableIterator<Faktum<*>> {

@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -29,7 +29,7 @@ internal class ResultatTest {
     private lateinit var resultatRecord: ResultatRecord
 
     private fun setup(prosessVersjon: Prosessversjon) {
-        val prototypeFakta = Søknad(
+        val prototypeFakta = Fakta(
             prosessVersjon,
             boolsk faktum "f1" id 19
         )
@@ -69,11 +69,11 @@ internal class ResultatTest {
         val resultat = faktagrupper.resultat()
         resultatRecord.lagreResultat(
             resultat!!,
-            faktagrupper.søknad.uuid,
+            faktagrupper.fakta.uuid,
             ResultatJsonBuilder(faktagrupper).resultat()
         )
 
-        val hentaResultat = resultatRecord.hentResultat(faktagrupper.søknad.uuid)
+        val hentaResultat = resultatRecord.hentResultat(faktagrupper.fakta.uuid)
 
         assertEquals(resultat, hentaResultat)
     }
@@ -82,13 +82,13 @@ internal class ResultatTest {
     fun `Lagrer sendt til manuell behandling`() {
         setup(Prosessversjon(Testprosess.Test, 936))
         val seksjonsnavn = "manuell seksjon"
-        resultatRecord.lagreManuellBehandling(faktagrupper.søknad.uuid, seksjonsnavn)
+        resultatRecord.lagreManuellBehandling(faktagrupper.fakta.uuid, seksjonsnavn)
 
         val grunn = using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL
                     "SELECT grunn FROM manuell_behandling WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
-                    faktagrupper.søknad.uuid
+                    faktagrupper.fakta.uuid
                 ).map { it.string("grunn") }.asSingle
             )
         }

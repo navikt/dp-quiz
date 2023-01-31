@@ -13,7 +13,7 @@ import java.util.UUID.randomUUID
 
 internal class Paragraf423aldervilkårTest {
 
-    private val søknad = Paragraf_4_23_alder_oppsett.prototypeSøknad
+    private val søknad = Paragraf_4_23_alder_oppsett.prototypeFakta
     private lateinit var aldersvurderingsprosess: Faktagrupper
 
     @BeforeEach

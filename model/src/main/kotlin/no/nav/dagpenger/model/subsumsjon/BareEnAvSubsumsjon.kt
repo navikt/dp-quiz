@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.subsumsjon
 
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
@@ -25,19 +25,19 @@ class BareEnAvSubsumsjon private constructor(
         ikkeOppfyltSubsumsjon.deepCopy(faktagrupper)
     )
 
-    override fun bygg(søknad: Søknad) = BareEnAvSubsumsjon(
+    override fun bygg(fakta: Fakta) = BareEnAvSubsumsjon(
         navn,
-        subsumsjoner.map { it.bygg(søknad) }.toMutableList(),
-        oppfyltSubsumsjon.bygg(søknad),
-        ikkeOppfyltSubsumsjon.bygg(søknad)
+        subsumsjoner.map { it.bygg(fakta) }.toMutableList(),
+        oppfyltSubsumsjon.bygg(fakta),
+        ikkeOppfyltSubsumsjon.bygg(fakta)
     )
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Subsumsjon {
+    override fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon {
         return BareEnAvSubsumsjon(
             "$navn [$indeks]",
-            subsumsjoner.map { it.deepCopy(indeks, søknad) }.toMutableList(),
-            oppfyltSubsumsjon.deepCopy(indeks, søknad),
-            ikkeOppfyltSubsumsjon.deepCopy(indeks, søknad)
+            subsumsjoner.map { it.deepCopy(indeks, fakta) }.toMutableList(),
+            oppfyltSubsumsjon.deepCopy(indeks, fakta),
+            ikkeOppfyltSubsumsjon.deepCopy(indeks, fakta)
         )
     }
 

@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.marshalling
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import java.time.LocalDateTime
 import java.util.UUID
@@ -13,11 +13,11 @@ class ResultatJsonBuilder(
 ) : SøknadJsonBuilder() {
 
     init {
-        faktagrupper.søknad.accept(this)
+        faktagrupper.fakta.accept(this)
         faktagrupper.rootSubsumsjon.mulige().accept(this)
 
         ignore = false
-        faktagrupper.søknad.forEach { if (it.erBesvart()) it.accept(this) }
+        faktagrupper.fakta.forEach { if (it.erBesvart()) it.accept(this) }
     }
 
     override fun resultat(): ObjectNode {
@@ -25,8 +25,8 @@ class ResultatJsonBuilder(
         return super.resultat()
     }
 
-    override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
-        super.preVisit(søknad, prosessVersjon, uuid)
+    override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+        super.preVisit(fakta, prosessVersjon, uuid)
         root.put("@event_name", "prosess_resultat")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")

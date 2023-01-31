@@ -13,7 +13,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.assertFaktaAsJson
 import no.nav.dagpenger.model.helpers.assertGeneratorFaktaAsJson
 import no.nav.dagpenger.model.helpers.assertValgFaktaAsJson
@@ -32,11 +32,11 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class SøknadsmalJsonBuilderTest {
-    private lateinit var prototypeSøknad: Søknad
+    private lateinit var prototypeFakta: Fakta
 
     @BeforeEach
     fun setup() {
-        prototypeSøknad = Søknad(
+        prototypeFakta = Fakta(
             testversjon,
             boolsk faktum "boolsk1" id 1,
             heltall faktum "heltall2" id 2,
@@ -66,47 +66,47 @@ internal class SøknadsmalJsonBuilderTest {
 
     private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Faktagrupper {
         val prototypeFaktagrupper = Faktagrupper(
-            prototypeSøknad,
+            prototypeFakta,
             Seksjon(
                 "seksjon1",
                 Rolle.søker,
-                prototypeSøknad.boolsk(1),
-                prototypeSøknad.heltall(2),
-                prototypeSøknad.tekst(15),
-                prototypeSøknad.periode(16),
-                prototypeSøknad.periode(17)
+                prototypeFakta.boolsk(1),
+                prototypeFakta.heltall(2),
+                prototypeFakta.tekst(15),
+                prototypeFakta.periode(16),
+                prototypeFakta.periode(17)
             ),
             Seksjon(
                 "seksjon2",
                 Rolle.søker,
-                prototypeSøknad.heltall(3),
-                prototypeSøknad.dato(4),
-                prototypeSøknad.generator(5),
-                prototypeSøknad.desimaltall(6),
+                prototypeFakta.heltall(3),
+                prototypeFakta.dato(4),
+                prototypeFakta.generator(5),
+                prototypeFakta.desimaltall(6),
             ),
             Seksjon(
                 "seksjon3",
                 Rolle.søker,
-                prototypeSøknad.flervalg(10),
-                prototypeSøknad.envalg(11),
-                prototypeSøknad.dato(12),
-                prototypeSøknad.inntekt(13),
-                prototypeSøknad.envalg(18),
-                prototypeSøknad.boolsk(19),
-                prototypeSøknad.generator(14),
+                prototypeFakta.flervalg(10),
+                prototypeFakta.envalg(11),
+                prototypeFakta.dato(12),
+                prototypeFakta.inntekt(13),
+                prototypeFakta.envalg(18),
+                prototypeFakta.boolsk(19),
+                prototypeFakta.generator(14),
             ),
             Seksjon(
                 "nav", Rolle.nav,
-                prototypeSøknad.dokument(7),
-                prototypeSøknad.inntekt(8),
-                prototypeSøknad.dato(9)
+                prototypeFakta.dokument(7),
+                prototypeFakta.inntekt(8),
+                prototypeFakta.dato(9)
             ),
-            Seksjon("seksjon4", Rolle.søker, prototypeSøknad.land(20), prototypeSøknad.inntekt(8)),
+            Seksjon("seksjon4", Rolle.søker, prototypeFakta.land(20), prototypeFakta.inntekt(8)),
             rootSubsumsjon = prototypeSubsumsjon
         )
 
         return Versjon.Bygger(
-            prototypeSøknad,
+            prototypeFakta,
             prototypeSubsumsjon,
             mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
         ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
@@ -114,7 +114,7 @@ internal class SøknadsmalJsonBuilderTest {
 
     private fun søkerSubsumsjon() = "regel" deltre {
         "alle".alle(
-            prototypeSøknad.boolsk(1) er true
+            prototypeFakta.boolsk(1) er true
         )
     }
 

@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Envalg
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.inneholder
@@ -21,7 +21,7 @@ import kotlin.test.assertTrue
 
 class EnvalgFaktumTest {
 
-    val prototypeSøknad = Søknad(
+    val prototypeFakta = Fakta(
         testversjon,
         envalg faktum "envalg" med "valg1" med "valg2" id 1,
         envalg faktum "envalg2" med "valg1" med "valg2" med "valg3" id 2,
@@ -33,7 +33,7 @@ class EnvalgFaktumTest {
 
     @BeforeEach
     fun setup() {
-        søknad = prototypeSøknad.testSøknadprosess(TomSubsumsjon)
+        søknad = prototypeFakta.testSøknadprosess(TomSubsumsjon)
     }
 
     @Test
@@ -50,7 +50,7 @@ class EnvalgFaktumTest {
     fun `Skal ikke kunne opprette et tomt Valg`() {
         assertThrows<IllegalArgumentException> { Envalg() }
         assertThrows<IllegalArgumentException> {
-            Søknad(
+            Fakta(
                 testversjon,
                 envalg faktum "envalg" id 1
             ).testSøknadprosess(TomSubsumsjon)

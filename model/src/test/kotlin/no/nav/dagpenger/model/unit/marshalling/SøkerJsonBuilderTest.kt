@@ -15,7 +15,7 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.MedSøknad
 import no.nav.dagpenger.model.helpers.testPerson
@@ -47,12 +47,12 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class SøkerJsonBuilderTest {
-    private lateinit var prototypeSøknad: Søknad
+    private lateinit var prototypeFakta: Fakta
     private lateinit var faktagrupper: Faktagrupper
 
     @BeforeEach
     fun setup() {
-        prototypeSøknad = Søknad(
+        prototypeFakta = Fakta(
             testversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1,
@@ -363,56 +363,56 @@ internal class SøkerJsonBuilderTest {
 
     private fun søkerSubsumsjon(): Subsumsjon {
         val alleBarnMåværeUnder18år =
-            (prototypeSøknad.heltall(6) under 18).sannsynliggjøresAv(prototypeSøknad.dokument(22))
+            (prototypeFakta.heltall(6) under 18).sannsynliggjøresAv(prototypeFakta.dokument(22))
         val deltre = "§ 1.2 har kun ikke myndige barn".deltre {
             alleBarnMåværeUnder18år.hvisIkkeOppfylt {
-                prototypeSøknad.boolsk(7).utfylt()
+                prototypeFakta.boolsk(7).utfylt()
             }
         }
-        val generatorSubsumsjon67 = (prototypeSøknad.generator(67) med deltre).godkjentAv(prototypeSøknad.boolsk(23))
-        val generatorSubsumsjon1718 = prototypeSøknad.generator(1718) med "Besvarte valg".deltre {
+        val generatorSubsumsjon67 = (prototypeFakta.generator(67) med deltre).godkjentAv(prototypeFakta.boolsk(23))
+        val generatorSubsumsjon1718 = prototypeFakta.generator(1718) med "Besvarte valg".deltre {
             "alle må være besvarte".alle(
-                prototypeSøknad.envalg(17).utfylt(),
-                prototypeSøknad.envalg(18).utfylt()
+                prototypeFakta.envalg(17).utfylt(),
+                prototypeFakta.envalg(18).utfylt()
             )
         }
         val regeltre = "regel" deltre {
             "alle i søknaden skal være besvart".alle(
                 "alle i seksjon 1".alle(
-                    (prototypeSøknad.boolsk(1) er true).hvisIkkeOppfylt {
-                        prototypeSøknad.boolsk(2).utfylt()
+                    (prototypeFakta.boolsk(1) er true).hvisIkkeOppfylt {
+                        prototypeFakta.boolsk(2).utfylt()
                     },
-                    (prototypeSøknad.boolsk(3) er true).hvisIkkeOppfylt {
-                        prototypeSøknad.boolsk(4).utfylt()
+                    (prototypeFakta.boolsk(3) er true).hvisIkkeOppfylt {
+                        prototypeFakta.boolsk(4).utfylt()
                     },
-                    prototypeSøknad.boolsk(5).utfylt()
+                    prototypeFakta.boolsk(5).utfylt()
                 ),
                 "alle i seksjon 2".alle(
                     generatorSubsumsjon67
                 ),
                 "NAV-systemer vil svare automatisk på følgende fakta".alle(
-                    prototypeSøknad.dato(8).utfylt(),
-                    prototypeSøknad.dato(9).utfylt()
+                    prototypeFakta.dato(8).utfylt(),
+                    prototypeFakta.dato(9).utfylt()
                 ),
                 "dokumentasjon".alle(
-                    prototypeSøknad.boolsk(5) er true hvisOppfylt {
-                        prototypeSøknad.boolsk(16) dokumenteresAv prototypeSøknad.dokument(15)
+                    prototypeFakta.boolsk(5) er true hvisOppfylt {
+                        prototypeFakta.boolsk(16) dokumenteresAv prototypeFakta.dokument(15)
                     }
                 ),
                 "Generator med valg".alle(
                     generatorSubsumsjon1718
                 ),
                 "Land".alle(
-                    prototypeSøknad.land(19).utfylt()
+                    prototypeFakta.land(19).utfylt()
                 ),
-                prototypeSøknad.generator(21) har
+                prototypeFakta.generator(21) har
                     "deltre".deltre {
-                        prototypeSøknad.dato(20).utfylt()
+                        prototypeFakta.dato(20).utfylt()
                     },
                 "Grunnleggende med dokumentasjon".minstEnAv(
-                    (prototypeSøknad.boolsk(24) er true).sannsynliggjøresAv(prototypeSøknad.dokument(25))
-                        .godkjentAv(prototypeSøknad.boolsk(26)),
-                    prototypeSøknad.boolsk(24) er false
+                    (prototypeFakta.boolsk(24) er true).sannsynliggjøresAv(prototypeFakta.dokument(25))
+                        .godkjentAv(prototypeFakta.boolsk(26)),
+                    prototypeFakta.boolsk(24) er false
                 )
             )
         }
@@ -424,75 +424,75 @@ internal class SøkerJsonBuilderTest {
             Seksjon(
                 "seksjon1",
                 Rolle.søker,
-                prototypeSøknad.boolsk(1),
-                prototypeSøknad.boolsk(2),
-                prototypeSøknad.boolsk(3),
-                prototypeSøknad.boolsk(4),
-                prototypeSøknad.boolsk(5)
+                prototypeFakta.boolsk(1),
+                prototypeFakta.boolsk(2),
+                prototypeFakta.boolsk(3),
+                prototypeFakta.boolsk(4),
+                prototypeFakta.boolsk(5)
             ),
             Seksjon(
                 "seksjon2",
                 Rolle.søker,
-                prototypeSøknad.heltall(6),
-                prototypeSøknad.boolsk(7),
-                prototypeSøknad.heltall(67)
+                prototypeFakta.heltall(6),
+                prototypeFakta.boolsk(7),
+                prototypeFakta.heltall(67)
             ),
             Seksjon(
                 "navseksjon",
                 Rolle.nav,
-                prototypeSøknad.dato(8),
-                prototypeSøknad.dato(9)
+                prototypeFakta.dato(8),
+                prototypeFakta.dato(9)
             ),
             Seksjon(
                 "dokumentasjon",
                 Rolle.søker,
-                prototypeSøknad.dokument(15)
+                prototypeFakta.dokument(15)
             ),
             Seksjon(
                 "seksjon3",
                 Rolle.søker,
-                prototypeSøknad.generator(1718),
-                prototypeSøknad.envalg(17),
-                prototypeSøknad.flervalg(18)
+                prototypeFakta.generator(1718),
+                prototypeFakta.envalg(17),
+                prototypeFakta.flervalg(18)
             ),
             Seksjon(
                 "saksbehandler godkjenning",
                 Rolle.saksbehandler,
-                prototypeSøknad.boolsk(16)
+                prototypeFakta.boolsk(16)
             ),
             Seksjon(
                 "Gyldige land",
                 Rolle.søker,
-                prototypeSøknad.land(19)
+                prototypeFakta.land(19)
             ),
             Seksjon(
                 "nav generator fakta",
                 Rolle.nav,
-                prototypeSøknad.generator(21),
-                prototypeSøknad.dato(20)
+                prototypeFakta.generator(21),
+                prototypeFakta.dato(20)
             ),
             Seksjon(
                 "grunnleggende med dokumentasjon",
                 Rolle.søker,
-                prototypeSøknad.boolsk(24),
-                prototypeSøknad.dokument(25)
+                prototypeFakta.boolsk(24),
+                prototypeFakta.dokument(25)
             ),
             Seksjon(
                 "godkjenner seksjon",
                 Rolle.saksbehandler,
-                prototypeSøknad.boolsk(23),
-                prototypeSøknad.boolsk(26),
-                prototypeSøknad.dokument(22)
+                prototypeFakta.boolsk(23),
+                prototypeFakta.boolsk(26),
+                prototypeFakta.dokument(22)
             )
         )
         val prototypeFaktagrupper = Faktagrupper(
-            prototypeSøknad,
+            prototypeFakta,
             seksjoner = seksjoner.toTypedArray(),
             rootSubsumsjon = prototypeSubsumsjon
         )
 
         return Versjon.Bygger(
-            prototypeSøknad,
+            prototypeFakta,
             prototypeSubsumsjon,
             mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
         ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)

@@ -8,8 +8,8 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.inneholder
 import no.nav.dagpenger.model.regel.utfylt
@@ -99,8 +99,8 @@ object AndreYtelser : DslFaktaseksjon {
         boolsk faktum "faktum.godkjenning-dokument-okonomiske-goder-tidligere-arbeidsgiver" id `godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver` avhengerAv `dokumentasjon økonomiske goder fra tidligere arbeidsgiver`
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(søknad.seksjon("andre-ytelser", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
-    override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
+    override fun seksjon(fakta: Fakta) = listOf(fakta.seksjon("andre-ytelser", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
+    override fun regeltre(fakta: Fakta): DeltreSubsumsjon = with(fakta) {
         "andre ytelser".deltre {
             "Har eller har ikke andre ytelser".minstEnAv(
                 boolsk(`andre ytelser mottatt eller søkt`) er false,
@@ -127,7 +127,7 @@ object AndreYtelser : DslFaktaseksjon {
         }
     }
 
-    private fun Søknad.tjenestepensjon() =
+    private fun Fakta.tjenestepensjon() =
         (flervalg(`hvilke andre ytelser`) inneholder Flervalg("faktum.hvilke-andre-ytelser.svar.pensjon-offentlig-tjenestepensjon"))
             .sannsynliggjøresAv(dokument(`dokumentasjon tjenestepensjon`))
             .godkjentAv(boolsk(`godkjenning dokumentasjon tjenestepensjon`)) hvisOppfylt {
@@ -138,7 +138,7 @@ object AndreYtelser : DslFaktaseksjon {
             )
         }
 
-    private fun Søknad.arbeidsløsGFF() =
+    private fun Fakta.arbeidsløsGFF() =
         (flervalg(`hvilke andre ytelser`) inneholder Flervalg("faktum.hvilke-andre-ytelser.svar.arbeidsloshet-garantikassen-for-fiskere"))
             .sannsynliggjøresAv(dokument(`dokumentasjon arbeidsløs GFF periode`))
             .godkjentAv(boolsk(`godkjenning dokumentasjon arbeidsløs GFF periode`)) hvisOppfylt {
@@ -147,7 +147,7 @@ object AndreYtelser : DslFaktaseksjon {
             )
         }
 
-    private fun Søknad.garantilottFraGFF() =
+    private fun Fakta.garantilottFraGFF() =
         (flervalg(`hvilke andre ytelser`) inneholder Flervalg("faktum.hvilke-andre-ytelser.svar.garantilott-garantikassen-for-fiskere"))
             .sannsynliggjøresAv(dokument(`dokumentasjon garantilott fra GFF periode`))
             .godkjentAv(boolsk(`godkjenning dokumentasjon garantilott fra GFF periode`)) hvisOppfylt {
@@ -156,7 +156,7 @@ object AndreYtelser : DslFaktaseksjon {
             )
         }
 
-    private fun Søknad.etterlønnFraArbeidsgiver() =
+    private fun Fakta.etterlønnFraArbeidsgiver() =
         (flervalg(`hvilke andre ytelser`) inneholder Flervalg("faktum.hvilke-andre-ytelser.svar.etterlonn-arbeidsgiver"))
             .sannsynliggjøresAv(dokument(`dokumentasjon etterlønn`))
             .godkjentAv(boolsk(`godkjenning dokumentasjon etterlønn`)) hvisOppfylt {
@@ -166,7 +166,7 @@ object AndreYtelser : DslFaktaseksjon {
             )
         }
 
-    private fun Søknad.dagpengerFraAnnetEøsLand() =
+    private fun Fakta.dagpengerFraAnnetEøsLand() =
         (flervalg(`hvilke andre ytelser`) inneholder Flervalg("faktum.hvilke-andre-ytelser.svar.dagpenger-annet-eos-land"))
             .sannsynliggjøresAv(dokument(`dokumentasjon dagpenger eøs land`))
             .godkjentAv(boolsk(`godkjenning dokumentasjon dagpenger eøs land`)) hvisOppfylt {
@@ -176,7 +176,7 @@ object AndreYtelser : DslFaktaseksjon {
             )
         }
 
-    private fun Søknad.annenYtelse() =
+    private fun Fakta.annenYtelse() =
         (flervalg(`hvilke andre ytelser`) inneholder Flervalg("faktum.hvilke-andre-ytelser.svar.annen-ytelse"))
             .sannsynliggjøresAv(dokument(`dokumentasjon annen ytelse`))
             .godkjentAv(boolsk(`godkjenning dokumentasjon annen ytelse`)) hvisOppfylt {

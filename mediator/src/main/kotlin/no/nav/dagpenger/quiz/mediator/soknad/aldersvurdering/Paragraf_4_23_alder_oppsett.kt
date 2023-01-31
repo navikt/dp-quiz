@@ -7,8 +7,8 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.grensedato6
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -34,8 +34,8 @@ internal object Paragraf_4_23_alder_oppsett {
     const val ønskerDagpengerFraDato = 4
     const val søknadInnsendtDato = 5
     const val innsendtSøknadId = 6
-    internal val prototypeSøknad: Søknad
-        get() = Søknad(
+    internal val prototypeFakta: Fakta
+        get() = Fakta(
             VERSJON_ID,
             dokument faktum "innsendtSøknadId" id innsendtSøknadId,
             dato faktum "ønskerDagpengerFra" id ønskerDagpengerFraDato avhengerAv innsendtSøknadId,
@@ -56,12 +56,12 @@ internal object Paragraf_4_23_alder_oppsett {
         )
     )
 
-    fun registrer(registrer: (prototype: Søknad) -> Unit) {
-        registrer(prototypeSøknad)
+    fun registrer(registrer: (prototype: Fakta) -> Unit) {
+        registrer(prototypeFakta)
     }
 
     object Subsumsjoner {
-        val regeltre: Subsumsjon = with(prototypeSøknad) {
+        val regeltre: Subsumsjon = with(prototypeFakta) {
             "søkeren må være under aldersgrense ved virkningstidspunkt".deltre {
                 "under aldersgrense" deltre {
                     dato(virkningsdato) før dato(grensedato)
@@ -69,7 +69,7 @@ internal object Paragraf_4_23_alder_oppsett {
             }
         }
     }
-    internal val seksjon = with(prototypeSøknad) {
+    internal val seksjon = with(prototypeFakta) {
         this.seksjon(
             "alder",
             Rolle.nav,
@@ -86,7 +86,7 @@ internal object Paragraf_4_23_alder_oppsett {
 
     init {
         Versjon.Bygger(
-            prototypeSøknad = prototypeSøknad,
+            prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = Subsumsjoner.regeltre,
             prototypeUserInterfaces = mapOf(
                 Versjon.UserInterfaceType.Web to faktagrupper

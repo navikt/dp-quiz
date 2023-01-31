@@ -10,7 +10,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import java.lang.Exception
 import java.util.UUID
 
-internal class SøknadSlettetServiceTest {
+internal class FaktaSlettetServiceTest {
 
     val søknadUUIDfeilerIkke = UUID.randomUUID()
     val søknadUUIDfeiler = UUID.randomUUID()

@@ -20,7 +20,7 @@ import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -48,7 +48,7 @@ class SøknadRecord : SøknadPersistence {
         val person = personRecord.hentEllerOpprettPerson(identer)
         return Versjon.id(prosessVersjon).søknadprosess(person, type, uuid).also { søknadprosess ->
             if (eksisterer(uuid)) return søknadprosess
-            NySøknad(søknadprosess.søknad, type)
+            NySøknad(søknadprosess.fakta, type)
         }
     }
 
@@ -95,19 +95,19 @@ class SøknadRecord : SøknadPersistence {
             uuid = uuid,
         ).also { søknadprosess ->
             svarList(uuid).onEach { row ->
-                søknadprosess.søknad.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
+                søknadprosess.fakta.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
             }
         }
     }
 
-    override fun lagre(søknad: Søknad): Boolean {
-        val nyeSvar: MutableMap<String, Faktum<*>?> = svarMap(søknad)
-        val originalSvar: MutableMap<String, Faktum<*>?> = svarMap(hent(søknad.uuid).søknad)
+    override fun lagre(fakta: Fakta): Boolean {
+        val nyeSvar: MutableMap<String, Faktum<*>?> = svarMap(fakta)
+        val originalSvar: MutableMap<String, Faktum<*>?> = svarMap(hent(fakta.uuid).fakta)
         using(sessionOf(dataSource)) { session ->
             session.transaction { transactionalSession ->
-                slettDødeTemplatefakta(søknad, nyeSvar, originalSvar, transactionalSession)
-                oppdaterEndretFaktum(originalSvar, nyeSvar, søknad, transactionalSession)
-                skrivNyeFaktum(nyeSvar, originalSvar, søknad, transactionalSession)
+                slettDødeTemplatefakta(fakta, nyeSvar, originalSvar, transactionalSession)
+                oppdaterEndretFaktum(originalSvar, nyeSvar, fakta, transactionalSession)
+                skrivNyeFaktum(nyeSvar, originalSvar, fakta, transactionalSession)
             }
         }
         // TODO: burde ikke alltid returnere true?? hva hvis noe går galt som ikke kræsjer? hvorfor boolean?
@@ -242,42 +242,42 @@ class SøknadRecord : SøknadPersistence {
     private fun skrivNyeFaktum(
         nyeSvar: MutableMap<String, Faktum<*>?>,
         originalSvar: MutableMap<String, Faktum<*>?>,
-        søknad: Søknad,
+        fakta: Fakta,
         transactionalSession: TransactionalSession,
     ) {
         nyeSvar.filterNot { (id, _) -> originalSvar.containsKey(id) }.forEach { (id, svar) ->
-            val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
+            val (rootId, indeks) = fakta.id(id).reflection { rootId, indeks -> rootId to indeks }
 
-            transactionalSession.run(opprettTemplateFaktum(indeks, søknad, rootId))
-            if (svar != null) transactionalSession.run(oppdaterFaktum(svar, søknad, indeks, rootId))
+            transactionalSession.run(opprettTemplateFaktum(indeks, fakta, rootId))
+            if (svar != null) transactionalSession.run(oppdaterFaktum(svar, fakta, indeks, rootId))
         }
     }
 
     private fun oppdaterEndretFaktum(
         originalSvar: MutableMap<String, Faktum<*>?>,
         nyeSvar: MutableMap<String, Faktum<*>?>,
-        søknad: Søknad,
+        fakta: Fakta,
         transactionalSession: TransactionalSession,
     ) {
         originalSvar.filterNot { (id, faktum) -> nyeSvar[id]?.svar() == faktum?.svar() }
             .forEach { (id, originaltFaktum) ->
-                val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
+                val (rootId, indeks) = fakta.id(id).reflection { rootId, indeks -> rootId to indeks }
 
                 if (originaltFaktum?.erBesvart() == true) {
-                    transactionalSession.run(arkiverFaktum(søknad, rootId, indeks))
+                    transactionalSession.run(arkiverFaktum(fakta, rootId, indeks))
                 }
-                transactionalSession.run(oppdaterFaktum(nyeSvar[id], søknad, indeks, rootId)).also {
-                    require(it > 0) { "Fant ikke faktum som skal oppdateres i faktum_verdi, for faktumId=$id, root_id=$rootId, indeks=$indeks, søknadId=${søknad.uuid}" }
+                transactionalSession.run(oppdaterFaktum(nyeSvar[id], fakta, indeks, rootId)).also {
+                    require(it > 0) { "Fant ikke faktum som skal oppdateres i faktum_verdi, for faktumId=$id, root_id=$rootId, indeks=$indeks, søknadId=${fakta.uuid}" }
                 }
             }
     }
 
-    private fun svarMap(søknad: Søknad): MutableMap<String, Faktum<*>?> = søknad.associate { faktum ->
+    private fun svarMap(fakta: Fakta): MutableMap<String, Faktum<*>?> = fakta.associate { faktum ->
         faktum.id to (if (faktum.erBesvart()) faktum else null)
     }.toMutableMap()
 
     private fun slettDødeTemplatefakta(
-        søknad: Søknad,
+        fakta: Fakta,
         nyeSvar: Map<String, Faktum<*>?>,
         originalSvar: MutableMap<String, Faktum<*>?>,
         transactionalSession: TransactionalSession,
@@ -287,14 +287,14 @@ class SøknadRecord : SøknadPersistence {
             .forEach { (rootId, indeks, id) ->
                 val originaltFaktum = originalSvar[id]?.svar()
                 if (originaltFaktum != null) {
-                    transactionalSession.run(arkiverFaktum(søknad = søknad, rootId = rootId, indeks = indeks))
+                    transactionalSession.run(arkiverFaktum(fakta = fakta, rootId = rootId, indeks = indeks))
                 }
-                transactionalSession.run(slettDødeFaktum(søknad = søknad, rootId, indeks))
+                transactionalSession.run(slettDødeFaktum(fakta = fakta, rootId, indeks))
                 originalSvar.remove(id)
             }
     }
 
-    private fun slettDødeFaktum(søknad: Søknad, rootId: Int, indeks: Int) = queryOf(
+    private fun slettDødeFaktum(fakta: Fakta, rootId: Int, indeks: Int) = queryOf(
         //language=PostgreSQL
         """
               DELETE FROM faktum_verdi
@@ -307,7 +307,7 @@ class SøknadRecord : SøknadPersistence {
                         AND faktum_verdi.indeks = ?
                 )
         """.trimIndent(),
-        søknad.uuid,
+        fakta.uuid,
         rootId,
         indeks,
     ).asExecute
@@ -442,8 +442,8 @@ class SøknadRecord : SøknadPersistence {
         }
     }
 
-    private fun oppdaterFaktum(faktum: Faktum<*>?, søknad: Søknad, indeks: Int, rootId: Int): UpdateQueryAction =
-        FaktumUpdateBuilder(søknad, indeks, rootId).build(faktum?.svar(), besvart(faktum?.besvartAv()))
+    private fun oppdaterFaktum(faktum: Faktum<*>?, fakta: Fakta, indeks: Int, rootId: Int): UpdateQueryAction =
+        FaktumUpdateBuilder(fakta, indeks, rootId).build(faktum?.svar(), besvart(faktum?.besvartAv()))
 
     private fun besvart(besvartAv: String?): Int? {
         val besvarer = besvartAv ?: return null
@@ -467,7 +467,7 @@ class SøknadRecord : SøknadPersistence {
         }
     }
 
-    private fun arkiverFaktum(søknad: Søknad, rootId: Int, indeks: Int): ExecuteQueryAction =
+    private fun arkiverFaktum(fakta: Fakta, rootId: Int, indeks: Int): ExecuteQueryAction =
         queryOf(
             //language=PostgreSQL
             """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, boolsk, aarlig_inntekt, dokument_id, dato, heltall, envalg_id, flervalg_id, tekst,land, periode_id, opprettet, besvart_av, desimaltall)
@@ -496,12 +496,12 @@ class SøknadRecord : SøknadPersistence {
               AND faktum.root_id = ?
               AND faktum_verdi.indeks = ?
             """.trimMargin(),
-            søknad.uuid,
+            fakta.uuid,
             rootId,
             indeks,
         ).asExecute
 
-    private fun opprettTemplateFaktum(indeks: Int, søknad: Søknad, rootId: Int): ExecuteQueryAction =
+    private fun opprettTemplateFaktum(indeks: Int, fakta: Fakta, rootId: Int): ExecuteQueryAction =
         queryOf(
             //language=PostgreSQL
             """INSERT INTO faktum_verdi (indeks, soknad_id, faktum_id)
@@ -514,7 +514,7 @@ class SøknadRecord : SøknadPersistence {
             """.trimMargin(),
             mapOf(
                 "indeks" to indeks,
-                "soknadUuid" to søknad.uuid,
+                "soknadUuid" to fakta.uuid,
                 "rootId" to rootId,
             ),
         ).asExecute

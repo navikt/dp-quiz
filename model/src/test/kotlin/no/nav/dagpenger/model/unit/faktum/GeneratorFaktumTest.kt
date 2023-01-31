@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.desember
@@ -35,36 +35,36 @@ class GeneratorFaktumTest {
 
     @BeforeEach
     fun setup() {
-        val søknadPrototype = Søknad(
+        val faktaPrototype = Fakta(
             testversjon,
             heltall faktum "periode antall" id 1 genererer 2 og 3,
             dato faktum "fom" id 2,
             dato faktum "tom" id 3,
             dato faktum "ønsket dato" id 4
         )
-        val prototypeSubsumsjon = søknadPrototype generator 1 har "periode".deltre {
-            søknadPrototype.dato(4) mellom søknadPrototype.dato(2) og søknadPrototype.dato(3)
+        val prototypeSubsumsjon = faktaPrototype generator 1 har "periode".deltre {
+            faktaPrototype.dato(4) mellom faktaPrototype.dato(2) og faktaPrototype.dato(3)
         }
 
         val prototypeFaktagrupper = Faktagrupper(
             Seksjon(
                 "periode antall",
                 Rolle.nav,
-                søknadPrototype generator 1
+                faktaPrototype generator 1
             ),
             Seksjon(
                 "periode",
                 Rolle.nav,
-                søknadPrototype dato 2,
-                søknadPrototype dato 3,
+                faktaPrototype dato 2,
+                faktaPrototype dato 3,
             ),
             Seksjon(
                 "søknadsdato",
                 Rolle.søker,
-                søknadPrototype dato 4,
+                faktaPrototype dato 4,
             ),
         )
-        søknadprosessTestBygger = Versjon.Bygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
+        søknadprosessTestBygger = Versjon.Bygger(faktaPrototype, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
     }
 
     @Test
@@ -127,21 +127,21 @@ class GeneratorFaktumTest {
 
     @Test
     fun `vi kan gi navn av type tekst til en generator`() {
-        val søknadPrototype = Søknad(
+        val faktaPrototype = Fakta(
             testversjon,
             tekst faktum "arbeidsgivernavn" id 1,
             heltall faktum "arbeidsgiver med navn" id 2 navngittAv 1 genererer 1
         )
         val søknadprosess = søknadprosess(
-            søknadPrototype,
-            søknadPrototype generator 2 har "arbeidsgiver".deltre {
-                (søknadPrototype tekst 1).utfylt()
+            faktaPrototype,
+            faktaPrototype generator 2 har "arbeidsgiver".deltre {
+                (faktaPrototype tekst 1).utfylt()
             },
             Seksjon(
                 "arbeidsgiver",
                 Rolle.søker,
-                søknadPrototype heltall 2,
-                søknadPrototype tekst 1
+                faktaPrototype heltall 2,
+                faktaPrototype tekst 1
             )
         )
         søknadprosess.generator(2).besvar(2)
@@ -160,7 +160,7 @@ class GeneratorFaktumTest {
     }
 
     private fun søknadprosess(
-        søknadPrototype: Søknad,
+        faktaPrototype: Fakta,
         prototypeSubsumsjon: Subsumsjon,
         vararg seksjoner: Seksjon
     ): Faktagrupper {
@@ -168,7 +168,7 @@ class GeneratorFaktumTest {
             *seksjoner
         )
         val søknadprosessTestBygger =
-            Versjon.Bygger(søknadPrototype, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
+            Versjon.Bygger(faktaPrototype, prototypeSubsumsjon, mapOf(Web to prototypeFaktagrupper))
         return søknadprosessTestBygger.søknadprosess(testPerson, Web)
     }
 

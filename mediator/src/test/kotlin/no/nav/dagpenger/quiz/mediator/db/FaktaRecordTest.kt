@@ -39,7 +39,7 @@ import java.time.LocalDate
 import java.util.UUID
 import kotlin.test.assertNotNull
 
-internal class SøknadRecordTest {
+internal class FaktaRecordTest {
     companion object {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
         private const val expectedFaktaCount = 28
@@ -109,7 +109,7 @@ internal class SøknadRecordTest {
 
             lagreHentOgSammenlign()
 
-            søknadRecord.slett(originalFaktagrupper.søknad.uuid)
+            søknadRecord.slett(originalFaktagrupper.fakta.uuid)
 
             assertRecordCount(0, "soknad")
             assertRecordCount(0, "faktum_verdi")
@@ -130,11 +130,11 @@ internal class SøknadRecordTest {
         val søknadProsess2 = søknadRecord.ny(UNG_PERSON_FNR_2018, Web, SøknadEksempel1.prosessVersjon)
         val besvarer = "123"
         søknadProsess1.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
-        søknadRecord.lagre(søknadProsess1.søknad)
+        søknadRecord.lagre(søknadProsess1.fakta)
         søknadProsess2.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
-        søknadRecord.lagre(søknadProsess2.søknad)
+        søknadRecord.lagre(søknadProsess2.fakta)
 
-        søknadRecord.slett(søknadProsess1.søknad.uuid)
+        søknadRecord.slett(søknadProsess1.fakta.uuid)
 
         assertRecordCount(1, "besvarer")
     }
@@ -247,16 +247,16 @@ internal class SøknadRecordTest {
     fun `Genererte template faktum`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
-            assertEquals(expectedFaktaCount, originalFaktagrupper.søknad.map { it }.size)
+            assertEquals(expectedFaktaCount, originalFaktagrupper.fakta.map { it }.size)
             lagreHentOgSammenlign()
             originalFaktagrupper = rehydrertFaktagrupper
 
             originalFaktagrupper.heltall(15).besvar(3)
             originalFaktagrupper.heltall("16.1").besvar(5)
-            assertEquals(expectedFaktaCount + 9, originalFaktagrupper.søknad.map { it }.size)
+            assertEquals(expectedFaktaCount + 9, originalFaktagrupper.fakta.map { it }.size)
 
             lagreHentOgSammenlign()
-            assertEquals(expectedFaktaCount + 9, rehydrertFaktagrupper.søknad.map { it }.size)
+            assertEquals(expectedFaktaCount + 9, rehydrertFaktagrupper.fakta.map { it }.size)
         }
     }
 
@@ -264,7 +264,7 @@ internal class SøknadRecordTest {
     fun `redusert template faktum`() {
         Postgres.withMigratedDb {
             byggOriginalSøknadprosess()
-            assertEquals(expectedFaktaCount, originalFaktagrupper.søknad.map { it }.size)
+            assertEquals(expectedFaktaCount, originalFaktagrupper.fakta.map { it }.size)
             lagreHentOgSammenlign()
             assertRecordCount(0, "gammel_faktum_verdi")
             originalFaktagrupper = rehydrertFaktagrupper
@@ -374,7 +374,7 @@ internal class SøknadRecordTest {
                 it.run(Query("ALTER SEQUENCE faktum_id_seq INCREMENT 2").asExecute)
             }
             byggOriginalSøknadprosess()
-            val soknadUUID = originalFaktagrupper.søknad.uuid
+            val soknadUUID = originalFaktagrupper.fakta.uuid
             assertEquals(
                 søknadRecord.migrer(soknadUUID, SøknadEksempel1.prosessVersjon),
                 SøknadEksempel1.prosessVersjon,
@@ -404,7 +404,7 @@ internal class SøknadRecordTest {
                 }
 
                 assertTrue(desimaltall("f27").erBesvart())
-                søknadRecord.lagre(this.søknad)
+                søknadRecord.lagre(this.fakta)
             }
 
             with(søknadRecord.hent(soknadUUID)) {
@@ -414,7 +414,7 @@ internal class SøknadRecordTest {
     }
 
     private fun lagreHentOgSammenlign(userInterfaceType: Versjon.UserInterfaceType = Web) {
-        søknadRecord.lagre(originalFaktagrupper.søknad)
+        søknadRecord.lagre(originalFaktagrupper.fakta)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         søknadRecord = SøknadRecord()
         rehydrertFaktagrupper = søknadRecord.hent(uuid, userInterfaceType)

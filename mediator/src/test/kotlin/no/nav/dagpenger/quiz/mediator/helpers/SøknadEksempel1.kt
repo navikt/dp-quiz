@@ -15,7 +15,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -27,7 +27,7 @@ enum class Testprosess(override val id: String) : Prosessnavn {
 
 internal object SøknadEksempel1 {
     val prosessVersjon = Prosessversjon(Testprosess.Test, 888)
-    internal val prototypeFakta1 = Søknad(
+    internal val prototypeFakta1 = Fakta(
         prosessVersjon,
         boolsk faktum "f1" id 1 avhengerAv 11,
         dato faktum "f2" id 2,

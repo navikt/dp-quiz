@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @Suppress("UNCHECKED_CAST")
-internal class SøknadSubsumsjonTest {
+internal class FaktaSubsumsjonTest {
 
     private lateinit var faktagrupper: Faktagrupper
 

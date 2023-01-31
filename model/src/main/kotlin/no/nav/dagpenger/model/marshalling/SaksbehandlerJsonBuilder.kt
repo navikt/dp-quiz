@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -25,7 +25,7 @@ class SaksbehandlerJsonBuilder(
     private val genererteFakta = mutableSetOf<Faktum<*>>()
 
     init {
-        faktagrupper.søknad.accept(this)
+        faktagrupper.fakta.accept(this)
         faktagrupper.rootSubsumsjon.mulige().accept(this)
         faktagrupper.first { seksjonNavn == it.navn && indeks == it.indeks }
             .filtrertSeksjon(faktagrupper.rootSubsumsjon).accept(this)
@@ -33,8 +33,8 @@ class SaksbehandlerJsonBuilder(
         genererteFakta.forEach { it.accept(this) }
     }
 
-    override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
-        super.preVisit(søknad, prosessVersjon, uuid)
+    override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
+        super.preVisit(fakta, prosessVersjon, uuid)
         root.put("@event_name", "oppgave")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")

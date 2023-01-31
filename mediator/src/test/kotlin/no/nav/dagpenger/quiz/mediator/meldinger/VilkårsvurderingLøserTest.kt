@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
@@ -33,7 +33,7 @@ class VilkårsvurderingLøserTest {
 
         val prosessPersistens = mockk<SøknadPersistence>().also {
             every { it.ny(any(), any(), any(), capture(vilkårsvurderingIdSlot)) } returns søknadsprosess
-            every { it.lagre(any() as Søknad) } returns true
+            every { it.lagre(any() as Fakta) } returns true
         }
 
         testRapid = TestRapid().also {

@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
@@ -23,10 +23,10 @@ internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
     val prosessversjon = Prosessversjon(Prosess.Dagpenger, -2313)
     private val dagpengerSøknadsprosess = MinimalSøknadsprosess(prosessversjon, Rolle.søker)
 
-    private val søknadPersistence = mockk<SøknadPersistence>().also {
+    private val faktaPersistence = mockk<SøknadPersistence>().also {
         every { it.hent(any(), any()) } returns Versjon.id(prosessversjon)
-            .søknadprosess(dagpengerSøknadsprosess.søknad, Versjon.UserInterfaceType.Web)
-        every { it.lagre(any() as Søknad) } returns true
+            .søknadprosess(dagpengerSøknadsprosess.fakta, Versjon.UserInterfaceType.Web)
+        every { it.lagre(any() as Fakta) } returns true
     }
 
     private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
@@ -35,7 +35,7 @@ internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
     fun setup() {
         testRapid = TestRapid().also {
             FaktumSvarService(
-                søknadPersistence = søknadPersistence,
+                søknadPersistence = faktaPersistence,
                 resultatPersistence = resultatPersistence,
                 rapidsConnection = it
             )
@@ -66,10 +66,10 @@ internal class AvslagPåMinsteinntektFaktumSvarflytTest : SøknadBesvarer() {
     val prosessversjon = Prosessversjon(Prosess.AvslagPåMinsteinntekt, -2313)
     private val dagpengerSøknadsprosess = MinimalSøknadsprosess(prosessversjon, Rolle.nav)
 
-    private val søknadPersistence = mockk<SøknadPersistence>().also {
+    private val faktaPersistence = mockk<SøknadPersistence>().also {
         every { it.hent(any(), any()) } returns Versjon.id(prosessversjon)
-            .søknadprosess(dagpengerSøknadsprosess.søknad, Versjon.UserInterfaceType.Web)
-        every { it.lagre(any() as Søknad) } returns true
+            .søknadprosess(dagpengerSøknadsprosess.fakta, Versjon.UserInterfaceType.Web)
+        every { it.lagre(any() as Fakta) } returns true
     }
 
     private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
@@ -78,7 +78,7 @@ internal class AvslagPåMinsteinntektFaktumSvarflytTest : SøknadBesvarer() {
     fun setup() {
         testRapid = TestRapid().also {
             FaktumSvarService(
-                søknadPersistence = søknadPersistence,
+                søknadPersistence = faktaPersistence,
                 resultatPersistence = resultatPersistence,
                 rapidsConnection = it
             )

@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.unit.marshalling
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
@@ -22,11 +22,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class ResultatJsonBuilderTest {
-    private lateinit var prototypeSøknad: Søknad
+    private lateinit var prototypeFakta: Fakta
 
     @BeforeEach
     fun setup() {
-        prototypeSøknad = Søknad(
+        prototypeFakta = Fakta(
             testversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1,
@@ -42,7 +42,7 @@ internal class ResultatJsonBuilderTest {
     @Test
     fun `bygger prossess_resultat event`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true
+            prototypeFakta.boolsk(1) er true
         )
         assertThrows<IllegalStateException> {
             ResultatJsonBuilder(søknadprosess).resultat()
@@ -64,10 +64,10 @@ internal class ResultatJsonBuilderTest {
     @Test
     fun `inkluderer kun mulige paths`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true hvisOppfylt {
-                prototypeSøknad.boolsk(2) er true
+            prototypeFakta.boolsk(1) er true hvisOppfylt {
+                prototypeFakta.boolsk(2) er true
             } hvisIkkeOppfylt {
-                prototypeSøknad.boolsk(3) er true
+                prototypeFakta.boolsk(3) er true
             }
         )
         søknadprosess.boolsk(1).besvar(true)
@@ -82,10 +82,10 @@ internal class ResultatJsonBuilderTest {
     @Test
     fun `inkluderer besvartAv`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true hvisOppfylt {
-                prototypeSøknad.boolsk(2) er true
+            prototypeFakta.boolsk(1) er true hvisOppfylt {
+                prototypeFakta.boolsk(2) er true
             } hvisIkkeOppfylt {
-                prototypeSøknad.boolsk(3) er true
+                prototypeFakta.boolsk(3) er true
             }
         )
         søknadprosess.boolsk(1).besvar(true, "A123456")
@@ -97,23 +97,23 @@ internal class ResultatJsonBuilderTest {
 
     private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Faktagrupper {
         val prototypeFaktagrupper = Faktagrupper(
-            prototypeSøknad,
+            prototypeFakta,
             Seksjon(
                 "søker",
                 Rolle.søker,
-                prototypeSøknad.boolsk(1),
-                prototypeSøknad.boolsk(3),
-                prototypeSøknad.boolsk(5),
-                prototypeSøknad.boolsk(6),
-                prototypeSøknad.boolsk(7)
+                prototypeFakta.boolsk(1),
+                prototypeFakta.boolsk(3),
+                prototypeFakta.boolsk(5),
+                prototypeFakta.boolsk(6),
+                prototypeFakta.boolsk(7)
             ),
-            Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.boolsk(2)),
-            Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeSøknad.boolsk(4)),
+            Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
+            Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeFakta.boolsk(4)),
             rootSubsumsjon = prototypeSubsumsjon,
         )
 
         return Versjon.Bygger(
-            prototypeSøknad,
+            prototypeFakta,
             prototypeSubsumsjon,
             mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
         ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)

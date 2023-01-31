@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
@@ -29,7 +29,7 @@ import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.oppfyltGodkjentAv
 import no.nav.dagpenger.model.subsumsjon.uansett
 
-private val prototypeSøknad1 = Søknad(
+private val prototypeFakta1 = Fakta(
     Prosessversjon(Testprosess.PrototypeSøknad, 0),
     boolsk faktum "f1" id 1,
     dato faktum "f2" id 2,
@@ -52,26 +52,26 @@ private val prototypeSøknad1 = Søknad(
     boolsk faktum "f19" id 19 avhengerAv 2 og 13,
     maks dato "345" av 3 og 4 og 5 id 345
 )
-private val p1Boolean = prototypeSøknad1 boolsk 1
-private val p2Dato = prototypeSøknad1 dato 2
-private val p3Dato = prototypeSøknad1 dato 3
-private val p4Dato = prototypeSøknad1 dato 4
-private val p5Dato = prototypeSøknad1 dato 5
-private val p_3_4_5Dato = prototypeSøknad1 dato 345
-private val p6Inntekt = prototypeSøknad1 inntekt 6
-private val p7Inntekt = prototypeSøknad1 inntekt 7
-private val p8Inntekt = prototypeSøknad1 inntekt 8
-private val p9Inntekt = prototypeSøknad1 inntekt 9
-private val p10Boolean = prototypeSøknad1 boolsk 10
-private val p11Dokument = prototypeSøknad1 dokument 11
-private val p12Boolean = prototypeSøknad1 boolsk 12
-private val p13Dato = prototypeSøknad1 dato 13
-private val p14Boolean = prototypeSøknad1 boolsk 14
-private val p15Int = prototypeSøknad1 generator 15
-private val p16Int = prototypeSøknad1 heltall 16
-private val p17Boolean = prototypeSøknad1 boolsk 17
-private val p18Boolean = prototypeSøknad1 boolsk 18
-private val p19Boolean = prototypeSøknad1 boolsk 19
+private val p1Boolean = prototypeFakta1 boolsk 1
+private val p2Dato = prototypeFakta1 dato 2
+private val p3Dato = prototypeFakta1 dato 3
+private val p4Dato = prototypeFakta1 dato 4
+private val p5Dato = prototypeFakta1 dato 5
+private val p_3_4_5Dato = prototypeFakta1 dato 345
+private val p6Inntekt = prototypeFakta1 inntekt 6
+private val p7Inntekt = prototypeFakta1 inntekt 7
+private val p8Inntekt = prototypeFakta1 inntekt 8
+private val p9Inntekt = prototypeFakta1 inntekt 9
+private val p10Boolean = prototypeFakta1 boolsk 10
+private val p11Dokument = prototypeFakta1 dokument 11
+private val p12Boolean = prototypeFakta1 boolsk 12
+private val p13Dato = prototypeFakta1 dato 13
+private val p14Boolean = prototypeFakta1 boolsk 14
+private val p15Int = prototypeFakta1 generator 15
+private val p16Int = prototypeFakta1 heltall 16
+private val p17Boolean = prototypeFakta1 boolsk 17
+private val p18Boolean = prototypeFakta1 boolsk 18
+private val p19Boolean = prototypeFakta1 boolsk 19
 private val datosjekk = "datosjekk".alle(
     p1Boolean er true,
     p2Dato etter p_3_4_5Dato,
@@ -133,7 +133,7 @@ internal lateinit var seksjon7: Seksjon
 internal lateinit var seksjon8: Seksjon
 internal lateinit var rootSubsumsjon: Subsumsjon
 private val søknadprosessTestBygger =
-    Versjon.Bygger(prototypeSøknad1, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
+    Versjon.Bygger(prototypeFakta1, prototypeSubsumsjon, mapOf(Web to webPrototypeFaktagrupper))
 
 internal class NyttEksempel() {
     internal val faktagrupper: Faktagrupper by lazy {

@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
 
 internal class UtdanningTest {
 
-    private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Utdanning.fakta())
+    private val fakta = Fakta(Prosessversjon(Prosess.Dagpenger, -1), *Utdanning.fakta())
     private lateinit var faktagrupper: Faktagrupper
     private lateinit var tarUtdanning: Faktum<Boolean>
     private lateinit var nyligAvsluttetUtdanning: Faktum<Boolean>
@@ -28,7 +28,7 @@ internal class UtdanningTest {
 
     @BeforeEach
     fun setup() {
-        faktagrupper = søknad.testSøknadprosess(Utdanning.regeltre(søknad)) {
+        faktagrupper = fakta.testSøknadprosess(Utdanning.regeltre(fakta)) {
             Utdanning.seksjon(this)
         }
 

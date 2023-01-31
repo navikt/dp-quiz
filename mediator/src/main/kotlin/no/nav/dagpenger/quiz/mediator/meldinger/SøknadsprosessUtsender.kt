@@ -15,6 +15,6 @@ fun Faktagrupper.sendNesteSeksjon(context: MessageContext) {
             val message = seksjon.somSpørsmål().let { JsonMessage(it, MessageProblems(it)) }
             context.publish(message.toJson())
             sikkerlogg.info { "Send ut seksjon: ${message.toJson()}" }
-            log.info { "Send seksjon ${seksjon.navn} for søknad ${søknad.uuid}" }
+            log.info { "Send seksjon ${seksjon.navn} for søknad ${fakta.uuid}" }
         }
 }

@@ -66,9 +66,9 @@ internal class VilkårsvurderingLøser(
                 paragraf_4_23_alder_prosess.dokument(Paragraf_4_23_alder_oppsett.innsendtSøknadId)
                     .besvar(Dokument(LocalDateTime.now(), "urn:soknadid:$søknadUuid"))
 
-                prosessPersistence.lagre(paragraf_4_23_alder_prosess.søknad)
+                prosessPersistence.lagre(paragraf_4_23_alder_prosess.fakta)
 
-                val prosessUuid = paragraf_4_23_alder_prosess.søknad.uuid.toString()
+                val prosessUuid = paragraf_4_23_alder_prosess.fakta.uuid.toString()
                 packet["@løsning"] = mapOf(behov to prosessUuid)
                 paragraf_4_23_alder_prosess.sendNesteSeksjon(context)
 

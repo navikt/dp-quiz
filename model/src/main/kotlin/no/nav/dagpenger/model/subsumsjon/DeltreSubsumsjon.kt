@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.subsumsjon
 
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
@@ -21,11 +21,11 @@ class DeltreSubsumsjon private constructor(
         ikkeOppfyltSubsumsjon.deepCopy(faktagrupper)
     )
 
-    override fun bygg(søknad: Søknad) = DeltreSubsumsjon(
+    override fun bygg(fakta: Fakta) = DeltreSubsumsjon(
         navn,
-        child.bygg(søknad),
-        oppfyltSubsumsjon.bygg(søknad),
-        ikkeOppfyltSubsumsjon.bygg(søknad)
+        child.bygg(fakta),
+        oppfyltSubsumsjon.bygg(fakta),
+        ikkeOppfyltSubsumsjon.bygg(fakta)
     )
 
     override fun deepCopy(): Subsumsjon {
@@ -37,12 +37,12 @@ class DeltreSubsumsjon private constructor(
         )
     }
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Subsumsjon {
+    override fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon {
         return DeltreSubsumsjon(
             "$navn [$indeks]",
-            child.deepCopy(indeks, søknad),
-            oppfyltSubsumsjon.deepCopy(indeks, søknad),
-            ikkeOppfyltSubsumsjon.deepCopy(indeks, søknad)
+            child.deepCopy(indeks, fakta),
+            oppfyltSubsumsjon.deepCopy(indeks, fakta),
+            ikkeOppfyltSubsumsjon.deepCopy(indeks, fakta)
         )
     }
 

@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.unit.faktum
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -18,14 +18,14 @@ internal class GenerertFaktumTest {
     @Test
     fun `Enkel template`() {
 
-        val søknad = Søknad(
+        val fakta = Fakta(
             testversjon,
             boolsk faktum "template" id 1,
             heltall faktum "generator" id 2 genererer 1
         )
 
-        val seksjon = Seksjon("seksjon", Rolle.søker, søknad boolsk 1, søknad generator 2)
-        val faktagrupper = Faktagrupper(søknad, seksjon)
+        val seksjon = Seksjon("seksjon", Rolle.søker, fakta boolsk 1, fakta generator 2)
+        val faktagrupper = Faktagrupper(fakta, seksjon)
         val originalSize = seksjon.size
         faktagrupper.generator(2).besvar(5)
 
@@ -37,7 +37,7 @@ internal class GenerertFaktumTest {
     @Test
     fun `Flere templates`() {
 
-        val søknad = Søknad(
+        val fakta = Fakta(
             testversjon,
             boolsk faktum "template" id 1,
             boolsk faktum "template" id 2,
@@ -47,9 +47,9 @@ internal class GenerertFaktumTest {
 
         )
 
-        val seksjon1 = Seksjon("seksjon", Rolle.søker, søknad boolsk 1, søknad generator 4)
-        val seksjon2 = Seksjon("seksjon", Rolle.søker, søknad boolsk 2, søknad boolsk 3, søknad boolsk 5)
-        val faktagrupper = Faktagrupper(søknad, seksjon1, seksjon2)
+        val seksjon1 = Seksjon("seksjon", Rolle.søker, fakta boolsk 1, fakta generator 4)
+        val seksjon2 = Seksjon("seksjon", Rolle.søker, fakta boolsk 2, fakta boolsk 3, fakta boolsk 5)
+        val faktagrupper = Faktagrupper(fakta, seksjon1, seksjon2)
         val originalSize1 = seksjon1.size
         val originalSize2 = seksjon2.size
         faktagrupper.generator(4).besvar(3)
@@ -64,7 +64,7 @@ internal class GenerertFaktumTest {
     @Test
     fun `generator faktum med avhengighet skal resettes`() {
 
-        val søknad = Søknad(
+        val fakta = Fakta(
             testversjon,
             boolsk faktum "template" id 1,
             boolsk faktum "template" id 2,
@@ -73,9 +73,9 @@ internal class GenerertFaktumTest {
             boolsk faktum "boolean" id 5
         )
 
-        val seksjon1 = Seksjon("seksjon", Rolle.søker, søknad boolsk 1, søknad generator 4)
-        val seksjon2 = Seksjon("seksjon", Rolle.søker, søknad boolsk 2, søknad boolsk 3, søknad boolsk 5)
-        val faktagrupper = Faktagrupper(søknad, seksjon1, seksjon2)
+        val seksjon1 = Seksjon("seksjon", Rolle.søker, fakta boolsk 1, fakta generator 4)
+        val seksjon2 = Seksjon("seksjon", Rolle.søker, fakta boolsk 2, fakta boolsk 3, fakta boolsk 5)
+        val faktagrupper = Faktagrupper(fakta, seksjon1, seksjon2)
 
         faktagrupper.boolsk(5).besvar(true)
 
@@ -92,21 +92,21 @@ internal class GenerertFaktumTest {
         faktagrupper.boolsk(5).besvar(false)
 
         assertFalse("4 skal ikke være besvart") { faktagrupper.boolsk(4).erBesvart() }
-        assertNull(faktagrupper.søknad.find { it.id == "1.1" }, "1.1 skal ikke være besvart")
-        assertNull(faktagrupper.søknad.find { it.id == "2.1" }, "2.1 skal ikke være besvart")
-        assertNull(faktagrupper.søknad.find { it.id == "3.1" }, "3.1 skal ikke være besvart")
+        assertNull(faktagrupper.fakta.find { it.id == "1.1" }, "1.1 skal ikke være besvart")
+        assertNull(faktagrupper.fakta.find { it.id == "2.1" }, "2.1 skal ikke være besvart")
+        assertNull(faktagrupper.fakta.find { it.id == "3.1" }, "3.1 skal ikke være besvart")
     }
 
     @Test
     fun `Generere seksjoner`() {
-        val søknad = Søknad(
+        val fakta = Fakta(
             testversjon,
             boolsk faktum "template" id 1,
             heltall faktum "generator" id 2 genererer 1
         )
-        val generatorSeksjon = Seksjon("seksjon", Rolle.søker, søknad generator 2)
-        val templateSeksjon = Seksjon("seksjon", Rolle.søker, søknad boolsk 1)
-        val faktagrupper = Faktagrupper(søknad, generatorSeksjon, templateSeksjon)
+        val generatorSeksjon = Seksjon("seksjon", Rolle.søker, fakta generator 2)
+        val templateSeksjon = Seksjon("seksjon", Rolle.søker, fakta boolsk 1)
+        val faktagrupper = Faktagrupper(fakta, generatorSeksjon, templateSeksjon)
         faktagrupper.generator(2).besvar(3)
         assertEquals(5, faktagrupper.size)
         assertEquals(1, generatorSeksjon.size)
@@ -117,7 +117,7 @@ internal class GenerertFaktumTest {
 
     @Test
     fun `Seksjon med kun og flere templates`() {
-        val søknad = Søknad(
+        val fakta = Fakta(
             testversjon,
             boolsk faktum "template" id 1,
             boolsk faktum "template" id 2,
@@ -125,10 +125,10 @@ internal class GenerertFaktumTest {
             heltall faktum "generator" id 4 genererer 1 og 2 og 3
         )
 
-        val generatorSeksjon = Seksjon("seksjon", Rolle.søker, søknad generator 4)
-        val templateSeksjon1 = Seksjon("seksjon", Rolle.søker, søknad boolsk 1, søknad boolsk 2)
-        val templateSeksjon2 = Seksjon("seksjon", Rolle.søker, søknad boolsk 3)
-        val faktagrupper = Faktagrupper(søknad, generatorSeksjon, templateSeksjon1, templateSeksjon2)
+        val generatorSeksjon = Seksjon("seksjon", Rolle.søker, fakta generator 4)
+        val templateSeksjon1 = Seksjon("seksjon", Rolle.søker, fakta boolsk 1, fakta boolsk 2)
+        val templateSeksjon2 = Seksjon("seksjon", Rolle.søker, fakta boolsk 3)
+        val faktagrupper = Faktagrupper(fakta, generatorSeksjon, templateSeksjon1, templateSeksjon2)
         faktagrupper.generator(4).besvar(3)
 
         assertEquals(9, faktagrupper.size)

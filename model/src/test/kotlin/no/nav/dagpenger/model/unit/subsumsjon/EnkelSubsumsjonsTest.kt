@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Faktum
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
@@ -31,7 +31,7 @@ internal class EnkelSubsumsjonsTest {
 
     @BeforeEach
     fun setup() {
-        faktagrupper = Søknad(
+        faktagrupper = Fakta(
             testversjon,
             dato faktum "Datoen du fyller 67" id 1,
             dato faktum "Datoen du søker om dagpenger" id 2,
@@ -72,7 +72,7 @@ internal class EnkelSubsumsjonsTest {
 
     @Test
     fun `heltall minst regel`() {
-        val søknadprosess = Søknad(testversjon, heltall faktum "heltall" id 1).testSøknadprosess()
+        val søknadprosess = Fakta(testversjon, heltall faktum "heltall" id 1).testSøknadprosess()
         val heltall = søknadprosess.heltall(1)
         val minstSubsumsumsjon = heltall minst 2
         heltall.besvar(1)

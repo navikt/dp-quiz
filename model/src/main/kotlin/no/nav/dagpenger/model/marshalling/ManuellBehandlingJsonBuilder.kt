@@ -12,7 +12,7 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.putR
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -33,13 +33,13 @@ class ManuellBehandlingJsonBuilder(faktagrupper: Faktagrupper, private val seksj
     private var rootId = 0
 
     init {
-        faktagrupper.søknad.accept(this)
+        faktagrupper.fakta.accept(this)
         faktagrupper.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(faktagrupper.rootSubsumsjon).accept(this)
     }
 
     fun resultat() = root
 
-    override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
         root.put("@event_name", "manuell_behandling")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")

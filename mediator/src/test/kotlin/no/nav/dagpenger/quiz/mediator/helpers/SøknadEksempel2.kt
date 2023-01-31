@@ -14,7 +14,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -23,7 +23,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 internal object SøknadEksempel2 {
     val prosessVersjon = Prosessversjon(Testprosess.Test, 889)
     internal val prototypeFakta by lazy {
-        Søknad(
+        Fakta(
             prosessVersjon,
             boolsk faktum "f1" id 1 avhengerAv 11,
             dato faktum "f2" id 2,

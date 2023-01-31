@@ -72,13 +72,13 @@ internal class AvslagPåMinsteinntektService(
                     )
                 )
 
-                søknadPersistence.lagre(søknadprosess.søknad)
-                log.info { "Opprettet ny søknadprosess ${søknadprosess.søknad.uuid} på grunn av journalføring $journalpostId for søknad $søknadsId" }
+                søknadPersistence.lagre(søknadprosess.fakta)
+                log.info { "Opprettet ny søknadprosess ${søknadprosess.fakta.uuid} på grunn av journalføring $journalpostId for søknad $søknadsId" }
 
                 søknadprosess.nesteSeksjoner()
                     .forEach { seksjon ->
                         context.publish(seksjon.somSpørsmål().also { sikkerlogg.debug { it } })
-                        log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.søknad.uuid}" }
+                        log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.fakta.uuid}" }
                     }
             }
     }

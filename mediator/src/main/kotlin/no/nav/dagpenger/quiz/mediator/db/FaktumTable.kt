@@ -30,7 +30,7 @@ import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
@@ -41,7 +41,7 @@ import java.time.LocalDate
 import java.util.UUID
 
 // Forstår initialisering av faktum tabellen
-class FaktumTable(søknad: Søknad) : SøknadVisitor {
+class FaktumTable(fakta: Fakta) : SøknadVisitor {
 
     private var rootId: Int = 0
     private var indeks: Int = 0
@@ -50,20 +50,20 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
     private var prosessVersjonId = 0
 
     init {
-        if (Versjonsjekker(søknad).ikkeEksisterer()) søknad.accept(this)
+        if (Versjonsjekker(fakta).ikkeEksisterer()) fakta.accept(this)
     }
 
-    private class Versjonsjekker(søknad: Søknad) : SøknadVisitor {
+    private class Versjonsjekker(fakta: Fakta) : SøknadVisitor {
 
         init {
-            søknad.accept(this)
+            fakta.accept(this)
         }
 
         private var eksisterer = false
 
         fun ikkeEksisterer() = !eksisterer
 
-        override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+        override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
             eksisterer = exists(prosessVersjon)
         }
 
@@ -82,7 +82,7 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         }
     }
 
-    override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
         val query = queryOf( //language=PostgreSQL
             "INSERT INTO V1_PROSESSVERSJON (navn, versjon_id) VALUES (:navn, :versjon_id) RETURNING id",
             mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon)
@@ -159,7 +159,7 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         avhengigheter[faktum] = avhengigeFakta
     }
 
-    override fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun postVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
         avhengigheter.forEach { (parent, children) -> faktumFaktum(dbIder[parent]!!, children, "avhengig_faktum") }
     }
 

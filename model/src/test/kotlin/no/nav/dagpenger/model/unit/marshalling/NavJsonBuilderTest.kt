@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test
 class NavJsonBuilderTest {
     @Test
     fun `bygger behov event`() {
-        val prototypeSøknad = Søknad(
+        val prototypeFakta = Fakta(
             testversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f1" id 2 avhengerAv 1,
@@ -45,14 +45,14 @@ class NavJsonBuilderTest {
             dato faktum "fom" id 9,
             dato faktum "tom" id 10
         )
-        val f1Faktum = prototypeSøknad.boolsk(1)
-        val f2Faktum = prototypeSøknad.boolsk(2)
-        val f3Faktum = prototypeSøknad.boolsk(3)
-        val f4Faktum = prototypeSøknad.boolsk(4)
-        val f7Faktum = prototypeSøknad.dato(5)
-        val f8Faktum = prototypeSøknad.generator(8)
-        val f9Faktum = prototypeSøknad.dato(9)
-        val f10Faktum = prototypeSøknad.dato(10)
+        val f1Faktum = prototypeFakta.boolsk(1)
+        val f2Faktum = prototypeFakta.boolsk(2)
+        val f3Faktum = prototypeFakta.boolsk(3)
+        val f4Faktum = prototypeFakta.boolsk(4)
+        val f7Faktum = prototypeFakta.dato(5)
+        val f8Faktum = prototypeFakta.generator(8)
+        val f9Faktum = prototypeFakta.dato(9)
+        val f10Faktum = prototypeFakta.dato(10)
         val periodeSubsumsjon = f8Faktum har "periode".deltre {
             f7Faktum mellom f9Faktum og f10Faktum
         }
@@ -79,7 +79,7 @@ class NavJsonBuilderTest {
             f10Faktum
         )
         val prototypeFaktagrupper = Faktagrupper(
-            prototypeSøknad,
+            prototypeFakta,
             søkerSeksjon,
             navSeksjon,
             rootSubsumsjon = prototypeSubsumsjon
@@ -98,7 +98,7 @@ class NavJsonBuilderTest {
             )
         )
         val fakta = Versjon.Bygger(
-            prototypeSøknad,
+            prototypeFakta,
             prototypeSubsumsjon,
             mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper),
             faktumNavBehov

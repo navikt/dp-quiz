@@ -35,7 +35,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.over67årFradato
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.permittert
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.permittertFiskeforedling
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.prototypeSøknad
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.prototypeFakta
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeFom
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPeriodeTom
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.registrertArbeidssøkerPerioder
@@ -61,7 +61,7 @@ internal class AvslagPåMinsteinntektTest {
 
     @BeforeEach
     fun setup() {
-        manglerInntekt = Versjon.Bygger(prototypeSøknad, regeltre, mapOf(Versjon.UserInterfaceType.Web to faktagrupper))
+        manglerInntekt = Versjon.Bygger(prototypeFakta, regeltre, mapOf(Versjon.UserInterfaceType.Web to faktagrupper))
             .søknadprosess(
                 Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
                 Versjon.UserInterfaceType.Web

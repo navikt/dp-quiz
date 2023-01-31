@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.MedSøknad
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -41,9 +41,9 @@ internal class AndreYtelserTest {
 
     @Test
     fun `Hvis bruker ikke får noen andre ytelser`() {
-        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
-        val søknadprosess = søknad.testSøknadprosess(
-            AndreYtelser.regeltre(søknad)
+        val fakta = Fakta(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val søknadprosess = fakta.testSøknadprosess(
+            AndreYtelser.regeltre(fakta)
         ) {
             AndreYtelser.seksjon(this)
         }
@@ -152,9 +152,9 @@ internal class AndreYtelserTest {
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
-        val søknadprosess = søknad.testSøknadprosess(
-            AndreYtelser.regeltre(søknad)
+        val fakta = Fakta(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val søknadprosess = fakta.testSøknadprosess(
+            AndreYtelser.regeltre(fakta)
         ) {
             AndreYtelser.seksjon(this)
         }
@@ -167,9 +167,9 @@ internal class AndreYtelserTest {
 
     @Test
     fun `For et EØS-land skal det være en egen gruppe for kun EØS-land`() {
-        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
-        val søknadprosess = søknad.testSøknadprosess(
-            AndreYtelser.regeltre(søknad)
+        val fakta = Fakta(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val søknadprosess = fakta.testSøknadprosess(
+            AndreYtelser.regeltre(fakta)
         ) {
             AndreYtelser.seksjon(this)
         }
@@ -194,9 +194,9 @@ internal class AndreYtelserTest {
     }
 
     private fun verifiserAnnenYtelseUtenØkonomiskGode(kodeForSpesifikkYtelse: (Faktagrupper) -> Unit) {
-        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
-        val søknadprosess = søknad.testSøknadprosess(
-            AndreYtelser.regeltre(søknad)
+        val fakta = Fakta(Prosessversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val søknadprosess = fakta.testSøknadprosess(
+            AndreYtelser.regeltre(fakta)
         ) {
             AndreYtelser.seksjon(this)
         }

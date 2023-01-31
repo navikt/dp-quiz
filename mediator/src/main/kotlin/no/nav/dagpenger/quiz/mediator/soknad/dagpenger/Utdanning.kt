@@ -3,8 +3,8 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -38,10 +38,10 @@ object Utdanning : DslFaktaseksjon {
             avhengerAv `dokumentasjon på sluttdato`
     )
 
-    override fun seksjon(søknad: Søknad) =
-        listOf(søknad.seksjon("utdanning", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
+    override fun seksjon(fakta: Fakta) =
+        listOf(fakta.seksjon("utdanning", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
-    override fun regeltre(søknad: Søknad) = with(søknad) {
+    override fun regeltre(fakta: Fakta) = with(fakta) {
         "utdanning".deltre {
             "Utdanning".alle(
                 "tar utdanning eller ikke".minstEnAv(

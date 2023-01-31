@@ -9,13 +9,13 @@ import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import org.intellij.lang.annotations.Language
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
+internal class FaktumUpdateBuilder(fakta: Fakta, indeks: Int, rootId: Int) {
     //language=PostgreSQL
     private val whereClause = """
                WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, soknad, faktum
@@ -23,7 +23,7 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
                 AND soknad.uuid = :uuid AND faktum_verdi.indeks = :indeks AND faktum.root_id = :rootId)
             """
     private val whereClauseParameters = mapOf(
-        "uuid" to søknad.uuid,
+        "uuid" to fakta.uuid,
         "indeks" to indeks,
         "rootId" to rootId
     )

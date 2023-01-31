@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
 
 class PeriodeFaktumTest {
 
-    val prototypeSøknad = Søknad(
+    val prototypeFakta = Fakta(
         testversjon,
         periode faktum "periode" id 1
     )
@@ -24,7 +24,7 @@ class PeriodeFaktumTest {
 
     @BeforeEach
     fun setup() {
-        søknad = prototypeSøknad.testSøknadprosess(TomSubsumsjon)
+        søknad = prototypeFakta.testSøknadprosess(TomSubsumsjon)
     }
 
     @Test

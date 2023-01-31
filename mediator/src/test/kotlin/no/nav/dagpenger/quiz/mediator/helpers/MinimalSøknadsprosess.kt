@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.minst
@@ -21,7 +21,7 @@ internal class MinimalSøknadsprosess(private val prosessversjon: Prosessversjon
 
     private val logger = KotlinLogging.logger { }
 
-    internal val søknad = Søknad(
+    internal val fakta = Fakta(
         prosessversjon,
         boolsk faktum "boolean" id faktumBoolsk,
         heltall faktum "heltall" id faktumHeltall,
@@ -29,7 +29,7 @@ internal class MinimalSøknadsprosess(private val prosessversjon: Prosessversjon
     )
 
     val regeltre: Subsumsjon =
-        with(søknad) {
+        with(fakta) {
             "alle".alle(
                 boolsk(faktumBoolsk) er true,
                 heltall(faktumHeltall) minst (0),
@@ -40,9 +40,9 @@ internal class MinimalSøknadsprosess(private val prosessversjon: Prosessversjon
     val seksjoner = Seksjon(
         "test",
         rolle,
-        søknad.boolsk(faktumBoolsk),
-        søknad.heltall(faktumHeltall),
-        søknad.tekst(faktumTekst)
+        fakta.boolsk(faktumBoolsk),
+        fakta.heltall(faktumHeltall),
+        fakta.tekst(faktumTekst)
     )
 
     companion object {
@@ -51,8 +51,8 @@ internal class MinimalSøknadsprosess(private val prosessversjon: Prosessversjon
         const val faktumTekst = 3
     }
 
-    fun registrer(registrer: (søknad: Søknad) -> Unit) {
-        registrer(søknad)
+    fun registrer(registrer: (fakta: Fakta) -> Unit) {
+        registrer(fakta)
     }
 
     private val søknadsprosess: Faktagrupper = Faktagrupper(seksjoner)
@@ -66,7 +66,7 @@ internal class MinimalSøknadsprosess(private val prosessversjon: Prosessversjon
     )
 
     private val versjon = Versjon.Bygger(
-        prototypeSøknad = søknad,
+        prototypeFakta = fakta,
         prototypeSubsumsjon = regeltre,
         prototypeUserInterfaces = mapOf(
             Versjon.UserInterfaceType.Web to søknadsprosess

@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.før
@@ -51,7 +51,7 @@ class Graftest {
         val registrertArbeidssøkerPerioder = 13
         val registrertArbeidssøkerPeriodeTom = 15
 
-        val prototypeSøknad = Søknad(
+        val prototypeFakta = Fakta(
             Prosessversjon(Testprosess.Test, 509),
             dato faktum "Datoen du fyller 67" id bursdag67,
             dato faktum "Datoen du søker om dagpenger" id søknadsdato,
@@ -70,7 +70,7 @@ class Graftest {
         )
 
         val prototypeWebSøknad =
-            with(prototypeSøknad) {
+            with(prototypeFakta) {
                 Faktagrupper(
                     Seksjon(
                         "seksjon1",
@@ -95,7 +95,7 @@ class Graftest {
                 )
             }
 
-        val prototypeSubsumsjon = with(prototypeSøknad) {
+        val prototypeSubsumsjon = with(prototypeFakta) {
             boolsk(registrertArbeidssøker) er true hvisOppfylt {
                 generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
                     dato(søknadsdato) før dato(registrertArbeidssøkerPeriodeTom)
@@ -127,7 +127,7 @@ class Graftest {
         }
 
         val søknadprosess = Versjon.Bygger(
-            prototypeSøknad,
+            prototypeFakta,
             prototypeSubsumsjon,
             mapOf(Versjon.UserInterfaceType.Web to prototypeWebSøknad)
         ).søknadprosess(
@@ -144,7 +144,7 @@ class Graftest {
     fun `avslag`() {
 
         val manglerInntekt = Versjon.Bygger(
-            AvslagPåMinsteinntektOppsett.prototypeSøknad,
+            AvslagPåMinsteinntektOppsett.prototypeFakta,
             AvslagPåMinsteinntekt.regeltre,
             mapOf(Versjon.UserInterfaceType.Web to Seksjoner.faktagrupper)
         )

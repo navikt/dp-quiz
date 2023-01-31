@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -18,21 +18,21 @@ internal class FaktumBesvartAvTest {
 
     @Test
     fun `Sjekk at ident blir lagt på når saksbehandler besvarer`() {
-        val søknad = Søknad(
+        val fakta = Fakta(
             testversjon,
             boolsk faktum "f1" id 1,
         ).testSøknadprosess()
-        val ja1 = søknad.boolsk(1)
+        val ja1 = fakta.boolsk(1)
 
         ja1.besvar(true, "A123456")
-        assertEquals("A123456", BesvartAvVisitor(søknad).identer.first())
+        assertEquals("A123456", BesvartAvVisitor(fakta).identer.first())
     }
 
     private class BesvartAvVisitor(faktagrupper: Faktagrupper) : SøknadVisitor {
 
         val identer = mutableListOf<String>()
         init {
-            faktagrupper.søknad.accept(this)
+            faktagrupper.fakta.accept(this)
         }
 
         override fun <R : Comparable<R>> visitMedSvar(

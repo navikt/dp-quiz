@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Land
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
@@ -30,14 +30,14 @@ internal class DagpengerTest : SøknadBesvarer() {
             søknadsprosess = Versjon.id(Dagpenger.VERSJON_ID)
                 .søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
         }
-        val søknadPersistence = mockk<SøknadPersistence>().also {
+        val faktaPersistence = mockk<SøknadPersistence>().also {
             every { it.hent(any(), any()) } returns søknadsprosess
-            every { it.lagre(any() as Søknad) } returns true
+            every { it.lagre(any() as Fakta) } returns true
         }
 
         testRapid = TestRapid().also {
             FaktumSvarService(
-                søknadPersistence = søknadPersistence,
+                søknadPersistence = faktaPersistence,
                 resultatPersistence = resultatPersistence,
                 rapidsConnection = it
             )
@@ -60,6 +60,6 @@ internal class DagpengerTest : SøknadBesvarer() {
 
     private fun Faktagrupper.verifiserAtNesteSeksjonEr(faktaseksjon: DslFaktaseksjon) {
         assertNotEquals(nesteSeksjoner().size, 0, "Har ikke neste seksjon")
-        assertEquals(faktaseksjon.seksjon(søknad)[0].navn, nesteSeksjoner()[0].navn)
+        assertEquals(faktaseksjon.seksjon(fakta)[0].navn, nesteSeksjoner()[0].navn)
     }
 }

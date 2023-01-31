@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -36,7 +36,7 @@ internal class FaktumSvarServiceTest {
     companion object {
 
         private val prosessVersjon = Prosessversjon(Testprosess.Test, -3000)
-        val prototypeFakta = Søknad(
+        val prototypeFakta = Fakta(
             prosessVersjon,
             heltall faktum "generator" id 10 genererer 11 og 12,
             dato faktum "fom" id 11,
@@ -58,17 +58,17 @@ internal class FaktumSvarServiceTest {
         ).registrer()
     }
 
-    val søknadPersistence = mockk<SøknadPersistence>().also {
+    val faktaPersistence = mockk<SøknadPersistence>().also {
         every { it.hent(any(), any()) } returns Versjon.id(prosessVersjon)
             .søknadprosess(prototypeFakta, Versjon.UserInterfaceType.Web)
-        every { it.lagre(any() as Søknad) } returns true
+        every { it.lagre(any() as Fakta) } returns true
     }
 
     val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
 
     val testRapid = TestRapid().also {
         FaktumSvarService(
-            søknadPersistence = søknadPersistence,
+            søknadPersistence = faktaPersistence,
             resultatPersistence = resultatPersistence,
             rapidsConnection = it
         )
@@ -89,8 +89,8 @@ internal class FaktumSvarServiceTest {
         assertTrue(prototypeFakta.dato("12.2").erBesvart())
         assertEquals("2020-01-16", prototypeFakta.dato("12.2").svar().toString())
 
-        verify(exactly = 1) { søknadPersistence.hent(any(), any()) }
-        verify(exactly = 1) { søknadPersistence.lagre(any() as Søknad) }
+        verify(exactly = 1) { faktaPersistence.hent(any(), any()) }
+        verify(exactly = 1) { faktaPersistence.lagre(any() as Fakta) }
         verify(exactly = 1) { resultatPersistence.lagreResultat(any(), any(), any()) }
     }
 

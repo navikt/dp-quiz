@@ -3,8 +3,8 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -30,8 +30,8 @@ object Verneplikt : DslFaktaseksjon {
             avhengerAv `dokumentasjon avtjent militær sivilforsvar tjeneste siste 12 mnd`
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(
-        søknad.seksjon(
+    override fun seksjon(fakta: Fakta) = listOf(
+        fakta.seksjon(
             "verneplikt",
             Rolle.søker,
             *spørsmålsrekkefølgeForSøker()
@@ -40,7 +40,7 @@ object Verneplikt : DslFaktaseksjon {
 
     // https://lovdata.no/lov/2016-08-12-77/§6 Vernepliktsalder er 19 til og med 44 år
     // https://lovdata.no/lov/1997-02-28-19/§4-19
-    override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
+    override fun regeltre(fakta: Fakta): DeltreSubsumsjon = with(fakta) {
         "verneplikt".deltre {
             "må godkjennes hvis ja".minstEnAv(
                 (boolsk(`avtjent militær sivilforsvar tjeneste siste 12 mnd`) er true).sannsynliggjøresAv(

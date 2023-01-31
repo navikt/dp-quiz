@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.minst
@@ -32,7 +32,7 @@ internal var dimisjonsdato: GrunnleggendeFaktum<LocalDate>
 internal var virkningstidspunkt: Faktum<LocalDate>
 internal var inntekt3G: GrunnleggendeFaktum<Inntekt>
 internal var inntekt15G: GrunnleggendeFaktum<Inntekt>
-private val prototypeSøknad = Søknad(
+private val prototypeFakta = Fakta(
     Prosessversjon(Testprosess.Test, 13),
     dato faktum "Datoen du fyller 67" id 1,
     dato faktum "Datoen du søker om dagpenger" id 2,
@@ -105,7 +105,7 @@ private val prototypeWebSøknad = Faktagrupper(
     )
 )
 private val søknadprosessTestBygger = Versjon.Bygger(
-    prototypeSøknad,
+    prototypeFakta,
     prototypeSubsumsjon,
     mapOf(Web to prototypeWebSøknad)
 )

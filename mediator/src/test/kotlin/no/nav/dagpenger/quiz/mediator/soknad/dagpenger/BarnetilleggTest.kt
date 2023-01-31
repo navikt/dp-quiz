@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
@@ -28,13 +28,13 @@ import java.time.LocalDate
 import kotlin.test.assertTrue
 
 internal class BarnetilleggTest {
-    private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Barnetillegg.fakta())
+    private val fakta = Fakta(Prosessversjon(Prosess.Dagpenger, -1), *Barnetillegg.fakta())
     private lateinit var faktagrupper: Faktagrupper
 
     @BeforeEach
     fun setup() {
-        faktagrupper = søknad.testSøknadprosess(
-            Barnetillegg.regeltre(søknad)
+        faktagrupper = fakta.testSøknadprosess(
+            Barnetillegg.regeltre(fakta)
         ) {
             Barnetillegg.seksjon(this)
         }

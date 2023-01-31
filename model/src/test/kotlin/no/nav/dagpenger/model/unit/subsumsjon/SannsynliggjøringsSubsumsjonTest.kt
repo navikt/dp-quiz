@@ -8,8 +8,8 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
@@ -29,7 +29,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class SannsynliggjøringsSubsumsjonTest {
-    private val søknad = Søknad(
+    private val fakta = Fakta(
         testversjon,
         boolsk faktum "faktum" id 1,
         dokument faktum "dokument" id 2 avhengerAv 1,
@@ -41,15 +41,15 @@ class SannsynliggjøringsSubsumsjonTest {
         dokument faktum "dokument for generator" id 7 avhengerAv 5 og 6,
         boolsk faktum "godkjenning for generator" id 8 avhengerAv 7
     )
-    private val faktum = søknad boolsk 1
-    private val dokument1 = søknad dokument 2
-    private val dokument2 = søknad dokument 21
-    private val godkjenning = søknad boolsk 3
-    private val generator = søknad generator 4
-    private val generatorB1 = søknad boolsk 5
-    private val generatorB2 = søknad boolsk 6
-    private val generatorDokument = søknad dokument 7
-    private val generatorGodkjenning = søknad boolsk 8
+    private val faktum = fakta boolsk 1
+    private val dokument1 = fakta dokument 2
+    private val dokument2 = fakta dokument 21
+    private val godkjenning = fakta boolsk 3
+    private val generator = fakta generator 4
+    private val generatorB1 = fakta boolsk 5
+    private val generatorB2 = fakta boolsk 6
+    private val generatorDokument = fakta dokument 7
+    private val generatorGodkjenning = fakta boolsk 8
 
     @Test
     fun `Skal lage sannsynliggjøring for en subsumsjon som kan dokumenteres og skal godkjennes `() {
@@ -97,10 +97,10 @@ class SannsynliggjøringsSubsumsjonTest {
                 "generator".alle(generatorB1 er true, generatorB2 er true).sannsynliggjøresAv(generatorDokument)
             }
         ).godkjentAv(generatorGodkjenning)
-        val søknadprosess = søknad.testSøknadprosess(subsumsjon) {
+        val søknadprosess = fakta.testSøknadprosess(subsumsjon) {
             listOf(
-                søknad.seksjon("bruker", Rolle.søker, 4, 5, 6),
-                søknad.seksjon("bruker", Rolle.saksbehandler, 7, 8)
+                fakta.seksjon("bruker", Rolle.søker, 4, 5, 6),
+                fakta.seksjon("bruker", Rolle.saksbehandler, 7, 8)
             )
         }
 
@@ -152,9 +152,9 @@ class SannsynliggjøringsSubsumsjonTest {
                 "generator".alle(generatorB1 er true, generatorB2 er true).sannsynliggjøresAv(generatorDokument)
             }
         ).godkjentAv(generatorGodkjenning)
-        val prosess = søknad.testSøknadprosess(subsumsjon)
+        val prosess = fakta.testSøknadprosess(subsumsjon)
 
-        repeat(10) { søknad.testSøknadprosess(subsumsjon) }
+        repeat(10) { fakta.testSøknadprosess(subsumsjon) }
 
         assertEquals(2, DuplikatVisitor(prosess).avhengigheter)
     }

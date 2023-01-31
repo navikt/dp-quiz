@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.grensedato6
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.mars
@@ -26,7 +26,7 @@ internal class UtledetFaktumFactoryTest {
 
     @Test
     fun `maks dato`() {
-        val søknad = Søknad(
+        val fakta = Fakta(
             testversjon,
             dato faktum "dato1" id 1,
             dato faktum "dato2" id 2,
@@ -35,14 +35,14 @@ internal class UtledetFaktumFactoryTest {
         )
 
         val faktagrupper = Faktagrupper(
-            søknad,
+            fakta,
             Seksjon(
                 "seksjon",
                 Rolle.søker,
-                søknad dato 1,
-                søknad dato 2,
-                søknad dato 3,
-                søknad dato 123
+                fakta dato 1,
+                fakta dato 2,
+                fakta dato 3,
+                fakta dato 123
             )
         )
 
@@ -62,7 +62,7 @@ internal class UtledetFaktumFactoryTest {
 
     @Test
     fun `maks inntekt`() {
-        val søknad = Søknad(
+        val fakta = Fakta(
             testversjon,
             inntekt faktum "inntekt1" id 1,
             inntekt faktum "inntekt2" id 2,
@@ -71,14 +71,14 @@ internal class UtledetFaktumFactoryTest {
         )
 
         val faktagrupper = Faktagrupper(
-            søknad,
+            fakta,
             Seksjon(
                 "seksjon",
                 Rolle.søker,
-                søknad inntekt 1,
-                søknad inntekt 2,
-                søknad inntekt 3,
-                søknad inntekt 123
+                fakta inntekt 1,
+                fakta inntekt 2,
+                fakta inntekt 3,
+                fakta inntekt 123
             )
         )
 
@@ -98,7 +98,7 @@ internal class UtledetFaktumFactoryTest {
 
     @Test
     fun `boolean and`() {
-        val søknad = Søknad(
+        val fakta = Fakta(
             testversjon,
             boolsk faktum "jaNei1" id 1,
             boolsk faktum "jaNei2" id 2,
@@ -107,14 +107,14 @@ internal class UtledetFaktumFactoryTest {
         )
 
         val faktagrupper = Faktagrupper(
-            søknad,
+            fakta,
             Seksjon(
                 "seksjon",
                 Rolle.søker,
-                søknad boolsk 1,
-                søknad boolsk 2,
-                søknad boolsk 3,
-                søknad boolsk 123
+                fakta boolsk 1,
+                fakta boolsk 2,
+                fakta boolsk 3,
+                fakta boolsk 123
             )
         )
         val faktum = faktagrupper.dato("123")
@@ -134,7 +134,7 @@ internal class UtledetFaktumFactoryTest {
     @Test
     fun `avhengigheter til utledetfaktum`() {
 
-        val søknad = Søknad(
+        val fakta = Fakta(
             testversjon,
             dato faktum "dato1" id 1,
             dato faktum "dato2" id 2,
@@ -143,31 +143,31 @@ internal class UtledetFaktumFactoryTest {
             boolsk faktum "boolsk" id 4 avhengerAv 1123,
             maks dato "maks dato 3" av 1 og 123 id 1123
         ).testSøknadprosess()
-        søknad.dato(1).besvar(1.januar)
-        søknad.dato(2).besvar(2.januar)
-        søknad.dato(3).besvar(3.januar)
-        assertTrue(søknad.dato(123).erBesvart())
-        søknad.boolsk(4).besvar(true)
-        assertTrue(søknad.boolsk(4).erBesvart())
-        søknad.dato(3).besvar(4.januar)
-        assertFalse(søknad.boolsk(4).erBesvart())
+        fakta.dato(1).besvar(1.januar)
+        fakta.dato(2).besvar(2.januar)
+        fakta.dato(3).besvar(3.januar)
+        assertTrue(fakta.dato(123).erBesvart())
+        fakta.boolsk(4).besvar(true)
+        assertTrue(fakta.boolsk(4).erBesvart())
+        fakta.dato(3).besvar(4.januar)
+        assertFalse(fakta.boolsk(4).erBesvart())
     }
 
     @Test
     fun `grensedato for 67 år`() {
-        val søknad = Søknad(
+        val fakta = Fakta(
             testversjon,
             dato faktum "dato1" id 1,
             grensedato67år dato "utledetDato" av 1 id 2
         ).testSøknadprosess()
 
-        søknad.dato(1).besvar(1.januar(1950))
-        assertEquals(1.februar(2017), søknad.id(2).svar())
+        fakta.dato(1).besvar(1.januar(1950))
+        assertEquals(1.februar(2017), fakta.id(2).svar())
 
-        søknad.dato(1).besvar(31.januar(1950))
-        assertEquals(1.februar(2017), søknad.id(2).svar())
+        fakta.dato(1).besvar(31.januar(1950))
+        assertEquals(1.februar(2017), fakta.id(2).svar())
 
-        søknad.dato(1).besvar(1.februar(1950))
-        assertEquals(1.mars(2017), søknad.id(2).svar())
+        fakta.dato(1).besvar(1.februar(1950))
+        assertEquals(1.mars(2017), fakta.id(2).svar())
     }
 }

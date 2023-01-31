@@ -6,7 +6,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -89,7 +89,7 @@ internal class FaktumSvarService(
                             val message = json.toString().let { JsonMessage(it, MessageProblems(it)) }
                             context.publish(message.toJson())
                         }
-                        log.info { "Ferdig med søknad ${søknadprosess.søknad.uuid}. Resultatet er: ${søknadprosess.resultat()}" }
+                        log.info { "Ferdig med søknad ${søknadprosess.fakta.uuid}. Resultatet er: ${søknadprosess.resultat()}" }
                     } else {
                         sendResultat(søknadprosess, context)
                     }
@@ -112,16 +112,16 @@ internal class FaktumSvarService(
 
             besvar(faktagrupper, faktumId, svar, type, besvartAv)
         }
-        søknadPersistence.lagre(faktagrupper.søknad)
+        søknadPersistence.lagre(faktagrupper.fakta)
     }
 
     private fun sendResultat(faktagrupper: Faktagrupper, context: MessageContext) {
         ResultatJsonBuilder(faktagrupper).resultat().also { json ->
-            resultatPersistence.lagreResultat(faktagrupper.resultat()!!, faktagrupper.søknad.uuid, json)
+            resultatPersistence.lagreResultat(faktagrupper.resultat()!!, faktagrupper.fakta.uuid, json)
             context.publish(json.toString())
             sikkerlogg.info { "Send ut resultat: $json" }
         }
-        log.info { "Ferdig med søknad ${faktagrupper.søknad.uuid}. Resultatet er: ${faktagrupper.resultat()}" }
+        log.info { "Ferdig med søknad ${faktagrupper.fakta.uuid}. Resultatet er: ${faktagrupper.resultat()}" }
     }
 
     override fun onError(problems: MessageProblems, context: MessageContext) {
@@ -178,7 +178,7 @@ internal class FaktumSvarService(
             faktagrupper.accept(this)
         }
 
-        override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+        override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
             prosessnavn = prosessVersjon.prosessnavn
         }
     }

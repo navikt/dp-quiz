@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.regel.er
@@ -39,11 +39,11 @@ abstract class Subsumsjon protected constructor(
 
     abstract fun deepCopy(faktagrupper: Faktagrupper): Subsumsjon
 
-    internal abstract fun bygg(søknad: Søknad): Subsumsjon
+    internal abstract fun bygg(fakta: Fakta): Subsumsjon
 
     abstract fun deepCopy(): Subsumsjon
 
-    internal abstract fun deepCopy(indeks: Int, søknad: Søknad): Subsumsjon
+    internal abstract fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon
 
     internal abstract fun lokaltResultat(): Boolean?
 

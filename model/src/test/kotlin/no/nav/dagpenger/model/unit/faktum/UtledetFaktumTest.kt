@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.unit.faktum
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Faktum
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
@@ -25,7 +25,7 @@ internal class UtledetFaktumTest {
 
     @BeforeEach
     fun setup() {
-        faktagrupper = Søknad(
+        faktagrupper = Fakta(
             testversjon,
             maks dato "maks dato" av 1 og 3 og 6 id 4,
             maks dato "maks dato" av 1 og 2 og 5 id 3,

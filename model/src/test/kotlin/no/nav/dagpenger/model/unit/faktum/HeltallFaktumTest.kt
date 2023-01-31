@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
@@ -13,7 +13,7 @@ internal class HeltallFaktumTest {
 
     @Test
     fun `Støtte fakta med type heltall`() {
-        val intFaktum = Søknad(testversjon, heltall faktum "int" id 1).testSøknadprosess().let { it heltall 1 }
+        val intFaktum = Fakta(testversjon, heltall faktum "int" id 1).testSøknadprosess().let { it heltall 1 }
 
         assertThrows<IllegalStateException> { intFaktum.svar() }
         intFaktum.besvar(5)
@@ -22,7 +22,7 @@ internal class HeltallFaktumTest {
 
     @Test
     fun `Subsumsjon med fakta av typen heltall`() {
-        val intFaktum = Søknad(testversjon, heltall faktum "int" id 1).testSøknadprosess().let { it heltall 1 }
+        val intFaktum = Fakta(testversjon, heltall faktum "int" id 1).testSøknadprosess().let { it heltall 1 }
         val subsumsjon = intFaktum er 0
 
         assertEquals(null, subsumsjon.resultat())

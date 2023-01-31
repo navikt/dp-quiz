@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
@@ -24,13 +24,13 @@ import org.junit.jupiter.api.Test
 
 internal class ReellArbeidssokerTest {
 
-    private lateinit var søknad: Søknad
+    private lateinit var fakta: Fakta
     private lateinit var faktagrupper: Faktagrupper
 
     @BeforeEach
     fun setup() {
-        søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *ReellArbeidssoker.fakta())
-        faktagrupper = søknad.testSøknadprosess(ReellArbeidssoker.regeltre(søknad)) {
+        fakta = Fakta(Prosessversjon(Prosess.Dagpenger, -1), *ReellArbeidssoker.fakta())
+        faktagrupper = fakta.testSøknadprosess(ReellArbeidssoker.regeltre(fakta)) {
             ReellArbeidssoker.seksjon(this)
         }
     }

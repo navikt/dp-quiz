@@ -2,15 +2,15 @@ package no.nav.dagpenger.quiz.mediator.helpers
 
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 
-internal fun Søknad.testSøknadprosess(
+internal fun Fakta.testSøknadprosess(
     subsumsjon: Subsumsjon,
-    seksjon: Søknad.() -> List<Seksjon>
+    seksjon: Fakta.() -> List<Seksjon>
 ): Faktagrupper {
     return Versjon.Bygger(
         this,

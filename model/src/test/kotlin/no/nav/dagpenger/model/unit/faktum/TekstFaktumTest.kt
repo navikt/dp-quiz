@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
 
 class TekstFaktumTest {
 
-    val prototypeSøknad = Søknad(
+    val prototypeFakta = Fakta(
         testversjon,
         tekst faktum "tekst" id 1
     )
@@ -24,7 +24,7 @@ class TekstFaktumTest {
 
     @BeforeEach
     fun setup() {
-        søknad = prototypeSøknad.testSøknadprosess(TomSubsumsjon)
+        søknad = prototypeFakta.testSøknadprosess(TomSubsumsjon)
     }
 
     @Test

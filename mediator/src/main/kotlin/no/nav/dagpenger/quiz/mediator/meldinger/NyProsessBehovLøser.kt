@@ -52,8 +52,8 @@ internal class NyProsessBehovLøser(
 
             søknadPersistence.ny(identer, Versjon.UserInterfaceType.Web, prosessversjon, søknadUuid)
                 .also { søknadsprosess ->
-                    søknadPersistence.lagre(søknadsprosess.søknad)
-                    log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid}" }
+                    søknadPersistence.lagre(søknadsprosess.fakta)
+                    log.info { "Opprettet ny søknadprosess ${søknadsprosess.fakta.uuid}" }
 
                     packet["@løsning"] = mapOf(
                         behovNavn to mapOf(

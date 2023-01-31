@@ -24,7 +24,7 @@ import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.assertDeepEquals
 import no.nav.dagpenger.model.helpers.januar
@@ -56,7 +56,7 @@ internal class AvhengigeFaktaTest {
     fun `Avhengig faktum reset`() {
         val prosessVersjon = Prosessversjon(Testprosess.Test, 634)
         Postgres.withMigratedDb {
-            val prototypeFakta = Søknad(
+            val prototypeFakta = Fakta(
                 prosessVersjon,
                 boolsk faktum "f1" id 19 avhengerAv 2 og 13,
                 dato faktum "f2" id 2,
@@ -78,7 +78,7 @@ internal class AvhengigeFaktaTest {
             ).registrer()
             FaktumTable(prototypeFakta)
             søknadRecord = SøknadRecord()
-            originalFaktagrupper = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
+            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
 
             originalFaktagrupper.dato(2).besvar(2.januar)
             originalFaktagrupper.dato(13).besvar(13.januar)
@@ -98,7 +98,7 @@ internal class AvhengigeFaktaTest {
         val prosessVersjon = Prosessversjon(Testprosess.Test, 635)
 
         Postgres.withMigratedDb {
-            val prototypeFakta = Søknad(
+            val prototypeFakta = Fakta(
                 prosessVersjon,
                 boolsk faktum "f1" id 1 avhengerAv 4,
                 boolsk faktum "f2" id 2,
@@ -122,7 +122,7 @@ internal class AvhengigeFaktaTest {
             FaktumTable(prototypeFakta)
 
             søknadRecord = SøknadRecord()
-            originalFaktagrupper = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
+            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
 
             originalFaktagrupper.boolsk(2).besvar(true)
             originalFaktagrupper.boolsk(5).besvar(true)
@@ -130,11 +130,11 @@ internal class AvhengigeFaktaTest {
             originalFaktagrupper.boolsk(1).besvar(true)
             originalFaktagrupper.boolsk(3).besvar(true)
 
-            assertEquals(5, originalFaktagrupper.søknad.count { it.erBesvart() })
-            søknadRecord.lagre(originalFaktagrupper.søknad)
+            assertEquals(5, originalFaktagrupper.fakta.count { it.erBesvart() })
+            søknadRecord.lagre(originalFaktagrupper.fakta)
 
-            rehydrertFaktagrupper = søknadRecord.hent(originalFaktagrupper.søknad.uuid)
-            assertEquals(5, rehydrertFaktagrupper.søknad.count { it.erBesvart() })
+            rehydrertFaktagrupper = søknadRecord.hent(originalFaktagrupper.fakta.uuid)
+            assertEquals(5, rehydrertFaktagrupper.fakta.count { it.erBesvart() })
         }
     }
 
@@ -143,7 +143,7 @@ internal class AvhengigeFaktaTest {
         val prosessVersjon = Prosessversjon(Testprosess.Test, 636)
 
         Postgres.withMigratedDb {
-            val prototypeFakta = Søknad(
+            val prototypeFakta = Fakta(
                 prosessVersjon,
                 boolsk faktum "f1" id 1 avhengerAv 4,
                 dato faktum "f2" id 2,
@@ -167,18 +167,18 @@ internal class AvhengigeFaktaTest {
             FaktumTable(prototypeFakta)
 
             søknadRecord = SøknadRecord()
-            originalFaktagrupper = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
+            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
 
             originalFaktagrupper.dato(2).besvar(1.januar)
             originalFaktagrupper.dato(3).besvar(10.januar)
             originalFaktagrupper.boolsk(1).besvar(true)
             originalFaktagrupper.boolsk(5).besvar(true)
 
-            assertEquals(5, originalFaktagrupper.søknad.count { it.erBesvart() })
-            søknadRecord.lagre(originalFaktagrupper.søknad)
+            assertEquals(5, originalFaktagrupper.fakta.count { it.erBesvart() })
+            søknadRecord.lagre(originalFaktagrupper.fakta)
 
-            rehydrertFaktagrupper = søknadRecord.hent(originalFaktagrupper.søknad.uuid)
-            assertEquals(5, rehydrertFaktagrupper.søknad.count { it.erBesvart() })
+            rehydrertFaktagrupper = søknadRecord.hent(originalFaktagrupper.fakta.uuid)
+            assertEquals(5, rehydrertFaktagrupper.fakta.count { it.erBesvart() })
         }
     }
 
@@ -186,7 +186,7 @@ internal class AvhengigeFaktaTest {
     fun `Alle avhengige faktumtyper resettes`() {
         val prosessVersjon = Prosessversjon(Testprosess.Test, 637)
         Postgres.withMigratedDb {
-            val prototypeFakta = Søknad(
+            val prototypeFakta = Fakta(
                 prosessVersjon,
                 boolsk faktum "f1" id 1,
                 dato faktum "f2" id 2 avhengerAv 1,
@@ -220,7 +220,7 @@ internal class AvhengigeFaktaTest {
             FaktumTable(prototypeFakta)
 
             søknadRecord = SøknadRecord()
-            originalFaktagrupper = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
+            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
 
             originalFaktagrupper.boolsk(1).besvar(true)
             originalFaktagrupper.dato(2).besvar(10.januar)
@@ -238,23 +238,23 @@ internal class AvhengigeFaktaTest {
             originalFaktagrupper.tekst(14).besvar(Tekst("svar tekst"))
             originalFaktagrupper.land(15).besvar(Land("SWE"))
 
-            assertEquals(15, originalFaktagrupper.søknad.count { it.erBesvart() })
-            søknadRecord.lagre(originalFaktagrupper.søknad)
+            assertEquals(15, originalFaktagrupper.fakta.count { it.erBesvart() })
+            søknadRecord.lagre(originalFaktagrupper.fakta)
 
             assertRecordCount(0, "gammel_faktum_verdi")
-            rehydrertFaktagrupper = søknadRecord.hent(originalFaktagrupper.søknad.uuid)
-            assertEquals(15, rehydrertFaktagrupper.søknad.count { it.erBesvart() })
+            rehydrertFaktagrupper = søknadRecord.hent(originalFaktagrupper.fakta.uuid)
+            assertEquals(15, rehydrertFaktagrupper.fakta.count { it.erBesvart() })
 
             originalFaktagrupper.boolsk(1).besvar(false)
-            søknadRecord.lagre(originalFaktagrupper.søknad)
+            søknadRecord.lagre(originalFaktagrupper.fakta)
             assertRecordCount(15, "gammel_faktum_verdi")
-            rehydrertFaktagrupper = søknadRecord.hent(originalFaktagrupper.søknad.uuid)
-            assertEquals(1, rehydrertFaktagrupper.søknad.count { it.erBesvart() })
+            rehydrertFaktagrupper = søknadRecord.hent(originalFaktagrupper.fakta.uuid)
+            assertEquals(1, rehydrertFaktagrupper.fakta.count { it.erBesvart() })
         }
     }
 
     private fun lagreHentOgSammenlign(userInterfaceType: Versjon.UserInterfaceType = Web) {
-        søknadRecord.lagre(originalFaktagrupper.søknad)
+        søknadRecord.lagre(originalFaktagrupper.fakta)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         rehydrertFaktagrupper = søknadRecord.hent(uuid, userInterfaceType)
         assertDeepEquals(originalFaktagrupper, rehydrertFaktagrupper)

@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.innsending
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -14,8 +14,8 @@ internal object Innsending {
     private val logger = KotlinLogging.logger { }
     val VERSJON_ID = Prosessversjon(Prosess.Innsending, 6)
 
-    fun registrer(registrer: (prototype: Søknad) -> Unit) {
-        registrer(prototypeSøknad)
+    fun registrer(registrer: (prototype: Fakta) -> Unit) {
+        registrer(prototypeFakta)
     }
 
     private val faktaseksjoner = listOf(
@@ -23,15 +23,15 @@ internal object Innsending {
     )
     private val alleFakta = flatMapAlleFakta()
     private val alleSeksjoner = flatMapAlleSeksjoner()
-    private val prototypeSøknad: Søknad
-        get() = Søknad(
+    private val prototypeFakta: Fakta
+        get() = Fakta(
             VERSJON_ID,
             *alleFakta
         )
     private val søknadsprosess: Faktagrupper = Faktagrupper(*alleSeksjoner)
 
     object Subsumsjoner {
-        val regeltre: Subsumsjon = with(prototypeSøknad) {
+        val regeltre: Subsumsjon = with(prototypeFakta) {
             GenerellInnsending.regeltre(this)
         }
     }
@@ -43,7 +43,7 @@ internal object Innsending {
 
     init {
         Versjon.Bygger(
-            prototypeSøknad = prototypeSøknad,
+            prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = regeltre,
             prototypeUserInterfaces = mapOf(
                 Versjon.UserInterfaceType.Web to søknadsprosess
@@ -59,6 +59,6 @@ internal object Innsending {
     }.toTypedArray()
 
     private fun flatMapAlleSeksjoner() = faktaseksjoner.map { faktaSeksjon ->
-        faktaSeksjon.seksjon(prototypeSøknad)
+        faktaSeksjon.seksjon(prototypeFakta)
     }.flatten().toTypedArray()
 }

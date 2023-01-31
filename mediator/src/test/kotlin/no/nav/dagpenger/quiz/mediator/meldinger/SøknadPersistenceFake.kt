@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
@@ -26,8 +26,8 @@ internal class SøknadPersistenceFake : SøknadPersistence {
 
     override fun hent(uuid: UUID, type: Versjon.UserInterfaceType?) = faktagrupper!!.also { hentet++ }
 
-    override fun lagre(søknad: Søknad): Boolean {
-        faktagrupper = Versjon.id(SøknadEksempel.prosessVersjon).søknadprosess(søknad, Versjon.UserInterfaceType.Web)
+    override fun lagre(fakta: Fakta): Boolean {
+        faktagrupper = Versjon.id(SøknadEksempel.prosessVersjon).søknadprosess(fakta, Versjon.UserInterfaceType.Web)
         return true
     }
 

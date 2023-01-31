@@ -13,7 +13,7 @@ import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -21,7 +21,7 @@ import no.nav.dagpenger.model.visitor.SøknadVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.util.UUID
 
-class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) : SøknadVisitor {
+class NySøknad(fakta: Fakta, private val type: Versjon.UserInterfaceType) : SøknadVisitor {
     private var internVersjonId = 0
     private var rootId = 0
     private var indeks = 0
@@ -31,7 +31,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
     private val faktumParametre = mutableListOf<Map<String, Any>>()
 
     init {
-        søknad.accept(this)
+        fakta.accept(this)
     }
 
     override fun preVisit(person: Person, uuid: UUID) {
@@ -50,7 +50,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         }
     }
 
-    override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
         this.internVersjonId = hentInternId(prosessVersjon)
         this.søknadUUID = uuid
     }
@@ -60,7 +60,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         this.indeks = indeks
     }
 
-    override fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun postVisit(fakta: Fakta, prosessVersjon: Prosessversjon, uuid: UUID) {
         val faktumInsertStatement = //language=PostgreSQL
             """INSERT INTO faktum_verdi
                                 (soknad_id, indeks, faktum_id)

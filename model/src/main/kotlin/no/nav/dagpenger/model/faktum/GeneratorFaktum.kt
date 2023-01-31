@@ -19,12 +19,12 @@ class GeneratorFaktum internal constructor(
     godkjenner = mutableSetOf(),
     roller = roller
 ) {
-    internal lateinit var søknad: Søknad
+    internal lateinit var fakta: Fakta
 
     fun identitet(faktumId: FaktumId): Faktum<Tekst>? {
         val identitetInstans = navngittAv?.medIndeks(faktumId.reflection { _, indeks -> indeks })
 
-        return søknad.filter { isT<Faktum<Tekst>>(it) }.find { it.faktumId == identitetInstans } as Faktum<Tekst>?
+        return fakta.filter { isT<Faktum<Tekst>>(it) }.find { it.faktumId == identitetInstans } as Faktum<Tekst>?
     }
 
     private inline fun <reified T> isT(x: Any) = x is T
@@ -36,7 +36,7 @@ class GeneratorFaktum internal constructor(
 
         tilbakestill()
         super.besvar(antall, ident)
-        templates.forEach { template -> template.generate(antall, søknad) }
+        templates.forEach { template -> template.generate(antall, fakta) }
         return this
     }
 
@@ -46,7 +46,7 @@ class GeneratorFaktum internal constructor(
 
     override fun rehydrer(r: Int, besvarer: String?): Faktum<Int> = this.also {
         super.rehydrer(r, besvarer)
-        templates.forEach { template -> template.generate(r, søknad) }
+        templates.forEach { template -> template.generate(r, fakta) }
     }
 
     override fun tilUbesvart() {
@@ -56,7 +56,7 @@ class GeneratorFaktum internal constructor(
 
     private fun tilbakestill() {
         templates.forEach { template -> template.tilbakestill() }
-        søknad.removeAll(templates)
+        fakta.removeAll(templates)
     }
 
     override fun acceptUtenSvar(visitor: FaktumVisitor) {
@@ -65,7 +65,7 @@ class GeneratorFaktum internal constructor(
 
     override fun acceptMedSvar(visitor: FaktumVisitor) {
         val genererteFaktum =
-            templates.flatMap { template -> søknad.filter { it.faktumId.generertFra(template.faktumId) && it.erBesvart() } }
+            templates.flatMap { template -> fakta.filter { it.faktumId.generertFra(template.faktumId) && it.erBesvart() } }
                 .toSet()
         visitor.visitMedSvar(
             this,

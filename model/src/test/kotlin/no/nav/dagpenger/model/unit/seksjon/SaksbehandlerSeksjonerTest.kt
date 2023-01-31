@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.unit.seksjon
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
@@ -28,7 +28,7 @@ internal class SaksbehandlerSeksjonerTest {
         internal val uuid = UUID.randomUUID()
     }
 
-    private val prototypeSøknad = Søknad(
+    private val prototypeFakta = Fakta(
         testversjon,
         boolsk faktum "f1" id 1,
         boolsk faktum "approve1" id 2 avhengerAv 1,
@@ -38,19 +38,19 @@ internal class SaksbehandlerSeksjonerTest {
         boolsk faktum "approve5" id 6 avhengerAv 5
     )
     private val prototypeSubsumsjon =
-        ((prototypeSøknad.boolsk(1) er true).oppfyltGodkjentAv(prototypeSøknad.boolsk(2))) hvisOppfylt {
-            (prototypeSøknad.boolsk(3) er true).ikkeOppfyltGodkjentAv(prototypeSøknad.boolsk(4))
+        ((prototypeFakta.boolsk(1) er true).oppfyltGodkjentAv(prototypeFakta.boolsk(2))) hvisOppfylt {
+            (prototypeFakta.boolsk(3) er true).ikkeOppfyltGodkjentAv(prototypeFakta.boolsk(4))
         } hvisIkkeOppfylt {
-            (prototypeSøknad.boolsk(5) er true).godkjentAv(prototypeSøknad.boolsk(6))
+            (prototypeFakta.boolsk(5) er true).godkjentAv(prototypeFakta.boolsk(6))
         }
     private val prototypeFaktagrupper = Faktagrupper(
-        prototypeSøknad,
-        Seksjon("søker", Rolle.søker, prototypeSøknad.boolsk(1), prototypeSøknad.boolsk(3), prototypeSøknad.boolsk(5)),
-        Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeSøknad.boolsk(2)),
-        Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.boolsk(4), prototypeSøknad.boolsk(6))
+        prototypeFakta,
+        Seksjon("søker", Rolle.søker, prototypeFakta.boolsk(1), prototypeFakta.boolsk(3), prototypeFakta.boolsk(5)),
+        Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
+        Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(4), prototypeFakta.boolsk(6))
     )
     private val søknadprosessTestBygger = Versjon.Bygger(
-        prototypeSøknad,
+        prototypeFakta,
         prototypeSubsumsjon,
         mapOf(Web to prototypeFaktagrupper)
     )

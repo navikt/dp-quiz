@@ -37,7 +37,7 @@ class DokumentkravSvarService(
                 val svar = packet.dokumentsvar()
                 søknadPersistence.hent(søknadId, Web).let { søknadprosess ->
                     søknadprosess.dokument(faktumId).besvar(svar)
-                    søknadPersistence.lagre(søknadprosess.søknad)
+                    søknadPersistence.lagre(søknadprosess.fakta)
                 }
 
                 packet["@løsning"] = mapOf(

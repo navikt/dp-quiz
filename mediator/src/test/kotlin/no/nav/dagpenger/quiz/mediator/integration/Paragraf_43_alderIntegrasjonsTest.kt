@@ -28,8 +28,8 @@ class Paragraf_43_alderIntegrasjonsTest {
             søknadsprosess.dokument(Paragraf_4_23_alder_oppsett.innsendtSøknadId)
                 .besvar(Dokument(LocalDateTime.now(), "urn:soknadid:${UUID.randomUUID()}"))
 
-            søknadPersistence.lagre(søknadsprosess.søknad)
-            val rehydrertSøknadsprosess = søknadPersistence.hent(søknadsprosess.søknad.uuid, Versjon.UserInterfaceType.Web)
+            søknadPersistence.lagre(søknadsprosess.fakta)
+            val rehydrertSøknadsprosess = søknadPersistence.hent(søknadsprosess.fakta.uuid, Versjon.UserInterfaceType.Web)
 
             assertTrue(rehydrertSøknadsprosess.dokument(Paragraf_4_23_alder_oppsett.innsendtSøknadId).erBesvart())
         }

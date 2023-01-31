@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.min
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.multiplikasjon
 import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
@@ -23,8 +23,8 @@ internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
     val VERSJON_ID = Prosessversjon(Prosess.AvslagPåMinsteinntekt, 29)
 
-    fun registrer(registrer: (prototype: Søknad) -> Unit) {
-        registrer(prototypeSøknad)
+    fun registrer(registrer: (prototype: Fakta) -> Unit) {
+        registrer(prototypeFakta)
     }
 
     const val ønsketDato = 1
@@ -77,8 +77,8 @@ internal object AvslagPåMinsteinntektOppsett {
     const val hattLukkedeSakerSiste8Uker = 59
     const val hattLukkedeSakerSiste8UkerManuell = 60
 
-    internal val prototypeSøknad: Søknad
-        get() = Søknad(
+    internal val prototypeFakta: Fakta
+        get() = Fakta(
             VERSJON_ID,
             dato faktum "Ønsker dagpenger fra dato" id ønsketDato avhengerAv innsendtSøknadsId,
             maks dato "Virkningsdato" av ønsketDato og søknadstidspunkt id virkningsdato,
@@ -170,7 +170,7 @@ internal object AvslagPåMinsteinntektOppsett {
 
     init {
         Versjon.Bygger(
-            prototypeSøknad = prototypeSøknad,
+            prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = regeltre,
             prototypeUserInterfaces = mapOf(
                 Versjon.UserInterfaceType.Web to faktagrupper

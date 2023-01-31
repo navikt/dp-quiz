@@ -30,9 +30,9 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
                 require(it.size == this.size) { "Mangler fakta" }
             }
 
-        internal fun List<Faktum<*>>.deepCopy(indeks: Int, søknad: Søknad): List<Faktum<*>> = this
+        internal fun List<Faktum<*>>.deepCopy(indeks: Int, fakta: Fakta): List<Faktum<*>> = this
             .map { faktum ->
-                faktum.deepCopy(indeks, søknad)
+                faktum.deepCopy(indeks, fakta)
             }
 
         private val prioritet = listOf(
@@ -79,7 +79,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
         other.avhengerAvFakta.add(this)
     }
 
-    internal open fun deepCopy(indeks: Int, søknad: Søknad): Faktum<*> = this
+    internal open fun deepCopy(indeks: Int, fakta: Fakta): Faktum<*> = this
 
     enum class FaktumTilstand {
         Ukjent,

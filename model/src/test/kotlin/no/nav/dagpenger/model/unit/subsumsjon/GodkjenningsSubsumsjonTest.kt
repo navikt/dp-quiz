@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.unit.subsumsjon
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Faktagrupper
@@ -83,40 +83,40 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Trenger avhengighet for å godkjenne`() {
-        val prototypeSøknad = Søknad(
+        val prototypeFakta = Fakta(
             testversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "approve1" id 2
         )
 
         assertThrows<IllegalArgumentException> {
-            (prototypeSøknad.boolsk(1) er true).oppfyltGodkjentAv(
-                prototypeSøknad.boolsk(
+            (prototypeFakta.boolsk(1) er true).oppfyltGodkjentAv(
+                prototypeFakta.boolsk(
                     2
                 )
             )
         }
         assertThrows<IllegalArgumentException> {
-            (prototypeSøknad.boolsk(1) er true).ikkeOppfyltGodkjentAv(
-                prototypeSøknad.boolsk(2)
+            (prototypeFakta.boolsk(1) er true).ikkeOppfyltGodkjentAv(
+                prototypeFakta.boolsk(2)
             )
         }
-        assertThrows<IllegalArgumentException> { (prototypeSøknad.boolsk(1) er true).godkjentAv(prototypeSøknad.boolsk(2)) }
+        assertThrows<IllegalArgumentException> { (prototypeFakta.boolsk(1) er true).godkjentAv(prototypeFakta.boolsk(2)) }
     }
 
-    private fun søknadprosess(block: (Søknad) -> Subsumsjon): Faktagrupper {
-        val søknad = Søknad(
+    private fun søknadprosess(block: (Fakta) -> Subsumsjon): Faktagrupper {
+        val fakta = Fakta(
             testversjon,
             boolsk faktum "faktum" id 1,
             boolsk faktum "godkjenning" id 2 avhengerAv 1
         )
 
-        faktum = søknad boolsk 1
-        godkjenning = søknad boolsk 2
+        faktum = fakta boolsk 1
+        godkjenning = fakta boolsk 2
 
-        godkjenningsSubsumsjon = block(søknad)
+        godkjenningsSubsumsjon = block(fakta)
         return Faktagrupper(
-            søknad,
+            fakta,
             Seksjon("seksjon", Rolle.søker, faktum),
             Seksjon("seksjon", Rolle.saksbehandler, godkjenning),
             rootSubsumsjon = godkjenningsSubsumsjon

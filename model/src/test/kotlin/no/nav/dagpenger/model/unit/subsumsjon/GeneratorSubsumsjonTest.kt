@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.unit.subsumsjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.med
@@ -19,11 +19,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class GeneratorSubsumsjonTest {
-    private lateinit var søknad: Søknad
+    private lateinit var fakta: Fakta
 
     @BeforeEach
     fun setup() {
-        søknad = Søknad(
+        fakta = Fakta(
             testversjon,
             heltall faktum "alder" id 1,
             heltall faktum "barn" id 2 genererer 1
@@ -32,22 +32,22 @@ internal class GeneratorSubsumsjonTest {
 
     @Test
     fun `Deltre template kan ikke ha oppfylte eller ikke oppfylte stier`() {
-        val template = søknad heltall 1
+        val template = fakta heltall 1
         val deltre = "deltre template".deltre { template er 4 } hvisOppfylt { template er 5 }
 
-        assertThrows<IllegalArgumentException> { søknad generator 2 med (deltre as DeltreSubsumsjon) }
+        assertThrows<IllegalArgumentException> { fakta generator 2 med (deltre as DeltreSubsumsjon) }
     }
 
     @Test
     fun `Deltre template subsumsjon works`() {
-        val alleBarnMåværeUnder18år = søknad heltall 1 under 18
+        val alleBarnMåværeUnder18år = fakta heltall 1 under 18
         val deltre = "§ 1.2 har kun ikke myndige barn".deltre {
             alleBarnMåværeUnder18år
         }
-        val subsumsjon = søknad generator 2 med deltre
+        val subsumsjon = fakta generator 2 med deltre
         val faktagrupper = Faktagrupper(
-            søknad,
-            Seksjon("seksjon", Rolle.søker, søknad generator 2, søknad boolsk 1),
+            fakta,
+            Seksjon("seksjon", Rolle.søker, fakta generator 2, fakta boolsk 1),
             rootSubsumsjon = subsumsjon
         )
 
