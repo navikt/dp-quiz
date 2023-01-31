@@ -1,8 +1,8 @@
 package no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt
 
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeid
@@ -296,8 +296,8 @@ internal object Seksjoner {
         )
     }
 
-    internal val faktagrupper: Faktagrupper =
-        Faktagrupper(
+    internal val utredningsprosess: Utredningsprosess =
+        Utredningsprosess(
             behandlingsdatoSeksjon,
             senesteMuligeVirkningsdatoSeksjon,
             minsteinntektKonstanter,

@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
@@ -12,21 +12,21 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class SøknadPersistenceFake : SøknadPersistence {
-    var faktagrupper: Faktagrupper? = null
+    var utredningsprosess: Utredningsprosess? = null
     var hentet: Int = 0
 
     override fun ny(
         identer: Identer,
         prosessVersjon: HenvendelsesType,
         uuid: UUID
-    ): Faktagrupper =
+    ): Utredningsprosess =
         Versjon.id(SøknadEksempel.prosessVersjon).søknadprosess(Person(identer))
-            .also { faktagrupper = it }
+            .also { utredningsprosess = it }
 
-    override fun hent(uuid: UUID) = faktagrupper!!.also { hentet++ }
+    override fun hent(uuid: UUID) = utredningsprosess!!.also { hentet++ }
 
     override fun lagre(fakta: Fakta): Boolean {
-        faktagrupper = Versjon.id(SøknadEksempel.prosessVersjon).søknadprosess(fakta)
+        utredningsprosess = Versjon.id(SøknadEksempel.prosessVersjon).søknadprosess(fakta)
         return true
     }
 
@@ -47,7 +47,7 @@ internal class SøknadPersistenceFake : SøknadPersistence {
     }
 
     fun reset() {
-        faktagrupper = null
+        utredningsprosess = null
         hentet = 0
     }
 }

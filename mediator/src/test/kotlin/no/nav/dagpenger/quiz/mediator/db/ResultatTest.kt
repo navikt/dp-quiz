@@ -10,8 +10,8 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
@@ -24,7 +24,7 @@ internal class ResultatTest {
         internal val IDENT = Identer.Builder().folkeregisterIdent("12020052345").build()
     }
 
-    private lateinit var faktagrupper: Faktagrupper
+    private lateinit var utredningsprosess: Utredningsprosess
     private lateinit var søknadRecord: SøknadRecord
     private lateinit var resultatRecord: ResultatRecord
 
@@ -37,7 +37,7 @@ internal class ResultatTest {
         Versjon.Bygger(
             prototypeFakta,
             prototypeFakta boolsk 19 er true,
-            Faktagrupper(
+            Utredningsprosess(
                 Seksjon(
                     "seksjon",
                     Rolle.nav,
@@ -51,7 +51,7 @@ internal class ResultatTest {
             søknadRecord = SøknadRecord()
             resultatRecord = ResultatRecord()
 
-            faktagrupper = søknadRecord.ny(
+            utredningsprosess = søknadRecord.ny(
                 IDENT,
                 prosessVersjon
             )
@@ -61,14 +61,14 @@ internal class ResultatTest {
     @Test
     fun `Lagre resultat`() {
         setup(HenvendelsesType(Testprosess.Test, 935))
-        faktagrupper.boolsk(19).besvar(false)
-        val resultat = faktagrupper.resultat()
+        utredningsprosess.boolsk(19).besvar(false)
+        val resultat = utredningsprosess.resultat()
         resultatRecord.lagreResultat(
             resultat!!,
-            faktagrupper.fakta.uuid,
-            ResultatJsonBuilder(faktagrupper).resultat()
+            utredningsprosess.fakta.uuid,
+            ResultatJsonBuilder(utredningsprosess).resultat()
         )
-        val hentaResultat = resultatRecord.hentResultat(faktagrupper.fakta.uuid)
+        val hentaResultat = resultatRecord.hentResultat(utredningsprosess.fakta.uuid)
 
         assertEquals(resultat, hentaResultat)
     }
@@ -77,12 +77,12 @@ internal class ResultatTest {
     fun `Lagrer sendt til manuell behandling`() {
         setup(HenvendelsesType(Testprosess.Test, 936))
         val seksjonsnavn = "manuell seksjon"
-        resultatRecord.lagreManuellBehandling(faktagrupper.fakta.uuid, seksjonsnavn)
+        resultatRecord.lagreManuellBehandling(utredningsprosess.fakta.uuid, seksjonsnavn)
         val grunn = using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL
                     "SELECT grunn FROM manuell_behandling WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
-                    faktagrupper.fakta.uuid
+                    utredningsprosess.fakta.uuid
                 ).map { it.string("grunn") }.asSingle
             )
         }

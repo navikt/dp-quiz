@@ -8,8 +8,8 @@ import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
@@ -95,8 +95,8 @@ internal class ResultatJsonBuilderTest {
         }
     }
 
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Faktagrupper {
-        val prototypeFaktagrupper = Faktagrupper(
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Utredningsprosess {
+        val prototypeUtredningsprosess = Utredningsprosess(
             prototypeFakta,
             Seksjon(
                 "søker",
@@ -115,7 +115,7 @@ internal class ResultatJsonBuilderTest {
         return Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
-            prototypeFaktagrupper
+            prototypeUtredningsprosess
         ).søknadprosess(testPerson)
     }
 }

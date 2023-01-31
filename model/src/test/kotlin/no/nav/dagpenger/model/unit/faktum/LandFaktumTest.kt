@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -21,19 +21,19 @@ import kotlin.test.assertTrue
 
 internal class LandFaktumTest {
 
-    private lateinit var faktagrupper: Faktagrupper
+    private lateinit var utredningsprosess: Utredningsprosess
     private lateinit var landFaktum: Faktum<Land>
 
     @BeforeEach
     fun setup() {
-        faktagrupper = Fakta(
+        utredningsprosess = Fakta(
             testversjon,
             land faktum "land" gruppe "eøs" med eøsEllerSveits() gruppe "norge-jan-mayen" med norge() id 1,
             land faktum "land" gruppe "eøs" med eøsEllerSveits() gruppe "norge-jan-mayen" med norge() id 2,
             heltall faktum "land generator" genererer 2 id 3
         ).testSøknadprosess()
 
-        landFaktum = faktagrupper.land(1)
+        landFaktum = utredningsprosess.land(1)
     }
 
     @Test
@@ -60,9 +60,9 @@ internal class LandFaktumTest {
 
     @Test
     fun `Templatefaktum har landgrupper`() {
-        val generatorfaktum = faktagrupper.generator(3)
+        val generatorfaktum = utredningsprosess.generator(3)
         generatorfaktum.besvar(1)
-        val landfaktumTemplate = faktagrupper.land("2.1")
+        val landfaktumTemplate = utredningsprosess.land("2.1")
         val forventetLandGrupper = LandFaktumVisitor(landfaktumTemplate).forventetLandGrupper
         assertTrue { forventetLandGrupper.containsKey("land.gruppe.eøs") }
         assertEquals(eøsEllerSveits(), forventetLandGrupper["land.gruppe.eøs"])

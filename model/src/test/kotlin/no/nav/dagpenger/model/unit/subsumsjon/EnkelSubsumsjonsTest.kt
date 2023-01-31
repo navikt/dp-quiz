@@ -12,7 +12,7 @@ import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.utfylt
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -24,22 +24,22 @@ import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 
 internal class EnkelSubsumsjonsTest {
-    private lateinit var faktagrupper: Faktagrupper
+    private lateinit var utredningsprosess: Utredningsprosess
     private lateinit var bursdag67: Faktum<LocalDate>
     private lateinit var søknadsdato: Faktum<LocalDate>
     private lateinit var etValg: Faktum<Boolean>
 
     @BeforeEach
     fun setup() {
-        faktagrupper = Fakta(
+        utredningsprosess = Fakta(
             testversjon,
             dato faktum "Datoen du fyller 67" id 1,
             dato faktum "Datoen du søker om dagpenger" id 2,
             boolsk faktum "Et valg" id 3
         ).testSøknadprosess()
-        bursdag67 = faktagrupper dato 1
-        søknadsdato = faktagrupper dato 2
-        etValg = faktagrupper boolsk 3
+        bursdag67 = utredningsprosess dato 1
+        søknadsdato = utredningsprosess dato 2
+        etValg = utredningsprosess boolsk 3
     }
 
     @Test

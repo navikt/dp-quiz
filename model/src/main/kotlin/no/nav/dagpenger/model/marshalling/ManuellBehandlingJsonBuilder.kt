@@ -15,13 +15,13 @@ import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.putR
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
 
-class ManuellBehandlingJsonBuilder(faktagrupper: Faktagrupper, private val seksjonNavn: String, indeks: Int = 0) :
+class ManuellBehandlingJsonBuilder(utredningsprosess: Utredningsprosess, private val seksjonNavn: String, indeks: Int = 0) :
     SøknadprosessVisitor {
 
     private val mapper = ObjectMapper()
@@ -33,8 +33,8 @@ class ManuellBehandlingJsonBuilder(faktagrupper: Faktagrupper, private val seksj
     private var rootId = 0
 
     init {
-        faktagrupper.fakta.accept(this)
-        faktagrupper.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(faktagrupper.rootSubsumsjon).accept(this)
+        utredningsprosess.fakta.accept(this)
+        utredningsprosess.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(utredningsprosess.rootSubsumsjon).accept(this)
     }
 
     fun resultat() = root

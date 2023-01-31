@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Tekst
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
@@ -17,7 +17,7 @@ import kotlin.test.assertTrue
 internal class TilleggsopplysningerTest {
 
     private val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *Tilleggsopplysninger.fakta())
-    private lateinit var faktagrupper: Faktagrupper
+    private lateinit var utredningsprosess: Utredningsprosess
     private lateinit var harTilleggsopplysninger: Faktum<Boolean>
     private lateinit var tilleggsopplysninger: Faktum<Tekst>
 
@@ -28,23 +28,23 @@ internal class TilleggsopplysningerTest {
 
     @BeforeEach
     fun setup() {
-        faktagrupper = fakta.testSøknadprosess(Tilleggsopplysninger.regeltre(fakta)) {
+        utredningsprosess = fakta.testSøknadprosess(Tilleggsopplysninger.regeltre(fakta)) {
             Tilleggsopplysninger.seksjon(this)
         }
-        harTilleggsopplysninger = faktagrupper.boolsk(Tilleggsopplysninger.`har tilleggsopplysninger`)
-        tilleggsopplysninger = faktagrupper.tekst(Tilleggsopplysninger.tilleggsopplysninger)
+        harTilleggsopplysninger = utredningsprosess.boolsk(Tilleggsopplysninger.`har tilleggsopplysninger`)
+        tilleggsopplysninger = utredningsprosess.tekst(Tilleggsopplysninger.tilleggsopplysninger)
     }
 
     @Test
     fun `Har tilleggsopplysninger eller ikke`() {
         harTilleggsopplysninger.besvar(false)
-        assertEquals(true, faktagrupper.resultat())
+        assertEquals(true, utredningsprosess.resultat())
 
         harTilleggsopplysninger.besvar(true)
-        assertEquals(null, faktagrupper.resultat())
+        assertEquals(null, utredningsprosess.resultat())
 
         tilleggsopplysninger.besvar(Tekst("Tilleggsopplysninger"))
-        assertEquals(true, faktagrupper.resultat())
+        assertEquals(true, utredningsprosess.resultat())
     }
 
     @Test
@@ -59,7 +59,7 @@ internal class TilleggsopplysningerTest {
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val faktarekkefølge = faktagrupper.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        val faktarekkefølge = utredningsprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("4002,4001", faktarekkefølge)
     }
 }

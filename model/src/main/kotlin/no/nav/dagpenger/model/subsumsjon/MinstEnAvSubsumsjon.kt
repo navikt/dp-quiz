@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class MinstEnAvSubsumsjon private constructor(
@@ -19,11 +19,11 @@ class MinstEnAvSubsumsjon private constructor(
         TomSubsumsjon
     )
 
-    override fun deepCopy(faktagrupper: Faktagrupper) = MinstEnAvSubsumsjon(
+    override fun deepCopy(utredningsprosess: Utredningsprosess) = MinstEnAvSubsumsjon(
         navn,
-        subsumsjoner.map { it.deepCopy(faktagrupper) },
-        oppfyltSubsumsjon.deepCopy(faktagrupper),
-        ikkeOppfyltSubsumsjon.deepCopy(faktagrupper)
+        subsumsjoner.map { it.deepCopy(utredningsprosess) },
+        oppfyltSubsumsjon.deepCopy(utredningsprosess),
+        ikkeOppfyltSubsumsjon.deepCopy(utredningsprosess)
     )
 
     override fun bygg(fakta: Fakta) = MinstEnAvSubsumsjon(

@@ -1,6 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
@@ -11,23 +11,23 @@ import org.junit.jupiter.api.assertThrows
 
 internal class ProsessMetadataStrategiTest {
 
-    private lateinit var faktagrupperDagpenger: Faktagrupper
-    private lateinit var faktagrupperInnsending: Faktagrupper
-    private lateinit var faktagrupperAvslagPåMinsteinntekt: Faktagrupper
+    private lateinit var utredningsprosessDagpenger: Utredningsprosess
+    private lateinit var utredningsprosessInnsending: Utredningsprosess
+    private lateinit var utredningsprosessAvslagPåMinsteinntekt: Utredningsprosess
 
     init {
         Dagpenger.registrer { prototypeSøknad ->
-            faktagrupperDagpenger = Versjon.id(Dagpenger.VERSJON_ID)
+            utredningsprosessDagpenger = Versjon.id(Dagpenger.VERSJON_ID)
                 .søknadprosess(prototypeSøknad)
         }
 
         Innsending.registrer { prototypeSøknad ->
-            faktagrupperInnsending = Versjon.id(Innsending.VERSJON_ID)
+            utredningsprosessInnsending = Versjon.id(Innsending.VERSJON_ID)
                 .søknadprosess(prototypeSøknad)
         }
 
         AvslagPåMinsteinntektOppsett.registrer { prototype ->
-            faktagrupperAvslagPåMinsteinntekt = Versjon.id(AvslagPåMinsteinntektOppsett.VERSJON_ID)
+            utredningsprosessAvslagPåMinsteinntekt = Versjon.id(AvslagPåMinsteinntektOppsett.VERSJON_ID)
                 .søknadprosess(prototype)
         }
     }
@@ -35,8 +35,8 @@ internal class ProsessMetadataStrategiTest {
     @Test
     fun `bestemme hvilken prosess skjemastrategi skal gå etter`() {
         val prosessSkjemakodeStrategi = ProsessMetadataStrategi()
-        assertDoesNotThrow { prosessSkjemakodeStrategi.metadata(faktagrupperDagpenger) }
-        assertDoesNotThrow { prosessSkjemakodeStrategi.metadata(faktagrupperInnsending) }
-        assertThrows<IllegalArgumentException> { prosessSkjemakodeStrategi.metadata(faktagrupperAvslagPåMinsteinntekt) }
+        assertDoesNotThrow { prosessSkjemakodeStrategi.metadata(utredningsprosessDagpenger) }
+        assertDoesNotThrow { prosessSkjemakodeStrategi.metadata(utredningsprosessInnsending) }
+        assertThrows<IllegalArgumentException> { prosessSkjemakodeStrategi.metadata(utredningsprosessAvslagPåMinsteinntekt) }
     }
 }

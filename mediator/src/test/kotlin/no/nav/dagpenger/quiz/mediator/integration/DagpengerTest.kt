@@ -5,7 +5,7 @@ import io.mockk.mockk
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Land
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
@@ -22,7 +22,7 @@ import kotlin.test.assertEquals
 
 internal class DagpengerTest : SøknadBesvarer() {
     private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
-    private lateinit var søknadsprosess: Faktagrupper
+    private lateinit var søknadsprosess: Utredningsprosess
 
     @BeforeEach
     fun setup() {
@@ -58,7 +58,7 @@ internal class DagpengerTest : SøknadBesvarer() {
         }
     }
 
-    private fun Faktagrupper.verifiserAtNesteSeksjonEr(faktaseksjon: DslFaktaseksjon) {
+    private fun Utredningsprosess.verifiserAtNesteSeksjonEr(faktaseksjon: DslFaktaseksjon) {
         assertNotEquals(nesteSeksjoner().size, 0, "Har ikke neste seksjon")
         assertEquals(faktaseksjon.seksjon(fakta)[0].navn, nesteSeksjoner()[0].navn)
     }

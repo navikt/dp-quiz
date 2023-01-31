@@ -15,8 +15,8 @@ import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.minst
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -69,7 +69,7 @@ class Graftest {
         )
         val prototypeWebSøknad =
             with(prototypeFakta) {
-                Faktagrupper(
+                Utredningsprosess(
                     Seksjon(
                         "seksjon1",
                         Rolle.søker,
@@ -140,7 +140,7 @@ class Graftest {
         val manglerInntekt = Versjon.Bygger(
             AvslagPåMinsteinntektOppsett.prototypeFakta,
             AvslagPåMinsteinntekt.regeltre,
-            Seksjoner.faktagrupper
+            Seksjoner.utredningsprosess
         )
             .søknadprosess(
                 Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build())

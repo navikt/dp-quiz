@@ -14,8 +14,8 @@ import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.mars
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -34,7 +34,7 @@ internal class UtledetFaktumFactoryTest {
             maks dato "maks dato" av 1 og 2 og 3 id 123
         )
 
-        val faktagrupper = Faktagrupper(
+        val utredningsprosess = Utredningsprosess(
             fakta,
             Seksjon(
                 "seksjon",
@@ -46,17 +46,17 @@ internal class UtledetFaktumFactoryTest {
             )
         )
 
-        val faktum = faktagrupper.dato("123")
+        val faktum = utredningsprosess.dato("123")
 
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
-        faktagrupper.dato("1").besvar(1.januar)
-        faktagrupper.dato("2").besvar(2.januar)
+        utredningsprosess.dato("1").besvar(1.januar)
+        utredningsprosess.dato("2").besvar(2.januar)
         assertFalse(faktum.erBesvart())
-        faktagrupper.dato("3").besvar(3.januar)
+        utredningsprosess.dato("3").besvar(3.januar)
         assertTrue(faktum.erBesvart())
         assertEquals(3.januar, faktum.svar())
-        faktagrupper.dato("1").besvar(4.januar)
+        utredningsprosess.dato("1").besvar(4.januar)
         assertEquals(4.januar, faktum.svar())
     }
 
@@ -70,7 +70,7 @@ internal class UtledetFaktumFactoryTest {
             maks inntekt "maks inntekt" av 1 og 2 og 3 id 123
         )
 
-        val faktagrupper = Faktagrupper(
+        val utredningsprosess = Utredningsprosess(
             fakta,
             Seksjon(
                 "seksjon",
@@ -82,17 +82,17 @@ internal class UtledetFaktumFactoryTest {
             )
         )
 
-        val faktum = faktagrupper.inntekt("123")
+        val faktum = utredningsprosess.inntekt("123")
 
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
-        faktagrupper.inntekt("1").besvar(260.årlig)
-        faktagrupper.inntekt("2").besvar(520.årlig)
+        utredningsprosess.inntekt("1").besvar(260.årlig)
+        utredningsprosess.inntekt("2").besvar(520.årlig)
         assertFalse(faktum.erBesvart())
-        faktagrupper.inntekt("3").besvar(130.årlig)
+        utredningsprosess.inntekt("3").besvar(130.årlig)
         assertTrue(faktum.erBesvart())
         assertEquals(520.årlig, faktum.svar())
-        faktagrupper.inntekt("1").besvar(1040.årlig)
+        utredningsprosess.inntekt("1").besvar(1040.årlig)
         assertEquals(1040.årlig, faktum.svar())
     }
 
@@ -106,7 +106,7 @@ internal class UtledetFaktumFactoryTest {
             alle ja "alle ja" av 1 og 2 og 3 id 123
         )
 
-        val faktagrupper = Faktagrupper(
+        val utredningsprosess = Utredningsprosess(
             fakta,
             Seksjon(
                 "seksjon",
@@ -117,17 +117,17 @@ internal class UtledetFaktumFactoryTest {
                 fakta boolsk 123
             )
         )
-        val faktum = faktagrupper.dato("123")
+        val faktum = utredningsprosess.dato("123")
 
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
-        faktagrupper.boolsk("1").besvar(true)
-        faktagrupper.boolsk("2").besvar(true)
+        utredningsprosess.boolsk("1").besvar(true)
+        utredningsprosess.boolsk("2").besvar(true)
         assertFalse(faktum.erBesvart())
-        faktagrupper.boolsk("3").besvar(true)
+        utredningsprosess.boolsk("3").besvar(true)
         assertTrue(faktum.erBesvart())
         assertEquals(true, faktum.svar())
-        faktagrupper.boolsk("1").besvar(false)
+        utredningsprosess.boolsk("1").besvar(false)
         assertEquals(false, faktum.svar())
     }
 

@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -44,7 +44,7 @@ internal class MetadataService(
 }
 
 fun interface MetadataStrategi {
-    fun metadata(faktagrupper: Faktagrupper): Metadata
+    fun metadata(utredningsprosess: Utredningsprosess): Metadata
 
     data class Metadata(val skjemakode: String? = null, val tittel: String? = null) {
         init {

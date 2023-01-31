@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.før
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -77,13 +77,13 @@ internal object Paragraf_4_23_alder_oppsett {
             grensedato
         )
     }
-    internal val faktagrupper: Faktagrupper = Faktagrupper(seksjon)
+    internal val utredningsprosess: Utredningsprosess = Utredningsprosess(seksjon)
 
     init {
         Versjon.Bygger(
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = Subsumsjoner.regeltre,
-            faktagrupper = faktagrupper,
+            utredningsprosess = utredningsprosess,
             faktumNavBehov = faktumNavBehov
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID} \n\n\n\n" }

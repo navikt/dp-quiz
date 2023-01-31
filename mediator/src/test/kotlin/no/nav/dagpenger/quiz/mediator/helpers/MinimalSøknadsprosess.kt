@@ -11,8 +11,8 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.utfylt
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -55,7 +55,7 @@ internal class MinimalSøknadsprosess(private val henvendelsesType: Henvendelses
         registrer(fakta)
     }
 
-    private val søknadsprosess: Faktagrupper = Faktagrupper(seksjoner)
+    private val søknadsprosess: Utredningsprosess = Utredningsprosess(seksjoner)
 
     private val faktumNavBehov = FaktumNavBehov(
         mapOf(
@@ -68,7 +68,7 @@ internal class MinimalSøknadsprosess(private val henvendelsesType: Henvendelses
     private val versjon = Versjon.Bygger(
         prototypeFakta = fakta,
         prototypeSubsumsjon = regeltre,
-        faktagrupper = søknadsprosess,
+        utredningsprosess = søknadsprosess,
         faktumNavBehov = faktumNavBehov
     ).registrer().also {
         logger.info { "\n\n\nREGISTRERT versjon id $henvendelsesType \n\n\n\n" }

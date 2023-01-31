@@ -7,8 +7,8 @@ import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.under
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -45,25 +45,25 @@ internal class GeneratorSubsumsjonTest {
             alleBarnMåværeUnder18år
         }
         val subsumsjon = fakta generator 2 med deltre
-        val faktagrupper = Faktagrupper(
+        val utredningsprosess = Utredningsprosess(
             fakta,
             Seksjon("seksjon", Rolle.søker, fakta generator 2, fakta boolsk 1),
             rootSubsumsjon = subsumsjon
         )
 
-        faktagrupper.generator(2).besvar(3)
+        utredningsprosess.generator(2).besvar(3)
         assertEquals(null, subsumsjon.resultat())
         assertEquals(3, (subsumsjon[0].oppfylt as AlleSubsumsjon).size)
 
-        faktagrupper.generator(2).besvar(2)
+        utredningsprosess.generator(2).besvar(2)
         assertEquals(null, subsumsjon.resultat())
         assertEquals(2, (subsumsjon[0].oppfylt as AlleSubsumsjon).size)
 
-        faktagrupper.heltall("1.1").besvar(8)
-        faktagrupper.heltall("1.2").besvar(8)
+        utredningsprosess.heltall("1.1").besvar(8)
+        utredningsprosess.heltall("1.2").besvar(8)
         assertEquals(true, subsumsjon.resultat())
 
-        faktagrupper.heltall("1.2").besvar(19)
+        utredningsprosess.heltall("1.2").besvar(19)
         assertEquals(false, subsumsjon.resultat())
     }
 }

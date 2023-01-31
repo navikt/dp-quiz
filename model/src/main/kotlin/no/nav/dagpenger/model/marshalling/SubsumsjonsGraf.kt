@@ -27,7 +27,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.Kanttype.IKKE_OPPFYLT
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.Kanttype.OPPFYLT
 import no.nav.dagpenger.model.regel.Regel
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
@@ -39,7 +39,7 @@ import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.io.File
 
-class SubsumsjonsGraf(faktagrupper: Faktagrupper) :
+class SubsumsjonsGraf(utredningsprosess: Utredningsprosess) :
     SøknadprosessVisitor {
 
     var index = 0
@@ -60,15 +60,15 @@ class SubsumsjonsGraf(faktagrupper: Faktagrupper) :
 
     init {
         subGrafer.add(0, rotGraf)
-        faktagrupper.accept(this)
+        utredningsprosess.accept(this)
     }
 
     fun skrivTilFil(filnavn: String) {
         rotGraf.toGraphviz().scale(5.0).render(Format.PNG).toFile(File(filnavn))
     }
 
-    override fun preVisit(faktagrupper: Faktagrupper) {
-        noder.add(faktagrupper.rootSubsumsjon)
+    override fun preVisit(utredningsprosess: Utredningsprosess) {
+        noder.add(utredningsprosess.rootSubsumsjon)
     }
 
     override fun preVisit(subsumsjon: GeneratorSubsumsjon, deltre: DeltreSubsumsjon) {

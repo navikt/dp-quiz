@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt.regeltre
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
@@ -45,7 +45,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.villigTilÅBytteYrke
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.ønsketDato
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.Seksjoner.faktagrupper
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.Seksjoner.utredningsprosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -57,14 +57,14 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class AvslagPåMinsteinntektTest {
-    private lateinit var manglerInntekt: Faktagrupper
+    private lateinit var manglerInntekt: Utredningsprosess
 
     @BeforeEach
     fun setup() {
         manglerInntekt = Versjon.Bygger(
             prototypeFakta,
             regeltre,
-            faktagrupper
+            utredningsprosess
         )
             .søknadprosess(
                 Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build())

@@ -2,8 +2,8 @@ package no.nav.dagpenger.model.helpers
 
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
@@ -19,10 +19,10 @@ internal fun Fakta.testSøknadprosess(
             )
         )
     }
-): Faktagrupper {
+): Utredningsprosess {
     return Versjon.Bygger(
         this,
         subsumsjon,
-        Faktagrupper(*seksjon().toTypedArray())
+        Utredningsprosess(*seksjon().toTypedArray())
     ).søknadprosess(testPerson)
 }

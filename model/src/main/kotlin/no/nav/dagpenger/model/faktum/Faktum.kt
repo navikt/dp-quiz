@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.faktum
 
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 abstract class Faktum<R : Comparable<R>> internal constructor(
@@ -15,15 +15,15 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     companion object {
         internal fun Collection<Faktum<*>>.erAlleBesvart() = this.all { it.erBesvart() }
-        private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, faktagrupper: Faktagrupper) {
-            faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { faktagrupper.faktum(it.faktumId) })
-            faktum.avhengerAvFakta.addAll(this.avhengerAvFakta.map { faktagrupper.faktum(it.faktumId) })
+        private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, utredningsprosess: Utredningsprosess) {
+            faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { utredningsprosess.faktum(it.faktumId) })
+            faktum.avhengerAvFakta.addAll(this.avhengerAvFakta.map { utredningsprosess.faktum(it.faktumId) })
         }
 
-        internal fun List<Faktum<*>>.deepCopy(faktagrupper: Faktagrupper): List<Faktum<*>> = this
+        internal fun List<Faktum<*>>.deepCopy(utredningsprosess: Utredningsprosess): List<Faktum<*>> = this
             .map { prototype ->
-                faktagrupper.faktum(prototype.faktumId).also {
-                    prototype.deepCopyAvhengigheter(it, faktagrupper)
+                utredningsprosess.faktum(prototype.faktumId).also {
+                    prototype.deepCopyAvhengigheter(it, utredningsprosess)
                 }
             }
             .also {

@@ -29,8 +29,8 @@ import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.assertDeepEquals
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
@@ -47,8 +47,8 @@ internal class AvhengigeFaktaTest {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
     }
 
-    private lateinit var originalFaktagrupper: Faktagrupper
-    private lateinit var rehydrertFaktagrupper: Faktagrupper
+    private lateinit var originalUtredningsprosess: Utredningsprosess
+    private lateinit var rehydrertUtredningsprosess: Utredningsprosess
     private lateinit var søknadRecord: SøknadRecord
 
     @Test
@@ -64,7 +64,7 @@ internal class AvhengigeFaktaTest {
             Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta boolsk 19 er true,
-                Faktagrupper(
+                Utredningsprosess(
                     Seksjon(
                         "seksjon",
                         Rolle.nav,
@@ -74,18 +74,18 @@ internal class AvhengigeFaktaTest {
             ).registrer()
             FaktumTable(prototypeFakta)
             søknadRecord = SøknadRecord()
-            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
+            originalUtredningsprosess = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
 
-            originalFaktagrupper.dato(2).besvar(2.januar)
-            originalFaktagrupper.dato(13).besvar(13.januar)
-            originalFaktagrupper.boolsk(19).besvar(true)
+            originalUtredningsprosess.dato(2).besvar(2.januar)
+            originalUtredningsprosess.dato(13).besvar(13.januar)
+            originalUtredningsprosess.boolsk(19).besvar(true)
             lagreHentOgSammenlign()
             assertRecordCount(0, "gammel_faktum_verdi")
-            assertTrue(rehydrertFaktagrupper.boolsk(19).svar())
-            originalFaktagrupper.dato(2).besvar(22.januar)
+            assertTrue(rehydrertUtredningsprosess.boolsk(19).svar())
+            originalUtredningsprosess.dato(2).besvar(22.januar)
             lagreHentOgSammenlign()
             assertRecordCount(2, "gammel_faktum_verdi")
-            assertFalse(rehydrertFaktagrupper.boolsk(19).erBesvart())
+            assertFalse(rehydrertUtredningsprosess.boolsk(19).erBesvart())
         }
     }
 
@@ -105,7 +105,7 @@ internal class AvhengigeFaktaTest {
             Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta boolsk 1 er true,
-                Faktagrupper(
+                Utredningsprosess(
                     Seksjon(
                         "seksjon",
                         Rolle.nav,
@@ -116,19 +116,19 @@ internal class AvhengigeFaktaTest {
             FaktumTable(prototypeFakta)
 
             søknadRecord = SøknadRecord()
-            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
+            originalUtredningsprosess = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
 
-            originalFaktagrupper.boolsk(2).besvar(true)
-            originalFaktagrupper.boolsk(5).besvar(true)
-            originalFaktagrupper.boolsk(4).besvar(true)
-            originalFaktagrupper.boolsk(1).besvar(true)
-            originalFaktagrupper.boolsk(3).besvar(true)
+            originalUtredningsprosess.boolsk(2).besvar(true)
+            originalUtredningsprosess.boolsk(5).besvar(true)
+            originalUtredningsprosess.boolsk(4).besvar(true)
+            originalUtredningsprosess.boolsk(1).besvar(true)
+            originalUtredningsprosess.boolsk(3).besvar(true)
 
-            assertEquals(5, originalFaktagrupper.fakta.count { it.erBesvart() })
-            søknadRecord.lagre(originalFaktagrupper.fakta)
+            assertEquals(5, originalUtredningsprosess.fakta.count { it.erBesvart() })
+            søknadRecord.lagre(originalUtredningsprosess.fakta)
 
-            rehydrertFaktagrupper = søknadRecord.hent(originalFaktagrupper.fakta.uuid)
-            assertEquals(5, rehydrertFaktagrupper.fakta.count { it.erBesvart() })
+            rehydrertUtredningsprosess = søknadRecord.hent(originalUtredningsprosess.fakta.uuid)
+            assertEquals(5, rehydrertUtredningsprosess.fakta.count { it.erBesvart() })
         }
     }
 
@@ -148,7 +148,7 @@ internal class AvhengigeFaktaTest {
             Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta boolsk 1 er true,
-                Faktagrupper(
+                Utredningsprosess(
                     Seksjon(
                         "seksjon",
                         Rolle.nav,
@@ -159,18 +159,18 @@ internal class AvhengigeFaktaTest {
             FaktumTable(prototypeFakta)
 
             søknadRecord = SøknadRecord()
-            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
+            originalUtredningsprosess = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
 
-            originalFaktagrupper.dato(2).besvar(1.januar)
-            originalFaktagrupper.dato(3).besvar(10.januar)
-            originalFaktagrupper.boolsk(1).besvar(true)
-            originalFaktagrupper.boolsk(5).besvar(true)
+            originalUtredningsprosess.dato(2).besvar(1.januar)
+            originalUtredningsprosess.dato(3).besvar(10.januar)
+            originalUtredningsprosess.boolsk(1).besvar(true)
+            originalUtredningsprosess.boolsk(5).besvar(true)
 
-            assertEquals(5, originalFaktagrupper.fakta.count { it.erBesvart() })
-            søknadRecord.lagre(originalFaktagrupper.fakta)
+            assertEquals(5, originalUtredningsprosess.fakta.count { it.erBesvart() })
+            søknadRecord.lagre(originalUtredningsprosess.fakta)
 
-            rehydrertFaktagrupper = søknadRecord.hent(originalFaktagrupper.fakta.uuid)
-            assertEquals(5, rehydrertFaktagrupper.fakta.count { it.erBesvart() })
+            rehydrertUtredningsprosess = søknadRecord.hent(originalUtredningsprosess.fakta.uuid)
+            assertEquals(5, rehydrertUtredningsprosess.fakta.count { it.erBesvart() })
         }
     }
 
@@ -199,7 +199,7 @@ internal class AvhengigeFaktaTest {
             Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta boolsk 1 er true,
-                Faktagrupper(
+                Utredningsprosess(
                     Seksjon(
                         "seksjon",
                         Rolle.nav,
@@ -210,44 +210,44 @@ internal class AvhengigeFaktaTest {
             FaktumTable(prototypeFakta)
 
             søknadRecord = SøknadRecord()
-            originalFaktagrupper = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
+            originalUtredningsprosess = søknadRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
 
-            originalFaktagrupper.boolsk(1).besvar(true)
-            originalFaktagrupper.dato(2).besvar(10.januar)
-            originalFaktagrupper.boolsk(3).besvar(false)
-            originalFaktagrupper.heltall(4).besvar(34)
-            originalFaktagrupper.dokument(5).besvar(Dokument(LocalDateTime.now(), "urn:si:test:123"))
-            originalFaktagrupper.desimaltall(6).besvar(2.4)
-            originalFaktagrupper.envalg(7).besvar(Envalg("f7.valg1"))
-            originalFaktagrupper.flervalg(8).besvar(Flervalg("f8.valg1", "f8.valg2"))
-            originalFaktagrupper.heltall(11).besvar(1)
-            originalFaktagrupper.heltall("9.1").besvar(150)
-            originalFaktagrupper.heltall("10.1").besvar(160)
-            originalFaktagrupper.inntekt(12).besvar(100.årlig)
-            originalFaktagrupper.periode(13).besvar(Periode(LocalDate.now().minusYears(2), LocalDate.now()))
-            originalFaktagrupper.tekst(14).besvar(Tekst("svar tekst"))
-            originalFaktagrupper.land(15).besvar(Land("SWE"))
+            originalUtredningsprosess.boolsk(1).besvar(true)
+            originalUtredningsprosess.dato(2).besvar(10.januar)
+            originalUtredningsprosess.boolsk(3).besvar(false)
+            originalUtredningsprosess.heltall(4).besvar(34)
+            originalUtredningsprosess.dokument(5).besvar(Dokument(LocalDateTime.now(), "urn:si:test:123"))
+            originalUtredningsprosess.desimaltall(6).besvar(2.4)
+            originalUtredningsprosess.envalg(7).besvar(Envalg("f7.valg1"))
+            originalUtredningsprosess.flervalg(8).besvar(Flervalg("f8.valg1", "f8.valg2"))
+            originalUtredningsprosess.heltall(11).besvar(1)
+            originalUtredningsprosess.heltall("9.1").besvar(150)
+            originalUtredningsprosess.heltall("10.1").besvar(160)
+            originalUtredningsprosess.inntekt(12).besvar(100.årlig)
+            originalUtredningsprosess.periode(13).besvar(Periode(LocalDate.now().minusYears(2), LocalDate.now()))
+            originalUtredningsprosess.tekst(14).besvar(Tekst("svar tekst"))
+            originalUtredningsprosess.land(15).besvar(Land("SWE"))
 
-            assertEquals(15, originalFaktagrupper.fakta.count { it.erBesvart() })
-            søknadRecord.lagre(originalFaktagrupper.fakta)
+            assertEquals(15, originalUtredningsprosess.fakta.count { it.erBesvart() })
+            søknadRecord.lagre(originalUtredningsprosess.fakta)
 
             assertRecordCount(0, "gammel_faktum_verdi")
-            rehydrertFaktagrupper = søknadRecord.hent(originalFaktagrupper.fakta.uuid)
-            assertEquals(15, rehydrertFaktagrupper.fakta.count { it.erBesvart() })
+            rehydrertUtredningsprosess = søknadRecord.hent(originalUtredningsprosess.fakta.uuid)
+            assertEquals(15, rehydrertUtredningsprosess.fakta.count { it.erBesvart() })
 
-            originalFaktagrupper.boolsk(1).besvar(false)
-            søknadRecord.lagre(originalFaktagrupper.fakta)
+            originalUtredningsprosess.boolsk(1).besvar(false)
+            søknadRecord.lagre(originalUtredningsprosess.fakta)
             assertRecordCount(15, "gammel_faktum_verdi")
-            rehydrertFaktagrupper = søknadRecord.hent(originalFaktagrupper.fakta.uuid)
-            assertEquals(1, rehydrertFaktagrupper.fakta.count { it.erBesvart() })
+            rehydrertUtredningsprosess = søknadRecord.hent(originalUtredningsprosess.fakta.uuid)
+            assertEquals(1, rehydrertUtredningsprosess.fakta.count { it.erBesvart() })
         }
     }
 
     private fun lagreHentOgSammenlign() {
-        søknadRecord.lagre(originalFaktagrupper.fakta)
+        søknadRecord.lagre(originalUtredningsprosess.fakta)
         val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
-        rehydrertFaktagrupper = søknadRecord.hent(uuid)
-        assertDeepEquals(originalFaktagrupper, rehydrertFaktagrupper)
+        rehydrertUtredningsprosess = søknadRecord.hent(uuid)
+        assertDeepEquals(originalUtredningsprosess, rehydrertUtredningsprosess)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

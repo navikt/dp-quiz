@@ -16,8 +16,8 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 
 internal object SøknadEksempel2 {
@@ -56,14 +56,14 @@ internal object SøknadEksempel2 {
             envalg faktum "f28" med "valg1" med "valg2" id 28
         )
     }
-    private val webPrototypeSøknad = Faktagrupper(
+    private val webPrototypeSøknad = Utredningsprosess(
         Seksjon(
             "seksjon",
             Rolle.søker,
             *(prototypeFakta.map { it }.toTypedArray())
         )
     )
-    private val mobilePrototypeSøknad = Faktagrupper(
+    private val mobilePrototypeSøknad = Utredningsprosess(
         Seksjon(
             "seksjon",
             Rolle.søker,

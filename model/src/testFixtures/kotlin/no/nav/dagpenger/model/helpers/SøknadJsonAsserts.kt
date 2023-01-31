@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.helpers
 
 import com.fasterxml.jackson.databind.JsonNode
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.assertContains
@@ -13,9 +13,9 @@ internal annotation class JsonAssertMarker
 @JsonAssertMarker
 class MedSøknad private constructor(private val søknad: JsonNode, block: MedSøknad.() -> Unit) {
     constructor(
-        faktagrupper: Faktagrupper,
+        utredningsprosess: Utredningsprosess,
         block: MedSøknad.() -> Unit
-    ) : this(SøkerJsonBuilder(faktagrupper).resultat(), block)
+    ) : this(SøkerJsonBuilder(utredningsprosess).resultat(), block)
 
     init {
         block(this)

@@ -15,7 +15,7 @@ import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.med
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.godkjentAv
@@ -159,7 +159,7 @@ class SannsynliggjøringsSubsumsjonTest {
         assertEquals(2, DuplikatVisitor(prosess).avhengigheter)
     }
 
-    class DuplikatVisitor(søknad: Faktagrupper) : SøknadprosessVisitor {
+    class DuplikatVisitor(søknad: Utredningsprosess) : SøknadprosessVisitor {
         var avhengigheter = 0
 
         init {

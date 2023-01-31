@@ -10,15 +10,15 @@ import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.Testprosess
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class VersjonTest {
-    private lateinit var faktagrupper: Faktagrupper
+    private lateinit var utredningsprosess: Utredningsprosess
 
     private companion object {
         val prototypeFakta = Fakta(
@@ -29,30 +29,30 @@ internal class VersjonTest {
             boolsk faktum "f18" id 18
         )
         val prototypeSeksjon = Seksjon("seksjon", Rolle.søker, prototypeFakta id 15, prototypeFakta id 16, prototypeFakta id 17, prototypeFakta id 18)
-        val prototypeFaktagrupper = Faktagrupper(prototypeSeksjon)
+        val prototypeUtredningsprosess = Utredningsprosess(prototypeSeksjon)
         val prototypeSubsumsjon = prototypeFakta heltall 15 er 6
         val versjon = Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
-            prototypeFaktagrupper
+            prototypeUtredningsprosess
         ).registrer()
     }
 
     @BeforeEach
     fun setup() {
-        faktagrupper = versjon.søknadprosess(testPerson)
+        utredningsprosess = versjon.søknadprosess(testPerson)
     }
 
     @Test
     fun ` bygg fra prototype `() {
-        faktagrupper.fakta.also { søknad ->
+        utredningsprosess.fakta.also { søknad ->
             assertEquals(TemplateFaktum::class, søknad.id(16)::class)
             assertEquals(GeneratorFaktum::class, søknad.id(15)::class)
             assertEquals(4, søknad.size)
-            assertEquals(4, faktagrupper[0].size)
+            assertEquals(4, utredningsprosess[0].size)
             (søknad heltall 15).besvar(2)
             assertEquals(10, søknad.size)
-            assertEquals(10, faktagrupper[0].size)
+            assertEquals(10, utredningsprosess[0].size)
         }
     }
 }

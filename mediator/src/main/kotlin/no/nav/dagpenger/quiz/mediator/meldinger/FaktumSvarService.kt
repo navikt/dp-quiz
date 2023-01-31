@@ -9,7 +9,7 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
@@ -102,25 +102,25 @@ internal class FaktumSvarService(
         }
     }
 
-    private fun besvarFakta(fakta: List<JsonNode>, faktagrupper: Faktagrupper) {
+    private fun besvarFakta(fakta: List<JsonNode>, utredningsprosess: Utredningsprosess) {
         fakta.forEach { faktumNode ->
             val faktumId = faktumNode["id"].asText()
             val svar = faktumNode["svar"]
             val type = faktumNode["type"].asText()
             val besvartAv = faktumNode["besvartAv"]?.asText()
 
-            besvar(faktagrupper, faktumId, svar, type, besvartAv)
+            besvar(utredningsprosess, faktumId, svar, type, besvartAv)
         }
-        søknadPersistence.lagre(faktagrupper.fakta)
+        søknadPersistence.lagre(utredningsprosess.fakta)
     }
 
-    private fun sendResultat(faktagrupper: Faktagrupper, context: MessageContext) {
-        ResultatJsonBuilder(faktagrupper).resultat().also { json ->
-            resultatPersistence.lagreResultat(faktagrupper.resultat()!!, faktagrupper.fakta.uuid, json)
+    private fun sendResultat(utredningsprosess: Utredningsprosess, context: MessageContext) {
+        ResultatJsonBuilder(utredningsprosess).resultat().also { json ->
+            resultatPersistence.lagreResultat(utredningsprosess.resultat()!!, utredningsprosess.fakta.uuid, json)
             context.publish(json.toString())
             sikkerlogg.info { "Send ut resultat: $json" }
         }
-        log.info { "Ferdig med søknad ${faktagrupper.fakta.uuid}. Resultatet er: ${faktagrupper.resultat()}" }
+        log.info { "Ferdig med søknad ${utredningsprosess.fakta.uuid}. Resultatet er: ${utredningsprosess.resultat()}" }
     }
 
     override fun onError(problems: MessageProblems, context: MessageContext) {
@@ -129,33 +129,33 @@ internal class FaktumSvarService(
     }
 
     private fun besvar(
-        faktagrupper: Faktagrupper,
+        utredningsprosess: Utredningsprosess,
         faktumId: String,
         svar: JsonNode,
         type: String,
         besvartAv: String?
     ) {
-        if (svar.isNull) return faktagrupper.id(faktumId).tilUbesvart()
+        if (svar.isNull) return utredningsprosess.id(faktumId).tilUbesvart()
         when (type) {
-            "land" -> faktagrupper.land(faktumId).besvar(svar.asLand(), besvartAv)
-            "boolean" -> faktagrupper.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)
-            "int" -> faktagrupper.heltall(faktumId).besvar(svar.asInt(), besvartAv) // todo: remove?
-            "integer" -> faktagrupper.heltall(faktumId).besvar(svar.asInt(), besvartAv)
-            "double" -> faktagrupper.desimaltall(faktumId).besvar(svar.asDouble(), besvartAv)
-            "localdate" -> faktagrupper.dato(faktumId).besvar(svar.asLocalDate(), besvartAv)
-            "inntekt" -> faktagrupper.inntekt(faktumId).besvar(svar.asDouble().årlig, besvartAv)
-            "envalg" -> faktagrupper.envalg(faktumId).besvar(svar.asEnvalg(), besvartAv)
-            "flervalg" -> faktagrupper.flervalg(faktumId).besvar(svar.asFlervalg(), besvartAv)
-            "tekst" -> faktagrupper.tekst(faktumId).besvar(svar.asTekst(), besvartAv)
-            "periode" -> faktagrupper.periode(faktumId).besvar(svar.asPeriode(), besvartAv)
-            "dokument" -> faktagrupper.dokument(faktumId).besvar(svar.asDokument(), besvartAv)
+            "land" -> utredningsprosess.land(faktumId).besvar(svar.asLand(), besvartAv)
+            "boolean" -> utredningsprosess.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)
+            "int" -> utredningsprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv) // todo: remove?
+            "integer" -> utredningsprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv)
+            "double" -> utredningsprosess.desimaltall(faktumId).besvar(svar.asDouble(), besvartAv)
+            "localdate" -> utredningsprosess.dato(faktumId).besvar(svar.asLocalDate(), besvartAv)
+            "inntekt" -> utredningsprosess.inntekt(faktumId).besvar(svar.asDouble().årlig, besvartAv)
+            "envalg" -> utredningsprosess.envalg(faktumId).besvar(svar.asEnvalg(), besvartAv)
+            "flervalg" -> utredningsprosess.flervalg(faktumId).besvar(svar.asFlervalg(), besvartAv)
+            "tekst" -> utredningsprosess.tekst(faktumId).besvar(svar.asTekst(), besvartAv)
+            "periode" -> utredningsprosess.periode(faktumId).besvar(svar.asPeriode(), besvartAv)
+            "dokument" -> utredningsprosess.dokument(faktumId).besvar(svar.asDokument(), besvartAv)
             "generator" -> {
                 val svarene = svar as ArrayNode
-                faktagrupper.generator(faktumId).besvar(svarene.size(), besvartAv)
+                utredningsprosess.generator(faktumId).besvar(svarene.size(), besvartAv)
                 svarene.forEachIndexed { index, genererteSvar ->
                     genererteSvar.filter(harSvar()).forEach {
                         besvar(
-                            faktagrupper,
+                            utredningsprosess,
                             "${it["id"].asText()}.${index + 1}}",
                             it["svar"],
                             it["type"].asText(),
@@ -170,11 +170,11 @@ internal class FaktumSvarService(
 
     private fun harSvar() = { faktumNode: JsonNode -> faktumNode.has("svar") }
 
-    private class ProsessVersjonVisitor(faktagrupper: Faktagrupper) : SøknadprosessVisitor {
+    private class ProsessVersjonVisitor(utredningsprosess: Utredningsprosess) : SøknadprosessVisitor {
         lateinit var prosessnavn: Prosessnavn
 
         init {
-            faktagrupper.accept(this)
+            utredningsprosess.accept(this)
         }
 
         override fun preVisit(fakta: Fakta, prosessVersjon: HenvendelsesType, uuid: UUID) {

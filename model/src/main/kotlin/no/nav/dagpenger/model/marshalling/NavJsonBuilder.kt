@@ -15,14 +15,14 @@ import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.putR
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
 
-class NavJsonBuilder(faktagrupper: Faktagrupper, private val seksjonNavn: String, indeks: Int = 0) : SøknadprosessVisitor {
+class NavJsonBuilder(utredningsprosess: Utredningsprosess, private val seksjonNavn: String, indeks: Int = 0) : SøknadprosessVisitor {
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
@@ -34,8 +34,8 @@ class NavJsonBuilder(faktagrupper: Faktagrupper, private val seksjonNavn: String
     private var rootId = 0
 
     init {
-        faktagrupper.fakta.accept(this)
-        faktagrupper.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(faktagrupper.rootSubsumsjon).accept(this)
+        utredningsprosess.fakta.accept(this)
+        utredningsprosess.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(utredningsprosess.rootSubsumsjon).accept(this)
     }
     fun resultat() = root
 

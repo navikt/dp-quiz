@@ -29,7 +29,7 @@ internal class NyFaktaTest {
     fun `Start ny søknadprosess, trigget av innsending_ferdigstilt fra dp-mottak`() {
         testRapid.sendTestMessage(innsendingFerdigstiltJson)
         assertEquals(1, testRapid.inspektør.size)
-        assertNotNull(søknadPersistance.faktagrupper)
+        assertNotNull(søknadPersistance.utredningsprosess)
     }
 
     @Language("JSON")

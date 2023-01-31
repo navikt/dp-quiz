@@ -32,7 +32,7 @@ class Versjon private constructor(
     fun søknadprosess(
         person: Person,
         uuid: UUID = UUID.randomUUID()
-    ): Faktagrupper =
+    ): Utredningsprosess =
         bygger.søknadprosess(person, uuid)
 
     fun søknadprosess(fakta: Fakta) =
@@ -41,20 +41,20 @@ class Versjon private constructor(
     class Bygger(
         private val prototypeFakta: Fakta,
         private val prototypeSubsumsjon: Subsumsjon,
-        private val faktagrupper: Faktagrupper,
+        private val utredningsprosess: Utredningsprosess,
         internal val faktumNavBehov: FaktumNavBehov? = null
     ) {
         fun søknadprosess(
             person: Person,
             uuid: UUID = UUID.randomUUID()
-        ): Faktagrupper =
+        ): Utredningsprosess =
             søknadprosess(prototypeFakta.bygg(person, prototypeFakta.prosessVersjon, uuid))
 
         fun søknadprosess(
             fakta: Fakta
-        ): Faktagrupper {
+        ): Utredningsprosess {
             val subsumsjon = prototypeSubsumsjon.bygg(fakta)
-            return faktagrupper.bygg(fakta, subsumsjon)
+            return utredningsprosess.bygg(fakta, subsumsjon)
         }
 
         internal fun prosessVersjon() = prototypeFakta.prosessVersjon

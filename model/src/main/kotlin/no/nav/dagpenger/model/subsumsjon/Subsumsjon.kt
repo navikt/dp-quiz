@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 abstract class Subsumsjon protected constructor(
@@ -37,7 +37,7 @@ abstract class Subsumsjon protected constructor(
 
     open fun saksbehandlerForklaring(): String = "saksbehandlerforklaring"
 
-    abstract fun deepCopy(faktagrupper: Faktagrupper): Subsumsjon
+    abstract fun deepCopy(utredningsprosess: Utredningsprosess): Subsumsjon
 
     internal abstract fun bygg(fakta: Fakta): Subsumsjon
 

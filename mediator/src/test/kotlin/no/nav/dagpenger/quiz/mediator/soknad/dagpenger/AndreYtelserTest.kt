@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.MedSøknad
-import no.nav.dagpenger.model.seksjon.Faktagrupper
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`andre ytelser mottatt eller søkt`
@@ -193,7 +193,7 @@ internal class AndreYtelserTest {
         }
     }
 
-    private fun verifiserAnnenYtelseUtenØkonomiskGode(kodeForSpesifikkYtelse: (Faktagrupper) -> Unit) {
+    private fun verifiserAnnenYtelseUtenØkonomiskGode(kodeForSpesifikkYtelse: (Utredningsprosess) -> Unit) {
         val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             AndreYtelser.regeltre(fakta)
@@ -208,50 +208,50 @@ internal class AndreYtelserTest {
         assertEquals(true, søknadprosess.resultat())
     }
 
-    private fun besvarAlleFaktaForTjenestepensjon(faktagrupper: Faktagrupper) {
-        faktagrupper.flervalg(`hvilke andre ytelser`)
+    private fun besvarAlleFaktaForTjenestepensjon(utredningsprosess: Utredningsprosess) {
+        utredningsprosess.flervalg(`hvilke andre ytelser`)
             .besvar(Flervalg("faktum.hvilke-andre-ytelser.svar.pensjon-offentlig-tjenestepensjon"))
-        faktagrupper.tekst(`tjenestepensjon hvem utbetaler`).besvar(Tekst("dummy arbeidsgiver"))
+        utredningsprosess.tekst(`tjenestepensjon hvem utbetaler`).besvar(Tekst("dummy arbeidsgiver"))
         val nå = LocalDate.now()
-        faktagrupper.periode(`tjenestepensjon hvilken periode`).besvar(Periode(nå.minusYears(2), nå))
+        utredningsprosess.periode(`tjenestepensjon hvilken periode`).besvar(Periode(nå.minusYears(2), nå))
     }
 
-    private fun besvarAlleFaktaForGFF(faktagrupper: Faktagrupper) {
-        faktagrupper.flervalg(`hvilke andre ytelser`)
+    private fun besvarAlleFaktaForGFF(utredningsprosess: Utredningsprosess) {
+        utredningsprosess.flervalg(`hvilke andre ytelser`)
             .besvar(Flervalg("faktum.hvilke-andre-ytelser.svar.arbeidsloshet-garantikassen-for-fiskere"))
         val nå = LocalDate.now()
-        faktagrupper.periode(`arbeidsløs GFF hvilken periode`).besvar(Periode(nå.minusYears(3), nå))
+        utredningsprosess.periode(`arbeidsløs GFF hvilken periode`).besvar(Periode(nå.minusYears(3), nå))
     }
 
-    private fun besvarAlleFaktaForGarantiloggFraGFF(faktagrupper: Faktagrupper) {
-        faktagrupper.flervalg(`hvilke andre ytelser`)
+    private fun besvarAlleFaktaForGarantiloggFraGFF(utredningsprosess: Utredningsprosess) {
+        utredningsprosess.flervalg(`hvilke andre ytelser`)
             .besvar(Flervalg("faktum.hvilke-andre-ytelser.svar.garantilott-garantikassen-for-fiskere"))
         val nå = LocalDate.now()
-        faktagrupper.periode(`garantilott fra GFF hvilken periode`).besvar(Periode(nå.minusYears(4), nå))
+        utredningsprosess.periode(`garantilott fra GFF hvilken periode`).besvar(Periode(nå.minusYears(4), nå))
     }
 
-    private fun besvarAlleFaktaForEtterlønn(faktagrupper: Faktagrupper) {
-        faktagrupper.flervalg(`hvilke andre ytelser`)
+    private fun besvarAlleFaktaForEtterlønn(utredningsprosess: Utredningsprosess) {
+        utredningsprosess.flervalg(`hvilke andre ytelser`)
             .besvar(Flervalg("faktum.hvilke-andre-ytelser.svar.etterlonn-arbeidsgiver"))
-        faktagrupper.tekst(`etterlønn arbeidsgiver hvem utbetaler`).besvar(Tekst("dummy arbeidsgiver"))
+        utredningsprosess.tekst(`etterlønn arbeidsgiver hvem utbetaler`).besvar(Tekst("dummy arbeidsgiver"))
         val nå = LocalDate.now()
-        faktagrupper.periode(`etterlønn arbeidsgiver hvilken periode`).besvar(Periode(nå.minusYears(5), nå))
+        utredningsprosess.periode(`etterlønn arbeidsgiver hvilken periode`).besvar(Periode(nå.minusYears(5), nå))
     }
 
-    private fun besvarAlleFaktaForDagpengerFraAnnetEØSLand(faktagrupper: Faktagrupper) {
-        faktagrupper.flervalg(`hvilke andre ytelser`)
+    private fun besvarAlleFaktaForDagpengerFraAnnetEØSLand(utredningsprosess: Utredningsprosess) {
+        utredningsprosess.flervalg(`hvilke andre ytelser`)
             .besvar(Flervalg("faktum.hvilke-andre-ytelser.svar.dagpenger-annet-eos-land"))
-        faktagrupper.land(`dagpenger hvilket eøs land utbetaler`).besvar(Land("SWE"))
+        utredningsprosess.land(`dagpenger hvilket eøs land utbetaler`).besvar(Land("SWE"))
         val nå = LocalDate.now()
-        faktagrupper.periode(`dagpenger eøs land hvilken periode`).besvar(Periode(nå.minusYears(6), nå))
+        utredningsprosess.periode(`dagpenger eøs land hvilken periode`).besvar(Periode(nå.minusYears(6), nå))
     }
 
-    private fun besvarAlleFaktaForAnnenYtelse(faktagrupper: Faktagrupper) {
-        faktagrupper.flervalg(`hvilke andre ytelser`).besvar(Flervalg("faktum.hvilke-andre-ytelser.svar.annen-ytelse"))
-        faktagrupper.tekst(`hvilken annen ytelse`).besvar(Tekst("Annen dummy ytelse"))
-        faktagrupper.tekst(`annen ytelse hvem utebetaler`).besvar(Tekst("Dummy utbetaler"))
+    private fun besvarAlleFaktaForAnnenYtelse(utredningsprosess: Utredningsprosess) {
+        utredningsprosess.flervalg(`hvilke andre ytelser`).besvar(Flervalg("faktum.hvilke-andre-ytelser.svar.annen-ytelse"))
+        utredningsprosess.tekst(`hvilken annen ytelse`).besvar(Tekst("Annen dummy ytelse"))
+        utredningsprosess.tekst(`annen ytelse hvem utebetaler`).besvar(Tekst("Dummy utbetaler"))
         val nå = LocalDate.now()
-        faktagrupper.periode(`annen ytelse hvilken periode`).besvar(Periode(nå.minusYears(7), nå))
+        utredningsprosess.periode(`annen ytelse hvilken periode`).besvar(Periode(nå.minusYears(7), nå))
     }
 
     private fun assertErUbesvarte(vararg fakta: Faktum<*>) =

@@ -6,8 +6,8 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.seksjon.Faktagrupper
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import org.junit.jupiter.api.BeforeEach
@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
 
 class GenerertEndreTest {
 
-    private lateinit var faktagrupper: Faktagrupper
+    private lateinit var utredningsprosess: Utredningsprosess
 
     @BeforeEach
     fun setup() {
@@ -27,31 +27,31 @@ class GenerertEndreTest {
             boolsk faktum "template2" id 2,
             boolsk faktum "template3" id 3
         )
-        val prototypeFaktagrupper = Faktagrupper(
+        val prototypeUtredningsprosess = Utredningsprosess(
             prototypeFakta,
             Seksjon("seksjon14", Rolle.søker, prototypeFakta.boolsk(1), prototypeFakta.generator(4)),
             Seksjon("template23", Rolle.søker, prototypeFakta.boolsk(2), prototypeFakta.boolsk(3))
         )
 
-        faktagrupper = Versjon.Bygger(
+        utredningsprosess = Versjon.Bygger(
             prototypeFakta,
             TomSubsumsjon,
-            prototypeFaktagrupper
+            prototypeUtredningsprosess
         ).søknadprosess(testPerson)
     }
 
     @Test
     fun ` endre generert faktum `() {
-        faktagrupper.generator(4).besvar(3)
-        assertEquals(4 + 9, faktagrupper.fakta.size)
-        assertEquals(5, faktagrupper.size)
+        utredningsprosess.generator(4).besvar(3)
+        assertEquals(4 + 9, utredningsprosess.fakta.size)
+        assertEquals(5, utredningsprosess.size)
 
-        faktagrupper.generator(4).besvar(2)
-        assertEquals(4 + 6, faktagrupper.fakta.size)
-        assertEquals(4, faktagrupper.size)
+        utredningsprosess.generator(4).besvar(2)
+        assertEquals(4 + 6, utredningsprosess.fakta.size)
+        assertEquals(4, utredningsprosess.size)
 
-        faktagrupper.generator(4).besvar(0)
-        assertEquals(4, faktagrupper.fakta.size)
-        assertEquals(2, faktagrupper.size)
+        utredningsprosess.generator(4).besvar(0)
+        assertEquals(4, utredningsprosess.fakta.size)
+        assertEquals(2, utredningsprosess.size)
     }
 }
