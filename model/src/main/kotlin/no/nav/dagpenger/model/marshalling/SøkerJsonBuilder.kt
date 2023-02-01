@@ -10,7 +10,7 @@ import no.nav.dagpenger.model.faktum.Faktum.Companion.erAlleBesvart
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
@@ -58,10 +58,10 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
 
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, faktaVersjon: FaktaVersjon, uuid: UUID) {
         root.put("@event_name", "søker_oppgave")
-        root.put("versjon_id", henvendelsesType.versjon)
-        root.put("versjon_navn", henvendelsesType.prosessnavn.id)
+        root.put("versjon_id", faktaVersjon.versjon)
+        root.put("versjon_navn", faktaVersjon.henvendelsesType.id)
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("søknad_uuid", "$uuid")

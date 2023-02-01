@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
@@ -51,7 +51,7 @@ class Graftest {
         val registrertArbeidssøkerPerioder = 13
         val registrertArbeidssøkerPeriodeTom = 15
         val prototypeFakta = Fakta(
-            HenvendelsesType(Testprosess.Test, 509),
+            FaktaVersjon(Testprosess.Test, 509),
             dato faktum "Datoen du fyller 67" id bursdag67,
             dato faktum "Datoen du søker om dagpenger" id søknadsdato,
             dato faktum "Datoen du ønsker dagpenger fra" id ønsketdato,
@@ -125,7 +125,7 @@ class Graftest {
         val søknadprosess = Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
-            prototypeWebSøknad
+            prototypeWebSøknad,
         ).utredningsprosess(
             Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build())
         )
@@ -140,7 +140,7 @@ class Graftest {
         val manglerInntekt = Versjon.Bygger(
             AvslagPåMinsteinntektOppsett.prototypeFakta,
             AvslagPåMinsteinntekt.regeltre,
-            Seksjoner.utredningsprosess
+            Seksjoner.utredningsprosess,
         )
             .utredningsprosess(
                 Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build())

@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.er
@@ -17,12 +17,12 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 
-internal class MinimalSøknadsprosess(private val henvendelsesType: HenvendelsesType, private val rolle: Rolle) {
+internal class MinimalSøknadsprosess(private val faktaVersjon: FaktaVersjon, private val rolle: Rolle) {
 
     private val logger = KotlinLogging.logger { }
 
     internal val fakta = Fakta(
-        henvendelsesType,
+        faktaVersjon,
         boolsk faktum "boolean" id faktumBoolsk,
         heltall faktum "heltall" id faktumHeltall,
         tekst faktum "tekst" id faktumTekst
@@ -69,8 +69,8 @@ internal class MinimalSøknadsprosess(private val henvendelsesType: Henvendelses
         prototypeFakta = fakta,
         prototypeSubsumsjon = regeltre,
         utredningsprosess = søknadsprosess,
-        faktumNavBehov = faktumNavBehov
+        faktumNavBehov = faktumNavBehov,
     ).registrer().also {
-        logger.info { "\n\n\nREGISTRERT versjon id $henvendelsesType \n\n\n\n" }
+        logger.info { "\n\n\nREGISTRERT versjon id $faktaVersjon \n\n\n\n" }
     }
 }

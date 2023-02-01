@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
@@ -29,7 +29,7 @@ import no.nav.dagpenger.model.subsumsjon.oppfyltGodkjentAv
 import no.nav.dagpenger.model.subsumsjon.uansett
 
 private val prototypeFakta1 = Fakta(
-    HenvendelsesType(Testprosess.PrototypeSøknad, 0),
+    FaktaVersjon(Testprosess.PrototypeSøknad, 0),
     boolsk faktum "f1" id 1,
     dato faktum "f2" id 2,
     dato faktum "f3" id 3,
@@ -135,7 +135,7 @@ private val søknadprosessTestBygger =
     Versjon.Bygger(
         prototypeFakta1,
         prototypeSubsumsjon,
-        webPrototypeUtredningsprosess
+        webPrototypeUtredningsprosess,
     )
 
 internal class NyttEksempel() {

@@ -64,7 +64,7 @@ internal class AvslagPåMinsteinntektTest {
         manglerInntekt = Versjon.Bygger(
             prototypeFakta,
             regeltre,
-            utredningsprosess
+            utredningsprosess,
         )
             .utredningsprosess(
                 Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build())

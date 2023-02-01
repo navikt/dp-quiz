@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Person
@@ -148,7 +148,7 @@ interface PersonVisitor : IdentVisitor {
 }
 
 interface FaktaVisitor : PersonVisitor, FaktumVisitor {
-    fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {}
+    fun preVisit(fakta: Fakta, faktaVersjon: FaktaVersjon, uuid: UUID) {}
     fun postVisit(fakta: Fakta, uuid: UUID) {}
 }
 

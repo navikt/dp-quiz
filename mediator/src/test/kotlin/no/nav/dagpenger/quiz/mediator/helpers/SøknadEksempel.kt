@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
@@ -20,7 +20,7 @@ import no.nav.dagpenger.model.subsumsjon.alle
 
 internal object SøknadEksempel {
 
-    val prosessVersjon = HenvendelsesType(Testprosess.Test, 666)
+    val prosessVersjon = FaktaVersjon(Testprosess.Test, 666)
 
     val prototypeFakta1 = Fakta(
         prosessVersjon,
@@ -97,6 +97,6 @@ internal object SøknadEksempel {
         prototypeFakta1,
         subsumsjon,
         webPrototypeSøknad,
-        faktumNavBehov
+        faktumNavBehov,
     ).registrer()
 }

@@ -1,9 +1,10 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
@@ -17,7 +18,7 @@ internal class FaktaPersistenceFake : FaktaPersistence {
 
     override fun ny(
         identer: Identer,
-        prosessVersjon: HenvendelsesType,
+        prosessVersjon: Prosessversjon,
         uuid: UUID
     ): Utredningsprosess =
         Versjon.id(SøknadEksempel.prosessVersjon).utredningsprosess(Person(identer))
@@ -38,7 +39,7 @@ internal class FaktaPersistenceFake : FaktaPersistence {
         TODO("Not yet implemented")
     }
 
-    override fun migrer(uuid: UUID, tilVersjon: HenvendelsesType?): HenvendelsesType {
+    override fun migrer(uuid: UUID, tilVersjon: FaktaVersjon?): FaktaVersjon {
         TODO("Not yet implemented")
     }
 

@@ -494,7 +494,7 @@ internal class SøkerJsonBuilderTest {
         return Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
-            prototypeUtredningsprosess
+            prototypeUtredningsprosess,
         ).utredningsprosess(testPerson)
     }
 

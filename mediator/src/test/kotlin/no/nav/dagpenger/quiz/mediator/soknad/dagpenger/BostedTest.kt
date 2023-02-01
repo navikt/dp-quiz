@@ -1,7 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
@@ -21,7 +21,7 @@ internal class BostedTest {
 
     @Test
     fun `Bostedsregel for Norge, Svalbard og Jan Mayen`() {
-        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *Bosted.fakta())
+        val fakta = Fakta(FaktaVersjon(Prosess.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             Bosted.regeltre(fakta)
         ) {
@@ -37,7 +37,7 @@ internal class BostedTest {
 
     @Test
     fun `Bostedsregel for EØS og Sveits ikke reist tilbake `() {
-        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *Bosted.fakta())
+        val fakta = Fakta(FaktaVersjon(Prosess.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             Bosted.regeltre(fakta)
         ) {
@@ -60,7 +60,7 @@ internal class BostedTest {
     }
     @Test
     fun `Bostedsregel for EØS og Sveits og har reist tilbake til bostedslandet`() {
-        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *Bosted.fakta())
+        val fakta = Fakta(FaktaVersjon(Prosess.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             Bosted.regeltre(fakta)
         ) {
@@ -93,7 +93,7 @@ internal class BostedTest {
 
     @Test
     fun `Bostedsregel for Storbritannia`() {
-        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *Bosted.fakta())
+        val fakta = Fakta(FaktaVersjon(Prosess.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             Bosted.regeltre(fakta)
         ) {
@@ -112,7 +112,7 @@ internal class BostedTest {
 
     @Test
     fun `Bostedsregel for utenfor EØS`() {
-        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *Bosted.fakta())
+        val fakta = Fakta(FaktaVersjon(Prosess.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             Bosted.regeltre(fakta)
         ) {
@@ -125,7 +125,7 @@ internal class BostedTest {
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *Bosted.fakta())
+        val fakta = Fakta(FaktaVersjon(Prosess.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             Bosted.regeltre(fakta)
         ) {

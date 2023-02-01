@@ -1,7 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
@@ -22,11 +22,11 @@ internal class ProsessMetadataStrategi : MetadataStrategi {
             utredningsprosess.accept(this)
         }
 
-        override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
-            metadata = when (henvendelsesType.prosessnavn) {
+        override fun preVisit(fakta: Fakta, faktaVersjon: FaktaVersjon, uuid: UUID) {
+            metadata = when (faktaVersjon.henvendelsesType) {
                 Prosess.Dagpenger -> DagpengerMetadataStrategi().metadata(utredningsprosess)
                 Prosess.Innsending -> InnsendingMetadataStrategi().metadata(utredningsprosess)
-                else -> throw IllegalArgumentException("Har ikke laget skjemakodestrategi for ${henvendelsesType.prosessnavn}")
+                else -> throw IllegalArgumentException("Har ikke laget skjemakodestrategi for ${faktaVersjon.henvendelsesType}")
             }
         }
 

@@ -10,7 +10,7 @@ import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
@@ -37,10 +37,10 @@ class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
         personId = uuid
     }
 
-    private fun hentInternId(prosessVersjon: HenvendelsesType): Int {
+    private fun hentInternId(prosessVersjon: FaktaVersjon): Int {
         val query = queryOf( //language=PostgreSQL
             "SELECT id FROM v1_prosessversjon WHERE navn = :navn AND versjon_id = :versjon_id",
-            mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon)
+            mapOf("navn" to prosessVersjon.henvendelsesType.id, "versjon_id" to prosessVersjon.versjon)
         )
         return using(sessionOf(dataSource)) { session ->
             session.run(
@@ -49,8 +49,8 @@ class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
         }
     }
 
-    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
-        this.internVersjonId = hentInternId(henvendelsesType)
+    override fun preVisit(fakta: Fakta, faktaVersjon: FaktaVersjon, uuid: UUID) {
+        this.internVersjonId = hentInternId(faktaVersjon)
         this.søknadUUID = uuid
     }
 

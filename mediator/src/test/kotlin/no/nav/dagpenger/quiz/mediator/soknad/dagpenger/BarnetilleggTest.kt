@@ -1,7 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
@@ -28,7 +28,7 @@ import java.time.LocalDate
 import kotlin.test.assertTrue
 
 internal class BarnetilleggTest {
-    private val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *Barnetillegg.fakta())
+    private val fakta = Fakta(FaktaVersjon(Prosess.Dagpenger, -1), *Barnetillegg.fakta())
     private lateinit var utredningsprosess: Utredningsprosess
 
     @BeforeEach

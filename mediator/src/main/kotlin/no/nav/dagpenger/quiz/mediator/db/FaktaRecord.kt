@@ -13,14 +13,15 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.Flervalg
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Identer.Ident
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.Prosessnavn
+import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -41,7 +42,7 @@ class FaktaRecord : FaktaPersistence {
 
     override fun ny(
         identer: Identer,
-        prosessVersjon: HenvendelsesType,
+        prosessVersjon: Prosessversjon,
         uuid: UUID,
     ): Utredningsprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
@@ -64,7 +65,7 @@ class FaktaRecord : FaktaPersistence {
         }
     }
 
-    private data class Prosess(override val id: String) : Prosessnavn
+    private data class Prosess(override val id: String) : HenvendelsesType
 
     override fun hent(uuid: UUID): Utredningsprosess {
         data class SoknadRad(val personId: UUID, val navn: String, val versjonId: Int)
@@ -88,7 +89,7 @@ class FaktaRecord : FaktaPersistence {
             )
         } ?: throw IllegalArgumentException("Kan ikke hente en søknad som ikke finnes, uuid: $uuid")
 
-        return Versjon.id(HenvendelsesType(Prosess(rad.navn), rad.versjonId)).utredningsprosess(
+        return Versjon.id(FaktaVersjon(Prosess(rad.navn), rad.versjonId)).utredningsprosess(
             person = personRecord.hentPerson(rad.personId),
             faktaUUID = uuid,
         ).also { søknadprosess ->
@@ -124,7 +125,7 @@ class FaktaRecord : FaktaPersistence {
         return true
     }
 
-    override fun migrer(uuid: UUID, tilVersjon: HenvendelsesType?): HenvendelsesType {
+    override fun migrer(uuid: UUID, tilVersjon: FaktaVersjon?): FaktaVersjon {
         val gjeldendeVersjon = prosessversjon(uuid)
         val nyVersjon = tilVersjon ?: gjeldendeVersjon.siste()
 
@@ -196,17 +197,17 @@ class FaktaRecord : FaktaPersistence {
             uuid,
         ).map { it.bigDecimal("id").toBigInteger() }.asSingle
 
-    private fun settVersjon(soknadId: BigInteger, versjon: HenvendelsesType) =
+    private fun settVersjon(soknadId: BigInteger, versjon: FaktaVersjon) =
         queryOf(
             // language=PostgreSQL
             """UPDATE soknad
             |SET versjon_id = (SELECT id FROM v1_prosessversjon WHERE navn = :navn AND versjon_id = :versjonId)
             |WHERE id = :soknadId
             """.trimMargin(),
-            mapOf("navn" to versjon.prosessnavn.id, "versjonId" to versjon.versjon, "soknadId" to soknadId),
+            mapOf("navn" to versjon.henvendelsesType.id, "versjonId" to versjon.versjon, "soknadId" to soknadId),
         ).asUpdate
 
-    private fun hentFaktum(sisteVersjon: HenvendelsesType) =
+    private fun hentFaktum(sisteVersjon: FaktaVersjon) =
         queryOf(
             // language=PostgreSQL
             """
@@ -214,7 +215,7 @@ class FaktaRecord : FaktaPersistence {
             |FROM faktum, v1_prosessversjon
             |WHERE faktum.versjon_id = v1_prosessversjon.id AND v1_prosessversjon.navn=? AND v1_prosessversjon.versjon_id=?
             """.trimMargin(),
-            sisteVersjon.prosessnavn.id,
+            sisteVersjon.henvendelsesType.id,
             sisteVersjon.versjon,
         ).map {
             FaktumMigrering(
@@ -233,7 +234,7 @@ class FaktaRecord : FaktaPersistence {
                 |WHERE s.uuid = :uuid
                 """.trimMargin(),
                 mapOf("uuid" to uuid),
-            ).map { HenvendelsesType(Prosess(it.string("navn")), it.int("versjon_id")) }.asSingle,
+            ).map { FaktaVersjon(Prosess(it.string("navn")), it.int("versjon_id")) }.asSingle,
         )
     } ?: throw IllegalArgumentException("Kan ikke finne prosessversjon for en søknad som ikke finnes, uuid: $uuid")
 

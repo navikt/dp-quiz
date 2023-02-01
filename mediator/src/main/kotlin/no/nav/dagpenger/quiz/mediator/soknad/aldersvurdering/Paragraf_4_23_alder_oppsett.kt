@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.grensedato6
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.før
@@ -24,7 +24,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosess
  * Vi er pt. usikre på formen på det enda, så denne blir borte/endret
  */
 internal object Paragraf_4_23_alder_oppsett {
-    val VERSJON_ID = HenvendelsesType(Prosess.Paragraf_4_23_alder, 2)
+    val VERSJON_ID = FaktaVersjon(Prosess.Paragraf_4_23_alder, 2)
     const val virkningsdato = 1
     const val fødselsdato = 2
     const val grensedato = 3
@@ -84,7 +84,7 @@ internal object Paragraf_4_23_alder_oppsett {
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = Subsumsjoner.regeltre,
             utredningsprosess = utredningsprosess,
-            faktumNavBehov = faktumNavBehov
+            faktumNavBehov = faktumNavBehov,
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID} \n\n\n\n" }
         }

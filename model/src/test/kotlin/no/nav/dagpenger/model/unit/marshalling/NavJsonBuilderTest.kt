@@ -101,7 +101,7 @@ class NavJsonBuilderTest {
             prototypeFakta,
             prototypeSubsumsjon,
             prototypeUtredningsprosess,
-            faktumNavBehov
+            faktumNavBehov,
         ).registrer().utredningsprosess(testPerson)
 
         fakta.boolsk(1).besvar(true)

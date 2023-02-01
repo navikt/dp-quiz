@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 
 internal class TilleggsopplysningerTest {
 
-    private val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *Tilleggsopplysninger.fakta())
+    private val fakta = Fakta(FaktaVersjon(Prosess.Dagpenger, -1), *Tilleggsopplysninger.fakta())
     private lateinit var utredningsprosess: Utredningsprosess
     private lateinit var harTilleggsopplysninger: Faktum<Boolean>
     private lateinit var tilleggsopplysninger: Faktum<Tekst>
