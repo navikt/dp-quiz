@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
@@ -51,7 +51,7 @@ class Graftest {
         val registrertArbeidssøkerPerioder = 13
         val registrertArbeidssøkerPeriodeTom = 15
         val prototypeFakta = Fakta(
-            HenvendelsesType(Testprosess.Test, 509),
+            Faktaversjon(Testprosess.Test, 509),
             dato faktum "Datoen du fyller 67" id bursdag67,
             dato faktum "Datoen du søker om dagpenger" id søknadsdato,
             dato faktum "Datoen du ønsker dagpenger fra" id ønsketdato,
@@ -65,7 +65,7 @@ class Graftest {
             boolsk faktum "Manuell fordi noe" id manuell,
             boolsk faktum "Registrert arbeidssøker" id registrertArbeidssøker,
             heltall faktum "Antall arbeidsøker registeringsperioder" id registrertArbeidssøkerPerioder genererer registrertArbeidssøkerPeriodeTom,
-            dato faktum "arbeidssøker til" id registrertArbeidssøkerPeriodeTom
+            dato faktum "arbeidssøker til" id registrertArbeidssøkerPeriodeTom,
         )
         val prototypeWebSøknad =
             with(prototypeFakta) {
@@ -83,13 +83,13 @@ class Graftest {
                         inntekt(inntekt3G),
                         inntekt(inntektSiste3år),
                         inntekt(inntektSisteÅr),
-                        boolsk(registrertArbeidssøker)
+                        boolsk(registrertArbeidssøker),
                     ),
                     Seksjon(
                         "manuell",
                         Rolle.manuell,
-                        boolsk(manuell)
-                    )
+                        boolsk(manuell),
+                    ),
                 )
             }
         val prototypeSubsumsjon = with(prototypeFakta) {
@@ -102,19 +102,19 @@ class Graftest {
                     "bursdagssjekker".alle(
                         dato(bursdag67) før dato(sisteDagMedLønn) hvisOppfylt { dato(bursdag67) før dato(bursdag67) },
                         "flere sjekker".minstEnAv(
-                            dato(bursdag67) før dato(dimisjonsdato)
+                            dato(bursdag67) før dato(dimisjonsdato),
                         ) hvisOppfylt { dato(ønsketdato) før dato(ønsketdato) },
                         "enda flere sjekker ".minstEnAv(
                             inntekt(inntekt15G) minst inntekt(inntekt3G),
-                            inntekt(inntekt15G) minst inntekt(inntekt15G)
-                        )
+                            inntekt(inntekt15G) minst inntekt(inntekt15G),
+                        ),
                     ) hvisOppfylt {
                         "minst ein".minstEnAv(dato(sisteDagMedLønn) før dato(sisteDagMedLønn))
                     } hvisIkkeOppfylt {
                         "deltre".deltre {
                             inntekt(inntektSisteÅr) minst inntekt(inntekt15G) hvisIkkeOppfyltManuell (
                                 boolsk(
-                                    manuell
+                                    manuell,
                                 )
                                 )
                         }
@@ -125,9 +125,9 @@ class Graftest {
         val søknadprosess = Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
-            prototypeWebSøknad
+            prototypeWebSøknad,
         ).utredningsprosess(
-            Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build())
+            Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
         )
 
         SubsumsjonsGraf(søknadprosess).skrivTilFil("grafer/ex2.png")
@@ -140,10 +140,10 @@ class Graftest {
         val manglerInntekt = Versjon.Bygger(
             AvslagPåMinsteinntektOppsett.prototypeFakta,
             AvslagPåMinsteinntekt.regeltre,
-            Seksjoner.utredningsprosess
+            Seksjoner.utredningsprosess,
         )
             .utredningsprosess(
-                Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build())
+                Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
             )
 
         SubsumsjonsGraf(manglerInntekt).skrivTilFil("grafer/ex2.png")

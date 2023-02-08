@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
@@ -27,7 +27,7 @@ import java.util.UUID
 internal class FaktumSvarService(
     private val faktaPersistence: FaktaPersistence,
     private val resultatPersistence: ResultatPersistence,
-    rapidsConnection: RapidsConnection
+    rapidsConnection: RapidsConnection,
 ) : River.PacketListener {
     private companion object {
         private val log = KotlinLogging.logger {}
@@ -44,7 +44,7 @@ internal class FaktumSvarService(
                 message.demandValue("@event_name", "faktum_svar")
                 message.requireKey(
                     "søknad_uuid",
-                    "fakta"
+                    "fakta",
                 )
                 message.require("@opprettet", JsonNode::asLocalDateTime)
                 message.require("@id") { UUID.fromString(it.asText()) }
@@ -71,8 +71,8 @@ internal class FaktumSvarService(
             withMDC(
                 mapOf(
                     "behovId" to UUID.fromString(packet["@id"].asText()).toString(),
-                    "søknad_uuid" to søknadUuid.toString()
-                )
+                    "søknad_uuid" to søknadUuid.toString(),
+                ),
             ) {
                 log.info { "Mottok ny(e) fakta (${fakta.joinToString(",") { it["id"].asText() }}) for $søknadUuid" }
                 sikkerlogg.info { "Mottok ny(e) fakta: ${packet.toJson()}" }
@@ -133,7 +133,7 @@ internal class FaktumSvarService(
         faktumId: String,
         svar: JsonNode,
         type: String,
-        besvartAv: String?
+        besvartAv: String?,
     ) {
         if (svar.isNull) return utredningsprosess.id(faktumId).tilUbesvart()
         when (type) {
@@ -159,7 +159,7 @@ internal class FaktumSvarService(
                             "${it["id"].asText()}.${index + 1}}",
                             it["svar"],
                             it["type"].asText(),
-                            it["besvartAv"]?.asText()
+                            it["besvartAv"]?.asText(),
                         )
                     }
                 }
@@ -177,8 +177,8 @@ internal class FaktumSvarService(
             utredningsprosess.accept(this)
         }
 
-        override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
-            prosessnavn = henvendelsesType.prosessnavn
+        override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
+            prosessnavn = faktaversjon.prosessnavn
         }
     }
 }

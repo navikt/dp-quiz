@@ -1,9 +1,9 @@
 package no.nav.dagpenger.model.seksjon
 
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TypedFaktum
 import no.nav.dagpenger.model.seksjon.Seksjon.Companion.saksbehandlerSeksjoner
@@ -14,18 +14,18 @@ import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 class Utredningsprosess private constructor(
     val fakta: Fakta,
     internal val rootSubsumsjon: Subsumsjon,
-    private val seksjoner: MutableList<Seksjon>
+    private val seksjoner: MutableList<Seksjon>,
 ) : TypedFaktum by fakta, MutableList<Seksjon> by seksjoner {
     constructor(vararg seksjoner: Seksjon) : this(
-        Fakta(HenvendelsesType.prototypeversjon),
+        Fakta(Faktaversjon.prototypeversjon),
         TomSubsumsjon,
-        seksjoner.toMutableList()
+        seksjoner.toMutableList(),
     )
 
     internal constructor(fakta: Fakta, vararg seksjoner: Seksjon, rootSubsumsjon: Subsumsjon = TomSubsumsjon) : this(
         fakta,
         rootSubsumsjon,
-        seksjoner.toMutableList()
+        seksjoner.toMutableList(),
     )
 
     init {
@@ -53,8 +53,8 @@ class Utredningsprosess private constructor(
                 seksjoner.firstOrNull { nesteFakta in it } ?: throw NoSuchElementException(
                     "Fant ikke seksjon med fakta:\n ${
                     nesteFakta.map { "Id=${it.id}, navn='${it.navn}'" }
-                    }"
-                )
+                    }",
+                ),
             )
         }
 

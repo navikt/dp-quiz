@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.seksjon
 
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
@@ -9,18 +9,18 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
 
 class Versjon private constructor(
-    private val bygger: Bygger
+    private val bygger: Bygger,
 ) {
     val faktumNavBehov get() = bygger.faktumNavBehov
 
     companion object {
-        val versjoner = mutableMapOf<HenvendelsesType, Versjon>()
-        fun siste(prosessnavn: Prosessnavn): HenvendelsesType {
+        val versjoner = mutableMapOf<Faktaversjon, Versjon>()
+        fun siste(prosessnavn: Prosessnavn): Faktaversjon {
             return versjoner.keys.filter { it.prosessnavn.id == prosessnavn.id }.maxByOrNull { it.versjon }
                 ?: throw IllegalArgumentException("Det finnes ingen versjoner!")
         }
 
-        fun id(versjonId: HenvendelsesType) =
+        fun id(versjonId: Faktaversjon) =
             versjoner[versjonId] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $versjonId")
     }
 
@@ -31,7 +31,7 @@ class Versjon private constructor(
 
     fun utredningsprosess(
         person: Person,
-        faktaUUID: UUID = UUID.randomUUID()
+        faktaUUID: UUID = UUID.randomUUID(),
     ): Utredningsprosess =
         bygger.utredningsprosess(person, faktaUUID)
 
@@ -42,22 +42,22 @@ class Versjon private constructor(
         private val prototypeFakta: Fakta,
         private val prototypeSubsumsjon: Subsumsjon,
         private val utredningsprosess: Utredningsprosess,
-        internal val faktumNavBehov: FaktumNavBehov? = null
+        internal val faktumNavBehov: FaktumNavBehov? = null,
     ) {
         fun utredningsprosess(
             person: Person,
-            faktaUUID: UUID = UUID.randomUUID()
+            faktaUUID: UUID = UUID.randomUUID(),
         ): Utredningsprosess =
-            utredningsprosess(prototypeFakta.bygg(person, prototypeFakta.henvendelsesType, faktaUUID))
+            utredningsprosess(prototypeFakta.bygg(person, prototypeFakta.faktaversjon, faktaUUID))
 
         fun utredningsprosess(
-            fakta: Fakta
+            fakta: Fakta,
         ): Utredningsprosess {
             val subsumsjon = prototypeSubsumsjon.bygg(fakta)
             return utredningsprosess.bygg(fakta, subsumsjon)
         }
 
-        internal fun prosessversjon() = prototypeFakta.henvendelsesType
+        internal fun prosessversjon() = prototypeFakta.faktaversjon
         fun registrer() = Versjon(this)
     }
 }

@@ -6,19 +6,19 @@ interface Prosessnavn {
     val id: String
 }
 
-class HenvendelsesType(val prosessnavn: Prosessnavn, val versjon: Int) {
+class Faktaversjon(val prosessnavn: Prosessnavn, val versjon: Int) {
     internal companion object {
-        val prototypeversjon = HenvendelsesType(
+        val prototypeversjon = Faktaversjon(
             object : Prosessnavn {
                 override val id: String = "prototype"
             },
-            0
+            0,
         )
     }
 
     fun siste() = Versjon.siste(prosessnavn)
 
-    fun kanMigrereTil(tilVersjon: HenvendelsesType): Boolean {
+    fun kanMigrereTil(tilVersjon: Faktaversjon): Boolean {
         require(tilVersjon.prosessnavn.id == prosessnavn.id) { "Kan ikke migrere til en annen prosesstype." }
         require(tilVersjon.versjon >= versjon) { "Kan ikke migrere bakover. Gjeldende versjon er $versjon, forsøkte å migrere til ${tilVersjon.versjon}" }
 
@@ -30,7 +30,7 @@ class HenvendelsesType(val prosessnavn: Prosessnavn, val versjon: Int) {
     }
 
     override fun equals(other: Any?): Boolean =
-        other is HenvendelsesType && other.prosessnavn.id == this.prosessnavn.id && other.versjon == this.versjon
+        other is Faktaversjon && other.prosessnavn.id == this.prosessnavn.id && other.versjon == this.versjon
 
     override fun hashCode(): Int = prosessnavn.id.hashCode() * 37 + versjon.hashCode()
 

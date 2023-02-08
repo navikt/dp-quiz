@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.grensedato6
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.før
@@ -24,7 +24,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosess
  * Vi er pt. usikre på formen på det enda, så denne blir borte/endret
  */
 internal object Paragraf_4_23_alder_oppsett {
-    val VERSJON_ID = HenvendelsesType(Prosess.Paragraf_4_23_alder, 2)
+    val VERSJON_ID = Faktaversjon(Prosess.Paragraf_4_23_alder, 2)
     const val virkningsdato = 1
     const val fødselsdato = 2
     const val grensedato = 3
@@ -39,7 +39,7 @@ internal object Paragraf_4_23_alder_oppsett {
             dato faktum "søknadInnsendtDato" id søknadInnsendtDato avhengerAv innsendtSøknadId,
             maks dato "virkningsdato" av ønskerDagpengerFraDato og søknadInnsendtDato id virkningsdato,
             dato faktum "fødselsdato" id fødselsdato,
-            grensedato67år dato "grensedato" av fødselsdato id grensedato
+            grensedato67år dato "grensedato" av fødselsdato id grensedato,
         )
     private val logger = KotlinLogging.logger { }
     private val faktumNavBehov = FaktumNavBehov(
@@ -47,8 +47,8 @@ internal object Paragraf_4_23_alder_oppsett {
             ønskerDagpengerFraDato to "ØnskerDagpengerFraDato",
             søknadInnsendtDato to "Søknadstidspunkt",
             fødselsdato to "Fødselsdato",
-            innsendtSøknadId to "InnsendtSøknadsId"
-        )
+            innsendtSøknadId to "InnsendtSøknadsId",
+        ),
     )
 
     fun registrer(registrer: (prototype: Fakta) -> Unit) {
@@ -74,7 +74,7 @@ internal object Paragraf_4_23_alder_oppsett {
             søknadInnsendtDato,
             virkningsdato,
             fødselsdato,
-            grensedato
+            grensedato,
         )
     }
     internal val utredningsprosess: Utredningsprosess = Utredningsprosess(seksjon)
@@ -84,7 +84,7 @@ internal object Paragraf_4_23_alder_oppsett {
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = Subsumsjoner.regeltre,
             utredningsprosess = utredningsprosess,
-            faktumNavBehov = faktumNavBehov
+            faktumNavBehov = faktumNavBehov,
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID} \n\n\n\n" }
         }

@@ -1,9 +1,9 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Flervalg
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
@@ -41,9 +41,9 @@ internal class AndreYtelserTest {
 
     @Test
     fun `Hvis bruker ikke får noen andre ytelser`() {
-        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(Faktaversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
-            AndreYtelser.regeltre(fakta)
+            AndreYtelser.regeltre(fakta),
         ) {
             AndreYtelser.seksjon(this)
         }
@@ -145,31 +145,31 @@ internal class AndreYtelserTest {
                 søknadprosess.periode(`dagpenger eøs land hvilken periode`),
                 søknadprosess.tekst(`hvilken annen ytelse`),
                 søknadprosess.tekst(`annen ytelse hvem utebetaler`),
-                søknadprosess.periode(`annen ytelse hvilken periode`)
+                søknadprosess.periode(`annen ytelse hvilken periode`),
             )
         }
     }
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(Faktaversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
-            AndreYtelser.regeltre(fakta)
+            AndreYtelser.regeltre(fakta),
         ) {
             AndreYtelser.seksjon(this)
         }
         val faktarekkefølge = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals(
             "5001,5002,5003,5004,5014,5015,5005,5006,5007,5008,5009,5010,5011,5012,5013,5016,5017,5018,5019,5020,5021,5022,5023,5024,5025,5026,5027,5028,5029",
-            faktarekkefølge
+            faktarekkefølge,
         )
     }
 
     @Test
     fun `For et EØS-land skal det være en egen gruppe for kun EØS-land`() {
-        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(Faktaversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
-            AndreYtelser.regeltre(fakta)
+            AndreYtelser.regeltre(fakta),
         ) {
             AndreYtelser.seksjon(this)
         }
@@ -194,9 +194,9 @@ internal class AndreYtelserTest {
     }
 
     private fun verifiserAnnenYtelseUtenØkonomiskGode(kodeForSpesifikkYtelse: (Utredningsprosess) -> Unit) {
-        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(Faktaversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
-            AndreYtelser.regeltre(fakta)
+            AndreYtelser.regeltre(fakta),
         ) {
             AndreYtelser.seksjon(this)
         }

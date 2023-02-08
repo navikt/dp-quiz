@@ -2,8 +2,8 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
@@ -21,7 +21,7 @@ import kotlin.test.assertTrue
 
 internal class DinSituasjonTest {
     private val fakta = DinSituasjon.fakta()
-    private val søknad = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *fakta)
+    private val søknad = Fakta(Faktaversjon(Prosess.Dagpenger, -1), *fakta)
     private lateinit var utredningsprosess: Utredningsprosess
 
     @BeforeEach
@@ -42,11 +42,11 @@ internal class DinSituasjonTest {
         val alleFakta = DinSituasjon.databaseIder().toList()
         assertTrue(
             faktaISeksjoner.containsAll(
-                alleFakta
+                alleFakta,
             ),
             "Ikke alle faktum er ikke definert i seksjon.\nMangler seksjon for faktum id: ${
             alleFakta.toSet().minus(faktaISeksjoner.toSet())
-            }"
+            }",
         )
     }
 
@@ -68,7 +68,7 @@ internal class DinSituasjonTest {
         assertErUbesvarte(
             utredningsprosess.tekst(DinSituasjon.`gjenopptak årsak til stans av dagpenger`),
             utredningsprosess.dato(DinSituasjon.`gjenopptak søknadsdato`),
-            utredningsprosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
+            utredningsprosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`),
         )
     }
 
@@ -110,7 +110,7 @@ internal class DinSituasjonTest {
             utredningsprosess.dato(DinSituasjon.`gjenopptak søknadsdato`),
             utredningsprosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`),
             utredningsprosess.boolsk(DinSituasjon.`gjenopptak ønsker ny beregning av dagpenger`),
-            utredningsprosess.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`)
+            utredningsprosess.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`),
         )
     }
 
@@ -129,7 +129,7 @@ internal class DinSituasjonTest {
 
         assertErUbesvarte(
             utredningsprosess.dato(DinSituasjon.`dagpenger søknadsdato`),
-            utredningsprosess.envalg(DinSituasjon.`type arbeidstid`)
+            utredningsprosess.envalg(DinSituasjon.`type arbeidstid`),
         )
     }
 
@@ -160,7 +160,7 @@ internal class DinSituasjonTest {
             utredningsprosess.boolsk("${DinSituasjon.`arbeidsforhold kjent antall timer jobbet`}.1"),
             utredningsprosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer jobbet`}.1"),
             utredningsprosess.boolsk("${DinSituasjon.`arbeidsforhold har tilleggsopplysninger`}.1"),
-            utredningsprosess.tekst("${DinSituasjon.`arbeidsforhold tilleggsopplysninger`}.1")
+            utredningsprosess.tekst("${DinSituasjon.`arbeidsforhold tilleggsopplysninger`}.1"),
         )
     }
 
@@ -184,7 +184,7 @@ internal class DinSituasjonTest {
         assertErUbesvarte(
             utredningsprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før mistet jobb`}.1"),
             utredningsprosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1"),
-            utredningsprosess.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til avskjediget`}.1")
+            utredningsprosess.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til avskjediget`}.1"),
         )
     }
 
@@ -216,7 +216,7 @@ internal class DinSituasjonTest {
             utredningsprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før mistet jobb`}.1"),
             utredningsprosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1"),
             utredningsprosess.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til sagt opp av arbeidsgiver`}.1"),
-            utredningsprosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
+            utredningsprosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1"),
         )
     }
 
@@ -250,7 +250,7 @@ internal class DinSituasjonTest {
             .besvar(Envalg("faktum.arbeidsforhold.har-sokt-om-lonnsgarantimidler.svar.ja"))
         utredningsprosess.envalg("${DinSituasjon.`arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`}.1")
             .besvar(
-                Envalg("faktum.arbeidsforhold.dekker-lonnsgarantiordningen-lonnskravet-ditt.svar.ja")
+                Envalg("faktum.arbeidsforhold.dekker-lonnsgarantiordningen-lonnskravet-ditt.svar.ja"),
             )
         utredningsprosess.boolsk("${DinSituasjon.`arbeidsforhold utbetalt lønn etter konkurs`}.1").besvar(true)
         utredningsprosess.dato("${DinSituasjon.`arbeidsforhold siste dag utbetalt for konkurs`}.1").besvar(1.januar)
@@ -274,7 +274,7 @@ internal class DinSituasjonTest {
             utredningsprosess.envalg("${DinSituasjon.`arbeidsforhold har søkt om lønnsgarantimidler`}.1"),
             utredningsprosess.envalg("${DinSituasjon.`arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`}.1"),
             utredningsprosess.boolsk("${DinSituasjon.`arbeidsforhold utbetalt lønn etter konkurs`}.1"),
-            utredningsprosess.dato("${DinSituasjon.`arbeidsforhold siste dag utbetalt for konkurs`}.1")
+            utredningsprosess.dato("${DinSituasjon.`arbeidsforhold siste dag utbetalt for konkurs`}.1"),
         )
     }
 
@@ -322,7 +322,7 @@ internal class DinSituasjonTest {
             utredningsprosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1"),
             utredningsprosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om forlengelse eller annen stilling`}.1"),
             utredningsprosess.envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1"),
-            utredningsprosess.tekst("${DinSituasjon.`arbeidsforhold årsak til ikke akseptert tilbud`}.1")
+            utredningsprosess.tekst("${DinSituasjon.`arbeidsforhold årsak til ikke akseptert tilbud`}.1"),
         )
     }
 
@@ -347,7 +347,7 @@ internal class DinSituasjonTest {
         assertErUbesvarte(
             utredningsprosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1"),
             utredningsprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før du sa opp`}.1"),
-            utredningsprosess.tekst("${DinSituasjon.`arbeidsforhold årsak til du sa opp`}.1")
+            utredningsprosess.tekst("${DinSituasjon.`arbeidsforhold årsak til du sa opp`}.1"),
         )
     }
 
@@ -379,7 +379,7 @@ internal class DinSituasjonTest {
             utredningsprosess.dato("${DinSituasjon.`arbeidsforhold arbeidstid redusert fra dato`}.1"),
             utredningsprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før redusert arbeidstid`}.1"),
             utredningsprosess.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til redusert arbeidstid`}.1"),
-            utredningsprosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
+            utredningsprosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1"),
         )
     }
 
@@ -419,7 +419,7 @@ internal class DinSituasjonTest {
             utredningsprosess.periode("${DinSituasjon.`arbeidsforhold permittert periode`}.1"),
             utredningsprosess.heltall("${DinSituasjon.`arbeidsforhold permittert prosent`}.1"),
             utredningsprosess.boolsk("${DinSituasjon.`arbeidsforhold vet du lønnsplikt periode`}.1"),
-            utredningsprosess.periode("${DinSituasjon.`arbeidsforhold når var lønnsplikt periode`}.1")
+            utredningsprosess.periode("${DinSituasjon.`arbeidsforhold når var lønnsplikt periode`}.1"),
         )
     }
 
@@ -459,9 +459,9 @@ internal class DinSituasjonTest {
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *DinSituasjon.fakta())
+        val fakta = Fakta(Faktaversjon(Prosess.Dagpenger, -1), *DinSituasjon.fakta())
         val søknadprosess = fakta.testSøknadprosess(
-            DinSituasjon.regeltre(fakta)
+            DinSituasjon.regeltre(fakta),
         ) {
             DinSituasjon.seksjon(this)
         }

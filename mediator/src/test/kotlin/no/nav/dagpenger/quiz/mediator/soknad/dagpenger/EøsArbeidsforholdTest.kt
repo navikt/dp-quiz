@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
@@ -26,13 +26,13 @@ import java.time.LocalDate
 internal class EøsArbeidsforholdTest {
     private val fakta = EøsArbeidsforhold.fakta() + DinSituasjon.fakta()
 
-    private val søknad = Fakta(HenvendelsesType(Prosess.Dagpenger, versjon = -1), *fakta)
+    private val søknad = Fakta(Faktaversjon(Prosess.Dagpenger, versjon = -1), *fakta)
     private lateinit var utredningsprosess: Utredningsprosess
 
     @BeforeEach
     fun setup() {
         utredningsprosess = søknad.testSøknadprosess(
-            EøsArbeidsforhold.regeltre(søknad)
+            EøsArbeidsforhold.regeltre(søknad),
         ) {
             EøsArbeidsforhold.seksjon(søknad)
         }
@@ -69,8 +69,8 @@ internal class EøsArbeidsforholdTest {
         utredningsprosess.periode("$`eøs arbeidsforhold varighet`.1").besvar(
             Periode(
                 fom = LocalDate.now().minusDays(50),
-                tom = LocalDate.now()
-            )
+                tom = LocalDate.now(),
+            ),
         )
 
         assertEquals(null, utredningsprosess.resultat())
@@ -81,8 +81,8 @@ internal class EøsArbeidsforholdTest {
         utredningsprosess.periode("$`eøs arbeidsforhold varighet`.2").besvar(
             Periode(
                 fom = LocalDate.now().minusDays(50),
-                tom = LocalDate.now()
-            )
+                tom = LocalDate.now(),
+            ),
         )
         assertEquals(true, utredningsprosess.resultat())
     }

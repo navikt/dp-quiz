@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 internal class AvslagPåMinsteinntektService(
     private val faktaPersistence: FaktaPersistence,
     rapidsConnection: RapidsConnection,
-    private val prosessVersjon: HenvendelsesType = Versjon.siste(Prosess.AvslagPåMinsteinntekt)
+    private val prosessVersjon: Faktaversjon = Versjon.siste(Prosess.AvslagPåMinsteinntekt),
 ) : River.PacketListener {
 
     private companion object {
@@ -59,16 +59,16 @@ internal class AvslagPåMinsteinntektService(
                     søknadprosess.dokument(arenaFagsakId).besvar(
                         Dokument(
                             lastOppTidsstempel = LocalDateTime.now(),
-                            urn = "urn:fagsakid:${fagsakIdNode.asText()}"
-                        )
+                            urn = "urn:fagsakid:${fagsakIdNode.asText()}",
+                        ),
                     )
                 }
                 // Litt stygt, men så lenge vi leser fra innsendt søknad, så må vi lagre id-en for å hente ut data fra søknaden.
                 søknadprosess.dokument(innsendtSøknadsId).besvar(
                     Dokument(
                         lastOppTidsstempel = LocalDateTime.now(),
-                        urn = "urn:soknadid:$søknadsId"
-                    )
+                        urn = "urn:soknadid:$søknadsId",
+                    ),
                 )
 
                 faktaPersistence.lagre(søknadprosess.fakta)

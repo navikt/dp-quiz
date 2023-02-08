@@ -13,7 +13,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -21,7 +21,7 @@ import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 
 internal object SøknadEksempel2 {
-    val prosessVersjon = HenvendelsesType(Testprosess.Test, 889)
+    val prosessVersjon = Faktaversjon(Testprosess.Test, 889)
     internal val prototypeFakta by lazy {
         Fakta(
             prosessVersjon,
@@ -53,34 +53,34 @@ internal object SøknadEksempel2 {
             land faktum "f25" id 25,
             heltall faktum "f26" id 26,
             desimaltall faktum "f27" id 27,
-            envalg faktum "f28" med "valg1" med "valg2" id 28
+            envalg faktum "f28" med "valg1" med "valg2" id 28,
         )
     }
     private val webPrototypeSøknad = Utredningsprosess(
         Seksjon(
             "seksjon",
             Rolle.søker,
-            *(prototypeFakta.map { it }.toTypedArray())
-        )
+            *(prototypeFakta.map { it }.toTypedArray()),
+        ),
     )
     private val mobilePrototypeSøknad = Utredningsprosess(
         Seksjon(
             "seksjon",
             Rolle.søker,
-            *(prototypeFakta.map { it }.toTypedArray())
+            *(prototypeFakta.map { it }.toTypedArray()),
         ),
         Seksjon(
             "template seksjon",
             Rolle.søker,
             prototypeFakta.heltall(16),
-            prototypeFakta.boolsk(17)
-        )
+            prototypeFakta.boolsk(17),
+        ),
     )
     val v2 by lazy {
         Versjon.Bygger(
             prototypeFakta,
             prototypeFakta boolsk 1 er true,
-            webPrototypeSøknad
+            webPrototypeSøknad,
         ).registrer()
     }
 }

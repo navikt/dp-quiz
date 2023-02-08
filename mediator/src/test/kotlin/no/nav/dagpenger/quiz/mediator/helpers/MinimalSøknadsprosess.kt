@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.er
@@ -17,15 +17,15 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 
-internal class MinimalSøknadsprosess(private val henvendelsesType: HenvendelsesType, private val rolle: Rolle) {
+internal class MinimalSøknadsprosess(private val faktaversjon: Faktaversjon, private val rolle: Rolle) {
 
     private val logger = KotlinLogging.logger { }
 
     internal val fakta = Fakta(
-        henvendelsesType,
+        faktaversjon,
         boolsk faktum "boolean" id faktumBoolsk,
         heltall faktum "heltall" id faktumHeltall,
-        tekst faktum "tekst" id faktumTekst
+        tekst faktum "tekst" id faktumTekst,
     )
 
     val regeltre: Subsumsjon =
@@ -33,7 +33,7 @@ internal class MinimalSøknadsprosess(private val henvendelsesType: Henvendelses
             "alle".alle(
                 boolsk(faktumBoolsk) er true,
                 heltall(faktumHeltall) minst (0),
-                heltall(faktumTekst).utfylt()
+                heltall(faktumTekst).utfylt(),
             )
         }
 
@@ -42,7 +42,7 @@ internal class MinimalSøknadsprosess(private val henvendelsesType: Henvendelses
         rolle,
         fakta.boolsk(faktumBoolsk),
         fakta.heltall(faktumHeltall),
-        fakta.tekst(faktumTekst)
+        fakta.tekst(faktumTekst),
     )
 
     companion object {
@@ -62,15 +62,15 @@ internal class MinimalSøknadsprosess(private val henvendelsesType: Henvendelses
             faktumBoolsk to "faktumBoolsk",
             faktumHeltall to "faktumHeltall",
             faktumTekst to "faktumTekst",
-        )
+        ),
     )
 
     private val versjon = Versjon.Bygger(
         prototypeFakta = fakta,
         prototypeSubsumsjon = regeltre,
         utredningsprosess = søknadsprosess,
-        faktumNavBehov = faktumNavBehov
+        faktumNavBehov = faktumNavBehov,
     ).registrer().also {
-        logger.info { "\n\n\nREGISTRERT versjon id $henvendelsesType \n\n\n\n" }
+        logger.info { "\n\n\nREGISTRERT versjon id $faktaversjon \n\n\n\n" }
     }
 }

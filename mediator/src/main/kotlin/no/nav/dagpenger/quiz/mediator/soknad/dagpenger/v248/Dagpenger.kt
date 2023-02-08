@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger.v248
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -20,7 +20,7 @@ internal object Dagpenger {
      *
      * Dette for at innsendte søknader fortsatt skal kunne lastes, uten å bli migrert fram.
      */
-    val VERSJON_ID = HenvendelsesType(Prosess.Dagpenger, 248)
+    val VERSJON_ID = Faktaversjon(Prosess.Dagpenger, 248)
 
     fun registrer(registrer: (prototype: Fakta) -> Unit) {
         registrer(prototypeFakta)
@@ -36,14 +36,14 @@ internal object Dagpenger {
         Utdanning,
         Barnetillegg,
         ReellArbeidssoker,
-        Tilleggsopplysninger
+        Tilleggsopplysninger,
     )
     private val alleFakta = flatMapAlleFakta()
     private val alleSeksjoner = flatMapAlleSeksjoner()
     private val prototypeFakta: Fakta
         get() = Fakta(
             VERSJON_ID,
-            *alleFakta
+            *alleFakta,
         )
     private val utredningsprosess = Utredningsprosess(*alleSeksjoner)
 
@@ -74,8 +74,8 @@ internal object Dagpenger {
     private val faktumNavBehov =
         FaktumNavBehov(
             mapOf(
-                Barnetillegg.`barn liste register` to "Barn"
-            )
+                Barnetillegg.`barn liste register` to "Barn",
+            ),
         )
 
     init {
@@ -83,7 +83,7 @@ internal object Dagpenger {
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = regeltre,
             utredningsprosess = utredningsprosess,
-            faktumNavBehov = faktumNavBehov
+            faktumNavBehov = faktumNavBehov,
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
         }

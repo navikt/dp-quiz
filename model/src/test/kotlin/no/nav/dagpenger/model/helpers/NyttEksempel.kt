@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
@@ -29,7 +29,7 @@ import no.nav.dagpenger.model.subsumsjon.oppfyltGodkjentAv
 import no.nav.dagpenger.model.subsumsjon.uansett
 
 private val prototypeFakta1 = Fakta(
-    HenvendelsesType(Testprosess.PrototypeSøknad, 0),
+    Faktaversjon(Testprosess.PrototypeSøknad, 0),
     boolsk faktum "f1" id 1,
     dato faktum "f2" id 2,
     dato faktum "f3" id 3,
@@ -49,7 +49,7 @@ private val prototypeFakta1 = Fakta(
     boolsk faktum "f17" id 17,
     boolsk faktum "f18" id 18,
     boolsk faktum "f19" id 19 avhengerAv 2 og 13,
-    maks dato "345" av 3 og 4 og 5 id 345
+    maks dato "345" av 3 og 4 og 5 id 345,
 )
 private val p1Boolean = prototypeFakta1 boolsk 1
 private val p2Dato = prototypeFakta1 dato 2
@@ -74,14 +74,14 @@ private val p19Boolean = prototypeFakta1 boolsk 19
 private val datosjekk = "datosjekk".alle(
     p1Boolean er true,
     p2Dato etter p_3_4_5Dato,
-    p3Dato før p4Dato
+    p3Dato før p4Dato,
 )
 private val dokumentOpplastning = "dokumentopplastning" deltre {
     p10Boolean er true hvisIkkeOppfylt { p12Boolean dokumenteresAv p11Dokument }
 }
 private val inntektValidering = "inntektvalidering".minstEnAv(
     p6Inntekt minst p8Inntekt,
-    p7Inntekt minst p9Inntekt
+    p7Inntekt minst p9Inntekt,
 )
 private val alderSjekk = "aldersjekk" deltre {
     p16Int under 18 hvisOppfylt { p17Boolean er true }
@@ -120,7 +120,7 @@ private val webPrototypeUtredningsprosess: Utredningsprosess =
         prototypeSeksjon6,
         prototypeSeksjon7,
         prototypeSeksjon8,
-        prototypeSeksjon9
+        prototypeSeksjon9,
     )
 internal lateinit var seksjon1: Seksjon
 internal lateinit var seksjon2: Seksjon
@@ -135,7 +135,7 @@ private val søknadprosessTestBygger =
     Versjon.Bygger(
         prototypeFakta1,
         prototypeSubsumsjon,
-        webPrototypeUtredningsprosess
+        webPrototypeUtredningsprosess,
     )
 
 internal class NyttEksempel() {

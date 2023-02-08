@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Faktum.Companion.erAlleBesvart
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
@@ -58,10 +58,10 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
 
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
         root.put("@event_name", "søker_oppgave")
-        root.put("versjon_id", henvendelsesType.versjon)
-        root.put("versjon_navn", henvendelsesType.prosessnavn.id)
+        root.put("versjon_id", faktaversjon.versjon)
+        root.put("versjon_navn", faktaversjon.prosessnavn.id)
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("søknad_uuid", "$uuid")
@@ -105,8 +105,8 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
                     faktum,
                     generatorFaktumFakta,
                     avhengigeFaktaErLåst,
-                    sannsynliggjøringsFaktaListe
-                ).root
+                    sannsynliggjøringsFaktaListe,
+                ).root,
             )
         }
 
@@ -128,7 +128,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R,
-        genererteFaktum: Set<Faktum<*>>
+        genererteFaktum: Set<Faktum<*>>,
     ) {
         if (!::gjeldendeFakta.isInitialized) return
         generatorer.add(faktum)
@@ -137,7 +137,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
 
     override fun <R : Comparable<R>> postVisitAvhengerAvFakta(
         faktum: Faktum<R>,
-        avhengerAvFakta: MutableSet<Faktum<*>>
+        avhengerAvFakta: MutableSet<Faktum<*>>,
     ) {
         if (!::gjeldendeFakta.isInitialized) return
         if (!gjeldendeFakta.contains(faktum)) return
@@ -154,7 +154,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
         override fun postVisit(
             subsumsjon: SannsynliggjøringsSubsumsjon,
             sannsynliggjøringsFakta: GrunnleggendeFaktum<*>,
-            lokaltResultat: Boolean?
+            lokaltResultat: Boolean?,
         ) {
             if (lokaltResultat != true) return
             fakta.add(sannsynliggjøringsFakta)
@@ -170,7 +170,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
         private val besvarteOgNesteGeneratorFakta: Set<Faktum<*>> = emptySet(),
         // TODO: Erstatte dette med noe decoratorish?
         private val readOnlyStrategy: ReadOnlyStrategy = skalIkkeBesvaresAvSøker,
-        private val sannsynliggjøringsFaktaListe: Set<Faktum<*>> = emptySet()
+        private val sannsynliggjøringsFaktaListe: Set<Faktum<*>> = emptySet(),
     ) : FaktumVisitor {
         val root: ObjectNode = mapper.createObjectNode()
 
@@ -185,7 +185,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
             avhengerAvFakta: Set<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>,
-            gyldigeValg: GyldigeValg?
+            gyldigeValg: GyldigeValg?,
         ) {
             this.root.lagFaktumNode<R>(id, clazz.simpleName.lowercase(), faktum.navn, roller, null, gyldigeValg)
         }
@@ -197,7 +197,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
             avhengerAvFakta: Set<Faktum<*>>,
             templates: List<TemplateFaktum<*>>,
             roller: Set<Rolle>,
-            clazz: Class<R>
+            clazz: Class<R>,
         ) {
             val jsonTemplates = mapper.createArrayNode()
             templates.forEach { template ->
@@ -216,7 +216,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
             roller: Set<Rolle>,
             clazz: Class<R>,
             svar: R,
-            genererteFaktum: Set<Faktum<*>>
+            genererteFaktum: Set<Faktum<*>>,
         ) {
             val jsonTemplates = templates.fold(mapper.createArrayNode()) { acc, template ->
                 acc.add(SøknadFaktumVisitor(template).root)
@@ -238,10 +238,10 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
                                 SøknadFaktumVisitor(
                                     faktum,
                                     readOnlyStrategy = readOnlyStrategy,
-                                    sannsynliggjøringsFaktaListe = sannsynliggjøringsFaktaListe
-                                ).root
+                                    sannsynliggjøringsFaktaListe = sannsynliggjøringsFaktaListe,
+                                ).root,
                             )
-                        } ?: arrayNode
+                        } ?: arrayNode,
                     )
                 }
             }
@@ -262,7 +262,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
             svar: R,
             besvartAv: String?,
             gyldigeValg: GyldigeValg?,
-            landGrupper: LandGrupper?
+            landGrupper: LandGrupper?,
         ) {
             skrivFaktum(
                 gyldigeValg = gyldigeValg,
@@ -273,7 +273,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
                 svar = svar,
                 besvartAv = besvartAv,
                 landGrupper = landGrupper,
-                avhengigeFakta = avhengigeFakta
+                avhengigeFakta = avhengigeFakta,
             )
         }
 
@@ -287,7 +287,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
             roller: Set<Rolle>,
             clazz: Class<R>,
             gyldigeValg: GyldigeValg?,
-            landGrupper: LandGrupper?
+            landGrupper: LandGrupper?,
         ) {
             skrivFaktum(
                 gyldigeValg = gyldigeValg,
@@ -296,7 +296,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
                 id = id,
                 roller = roller,
                 landGrupper = landGrupper,
-                avhengigeFakta = avhengigeFakta
+                avhengigeFakta = avhengigeFakta,
             )
         }
 
@@ -309,7 +309,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
             svar: R? = null,
             besvartAv: String? = null,
             landGrupper: LandGrupper?,
-            avhengigeFakta: Set<Faktum<*>>
+            avhengigeFakta: Set<Faktum<*>>,
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
             if (clazz.erBoolean()) {
@@ -323,7 +323,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
                 null,
                 overstyrbareGyldigeValg,
                 svar,
-                besvartAv
+                besvartAv,
             )
             if (clazz.erLand()) {
                 this.root.leggTilGyldigeLand()
@@ -341,7 +341,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
                                 when (it.erBesvart()) {
                                     true -> it.svar().verdi
                                     false -> "Ubesvart"
-                                }
+                                },
                             )
                         }
                     }

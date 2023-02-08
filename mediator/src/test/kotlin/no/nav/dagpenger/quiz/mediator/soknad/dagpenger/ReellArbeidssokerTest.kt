@@ -1,9 +1,9 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Flervalg
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
@@ -29,7 +29,7 @@ internal class ReellArbeidssokerTest {
 
     @BeforeEach
     fun setup() {
-        fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *ReellArbeidssoker.fakta())
+        fakta = Fakta(Faktaversjon(Prosess.Dagpenger, -1), *ReellArbeidssoker.fakta())
         utredningsprosess = fakta.testSøknadprosess(ReellArbeidssoker.regeltre(fakta)) {
             ReellArbeidssoker.seksjon(this)
         }
@@ -48,7 +48,7 @@ internal class ReellArbeidssokerTest {
         assertEquals(null, utredningsprosess.resultat())
 
         utredningsprosess.flervalg(`årsak til kun deltid`).besvar(
-            Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-baby", "faktum.kun-deltid-aarsak.svar.annen-situasjon")
+            Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-baby", "faktum.kun-deltid-aarsak.svar.annen-situasjon"),
         )
         assertEquals(null, utredningsprosess.resultat())
 
@@ -62,7 +62,7 @@ internal class ReellArbeidssokerTest {
         assertEquals(null, utredningsprosess.resultat())
 
         utredningsprosess.flervalg(`årsak kan ikke jobbe i hele Norge`).besvar(
-            Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse", "faktum.ikke-jobbe-hele-norge.svar.annen-situasjon")
+            Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse", "faktum.ikke-jobbe-hele-norge.svar.annen-situasjon"),
         )
         assertEquals(null, utredningsprosess.resultat())
 
@@ -84,7 +84,7 @@ internal class ReellArbeidssokerTest {
             utredningsprosess.flervalg(`årsak kan ikke jobbe i hele Norge`),
             utredningsprosess.tekst(`kort om hvorfor ikke jobbe hele norge`),
             utredningsprosess.boolsk(`kan ta alle typer arbeid`),
-            utredningsprosess.boolsk(`kan bytte yrke eller gå ned i lønn`)
+            utredningsprosess.boolsk(`kan bytte yrke eller gå ned i lønn`),
         )
     }
 
@@ -106,7 +106,7 @@ internal class ReellArbeidssokerTest {
             utredningsprosess.boolsk(`kan jobbe heltid`),
             utredningsprosess.boolsk(`kan du jobbe i hele Norge`),
             utredningsprosess.boolsk(`kan ta alle typer arbeid`),
-            utredningsprosess.boolsk(`kan bytte yrke eller gå ned i lønn`)
+            utredningsprosess.boolsk(`kan bytte yrke eller gå ned i lønn`),
         )
     }
 
@@ -118,7 +118,7 @@ internal class ReellArbeidssokerTest {
             utredningsprosess.boolsk(`kan jobbe heltid`),
             utredningsprosess.flervalg(`årsak til kun deltid`),
             utredningsprosess.tekst(`skriv kort om situasjonen din`),
-            utredningsprosess.desimaltall(`antall timer deltid du kan jobbe`)
+            utredningsprosess.desimaltall(`antall timer deltid du kan jobbe`),
         )
     }
 
@@ -130,14 +130,14 @@ internal class ReellArbeidssokerTest {
         assertAvhengigeFaktaInvalideres(
             utredningsprosess.flervalg(`årsak til kun deltid`),
             utredningsprosess.tekst(`skriv kort om situasjonen din`),
-            utredningsprosess.desimaltall(`antall timer deltid du kan jobbe`)
+            utredningsprosess.desimaltall(`antall timer deltid du kan jobbe`),
         )
 
         `Besvar alle fakta hvorfor deltid`()
         utredningsprosess.flervalg(`årsak til kun deltid`).besvar(Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon"))
 
         assertAvhengigeFaktaInvalideres(
-            utredningsprosess.tekst(`skriv kort om situasjonen din`)
+            utredningsprosess.tekst(`skriv kort om situasjonen din`),
         )
 
         `Besvar alle fakta hvorfor deltid`()
@@ -151,7 +151,7 @@ internal class ReellArbeidssokerTest {
         assertFaktaErBesvart(
             utredningsprosess.boolsk(`kan du jobbe i hele Norge`),
             utredningsprosess.flervalg(`årsak kan ikke jobbe i hele Norge`),
-            utredningsprosess.tekst(`kort om hvorfor ikke jobbe hele norge`)
+            utredningsprosess.tekst(`kort om hvorfor ikke jobbe hele norge`),
         )
     }
 
@@ -163,17 +163,17 @@ internal class ReellArbeidssokerTest {
 
         assertAvhengigeFaktaInvalideres(
             utredningsprosess.flervalg(`årsak kan ikke jobbe i hele Norge`),
-            utredningsprosess.tekst(`kort om hvorfor ikke jobbe hele norge`)
+            utredningsprosess.tekst(`kort om hvorfor ikke jobbe hele norge`),
         )
 
         `Besvar alle fakta hvorfor ikke jobbe i hele Norge`()
 
         utredningsprosess.flervalg(`årsak kan ikke jobbe i hele Norge`).besvar(
-            Flervalg("faktum.ikke-jobbe-hele-norge.svar.har-fylt-60")
+            Flervalg("faktum.ikke-jobbe-hele-norge.svar.har-fylt-60"),
         )
 
         assertAvhengigeFaktaInvalideres(
-            utredningsprosess.tekst(`kort om hvorfor ikke jobbe hele norge`)
+            utredningsprosess.tekst(`kort om hvorfor ikke jobbe hele norge`),
         )
     }
 
@@ -192,7 +192,7 @@ internal class ReellArbeidssokerTest {
     private fun `Besvar alle fakta hvorfor deltid`() {
         utredningsprosess.boolsk(`kan jobbe heltid`).besvar(false)
         utredningsprosess.flervalg(`årsak til kun deltid`).besvar(
-            Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon")
+            Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon"),
         )
         utredningsprosess.tekst(`skriv kort om situasjonen din`).besvar(Tekst("Jeg er omringet av maur"))
         utredningsprosess.desimaltall(`antall timer deltid du kan jobbe`).besvar(20.5)
@@ -202,7 +202,7 @@ internal class ReellArbeidssokerTest {
         `Besvar alle fakta hvorfor deltid`()
         utredningsprosess.boolsk(`kan du jobbe i hele Norge`).besvar(false)
         utredningsprosess.flervalg(`årsak kan ikke jobbe i hele Norge`).besvar(
-            Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse", "faktum.ikke-jobbe-hele-norge.svar.annen-situasjon")
+            Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse", "faktum.ikke-jobbe-hele-norge.svar.annen-situasjon"),
         )
         utredningsprosess.tekst(`kort om hvorfor ikke jobbe hele norge`).besvar(Tekst("Jeg er redd for hai"))
     }

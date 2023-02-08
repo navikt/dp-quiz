@@ -4,9 +4,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.før
@@ -32,7 +32,7 @@ internal var virkningstidspunkt: Faktum<LocalDate>
 internal var inntekt3G: GrunnleggendeFaktum<Inntekt>
 internal var inntekt15G: GrunnleggendeFaktum<Inntekt>
 private val prototypeFakta = Fakta(
-    HenvendelsesType(Testprosess.Test, 13),
+    Faktaversjon(Testprosess.Test, 13),
     dato faktum "Datoen du fyller 67" id 1,
     dato faktum "Datoen du søker om dagpenger" id 2,
     dato faktum "Datoen du ønsker dagpenger fra" id 3,
@@ -42,7 +42,7 @@ private val prototypeFakta = Fakta(
     dato faktum "Dimisjonsdato" id 7,
     maks dato "Hvilken dato vedtaket skal gjelde fra" av 2 og 3 og 4 id 8,
     inntekt faktum "3G" id 9,
-    inntekt faktum "1.5G" id 10
+    inntekt faktum "1.5G" id 10,
 ).also { søknad ->
     bursdag67 = søknad.dato(1) as GrunnleggendeFaktum<LocalDate>
     søknadsdato = søknad.dato(2) as GrunnleggendeFaktum<LocalDate>
@@ -61,25 +61,25 @@ private val prototypeSubsumsjon = "inngangsvilkår".alle(
     "under67".alle(
         søknadsdato før bursdag67,
         ønsketdato før bursdag67,
-        sisteDagMedLønn før bursdag67
+        sisteDagMedLønn før bursdag67,
     ),
     "virkningstidspunkt er godkjent".alle(
         ønsketdato ikkeFør sisteDagMedLønn,
         søknadsdato ikkeFør sisteDagMedLønn,
-    )
+    ),
 ) hvisOppfylt {
     "oppfyller krav til minsteinntekt".minstEnAv(
         inntektSiste3år minst inntekt3G,
         inntektSisteÅr minst inntekt15G,
-        dimisjonsdato før virkningstidspunkt
+        dimisjonsdato før virkningstidspunkt,
     ) hvisIkkeOppfylt {
         "oppfyller ikke kravet til minsteinntekt".alle(
-            ønsketdato ikkeFør sisteDagMedLønn
+            ønsketdato ikkeFør sisteDagMedLønn,
         )
     }
 } hvisIkkeOppfylt {
     "oppfyller ikke inngangsvilkår".alle(
-        ønsketdato ikkeFør sisteDagMedLønn
+        ønsketdato ikkeFør sisteDagMedLønn,
     )
 }
 private val prototypeWebSøknad = Utredningsprosess(
@@ -92,7 +92,7 @@ private val prototypeWebSøknad = Utredningsprosess(
         sisteDagMedLønn,
         sisteDagMedLønn,
         dimisjonsdato,
-        virkningstidspunkt
+        virkningstidspunkt,
     ),
     Seksjon(
         "seksjon2",
@@ -100,13 +100,13 @@ private val prototypeWebSøknad = Utredningsprosess(
         inntekt15G,
         inntekt3G,
         inntektSiste3år,
-        inntektSisteÅr
-    )
+        inntektSisteÅr,
+    ),
 )
 private val søknadprosessTestBygger = Versjon.Bygger(
     prototypeFakta,
     prototypeSubsumsjon,
-    prototypeWebSøknad
+    prototypeWebSøknad,
 )
 
 /* ktlint-disable parameter-list-wrapping */

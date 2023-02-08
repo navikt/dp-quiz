@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
@@ -20,7 +20,7 @@ import no.nav.dagpenger.model.subsumsjon.alle
 
 internal object SøknadEksempel {
 
-    val prosessVersjon = HenvendelsesType(Testprosess.Test, 666)
+    val prosessVersjon = Faktaversjon(Testprosess.Test, 666)
 
     val prototypeFakta1 = Fakta(
         prosessVersjon,
@@ -41,34 +41,34 @@ internal object SøknadEksempel {
             "seksjon1",
             Rolle.nav,
             prototypeFakta1.boolsk(1),
-            prototypeFakta1.boolsk(2)
+            prototypeFakta1.boolsk(2),
         ),
         Seksjon(
             "seksjon2",
             Rolle.nav,
-            prototypeFakta1.heltall(3)
+            prototypeFakta1.heltall(3),
         ),
         Seksjon(
             "seksjon3",
             Rolle.søker,
-            prototypeFakta1.dato(4)
+            prototypeFakta1.dato(4),
         ),
         Seksjon(
             "seksjon4",
             Rolle.søker,
             prototypeFakta1.inntekt(5),
-            prototypeFakta1.inntekt(6)
+            prototypeFakta1.inntekt(6),
         ),
         Seksjon(
             "seksjon5",
             Rolle.søker,
-            prototypeFakta1.dokument(7)
+            prototypeFakta1.dokument(7),
         ),
         Seksjon(
             "seksjon6",
             Rolle.saksbehandler,
-            prototypeFakta1.boolsk(8)
-        )
+            prototypeFakta1.boolsk(8),
+        ),
     )
 
     private val subsumsjon = "subsumsjon".alle(
@@ -77,7 +77,7 @@ internal object SøknadEksempel {
         prototypeFakta1 heltall 3 er 2,
         prototypeFakta1 dato 4 er 24.desember,
         prototypeFakta1 inntekt 5 minst (prototypeFakta1 inntekt 6),
-        prototypeFakta1 boolsk 8 dokumenteresAv (prototypeFakta1 dokument 7)
+        prototypeFakta1 boolsk 8 dokumenteresAv (prototypeFakta1 dokument 7),
     )
 
     val faktumNavBehov = FaktumNavBehov(
@@ -90,13 +90,13 @@ internal object SøknadEksempel {
             6 to "f6Behov",
             7 to "f7Behov",
             8 to "f8Behov",
-            17 to "InnsendtSøknadsId"
-        )
+            17 to "InnsendtSøknadsId",
+        ),
     )
     val versjon = Versjon.Bygger(
         prototypeFakta1,
         subsumsjon,
         webPrototypeSøknad,
-        faktumNavBehov
+        faktumNavBehov,
     ).registrer()
 }

@@ -2,12 +2,12 @@ package no.nav.dagpenger.model.visitor
 
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Person
@@ -39,7 +39,7 @@ interface FaktumVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
     }
 
@@ -55,7 +55,7 @@ interface FaktumVisitor {
         svar: R,
         besvartAv: String?,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
     }
 
@@ -66,7 +66,7 @@ interface FaktumVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
     ) {
     }
 
@@ -77,7 +77,7 @@ interface FaktumVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
     ) {
     }
 
@@ -90,7 +90,7 @@ interface FaktumVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R,
-        genererteFaktum: Set<Faktum<*>>
+        genererteFaktum: Set<Faktum<*>>,
     ) {
     }
 
@@ -102,7 +102,7 @@ interface FaktumVisitor {
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         regel: FaktaRegel<R>,
-        svar: R
+        svar: R,
     ) {
     }
 
@@ -113,7 +113,7 @@ interface FaktumVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
-        regel: FaktaRegel<R>
+        regel: FaktaRegel<R>,
     ) {
     }
 
@@ -121,14 +121,14 @@ interface FaktumVisitor {
         faktum: UtledetFaktum<R>,
         id: String,
         children: Set<Faktum<*>>,
-        clazz: Class<R>
+        clazz: Class<R>,
     ) {
     }
 
     fun visit(
         faktumId: FaktumId,
         rootId: Int,
-        indeks: Int
+        indeks: Int,
     ) {
     }
 
@@ -148,7 +148,7 @@ interface PersonVisitor : IdentVisitor {
 }
 
 interface FaktaVisitor : PersonVisitor, FaktumVisitor {
-    fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {}
+    fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {}
     fun postVisit(fakta: Fakta, uuid: UUID) {}
 }
 
@@ -167,7 +167,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         regel: Regel,
         fakta: List<Faktum<*>>,
         lokaltResultat: Boolean?,
-        resultat: Boolean?
+        resultat: Boolean?,
     ) {
     }
 
@@ -176,7 +176,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         regel: Regel,
         fakta: List<Faktum<*>>,
         lokaltResultat: Boolean?,
-        resultat: Boolean?
+        resultat: Boolean?,
     ) {
     }
 
@@ -187,7 +187,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         subsumsjon: AlleSubsumsjon,
         subsumsjoner: List<Subsumsjon>,
         lokaltResultat: Boolean?,
-        resultat: Boolean?
+        resultat: Boolean?,
     ) {
     }
 
@@ -195,7 +195,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         subsumsjon: AlleSubsumsjon,
         subsumsjoner: List<Subsumsjon>,
         lokaltResultat: Boolean?,
-        resultat: Boolean?
+        resultat: Boolean?,
     ) {
     }
 
@@ -203,7 +203,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         subsumsjon: MinstEnAvSubsumsjon,
         subsumsjoner: List<Subsumsjon>,
         lokaltResultat: Boolean?,
-        resultat: Boolean?
+        resultat: Boolean?,
     ) {
     }
 
@@ -211,7 +211,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         subsumsjon: MinstEnAvSubsumsjon,
         subsumsjoner: List<Subsumsjon>,
         lokaltResultat: Boolean?,
-        resultat: Boolean?
+        resultat: Boolean?,
     ) {
     }
 
@@ -224,7 +224,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         action: GodkjenningsSubsumsjon.Action,
         godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         lokaltResultat: Boolean?,
-        childResultat: Boolean?
+        childResultat: Boolean?,
     ) {
     }
 
@@ -233,21 +233,21 @@ interface SubsumsjonVisitor : FaktumVisitor {
         action: GodkjenningsSubsumsjon.Action,
         godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         resultat: Boolean?,
-        childResultat: Boolean?
+        childResultat: Boolean?,
     ) {
     }
 
     fun preVisit(
         subsumsjon: SannsynliggjøringsSubsumsjon,
         sannsynliggjøringsFakta: GrunnleggendeFaktum<*>,
-        lokaltResultat: Boolean?
+        lokaltResultat: Boolean?,
     ) {
     }
 
     fun postVisit(
         subsumsjon: SannsynliggjøringsSubsumsjon,
         sannsynliggjøringsFakta: GrunnleggendeFaktum<*>,
-        lokaltResultat: Boolean?
+        lokaltResultat: Boolean?,
     ) {
     }
 
@@ -255,7 +255,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
     fun postVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,
-        lokaltResultat: Boolean?
+        lokaltResultat: Boolean?,
     ) {
     }
 

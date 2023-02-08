@@ -1,9 +1,9 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Flervalg
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
@@ -17,13 +17,13 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class EgenNæringTest {
-    private val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, versjon = -1), *EgenNæring.fakta())
+    private val fakta = Fakta(Faktaversjon(Prosess.Dagpenger, versjon = -1), *EgenNæring.fakta())
     private lateinit var utredningsprosess: Utredningsprosess
 
     @BeforeEach
     fun setup() {
         utredningsprosess = fakta.testSøknadprosess(
-            EgenNæring.regeltre(fakta)
+            EgenNæring.regeltre(fakta),
         ) {
             EgenNæring.seksjon(this)
         }
@@ -65,8 +65,8 @@ internal class EgenNæringTest {
         utredningsprosess.flervalg(EgenNæring.`eget gårdsbruk hvem eier`).besvar(
             Flervalg(
                 "faktum.eget-gaardsbruk-hvem-eier.svar.selv",
-                "faktum.eget-gaardsbruk-hvem-eier.svar.ektefelle-samboer"
-            )
+                "faktum.eget-gaardsbruk-hvem-eier.svar.ektefelle-samboer",
+            ),
         )
         utredningsprosess.desimaltall(EgenNæring.`eget gårdsbruk jeg andel inntekt`).besvar(50.0)
         utredningsprosess.desimaltall(EgenNæring.`eget gårdsbruk ektefelle samboer andel inntekt`).besvar(50.0)
@@ -115,8 +115,8 @@ internal class EgenNæringTest {
         eier.besvar(
             Flervalg(
                 "faktum.eget-gaardsbruk-hvem-eier.svar.selv",
-                "faktum.eget-gaardsbruk-hvem-eier.svar.ektefelle-samboer"
-            )
+                "faktum.eget-gaardsbruk-hvem-eier.svar.ektefelle-samboer",
+            ),
         )
         andelInntektSelv.besvar(60.0)
         andelInntektSamboerEktefelle.besvar(40.0)

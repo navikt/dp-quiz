@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
@@ -39,7 +39,7 @@ class ManuellBehandlingJsonBuilder(utredningsprosess: Utredningsprosess, private
 
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
         root.put("@event_name", "manuell_behandling")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
@@ -76,9 +76,8 @@ class ManuellBehandlingJsonBuilder(utredningsprosess: Utredningsprosess, private
         avhengerAvFakta: Set<Faktum<*>>,
         templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
     ) {
-
         if (ignore) return
         if (id in faktumIder) return
         if (avhengerAvFakta.all { it.erBesvart() }) {
@@ -107,7 +106,7 @@ class ManuellBehandlingJsonBuilder(utredningsprosess: Utredningsprosess, private
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
         if (ignore) return
         if (id in faktumIder) return

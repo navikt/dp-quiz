@@ -10,10 +10,10 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.Flervalg
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Identer.Ident
 import no.nav.dagpenger.model.faktum.Inntekt
@@ -41,7 +41,7 @@ class FaktaRecord : FaktaPersistence {
 
     override fun ny(
         identer: Identer,
-        prosessVersjon: HenvendelsesType,
+        prosessVersjon: Faktaversjon,
         uuid: UUID,
     ): Utredningsprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
@@ -88,7 +88,7 @@ class FaktaRecord : FaktaPersistence {
             )
         } ?: throw IllegalArgumentException("Kan ikke hente en søknad som ikke finnes, uuid: $uuid")
 
-        return Versjon.id(HenvendelsesType(Prosess(rad.navn), rad.versjonId)).utredningsprosess(
+        return Versjon.id(Faktaversjon(Prosess(rad.navn), rad.versjonId)).utredningsprosess(
             person = personRecord.hentPerson(rad.personId),
             faktaUUID = uuid,
         ).also { søknadprosess ->
@@ -124,7 +124,7 @@ class FaktaRecord : FaktaPersistence {
         return true
     }
 
-    override fun migrer(uuid: UUID, tilVersjon: HenvendelsesType?): HenvendelsesType {
+    override fun migrer(uuid: UUID, tilVersjon: Faktaversjon?): Faktaversjon {
         val gjeldendeVersjon = prosessversjon(uuid)
         val nyVersjon = tilVersjon ?: gjeldendeVersjon.siste()
 
@@ -196,7 +196,7 @@ class FaktaRecord : FaktaPersistence {
             uuid,
         ).map { it.bigDecimal("id").toBigInteger() }.asSingle
 
-    private fun settVersjon(soknadId: BigInteger, versjon: HenvendelsesType) =
+    private fun settVersjon(soknadId: BigInteger, versjon: Faktaversjon) =
         queryOf(
             // language=PostgreSQL
             """UPDATE soknad
@@ -206,7 +206,7 @@ class FaktaRecord : FaktaPersistence {
             mapOf("navn" to versjon.prosessnavn.id, "versjonId" to versjon.versjon, "soknadId" to soknadId),
         ).asUpdate
 
-    private fun hentFaktum(sisteVersjon: HenvendelsesType) =
+    private fun hentFaktum(sisteVersjon: Faktaversjon) =
         queryOf(
             // language=PostgreSQL
             """
@@ -233,7 +233,7 @@ class FaktaRecord : FaktaPersistence {
                 |WHERE s.uuid = :uuid
                 """.trimMargin(),
                 mapOf("uuid" to uuid),
-            ).map { HenvendelsesType(Prosess(it.string("navn")), it.int("versjon_id")) }.asSingle,
+            ).map { Faktaversjon(Prosess(it.string("navn")), it.int("versjon_id")) }.asSingle,
         )
     } ?: throw IllegalArgumentException("Kan ikke finne prosessversjon for en søknad som ikke finnes, uuid: $uuid")
 

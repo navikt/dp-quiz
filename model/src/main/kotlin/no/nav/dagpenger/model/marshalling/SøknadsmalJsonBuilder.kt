@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -40,10 +40,10 @@ class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : Utredningsp
 
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
         root.put("@event_name", "Søknadsmal")
-        root.put("versjon_id", henvendelsesType.versjon)
-        root.put("versjon_navn", henvendelsesType.prosessnavn.id)
+        root.put("versjon_id", faktaversjon.versjon)
+        root.put("versjon_navn", faktaversjon.prosessnavn.id)
     }
 
     override fun postVisit(fakta: Fakta, uuid: UUID) {
@@ -73,7 +73,7 @@ class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : Utredningsp
         avhengerAvFakta: Set<Faktum<*>>,
         templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
     ) {
         generatorFakta.putIfAbsent(faktum, templates)
         if (!::fakta.isInitialized) return
@@ -90,7 +90,7 @@ class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : Utredningsp
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
         if (!::fakta.isInitialized) return
         fakta.addAll(avhengerAvFakta)
@@ -103,18 +103,18 @@ class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : Utredningsp
         avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
     ) {
         if (!::fakta.isInitialized) return
         fakta.addAll(
             generatorFakta.filter { (_, templates) ->
                 templates.contains(faktum)
-            }.keys
+            }.keys,
         )
     }
 
     private class SøknadFaktumVisitor(
-        faktum: Faktum<*>
+        faktum: Faktum<*>,
     ) :
         FaktumVisitor {
         val root: ObjectNode = mapper.createObjectNode()
@@ -130,7 +130,7 @@ class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : Utredningsp
             avhengerAvFakta: Set<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>,
-            gyldigeValg: GyldigeValg?
+            gyldigeValg: GyldigeValg?,
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
 
@@ -143,7 +143,7 @@ class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : Utredningsp
                 faktum.navn,
                 roller,
                 null,
-                overstyrbareGyldigeValg
+                overstyrbareGyldigeValg,
             )
         }
 
@@ -154,7 +154,7 @@ class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : Utredningsp
             avhengerAvFakta: Set<Faktum<*>>,
             templates: List<TemplateFaktum<*>>,
             roller: Set<Rolle>,
-            clazz: Class<R>
+            clazz: Class<R>,
         ) {
             val jsonTemplates = mapper.createArrayNode()
             templates.forEach { template ->
@@ -173,7 +173,7 @@ class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : Utredningsp
             roller: Set<Rolle>,
             clazz: Class<R>,
             gyldigeValg: GyldigeValg?,
-            landGrupper: LandGrupper?
+            landGrupper: LandGrupper?,
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
             if (clazz.erBoolean()) {
@@ -185,7 +185,7 @@ class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : Utredningsp
                 faktum.navn,
                 roller,
                 null,
-                overstyrbareGyldigeValg
+                overstyrbareGyldigeValg,
             )
             if (clazz.erLand()) {
                 this.root.leggTilGyldigeLand()

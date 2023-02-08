@@ -5,12 +5,12 @@ import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
@@ -37,20 +37,20 @@ class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
         personId = uuid
     }
 
-    private fun hentInternId(prosessVersjon: HenvendelsesType): Int {
+    private fun hentInternId(prosessVersjon: Faktaversjon): Int {
         val query = queryOf( //language=PostgreSQL
             "SELECT id FROM v1_prosessversjon WHERE navn = :navn AND versjon_id = :versjon_id",
-            mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon)
+            mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon),
         )
         return using(sessionOf(dataSource)) { session ->
             session.run(
-                query.map { it.intOrNull("id") }.asSingle
+                query.map { it.intOrNull("id") }.asSingle,
             ) ?: throw IllegalStateException("Fant ikke internid for prosessversjon $prosessVersjon")
         }
     }
 
-    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
-        this.internVersjonId = hentInternId(henvendelsesType)
+    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
+        this.internVersjonId = hentInternId(faktaversjon)
         this.søknadUUID = uuid
     }
 
@@ -78,9 +78,9 @@ class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
                         mapOf(
                             "uuid" to søknadUUID,
                             "versjon_id" to internVersjonId,
-                            "person_id" to personId
-                        )
-                    ).map { it.long(1) }.asSingle
+                            "person_id" to personId,
+                        ),
+                    ).map { it.long(1) }.asSingle,
                 )
                 val params = faktumParametre.map { originalParameter -> mapOf("soknadId" to id) + originalParameter }
                 transactionalSession.batchPreparedNamedStatement(faktumInsertStatement, params)
@@ -98,7 +98,7 @@ class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
         skrivFaktumVerdi(faktum)
     }
@@ -110,7 +110,7 @@ class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
     ) {
         skrivFaktumVerdi(faktum)
     }
@@ -122,7 +122,7 @@ class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
     ) {
         skrivFaktumVerdi(faktum)
     }
@@ -134,7 +134,7 @@ class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
-        regel: FaktaRegel<R>
+        regel: FaktaRegel<R>,
     ) {
         skrivFaktumVerdi(faktum)
     }
@@ -145,8 +145,8 @@ class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
             mapOf(
                 "indeks" to indeks,
                 "internVersjonId" to internVersjonId,
-                "rootId" to rootId
-            )
+                "rootId" to rootId,
+            ),
         )
     }
 }

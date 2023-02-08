@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.integration
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -20,11 +20,11 @@ import kotlin.test.assertEquals
 
 internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
 
-    val henvendelsesType = HenvendelsesType(Prosess.Dagpenger, -2313)
-    private val dagpengerSøknadsprosess = MinimalSøknadsprosess(henvendelsesType, Rolle.søker)
+    val faktaversjon = Faktaversjon(Prosess.Dagpenger, -2313)
+    private val dagpengerSøknadsprosess = MinimalSøknadsprosess(faktaversjon, Rolle.søker)
 
     private val faktaPersistence = mockk<FaktaPersistence>().also {
-        every { it.hent(any()) } returns Versjon.id(henvendelsesType)
+        every { it.hent(any()) } returns Versjon.id(faktaversjon)
             .utredningsprosess(dagpengerSøknadsprosess.fakta)
         every { it.lagre(any() as Fakta) } returns true
     }
@@ -37,7 +37,7 @@ internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
             FaktumSvarService(
                 faktaPersistence = faktaPersistence,
                 resultatPersistence = resultatPersistence,
-                rapidsConnection = it
+                rapidsConnection = it,
             )
         }
     }
@@ -63,11 +63,11 @@ internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
 
 internal class AvslagPåMinsteinntektFaktumSvarflytTest : SøknadBesvarer() {
 
-    val henvendelsesType = HenvendelsesType(Prosess.AvslagPåMinsteinntekt, -2313)
-    private val dagpengerSøknadsprosess = MinimalSøknadsprosess(henvendelsesType, Rolle.nav)
+    val faktaversjon = Faktaversjon(Prosess.AvslagPåMinsteinntekt, -2313)
+    private val dagpengerSøknadsprosess = MinimalSøknadsprosess(faktaversjon, Rolle.nav)
 
     private val faktaPersistence = mockk<FaktaPersistence>().also {
-        every { it.hent(any()) } returns Versjon.id(henvendelsesType)
+        every { it.hent(any()) } returns Versjon.id(faktaversjon)
             .utredningsprosess(dagpengerSøknadsprosess.fakta)
         every { it.lagre(any() as Fakta) } returns true
     }
@@ -80,7 +80,7 @@ internal class AvslagPåMinsteinntektFaktumSvarflytTest : SøknadBesvarer() {
             FaktumSvarService(
                 faktaPersistence = faktaPersistence,
                 resultatPersistence = resultatPersistence,
-                rapidsConnection = it
+                rapidsConnection = it,
             )
         }
     }

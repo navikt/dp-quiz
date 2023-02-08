@@ -5,7 +5,7 @@ import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
@@ -28,10 +28,10 @@ internal class ResultatTest {
     private lateinit var faktaRecord: FaktaRecord
     private lateinit var resultatRecord: ResultatRecord
 
-    private fun setup(prosessVersjon: HenvendelsesType) {
+    private fun setup(prosessVersjon: Faktaversjon) {
         val prototypeFakta = Fakta(
             prosessVersjon,
-            boolsk faktum "f1" id 19
+            boolsk faktum "f1" id 19,
         )
 
         Versjon.Bygger(
@@ -41,9 +41,9 @@ internal class ResultatTest {
                 Seksjon(
                     "seksjon",
                     Rolle.nav,
-                    *(prototypeFakta.map { it }.toTypedArray())
-                )
-            )
+                    *(prototypeFakta.map { it }.toTypedArray()),
+                ),
+            ),
         ).registrer()
 
         Postgres.withMigratedDb {
@@ -53,20 +53,20 @@ internal class ResultatTest {
 
             utredningsprosess = faktaRecord.ny(
                 IDENT,
-                prosessVersjon
+                prosessVersjon,
             )
         }
     }
 
     @Test
     fun `Lagre resultat`() {
-        setup(HenvendelsesType(Testprosess.Test, 935))
+        setup(Faktaversjon(Testprosess.Test, 935))
         utredningsprosess.boolsk(19).besvar(false)
         val resultat = utredningsprosess.resultat()
         resultatRecord.lagreResultat(
             resultat!!,
             utredningsprosess.fakta.uuid,
-            ResultatJsonBuilder(utredningsprosess).resultat()
+            ResultatJsonBuilder(utredningsprosess).resultat(),
         )
         val hentaResultat = resultatRecord.hentResultat(utredningsprosess.fakta.uuid)
 
@@ -75,15 +75,15 @@ internal class ResultatTest {
 
     @Test
     fun `Lagrer sendt til manuell behandling`() {
-        setup(HenvendelsesType(Testprosess.Test, 936))
+        setup(Faktaversjon(Testprosess.Test, 936))
         val seksjonsnavn = "manuell seksjon"
         resultatRecord.lagreManuellBehandling(utredningsprosess.fakta.uuid, seksjonsnavn)
         val grunn = using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL
                     "SELECT grunn FROM manuell_behandling WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
-                    utredningsprosess.fakta.uuid
-                ).map { it.string("grunn") }.asSingle
+                    utredningsprosess.fakta.uuid,
+                ).map { it.string("grunn") }.asSingle,
             )
         }
 

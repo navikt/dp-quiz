@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
-import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Identer.Ident.Type
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
@@ -39,7 +39,7 @@ class NavJsonBuilder(utredningsprosess: Utredningsprosess, private val seksjonNa
     }
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
         root.put("@event_name", "faktum_svar")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
@@ -50,7 +50,7 @@ class NavJsonBuilder(utredningsprosess: Utredningsprosess, private val seksjonNa
         root.set<ArrayNode>("@behov", behovNode)
         root.set<ArrayNode>("identer", identerNode)
 
-        faktumNavBehov = Versjon.id(henvendelsesType).faktumNavBehov ?: throw IllegalArgumentException("Finner ikke oversettelse til navbehov, versjon: $henvendelsesType")
+        faktumNavBehov = Versjon.id(faktaversjon).faktumNavBehov ?: throw IllegalArgumentException("Finner ikke oversettelse til navbehov, versjon: $faktaversjon")
     }
 
     override fun visit(type: Type, id: String, historisk: Boolean) {
@@ -80,9 +80,8 @@ class NavJsonBuilder(utredningsprosess: Utredningsprosess, private val seksjonNa
         avhengerAvFakta: Set<Faktum<*>>,
         templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
     ) {
-
         if (ignore) return
         if (id in faktumIder) return
         if (avhengerAvFakta.all { it.erBesvart() }) {
@@ -112,7 +111,7 @@ class NavJsonBuilder(utredningsprosess: Utredningsprosess, private val seksjonNa
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
         if (ignore) return
         if (id in faktumIder) return
