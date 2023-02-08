@@ -33,7 +33,7 @@ class NesteSeksjonTest {
         val fakta = Versjon.Bygger(
             prototypesøknad,
             prototypeSubsumsjon,
-            prototypeUtredningsprosess,
+            prototypeUtredningsprosess
         )
             .utredningsprosess(testPerson)
 
@@ -60,7 +60,7 @@ class NesteSeksjonTest {
         Versjon.Bygger(
             prototypesøknad,
             prototypeSubsumsjon,
-            prototypeUtredningsprosess,
+            prototypeUtredningsprosess
         )
             .utredningsprosess(testPerson).also { fakta ->
                 assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())

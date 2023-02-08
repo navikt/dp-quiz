@@ -36,7 +36,7 @@ class GenerertEndreTest {
         utredningsprosess = Versjon.Bygger(
             prototypeFakta,
             TomSubsumsjon,
-            prototypeUtredningsprosess,
+            prototypeUtredningsprosess
         ).utredningsprosess(testPerson)
     }
 

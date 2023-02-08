@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -20,7 +20,7 @@ internal object Dagpenger {
      *
      * Dette for at innsendte søknader fortsatt skal kunne lastes, uten å bli migrert fram.
      */
-    val VERSJON_ID = FaktaVersjon(Prosess.Dagpenger, 249)
+    val VERSJON_ID = HenvendelsesType(Prosess.Dagpenger, 249)
 
     fun registrer(registrer: (prototype: Fakta) -> Unit) {
         registrer(prototypeFakta)
@@ -83,7 +83,7 @@ internal object Dagpenger {
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = regeltre,
             utredningsprosess = utredningsprosess,
-            faktumNavBehov = faktumNavBehov,
+            faktumNavBehov = faktumNavBehov
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
         }

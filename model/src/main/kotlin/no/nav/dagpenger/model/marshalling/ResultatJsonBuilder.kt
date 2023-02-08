@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.marshalling
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import java.time.LocalDateTime
 import java.util.UUID
@@ -25,13 +25,13 @@ class ResultatJsonBuilder(
         return super.resultat()
     }
 
-    override fun preVisit(fakta: Fakta, faktaVersjon: FaktaVersjon, uuid: UUID) {
-        super.preVisit(fakta, faktaVersjon, uuid)
+    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+        super.preVisit(fakta, henvendelsesType, uuid)
         root.put("@event_name", "prosess_resultat")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
-        root.put("versjon_id", faktaVersjon.versjon)
-        root.put("versjon_navn", faktaVersjon.henvendelsesType.id)
+        root.put("versjon_id", henvendelsesType.versjon)
+        root.put("versjon_navn", henvendelsesType.prosessnavn.id)
         root.put("søknad_uuid", "$uuid")
         root.put("resultat", utredningsprosess.resultat())
         root.set<ArrayNode>("identer", identerNode)

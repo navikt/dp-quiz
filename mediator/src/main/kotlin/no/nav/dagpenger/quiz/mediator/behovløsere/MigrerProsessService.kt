@@ -43,7 +43,7 @@ class MigrerProsessService(
 
             packet["@løsning"] = mapOf(
                 behov to mapOf(
-                    "prosessnavn" to prosessversjon.henvendelsesType,
+                    "prosessnavn" to prosessversjon.prosessnavn,
                     "versjon" to prosessversjon.versjon,
                     "data" to søknadData
                 )

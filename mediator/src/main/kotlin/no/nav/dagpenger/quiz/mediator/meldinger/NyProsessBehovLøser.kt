@@ -3,7 +3,6 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.FaktaRecord
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
@@ -36,8 +35,8 @@ internal class NyProsessBehovLøser(
         val behovNavn = packet["@behov"].single().asText()
         val prosessnavn = packet["prosessnavn"].asText()
         val prosessversjon = when (prosessnavn) {
-            "Dagpenger" -> Versjon.id(Prosessversjon(Prosess.Dagpenger, "søknad"))
-            "Innsending" -> Versjon.id(Prosessversjon(Prosess.Innsending, "søknad"))
+            "Dagpenger" -> Versjon.siste(Prosess.Dagpenger)
+            "Innsending" -> Versjon.siste(Prosess.Innsending)
             else -> throw Error("Mangler prosess for $prosessnavn")
         }
         val søknadUuid = packet["søknad_uuid"].asText().let { søknadUuid -> UUID.fromString(søknadUuid) }
@@ -59,7 +58,7 @@ internal class NyProsessBehovLøser(
                     packet["@løsning"] = mapOf(
                         behovNavn to mapOf(
                             "prosessversjon" to mapOf(
-                                "prosessnavn" to prosessversjon.henvendelsesType.id,
+                                "prosessnavn" to prosessversjon.prosessnavn.id,
                                 "versjon" to prosessversjon.versjon
                             )
                         )

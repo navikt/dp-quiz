@@ -23,6 +23,6 @@ internal fun Fakta.testSøknadprosess(
     return Versjon.Bygger(
         this,
         subsumsjon,
-        Utredningsprosess(*seksjon().toTypedArray()),
+        Utredningsprosess(*seksjon().toTypedArray())
     ).utredningsprosess(testPerson)
 }

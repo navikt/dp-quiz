@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 internal class AvslagPåMinsteinntektService(
     private val faktaPersistence: FaktaPersistence,
     rapidsConnection: RapidsConnection,
-    private val prosessVersjon: FaktaVersjon = Versjon.siste(Prosess.AvslagPåMinsteinntekt)
+    private val prosessVersjon: HenvendelsesType = Versjon.siste(Prosess.AvslagPåMinsteinntekt)
 ) : River.PacketListener {
 
     private companion object {

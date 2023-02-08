@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
@@ -40,8 +40,8 @@ class DagpengerMetadataStrategi : MetadataStrategi {
             }
         }
 
-        override fun preVisit(fakta: Fakta, faktaVersjon: FaktaVersjon, uuid: UUID) {
-            require(faktaVersjon.henvendelsesType == Prosess.Dagpenger) { "Kan kun håndtere ${Prosess.Dagpenger.name}, var ${faktaVersjon.henvendelsesType}" }
+        override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+            require(henvendelsesType.prosessnavn == Prosess.Dagpenger) { "Kan kun håndtere ${Prosess.Dagpenger.name}, var ${henvendelsesType.prosessnavn}" }
         }
 
         override fun preVisit(

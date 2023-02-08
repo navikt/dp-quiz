@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
@@ -21,7 +21,7 @@ import kotlin.test.assertTrue
 
 internal class DinSituasjonTest {
     private val fakta = DinSituasjon.fakta()
-    private val søknad = Fakta(FaktaVersjon(Prosess.Dagpenger, -1), *fakta)
+    private val søknad = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *fakta)
     private lateinit var utredningsprosess: Utredningsprosess
 
     @BeforeEach
@@ -459,7 +459,7 @@ internal class DinSituasjonTest {
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val fakta = Fakta(FaktaVersjon(Prosess.Dagpenger, -1), *DinSituasjon.fakta())
+        val fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *DinSituasjon.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             DinSituasjon.regeltre(fakta)
         ) {

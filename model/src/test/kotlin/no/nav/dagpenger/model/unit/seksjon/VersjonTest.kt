@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.Testprosess
@@ -22,7 +22,7 @@ internal class VersjonTest {
 
     private companion object {
         val prototypeFakta = Fakta(
-            FaktaVersjon(Testprosess.Test, 1),
+            HenvendelsesType(Testprosess.Test, 1),
             heltall faktum "f15" id 15 genererer 16 og 17 og 18,
             heltall faktum "f16" id 16,
             boolsk faktum "f17" id 17,
@@ -34,7 +34,7 @@ internal class VersjonTest {
         val versjon = Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
-            prototypeUtredningsprosess,
+            prototypeUtredningsprosess
         ).registrer()
     }
 

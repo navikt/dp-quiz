@@ -66,7 +66,7 @@ class GeneratorFaktumTest {
         søknadprosessTestBygger = Versjon.Bygger(
             faktaPrototype,
             prototypeSubsumsjon,
-            prototypeUtredningsprosess,
+            prototypeUtredningsprosess
         )
     }
 
@@ -174,7 +174,7 @@ class GeneratorFaktumTest {
             Versjon.Bygger(
                 faktaPrototype,
                 prototypeSubsumsjon,
-                prototypeUtredningsprosess,
+                prototypeUtredningsprosess
             )
         return søknadprosessTestBygger.utredningsprosess(testPerson)
     }

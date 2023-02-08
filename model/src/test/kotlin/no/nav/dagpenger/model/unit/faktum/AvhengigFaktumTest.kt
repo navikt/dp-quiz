@@ -62,7 +62,7 @@ internal class AvhengigFaktumTest {
             Versjon.Bygger(
                 fakta,
                 TomSubsumsjon,
-                prototypeUtredningsprosess,
+                prototypeUtredningsprosess
             )
                 .utredningsprosess(testPerson)
 

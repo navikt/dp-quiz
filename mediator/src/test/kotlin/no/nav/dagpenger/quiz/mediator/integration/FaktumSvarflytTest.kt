@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.integration
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -20,11 +20,11 @@ import kotlin.test.assertEquals
 
 internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
 
-    val faktaVersjon = FaktaVersjon(Prosess.Dagpenger, -2313)
-    private val dagpengerSøknadsprosess = MinimalSøknadsprosess(faktaVersjon, Rolle.søker)
+    val henvendelsesType = HenvendelsesType(Prosess.Dagpenger, -2313)
+    private val dagpengerSøknadsprosess = MinimalSøknadsprosess(henvendelsesType, Rolle.søker)
 
     private val faktaPersistence = mockk<FaktaPersistence>().also {
-        every { it.hent(any()) } returns Versjon.id(faktaVersjon)
+        every { it.hent(any()) } returns Versjon.id(henvendelsesType)
             .utredningsprosess(dagpengerSøknadsprosess.fakta)
         every { it.lagre(any() as Fakta) } returns true
     }
@@ -63,11 +63,11 @@ internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
 
 internal class AvslagPåMinsteinntektFaktumSvarflytTest : SøknadBesvarer() {
 
-    val faktaVersjon = FaktaVersjon(Prosess.AvslagPåMinsteinntekt, -2313)
-    private val dagpengerSøknadsprosess = MinimalSøknadsprosess(faktaVersjon, Rolle.nav)
+    val henvendelsesType = HenvendelsesType(Prosess.AvslagPåMinsteinntekt, -2313)
+    private val dagpengerSøknadsprosess = MinimalSøknadsprosess(henvendelsesType, Rolle.nav)
 
     private val faktaPersistence = mockk<FaktaPersistence>().also {
-        every { it.hent(any()) } returns Versjon.id(faktaVersjon)
+        every { it.hent(any()) } returns Versjon.id(henvendelsesType)
             .utredningsprosess(dagpengerSøknadsprosess.fakta)
         every { it.lagre(any() as Fakta) } returns true
     }

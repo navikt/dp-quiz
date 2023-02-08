@@ -9,23 +9,23 @@ import java.util.UUID
 @Suppress("UNCHECKED_CAST")
 class Fakta private constructor(
     private val person: Person,
-    internal val faktaVersjon: FaktaVersjon,
+    internal val henvendelsesType: HenvendelsesType,
     val uuid: UUID,
     private val faktaMap: MutableMap<FaktumId, Faktum<*>>
 ) : TypedFaktum, Iterable<Faktum<*>> {
 
     internal val size get() = faktaMap.size
 
-    constructor(faktaVersjon: FaktaVersjon, vararg factories: FaktumFactory<*>) : this(
+    constructor(henvendelsesType: HenvendelsesType, vararg factories: FaktumFactory<*>) : this(
         Person.prototype,
-        faktaVersjon,
+        henvendelsesType,
         UUID.randomUUID(),
         factories.toList()
     )
 
-    constructor(person: Person, faktaVersjon: FaktaVersjon, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
+    constructor(person: Person, henvendelsesType: HenvendelsesType, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
         person,
-        faktaVersjon,
+        henvendelsesType,
         uuid,
         factories.toFaktaMap()
     )
@@ -138,7 +138,7 @@ class Fakta private constructor(
     override fun periode(id: String): Faktum<Periode> = periode(FaktumId(id))
     private infix fun periode(faktumId: FaktumId) = id(faktumId) as Faktum<Periode>
 
-    fun bygg(person: Person, prosessVersjon: FaktaVersjon, uuid: UUID = UUID.randomUUID()): Fakta {
+    fun bygg(person: Person, prosessVersjon: HenvendelsesType, uuid: UUID = UUID.randomUUID()): Fakta {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktaMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
         return Fakta(person, prosessVersjon, uuid, mapOfFakta)
@@ -172,7 +172,7 @@ class Fakta private constructor(
 
     fun accept(visitor: FaktaVisitor) {
         person.accept(visitor)
-        visitor.preVisit(this, faktaVersjon, uuid)
+        visitor.preVisit(this, henvendelsesType, uuid)
         this.forEach { it.accept(visitor) }
         visitor.postVisit(this, uuid)
     }

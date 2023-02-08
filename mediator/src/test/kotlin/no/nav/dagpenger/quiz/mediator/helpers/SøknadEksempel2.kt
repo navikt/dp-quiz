@@ -13,7 +13,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -21,7 +21,7 @@ import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 
 internal object SøknadEksempel2 {
-    val prosessVersjon = FaktaVersjon(Testprosess.Test, 889)
+    val prosessVersjon = HenvendelsesType(Testprosess.Test, 889)
     internal val prototypeFakta by lazy {
         Fakta(
             prosessVersjon,
@@ -80,7 +80,7 @@ internal object SøknadEksempel2 {
         Versjon.Bygger(
             prototypeFakta,
             prototypeFakta boolsk 1 er true,
-            webPrototypeSøknad,
+            webPrototypeSøknad
         ).registrer()
     }
 }

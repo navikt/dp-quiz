@@ -19,7 +19,7 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Flervalg
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
@@ -53,7 +53,7 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig faktum reset`() {
-        val prosessVersjon = FaktaVersjon(Testprosess.Test, 634)
+        val prosessVersjon = HenvendelsesType(Testprosess.Test, 634)
         Postgres.withMigratedDb {
             val prototypeFakta = Fakta(
                 prosessVersjon,
@@ -70,7 +70,7 @@ internal class AvhengigeFaktaTest {
                         Rolle.nav,
                         *(prototypeFakta.map { it }.toTypedArray())
                     )
-                ),
+                )
             ).registrer()
             FaktumTable(prototypeFakta)
             faktaRecord = FaktaRecord()
@@ -91,7 +91,7 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig faktum rehydreres`() {
-        val prosessVersjon = FaktaVersjon(Testprosess.Test, 635)
+        val prosessVersjon = HenvendelsesType(Testprosess.Test, 635)
 
         Postgres.withMigratedDb {
             val prototypeFakta = Fakta(
@@ -111,7 +111,7 @@ internal class AvhengigeFaktaTest {
                         Rolle.nav,
                         *(prototypeFakta.map { it }.toTypedArray())
                     )
-                ),
+                )
             ).registrer()
             FaktumTable(prototypeFakta)
 
@@ -134,7 +134,7 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig av utledet faktum rehydreres`() {
-        val prosessVersjon = FaktaVersjon(Testprosess.Test, 636)
+        val prosessVersjon = HenvendelsesType(Testprosess.Test, 636)
 
         Postgres.withMigratedDb {
             val prototypeFakta = Fakta(
@@ -154,7 +154,7 @@ internal class AvhengigeFaktaTest {
                         Rolle.nav,
                         *(prototypeFakta.map { it }.toTypedArray())
                     )
-                ),
+                )
             ).registrer()
             FaktumTable(prototypeFakta)
 
@@ -176,7 +176,7 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Alle avhengige faktumtyper resettes`() {
-        val prosessVersjon = FaktaVersjon(Testprosess.Test, 637)
+        val prosessVersjon = HenvendelsesType(Testprosess.Test, 637)
         Postgres.withMigratedDb {
             val prototypeFakta = Fakta(
                 prosessVersjon,
@@ -205,7 +205,7 @@ internal class AvhengigeFaktaTest {
                         Rolle.nav,
                         *(prototypeFakta.map { it }.toTypedArray())
                     )
-                ),
+                )
             ).registrer()
             FaktumTable(prototypeFakta)
 

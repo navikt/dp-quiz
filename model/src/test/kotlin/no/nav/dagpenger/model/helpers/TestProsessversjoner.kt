@@ -1,12 +1,12 @@
 package no.nav.dagpenger.model.helpers
 
-import no.nav.dagpenger.model.faktum.FaktaVersjon
 import no.nav.dagpenger.model.faktum.HenvendelsesType
+import no.nav.dagpenger.model.faktum.Prosessnavn
 
-enum class Testprosess(override val id: String) : HenvendelsesType {
+enum class Testprosess(override val id: String) : Prosessnavn {
     PrototypeSøknad("prototypeSøknad"),
     Test("test"),
 }
 
 const val testprosessversjon = 0
-internal val testversjon = FaktaVersjon(Testprosess.Test, testprosessversjon)
+internal val testversjon = HenvendelsesType(Testprosess.Test, testprosessversjon)

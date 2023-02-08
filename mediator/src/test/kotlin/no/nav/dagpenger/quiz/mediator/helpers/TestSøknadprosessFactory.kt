@@ -17,7 +17,7 @@ internal fun Fakta.testSøknadprosess(
         subsumsjon,
         Utredningsprosess(
             *seksjon().toTypedArray()
-        ),
+        )
     ).utredningsprosess(testPerson)
 }
 

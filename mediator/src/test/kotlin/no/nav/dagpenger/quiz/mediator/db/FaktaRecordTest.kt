@@ -7,7 +7,7 @@ import kotliquery.using
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
@@ -54,7 +54,7 @@ internal class FaktaRecordTest {
 
             assertRecordCount(1, "soknad")
             assertRecordCount(expectedFaktaCount, "faktum_verdi")
-            FaktaRecord().ny(UNG_PERSON_FNR_2018, FaktaVersjon(Testprosess.Test, 888))
+            FaktaRecord().ny(UNG_PERSON_FNR_2018, HenvendelsesType(Testprosess.Test, 888))
             assertRecordCount(2, "soknad")
             assertRecordCount(expectedFaktaCount * 2, "faktum_verdi")
             lagreHentOgSammenlign()

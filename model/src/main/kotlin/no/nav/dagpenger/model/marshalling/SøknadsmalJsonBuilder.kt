@@ -8,7 +8,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
@@ -40,10 +40,10 @@ class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : Utredningsp
 
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, faktaVersjon: FaktaVersjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
         root.put("@event_name", "Søknadsmal")
-        root.put("versjon_id", faktaVersjon.versjon)
-        root.put("versjon_navn", faktaVersjon.henvendelsesType.id)
+        root.put("versjon_id", henvendelsesType.versjon)
+        root.put("versjon_navn", henvendelsesType.prosessnavn.id)
     }
 
     override fun postVisit(fakta: Fakta, uuid: UUID) {

@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.innsending
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -12,7 +12,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending.Subsumsjoner.
 
 internal object Innsending {
     private val logger = KotlinLogging.logger { }
-    val VERSJON_ID = FaktaVersjon(Prosess.Innsending, 6)
+    val VERSJON_ID = HenvendelsesType(Prosess.Innsending, 6)
 
     fun registrer(registrer: (prototype: Fakta) -> Unit) {
         registrer(prototypeFakta)
@@ -46,7 +46,7 @@ internal object Innsending {
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = regeltre,
             utredningsprosess = søknadsprosess,
-            faktumNavBehov = faktumNavBehov,
+            faktumNavBehov = faktumNavBehov
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
         }

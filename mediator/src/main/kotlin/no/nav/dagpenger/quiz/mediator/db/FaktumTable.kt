@@ -25,7 +25,7 @@ import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.LandGrupper
@@ -63,15 +63,15 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
 
         fun ikkeEksisterer() = !eksisterer
 
-        override fun preVisit(fakta: Fakta, faktaVersjon: FaktaVersjon, uuid: UUID) {
-            eksisterer = exists(faktaVersjon)
+        override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+            eksisterer = exists(henvendelsesType)
         }
 
         private companion object {
-            private fun exists(prosessVersjon: FaktaVersjon): Boolean {
+            private fun exists(prosessVersjon: HenvendelsesType): Boolean {
                 val query = queryOf( //language=PostgreSQL
                     "SELECT id FROM V1_PROSESSVERSJON WHERE navn = :navn AND versjon_id = :versjon_id",
-                    mapOf("navn" to prosessVersjon.henvendelsesType.id, "versjon_id" to prosessVersjon.versjon)
+                    mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon)
                 )
                 return using(sessionOf(dataSource)) { session ->
                     session.run(
@@ -82,15 +82,15 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
         }
     }
 
-    override fun preVisit(fakta: Fakta, faktaVersjon: FaktaVersjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
         val query = queryOf( //language=PostgreSQL
             "INSERT INTO V1_PROSESSVERSJON (navn, versjon_id) VALUES (:navn, :versjon_id) RETURNING id",
-            mapOf("navn" to faktaVersjon.henvendelsesType.id, "versjon_id" to faktaVersjon.versjon)
+            mapOf("navn" to henvendelsesType.prosessnavn.id, "versjon_id" to henvendelsesType.versjon)
         )
         prosessVersjonId = using(sessionOf(dataSource)) { session ->
             session.run(
                 query.map { rad -> rad.int("id") }.asSingle
-            ) ?: throw IllegalStateException("Klarte ikke å opprette prosessversjon, $faktaVersjon")
+            ) ?: throw IllegalStateException("Klarte ikke å opprette prosessversjon, $henvendelsesType")
         }
     }
 

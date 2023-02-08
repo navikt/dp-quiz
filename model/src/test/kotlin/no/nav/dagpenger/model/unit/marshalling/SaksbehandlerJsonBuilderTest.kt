@@ -420,7 +420,7 @@ internal class SaksbehandlerJsonBuilderTest {
         return Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
-            prototypeUtredningsprosess,
+            prototypeUtredningsprosess
         ).utredningsprosess(testPerson)
     }
 }

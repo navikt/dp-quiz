@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Flervalg
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
@@ -29,7 +29,7 @@ internal class ReellArbeidssokerTest {
 
     @BeforeEach
     fun setup() {
-        fakta = Fakta(FaktaVersjon(Prosess.Dagpenger, -1), *ReellArbeidssoker.fakta())
+        fakta = Fakta(HenvendelsesType(Prosess.Dagpenger, -1), *ReellArbeidssoker.fakta())
         utredningsprosess = fakta.testSøknadprosess(ReellArbeidssoker.regeltre(fakta)) {
             ReellArbeidssoker.seksjon(this)
         }

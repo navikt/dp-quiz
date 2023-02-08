@@ -51,7 +51,7 @@ internal class SaksbehandlerSeksjonerTest {
     private val søknadprosessTestBygger = Versjon.Bygger(
         prototypeFakta,
         prototypeSubsumsjon,
-        prototypeUtredningsprosess,
+        prototypeUtredningsprosess
     )
     private lateinit var seksjoner: Utredningsprosess
     private lateinit var f1: Faktum<Boolean>

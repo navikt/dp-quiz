@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.seksjon
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TypedFaktum
 import no.nav.dagpenger.model.seksjon.Seksjon.Companion.saksbehandlerSeksjoner
@@ -17,7 +17,7 @@ class Utredningsprosess private constructor(
     private val seksjoner: MutableList<Seksjon>
 ) : TypedFaktum by fakta, MutableList<Seksjon> by seksjoner {
     constructor(vararg seksjoner: Seksjon) : this(
-        Fakta(FaktaVersjon.prototypeversjon),
+        Fakta(HenvendelsesType.prototypeversjon),
         TomSubsumsjon,
         seksjoner.toMutableList()
     )

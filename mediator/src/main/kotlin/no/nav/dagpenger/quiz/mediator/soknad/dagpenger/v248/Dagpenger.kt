@@ -2,8 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger.v248
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.FaktaVersjon
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -21,7 +20,7 @@ internal object Dagpenger {
      *
      * Dette for at innsendte søknader fortsatt skal kunne lastes, uten å bli migrert fram.
      */
-    val VERSJON_ID = FaktaVersjon(Prosess.Dagpenger, 248)
+    val VERSJON_ID = HenvendelsesType(Prosess.Dagpenger, 248)
 
     fun registrer(registrer: (prototype: Fakta) -> Unit) {
         registrer(prototypeFakta)
@@ -46,6 +45,7 @@ internal object Dagpenger {
             VERSJON_ID,
             *alleFakta
         )
+    private val utredningsprosess = Utredningsprosess(*alleSeksjoner)
 
     object Subsumsjoner {
         val regeltre: Subsumsjon = with(prototypeFakta) {
@@ -78,28 +78,12 @@ internal object Dagpenger {
             )
         )
 
-    private val søknadId = Prosessversjon(Prosess.Dagpenger, "søknad")
-    private val dokumentasjonsprosessId = Prosessversjon(Prosess.Dagpenger, "søknad")
-    private val søknadprosess = Utredningsprosess(*alleSeksjoner)
-    private val dokumentasjonsprosess = Utredningsprosess(*alleSeksjoner)
-
     init {
         Versjon.Bygger(
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = regeltre,
-            utredningsprosess = søknadprosess,
-            faktumNavBehov = faktumNavBehov,
-            prosessversjon = søknadId
-        ).registrer().also {
-            logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
-        }
-
-        Versjon.Bygger(
-            prototypeFakta = prototypeFakta,
-            prototypeSubsumsjon = regeltre,
-            utredningsprosess = dokumentasjonsprosess,
-            faktumNavBehov = faktumNavBehov,
-            prosessversjon = dokumentasjonsprosessId
+            utredningsprosess = utredningsprosess,
+            faktumNavBehov = faktumNavBehov
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
         }

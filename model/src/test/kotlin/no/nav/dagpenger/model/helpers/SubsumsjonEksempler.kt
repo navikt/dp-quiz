@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.før
@@ -32,7 +32,7 @@ internal var virkningstidspunkt: Faktum<LocalDate>
 internal var inntekt3G: GrunnleggendeFaktum<Inntekt>
 internal var inntekt15G: GrunnleggendeFaktum<Inntekt>
 private val prototypeFakta = Fakta(
-    FaktaVersjon(Testprosess.Test, 13),
+    HenvendelsesType(Testprosess.Test, 13),
     dato faktum "Datoen du fyller 67" id 1,
     dato faktum "Datoen du søker om dagpenger" id 2,
     dato faktum "Datoen du ønsker dagpenger fra" id 3,
@@ -106,7 +106,7 @@ private val prototypeWebSøknad = Utredningsprosess(
 private val søknadprosessTestBygger = Versjon.Bygger(
     prototypeFakta,
     prototypeSubsumsjon,
-    prototypeWebSøknad,
+    prototypeWebSøknad
 )
 
 /* ktlint-disable parameter-list-wrapping */

@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.min
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.multiplikasjon
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosess
@@ -20,7 +20,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    val VERSJON_ID = FaktaVersjon(Prosess.AvslagPåMinsteinntekt, 29)
+    val VERSJON_ID = HenvendelsesType(Prosess.AvslagPåMinsteinntekt, 29)
 
     fun registrer(registrer: (prototype: Fakta) -> Unit) {
         registrer(prototypeFakta)
@@ -172,7 +172,7 @@ internal object AvslagPåMinsteinntektOppsett {
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = regeltre,
             utredningsprosess = Seksjoner.utredningsprosess,
-            faktumNavBehov = faktumNavBehov,
+            faktumNavBehov = faktumNavBehov
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
         }

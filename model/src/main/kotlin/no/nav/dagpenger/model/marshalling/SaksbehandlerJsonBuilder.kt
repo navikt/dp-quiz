@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.faktum.FaktaVersjon
+import no.nav.dagpenger.model.faktum.HenvendelsesType
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
@@ -33,8 +33,8 @@ class SaksbehandlerJsonBuilder(
         genererteFakta.forEach { it.accept(this) }
     }
 
-    override fun preVisit(fakta: Fakta, faktaVersjon: FaktaVersjon, uuid: UUID) {
-        super.preVisit(fakta, faktaVersjon, uuid)
+    override fun preVisit(fakta: Fakta, henvendelsesType: HenvendelsesType, uuid: UUID) {
+        super.preVisit(fakta, henvendelsesType, uuid)
         root.put("@event_name", "oppgave")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
