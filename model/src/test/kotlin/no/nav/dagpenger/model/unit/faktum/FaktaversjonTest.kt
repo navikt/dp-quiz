@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.unit.faktum
 
+import no.nav.dagpenger.model.faktum.Faktatype
 import no.nav.dagpenger.model.faktum.Faktaversjon
-import no.nav.dagpenger.model.faktum.Prosessnavn
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
@@ -10,7 +10,7 @@ import kotlin.test.assertContains
 
 internal class FaktaversjonTest {
 
-    private class Navn(override val id: String) : Prosessnavn {
+    private class Navn(override val id: String) : Faktatype {
         override fun toString(): String {
             return "Navn{id=$id}"
         }

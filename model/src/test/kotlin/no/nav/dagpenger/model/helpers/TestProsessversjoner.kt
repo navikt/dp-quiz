@@ -1,9 +1,9 @@
 package no.nav.dagpenger.model.helpers
 
+import no.nav.dagpenger.model.faktum.Faktatype
 import no.nav.dagpenger.model.faktum.Faktaversjon
-import no.nav.dagpenger.model.faktum.Prosessnavn
 
-enum class Testprosess(override val id: String) : Prosessnavn {
+enum class Testprosess(override val id: String) : Faktatype {
     PrototypeSøknad("prototypeSøknad"),
     Test("test"),
 }

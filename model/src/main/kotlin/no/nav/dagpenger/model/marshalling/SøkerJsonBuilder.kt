@@ -61,7 +61,7 @@ class SøkerJsonBuilder(private val utredningsprosess: Utredningsprosess) : Utre
     override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
         root.put("@event_name", "søker_oppgave")
         root.put("versjon_id", faktaversjon.versjon)
-        root.put("versjon_navn", faktaversjon.prosessnavn.id)
+        root.put("versjon_navn", faktaversjon.faktatype.id)
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("søknad_uuid", "$uuid")

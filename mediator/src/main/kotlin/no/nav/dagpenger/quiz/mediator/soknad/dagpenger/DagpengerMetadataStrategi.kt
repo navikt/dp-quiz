@@ -41,7 +41,7 @@ class DagpengerMetadataStrategi : MetadataStrategi {
         }
 
         override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
-            require(faktaversjon.prosessnavn == Prosess.Dagpenger) { "Kan kun håndtere ${Prosess.Dagpenger.name}, var ${faktaversjon.prosessnavn}" }
+            require(faktaversjon.faktatype == Prosess.Dagpenger) { "Kan kun håndtere ${Prosess.Dagpenger.name}, var ${faktaversjon.faktatype}" }
         }
 
         override fun preVisit(

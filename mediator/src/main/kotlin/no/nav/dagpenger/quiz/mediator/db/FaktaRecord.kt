@@ -10,6 +10,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktatype
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
@@ -20,7 +21,6 @@ import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
@@ -64,7 +64,7 @@ class FaktaRecord : FaktaPersistence {
         }
     }
 
-    private data class Prosess(override val id: String) : Prosessnavn
+    private data class Prosess(override val id: String) : Faktatype
 
     override fun hent(uuid: UUID): Utredningsprosess {
         data class SoknadRad(val personId: UUID, val navn: String, val versjonId: Int)
@@ -203,7 +203,7 @@ class FaktaRecord : FaktaPersistence {
             |SET versjon_id = (SELECT id FROM v1_prosessversjon WHERE navn = :navn AND versjon_id = :versjonId)
             |WHERE id = :soknadId
             """.trimMargin(),
-            mapOf("navn" to versjon.prosessnavn.id, "versjonId" to versjon.versjon, "soknadId" to soknadId),
+            mapOf("navn" to versjon.faktatype.id, "versjonId" to versjon.versjon, "soknadId" to soknadId),
         ).asUpdate
 
     private fun hentFaktum(sisteVersjon: Faktaversjon) =
@@ -214,7 +214,7 @@ class FaktaRecord : FaktaPersistence {
             |FROM faktum, v1_prosessversjon
             |WHERE faktum.versjon_id = v1_prosessversjon.id AND v1_prosessversjon.navn=? AND v1_prosessversjon.versjon_id=?
             """.trimMargin(),
-            sisteVersjon.prosessnavn.id,
+            sisteVersjon.faktatype.id,
             sisteVersjon.versjon,
         ).map {
             FaktumMigrering(

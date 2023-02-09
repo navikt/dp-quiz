@@ -14,7 +14,7 @@ import java.util.UUID
 
 internal class NyProsessBehovLøser(
     private val søknadPersistence: FaktaRecord,
-    rapidsConnection: RapidsConnection
+    rapidsConnection: RapidsConnection,
 ) : River.PacketListener {
     private companion object {
         private val log = KotlinLogging.logger {}
@@ -42,7 +42,7 @@ internal class NyProsessBehovLøser(
         val søknadUuid = packet["søknad_uuid"].asText().let { søknadUuid -> UUID.fromString(søknadUuid) }
 
         withLoggingContext(
-            "søknad_uuid" to søknadUuid.toString()
+            "søknad_uuid" to søknadUuid.toString(),
         ) {
             log.info { "Mottok $behovNavn behov" }
             val identer = Identer.Builder()
@@ -58,15 +58,15 @@ internal class NyProsessBehovLøser(
                     packet["@løsning"] = mapOf(
                         behovNavn to mapOf(
                             "prosessversjon" to mapOf(
-                                "prosessnavn" to prosessversjon.prosessnavn.id,
-                                "versjon" to prosessversjon.versjon
-                            )
-                        )
+                                "prosessnavn" to prosessversjon.faktatype.id,
+                                "versjon" to prosessversjon.versjon,
+                            ),
+                        ),
                     )
                     context.publish(
                         packet.toJson().also {
                             log.info { "Publiserer løsning med prosessversjon=$prosessversjon" }
-                        }
+                        },
                     )
 
                     søknadsprosess.sendNesteSeksjon(context)

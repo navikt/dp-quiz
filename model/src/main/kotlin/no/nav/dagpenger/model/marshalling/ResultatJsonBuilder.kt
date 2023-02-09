@@ -31,7 +31,7 @@ class ResultatJsonBuilder(
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("versjon_id", faktaversjon.versjon)
-        root.put("versjon_navn", faktaversjon.prosessnavn.id)
+        root.put("versjon_navn", faktaversjon.faktatype.id)
         root.put("søknad_uuid", "$uuid")
         root.put("resultat", utredningsprosess.resultat())
         root.set<ArrayNode>("identer", identerNode)

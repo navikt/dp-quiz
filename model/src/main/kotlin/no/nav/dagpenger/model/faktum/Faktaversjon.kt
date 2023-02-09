@@ -2,39 +2,39 @@ package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.seksjon.Versjon
 
-interface Prosessnavn {
+interface Faktatype {
     val id: String
 }
 
-class Faktaversjon(val prosessnavn: Prosessnavn, val versjon: Int) {
+class Faktaversjon(val faktatype: Faktatype, val versjon: Int) {
     internal companion object {
         val prototypeversjon = Faktaversjon(
-            object : Prosessnavn {
+            object : Faktatype {
                 override val id: String = "prototype"
             },
             0,
         )
     }
 
-    fun siste() = Versjon.siste(prosessnavn)
+    fun siste() = Versjon.siste(faktatype)
 
     fun kanMigrereTil(tilVersjon: Faktaversjon): Boolean {
-        require(tilVersjon.prosessnavn.id == prosessnavn.id) { "Kan ikke migrere til en annen prosesstype." }
+        require(tilVersjon.faktatype.id == faktatype.id) { "Kan ikke migrere til en annen prosesstype." }
         require(tilVersjon.versjon >= versjon) { "Kan ikke migrere bakover. Gjeldende versjon er $versjon, forsøkte å migrere til ${tilVersjon.versjon}" }
 
         return this != tilVersjon
     }
 
     init {
-        require(prosessnavn.id.isNotBlank()) { "Prosessnavn kan ikke være blank" }
+        require(faktatype.id.isNotBlank()) { "Prosessnavn kan ikke være blank" }
     }
 
     override fun equals(other: Any?): Boolean =
-        other is Faktaversjon && other.prosessnavn.id == this.prosessnavn.id && other.versjon == this.versjon
+        other is Faktaversjon && other.faktatype.id == this.faktatype.id && other.versjon == this.versjon
 
-    override fun hashCode(): Int = prosessnavn.id.hashCode() * 37 + versjon.hashCode()
+    override fun hashCode(): Int = faktatype.id.hashCode() * 37 + versjon.hashCode()
 
     override fun toString(): String {
-        return "Prosessversjon(prosessnavn=$prosessnavn, versjon=$versjon)"
+        return "Prosessversjon(prosessnavn=$faktatype, versjon=$versjon)"
     }
 }

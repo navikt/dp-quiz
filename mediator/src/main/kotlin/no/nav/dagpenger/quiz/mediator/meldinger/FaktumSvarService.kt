@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktatype
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
@@ -80,7 +80,7 @@ internal class FaktumSvarService(
                 val søknadprosess = faktaPersistence.hent(søknadUuid)
                 besvarFakta(fakta, søknadprosess)
 
-                val prosessnavn = ProsessVersjonVisitor(søknadprosess).prosessnavn
+                val prosessnavn = ProsessVersjonVisitor(søknadprosess).faktatype
                 if (søknadprosess.erFerdig()) {
                     // TODO: Lag en bedre måte å håndtere disse prosessene
                     if (prosessnavn == Prosess.Dagpenger || prosessnavn == Prosess.Innsending) {
@@ -171,14 +171,14 @@ internal class FaktumSvarService(
     private fun harSvar() = { faktumNode: JsonNode -> faktumNode.has("svar") }
 
     private class ProsessVersjonVisitor(utredningsprosess: Utredningsprosess) : UtredningsprosessVisitor {
-        lateinit var prosessnavn: Prosessnavn
+        lateinit var faktatype: Faktatype
 
         init {
             utredningsprosess.accept(this)
         }
 
         override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
-            prosessnavn = faktaversjon.prosessnavn
+            faktatype = faktaversjon.faktatype
         }
     }
 }

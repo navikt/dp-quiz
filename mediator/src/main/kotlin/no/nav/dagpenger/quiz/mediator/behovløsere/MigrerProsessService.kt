@@ -11,7 +11,7 @@ import no.nav.helse.rapids_rivers.River
 
 class MigrerProsessService(
     rapidsConnection: RapidsConnection,
-    private val faktaPersistence: FaktaPersistence
+    private val faktaPersistence: FaktaPersistence,
 ) : River.PacketListener {
     private companion object {
         val logger = KotlinLogging.logger { }
@@ -43,10 +43,10 @@ class MigrerProsessService(
 
             packet["@løsning"] = mapOf(
                 behov to mapOf(
-                    "prosessnavn" to prosessversjon.prosessnavn,
+                    "prosessnavn" to prosessversjon.faktatype,
                     "versjon" to prosessversjon.versjon,
-                    "data" to søknadData
-                )
+                    "data" to søknadData,
+                ),
             )
 
             context.publish(packet.toJson()).also {

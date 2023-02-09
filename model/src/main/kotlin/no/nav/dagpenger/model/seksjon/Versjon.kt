@@ -1,9 +1,9 @@
 package no.nav.dagpenger.model.seksjon
 
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktatype
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.Prosessnavn
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
@@ -15,8 +15,8 @@ class Versjon private constructor(
 
     companion object {
         val versjoner = mutableMapOf<Faktaversjon, Versjon>()
-        fun siste(prosessnavn: Prosessnavn): Faktaversjon {
-            return versjoner.keys.filter { it.prosessnavn.id == prosessnavn.id }.maxByOrNull { it.versjon }
+        fun siste(faktatype: Faktatype): Faktaversjon {
+            return versjoner.keys.filter { it.faktatype.id == faktatype.id }.maxByOrNull { it.versjon }
                 ?: throw IllegalArgumentException("Det finnes ingen versjoner!")
         }
 
