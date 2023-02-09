@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn etternavn`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn etternavn register`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn fornavn mellomnavn`
@@ -28,7 +28,7 @@ import java.time.LocalDate
 import kotlin.test.assertTrue
 
 internal class BarnetilleggTest {
-    private val fakta = Fakta(Faktaversjon(Prosess.Dagpenger, -1), *Barnetillegg.fakta())
+    private val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *Barnetillegg.fakta())
     private lateinit var utredningsprosess: Utredningsprosess
 
     @BeforeEach

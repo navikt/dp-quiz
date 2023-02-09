@@ -10,7 +10,7 @@ import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.MedSøknad
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`andre ytelser mottatt eller søkt`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`annen ytelse hvem utebetaler`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`annen ytelse hvilken periode`
@@ -41,7 +41,7 @@ internal class AndreYtelserTest {
 
     @Test
     fun `Hvis bruker ikke får noen andre ytelser`() {
-        val fakta = Fakta(Faktaversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             AndreYtelser.regeltre(fakta),
         ) {
@@ -152,7 +152,7 @@ internal class AndreYtelserTest {
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val fakta = Fakta(Faktaversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             AndreYtelser.regeltre(fakta),
         ) {
@@ -167,7 +167,7 @@ internal class AndreYtelserTest {
 
     @Test
     fun `For et EØS-land skal det være en egen gruppe for kun EØS-land`() {
-        val fakta = Fakta(Faktaversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             AndreYtelser.regeltre(fakta),
         ) {
@@ -194,7 +194,7 @@ internal class AndreYtelserTest {
     }
 
     private fun verifiserAnnenYtelseUtenØkonomiskGode(kodeForSpesifikkYtelse: (Utredningsprosess) -> Unit) {
-        val fakta = Fakta(Faktaversjon(Prosess.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             AndreYtelser.regeltre(fakta),
         ) {

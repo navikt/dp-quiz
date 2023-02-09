@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.FaktaRecord
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -22,7 +22,7 @@ class Paragraf_43_alderIntegrasjonsTest {
             val identer = Identer.Builder().folkeregisterIdent("12345678910").build()
             val søknadsprosess = søknadPersistence.ny(
                 identer,
-                Versjon.siste(Prosess.Paragraf_4_23_alder)
+                Versjon.siste(Prosessfakta.Paragraf_4_23_alder),
             )
 
             søknadsprosess.dokument(Paragraf_4_23_alder_oppsett.innsendtSøknadId)

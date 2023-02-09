@@ -15,7 +15,7 @@ import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 
 /**
  *  POC - dele opp vilkårsvurdering i kap 4
@@ -24,7 +24,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosess
  * Vi er pt. usikre på formen på det enda, så denne blir borte/endret
  */
 internal object Paragraf_4_23_alder_oppsett {
-    val VERSJON_ID = Faktaversjon(Prosess.Paragraf_4_23_alder, 2)
+    val VERSJON_ID = Faktaversjon(Prosessfakta.Paragraf_4_23_alder, 2)
     const val virkningsdato = 1
     const val fødselsdato = 2
     const val grensedato = 3

@@ -24,8 +24,8 @@ internal class ProsessMetadataStrategi : MetadataStrategi {
 
         override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
             metadata = when (faktaversjon.faktatype) {
-                Prosess.Dagpenger -> DagpengerMetadataStrategi().metadata(utredningsprosess)
-                Prosess.Innsending -> InnsendingMetadataStrategi().metadata(utredningsprosess)
+                Prosessfakta.Dagpenger -> DagpengerMetadataStrategi().metadata(utredningsprosess)
+                Prosessfakta.Innsending -> InnsendingMetadataStrategi().metadata(utredningsprosess)
                 else -> throw IllegalArgumentException("Har ikke laget skjemakodestrategi for ${faktaversjon.faktatype}")
             }
         }

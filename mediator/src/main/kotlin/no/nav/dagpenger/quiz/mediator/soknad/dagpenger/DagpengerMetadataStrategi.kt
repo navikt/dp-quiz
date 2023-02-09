@@ -10,7 +10,7 @@ import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
 import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import java.util.UUID
 
 class DagpengerMetadataStrategi : MetadataStrategi {
@@ -41,7 +41,7 @@ class DagpengerMetadataStrategi : MetadataStrategi {
         }
 
         override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
-            require(faktaversjon.faktatype == Prosess.Dagpenger) { "Kan kun håndtere ${Prosess.Dagpenger.name}, var ${faktaversjon.faktatype}" }
+            require(faktaversjon.faktatype == Prosessfakta.Dagpenger) { "Kan kun håndtere ${Prosessfakta.Dagpenger.name}, var ${faktaversjon.faktatype}" }
         }
 
         override fun preVisit(

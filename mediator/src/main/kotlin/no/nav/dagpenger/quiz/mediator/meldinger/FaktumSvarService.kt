@@ -13,7 +13,7 @@ import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -83,7 +83,7 @@ internal class FaktumSvarService(
                 val prosessnavn = ProsessVersjonVisitor(søknadprosess).faktatype
                 if (søknadprosess.erFerdig()) {
                     // TODO: Lag en bedre måte å håndtere disse prosessene
-                    if (prosessnavn == Prosess.Dagpenger || prosessnavn == Prosess.Innsending) {
+                    if (prosessnavn == Prosessfakta.Dagpenger || prosessnavn == Prosessfakta.Innsending) {
                         SøkerJsonBuilder(søknadprosess).resultat().also { json ->
                             val message = json.toString().let { JsonMessage(it, MessageProblems(it)) }
                             context.publish(message.toJson())

@@ -19,8 +19,8 @@ import no.nav.dagpenger.quiz.mediator.meldinger.ManuellBehandlingSink
 import no.nav.dagpenger.quiz.mediator.meldinger.NyProsessBehovLøser
 import no.nav.dagpenger.quiz.mediator.meldinger.SøknadSlettetService
 import no.nav.dagpenger.quiz.mediator.meldinger.VilkårsvurderingLøser
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.ProsessMetadataStrategi
+import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
@@ -34,7 +34,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.v248.Dagpenger as Dagpeng
 // Understands how to build our application server
 internal class ApplicationBuilder : RapidsConnection.StatusListener {
     private val rapidsConnection = RapidApplication.Builder(
-        RapidApplication.RapidApplicationConfig.fromEnv(Configuration.config)
+        RapidApplication.RapidApplicationConfig.fromEnv(Configuration.config),
     ).build()
 
     private companion object {
@@ -62,7 +62,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 Dagpenger.registrer { prototype ->
                     FaktumTable(prototype)
 
-                    Versjon.id(Versjon.siste(Prosess.Dagpenger)).also { versjon ->
+                    Versjon.id(Versjon.siste(Prosessfakta.Dagpenger)).also { versjon ->
                         val søknadsprosess = versjon.utredningsprosess(prototype)
                         val malJson = SøknadsmalJsonBuilder(søknadsprosess).resultat().toString()
                         rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
@@ -72,7 +72,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 Innsending.registrer { prototype ->
                     FaktumTable(prototype)
 
-                    Versjon.id(Versjon.siste(Prosess.Innsending)).also { versjon ->
+                    Versjon.id(Versjon.siste(Prosessfakta.Innsending)).also { versjon ->
                         val søknadsprosess = versjon.utredningsprosess(prototype)
                         val malJson = SøknadsmalJsonBuilder(søknadsprosess).resultat().toString()
                         rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
@@ -96,7 +96,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 MetadataService(
                     rapidsConnection,
                     faktaRecord,
-                    ProsessMetadataStrategi()
+                    ProsessMetadataStrategi(),
                 )
                 DokumentkravSvarService(rapidsConnection, faktaRecord)
                 MigrerProsessService(rapidsConnection, faktaRecord)

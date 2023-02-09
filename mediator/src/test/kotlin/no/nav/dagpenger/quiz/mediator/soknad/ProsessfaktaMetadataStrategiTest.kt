@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 
-internal class ProsessMetadataStrategiTest {
+internal class ProsessfaktaMetadataStrategiTest {
 
     private lateinit var utredningsprosessDagpenger: Utredningsprosess
     private lateinit var utredningsprosessInnsending: Utredningsprosess

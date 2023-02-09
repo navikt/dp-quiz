@@ -18,7 +18,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class NyProsessBehovLøserTest : SøknadBesvarer() {
+internal class NyProsessfaktaBehovLøserTest : SøknadBesvarer() {
     @BeforeEach
     fun setup() {
         Postgres.withMigratedDb {
@@ -30,7 +30,7 @@ internal class NyProsessBehovLøserTest : SøknadBesvarer() {
                 FaktumSvarService(
                     faktaPersistence = søknadPersistence,
                     resultatPersistence = resultatPersistence,
-                    rapidsConnection = it
+                    rapidsConnection = it,
                 )
                 NyProsessBehovLøser(søknadPersistence, it)
             }
@@ -51,7 +51,7 @@ internal class NyProsessBehovLøserTest : SøknadBesvarer() {
                 assertEquals("behov", it["@event_name"].asText())
                 assertEquals(
                     listOf("NySøknad"),
-                    it["@behov"].map { it.asText() }
+                    it["@behov"].map { it.asText() },
                 )
                 assertFalse(it["@løsning"]["NySøknad"].isNull, "NySøknad behov skal besvares med søknad id")
             }

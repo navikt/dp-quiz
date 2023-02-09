@@ -11,7 +11,7 @@ import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.MinimalSøknadsprosess
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -20,7 +20,7 @@ import kotlin.test.assertEquals
 
 internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
 
-    val faktaversjon = Faktaversjon(Prosess.Dagpenger, -2313)
+    val faktaversjon = Faktaversjon(Prosessfakta.Dagpenger, -2313)
     private val dagpengerSøknadsprosess = MinimalSøknadsprosess(faktaversjon, Rolle.søker)
 
     private val faktaPersistence = mockk<FaktaPersistence>().also {
@@ -63,7 +63,7 @@ internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
 
 internal class AvslagPåMinsteinntektFaktumSvarflytTest : SøknadBesvarer() {
 
-    val faktaversjon = Faktaversjon(Prosess.AvslagPåMinsteinntekt, -2313)
+    val faktaversjon = Faktaversjon(Prosessfakta.AvslagPåMinsteinntekt, -2313)
     private val dagpengerSøknadsprosess = MinimalSøknadsprosess(faktaversjon, Rolle.nav)
 
     private val faktaPersistence = mockk<FaktaPersistence>().also {

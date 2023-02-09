@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-internal class MigrerProsessServiceTest {
+internal class MigrerProsessfaktaServiceTest {
     private val faktaPersistence = mockk<FaktaPersistence>(relaxed = true)
     private val søknadUUID = UUID.randomUUID()
     private val rapid = TestRapid().apply {
@@ -42,7 +42,7 @@ internal class MigrerProsessServiceTest {
                 }
               ]
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         with(rapid.inspektør) {

@@ -35,6 +35,6 @@ class Faktaversjon(val faktatype: Faktatype, val versjon: Int) {
     override fun hashCode(): Int = faktatype.id.hashCode() * 37 + versjon.hashCode()
 
     override fun toString(): String {
-        return "Prosessversjon(prosessnavn=$faktatype, versjon=$versjon)"
+        return "Faktaversjon(faktatype=$faktatype, versjon=$versjon)"
     }
 }

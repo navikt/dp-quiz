@@ -5,7 +5,7 @@ import mu.withLoggingContext
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.FaktaRecord
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -35,8 +35,8 @@ internal class NyProsessBehovLøser(
         val behovNavn = packet["@behov"].single().asText()
         val prosessnavn = packet["prosessnavn"].asText()
         val prosessversjon = when (prosessnavn) {
-            "Dagpenger" -> Versjon.siste(Prosess.Dagpenger)
-            "Innsending" -> Versjon.siste(Prosess.Innsending)
+            "Dagpenger" -> Versjon.siste(Prosessfakta.Dagpenger)
+            "Innsending" -> Versjon.siste(Prosessfakta.Innsending)
             else -> throw Error("Mangler prosess for $prosessnavn")
         }
         val søknadUuid = packet["søknad_uuid"].asText().let { søknadUuid -> UUID.fromString(søknadUuid) }

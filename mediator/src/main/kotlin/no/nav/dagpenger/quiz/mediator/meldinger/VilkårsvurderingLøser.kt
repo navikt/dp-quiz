@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -17,7 +17,7 @@ import java.util.UUID
 
 internal class VilkårsvurderingLøser(
     rapidsConnection: RapidsConnection,
-    private val prosessPersistence: FaktaPersistence
+    private val prosessPersistence: FaktaPersistence,
 ) :
     River.PacketListener {
     val behov = "Paragraf_4_23_alder"
@@ -36,7 +36,6 @@ internal class VilkårsvurderingLøser(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-
         val vilkårsvurderingId = packet["vilkårsvurderingId"].asText().let { UUID.fromString(it) }
         val søknadUuid = packet["søknad_uuid"].asText().let { UUID.fromString(it) }
         withLoggingContext(
@@ -46,7 +45,7 @@ internal class VilkårsvurderingLøser(
                 val vilkår = packet["@behov"].map { it.asText() }.first()
                 logger.info { "Mottok behov om vurdering av $vilkår" }
                 val prosessversjon = when (vilkår) {
-                    behov -> Versjon.siste(Prosess.Paragraf_4_23_alder)
+                    behov -> Versjon.siste(Prosessfakta.Paragraf_4_23_alder)
                     else -> {
                         logger.error { "Det er ikke støtte for vurdering av $vilkår enda." }
                         null
@@ -59,7 +58,7 @@ internal class VilkårsvurderingLøser(
                     prosessPersistence.ny(
                         identer = identer,
                         prosessVersjon = prosessversjon,
-                        uuid = vilkårsvurderingId
+                        uuid = vilkårsvurderingId,
                     )
 
                 paragraf_4_23_alder_prosess.dokument(Paragraf_4_23_alder_oppsett.innsendtSøknadId)
