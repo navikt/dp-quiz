@@ -45,7 +45,7 @@ internal class DinSituasjonTest {
                 alleFakta,
             ),
             "Ikke alle faktum er ikke definert i seksjon.\nMangler seksjon for faktum id: ${
-                alleFakta.toSet().minus(faktaISeksjoner.toSet())
+            alleFakta.toSet().minus(faktaISeksjoner.toSet())
             }",
         )
     }

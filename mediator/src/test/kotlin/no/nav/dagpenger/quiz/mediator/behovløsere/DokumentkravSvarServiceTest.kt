@@ -2,17 +2,17 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
+import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class DokumentkravSvarServiceTest {
-    val faktaPersistence = mockk<FaktaPersistence>(relaxed = true)
+    val faktaRepository = mockk<FaktaRepository>(relaxed = true)
 
     private val rapid = TestRapid().apply {
-        DokumentkravSvarService(this, faktaPersistence)
+        DokumentkravSvarService(this, faktaRepository)
     }
 
     @Test
@@ -38,7 +38,7 @@ internal class DokumentkravSvarServiceTest {
           "@id": "12345",
           "@opprettet": "2022-09-26T09:47:15.296036"
         }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         with(rapid.inspektør) {
@@ -47,8 +47,8 @@ internal class DokumentkravSvarServiceTest {
         }
 
         verify(exactly = 1) {
-            faktaPersistence.hent(søknadUUID)
-            faktaPersistence.lagre(any())
+            faktaRepository.hent(søknadUUID)
+            faktaRepository.lagre(any())
         }
     }
 }

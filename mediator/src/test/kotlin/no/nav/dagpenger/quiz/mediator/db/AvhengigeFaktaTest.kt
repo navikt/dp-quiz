@@ -74,7 +74,7 @@ internal class AvhengigeFaktaTest {
             ).registrer()
             FaktumTable(prototypeFakta)
             faktaRecord = FaktaRecord()
-            originalUtredningsprosess = faktaRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
+            originalUtredningsprosess = utredningsprosess(prosessVersjon)
 
             originalUtredningsprosess.dato(2).besvar(2.januar)
             originalUtredningsprosess.dato(13).besvar(13.januar)
@@ -116,7 +116,7 @@ internal class AvhengigeFaktaTest {
             FaktumTable(prototypeFakta)
 
             faktaRecord = FaktaRecord()
-            originalUtredningsprosess = faktaRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
+            originalUtredningsprosess = utredningsprosess(prosessVersjon)
 
             originalUtredningsprosess.boolsk(2).besvar(true)
             originalUtredningsprosess.boolsk(5).besvar(true)
@@ -159,7 +159,7 @@ internal class AvhengigeFaktaTest {
             FaktumTable(prototypeFakta)
 
             faktaRecord = FaktaRecord()
-            originalUtredningsprosess = faktaRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
+            originalUtredningsprosess = utredningsprosess(prosessVersjon)
 
             originalUtredningsprosess.dato(2).besvar(1.januar)
             originalUtredningsprosess.dato(3).besvar(10.januar)
@@ -210,7 +210,7 @@ internal class AvhengigeFaktaTest {
             FaktumTable(prototypeFakta)
 
             faktaRecord = FaktaRecord()
-            originalUtredningsprosess = faktaRecord.ny(FaktaRecordTest.UNG_PERSON_FNR_2018, prosessVersjon)
+            originalUtredningsprosess = utredningsprosess(prosessVersjon)
 
             originalUtredningsprosess.boolsk(1).besvar(true)
             originalUtredningsprosess.dato(2).besvar(10.januar)
@@ -241,6 +241,11 @@ internal class AvhengigeFaktaTest {
             rehydrertUtredningsprosess = faktaRecord.hent(originalUtredningsprosess.fakta.uuid)
             assertEquals(1, rehydrertUtredningsprosess.fakta.count { it.erBesvart() })
         }
+    }
+
+    private fun utredningsprosess(prosessVersjon: Faktaversjon): Utredningsprosess {
+        val fakta = faktaRecord.ny(UNG_PERSON_FNR_2018, prosessVersjon)
+        return Versjon.id(prosessVersjon).utredningsprosess(fakta)
     }
 
     private fun lagreHentOgSammenlign() {

@@ -28,7 +28,7 @@ internal class NyProsessfaktaBehovLøserTest : SøknadBesvarer() {
             val resultatPersistence = ResultatRecord()
             testRapid = TestRapid().also {
                 FaktumSvarService(
-                    faktaPersistence = søknadPersistence,
+                    faktaRepository = søknadPersistence,
                     resultatPersistence = resultatPersistence,
                     rapidsConnection = it,
                 )

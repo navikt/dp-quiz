@@ -51,10 +51,11 @@ internal class ResultatTest {
             faktaRecord = FaktaRecord()
             resultatRecord = ResultatRecord()
 
-            utredningsprosess = faktaRecord.ny(
+            val fakta = faktaRecord.ny(
                 IDENT,
                 prosessVersjon,
             )
+            utredningsprosess = Versjon.id(prosessVersjon).utredningsprosess(fakta)
         }
     }
 

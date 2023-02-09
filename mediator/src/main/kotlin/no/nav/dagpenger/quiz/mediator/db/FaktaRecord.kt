@@ -31,7 +31,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 // Understands a relational representation of a Fakta
-class FaktaRecord : FaktaPersistence {
+class FaktaRecord : FaktaRepository {
     private val personRecord = PersonRecord()
 
     private companion object {
@@ -43,11 +43,11 @@ class FaktaRecord : FaktaPersistence {
         identer: Identer,
         prosessVersjon: Faktaversjon,
         uuid: UUID,
-    ): Utredningsprosess {
+    ): Fakta {
         val person = personRecord.hentEllerOpprettPerson(identer)
-        return Versjon.id(prosessVersjon).utredningsprosess(person, uuid).also { søknadprosess ->
-            if (eksisterer(uuid)) return søknadprosess
-            OpprettNyFaktaVisitor(søknadprosess.fakta)
+        return Versjon.id(prosessVersjon).fakta(person, uuid).also { fakta ->
+            if (eksisterer(uuid)) return fakta
+            OpprettNyFaktaVisitor(fakta)
         }
     }
 
@@ -87,15 +87,15 @@ class FaktaRecord : FaktaPersistence {
                 }.asSingle,
             )
         } ?: throw IllegalArgumentException("Kan ikke hente en søknad som ikke finnes, uuid: $uuid")
+        val fakta = Versjon.id(Faktaversjon(Prosess(rad.navn), rad.versjonId))
+            .fakta(personRecord.hentPerson(rad.personId), uuid)
 
-        return Versjon.id(Faktaversjon(Prosess(rad.navn), rad.versjonId)).utredningsprosess(
-            person = personRecord.hentPerson(rad.personId),
-            faktaUUID = uuid,
-        ).also { søknadprosess ->
-            svarList(uuid).onEach { row ->
-                søknadprosess.fakta.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
+        return Versjon.id(Faktaversjon(Prosess(rad.navn), rad.versjonId)).utredningsprosess(fakta)
+            .also { søknadprosess ->
+                svarList(uuid).onEach { row ->
+                    søknadprosess.fakta.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
+                }
             }
-        }
     }
 
     override fun lagre(fakta: Fakta): Boolean {
@@ -115,7 +115,8 @@ class FaktaRecord : FaktaPersistence {
     override fun slett(uuid: UUID): Boolean {
         using(sessionOf(dataSource)) { session ->
             session.run(
-                queryOf( //language=PostgreSQL
+                queryOf(
+                        //language=PostgreSQL
                     "DELETE FROM soknad WHERE uuid = :uuid",
                     mapOf("uuid" to uuid),
                 ).asExecute,

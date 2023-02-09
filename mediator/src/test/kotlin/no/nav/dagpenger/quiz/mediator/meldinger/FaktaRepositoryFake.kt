@@ -6,12 +6,12 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
+import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class FaktaPersistenceFake : FaktaPersistence {
+internal class FaktaRepositoryFake : FaktaRepository {
     var utredningsprosess: Utredningsprosess? = null
     var hentet: Int = 0
 
@@ -19,9 +19,9 @@ internal class FaktaPersistenceFake : FaktaPersistence {
         identer: Identer,
         prosessVersjon: Faktaversjon,
         uuid: UUID,
-    ): Utredningsprosess =
-        Versjon.id(SøknadEksempel.prosessVersjon).utredningsprosess(Person(identer))
-            .also { utredningsprosess = it }
+    ): Fakta =
+        Versjon.id(SøknadEksempel.prosessVersjon).fakta(Person(identer))
+            .also { utredningsprosess = Versjon.id(SøknadEksempel.prosessVersjon).utredningsprosess(it) }
 
     override fun hent(uuid: UUID) = utredningsprosess!!.also { hentet++ }
 

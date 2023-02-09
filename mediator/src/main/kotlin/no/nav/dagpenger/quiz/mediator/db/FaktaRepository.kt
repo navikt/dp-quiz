@@ -7,8 +7,8 @@ import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import java.time.LocalDateTime
 import java.util.UUID
 
-interface FaktaPersistence {
-    fun ny(identer: Identer, prosessVersjon: Faktaversjon, uuid: UUID = UUID.randomUUID()): Utredningsprosess
+interface FaktaRepository {
+    fun ny(identer: Identer, prosessVersjon: Faktaversjon, uuid: UUID = UUID.randomUUID()): Fakta
     fun hent(uuid: UUID): Utredningsprosess
     fun lagre(fakta: Fakta): Boolean
     fun opprettede(identer: Identer): Map<LocalDateTime, UUID>

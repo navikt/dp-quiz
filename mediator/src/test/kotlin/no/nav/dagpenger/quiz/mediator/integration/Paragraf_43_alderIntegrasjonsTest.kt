@@ -28,9 +28,9 @@ class Paragraf_43_alderIntegrasjonsTest {
             søknadsprosess.dokument(Paragraf_4_23_alder_oppsett.innsendtSøknadId)
                 .besvar(Dokument(LocalDateTime.now(), "urn:soknadid:${UUID.randomUUID()}"))
 
-            søknadPersistence.lagre(søknadsprosess.fakta)
+            søknadPersistence.lagre(søknadsprosess)
             val rehydrertSøknadsprosess =
-                søknadPersistence.hent(søknadsprosess.fakta.uuid)
+                søknadPersistence.hent(søknadsprosess.uuid)
 
             assertTrue(rehydrertSøknadsprosess.dokument(Paragraf_4_23_alder_oppsett.innsendtSøknadId).erBesvart())
         }

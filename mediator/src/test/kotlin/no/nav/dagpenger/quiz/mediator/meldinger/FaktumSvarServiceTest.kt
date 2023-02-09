@@ -16,7 +16,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
-import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
+import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -53,14 +53,14 @@ internal class FaktumSvarServiceTest {
         ).registrer()
     }
 
-    val faktaPersistence = mockk<FaktaPersistence>().also {
+    val faktaRepository = mockk<FaktaRepository>().also {
         every { it.hent(any()) } returns Versjon.id(prosessVersjon).utredningsprosess(prototypeFakta)
         every { it.lagre(any() as Fakta) } returns true
     }
     val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
     val testRapid = TestRapid().also {
         FaktumSvarService(
-            faktaPersistence = faktaPersistence,
+            faktaRepository = faktaRepository,
             resultatPersistence = resultatPersistence,
             rapidsConnection = it,
         )
@@ -81,8 +81,8 @@ internal class FaktumSvarServiceTest {
         assertTrue(prototypeFakta.dato("12.2").erBesvart())
         assertEquals("2020-01-16", prototypeFakta.dato("12.2").svar().toString())
 
-        verify(exactly = 1) { faktaPersistence.hent(any()) }
-        verify(exactly = 1) { faktaPersistence.lagre(any() as Fakta) }
+        verify(exactly = 1) { faktaRepository.hent(any()) }
+        verify(exactly = 1) { faktaRepository.lagre(any() as Fakta) }
         verify(exactly = 1) { resultatPersistence.lagreResultat(any(), any(), any()) }
     }
 

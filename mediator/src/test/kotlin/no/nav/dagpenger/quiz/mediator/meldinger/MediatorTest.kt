@@ -25,14 +25,14 @@ internal class MediatorTest {
     private companion object {
         private val meldingsfabrikk = TestMeldingFactory("fødselsnummer", "aktør")
         private val testRapid = TestRapid()
-        private val grupperer = FaktaPersistenceFake()
+        private val grupperer = FaktaRepositoryFake()
         private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
 
         init {
             AvslagPåMinsteinntektService(
                 grupperer,
                 testRapid,
-                SøknadEksempel.prosessVersjon
+                SøknadEksempel.prosessVersjon,
             )
             FaktumSvarService(grupperer, resultatPersistence, testRapid)
         }
@@ -48,8 +48,8 @@ internal class MediatorTest {
             meldingsfabrikk.besvarFaktum(
                 uuid,
                 FaktumSvar(1, "boolean", "true"),
-                FaktumSvar(2, "boolean", "true")
-            )
+                FaktumSvar(2, "boolean", "true"),
+            ),
         )
         assertEquals("faktum_svar", testRapid.inspektør.field(1, "@event_name").asText())
         assertEquals(true, grupperer.utredningsprosess!!.id(1).svar())
@@ -58,8 +58,8 @@ internal class MediatorTest {
         testRapid.sendTestMessage(
             meldingsfabrikk.besvarFaktum(
                 uuid,
-                FaktumSvar(4, "localdate", 24.desember.toString())
-            )
+                FaktumSvar(4, "localdate", 24.desember.toString()),
+            ),
         )
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(5, "inntekt", 1000.årlig.toString())))
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(6, "inntekt", 1050.årlig.toString())))
@@ -69,9 +69,9 @@ internal class MediatorTest {
                 FaktumSvar(
                     7,
                     "dokument",
-                    Dokument(1.januar.atStartOfDay(), "urn:nav:somethingg")
-                )
-            )
+                    Dokument(1.januar.atStartOfDay(), "urn:nav:somethingg"),
+                ),
+            ),
         )
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(8, "boolean", "true")))
         assertEquals(8, testRapid.inspektør.size)
@@ -87,8 +87,8 @@ internal class MediatorTest {
         testRapid.sendTestMessage(
             meldingsfabrikk.besvarFaktum(
                 uuid,
-                FaktumSvar(1, "boolean", null)
-            )
+                FaktumSvar(1, "boolean", null),
+            ),
         )
         assertEquals(1, testRapid.inspektør.size)
         assertEquals(0, grupperer.hentet, "Faktum uten svar laster ikke søknaden")
@@ -96,8 +96,8 @@ internal class MediatorTest {
         testRapid.sendTestMessage(
             meldingsfabrikk.besvarFaktum(
                 uuid,
-                FaktumSvar(2, "boolean", "true")
-            )
+                FaktumSvar(2, "boolean", "true"),
+            ),
         )
         assertEquals(2, testRapid.inspektør.size)
         assertEquals(1, grupperer.hentet, "Faktum med et svar laster søknaden")
@@ -106,8 +106,8 @@ internal class MediatorTest {
             meldingsfabrikk.besvarFaktum(
                 uuid,
                 FaktumSvar(1, "boolean", null),
-                FaktumSvar(2, "boolean", "true")
-            )
+                FaktumSvar(2, "boolean", "true"),
+            ),
         )
         assertEquals(3, testRapid.inspektør.size)
         assertEquals(2, grupperer.hentet, "Fakta hvor minst ett faktum har svar laster søknaden")
@@ -115,8 +115,8 @@ internal class MediatorTest {
         testRapid.sendTestMessage(
             meldingsfabrikk.besvarFaktumMedNull(
                 uuid,
-                FaktumSvar(1, "boolean", null)
-            )
+                FaktumSvar(1, "boolean", null),
+            ),
         )
         assertEquals(4, testRapid.inspektør.size)
         assertEquals(3, grupperer.hentet, "Faktum med null som svar laster søknaden")
@@ -133,8 +133,8 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
             "aktørId" to aktørId,
             "type" to "NySøknad",
             "journalpostId" to "493389306",
-            "søknadsData" to mapOf("søknad_uuid" to "mf68etellerannet")
-        )
+            "søknadsData" to mapOf("søknad_uuid" to "mf68etellerannet"),
+        ),
     )
 
     private fun nyHendelse(navn: String, hendelse: Map<String, Any>) =
@@ -143,7 +143,7 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
     private fun nyHendelse(navn: String) = mutableMapOf<String, Any>(
         "@id" to UUID.randomUUID(),
         "@event_name" to navn,
-        "@opprettet" to LocalDateTime.now()
+        "@opprettet" to LocalDateTime.now(),
     )
 
     fun besvarFaktum(søknadUuid: UUID, vararg faktumSvarListe: FaktumSvar) = nyHendelse(
@@ -154,7 +154,7 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
             "fakta" to faktumSvarListe.asList().map { faktumSvar ->
                 mapOf(
                     "id" to faktumSvar.faktumId,
-                    "type" to faktumSvar.type
+                    "type" to faktumSvar.type,
                 ).let { fakta ->
                     fakta + faktumSvar.svar?.let {
                         mapOf(
@@ -163,17 +163,17 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
                                 is Dokument -> faktumSvar.svar.reflection { lastOppTidsstempel, urn: String ->
                                     mapOf(
                                         "lastOppTidsstempel" to lastOppTidsstempel,
-                                        "urn" to urn
+                                        "urn" to urn,
                                     )
                                 }
 
                                 else -> throw IllegalArgumentException("Ustøtta svar-type")
-                            }
+                            },
                         )
                     }.orEmpty()
                 }
-            }
-        )
+            },
+        ),
     )
 
     fun besvarFaktumMedNull(søknadUuid: UUID, vararg faktumSvarListe: FaktumSvar) = nyHendelse(
@@ -184,13 +184,13 @@ private class TestMeldingFactory(private val fnr: String, private val aktørId: 
             "fakta" to faktumSvarListe.asList().map { faktumSvar ->
                 mapOf(
                     "id" to faktumSvar.faktumId,
-                    "type" to faktumSvar.type
+                    "type" to faktumSvar.type,
                 ).let { fakta ->
                     fakta + mapOf(
-                        "svar" to null
+                        "svar" to null,
                     )
                 }
-            }
-        )
+            },
+        ),
     )
 }

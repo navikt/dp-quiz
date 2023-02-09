@@ -21,6 +21,7 @@ import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.mai
 import no.nav.dagpenger.model.helpers.mars
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
@@ -123,8 +124,8 @@ internal class FaktaRecordTest {
     fun `Skal kun slette besvarer hvis den ikke refererer til andre søknader`() = Postgres.withMigratedDb {
         FaktumTable(SøknadEksempel1.prototypeFakta1)
         faktaRecord = FaktaRecord()
-        val søknadProsess1 = faktaRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon)
-        val søknadProsess2 = faktaRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon)
+        val søknadProsess1 = utredningsprosess(SøknadEksempel1.prosessVersjon)
+        val søknadProsess2 = utredningsprosess(SøknadEksempel1.prosessVersjon)
         val besvarer = "123"
         søknadProsess1.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
         faktaRecord.lagre(søknadProsess1.fakta)
@@ -354,9 +355,9 @@ internal class FaktaRecordTest {
             FaktumTable(SøknadEksempel1.prototypeFakta1)
             faktaRecord = FaktaRecord()
             originalUtredningsprosess =
-                faktaRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon, søknadUUId)
+                utredningsprosess(SøknadEksempel1.prosessVersjon, søknadUUId)
             originalUtredningsprosess =
-                faktaRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon, søknadUUId)
+                utredningsprosess(SøknadEksempel1.prosessVersjon, søknadUUId)
 
             originalUtredningsprosess.dato(2).besvar(LocalDate.now())
 
@@ -410,6 +411,12 @@ internal class FaktaRecordTest {
         }
     }
 
+    private fun utredningsprosess(prosessVersjon: Faktaversjon, søknadUUID: UUID): Utredningsprosess {
+        val fakta = faktaRecord.ny(AvhengigeFaktaTest.UNG_PERSON_FNR_2018, prosessVersjon, søknadUUID)
+        return Versjon.id(prosessVersjon).utredningsprosess(fakta)
+    }
+    private fun utredningsprosess(prosessVersjon: Faktaversjon) = utredningsprosess(prosessVersjon, UUID.randomUUID())
+
     private fun lagreHentOgSammenlign() {
         faktaRecord.lagre(originalUtredningsprosess.fakta)
         val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
@@ -422,7 +429,7 @@ internal class FaktaRecordTest {
     private fun byggOriginalSøknadprosess() {
         FaktumTable(SøknadEksempel1.prototypeFakta1)
         faktaRecord = FaktaRecord()
-        originalUtredningsprosess = faktaRecord.ny(UNG_PERSON_FNR_2018, SøknadEksempel1.prosessVersjon)
+        originalUtredningsprosess = utredningsprosess(SøknadEksempel1.prosessVersjon)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

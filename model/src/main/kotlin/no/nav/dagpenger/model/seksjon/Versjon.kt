@@ -29,11 +29,11 @@ class Versjon private constructor(
         versjoner[bygger.prosessversjon()] = this
     }
 
-    fun utredningsprosess(
+    fun fakta(
         person: Person,
         faktaUUID: UUID = UUID.randomUUID(),
-    ): Utredningsprosess =
-        bygger.utredningsprosess(person, faktaUUID)
+    ): Fakta =
+        bygger.fakta(person, faktaUUID)
 
     fun utredningsprosess(fakta: Fakta) =
         bygger.utredningsprosess(fakta)
@@ -49,6 +49,10 @@ class Versjon private constructor(
             faktaUUID: UUID = UUID.randomUUID(),
         ): Utredningsprosess =
             utredningsprosess(prototypeFakta.bygg(person, prototypeFakta.faktaversjon, faktaUUID))
+        fun fakta(
+            person: Person,
+            faktaUUID: UUID = UUID.randomUUID(),
+        ): Fakta = prototypeFakta.bygg(person, prototypeFakta.faktaversjon, faktaUUID)
 
         fun utredningsprosess(
             fakta: Fakta,

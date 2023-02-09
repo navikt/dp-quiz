@@ -5,7 +5,7 @@ import mu.withLoggingContext
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
+import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -17,7 +17,7 @@ import java.util.UUID
 
 internal class VilkårsvurderingLøser(
     rapidsConnection: RapidsConnection,
-    private val prosessPersistence: FaktaPersistence,
+    private val prosessPersistence: FaktaRepository,
 ) :
     River.PacketListener {
     val behov = "Paragraf_4_23_alder"
@@ -51,21 +51,15 @@ internal class VilkårsvurderingLøser(
                         null
                     }
                 } ?: return
-
                 val identer = Identer.Builder().folkeregisterIdent(packet["ident"].asText()).build()
-
+                val fakta = prosessPersistence.ny(identer, prosessversjon, vilkårsvurderingId)
                 val paragraf_4_23_alder_prosess =
-                    prosessPersistence.ny(
-                        identer = identer,
-                        prosessVersjon = prosessversjon,
-                        uuid = vilkårsvurderingId,
-                    )
+                    Versjon.id(prosessversjon).utredningsprosess(fakta)
 
                 paragraf_4_23_alder_prosess.dokument(Paragraf_4_23_alder_oppsett.innsendtSøknadId)
                     .besvar(Dokument(LocalDateTime.now(), "urn:soknadid:$søknadUuid"))
 
                 prosessPersistence.lagre(paragraf_4_23_alder_prosess.fakta)
-
                 val prosessUuid = paragraf_4_23_alder_prosess.fakta.uuid.toString()
                 packet["@løsning"] = mapOf(behov to prosessUuid)
                 paragraf_4_23_alder_prosess.sendNesteSeksjon(context)

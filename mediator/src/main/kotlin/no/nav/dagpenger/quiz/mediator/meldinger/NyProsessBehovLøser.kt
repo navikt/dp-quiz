@@ -13,7 +13,7 @@ import no.nav.helse.rapids_rivers.River
 import java.util.UUID
 
 internal class NyProsessBehovLøser(
-    private val søknadPersistence: FaktaRecord,
+    private val faktaRepository: FaktaRecord,
     rapidsConnection: RapidsConnection,
 ) : River.PacketListener {
     private companion object {
@@ -47,12 +47,12 @@ internal class NyProsessBehovLøser(
             log.info { "Mottok $behovNavn behov" }
             val identer = Identer.Builder()
                 .folkeregisterIdent(packet["ident"].asText())
-                // @todo: Aktør id?
                 .build()
 
-            søknadPersistence.ny(identer, prosessversjon, søknadUuid)
+            val fakta = faktaRepository.ny(identer, prosessversjon, søknadUuid)
+            Versjon.id(prosessversjon).utredningsprosess(fakta)
                 .also { søknadsprosess ->
-                    søknadPersistence.lagre(søknadsprosess.fakta)
+                    faktaRepository.lagre(søknadsprosess.fakta)
                     log.info { "Opprettet ny søknadprosess ${søknadsprosess.fakta.uuid}" }
 
                     packet["@løsning"] = mapOf(

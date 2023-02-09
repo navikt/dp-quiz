@@ -40,7 +40,8 @@ internal class VersjonTest {
 
     @BeforeEach
     fun setup() {
-        utredningsprosess = versjon.utredningsprosess(testPerson)
+        val fakta = versjon.fakta(testPerson)
+        utredningsprosess = versjon.utredningsprosess(fakta)
     }
 
     @Test

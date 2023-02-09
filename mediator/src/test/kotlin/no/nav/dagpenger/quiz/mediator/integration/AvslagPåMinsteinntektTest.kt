@@ -56,9 +56,9 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
             val resultatPersistence = ResultatRecord()
             testRapid = TestRapid().also {
                 FaktumSvarService(
-                    faktaPersistence = søknadPersistence,
+                    faktaRepository = søknadPersistence,
                     resultatPersistence = resultatPersistence,
-                    rapidsConnection = it
+                    rapidsConnection = it,
                 )
                 AvslagPåMinsteinntektService(søknadPersistence, it)
             }
@@ -80,9 +80,9 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
                         "$ordinær.1" to false,
                         "$permittert.1" to true,
                         "$lønnsgaranti.1" to false,
-                        "$permittertFiskeforedling.1" to false
-                    )
-                )
+                        "$permittertFiskeforedling.1" to false,
+                    ),
+                ),
             )
             assertGjeldendeSeksjon("virkningstidspunkt vi ikke kan håndtere")
         }
@@ -100,16 +100,16 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
                         "$ordinær.1" to false,
                         "$permittert.1" to true,
                         "$lønnsgaranti.1" to false,
-                        "$permittertFiskeforedling.1" to false
+                        "$permittertFiskeforedling.1" to false,
                     ),
                     listOf(
                         "$ordinær.2" to false,
                         "$permittert.2" to true,
                         "$lønnsgaranti.2" to false,
-                        "$permittertFiskeforedling.2" to false
+                        "$permittertFiskeforedling.2" to false,
                     ),
 
-                )
+                ),
             )
 
             besvar(behandlingsdato, 5.januar)
@@ -152,9 +152,9 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
                 listOf(
                     listOf(
                         "$registrertArbeidssøkerPeriodeFom.1" to 1.januar(2018),
-                        "$registrertArbeidssøkerPeriodeTom.1" to 30.januar(2018)
-                    )
-                )
+                        "$registrertArbeidssøkerPeriodeTom.1" to 30.januar(2018),
+                    ),
+                ),
             )
 
             assertGjeldendeSeksjon("minsteinntektKonstanter")

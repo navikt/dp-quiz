@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
-import no.nav.dagpenger.quiz.mediator.db.FaktaPersistence
+import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -11,7 +11,7 @@ import no.nav.helse.rapids_rivers.River
 
 class MigrerProsessService(
     rapidsConnection: RapidsConnection,
-    private val faktaPersistence: FaktaPersistence,
+    private val faktaRepository: FaktaRepository,
 ) : River.PacketListener {
     private companion object {
         val logger = KotlinLogging.logger { }
@@ -33,12 +33,12 @@ class MigrerProsessService(
         withLoggingContext("søknadId" to søknadId.toString()) {
             logger.info { "Løser $behov" }
 
-            if (!faktaPersistence.eksisterer(søknadId)) {
+            if (!faktaRepository.eksisterer(søknadId)) {
                 logger.warn { "Migrering av søknadId=$søknadId kunne ikke migreres siden den ikke eksisterer" }
                 return
             }
-            val prosessversjon = faktaPersistence.migrer(søknadId)
-            val søknad = faktaPersistence.hent(søknadId)
+            val prosessversjon = faktaRepository.migrer(søknadId)
+            val søknad = faktaRepository.hent(søknadId)
             val søknadData = SøkerJsonBuilder(søknad).resultat().toString()
 
             packet["@løsning"] = mapOf(

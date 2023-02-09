@@ -43,7 +43,7 @@ class NavJsonBuilderTest {
             maks dato "f56" av 5 og 6 id 7,
             heltall faktum "periode" id 8 genererer 9 og 10,
             dato faktum "fom" id 9,
-            dato faktum "tom" id 10
+            dato faktum "tom" id 10,
         )
         val f1Faktum = prototypeFakta.boolsk(1)
         val f2Faktum = prototypeFakta.boolsk(2)
@@ -62,7 +62,7 @@ class NavJsonBuilderTest {
                     f2Faktum er true,
                     f3Faktum er true,
                     f4Faktum er true,
-                    periodeSubsumsjon
+                    periodeSubsumsjon,
                 )
             }
         val søkerSeksjon = Seksjon("seksjon søker", Rolle.søker, f1Faktum)
@@ -76,13 +76,13 @@ class NavJsonBuilderTest {
             f7Faktum,
             f8Faktum,
             f9Faktum,
-            f10Faktum
+            f10Faktum,
         )
         val prototypeUtredningsprosess = Utredningsprosess(
             prototypeFakta,
             søkerSeksjon,
             navSeksjon,
-            rootSubsumsjon = prototypeSubsumsjon
+            rootSubsumsjon = prototypeSubsumsjon,
         )
         val faktumNavBehov = FaktumNavBehov(
             mapOf(
@@ -94,71 +94,73 @@ class NavJsonBuilderTest {
                 6 to "f6Behov",
                 7 to "f7Behov",
                 8 to "f8Behov",
-                9 to "f9Behov"
-            )
+                9 to "f9Behov",
+            ),
         )
         val fakta = Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
             prototypeUtredningsprosess,
-            faktumNavBehov
-        ).registrer().utredningsprosess(testPerson)
+            faktumNavBehov,
+        ).registrer().fakta(testPerson)
 
-        fakta.boolsk(1).besvar(true)
-        fakta.dato(5).besvar(1.januar)
+        val prosess = Versjon.id(testversjon).utredningsprosess(fakta)
+
+        prosess.boolsk(1).besvar(true)
+        prosess.dato(5).besvar(1.januar)
 
         assertBehovJson(
-            json = NavJsonBuilder(fakta, "seksjon nav").resultat(),
+            json = NavJsonBuilder(prosess, "seksjon nav").resultat(),
             faktumOgBehov = mapOf(2 to "f2Behov", 3 to "f3Behov", 8 to "f8Behov", 6 to "f6Behov"),
-            avhengigeBehov = listOf("f1Behov")
+            avhengigeBehov = listOf("f1Behov"),
         )
 
-        fakta.dato(6).besvar(1.januar)
+        prosess.dato(6).besvar(1.januar)
 
         assertBehovJson(
-            json = NavJsonBuilder(fakta, "seksjon nav").resultat(),
+            json = NavJsonBuilder(prosess, "seksjon nav").resultat(),
             faktumOgBehov = mapOf(2 to "f2Behov", 3 to "f3Behov", 4 to "f4Behov", 8 to "f8Behov"),
-            avhengigeBehov = listOf("f7Behov")
+            avhengigeBehov = listOf("f7Behov"),
         )
 
-        fakta.dato(2).besvar(1.januar)
-        fakta.dato(4).besvar(1.januar)
+        prosess.dato(2).besvar(1.januar)
+        prosess.dato(4).besvar(1.januar)
 
         assertBehovJson(
-            json = NavJsonBuilder(fakta, "seksjon nav").resultat(),
+            json = NavJsonBuilder(prosess, "seksjon nav").resultat(),
             faktumOgBehov = mapOf(3 to "f3Behov", 8 to "f8Behov"),
-            avhengigeBehov = emptyList()
+            avhengigeBehov = emptyList(),
         )
 
-        fakta.dato(3).besvar(1.januar)
+        prosess.dato(3).besvar(1.januar)
 
-        NavJsonBuilder(fakta, "seksjon nav").resultat().also {
+        NavJsonBuilder(prosess, "seksjon nav").resultat().also {
             assertBehovJson(
                 json = it,
                 faktumOgBehov = mapOf(8 to "f8Behov"),
-                avhengigeBehov = emptyList()
+                avhengigeBehov = emptyList(),
             )
             assertEquals(
                 """[{"id":"9","navn":"fom","type":"localdate"},{"id":"10","navn":"tom","type":"localdate"}]""",
-                it["fakta"][0]["templates"].toString()
+                it["fakta"][0]["templates"].toString(),
             )
         }
 
-        fakta.generator(8).besvar(1)
-        fakta.dato("9.1").besvar(31.desember(2017))
-        fakta.dato("10.1").besvar(2.februar)
+        prosess.generator(8).besvar(1)
+        prosess.dato("9.1").besvar(31.desember(2017))
+        prosess.dato("10.1").besvar(2.februar)
 
         assertBehovJson(
-            json = NavJsonBuilder(fakta, "seksjon nav").resultat(),
+            json = NavJsonBuilder(prosess, "seksjon nav").resultat(),
             faktumOgBehov = mapOf(),
-            avhengigeBehov = emptyList()
+            avhengigeBehov = emptyList(),
         )
     }
 
     private fun assertBehovJson(
         json: JsonNode,
         faktumOgBehov: Map<Int, String>,
-        avhengigeBehov: List<String>
+        avhengigeBehov: List<String>,
     ) {
         assertEquals("faktum_svar", json["@event_name"].asText())
         assertEquals("folkeregisterident", json["identer"][0]["type"].asText())
