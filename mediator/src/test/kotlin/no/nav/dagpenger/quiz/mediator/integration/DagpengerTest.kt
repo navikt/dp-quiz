@@ -3,12 +3,11 @@ package no.nav.dagpenger.quiz.mediator.integration
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktum.Envalg
-import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
+import no.nav.dagpenger.quiz.mediator.db.UtredningsprosessRepository
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Bosted
@@ -30,14 +29,14 @@ internal class DagpengerTest : SøknadBesvarer() {
             søknadsprosess = Versjon.id(Dagpenger.VERSJON_ID)
                 .utredningsprosess(prototypeSøknad)
         }
-        val faktaRepository = mockk<FaktaRepository>().also {
+        val faktaRepository = mockk<UtredningsprosessRepository>().also {
             every { it.hent(any()) } returns søknadsprosess
-            every { it.lagre(any() as Fakta) } returns true
+            every { it.lagre(any()) } returns true
         }
 
         testRapid = TestRapid().also {
             FaktumSvarService(
-                faktaRepository = faktaRepository,
+                utredningsprosessRepository = faktaRepository,
                 resultatPersistence = resultatPersistence,
                 rapidsConnection = it,
             )

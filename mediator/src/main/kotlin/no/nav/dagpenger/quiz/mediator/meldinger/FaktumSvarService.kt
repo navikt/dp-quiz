@@ -11,8 +11,8 @@ import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
-import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
+import no.nav.dagpenger.quiz.mediator.db.UtredningsprosessRepository
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -25,7 +25,7 @@ import no.nav.helse.rapids_rivers.withMDC
 import java.util.UUID
 
 internal class FaktumSvarService(
-    private val faktaRepository: FaktaRepository,
+    private val utredningsprosessRepository: UtredningsprosessRepository,
     private val resultatPersistence: ResultatPersistence,
     rapidsConnection: RapidsConnection,
 ) : River.PacketListener {
@@ -77,7 +77,7 @@ internal class FaktumSvarService(
                 log.info { "Mottok ny(e) fakta (${fakta.joinToString(",") { it["id"].asText() }}) for $søknadUuid" }
                 sikkerlogg.info { "Mottok ny(e) fakta: ${packet.toJson()}" }
 
-                val søknadprosess = faktaRepository.hent(søknadUuid)
+                val søknadprosess = utredningsprosessRepository.hent(søknadUuid)
                 besvarFakta(fakta, søknadprosess)
 
                 val prosessnavn = ProsessVersjonVisitor(søknadprosess).faktatype
@@ -111,7 +111,7 @@ internal class FaktumSvarService(
 
             besvar(utredningsprosess, faktumId, svar, type, besvartAv)
         }
-        faktaRepository.lagre(utredningsprosess.fakta)
+        utredningsprosessRepository.lagre(utredningsprosess)
     }
 
     private fun sendResultat(utredningsprosess: Utredningsprosess, context: MessageContext) {

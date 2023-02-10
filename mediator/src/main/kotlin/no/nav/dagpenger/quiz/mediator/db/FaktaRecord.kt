@@ -22,7 +22,6 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.math.BigInteger
@@ -41,11 +40,12 @@ class FaktaRecord : FaktaRepository {
 
     override fun ny(
         identer: Identer,
-        prosessVersjon: Faktaversjon,
+        faktaversjon: Faktaversjon,
         uuid: UUID,
     ): Fakta {
         val person = personRecord.hentEllerOpprettPerson(identer)
-        return Versjon.id(prosessVersjon).fakta(person, uuid).also { fakta ->
+        println(faktaversjon)
+        return Versjon.id(faktaversjon).fakta(person, uuid).also { fakta ->
             if (eksisterer(uuid)) return fakta
             OpprettNyFaktaVisitor(fakta)
         }
@@ -66,7 +66,7 @@ class FaktaRecord : FaktaRepository {
 
     private data class Prosess(override val id: String) : Faktatype
 
-    override fun hent(uuid: UUID): Utredningsprosess {
+    override fun hent(uuid: UUID): Fakta {
         data class SoknadRad(val personId: UUID, val navn: String, val versjonId: Int)
 
         val rad = using(sessionOf(dataSource)) { session ->
@@ -90,17 +90,16 @@ class FaktaRecord : FaktaRepository {
         val fakta = Versjon.id(Faktaversjon(Prosess(rad.navn), rad.versjonId))
             .fakta(personRecord.hentPerson(rad.personId), uuid)
 
-        return Versjon.id(Faktaversjon(Prosess(rad.navn), rad.versjonId)).utredningsprosess(fakta)
-            .also { søknadprosess ->
-                svarList(uuid).onEach { row ->
-                    søknadprosess.fakta.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
-                }
-            }
+        svarList(uuid).onEach { row ->
+            fakta.idOrNull(row.id)?.also { rehydrerFaktum(row, it) } ?: println("MANGLER ${row.id} - ${rad.navn} - ${rad.versjonId}")
+        }
+
+        return fakta
     }
 
     override fun lagre(fakta: Fakta): Boolean {
         val nyeSvar: MutableMap<String, Faktum<*>?> = svarMap(fakta)
-        val originalSvar: MutableMap<String, Faktum<*>?> = svarMap(hent(fakta.uuid).fakta)
+        val originalSvar: MutableMap<String, Faktum<*>?> = svarMap(hent(fakta.uuid))
         using(sessionOf(dataSource)) { session ->
             session.transaction { transactionalSession ->
                 slettDødeTemplatefakta(fakta, nyeSvar, originalSvar, transactionalSession)
@@ -170,25 +169,7 @@ class FaktaRecord : FaktaRepository {
         return nyVersjon
     }
 
-    private data class FaktumMigrering(val faktumId: BigInteger, val rootId: Int) {
-        fun opprettQuery(soknadId: BigInteger) = queryOf(
-            //language=PostgreSQL
-            "INSERT INTO faktum_verdi (soknad_id, indeks, faktum_id) VALUES (:soknadId, 0, :id)",
-            mapOf("soknadId" to soknadId, "id" to faktumId),
-        ).asUpdate
-
-        fun oppdaterQuery(soknadId: BigInteger, gammelFaktumId: BigInteger, nyFaktumId: BigInteger) =
-            queryOf(
-                //language=PostgreSQL
-                "UPDATE faktum_verdi SET faktum_id = :nyFaktumId WHERE soknad_id = :soknadId AND faktum_id = :gammelFaktumId ",
-                mapOf("soknadId" to soknadId, "gammelFaktumId" to gammelFaktumId, "nyFaktumId" to nyFaktumId),
-            ).asUpdate
-
-        fun opprettEllerOppdater(forrigeFaktum: FaktumMigrering?, soknadId: BigInteger) = when (forrigeFaktum) {
-            null -> opprettQuery(soknadId)
-            else -> oppdaterQuery(soknadId, forrigeFaktum.faktumId, faktumId)
-        }
-    }
+    private data class FaktumMigrering(val faktumId: BigInteger, val rootId: Int)
 
     private fun internSoknadId(uuid: UUID) =
         queryOf(

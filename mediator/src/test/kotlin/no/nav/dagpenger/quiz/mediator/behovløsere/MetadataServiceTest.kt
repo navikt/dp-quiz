@@ -2,19 +2,19 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 
 import io.mockk.mockk
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
-import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
+import no.nav.dagpenger.quiz.mediator.db.UtredningsprosessRepository
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class MetadataServiceTest {
-    val faktaRepository = mockk<FaktaRepository>(relaxed = true)
-    val testMetadataStrategi = MetadataStrategi {
+    private val utredningsprosessRepository = mockk<UtredningsprosessRepository>(relaxed = true)
+    private val testMetadataStrategi = MetadataStrategi {
         Metadata("04-01.03")
     }
     private val rapid = TestRapid().apply {
-        MetadataService(this, faktaRepository, testMetadataStrategi)
+        MetadataService(this, utredningsprosessRepository, testMetadataStrategi)
     }
 
     @Test

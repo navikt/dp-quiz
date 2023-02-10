@@ -13,6 +13,7 @@ import no.nav.dagpenger.quiz.mediator.db.FaktaRecord
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
+import no.nav.dagpenger.quiz.mediator.db.UtredningsprosessRepositoryImpl
 import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.ManuellBehandlingSink
@@ -52,9 +53,10 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
         runMigration()
             .also {
                 val faktaRecord = FaktaRecord()
+                val utredningsprosessRepository = UtredningsprosessRepositoryImpl()
                 val resultatRecord = ResultatRecord()
                 AvslagPåMinsteinntektOppsett.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
-                AvslagPåMinsteinntektService(faktaRecord, rapidsConnection)
+                AvslagPåMinsteinntektService(utredningsprosessRepository, rapidsConnection)
 
                 Dagpenger248.registrer {
                     logger.info("Sørger for å støtte gamle versjoner, registrerer dagpenger versjon 248")
@@ -86,8 +88,8 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                     VilkårsvurderingLøser(rapidsConnection, faktaRecord)
                 }
 
-                NyProsessBehovLøser(faktaRecord, rapidsConnection)
-                FaktumSvarService(faktaRecord, resultatRecord, rapidsConnection)
+                NyProsessBehovLøser(utredningsprosessRepository, rapidsConnection)
+                FaktumSvarService(utredningsprosessRepository, resultatRecord, rapidsConnection)
                 BehandlingsdatoService(rapidsConnection)
                 SenesteMuligeVirkningsdatoService(rapidsConnection)
                 TerskelFaktorService(rapidsConnection)
@@ -95,11 +97,11 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 SøknadSlettetService(rapidsConnection, faktaRecord)
                 MetadataService(
                     rapidsConnection,
-                    faktaRecord,
+                    utredningsprosessRepository,
                     ProsessMetadataStrategi(),
                 )
-                DokumentkravSvarService(rapidsConnection, faktaRecord)
-                MigrerProsessService(rapidsConnection, faktaRecord)
+                DokumentkravSvarService(rapidsConnection, utredningsprosessRepository)
+                MigrerProsessService(rapidsConnection, faktaRecord, utredningsprosessRepository)
             }
     }
 }

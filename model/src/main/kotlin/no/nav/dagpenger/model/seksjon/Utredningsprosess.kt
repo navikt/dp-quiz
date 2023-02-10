@@ -10,12 +10,15 @@ import no.nav.dagpenger.model.seksjon.Seksjon.Companion.saksbehandlerSeksjoner
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
+import java.util.UUID
 
 class Utredningsprosess private constructor(
     val fakta: Fakta,
     internal val rootSubsumsjon: Subsumsjon,
     private val seksjoner: MutableList<Seksjon>,
 ) : TypedFaktum by fakta, MutableList<Seksjon> by seksjoner {
+    val uuid: UUID = fakta.uuid
+
     constructor(vararg seksjoner: Seksjon) : this(
         Fakta(Faktaversjon.prototypeversjon),
         TomSubsumsjon,
@@ -78,5 +81,6 @@ class Utredningsprosess private constructor(
     fun resultat() = rootSubsumsjon.resultat()
 
     fun erFerdig() = nesteSeksjoner().all { fakta -> fakta.all { faktum -> faktum.erBesvart() } }
-    fun erFerdigFor(vararg roller: Rolle): Boolean = nesteSeksjoner().all { fakta -> fakta.none { faktum -> roller.any { faktum.harRolle(it) } } }
+    fun erFerdigFor(vararg roller: Rolle): Boolean =
+        nesteSeksjoner().all { fakta -> fakta.none { faktum -> roller.any { faktum.harRolle(it) } } }
 }

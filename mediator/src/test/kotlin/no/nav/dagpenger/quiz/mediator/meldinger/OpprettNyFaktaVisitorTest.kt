@@ -18,7 +18,7 @@ internal class OpprettNyFaktaVisitorTest {
 
     private companion object {
         private val testRapid = TestRapid()
-        private val søknadPersistance = FaktaRepositoryFake()
+        private val søknadPersistance = UtredningsprosessRepositoryFake()
 
         init {
             AvslagPåMinsteinntektService(søknadPersistance, testRapid, SøknadEksempel.prosessVersjon)

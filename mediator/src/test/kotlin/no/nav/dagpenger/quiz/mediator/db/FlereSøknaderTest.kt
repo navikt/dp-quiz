@@ -34,8 +34,8 @@ internal class FlereSøknaderTest {
             val rehydrertSøknadprosess1 = faktaRecord.hent(søknad1.uuid)
             val rehydrertSøknadprosess2 = faktaRecord.hent(søknad2.uuid)
 
-            assertEquals(true, rehydrertSøknadprosess1.fakta.boolsk(10).svar())
-            assertEquals(false, rehydrertSøknadprosess2.fakta.boolsk(8).svar())
+            assertEquals(true, rehydrertSøknadprosess1.boolsk(10).svar())
+            assertEquals(false, rehydrertSøknadprosess2.boolsk(8).svar())
         }
     }
 }

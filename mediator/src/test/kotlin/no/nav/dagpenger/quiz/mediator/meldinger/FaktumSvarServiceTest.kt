@@ -16,8 +16,8 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
-import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
+import no.nav.dagpenger.quiz.mediator.db.UtredningsprosessRepository
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
@@ -53,14 +53,14 @@ internal class FaktumSvarServiceTest {
         ).registrer()
     }
 
-    val faktaRepository = mockk<FaktaRepository>().also {
+    private val faktaRepository = mockk<UtredningsprosessRepository>().also {
         every { it.hent(any()) } returns Versjon.id(prosessVersjon).utredningsprosess(prototypeFakta)
-        every { it.lagre(any() as Fakta) } returns true
+        every { it.lagre(any()) } returns true
     }
-    val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
-    val testRapid = TestRapid().also {
+    private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
+    private val testRapid = TestRapid().also {
         FaktumSvarService(
-            faktaRepository = faktaRepository,
+            utredningsprosessRepository = faktaRepository,
             resultatPersistence = resultatPersistence,
             rapidsConnection = it,
         )
@@ -82,7 +82,7 @@ internal class FaktumSvarServiceTest {
         assertEquals("2020-01-16", prototypeFakta.dato("12.2").svar().toString())
 
         verify(exactly = 1) { faktaRepository.hent(any()) }
-        verify(exactly = 1) { faktaRepository.lagre(any() as Fakta) }
+        verify(exactly = 1) { faktaRepository.lagre(any()) }
         verify(exactly = 1) { resultatPersistence.lagreResultat(any(), any(), any()) }
     }
 

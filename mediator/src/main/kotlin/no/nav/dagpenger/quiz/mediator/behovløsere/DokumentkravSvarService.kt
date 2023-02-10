@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
+import no.nav.dagpenger.quiz.mediator.db.UtredningsprosessRepository
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -12,7 +12,7 @@ import no.nav.helse.rapids_rivers.asLocalDateTime
 
 class DokumentkravSvarService(
     rapidsConnection: RapidsConnection,
-    private val faktaRepository: FaktaRepository,
+    private val utredningsprosessRepository: UtredningsprosessRepository,
 ) : River.PacketListener {
     private companion object {
         val logger = KotlinLogging.logger { }
@@ -34,9 +34,9 @@ class DokumentkravSvarService(
             try {
                 val faktumId = packet.faktumId()
                 val svar = packet.dokumentsvar()
-                faktaRepository.hent(søknadId).let { søknadprosess ->
+                utredningsprosessRepository.hent(søknadId).let { søknadprosess ->
                     søknadprosess.dokument(faktumId).besvar(svar)
-                    faktaRepository.lagre(søknadprosess.fakta)
+                    utredningsprosessRepository.lagre(søknadprosess)
                 }
 
                 packet["@løsning"] = mapOf(
