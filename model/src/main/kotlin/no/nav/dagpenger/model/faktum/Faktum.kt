@@ -9,7 +9,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     val navn: String,
     protected val avhengigeFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     protected val avhengerAvFakta: MutableSet<Faktum<*>> = mutableSetOf(),
-    protected val roller: MutableSet<Rolle> = mutableSetOf()
+    protected val roller: MutableSet<Rolle> = mutableSetOf(),
 ) : Comparable<Faktum<*>> {
     val id: String get() = faktumId.id
 
@@ -39,7 +39,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
             GrunnleggendeFaktum::class.java,
             TemplateFaktum::class.java,
             GeneratorFaktum::class.java,
-            UtledetFaktum::class.java
+            UtledetFaktum::class.java,
         )
     }
 
@@ -83,7 +83,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     enum class FaktumTilstand {
         Ukjent,
-        Kjent
+        Kjent,
     }
 
     override fun toString() = "$navn med id $id"
@@ -99,8 +99,11 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     }
 
     private fun prioritet(faktum: Faktum<*>) =
-        if (!prioritet.contains(faktum::class.java)) throw Exception("Mangler prioritet for ${faktum::class.simpleName}")
-        else prioritet.indexOf(faktum::class.java)
+        if (!prioritet.contains(faktum::class.java)) {
+            throw Exception("Mangler prioritet for ${faktum::class.simpleName}")
+        } else {
+            prioritet.indexOf(faktum::class.java)
+        }
 
     internal fun leggTilAvhengigheter(fakta: MutableSet<Faktum<*>>) {
         fakta.addAll(avhengerAvFakta)

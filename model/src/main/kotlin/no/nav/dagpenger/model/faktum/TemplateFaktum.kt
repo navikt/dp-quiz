@@ -12,7 +12,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     avhengerAvFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     roller: MutableSet<Rolle> = mutableSetOf(),
     private val gyldigeValg: GyldigeValg? = null,
-    private val landgrupper: LandGrupper? = null
+    private val landgrupper: LandGrupper? = null,
 ) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private val seksjoner = mutableListOf<Seksjon>()
 
@@ -64,19 +64,25 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
         godkjenner = mutableSetOf(),
         roller = roller,
         gyldigeValg = gyldigeValg,
-        landGrupper = landgrupper
+        landGrupper = landgrupper,
     )
 
     // Lag instans av template faktum ved besvar eller rehydrering av søknad
     internal fun generate(generator: Int, fakta: Fakta) {
-        // Seksjoner dette templatet ligger i
-        seksjoner.forEach { originalSeksjon ->
-            generator.forHvertSvar { indeks: Int ->
-                // Sjekker om seksjonen er *kun* templates, og skal dermed klones før vi lager instanser av template i den
-                val seksjon = instansiertSeksjon(originalSeksjon, indeks)
-                deepCopy(indeks).also { lagdFaktum: GrunnleggendeFaktum<R> ->
+        val genererteInstanser = generator.forHvertSvar { indeks: Int ->
+            Pair(indeks, deepCopy(indeks))
+        }
+        genererteInstanser.forEach { (indeks, lagdFaktum) ->
+            if (seksjoner.isEmpty()) { // Vi rehydrerer fakta fra databasen
+                fakta.add(lagdFaktum)
+                leggTilAvhengighet(fakta, indeks, lagdFaktum as GrunnleggendeFaktum<R>)
+            } else { // Vi kobler fakta og prosess
+                // Gå gjennom alle seksjoner dette templatet ligger i
+                seksjoner.forEach { originalSeksjon ->
+                    // Sjekker om seksjonen er *kun* templates, og skal dermed klones før vi lager instanser av template i den
+                    val seksjon = instansiertSeksjon(originalSeksjon, indeks)
                     seksjon.add(lagdFaktum)
-                    leggTilAvhengighet(fakta, indeks, lagdFaktum)
+                    leggTilAvhengighet(fakta, indeks, lagdFaktum as GrunnleggendeFaktum<R>)
                 }
             }
         }
@@ -85,8 +91,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     private fun leggTilAvhengighet(
         fakta: Fakta,
         indeks: Int,
-        lagdFaktum: GrunnleggendeFaktum<R>
-
+        lagdFaktum: GrunnleggendeFaktum<R>,
     ) {
         avhengerAvFakta.map { avhengighet ->
             fakta.finnEksisterende(avhengighet, indeks) ?: avhengighet.deepCopy(indeks, fakta)
@@ -98,20 +103,22 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
         is TemplateFaktum<*> -> singleOrNull {
             it.faktumId == avhengighet.faktumId medIndeks indeks
         }
+
         else -> idOrNull(avhengighet.faktumId)
     }
 
     // Sjekker om seksjonen er *kun* templates, og skal dermed klones før vi lager instanser av template i den
     private fun instansiertSeksjon(
         originalSeksjon: Seksjon,
-        indeks: Int
+        indeks: Int,
     ) = if (originalSeksjon.bareTemplates()) {
         originalSeksjon.deepCopy(indeks)
     } else {
         originalSeksjon
     }
 
-    private fun Int.forHvertSvar(block: (Int) -> Unit) = (1..this).forEach { block(it) }
+    private fun Int.forHvertSvar(block: (Int) -> Pair<Int, GrunnleggendeFaktum<R>>): List<Pair<Int, GrunnleggendeFaktum<*>>> =
+        (1..this).map { block(it) }
 
     internal fun tilbakestill() {
         seksjoner.medSøknadprosess().forEach { it.tilbakestill(faktumId) }
@@ -128,7 +135,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
             avhengerAvFakta,
             roller,
             gyldigeValg,
-            landgrupper
+            landgrupper,
         )
             .also { byggetFakta[faktumId] = it }
     }

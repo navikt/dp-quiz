@@ -28,7 +28,7 @@ internal class AvhengigFaktumTest {
             testversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1,
-            boolsk faktum "f3" id 3 avhengerAv 2
+            boolsk faktum "f3" id 3 avhengerAv 2,
         )
         val ja1 = fakta.boolsk(1)
         val ja2 = fakta.boolsk(2)
@@ -51,18 +51,18 @@ internal class AvhengigFaktumTest {
             heltall faktum "periode antall" id 1 genererer 2 og 3,
             dato faktum "fom" id 2,
             dato faktum "tom" id 3 avhengerAv 2,
-            dato faktum "ønsket dato" id 4
+            dato faktum "ønsket dato" id 4,
         )
         val prototypeUtredningsprosess = Utredningsprosess(
             Seksjon("periode antall", Rolle.nav, fakta generator 1),
             Seksjon("periode", Rolle.nav, fakta dato 2, fakta dato 3),
-            Seksjon("søknadsdato", Rolle.søker, fakta dato 4)
+            Seksjon("søknadsdato", Rolle.søker, fakta dato 4),
         )
         val søknadprosess =
             Versjon.Bygger(
                 fakta,
                 TomSubsumsjon,
-                prototypeUtredningsprosess
+                prototypeUtredningsprosess,
             )
                 .utredningsprosess(testPerson)
 
@@ -113,7 +113,7 @@ internal class AvhengigFaktumTest {
             heltall faktum "periode antall" id 1 genererer 2 og 3,
             dato faktum "fom" id 2,
             dato faktum "tom" id 3,
-            boolsk faktum "boolsk" id 4 avhengerAv 3
+            boolsk faktum "boolsk" id 4 avhengerAv 3,
         )
         val søknadprosess = fakta.testSøknadprosess()
 

@@ -24,6 +24,7 @@ internal class MigrerProsessfaktaServiceTest {
         every {
             faktaRepository.eksisterer(søknadUUID)
         } returns true
+
         rapid.sendTestMessage( //language=JSON
             """
             {
@@ -55,8 +56,8 @@ internal class MigrerProsessfaktaServiceTest {
         }
 
         verify(exactly = 1) {
+            faktaRepository.eksisterer(søknadUUID)
             faktaRepository.migrer(søknadUUID, any())
-            faktaRepository.hent(søknadUUID)
         }
     }
 }

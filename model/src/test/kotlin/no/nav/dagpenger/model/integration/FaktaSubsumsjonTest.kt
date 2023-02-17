@@ -125,7 +125,7 @@ internal class FaktaSubsumsjonTest {
         assertEquals(7, utredningsprosess[9].fakta().size)
         assertEquals(
             listOf("6", "7", "12", "14", "16.1", "16.2", "19").sorted(),
-            utredningsprosess[9].fakta().map { it.id }.sorted()
+            utredningsprosess[9].fakta().map { it.id }.sorted(),
         )
         utredningsprosess.boolsk(14).besvar(true)
         utredningsprosess.nesteFakta().also { fakta ->
