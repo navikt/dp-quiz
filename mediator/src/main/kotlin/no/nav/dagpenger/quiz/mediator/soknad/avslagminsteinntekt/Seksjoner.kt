@@ -49,44 +49,38 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.ønsketDato
 
 internal object Seksjoner {
-
     private val behandlingsdatoSeksjon = with(prototypeFakta) {
         Seksjon("behandlingsdato", Rolle.nav, dato(behandlingsdato))
     }
-
     private val senesteMuligeVirkningsdatoSeksjon = with(prototypeFakta) {
         Seksjon(
             "senesteMuligeVirkningstidspunkt",
             Rolle.nav,
-            dato(senesteMuligeVirkningsdato)
+            dato(senesteMuligeVirkningsdato),
         )
     }
-
     private val minsteinntektKonstanter = with(prototypeFakta) {
         Seksjon(
             "minsteinntektKonstanter",
             Rolle.nav,
             desimaltall(minsteinntektfaktor12mnd),
-            desimaltall(minsteinntektfaktor36mnd)
+            desimaltall(minsteinntektfaktor36mnd),
         )
     }
-
     private val grunnbeløpSeksjon = with(prototypeFakta) {
         Seksjon(
             "grunnbeløp",
             Rolle.nav,
-            inntekt(grunnbeløp)
+            inntekt(grunnbeløp),
         )
     }
-
-    private val dataFraSøknadLivssyklus = with(prototypeSøknad) {
+    private val dataFraSøknadLivssyklus = with(prototypeFakta) {
         Seksjon(
             "dataFraSøknadLivssyklus",
             Rolle.nav,
-            dato(søknadstidspunkt)
+            dato(søknadstidspunkt),
         )
     }
-
     private val dataFraSøknad = with(prototypeFakta) {
         Seksjon(
             "datafrasøknad",
@@ -98,20 +92,18 @@ internal object Seksjoner {
             boolsk(helseTilAlleTyperJobb),
             boolsk(kanJobbeHvorSomHelst),
             boolsk(villigTilÅBytteYrke),
-            boolsk(jobbetUtenforNorge)
+            boolsk(jobbetUtenforNorge),
         )
     }
-
     private val arbeidsøkerPerioder = with(prototypeFakta) {
         Seksjon(
             "arbeidsøkerperioder",
             Rolle.nav,
             dato(registrertArbeidssøkerPeriodeFom),
             dato(registrertArbeidssøkerPeriodeTom),
-            generator(registrertArbeidssøkerPerioder)
+            generator(registrertArbeidssøkerPerioder),
         )
     }
-
     private val dagpengehistorikk = with(prototypeFakta) {
         Seksjon(
             "dagpengehistorikk",
@@ -119,7 +111,6 @@ internal object Seksjoner {
             boolsk(harHattDagpengerSiste36mnd),
         )
     }
-
     private val lukkedeSaker = with(prototypeFakta) {
         Seksjon(
             "lukkedeSaker",
@@ -127,37 +118,33 @@ internal object Seksjoner {
             boolsk(hattLukkedeSakerSiste8Uker),
         )
     }
-
     private val inntektshistorikk = with(prototypeFakta) {
         Seksjon(
             "inntektshistorikk",
             Rolle.nav,
-            boolsk(fangstOgFiskInntektSiste36mnd)
+            boolsk(fangstOgFiskInntektSiste36mnd),
         )
     }
-
     private val sykepengehistorikk = with(prototypeFakta) {
         Seksjon(
             "sykepengehistorikk",
             Rolle.nav,
-            boolsk(sykepengerSiste36mnd)
+            boolsk(sykepengerSiste36mnd),
         )
     }
-
     private val inntekter = with(prototypeFakta) {
         Seksjon(
             "inntekter",
             Rolle.nav,
             inntekt(inntektSiste12mnd),
-            inntekt(inntektSiste36mnd)
+            inntekt(inntektSiste36mnd),
         )
     }
-
     private val inntektNesteKalendermåned = with(prototypeFakta) {
         Seksjon(
             "inntekt neste kalendermåned",
             Rolle.nav,
-            boolsk(harInntektNesteKalendermåned)
+            boolsk(harInntektNesteKalendermåned),
         )
     }
 
@@ -171,7 +158,6 @@ internal object Seksjoner {
         )
     }
      */
-
     private val endredeArbeidsforhold = with(prototypeFakta) {
         Seksjon(
             "arbeidsforhold",
@@ -183,7 +169,6 @@ internal object Seksjoner {
             boolsk(permittert),
         )
     }
-
     private val manuellGjenopptak = with(prototypeFakta) {
         Seksjon(
             "mulig gjenopptak",
@@ -191,7 +176,6 @@ internal object Seksjoner {
             boolsk(periodeOppbruktManuell),
         )
     }
-
     private val manuellHattLukkedeSakerSiste8Uker = with(prototypeFakta) {
         Seksjon(
             "har hatt lukkede saker siste 8 uker",
@@ -199,103 +183,90 @@ internal object Seksjoner {
             boolsk(hattLukkedeSakerSiste8UkerManuell),
         )
     }
-
     private val manuellSykepenger = with(prototypeFakta) {
         Seksjon(
             "svangerskapsrelaterte sykepenger",
             Rolle.manuell,
-            boolsk(svangerskapsrelaterteSykepengerManuell)
+            boolsk(svangerskapsrelaterteSykepengerManuell),
         )
     }
-
     private val manuellFangstOgFisk = with(prototypeFakta) {
         Seksjon(
             "mulige inntekter fra fangst og fisk",
             Rolle.manuell,
-            boolsk(fangstOgFiskManuell)
+            boolsk(fangstOgFiskManuell),
         )
     }
-
     private val manuellEøs = with(prototypeFakta) {
         Seksjon(
             "EØS-arbeid",
             Rolle.manuell,
-            boolsk(eøsArbeidManuell)
+            boolsk(eøsArbeidManuell),
         )
     }
-
     private val manuellJobbetUtenforNorge = with(prototypeFakta) {
         Seksjon(
             "jobbet utenfor Norge",
             Rolle.manuell,
-            boolsk(jobbetUtenforNorgeManuell)
+            boolsk(jobbetUtenforNorgeManuell),
         )
     }
-
     private val manuellDatoer = with(prototypeFakta) {
         Seksjon(
             "virkningstidspunkt vi ikke kan håndtere",
             Rolle.manuell,
-            boolsk(uhåndterbartVirkningsdatoManuell)
+            boolsk(uhåndterbartVirkningsdatoManuell),
         )
     }
-
     private val manuellOppfyllerKraveneTilMinsteArbeidsinntekt = with(prototypeFakta) {
         Seksjon(
             "kravene til minste arbeidsinntekt er oppfylt så",
             Rolle.manuell,
-            boolsk(oppfyllerMinsteinntektManuell)
+            boolsk(oppfyllerMinsteinntektManuell),
         )
     }
-
     private val manuellHarInntektNesteKalendermåned = with(prototypeFakta) {
         Seksjon(
             "det er inntekt neste kalendermåned",
             Rolle.manuell,
-            boolsk(inntektNesteKalendermånedManuell)
+            boolsk(inntektNesteKalendermånedManuell),
         )
     }
-
     private val manuellErIkkeReellArbeidssøker = with(prototypeFakta) {
         Seksjon(
             "ikke reell arbeidssøker",
             Rolle.manuell,
-            boolsk(reellArbeidssøkerManuell)
+            boolsk(reellArbeidssøkerManuell),
         )
     }
-
     private val manuellErIkkeRegistrertArbeidssøker = with(prototypeFakta) {
         Seksjon(
             "ikke registrert arbeidssøker",
             Rolle.manuell,
-            boolsk(registrertArbeidssøkerManuell)
+            boolsk(registrertArbeidssøkerManuell),
         )
     }
-
     private val manuellOver67år = with(prototypeFakta) {
         Seksjon(
             "over 67 år",
             Rolle.manuell,
-            boolsk(over67årManuell)
+            boolsk(over67årManuell),
         )
     }
-
     private val inntektsrapporteringsperioder = with(prototypeFakta) {
         Seksjon(
             "inntektsrapporteringsperioder",
             Rolle.nav,
-            dato(inntektsrapporteringsperiodeTom)
+            dato(inntektsrapporteringsperiodeTom),
         )
     }
-
     private val alder = with(prototypeFakta) {
         Seksjon(
             "alder",
             Rolle.nav,
-            dato(over67årFradato)
+            dato(over67årFradato),
         )
     }
-
     internal val utredningsprosess: Utredningsprosess =
         Utredningsprosess(
             behandlingsdatoSeksjon,

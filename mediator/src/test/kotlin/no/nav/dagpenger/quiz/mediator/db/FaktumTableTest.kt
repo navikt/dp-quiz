@@ -38,14 +38,14 @@ internal class FaktumTableTest {
             session.run(
                 queryOf( //language=PostgreSQL
                     "SELECT verdier FROM faktum_gyldige_valg LEFT JOIN faktum ON faktum.id = faktum_gyldige_valg.faktum_id WHERE faktum.root_id = ?",
-                    faktumRootId
-                ).map { it.array<String>(1) }.asSingle
+                    faktumRootId,
+                ).map { it.array<String>(1) }.asSingle,
             )
         }
         assertEquals(
             valg.joinToString { it },
             verdier?.joinToString { it },
-            "forventet $valg men var $verdier "
+            "forventet $valg men var $verdier ",
         )
     }
 
@@ -55,11 +55,11 @@ internal class FaktumTableTest {
             using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        "SELECT COUNT (*) FROM $table"
-                    ).map { it.int(1) }.asSingle
+                        "SELECT COUNT (*) FROM $table",
+                    ).map { it.int(1) }.asSingle,
                 )
             },
-            "forventet $recordCount poster i $table"
+            "forventet $recordCount poster i $table",
         )
     }
 }
