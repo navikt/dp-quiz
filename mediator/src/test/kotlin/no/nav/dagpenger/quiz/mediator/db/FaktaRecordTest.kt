@@ -30,14 +30,12 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.test.assertNotNull
 
-@Disabled
 internal class FaktaRecordTest {
     companion object {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
@@ -422,7 +420,7 @@ internal class FaktaRecordTest {
         val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
         faktaRecord = FaktaRecord()
         rehydrertFakta = faktaRecord.hent(uuid)
-        assertJsonEquals(originalFakta, rehydrertFakta)
+        assertJsonEquals(originalFakta.toList(), rehydrertFakta.toList())
         assertDeepEquals(originalFakta, rehydrertFakta)
     }
 
