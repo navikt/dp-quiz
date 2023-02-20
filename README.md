@@ -1,8 +1,8 @@
 # dp-quiz
 
-QUIZ sitt formål: 
+QUIZ sitt formål:
 
-Prosess for faktainnhenting og anvendelse av de faktaene på regler: 
+Prosess for faktainnhenting og anvendelse av de faktaene på regler:
 
 > Lage en prosess, styrt av regelverket, som kunne innhente/skaffe alle fakta som trengs for å ta en avgjørelse
 
@@ -14,11 +14,12 @@ Skal kunne:
 Sentrale begreper i QUIZ:
 
 * Faktum - faktiske forhold som er av betydning i et saksforhold. Som for et eksempel "fødselsdato" (BEGREPSKATALOG - https://jira.adeo.no/browse/BEGREP-306)
-  * [Faktumtyper i QUIZ](doc/mvp/faktumtyper/README.md) 
+  * [Faktumtyper i QUIZ](doc/mvp/faktumtyper/README.md)
 * Subsumsjon - å anvende en rettsregel (lov) på et faktum. Som for et eksempel - søker må være under 67 år der "fødselsdato" anvendes på regelen. (BEGREPSKATALOG - https://jira.adeo.no/browse/BEGREP-817)
-  * [Subsumsjonstyper i QUIZ](doc/mvp/subsumsjonstyper/README.md) 
+  * [Subsumsjonstyper i QUIZ](doc/mvp/subsumsjonstyper/README.md)
 * Seksjoner - Seksjoner i Quiz er en logisk samling av [fakta](doc/mvp/faktumtyper/README.md).
-  * [Seksjoner](doc/mvp/seksjon/seksjon.md) 
+  * [Seksjoner](doc/mvp/seksjon/seksjon.md)
+
 ## Komme i gang
 
 Gradle brukes som byggverktøy og er bundlet inn.
