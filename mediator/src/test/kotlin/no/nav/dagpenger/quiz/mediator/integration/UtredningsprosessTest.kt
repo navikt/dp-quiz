@@ -20,35 +20,31 @@ import kotlin.test.assertEquals
 
 internal class UtredningsprosessTest() {
     private lateinit var søknadsprosess: Utredningsprosess
+    private val søknadUUID = UUID.randomUUID()
+    private val repository = UtredningsprosessRepositoryImpl()
 
     @Test
     fun `Besvarer en prosess uten mocks`() {
-        Postgres.withMigratedDb {
-            Dagpenger.registrer { fakta ->
-                FaktumTable(fakta)
-            }
-            val repository = UtredningsprosessRepositoryImpl()
-            val uuid = UUID.randomUUID()
-            søknadsprosess = repository.ny(
-                Identer(identer = setOf(Identer.Ident(Identer.Ident.Type.FOLKEREGISTERIDENT, "12312312311", false))),
-                Dagpenger.VERSJON_ID,
-                uuid,
-            )
+        medProsess {
             medSeksjon(Bosted) {
                 it.land(`hvilket land bor du i`).besvar(Land("NOR"))
             }
             medSeksjon(DinSituasjon) {
-                it.harNavn("din-situasjon")
+                with(it.aktivSeksjon) {
+                    assertEquals("din-situasjon", navn)
+                    assertEquals(64, antallSpørsmål)
+                }
+
                 it.envalg(`mottatt dagpenger siste 12 mnd`)
                     .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
                 it.dato(`dagpenger søknadsdato`).besvar(LocalDate.now())
                 it.envalg(`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
                 it.generator(arbeidsforhold).besvar(1)
+
+                assertEquals(118, it.aktivSeksjon.antallSpørsmål)
                 it.tekst(`arbeidsforhold navn bedrift` index 1).besvar(Tekst("Hei"))
             }
-            repository.lagre(søknadsprosess)
 
-            søknadsprosess = repository.hent(uuid)
             medSeksjon(DinSituasjon) {
                 it.land(`arbeidsforhold land` index 1).besvar(Land("NOR"))
             }
@@ -57,12 +53,42 @@ internal class UtredningsprosessTest() {
         }
     }
 
-    private fun Utredningsprosess.harNavn(navn: String) = assertEquals(navn, nesteSeksjoner()[0].navn)
+    private fun medProsess(block: () -> Unit) = Postgres.withMigratedDb {
+        Dagpenger.registrer { fakta ->
+            FaktumTable(fakta)
+        }
+
+        lagNyProsess()
+        block()
+    }
+
+    private fun lagNyProsess() {
+        søknadsprosess = repository.ny(
+            Identer(identer = setOf(Identer.Ident(Identer.Ident.Type.FOLKEREGISTERIDENT, "12312312311", false))),
+            Dagpenger.VERSJON_ID,
+            søknadUUID,
+        )
+    }
+
+    private fun lagreOgHent() {
+        repository.lagre(søknadsprosess)
+        søknadsprosess = repository.hent(søknadUUID)
+    }
+
+    private val Utredningsprosess.aktivSeksjon
+        get() = with(this.nesteSeksjoner()[0]) {
+            val aktivSeksjon = this@with
+            object {
+                val navn = aktivSeksjon.navn
+                val antallSpørsmål = aktivSeksjon.size
+            }
+        }
 
     private infix fun Int.index(generatorIndex: Int) = "$this.$generatorIndex"
 
     private fun <T : DslFaktaseksjon> medSeksjon(faktaseksjon: T, block: T.(fakta: Utredningsprosess) -> Unit) {
         assertNotEquals(søknadsprosess.nesteSeksjoner().size, 0, "Har ikke neste seksjon")
         block(faktaseksjon, søknadsprosess)
+        lagreOgHent()
     }
 }
