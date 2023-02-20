@@ -44,13 +44,13 @@ internal class UtredningsprosessTest() {
                 it.dato(`dagpenger søknadsdato`).besvar(LocalDate.now())
                 it.envalg(`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
                 it.generator(arbeidsforhold).besvar(1)
-                it.tekst("$`arbeidsforhold navn bedrift`.1").besvar(Tekst("Hei"))
+                it.tekst(`arbeidsforhold navn bedrift` index 1).besvar(Tekst("Hei"))
             }
             repository.lagre(søknadsprosess)
 
             søknadsprosess = repository.hent(uuid)
             medSeksjon(DinSituasjon) {
-                it.land("$`arbeidsforhold land`.1").besvar(Land("NOR"))
+                it.land(`arbeidsforhold land` index 1).besvar(Land("NOR"))
             }
 
             assertEquals(false, søknadsprosess.erFerdig())
@@ -58,6 +58,8 @@ internal class UtredningsprosessTest() {
     }
 
     private fun Utredningsprosess.harNavn(navn: String) = assertEquals(navn, nesteSeksjoner()[0].navn)
+
+    private infix fun Int.index(generatorIndex: Int) = "$this.$generatorIndex"
 
     private fun <T : DslFaktaseksjon> medSeksjon(faktaseksjon: T, block: T.(fakta: Utredningsprosess) -> Unit) {
         assertNotEquals(søknadsprosess.nesteSeksjoner().size, 0, "Har ikke neste seksjon")
