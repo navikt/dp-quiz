@@ -14,6 +14,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DinSituasjon
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.test.assertEquals
@@ -24,33 +25,33 @@ internal class UtredningsprosessTest() {
     private val repository = UtredningsprosessRepositoryImpl()
 
     @Test
-    fun `Besvarer en prosess uten mocks`() {
-        medProsess {
-            medSeksjon(Bosted) {
-                it.land(`hvilket land bor du i`).besvar(Land("NOR"))
-            }
-            medSeksjon(DinSituasjon) {
-                with(it.aktivSeksjon) {
-                    assertEquals("din-situasjon", navn)
-                    assertEquals(64, antallSpørsmål)
-                }
-
-                it.envalg(`mottatt dagpenger siste 12 mnd`)
-                    .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
-                it.dato(`dagpenger søknadsdato`).besvar(LocalDate.now())
-                it.envalg(`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
-                it.generator(arbeidsforhold).besvar(1)
-
-                assertEquals(118, it.aktivSeksjon.antallSpørsmål)
-                it.tekst(`arbeidsforhold navn bedrift` index 1).besvar(Tekst("Hei"))
-            }
-
-            medSeksjon(DinSituasjon) {
-                it.land(`arbeidsforhold land` index 1).besvar(Land("NOR"))
-            }
-
-            assertEquals(false, søknadsprosess.erFerdig())
+    fun `Besvarer en prosess uten mocks`() = medProsess {
+        medSeksjon(Bosted) {
+            it.land(`hvilket land bor du i`).besvar(Land("NOR"))
         }
+        medSeksjon(DinSituasjon) {
+            with(it.aktivSeksjon) {
+                assertEquals("din-situasjon", navn)
+                assertEquals(64, antallSpørsmål)
+            }
+
+            it.envalg(`mottatt dagpenger siste 12 mnd`)
+                .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
+            it.dato(`dagpenger søknadsdato`).besvar(LocalDate.now())
+            it.envalg(`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
+            it.generator(arbeidsforhold).besvar(1)
+
+            // Når generatoren er besvart skal det være lagt til nylig genererte faktum i samme seksjon
+            assertEquals(118, it.aktivSeksjon.antallSpørsmål)
+            it.tekst(`arbeidsforhold navn bedrift` index 1).besvar(Tekst("Hei"))
+        }
+
+        assertDoesNotThrow("Mangler genererte faktum i riktig seksjon") { søknadsprosess.aktivSeksjon }
+        medSeksjon(DinSituasjon) {
+            it.land(`arbeidsforhold land` index 1).besvar(Land("NOR"))
+        }
+
+        assertEquals(false, søknadsprosess.erFerdig())
     }
 
     private fun medProsess(block: () -> Unit) = Postgres.withMigratedDb {
