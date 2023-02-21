@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Prosess
@@ -25,18 +26,19 @@ class GenerertEndreTest {
             heltall faktum "generator" id 4 genererer 1 og 2 og 3,
             boolsk faktum "template1" id 1,
             boolsk faktum "template2" id 2,
-            boolsk faktum "template3" id 3
+            boolsk faktum "template3" id 3,
         )
         val prototypeProsess = Prosess(
+            TestProsesser.Test,
             prototypeFakta,
             Seksjon("seksjon14", Rolle.søker, prototypeFakta.boolsk(1), prototypeFakta.generator(4)),
-            Seksjon("template23", Rolle.søker, prototypeFakta.boolsk(2), prototypeFakta.boolsk(3))
+            Seksjon("template23", Rolle.søker, prototypeFakta.boolsk(2), prototypeFakta.boolsk(3)),
         )
 
         prosess = Versjon.Bygger(
             prototypeFakta,
             TomSubsumsjon,
-            prototypeProsess
+            prototypeProsess,
         ).utredningsprosess(testPerson)
     }
 

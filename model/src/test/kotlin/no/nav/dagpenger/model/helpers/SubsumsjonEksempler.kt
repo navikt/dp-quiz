@@ -32,7 +32,7 @@ internal var virkningstidspunkt: Faktum<LocalDate>
 internal var inntekt3G: GrunnleggendeFaktum<Inntekt>
 internal var inntekt15G: GrunnleggendeFaktum<Inntekt>
 private val prototypeFakta = Fakta(
-    Faktaversjon(Testprosess.Test, 13),
+    Faktaversjon(TestFakta.Test, 13),
     dato faktum "Datoen du fyller 67" id 1,
     dato faktum "Datoen du søker om dagpenger" id 2,
     dato faktum "Datoen du ønsker dagpenger fra" id 3,
@@ -83,6 +83,7 @@ private val prototypeSubsumsjon = "inngangsvilkår".alle(
     )
 }
 private val prototypeWebSøknad = Prosess(
+    TestProsesser.Test,
     Seksjon(
         "seksjon1",
         Rolle.søker,

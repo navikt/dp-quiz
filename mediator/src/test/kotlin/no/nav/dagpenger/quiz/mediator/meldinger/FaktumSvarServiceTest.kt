@@ -18,6 +18,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
+import no.nav.dagpenger.quiz.mediator.helpers.Testfakta
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
@@ -33,7 +34,7 @@ internal class FaktumSvarServiceTest {
     }
 
     companion object {
-        private val prosessVersjon = Faktaversjon(Testprosess.Test, -3000)
+        private val prosessVersjon = Faktaversjon(Testfakta.Test, -3000)
         val prototypeFakta = Fakta(
             prosessVersjon,
             heltall faktum "generator" id 10 genererer 11 og 12,
@@ -44,6 +45,7 @@ internal class FaktumSvarServiceTest {
             prototypeFakta,
             prototypeFakta heltall 10 er 1 hvisOppfylt { prototypeFakta dato 11 etter (prototypeFakta dato 12) },
             Prosess(
+                Testprosess.Test,
                 Seksjon(
                     "seksjon",
                     Rolle.nav,
@@ -54,7 +56,7 @@ internal class FaktumSvarServiceTest {
     }
 
     private val faktaRepository = mockk<ProsessRepository>().also {
-        every { it.hent(any()) } returns Versjon.id(prosessVersjon).utredningsprosess(prototypeFakta)
+        every { it.hent(any()) } returns Versjon.id(Testprosess.Test).utredningsprosess(prototypeFakta)
         every { it.lagre(any()) } returns true
     }
     private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)

@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -12,7 +13,7 @@ internal class InnsendingMetadataStrategiTest {
 
     init {
         Innsending.registrer { prototypeSøknad ->
-            prosess = Versjon.id(Innsending.VERSJON_ID)
+            prosess = Versjon.id(Prosesser.Innsending)
                 .utredningsprosess(prototypeSøknad)
         }
     }

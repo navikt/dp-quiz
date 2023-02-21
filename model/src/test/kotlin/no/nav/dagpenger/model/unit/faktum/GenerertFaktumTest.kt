@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -17,15 +18,18 @@ internal class GenerertFaktumTest {
 
     @Test
     fun `Enkel template`() {
-
         val fakta = Fakta(
             testversjon,
             boolsk faktum "template" id 1,
-            heltall faktum "generator" id 2 genererer 1
+            heltall faktum "generator" id 2 genererer 1,
         )
 
         val seksjon = Seksjon("seksjon", Rolle.søker, fakta boolsk 1, fakta generator 2)
-        val prosess = Prosess(fakta, seksjon)
+        val prosess = Prosess(
+            TestProsesser.Test,
+            fakta,
+            seksjon,
+        )
         val originalSize = seksjon.size
         prosess.generator(2).besvar(5)
 
@@ -36,20 +40,24 @@ internal class GenerertFaktumTest {
 
     @Test
     fun `Flere templates`() {
-
         val fakta = Fakta(
             testversjon,
             boolsk faktum "template" id 1,
             boolsk faktum "template" id 2,
             boolsk faktum "template" id 3,
             heltall faktum "generer" id 4 genererer 1 og 2 og 3,
-            boolsk faktum "boolean" id 5
+            boolsk faktum "boolean" id 5,
 
         )
 
         val seksjon1 = Seksjon("seksjon", Rolle.søker, fakta boolsk 1, fakta generator 4)
         val seksjon2 = Seksjon("seksjon", Rolle.søker, fakta boolsk 2, fakta boolsk 3, fakta boolsk 5)
-        val prosess = Prosess(fakta, seksjon1, seksjon2)
+        val prosess = Prosess(
+            TestProsesser.Test,
+            fakta,
+            seksjon1,
+            seksjon2,
+        )
         val originalSize1 = seksjon1.size
         val originalSize2 = seksjon2.size
         prosess.generator(4).besvar(3)
@@ -63,19 +71,23 @@ internal class GenerertFaktumTest {
 
     @Test
     fun `generator faktum med avhengighet skal resettes`() {
-
         val fakta = Fakta(
             testversjon,
             boolsk faktum "template" id 1,
             boolsk faktum "template" id 2,
             boolsk faktum "template" id 3,
             heltall faktum "generer" id 4 genererer 1 og 2 og 3 avhengerAv 5,
-            boolsk faktum "boolean" id 5
+            boolsk faktum "boolean" id 5,
         )
 
         val seksjon1 = Seksjon("seksjon", Rolle.søker, fakta boolsk 1, fakta generator 4)
         val seksjon2 = Seksjon("seksjon", Rolle.søker, fakta boolsk 2, fakta boolsk 3, fakta boolsk 5)
-        val prosess = Prosess(fakta, seksjon1, seksjon2)
+        val prosess = Prosess(
+            TestProsesser.Test,
+            fakta,
+            seksjon1,
+            seksjon2,
+        )
 
         prosess.boolsk(5).besvar(true)
 
@@ -102,11 +114,16 @@ internal class GenerertFaktumTest {
         val fakta = Fakta(
             testversjon,
             boolsk faktum "template" id 1,
-            heltall faktum "generator" id 2 genererer 1
+            heltall faktum "generator" id 2 genererer 1,
         )
         val generatorSeksjon = Seksjon("seksjon", Rolle.søker, fakta generator 2)
         val templateSeksjon = Seksjon("seksjon", Rolle.søker, fakta boolsk 1)
-        val prosess = Prosess(fakta, generatorSeksjon, templateSeksjon)
+        val prosess = Prosess(
+            TestProsesser.Test,
+            fakta,
+            generatorSeksjon,
+            templateSeksjon,
+        )
         prosess.generator(2).besvar(3)
         assertEquals(5, prosess.size)
         assertEquals(1, generatorSeksjon.size)
@@ -122,13 +139,19 @@ internal class GenerertFaktumTest {
             boolsk faktum "template" id 1,
             boolsk faktum "template" id 2,
             boolsk faktum "template" id 3,
-            heltall faktum "generator" id 4 genererer 1 og 2 og 3
+            heltall faktum "generator" id 4 genererer 1 og 2 og 3,
         )
 
         val generatorSeksjon = Seksjon("seksjon", Rolle.søker, fakta generator 4)
         val templateSeksjon1 = Seksjon("seksjon", Rolle.søker, fakta boolsk 1, fakta boolsk 2)
         val templateSeksjon2 = Seksjon("seksjon", Rolle.søker, fakta boolsk 3)
-        val prosess = Prosess(fakta, generatorSeksjon, templateSeksjon1, templateSeksjon2)
+        val prosess = Prosess(
+            TestProsesser.Test,
+            fakta,
+            generatorSeksjon,
+            templateSeksjon1,
+            templateSeksjon2,
+        )
         prosess.generator(4).besvar(3)
 
         assertEquals(9, prosess.size)

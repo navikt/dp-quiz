@@ -10,14 +10,15 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 
 internal fun Fakta.testSøknadprosess(
     subsumsjon: Subsumsjon,
-    seksjon: Fakta.() -> List<Seksjon>
+    seksjon: Fakta.() -> List<Seksjon>,
 ): Prosess {
     return Versjon.Bygger(
         this,
         subsumsjon,
         Prosess(
-            *seksjon().toTypedArray()
-        )
+            Testprosess.Test,
+            *seksjon().toTypedArray(),
+        ),
     ).utredningsprosess(testPerson)
 }
 

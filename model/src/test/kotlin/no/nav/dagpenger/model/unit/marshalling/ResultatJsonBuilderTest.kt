@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
@@ -35,14 +36,14 @@ internal class ResultatJsonBuilderTest {
             boolsk faktum "f5" id 5,
             boolsk faktum "f6" id 6,
             boolsk faktum "f7" id 7,
-            heltall faktum "f67" id 67 genererer 6 og 7
+            heltall faktum "f67" id 67 genererer 6 og 7,
         )
     }
 
     @Test
     fun `bygger prossess_resultat event`() {
         val søknadprosess = søknadprosess(
-            prototypeFakta.boolsk(1) er true
+            prototypeFakta.boolsk(1) er true,
         )
         assertThrows<IllegalStateException> {
             ResultatJsonBuilder(søknadprosess).resultat()
@@ -68,7 +69,7 @@ internal class ResultatJsonBuilderTest {
                 prototypeFakta.boolsk(2) er true
             } hvisIkkeOppfylt {
                 prototypeFakta.boolsk(3) er true
-            }
+            },
         )
         søknadprosess.boolsk(1).besvar(true)
         søknadprosess.boolsk(2).besvar(true)
@@ -86,7 +87,7 @@ internal class ResultatJsonBuilderTest {
                 prototypeFakta.boolsk(2) er true
             } hvisIkkeOppfylt {
                 prototypeFakta.boolsk(3) er true
-            }
+            },
         )
         søknadprosess.boolsk(1).besvar(true, "A123456")
         søknadprosess.boolsk(2).besvar(true)
@@ -97,6 +98,7 @@ internal class ResultatJsonBuilderTest {
 
     private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess {
         val prototypeProsess = Prosess(
+            TestProsesser.Test,
             prototypeFakta,
             Seksjon(
                 "søker",
@@ -105,7 +107,7 @@ internal class ResultatJsonBuilderTest {
                 prototypeFakta.boolsk(3),
                 prototypeFakta.boolsk(5),
                 prototypeFakta.boolsk(6),
-                prototypeFakta.boolsk(7)
+                prototypeFakta.boolsk(7),
             ),
             Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
             Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeFakta.boolsk(4)),
@@ -115,7 +117,7 @@ internal class ResultatJsonBuilderTest {
         return Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
-            prototypeProsess
+            prototypeProsess,
         ).utredningsprosess(testPerson)
     }
 }

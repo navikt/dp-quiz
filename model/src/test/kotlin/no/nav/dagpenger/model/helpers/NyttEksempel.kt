@@ -29,7 +29,7 @@ import no.nav.dagpenger.model.subsumsjon.oppfyltGodkjentAv
 import no.nav.dagpenger.model.subsumsjon.uansett
 
 private val prototypeFakta1 = Fakta(
-    Faktaversjon(Testprosess.PrototypeSøknad, 0),
+    Faktaversjon(TestFakta.PrototypeSøknad, 0),
     boolsk faktum "f1" id 1,
     dato faktum "f2" id 2,
     dato faktum "f3" id 3,
@@ -112,6 +112,7 @@ private val prototypeSeksjon9 =
     Seksjon("seksjon9", Rolle.saksbehandler, p3Dato, p4Dato, p5Dato, p_3_4_5Dato, p13Dato)
 private val webPrototypeProsess: Prosess =
     Prosess(
+        TestProsesser.Test,
         prototypeSeksjon1,
         prototypeSeksjon2,
         prototypeSeksjon3,

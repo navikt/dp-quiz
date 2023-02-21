@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.uansett
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger.Subsumsjoner.regeltre
 
@@ -45,7 +46,10 @@ internal object Dagpenger {
             VERSJON_ID,
             *alleFakta,
         )
-    private val prosess: Prosess = Prosess(*alleSeksjoner)
+    private val prosess: Prosess = Prosess(
+        Prosesser.Søknad,
+        *alleSeksjoner,
+    )
 
     object Subsumsjoner {
         val regeltre: Subsumsjon = with(prototypeFakta) {

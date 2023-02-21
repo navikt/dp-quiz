@@ -15,14 +15,15 @@ internal fun Fakta.testSøknadprosess(
             Seksjon(
                 "seksjon",
                 Rolle.søker,
-                *(this.map { it }.toTypedArray())
-            )
+                *(this.map { it }.toTypedArray()),
+            ),
         )
-    }
+    },
 ): Prosess {
     return Versjon.Bygger(
         this,
         subsumsjon,
-        Prosess(*seksjon().toTypedArray())
+        // TODO: Denne må nok bli et argument
+        Prosess(TestProsesser.Test, *seksjon().toTypedArray()),
     ).utredningsprosess(testPerson)
 }

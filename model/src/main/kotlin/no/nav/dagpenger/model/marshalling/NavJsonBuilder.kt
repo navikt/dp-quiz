@@ -17,7 +17,6 @@ import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.putR
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
@@ -50,7 +49,8 @@ class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: 
         root.set<ArrayNode>("@behov", behovNode)
         root.set<ArrayNode>("identer", identerNode)
 
-        faktumNavBehov = Versjon.id(faktaversjon).faktumNavBehov ?: throw IllegalArgumentException("Finner ikke oversettelse til navbehov, versjon: $faktaversjon")
+        TODO("Skal bli prosessversjon")
+        // faktumNavBehov = Versjon.id(faktaversjon).faktumNavBehov ?: throw IllegalArgumentException("Finner ikke oversettelse til navbehov, versjon: $faktaversjon")
     }
 
     override fun visit(type: Type, id: String, historisk: Boolean) {

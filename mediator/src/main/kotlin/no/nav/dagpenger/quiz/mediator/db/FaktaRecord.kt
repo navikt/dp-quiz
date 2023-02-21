@@ -22,6 +22,8 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.math.BigInteger
@@ -40,11 +42,10 @@ class FaktaRecord : FaktaRepository {
 
     override fun ny(
         identer: Identer,
-        faktaversjon: Faktaversjon,
+        faktaversjon: Prosesstype,
         uuid: UUID,
     ): Fakta {
         val person = personRecord.hentEllerOpprettPerson(identer)
-        println(faktaversjon)
         return Versjon.id(faktaversjon).fakta(person, uuid).also { fakta ->
             if (eksisterer(uuid)) return fakta
             OpprettNyFaktaVisitor(fakta)
@@ -54,7 +55,7 @@ class FaktaRecord : FaktaRepository {
     override fun eksisterer(uuid: UUID): Boolean {
         val query = queryOf(
             //language=PostgreSQL
-            "SELECT id FROM soknad WHERE uuid = :uuid",
+            "SELECT id FROM fakta WHERE uuid = :uuid",
             mapOf("uuid" to uuid),
         )
         return using(sessionOf(dataSource)) { session ->
@@ -64,7 +65,7 @@ class FaktaRecord : FaktaRepository {
         }
     }
 
-    private data class Prosess(override val id: String) : Faktatype
+    private data class DaoProsess(override val id: String) : Faktatype
 
     override fun hent(uuid: UUID): Fakta {
         data class SoknadRad(val personId: UUID, val navn: String, val versjonId: Int)
@@ -80,14 +81,14 @@ class FaktaRecord : FaktaRepository {
             session.run(
                 queryOf(
                     //language=PostgreSQL
-                    "SELECT soknad.person_id, versjon.navn , versjon.versjon_id FROM soknad JOIN v1_prosessversjon AS versjon ON (versjon.id = soknad.versjon_id) WHERE uuid = ?",
+                    "SELECT fakta.person_id, versjon.navn , versjon.versjon_id FROM fakta JOIN faktaversjon AS versjon ON (versjon.id = soknad.versjon_id) WHERE uuid = ?",
                     uuid,
                 ).map { row ->
                     SoknadRad(UUID.fromString(row.string(1)), row.string(2), row.int(3))
                 }.asSingle,
             )
         } ?: throw IllegalArgumentException("Kan ikke hente en søknad som ikke finnes, uuid: $uuid")
-        val fakta = Versjon.id(Faktaversjon(Prosess(rad.navn), rad.versjonId))
+        val fakta = Versjon.id(DaoProsess(rad.navn))
             .fakta(personRecord.hentPerson(rad.personId), uuid)
 
         svarList(uuid).onEach { row ->
@@ -98,7 +99,7 @@ class FaktaRecord : FaktaRepository {
         return fakta
     }
 
-    fun rehydrerProsess(prosess: no.nav.dagpenger.model.seksjon.Prosess): no.nav.dagpenger.model.seksjon.Prosess {
+    fun rehydrerProsess(prosess: Prosess): Prosess {
         svarList(prosess.fakta.uuid).onEach { row ->
             prosess.fakta.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
         }
@@ -183,7 +184,7 @@ class FaktaRecord : FaktaRepository {
     private fun internSoknadId(uuid: UUID) =
         queryOf(
             // language=PostgreSQL
-            "SELECT id FROM soknad WHERE uuid=?",
+            "SELECT id FROM fakta WHERE uuid=?",
             uuid,
         ).map { it.bigDecimal("id").toBigInteger() }.asSingle
 
@@ -191,7 +192,7 @@ class FaktaRecord : FaktaRepository {
         queryOf(
             // language=PostgreSQL
             """UPDATE soknad
-            |SET versjon_id = (SELECT id FROM v1_prosessversjon WHERE navn = :navn AND versjon_id = :versjonId)
+            |SET versjon_id = (SELECT id FROM faktaversjon WHERE navn = :navn AND versjon_id = :versjonId)
             |WHERE id = :soknadId
             """.trimMargin(),
             mapOf("navn" to versjon.faktatype.id, "versjonId" to versjon.versjon, "soknadId" to soknadId),
@@ -201,9 +202,9 @@ class FaktaRecord : FaktaRepository {
         queryOf(
             // language=PostgreSQL
             """
-            |SELECT faktum.*, v1_prosessversjon.id AS prosessinternid
-            |FROM faktum, v1_prosessversjon
-            |WHERE faktum.versjon_id = v1_prosessversjon.id AND v1_prosessversjon.navn=? AND v1_prosessversjon.versjon_id=?
+            |SELECT faktum.*, faktaversjon.id AS prosessinternid
+            |FROM faktum, faktaversjon
+            |WHERE faktum.versjon_id = faktaversjon.id AND faktaversjon.navn=? AND faktaversjon.versjon_id=?
             """.trimMargin(),
             sisteVersjon.faktatype.id,
             sisteVersjon.versjon,
@@ -214,18 +215,19 @@ class FaktaRecord : FaktaRepository {
             )
         }.asList
 
-    private fun prosessversjon(uuid: UUID) = using(sessionOf(dataSource)) { session ->
-        session.run(
+    private fun prosessversjon(uuid: UUID): Faktaversjon = using(sessionOf(dataSource)) { session ->
+        /*session.run(
             queryOf(
                 // language=PostgreSQL
-                """SELECT v.navn, v.versjon_id 
-                |FROM v1_prosessversjon v
+                """SELECT v.navn, v.versjon_id
+                |FROM faktaversjon v
                 |LEFT JOIN soknad s ON v.id=s.versjon_id
                 |WHERE s.uuid = :uuid
                 """.trimMargin(),
                 mapOf("uuid" to uuid),
-            ).map { Faktaversjon(Prosess(it.string("navn")), it.int("versjon_id")) }.asSingle,
-        )
+            ).map { Faktaversjon(DaoProsess(it.string("navn")), it.int("versjon_id")) }.asSingle,
+        )*/
+        null // TODO
     } ?: throw IllegalArgumentException("Kan ikke finne prosessversjon for en søknad som ikke finnes, uuid: $uuid")
 
     private fun skrivNyeFaktum(
@@ -288,10 +290,10 @@ class FaktaRecord : FaktaRepository {
         """
               DELETE FROM faktum_verdi
               WHERE id IN 
-                (SELECT faktum_verdi.id AS faktum_id FROM soknad, faktum_verdi, faktum
-                  WHERE faktum_verdi.soknad_id = soknad.id 
+                (SELECT faktum_verdi.id AS faktum_id FROM fakta, faktum_verdi, faktum
+                  WHERE faktum_verdi.soknad_id = fakta.id 
                         AND faktum_verdi.faktum_id = faktum.id 
-                        AND soknad.uuid = ? 
+                        AND fakta.uuid = ? 
                         AND faktum.root_id = ? 
                         AND faktum_verdi.indeks = ?
                 )
@@ -307,8 +309,8 @@ class FaktaRecord : FaktaRepository {
                 queryOf(
                     //language=PostgreSQL
                     """
-                        WITH soknad_faktum AS (SELECT faktum.id AS faktum_id, faktum.root_id AS root_id, soknad.id AS soknad_id FROM soknad, faktum
-                                WHERE faktum.versjon_id = soknad.versjon_id AND faktum.regel IS NULL AND soknad.uuid = ?)
+                        WITH soknad_faktum AS (SELECT faktum.id AS faktum_id, faktum.root_id AS root_id, fakta.id AS soknad_id FROM fakta, faktum
+                                WHERE faktum.versjon_id = fakta.versjon_id AND faktum.regel IS NULL AND fakta.uuid = ?)
                             SELECT 
                                 soknad_faktum.root_id AS root_id,
                                 faktum_verdi.indeks AS indeks,
@@ -494,11 +496,11 @@ class FaktaRecord : FaktaRepository {
         queryOf(
             //language=PostgreSQL
             """INSERT INTO faktum_verdi (indeks, soknad_id, faktum_id)
-            SELECT :indeks, soknad.id, faktum.id
-            FROM soknad,
+            SELECT :indeks, fakta.id, faktum.id
+            FROM fakta,
                  faktum
-            WHERE soknad.uuid = :soknadUuid
-              AND faktum.versjon_id = soknad.versjon_id
+            WHERE fakta.uuid = :soknadUuid
+              AND faktum.versjon_id = fakta.versjon_id
               AND faktum.root_id = :rootId
             """.trimMargin(),
             mapOf(
@@ -513,7 +515,7 @@ class FaktaRecord : FaktaRepository {
             session.run(
                 queryOf(
                     //language=PostgreSQL
-                    "SELECT opprettet, uuid FROM soknad WHERE person_id = (SELECT person_id FROM folkeregisterident WHERE verdi = ?)",
+                    "SELECT opprettet, uuid FROM fakta WHERE person_id = (SELECT person_id FROM folkeregisterident WHERE verdi = ?)",
                     identer.first { it.type == Ident.Type.FOLKEREGISTERIDENT && !it.historisk }.id,
                 ).map { it.localDateTime(1) to UUID.fromString(it.string(2)) }.asList,
             )

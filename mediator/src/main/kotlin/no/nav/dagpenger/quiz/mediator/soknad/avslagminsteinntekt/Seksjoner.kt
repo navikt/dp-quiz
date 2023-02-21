@@ -3,6 +3,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeid
@@ -269,6 +270,7 @@ internal object Seksjoner {
     }
     internal val prosess: Prosess =
         Prosess(
+            Prosesser.AvslagPåMinsteinntekt,
             behandlingsdatoSeksjon,
             senesteMuligeVirkningsdatoSeksjon,
             minsteinntektKonstanter,

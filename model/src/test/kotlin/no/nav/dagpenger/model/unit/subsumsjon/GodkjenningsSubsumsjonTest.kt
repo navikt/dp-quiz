@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
@@ -86,19 +87,19 @@ internal class GodkjenningsSubsumsjonTest {
         val prototypeFakta = Fakta(
             testversjon,
             boolsk faktum "f1" id 1,
-            boolsk faktum "approve1" id 2
+            boolsk faktum "approve1" id 2,
         )
 
         assertThrows<IllegalArgumentException> {
             (prototypeFakta.boolsk(1) er true).oppfyltGodkjentAv(
                 prototypeFakta.boolsk(
-                    2
-                )
+                    2,
+                ),
             )
         }
         assertThrows<IllegalArgumentException> {
             (prototypeFakta.boolsk(1) er true).ikkeOppfyltGodkjentAv(
-                prototypeFakta.boolsk(2)
+                prototypeFakta.boolsk(2),
             )
         }
         assertThrows<IllegalArgumentException> { (prototypeFakta.boolsk(1) er true).godkjentAv(prototypeFakta.boolsk(2)) }
@@ -108,7 +109,7 @@ internal class GodkjenningsSubsumsjonTest {
         val fakta = Fakta(
             testversjon,
             boolsk faktum "faktum" id 1,
-            boolsk faktum "godkjenning" id 2 avhengerAv 1
+            boolsk faktum "godkjenning" id 2 avhengerAv 1,
         )
 
         faktum = fakta boolsk 1
@@ -116,10 +117,11 @@ internal class GodkjenningsSubsumsjonTest {
 
         godkjenningsSubsumsjon = block(fakta)
         return Prosess(
+            TestProsesser.Test,
             fakta,
             Seksjon("seksjon", Rolle.søker, faktum),
             Seksjon("seksjon", Rolle.saksbehandler, godkjenning),
-            rootSubsumsjon = godkjenningsSubsumsjon
+            rootSubsumsjon = godkjenningsSubsumsjon,
         )
     }
 }

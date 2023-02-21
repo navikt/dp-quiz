@@ -7,7 +7,6 @@ import kotliquery.using
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
@@ -21,6 +20,7 @@ import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.mai
 import no.nav.dagpenger.model.helpers.mars
+import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
@@ -53,7 +53,7 @@ internal class FaktaRecordTest {
 
             assertRecordCount(1, "soknad")
             assertRecordCount(expectedFaktaCount, "faktum_verdi")
-            FaktaRecord().ny(UNG_PERSON_FNR_2018, Faktaversjon(Testprosess.Test, 888))
+            FaktaRecord().ny(UNG_PERSON_FNR_2018, Testprosess.Test)
             assertRecordCount(2, "soknad")
             assertRecordCount(expectedFaktaCount * 2, "faktum_verdi")
             lagreHentOgSammenlign()
@@ -122,8 +122,8 @@ internal class FaktaRecordTest {
     fun `Skal kun slette besvarer hvis den ikke refererer til andre søknader`() = Postgres.withMigratedDb {
         FaktumTable(SøknadEksempel1.prototypeFakta1)
         faktaRecord = FaktaRecord()
-        val søknadProsess1 = fakta(SøknadEksempel1.prosessVersjon)
-        val søknadProsess2 = fakta(SøknadEksempel1.prosessVersjon)
+        val søknadProsess1 = fakta(Testprosess.Test)
+        val søknadProsess2 = fakta(Testprosess.Test)
         val besvarer = "123"
         søknadProsess1.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
         faktaRecord.lagre(søknadProsess1)
@@ -353,9 +353,9 @@ internal class FaktaRecordTest {
             FaktumTable(SøknadEksempel1.prototypeFakta1)
             faktaRecord = FaktaRecord()
             originalFakta =
-                fakta(SøknadEksempel1.prosessVersjon, søknadUUId)
+                fakta(Testprosess.Test, søknadUUId)
             originalFakta =
-                fakta(SøknadEksempel1.prosessVersjon, søknadUUId)
+                fakta(Testprosess.Test, søknadUUId)
 
             originalFakta.dato(2).besvar(LocalDate.now())
 
@@ -409,11 +409,11 @@ internal class FaktaRecordTest {
         }
     }
 
-    private fun fakta(prosessVersjon: Faktaversjon, søknadUUID: UUID): Fakta {
-        return faktaRecord.ny(AvhengigeFaktaTest.UNG_PERSON_FNR_2018, prosessVersjon, søknadUUID)
+    private fun fakta(prosesstype: Prosesstype, søknadUUID: UUID): Fakta {
+        return faktaRecord.ny(AvhengigeFaktaTest.UNG_PERSON_FNR_2018, prosesstype, søknadUUID)
     }
 
-    private fun fakta(prosessVersjon: Faktaversjon) = fakta(prosessVersjon, UUID.randomUUID())
+    private fun fakta(prosesstype: Prosesstype) = fakta(prosesstype, UUID.randomUUID())
 
     private fun lagreHentOgSammenlign() {
         faktaRecord.lagre(originalFakta)
@@ -427,7 +427,7 @@ internal class FaktaRecordTest {
     private fun byggOriginalFakta() {
         FaktumTable(SøknadEksempel1.prototypeFakta1)
         faktaRecord = FaktaRecord()
-        originalFakta = fakta(SøknadEksempel1.prosessVersjon)
+        originalFakta = fakta(Testprosess.Test)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

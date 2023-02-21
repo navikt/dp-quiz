@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.seksjon
 
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktatype
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
@@ -12,26 +13,40 @@ import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import java.util.UUID
 
+interface Prosesstype {
+    val faktatype: Faktatype
+}
+
 class Prosess private constructor(
+    val uuid: UUID,
+    val type: Prosesstype,
     val fakta: Fakta,
     internal val rootSubsumsjon: Subsumsjon,
     private val seksjoner: MutableList<Seksjon>,
 ) : TypedFaktum by fakta, MutableList<Seksjon> by seksjoner {
-    val uuid: UUID = fakta.uuid
-
-    constructor(vararg seksjoner: Seksjon) : this(
+    constructor(type: Prosesstype, vararg seksjoner: Seksjon) : this(
+        UUID.randomUUID(),
+        type,
         Fakta(Faktaversjon.prototypeversjon),
         TomSubsumsjon,
         seksjoner.toMutableList(),
     )
 
-    internal constructor(fakta: Fakta, vararg seksjoner: Seksjon, rootSubsumsjon: Subsumsjon = TomSubsumsjon) : this(
+    internal constructor(
+        type: Prosesstype,
+        fakta: Fakta,
+        vararg seksjoner: Seksjon,
+        rootSubsumsjon: Subsumsjon = TomSubsumsjon,
+    ) : this(
+        UUID.randomUUID(),
+        type,
         fakta,
         rootSubsumsjon,
         seksjoner.toMutableList(),
     )
 
     init {
+        // TODO: require(type.faktatype.id == fakta.faktaversjon.faktatype.id) { "Kan ikke bruke denne type fakta for denne prosessen" }
         seksjoner.forEach {
             it.søknadprosess(this)
         }
@@ -73,8 +88,8 @@ class Prosess private constructor(
 
     fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
 
-    internal fun bygg(fakta: Fakta, subsumsjon: Subsumsjon) =
-        Prosess(fakta, subsumsjon, seksjoner.map { it.bygg(fakta) }.toMutableList())
+    internal fun bygg(prosessUUID: UUID, fakta: Fakta, subsumsjon: Subsumsjon) =
+        Prosess(prosessUUID, type, fakta, subsumsjon, seksjoner.map { it.bygg(fakta) }.toMutableList())
 
     internal fun nesteFakta() = rootSubsumsjon.nesteFakta()
 

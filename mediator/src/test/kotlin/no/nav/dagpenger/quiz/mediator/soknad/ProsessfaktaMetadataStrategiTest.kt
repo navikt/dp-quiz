@@ -10,24 +10,23 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 
 internal class ProsessfaktaMetadataStrategiTest {
-
     private lateinit var prosessDagpenger: Prosess
     private lateinit var prosessInnsending: Prosess
     private lateinit var prosessAvslagPåMinsteinntekt: Prosess
 
     init {
         Dagpenger.registrer { prototypeSøknad ->
-            prosessDagpenger = Versjon.id(Dagpenger.VERSJON_ID)
+            prosessDagpenger = Versjon.id(Prosesser.Søknad)
                 .utredningsprosess(prototypeSøknad)
         }
 
         Innsending.registrer { prototypeSøknad ->
-            prosessInnsending = Versjon.id(Innsending.VERSJON_ID)
+            prosessInnsending = Versjon.id(Prosesser.Innsending)
                 .utredningsprosess(prototypeSøknad)
         }
 
         AvslagPåMinsteinntektOppsett.registrer { prototype ->
-            prosessAvslagPåMinsteinntekt = Versjon.id(AvslagPåMinsteinntektOppsett.VERSJON_ID)
+            prosessAvslagPåMinsteinntekt = Versjon.id(Prosesser.AvslagPåMinsteinntekt)
                 .utredningsprosess(prototype)
         }
     }

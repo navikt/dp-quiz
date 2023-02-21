@@ -19,9 +19,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 
 internal object SøknadEksempel {
-
-    val prosessVersjon = Faktaversjon(Testprosess.Test, 666)
-
+    val prosessVersjon = Faktaversjon(Testfakta.Test, 666)
     val prototypeFakta1 = Fakta(
         prosessVersjon,
         boolsk faktum "f1_bool" id 1 avhengerAv 17,
@@ -35,8 +33,8 @@ internal object SøknadEksempel {
         dokument faktum "innsendt søknadsid" id 17, // MottattSøknadService trenger dette faktumet
         dokument faktum "arena fagsakid" id 52, // MottattSøknadService trenger dette faktumet
     )
-
     private val webPrototypeSøknad = Prosess(
+        Testprosess.Test,
         Seksjon(
             "seksjon1",
             Rolle.nav,
@@ -70,7 +68,6 @@ internal object SøknadEksempel {
             prototypeFakta1.boolsk(8),
         ),
     )
-
     private val subsumsjon = "subsumsjon".alle(
         prototypeFakta1 boolsk 1 er true,
         prototypeFakta1 boolsk 2 er true,
@@ -79,7 +76,6 @@ internal object SøknadEksempel {
         prototypeFakta1 inntekt 5 minst (prototypeFakta1 inntekt 6),
         prototypeFakta1 boolsk 8 dokumenteresAv (prototypeFakta1 dokument 7),
     )
-
     val faktumNavBehov = FaktumNavBehov(
         mapOf(
             1 to "f1Behov",

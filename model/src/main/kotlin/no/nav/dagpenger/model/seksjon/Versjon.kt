@@ -14,19 +14,24 @@ class Versjon private constructor(
     val faktumNavBehov get() = bygger.faktumNavBehov
 
     companion object {
-        val versjoner = mutableMapOf<Faktaversjon, Versjon>()
+        val versjoner = mutableMapOf<Prosesstype, Versjon>()
+        val faktamap = mutableMapOf<Faktatype, Versjon>()
         fun siste(faktatype: Faktatype): Faktaversjon {
-            return versjoner.keys.filter { it.faktatype.id == faktatype.id }.maxByOrNull { it.versjon }
-                ?: throw IllegalArgumentException("Det finnes ingen versjoner!")
+            TODO("Skal nok fases ut")
+            /*return versjoner.keys.filter { it.faktatype.id == faktatype.id }.maxByOrNull { it.versjon }
+                ?: throw IllegalArgumentException("Det finnes ingen versjoner!")*/
         }
 
-        fun id(versjonId: Faktaversjon) =
-            versjoner[versjonId] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $versjonId")
+        fun id(prosesstype: Prosesstype) =
+            versjoner[prosesstype] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $prosesstype")
+        fun id(faktatype: Faktatype) =
+            faktamap[faktatype] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $faktatype")
     }
 
     init {
-        require(bygger.prosessversjon() !in versjoner.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider" }
-        versjoner[bygger.prosessversjon()] = this
+        require(bygger.prosesstype() !in versjoner.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider" }
+        versjoner[bygger.prosesstype()] = this
+        faktamap[bygger.prosesstype().faktatype] = this
     }
 
     fun fakta(
@@ -38,8 +43,8 @@ class Versjon private constructor(
     fun utredningsprosess(fakta: Fakta) =
         bygger.utredningsprosess(fakta)
 
-    fun utredningsprosess(person: Person, faktaUUID: UUID) =
-        bygger.utredningsprosess(person, faktaUUID)
+    fun utredningsprosess(person: Person, prosessUUID: UUID, faktaUUID: UUID) =
+        bygger.utredningsprosess(person, prosessUUID, faktaUUID)
 
     class Bygger(
         private val prototypeFakta: Fakta,
@@ -49,9 +54,10 @@ class Versjon private constructor(
     ) {
         fun utredningsprosess(
             person: Person,
+            prosessUUID: UUID = UUID.randomUUID(),
             faktaUUID: UUID = UUID.randomUUID(),
         ): Prosess =
-            utredningsprosess(prototypeFakta.bygg(person, prototypeFakta.faktaversjon, faktaUUID))
+            utredningsprosess(prototypeFakta.bygg(person, prototypeFakta.faktaversjon, faktaUUID), prosessUUID)
 
         fun fakta(
             person: Person,
@@ -60,12 +66,13 @@ class Versjon private constructor(
 
         fun utredningsprosess(
             fakta: Fakta,
+            prosessUUID: UUID = UUID.randomUUID(),
         ): Prosess {
             val subsumsjon = prototypeSubsumsjon.bygg(fakta)
-            return prosess.bygg(fakta, subsumsjon)
+            return prosess.bygg(prosessUUID, fakta, subsumsjon)
         }
 
-        internal fun prosessversjon() = prototypeFakta.faktaversjon
+        internal fun prosesstype() = prosess.type
         fun registrer() = Versjon(this)
     }
 }

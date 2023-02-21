@@ -70,7 +70,7 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
         private companion object {
             private fun exists(prosessVersjon: Faktaversjon): Boolean {
                 val query = queryOf( //language=PostgreSQL
-                    "SELECT id FROM V1_PROSESSVERSJON WHERE navn = :navn AND versjon_id = :versjon_id",
+                    "SELECT id FROM faktaversjon WHERE navn = :navn AND versjon_id = :versjon_id",
                     mapOf("navn" to prosessVersjon.faktatype.id, "versjon_id" to prosessVersjon.versjon),
                 )
                 return using(sessionOf(dataSource)) { session ->
@@ -84,7 +84,7 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
 
     override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
         val query = queryOf( //language=PostgreSQL
-            "INSERT INTO V1_PROSESSVERSJON (navn, versjon_id) VALUES (:navn, :versjon_id) RETURNING id",
+            "INSERT INTO faktaversjon (navn, versjon_id) VALUES (:navn, :versjon_id) RETURNING id",
             mapOf("navn" to faktaversjon.faktatype.id, "versjon_id" to faktaversjon.versjon),
         )
         prosessVersjonId = using(sessionOf(dataSource)) { session ->

@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
-import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -45,7 +45,7 @@ internal class VilkårsvurderingLøser(
                 val vilkår = packet["@behov"].map { it.asText() }.first()
                 logger.info { "Mottok behov om vurdering av $vilkår" }
                 val prosessversjon = when (vilkår) {
-                    behov -> Versjon.siste(Prosessfakta.Paragraf_4_23_alder)
+                    behov -> Prosesser.Paragraf_4_23_alder
                     else -> {
                         logger.error { "Det er ikke støtte for vurdering av $vilkår enda." }
                         null

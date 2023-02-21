@@ -21,7 +21,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
 
 internal object SøknadEksempel2 {
-    val prosessVersjon = Faktaversjon(Testprosess.Test, 889)
+    val prosessVersjon = Faktaversjon(Testfakta.Test, 889)
     internal val prototypeFakta by lazy {
         Fakta(
             prosessVersjon,
@@ -57,23 +57,11 @@ internal object SøknadEksempel2 {
         )
     }
     private val webPrototypeSøknad = Prosess(
+        Testprosess.Test,
         Seksjon(
             "seksjon",
             Rolle.søker,
             *(prototypeFakta.map { it }.toTypedArray()),
-        ),
-    )
-    private val mobilePrototypeSøknad = Prosess(
-        Seksjon(
-            "seksjon",
-            Rolle.søker,
-            *(prototypeFakta.map { it }.toTypedArray()),
-        ),
-        Seksjon(
-            "template seksjon",
-            Rolle.søker,
-            prototypeFakta.heltall(16),
-            prototypeFakta.boolsk(17),
         ),
     )
     val v2 by lazy {

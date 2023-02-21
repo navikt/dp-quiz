@@ -39,7 +39,7 @@ class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
 
     private fun hentInternId(prosessVersjon: Faktaversjon): Int {
         val query = queryOf( //language=PostgreSQL
-            "SELECT id FROM v1_prosessversjon WHERE navn = :navn AND versjon_id = :versjon_id",
+            "SELECT id FROM faktaversjon WHERE navn = :navn AND versjon_id = :versjon_id",
             mapOf("navn" to prosessVersjon.faktatype.id, "versjon_id" to prosessVersjon.versjon),
         )
         return using(sessionOf(dataSource)) { session ->
@@ -71,7 +71,7 @@ class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
                 val id = transactionalSession.run(
                     queryOf( //language=PostgreSQL
                         """
-                         INSERT INTO soknad(uuid, versjon_id, person_id) 
+                         INSERT INTO fakta(uuid, versjon_id, person_id) 
                          VALUES (:uuid, :versjon_id, :person_id) 
                          RETURNING id                        
                         """.trimIndent(),

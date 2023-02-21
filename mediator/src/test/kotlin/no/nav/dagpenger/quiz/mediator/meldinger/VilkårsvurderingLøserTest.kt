@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.intellij.lang.annotations.Language
@@ -27,7 +28,7 @@ class VilkårsvurderingLøserTest {
     @BeforeEach
     fun setup() {
         Paragraf_4_23_alder_oppsett.registrer { prototypeSøknad ->
-            søknadsprosess = Versjon.id(Paragraf_4_23_alder_oppsett.VERSJON_ID)
+            søknadsprosess = Versjon.id(Prosesser.Paragraf_4_23_alder)
                 .utredningsprosess(prototypeSøknad)
         }
 

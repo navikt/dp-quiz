@@ -24,6 +24,7 @@ import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfyltManuell
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
+import no.nav.dagpenger.quiz.mediator.helpers.Testfakta
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
@@ -51,7 +52,7 @@ class Graftest {
         val registrertArbeidssøkerPerioder = 13
         val registrertArbeidssøkerPeriodeTom = 15
         val prototypeFakta = Fakta(
-            Faktaversjon(Testprosess.Test, 509),
+            Faktaversjon(Testfakta.Test, 509),
             dato faktum "Datoen du fyller 67" id bursdag67,
             dato faktum "Datoen du søker om dagpenger" id søknadsdato,
             dato faktum "Datoen du ønsker dagpenger fra" id ønsketdato,
@@ -70,6 +71,7 @@ class Graftest {
         val prototypeWebSøknad =
             with(prototypeFakta) {
                 Prosess(
+                    Testprosess.Test,
                     Seksjon(
                         "seksjon1",
                         Rolle.søker,

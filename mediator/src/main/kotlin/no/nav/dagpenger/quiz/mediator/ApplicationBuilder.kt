@@ -1,8 +1,6 @@
 package no.nav.dagpenger.quiz.mediator
 
 import mu.KotlinLogging
-import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.behovløsere.BehandlingsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.DokumentkravSvarService
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataService
@@ -21,13 +19,10 @@ import no.nav.dagpenger.quiz.mediator.meldinger.NyProsessBehovLøser
 import no.nav.dagpenger.quiz.mediator.meldinger.SøknadSlettetService
 import no.nav.dagpenger.quiz.mediator.meldinger.VilkårsvurderingLøser
 import no.nav.dagpenger.quiz.mediator.soknad.ProsessMetadataStrategi
-import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.v248.Dagpenger as Dagpenger248
@@ -64,21 +59,22 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 Dagpenger.registrer { prototype ->
                     FaktumTable(prototype)
 
-                    Versjon.id(Versjon.siste(Prosessfakta.Dagpenger)).also { versjon ->
+                    TODO("Se om denne trengs")
+                    /*Versjon.id(Versjon.siste(Prosessfakta.Dagpenger)).also { versjon ->
                         val søknadsprosess = versjon.utredningsprosess(prototype)
                         val malJson = SøknadsmalJsonBuilder(søknadsprosess).resultat().toString()
                         rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
-                    }
+                    }*/
                 }
 
                 Innsending.registrer { prototype ->
                     FaktumTable(prototype)
 
-                    Versjon.id(Versjon.siste(Prosessfakta.Innsending)).also { versjon ->
+                    /*Versjon.id(Versjon.siste(Prosessfakta.Innsending)).also { versjon ->
                         val søknadsprosess = versjon.utredningsprosess(prototype)
                         val malJson = SøknadsmalJsonBuilder(søknadsprosess).resultat().toString()
                         rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
-                    }
+                    }*/
                 }
 
                 if (Cluster.DEV_GCP == Cluster.current) {

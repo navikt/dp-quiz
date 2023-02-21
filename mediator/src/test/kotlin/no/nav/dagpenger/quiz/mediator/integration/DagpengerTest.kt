@@ -10,6 +10,7 @@ import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Bosted
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DinSituasjon
@@ -26,7 +27,7 @@ internal class DagpengerTest : SøknadBesvarer() {
     @BeforeEach
     fun setup() {
         Dagpenger.registrer { prototypeSøknad ->
-            søknadsprosess = Versjon.id(Dagpenger.VERSJON_ID)
+            søknadsprosess = Versjon.id(Prosesser.Søknad)
                 .utredningsprosess(prototypeSøknad)
         }
         val faktaRepository = mockk<ProsessRepository>().also {

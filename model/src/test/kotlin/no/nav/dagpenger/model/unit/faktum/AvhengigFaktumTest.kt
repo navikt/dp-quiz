@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
@@ -54,6 +55,7 @@ internal class AvhengigFaktumTest {
             dato faktum "ønsket dato" id 4,
         )
         val prototypeProsess = Prosess(
+            TestProsesser.Test,
             Seksjon("periode antall", Rolle.nav, fakta generator 1),
             Seksjon("periode", Rolle.nav, fakta dato 2, fakta dato 3),
             Seksjon("søknadsdato", Rolle.søker, fakta dato 4),

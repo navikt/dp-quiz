@@ -15,6 +15,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
+import no.nav.dagpenger.quiz.mediator.helpers.Testfakta
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -38,6 +39,7 @@ internal class ResultatTest {
             prototypeFakta,
             prototypeFakta boolsk 19 er true,
             Prosess(
+                Testprosess.Test,
                 Seksjon(
                     "seksjon",
                     Rolle.nav,
@@ -50,18 +52,17 @@ internal class ResultatTest {
             FaktumTable(prototypeFakta)
             faktaRecord = FaktaRecord()
             resultatRecord = ResultatRecord()
-
             val fakta = faktaRecord.ny(
                 IDENT,
-                prosessVersjon,
+                Testprosess.Test,
             )
-            prosess = Versjon.id(prosessVersjon).utredningsprosess(fakta)
+            prosess = Versjon.id(Testprosess.Test).utredningsprosess(fakta)
         }
     }
 
     @Test
     fun `Lagre resultat`() {
-        setup(Faktaversjon(Testprosess.Test, 935))
+        setup(Faktaversjon(Testfakta.Test, 935))
         prosess.boolsk(19).besvar(false)
         val resultat = prosess.resultat()
         resultatRecord.lagreResultat(
@@ -76,12 +77,13 @@ internal class ResultatTest {
 
     @Test
     fun `Lagrer sendt til manuell behandling`() {
-        setup(Faktaversjon(Testprosess.Test, 936))
+        setup(Faktaversjon(Testfakta.Test, 936))
         val seksjonsnavn = "manuell seksjon"
         resultatRecord.lagreManuellBehandling(prosess.fakta.uuid, seksjonsnavn)
         val grunn = using(sessionOf(dataSource)) { session ->
             session.run(
-                queryOf( //language=PostgreSQL
+                queryOf(
+                    //language=PostgreSQL
                     "SELECT grunn FROM manuell_behandling WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
                     prosess.fakta.uuid,
                 ).map { it.string("grunn") }.asSingle,

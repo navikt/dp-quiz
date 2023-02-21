@@ -3,14 +3,22 @@ package no.nav.dagpenger.quiz.mediator.integration
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Land
+import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
+import no.nav.dagpenger.model.regel.inneholder
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Seksjon
+import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepositoryImpl
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Bosted
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger.prototypeFakta
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DinSituasjon
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
@@ -49,16 +57,13 @@ internal class ProsessTest() {
         medSeksjon(DinSituasjon) {
             it.land(`arbeidsforhold land` index 1).besvar(Land("NOR"))
         }
-        /*
         val regeltre = with(prototypeFakta) {
             "".deltre {
                 (envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`) inneholder Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
             }
         }
-
-        val søknadProsess = Prosessversjon("søknad", Dagpenger.VERSJON_ID)
-        val minsteinntektProsess = Prosessversjon("minsteinntekt", Dagpenger.VERSJON_ID)
-        val annenProsess = Utredningsprosess(
+        val annenProsess = Prosess(
+            Prosesser.Søknad,
             Seksjon(
                 "test",
                 Rolle.søker,
@@ -67,15 +72,14 @@ internal class ProsessTest() {
         )
 
         Versjon.Bygger(
-            minsteinntektProsess,
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = regeltre,
-            utredningsprosess = annenProsess,
+            prosess = annenProsess,
             faktumNavBehov = FaktumNavBehov(emptyMap()),
         ).registrer().also {
             val nyInstans = it.utredningsprosess(søknadsprosess.fakta)
             println(nyInstans)
-        }*/
+        }
 
         assertEquals(false, søknadsprosess.erFerdig())
     }
@@ -92,7 +96,7 @@ internal class ProsessTest() {
     private fun lagNyProsess() {
         søknadsprosess = repository.ny(
             Identer(identer = setOf(Identer.Ident(Identer.Ident.Type.FOLKEREGISTERIDENT, "12312312311", false))),
-            Dagpenger.VERSJON_ID,
+            Prosesser.Søknad,
             søknadUUID,
         )
     }

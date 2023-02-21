@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.MinimalSøknadsprosess
+import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -23,7 +24,7 @@ internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
     private val dagpengerSøknadsprosess = MinimalSøknadsprosess(faktaversjon, Rolle.søker)
 
     private val faktaRepository = mockk<ProsessRepository>().also {
-        every { it.hent(any()) } returns Versjon.id(faktaversjon)
+        every { it.hent(any()) } returns Versjon.id(Testprosess.Test)
             .utredningsprosess(dagpengerSøknadsprosess.fakta)
         every { it.lagre(any()) } returns true
     }
@@ -66,7 +67,7 @@ internal class AvslagPåMinsteinntektFaktumSvarflytTest : SøknadBesvarer() {
     private val dagpengerSøknadsprosess = MinimalSøknadsprosess(faktaversjon, Rolle.nav)
 
     private val faktaRepository = mockk<ProsessRepository>().also {
-        every { it.hent(any()) } returns Versjon.id(faktaversjon)
+        every { it.hent(any()) } returns Versjon.id(Testprosess.Test)
             .utredningsprosess(dagpengerSøknadsprosess.fakta)
         every { it.lagre(any()) } returns true
     }

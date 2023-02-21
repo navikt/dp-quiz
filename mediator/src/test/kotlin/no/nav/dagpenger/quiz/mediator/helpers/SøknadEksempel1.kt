@@ -18,15 +18,20 @@ import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
 
-enum class Testprosess(override val id: String) : Faktatype {
+enum class Testfakta(override val id: String) : Faktatype {
     Test("test-r"),
 }
 
+enum class Testprosess(override val faktatype: Faktatype) : Prosesstype {
+    Test(Testfakta.Test),
+}
+
 internal object SøknadEksempel1 {
-    val prosessVersjon = Faktaversjon(Testprosess.Test, 888)
+    val prosessVersjon = Faktaversjon(Testfakta.Test, 888)
     internal val prototypeFakta1 = Fakta(
         prosessVersjon,
         boolsk faktum "f1" id 1 avhengerAv 11,
@@ -59,23 +64,11 @@ internal object SøknadEksempel1 {
         desimaltall faktum "f26" id 26,
     )
     private val webPrototypeSøknad = Prosess(
+        Testprosess.Test,
         Seksjon(
             "seksjon",
             Rolle.søker,
             *(prototypeFakta1.map { it }.toTypedArray()),
-        ),
-    )
-    private val mobilePrototypeSøknad = Prosess(
-        Seksjon(
-            "seksjon",
-            Rolle.søker,
-            *(prototypeFakta1.map { it }.toTypedArray()),
-        ),
-        Seksjon(
-            "template seksjon",
-            Rolle.søker,
-            prototypeFakta1.heltall(16),
-            prototypeFakta1.boolsk(17),
         ),
     )
     val v = Versjon.Bygger(

@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.unit.seksjon
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
@@ -19,21 +20,22 @@ class NesteSeksjonTest {
         val prototypesøknad = Fakta(
             testversjon,
             boolsk faktum "f1" id 1,
-            boolsk faktum "f2" id 2 avhengerAv 1
+            boolsk faktum "f2" id 2 avhengerAv 1,
         )
         val prototypeSubsumsjon = prototypesøknad.boolsk(1) er true hvisOppfylt {
             prototypesøknad.boolsk(2) er true
         }
         val prototypeProsess = Prosess(
+            TestProsesser.Test,
             prototypesøknad,
             Seksjon("nav", Rolle.nav, prototypesøknad.boolsk(2)),
             Seksjon("søker", Rolle.søker, prototypesøknad.boolsk(1)),
-            rootSubsumsjon = prototypeSubsumsjon
+            rootSubsumsjon = prototypeSubsumsjon,
         )
         val fakta = Versjon.Bygger(
             prototypesøknad,
             prototypeSubsumsjon,
-            prototypeProsess
+            prototypeProsess,
         )
             .utredningsprosess(testPerson)
 
@@ -45,22 +47,23 @@ class NesteSeksjonTest {
         val prototypesøknad = Fakta(
             testversjon,
             boolsk faktum "f1" id 1,
-            boolsk faktum "f2" id 2 avhengerAv 1
+            boolsk faktum "f2" id 2 avhengerAv 1,
         )
         val prototypeSubsumsjon = prototypesøknad.boolsk(1) er true hvisOppfylt {
             prototypesøknad.boolsk(2) er true
         }
         val prototypeProsess = Prosess(
+            TestProsesser.Test,
             prototypesøknad,
             Seksjon("søker1", Rolle.søker, prototypesøknad.boolsk(2)),
             Seksjon("søker2", Rolle.søker, prototypesøknad.boolsk(1)),
-            rootSubsumsjon = prototypeSubsumsjon
+            rootSubsumsjon = prototypeSubsumsjon,
         )
 
         Versjon.Bygger(
             prototypesøknad,
             prototypeSubsumsjon,
-            prototypeProsess
+            prototypeProsess,
         )
             .utredningsprosess(testPerson).also { fakta ->
                 assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())

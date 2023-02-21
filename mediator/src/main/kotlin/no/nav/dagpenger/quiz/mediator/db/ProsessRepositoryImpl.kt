@@ -3,17 +3,18 @@ package no.nav.dagpenger.quiz.mediator.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.dagpenger.model.faktum.Faktatype
-import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.seksjon.Versjon
 import java.util.UUID
 
 class ProsessRepositoryImpl : ProsessRepository {
     private val faktaRepository = FaktaRecord()
-    override fun ny(person: Identer, faktaversjon: Faktaversjon, uuid: UUID): Prosess {
-        val fakta = faktaRepository.ny(person, faktaversjon, uuid)
-        return Versjon.id(faktaversjon).utredningsprosess(fakta)
+
+    override fun ny(person: Identer, prosesstype: Prosesstype, uuid: UUID, faktaUUID: UUID): Prosess {
+        val fakta = faktaRepository.ny(person, prosesstype, uuid)
+        return Versjon.id(prosesstype).utredningsprosess(fakta)
     }
 
     override fun hent(uuid: UUID): Prosess {
@@ -21,26 +22,25 @@ class ProsessRepositoryImpl : ProsessRepository {
             session.run(
                 queryOf(
                     //language=PostgreSQL
-                    """SELECT soknad.person_id, versjon.navn, versjon.versjon_id
-                    FROM soknad
-                             JOIN v1_prosessversjon AS versjon ON (versjon.id = soknad.versjon_id)
+                    """SELECT prosess.person_id, prosess.type, prosess.fakta_id
+                    FROM prosess 
                     WHERE uuid = ?
                     """.trimMargin(),
                     uuid,
                 ).map { row ->
-                    ProsessRad(row.string(1), row.string(2), row.int(3))
+                    ProsessRad(row.uuid("person_id"), row.string("type"), row.uuid("fakta_id"))
                 }.asSingle,
             )
         } ?: throw IllegalArgumentException("Kan ikke hente en utredningsprosess som ikke finnes, uuid: $uuid")
-        val versjonId = Faktaversjon(ProsessFakta(rad.navn), rad.versjonId)
-        val utredningsprosess = Versjon.id(versjonId).utredningsprosess(PersonRecord().hentPerson(rad.personId), uuid)
+        val utredningsprosess = Versjon.id(rad.prosesstype).utredningsprosess(PersonRecord().hentPerson(rad.personId), uuid, rad.faktaUUID)
         return faktaRepository.rehydrerProsess(utredningsprosess)
     }
 
     override fun lagre(prosess: Prosess) = faktaRepository.lagre(prosess.fakta)
 
     private data class ProsessFakta(override val id: String) : Faktatype
-    private data class ProsessRad(val personId: UUID, val navn: String, val versjonId: Int) {
-        constructor(personId: String, navn: String, versjonId: Int) : this(UUID.fromString(personId), navn, versjonId)
+    private data class ProsessType(override val faktatype: Faktatype) : Prosesstype
+    private data class ProsessRad(val personId: UUID, val type: String, val faktaUUID: UUID) {
+        val prosesstype = ProsessType(ProsessFakta(type))
     }
 }

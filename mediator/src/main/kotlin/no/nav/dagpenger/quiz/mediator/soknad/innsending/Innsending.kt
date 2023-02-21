@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending.Subsumsjoner.regeltre
 
@@ -28,7 +29,10 @@ internal object Innsending {
             VERSJON_ID,
             *alleFakta,
         )
-    private val søknadsprosess: Prosess = Prosess(*alleSeksjoner)
+    private val søknadsprosess: Prosess = Prosess(
+        Prosesser.Innsending,
+        *alleSeksjoner,
+    )
 
     object Subsumsjoner {
         val regeltre: Subsumsjon = with(prototypeFakta) {

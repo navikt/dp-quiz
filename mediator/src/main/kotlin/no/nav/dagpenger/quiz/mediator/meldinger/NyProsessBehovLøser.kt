@@ -3,9 +3,8 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
-import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -35,8 +34,8 @@ internal class NyProsessBehovLøser(
         val behovNavn = packet["@behov"].single().asText()
         val prosessnavn = packet["prosessnavn"].asText()
         val prosessversjon = when (prosessnavn) {
-            "Dagpenger" -> Versjon.siste(Prosessfakta.Dagpenger)
-            "Innsending" -> Versjon.siste(Prosessfakta.Innsending)
+            "Dagpenger" -> Prosesser.Søknad
+            "Innsending" -> Prosesser.Innsending
             else -> throw Error("Mangler prosess for $prosessnavn")
         }
         val søknadUuid = packet["søknad_uuid"].asText().let { søknadUuid -> UUID.fromString(søknadUuid) }
@@ -58,7 +57,8 @@ internal class NyProsessBehovLøser(
                         behovNavn to mapOf(
                             "prosessversjon" to mapOf(
                                 "prosessnavn" to prosessversjon.faktatype.id,
-                                "versjon" to prosessversjon.versjon,
+                                // TODO: Denne trengs ikke om vi slutter med migrering fra dp-soknad
+                                // "versjon" to prosessversjon.faktatype.versjon,
                             ),
                         ),
                     )

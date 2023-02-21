@@ -2,11 +2,10 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
-import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.arenaFagsakId
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.innsendtSøknadsId
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -20,7 +19,7 @@ import java.time.LocalDateTime
 internal class AvslagPåMinsteinntektService(
     private val prosessRepository: ProsessRepository,
     rapidsConnection: RapidsConnection,
-    private val prosessfaktaVersjon: Faktaversjon = Versjon.siste(Prosessfakta.AvslagPåMinsteinntekt),
+    private val prosessfaktaVersjon: Prosesstype = Prosesser.AvslagPåMinsteinntekt,
 ) : River.PacketListener {
     private companion object {
         private val log = KotlinLogging.logger {}

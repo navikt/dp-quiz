@@ -18,6 +18,7 @@ import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.MedSøknad
+import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
@@ -77,7 +78,7 @@ internal class SøkerJsonBuilderTest {
             heltall faktum "f1718" id 1718 genererer 17 og 18,
             land faktum "f19" gruppe "eøs" med listOf(Land("SWE")) gruppe "norge-jan-mayen" med listOf(
                 Land("NOR"),
-                Land("SJM")
+                Land("SJM"),
             ) id 19,
             dato faktum "f20" id 20,
             heltall faktum "f21" genererer 20 id 21,
@@ -85,7 +86,7 @@ internal class SøkerJsonBuilderTest {
             boolsk faktum "f23" id 23 avhengerAv 22,
             boolsk faktum "f24" id 24,
             dokument faktum "f25" id 25 avhengerAv 24,
-            boolsk faktum "f26" id 26 avhengerAv 25
+            boolsk faktum "f26" id 26 avhengerAv 25,
         )
         prosess = søknadprosess(søkerSubsumsjon())
     }
@@ -353,7 +354,7 @@ internal class SøkerJsonBuilderTest {
                     boolsk("f1") {
                         harGyldigeValg(
                             "f1.svar.ja",
-                            "f1.svar.nei"
+                            "f1.svar.nei",
                         )
                     }
                 }
@@ -373,7 +374,7 @@ internal class SøkerJsonBuilderTest {
         val generatorSubsumsjon1718 = prototypeFakta.generator(1718) med "Besvarte valg".deltre {
             "alle må være besvarte".alle(
                 prototypeFakta.envalg(17).utfylt(),
-                prototypeFakta.envalg(18).utfylt()
+                prototypeFakta.envalg(18).utfylt(),
             )
         }
         val regeltre = "regel" deltre {
@@ -385,25 +386,25 @@ internal class SøkerJsonBuilderTest {
                     (prototypeFakta.boolsk(3) er true).hvisIkkeOppfylt {
                         prototypeFakta.boolsk(4).utfylt()
                     },
-                    prototypeFakta.boolsk(5).utfylt()
+                    prototypeFakta.boolsk(5).utfylt(),
                 ),
                 "alle i seksjon 2".alle(
-                    generatorSubsumsjon67
+                    generatorSubsumsjon67,
                 ),
                 "NAV-systemer vil svare automatisk på følgende fakta".alle(
                     prototypeFakta.dato(8).utfylt(),
-                    prototypeFakta.dato(9).utfylt()
+                    prototypeFakta.dato(9).utfylt(),
                 ),
                 "dokumentasjon".alle(
                     prototypeFakta.boolsk(5) er true hvisOppfylt {
                         prototypeFakta.boolsk(16) dokumenteresAv prototypeFakta.dokument(15)
-                    }
+                    },
                 ),
                 "Generator med valg".alle(
-                    generatorSubsumsjon1718
+                    generatorSubsumsjon1718,
                 ),
                 "Land".alle(
-                    prototypeFakta.land(19).utfylt()
+                    prototypeFakta.land(19).utfylt(),
                 ),
                 prototypeFakta.generator(21) har
                     "deltre".deltre {
@@ -412,8 +413,8 @@ internal class SøkerJsonBuilderTest {
                 "Grunnleggende med dokumentasjon".minstEnAv(
                     (prototypeFakta.boolsk(24) er true).sannsynliggjøresAv(prototypeFakta.dokument(25))
                         .godkjentAv(prototypeFakta.boolsk(26)),
-                    prototypeFakta.boolsk(24) er false
-                )
+                    prototypeFakta.boolsk(24) er false,
+                ),
             )
         }
         return regeltre
@@ -428,73 +429,74 @@ internal class SøkerJsonBuilderTest {
                 prototypeFakta.boolsk(2),
                 prototypeFakta.boolsk(3),
                 prototypeFakta.boolsk(4),
-                prototypeFakta.boolsk(5)
+                prototypeFakta.boolsk(5),
             ),
             Seksjon(
                 "seksjon2",
                 Rolle.søker,
                 prototypeFakta.heltall(6),
                 prototypeFakta.boolsk(7),
-                prototypeFakta.heltall(67)
+                prototypeFakta.heltall(67),
             ),
             Seksjon(
                 "navseksjon",
                 Rolle.nav,
                 prototypeFakta.dato(8),
-                prototypeFakta.dato(9)
+                prototypeFakta.dato(9),
             ),
             Seksjon(
                 "dokumentasjon",
                 Rolle.søker,
-                prototypeFakta.dokument(15)
+                prototypeFakta.dokument(15),
             ),
             Seksjon(
                 "seksjon3",
                 Rolle.søker,
                 prototypeFakta.generator(1718),
                 prototypeFakta.envalg(17),
-                prototypeFakta.flervalg(18)
+                prototypeFakta.flervalg(18),
             ),
             Seksjon(
                 "saksbehandler godkjenning",
                 Rolle.saksbehandler,
-                prototypeFakta.boolsk(16)
+                prototypeFakta.boolsk(16),
             ),
             Seksjon(
                 "Gyldige land",
                 Rolle.søker,
-                prototypeFakta.land(19)
+                prototypeFakta.land(19),
             ),
             Seksjon(
                 "nav generator fakta",
                 Rolle.nav,
                 prototypeFakta.generator(21),
-                prototypeFakta.dato(20)
+                prototypeFakta.dato(20),
             ),
             Seksjon(
                 "grunnleggende med dokumentasjon",
                 Rolle.søker,
                 prototypeFakta.boolsk(24),
-                prototypeFakta.dokument(25)
+                prototypeFakta.dokument(25),
             ),
             Seksjon(
                 "godkjenner seksjon",
                 Rolle.saksbehandler,
                 prototypeFakta.boolsk(23),
                 prototypeFakta.boolsk(26),
-                prototypeFakta.dokument(22)
-            )
+                prototypeFakta.dokument(22),
+            ),
         )
         val prototypeProsess = Prosess(
+            TestProsesser.Test,
             prototypeFakta,
             seksjoner = seksjoner.toTypedArray(),
-            rootSubsumsjon = prototypeSubsumsjon
+            rootSubsumsjon = prototypeSubsumsjon,
         )
 
         return Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
-            prototypeProsess
+            prototypeProsess,
         ).utredningsprosess(testPerson)
     }
 

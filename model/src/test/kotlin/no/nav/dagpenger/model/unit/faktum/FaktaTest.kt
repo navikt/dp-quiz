@@ -11,6 +11,7 @@ import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Prosess
@@ -22,7 +23,6 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 class FaktaTest {
-
     @Test
     fun `søknad med ett faktum`() {
         val fakta = Fakta(testversjon, boolsk faktum "janei" id 3)
@@ -37,10 +37,18 @@ class FaktaTest {
         val fakta = Fakta(
             testversjon,
             dokument faktum "f11" id 11,
-            boolsk faktum "f12" id 12 avhengerAv 11
+            boolsk faktum "f12" id 12 avhengerAv 11,
         )
 
-        Prosess(Seksjon("seksjon", Rolle.søker, fakta id 11, fakta id 12))
+        Prosess(
+            TestProsesser.Test,
+            Seksjon(
+                "seksjon",
+                Rolle.søker,
+                fakta id 11,
+                fakta id 12,
+            ),
+        )
         assertEquals(2, fakta.size)
         fakta.dokument(11).besvar(Dokument(1.januar, "urn:nid:sse"))
         fakta.boolsk(12).besvar(true)
@@ -57,10 +65,20 @@ class FaktaTest {
             dato faktum "f3" id 3,
             dato faktum "f4" id 4,
             dato faktum "f5" id 5,
-            maks dato "maksdato" av 3 og 4 og 5 id 345
+            maks dato "maksdato" av 3 og 4 og 5 id 345,
         )
 
-        Prosess(Seksjon("seksjon", Rolle.søker, fakta id 345, fakta id 3, fakta id 4, fakta id 5))
+        Prosess(
+            TestProsesser.Test,
+            Seksjon(
+                "seksjon",
+                Rolle.søker,
+                fakta id 345,
+                fakta id 3,
+                fakta id 4,
+                fakta id 5,
+            ),
+        )
         assertEquals(4, fakta.size)
         fakta.dato(3).besvar(3.januar)
         fakta.dato(4).besvar(4.januar)
@@ -79,10 +97,14 @@ class FaktaTest {
             heltall faktum "antall barn" id 15 genererer 16 og 17 og 18,
             heltall faktum "alder barn" id 16,
             boolsk faktum "skal du ha penger for barn" id 17,
-            boolsk faktum "annen forelder får støtte" id 18
+            boolsk faktum "annen forelder får støtte" id 18,
         )
         val barneSeksjon = Seksjon("barneseksjon", Rolle.søker, fakta id 15, fakta id 16, fakta id 17, fakta id 18)
-        Prosess(fakta, barneSeksjon)
+        Prosess(
+            TestProsesser.Test,
+            fakta,
+            barneSeksjon,
+        )
         assertEquals(TemplateFaktum::class, fakta.id(16)::class)
         assertEquals(GeneratorFaktum::class, fakta.id(15)::class)
         assertEquals(4, fakta.size)
@@ -100,7 +122,7 @@ class FaktaTest {
             dato faktum "f5" id 5,
             maks dato "maksdato" av 6 og 7 id 8,
             maks dato "maksdato" av 5 og 7 id 6,
-            maks dato "maksdato" av 3 og 4 id 7
+            maks dato "maksdato" av 3 og 4 id 7,
         )
 
         assertIder(fakta, 3, 4, 5, 7, 6, 8)
@@ -125,9 +147,8 @@ class FaktaTest {
             dato faktum "f4" id 4,
             dato faktum "f5" id 5,
             heltall faktum "f6" id 6,
-            maks dato "maksdato" av 3 og 4 og 5 id 345
+            maks dato "maksdato" av 3 og 4 og 5 id 345,
         )
-
         val seksjon1 = fakta.seksjon("f6f3f4", Rolle.søker, 6, 3, 4)
         val seksjon2 = fakta.seksjon("f345f5", Rolle.søker, 345, 5)
         assertThrows<IllegalArgumentException> { fakta.seksjon("faktum finnes ikke", Rolle.søker, -2000) }

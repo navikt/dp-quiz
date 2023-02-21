@@ -18,16 +18,13 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 
 internal class MinimalSøknadsprosess(private val faktaversjon: Faktaversjon, private val rolle: Rolle) {
-
     private val logger = KotlinLogging.logger { }
-
     internal val fakta = Fakta(
         faktaversjon,
         boolsk faktum "boolean" id faktumBoolsk,
         heltall faktum "heltall" id faktumHeltall,
         tekst faktum "tekst" id faktumTekst,
     )
-
     val regeltre: Subsumsjon =
         with(fakta) {
             "alle".alle(
@@ -36,7 +33,6 @@ internal class MinimalSøknadsprosess(private val faktaversjon: Faktaversjon, pr
                 heltall(faktumTekst).utfylt(),
             )
         }
-
     val seksjoner = Seksjon(
         "test",
         rolle,
@@ -55,8 +51,10 @@ internal class MinimalSøknadsprosess(private val faktaversjon: Faktaversjon, pr
         registrer(fakta)
     }
 
-    private val søknadsprosess: Prosess = Prosess(seksjoner)
-
+    private val søknadsprosess: Prosess = Prosess(
+        Testprosess.Test,
+        seksjoner,
+    )
     private val faktumNavBehov = FaktumNavBehov(
         mapOf(
             faktumBoolsk to "faktumBoolsk",
@@ -64,7 +62,6 @@ internal class MinimalSøknadsprosess(private val faktaversjon: Faktaversjon, pr
             faktumTekst to "faktumTekst",
         ),
     )
-
     private val versjon = Versjon.Bygger(
         prototypeFakta = fakta,
         prototypeSubsumsjon = regeltre,

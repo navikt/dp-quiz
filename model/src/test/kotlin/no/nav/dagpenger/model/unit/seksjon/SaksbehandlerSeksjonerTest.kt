@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
@@ -34,7 +35,7 @@ internal class SaksbehandlerSeksjonerTest {
         boolsk faktum "f3" id 3,
         boolsk faktum "approve3" id 4 avhengerAv 3,
         boolsk faktum "f5" id 5,
-        boolsk faktum "approve5" id 6 avhengerAv 5
+        boolsk faktum "approve5" id 6 avhengerAv 5,
     )
     private val prototypeSubsumsjon =
         ((prototypeFakta.boolsk(1) er true).oppfyltGodkjentAv(prototypeFakta.boolsk(2))) hvisOppfylt {
@@ -43,15 +44,16 @@ internal class SaksbehandlerSeksjonerTest {
             (prototypeFakta.boolsk(5) er true).godkjentAv(prototypeFakta.boolsk(6))
         }
     private val prototypeProsess = Prosess(
+        TestProsesser.Test,
         prototypeFakta,
         Seksjon("søker", Rolle.søker, prototypeFakta.boolsk(1), prototypeFakta.boolsk(3), prototypeFakta.boolsk(5)),
         Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
-        Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(4), prototypeFakta.boolsk(6))
+        Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(4), prototypeFakta.boolsk(6)),
     )
     private val søknadprosessTestBygger = Versjon.Bygger(
         prototypeFakta,
         prototypeSubsumsjon,
-        prototypeProsess
+        prototypeProsess,
     )
     private lateinit var seksjoner: Prosess
     private lateinit var f1: Faktum<Boolean>

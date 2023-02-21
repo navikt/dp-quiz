@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.faktum.TemplateFaktum
+import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
@@ -39,17 +40,17 @@ class GeneratorFaktumTest {
             heltall faktum "periode antall" id 1 genererer 2 og 3,
             dato faktum "fom" id 2,
             dato faktum "tom" id 3,
-            dato faktum "ønsket dato" id 4
+            dato faktum "ønsket dato" id 4,
         )
         val prototypeSubsumsjon = faktaPrototype generator 1 har "periode".deltre {
             faktaPrototype.dato(4) mellom faktaPrototype.dato(2) og faktaPrototype.dato(3)
         }
-
         val prototypeProsess = Prosess(
+            TestProsesser.Test,
             Seksjon(
                 "periode antall",
                 Rolle.nav,
-                faktaPrototype generator 1
+                faktaPrototype generator 1,
             ),
             Seksjon(
                 "periode",
@@ -66,7 +67,7 @@ class GeneratorFaktumTest {
         søknadprosessTestBygger = Versjon.Bygger(
             faktaPrototype,
             prototypeSubsumsjon,
-            prototypeProsess
+            prototypeProsess,
         )
     }
 
@@ -133,7 +134,7 @@ class GeneratorFaktumTest {
         val faktaPrototype = Fakta(
             testversjon,
             tekst faktum "arbeidsgivernavn" id 1,
-            heltall faktum "arbeidsgiver med navn" id 2 navngittAv 1 genererer 1
+            heltall faktum "arbeidsgiver med navn" id 2 navngittAv 1 genererer 1,
         )
         val søknadprosess = søknadprosess(
             faktaPrototype,
@@ -144,8 +145,8 @@ class GeneratorFaktumTest {
                 "arbeidsgiver",
                 Rolle.søker,
                 faktaPrototype heltall 2,
-                faktaPrototype tekst 1
-            )
+                faktaPrototype tekst 1,
+            ),
         )
         søknadprosess.generator(2).besvar(2)
         søknadprosess.tekst("1.1").besvar(Tekst("Arbeidsgiver 1"))
@@ -154,34 +155,35 @@ class GeneratorFaktumTest {
 
         assertEquals(
             Tekst("Arbeidsgiver 1"),
-            generatorer.first().identitet(søknadprosess.tekst("1.1").faktumId)!!.svar()
+            generatorer.first().identitet(søknadprosess.tekst("1.1").faktumId)!!.svar(),
         )
         assertEquals(
             Tekst("Arbeidsgiver 2"),
-            generatorer.first().identitet(søknadprosess.tekst("1.2").faktumId)!!.svar()
+            generatorer.first().identitet(søknadprosess.tekst("1.2").faktumId)!!.svar(),
         )
     }
 
     private fun søknadprosess(
         faktaPrototype: Fakta,
         prototypeSubsumsjon: Subsumsjon,
-        vararg seksjoner: Seksjon
+        vararg seksjoner: Seksjon,
     ): Prosess {
         val prototypeProsess = Prosess(
-            *seksjoner
+            TestProsesser.Test,
+            *seksjoner,
         )
         val søknadprosessTestBygger =
             Versjon.Bygger(
                 faktaPrototype,
                 prototypeSubsumsjon,
-                prototypeProsess
+                prototypeProsess,
             )
         return søknadprosessTestBygger.utredningsprosess(testPerson)
     }
 
     private class GeneratorVisitor(
         prosess: Prosess,
-        private val generatorer: MutableSet<GeneratorFaktum> = mutableSetOf()
+        private val generatorer: MutableSet<GeneratorFaktum> = mutableSetOf(),
     ) :
         UtredningsprosessVisitor,
         MutableSet<GeneratorFaktum> by generatorer {
@@ -199,7 +201,7 @@ class GeneratorFaktumTest {
             roller: Set<Rolle>,
             clazz: Class<R>,
             svar: R,
-            genererteFaktum: Set<Faktum<*>>
+            genererteFaktum: Set<Faktum<*>>,
         ) {
             generatorer.add(faktum)
         }

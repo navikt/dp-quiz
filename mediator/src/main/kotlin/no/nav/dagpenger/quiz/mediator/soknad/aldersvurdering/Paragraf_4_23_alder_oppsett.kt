@@ -15,6 +15,7 @@ import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 
 /**
@@ -77,7 +78,10 @@ internal object Paragraf_4_23_alder_oppsett {
             grensedato,
         )
     }
-    internal val prosess: Prosess = Prosess(seksjon)
+    internal val prosess: Prosess = Prosess(
+        Prosesser.Paragraf_4_23_alder,
+        seksjon,
+    )
 
     init {
         Versjon.Bygger(

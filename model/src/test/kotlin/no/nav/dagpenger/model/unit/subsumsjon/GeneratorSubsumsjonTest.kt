@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.unit.subsumsjon
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.med
@@ -26,7 +27,7 @@ internal class GeneratorSubsumsjonTest {
         fakta = Fakta(
             testversjon,
             heltall faktum "alder" id 1,
-            heltall faktum "barn" id 2 genererer 1
+            heltall faktum "barn" id 2 genererer 1,
         )
     }
 
@@ -46,9 +47,10 @@ internal class GeneratorSubsumsjonTest {
         }
         val subsumsjon = fakta generator 2 med deltre
         val prosess = Prosess(
+            TestProsesser.Test,
             fakta,
             Seksjon("seksjon", Rolle.søker, fakta generator 2, fakta boolsk 1),
-            rootSubsumsjon = subsumsjon
+            rootSubsumsjon = subsumsjon,
         )
 
         prosess.generator(2).besvar(3)

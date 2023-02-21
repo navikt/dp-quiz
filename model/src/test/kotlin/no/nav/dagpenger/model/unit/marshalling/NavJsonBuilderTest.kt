@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
@@ -79,6 +80,7 @@ class NavJsonBuilderTest {
             f10Faktum,
         )
         val prototypeProsess = Prosess(
+            TestProsesser.Test,
             prototypeFakta,
             søkerSeksjon,
             navSeksjon,
@@ -103,8 +105,7 @@ class NavJsonBuilderTest {
             prototypeProsess,
             faktumNavBehov,
         ).registrer().fakta(testPerson)
-
-        val prosess = Versjon.id(testversjon).utredningsprosess(fakta)
+        val prosess = Versjon.id(TestProsesser.Test).utredningsprosess(fakta)
 
         prosess.boolsk(1).besvar(true)
         prosess.dato(5).besvar(1.januar)
