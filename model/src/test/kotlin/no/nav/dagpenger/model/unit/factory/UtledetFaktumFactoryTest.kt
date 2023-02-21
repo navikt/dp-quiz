@@ -14,8 +14,8 @@ import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.mars
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -34,7 +34,7 @@ internal class UtledetFaktumFactoryTest {
             maks dato "maks dato" av 1 og 2 og 3 id 123
         )
 
-        val utredningsprosess = Utredningsprosess(
+        val prosess = Prosess(
             fakta,
             Seksjon(
                 "seksjon",
@@ -46,17 +46,17 @@ internal class UtledetFaktumFactoryTest {
             )
         )
 
-        val faktum = utredningsprosess.dato("123")
+        val faktum = prosess.dato("123")
 
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
-        utredningsprosess.dato("1").besvar(1.januar)
-        utredningsprosess.dato("2").besvar(2.januar)
+        prosess.dato("1").besvar(1.januar)
+        prosess.dato("2").besvar(2.januar)
         assertFalse(faktum.erBesvart())
-        utredningsprosess.dato("3").besvar(3.januar)
+        prosess.dato("3").besvar(3.januar)
         assertTrue(faktum.erBesvart())
         assertEquals(3.januar, faktum.svar())
-        utredningsprosess.dato("1").besvar(4.januar)
+        prosess.dato("1").besvar(4.januar)
         assertEquals(4.januar, faktum.svar())
     }
 
@@ -70,7 +70,7 @@ internal class UtledetFaktumFactoryTest {
             maks inntekt "maks inntekt" av 1 og 2 og 3 id 123
         )
 
-        val utredningsprosess = Utredningsprosess(
+        val prosess = Prosess(
             fakta,
             Seksjon(
                 "seksjon",
@@ -82,17 +82,17 @@ internal class UtledetFaktumFactoryTest {
             )
         )
 
-        val faktum = utredningsprosess.inntekt("123")
+        val faktum = prosess.inntekt("123")
 
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
-        utredningsprosess.inntekt("1").besvar(260.årlig)
-        utredningsprosess.inntekt("2").besvar(520.årlig)
+        prosess.inntekt("1").besvar(260.årlig)
+        prosess.inntekt("2").besvar(520.årlig)
         assertFalse(faktum.erBesvart())
-        utredningsprosess.inntekt("3").besvar(130.årlig)
+        prosess.inntekt("3").besvar(130.årlig)
         assertTrue(faktum.erBesvart())
         assertEquals(520.årlig, faktum.svar())
-        utredningsprosess.inntekt("1").besvar(1040.årlig)
+        prosess.inntekt("1").besvar(1040.årlig)
         assertEquals(1040.årlig, faktum.svar())
     }
 
@@ -106,7 +106,7 @@ internal class UtledetFaktumFactoryTest {
             alle ja "alle ja" av 1 og 2 og 3 id 123
         )
 
-        val utredningsprosess = Utredningsprosess(
+        val prosess = Prosess(
             fakta,
             Seksjon(
                 "seksjon",
@@ -117,17 +117,17 @@ internal class UtledetFaktumFactoryTest {
                 fakta boolsk 123
             )
         )
-        val faktum = utredningsprosess.dato("123")
+        val faktum = prosess.dato("123")
 
         assertFalse(faktum.erBesvart())
         assertThrows<IllegalStateException> { faktum.svar() }
-        utredningsprosess.boolsk("1").besvar(true)
-        utredningsprosess.boolsk("2").besvar(true)
+        prosess.boolsk("1").besvar(true)
+        prosess.boolsk("2").besvar(true)
         assertFalse(faktum.erBesvart())
-        utredningsprosess.boolsk("3").besvar(true)
+        prosess.boolsk("3").besvar(true)
         assertTrue(faktum.erBesvart())
         assertEquals(true, faktum.svar())
-        utredningsprosess.boolsk("1").besvar(false)
+        prosess.boolsk("1").besvar(false)
         assertEquals(false, faktum.svar())
     }
 

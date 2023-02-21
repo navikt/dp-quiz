@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
@@ -45,7 +45,7 @@ internal object Dagpenger {
             VERSJON_ID,
             *alleFakta,
         )
-    private val utredningsprosess = Utredningsprosess(*alleSeksjoner)
+    private val prosess = Prosess(*alleSeksjoner)
 
     object Subsumsjoner {
         val regeltre: Subsumsjon = with(prototypeFakta) {
@@ -82,7 +82,7 @@ internal object Dagpenger {
         Versjon.Bygger(
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = regeltre,
-            utredningsprosess = utredningsprosess,
+            prosess = prosess,
             faktumNavBehov = faktumNavBehov,
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }

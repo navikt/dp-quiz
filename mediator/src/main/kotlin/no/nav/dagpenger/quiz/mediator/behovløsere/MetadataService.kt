@@ -2,8 +2,8 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
-import no.nav.dagpenger.quiz.mediator.db.UtredningsprosessRepository
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -11,7 +11,7 @@ import no.nav.helse.rapids_rivers.River
 
 internal class MetadataService(
     rapidsConnection: RapidsConnection,
-    private val utredningsRepository: UtredningsprosessRepository,
+    private val utredningsRepository: ProsessRepository,
     private val metadataStrategi: MetadataStrategi,
 ) : River.PacketListener {
     private companion object {
@@ -44,7 +44,7 @@ internal class MetadataService(
 }
 
 fun interface MetadataStrategi {
-    fun metadata(utredningsprosess: Utredningsprosess): Metadata
+    fun metadata(prosess: Prosess): Metadata
 
     data class Metadata(val skjemakode: String? = null, val tittel: String? = null) {
         init {

@@ -4,9 +4,9 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Tekst
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
-import no.nav.dagpenger.quiz.mediator.db.UtredningsprosessRepositoryImpl
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepositoryImpl
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Bosted
@@ -19,10 +19,10 @@ import java.time.LocalDate
 import java.util.UUID
 import kotlin.test.assertEquals
 
-internal class UtredningsprosessTest() {
-    private lateinit var søknadsprosess: Utredningsprosess
+internal class ProsessTest() {
+    private lateinit var søknadsprosess: Prosess
     private val søknadUUID = UUID.randomUUID()
-    private val repository = UtredningsprosessRepositoryImpl()
+    private val repository = ProsessRepositoryImpl()
 
     @Test
     fun `Besvarer en prosess uten mocks`() = medProsess {
@@ -102,7 +102,7 @@ internal class UtredningsprosessTest() {
         søknadsprosess = repository.hent(søknadUUID)
     }
 
-    private val Utredningsprosess.aktivSeksjon
+    private val Prosess.aktivSeksjon
         get() = with(this.nesteSeksjoner()[0]) {
             val aktivSeksjon = this@with
             object {
@@ -113,7 +113,7 @@ internal class UtredningsprosessTest() {
 
     private infix fun Int.index(generatorIndex: Int) = "$this.$generatorIndex"
 
-    private fun <T : DslFaktaseksjon> medSeksjon(faktaseksjon: T, block: T.(fakta: Utredningsprosess) -> Unit) {
+    private fun <T : DslFaktaseksjon> medSeksjon(faktaseksjon: T, block: T.(fakta: Prosess) -> Unit) {
         assertNotEquals(søknadsprosess.nesteSeksjoner().size, 0, "Har ikke neste seksjon")
         block(faktaseksjon, søknadsprosess)
         lagreOgHent()

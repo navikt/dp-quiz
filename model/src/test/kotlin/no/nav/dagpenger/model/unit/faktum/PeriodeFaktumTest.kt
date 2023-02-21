@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -20,7 +20,7 @@ class PeriodeFaktumTest {
         periode faktum "periode" id 1
     )
 
-    lateinit var søknad: Utredningsprosess
+    lateinit var søknad: Prosess
 
     @BeforeEach
     fun setup() {

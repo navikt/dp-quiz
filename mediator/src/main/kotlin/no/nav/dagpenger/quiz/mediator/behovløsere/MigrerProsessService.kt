@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
-import no.nav.dagpenger.quiz.mediator.db.UtredningsprosessRepository
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -13,7 +13,7 @@ import no.nav.helse.rapids_rivers.River
 class MigrerProsessService(
     rapidsConnection: RapidsConnection,
     private val faktaRepository: FaktaRepository,
-    private val utredningsprosessRepository: UtredningsprosessRepository,
+    private val prosessRepository: ProsessRepository,
 ) : River.PacketListener {
     private companion object {
         val logger = KotlinLogging.logger { }
@@ -40,7 +40,7 @@ class MigrerProsessService(
                 return
             }
             val prosessversjon = faktaRepository.migrer(søknadId)
-            val søknad = utredningsprosessRepository.hent(søknadId)
+            val søknad = prosessRepository.hent(søknadId)
             val søknadData = SøkerJsonBuilder(søknad).resultat().toString()
 
             packet["@løsning"] = mapOf(

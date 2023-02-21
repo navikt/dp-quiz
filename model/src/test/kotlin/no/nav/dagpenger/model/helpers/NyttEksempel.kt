@@ -16,8 +16,8 @@ import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.under
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -110,8 +110,8 @@ private val prototypeSeksjon8 =
     Seksjon("seksjon8", Rolle.saksbehandler, p6Inntekt, p7Inntekt, p12Boolean, p14Boolean, p16Int, p19Boolean)
 private val prototypeSeksjon9 =
     Seksjon("seksjon9", Rolle.saksbehandler, p3Dato, p4Dato, p5Dato, p_3_4_5Dato, p13Dato)
-private val webPrototypeUtredningsprosess: Utredningsprosess =
-    Utredningsprosess(
+private val webPrototypeProsess: Prosess =
+    Prosess(
         prototypeSeksjon1,
         prototypeSeksjon2,
         prototypeSeksjon3,
@@ -135,11 +135,11 @@ private val søknadprosessTestBygger =
     Versjon.Bygger(
         prototypeFakta1,
         prototypeSubsumsjon,
-        webPrototypeUtredningsprosess,
+        webPrototypeProsess,
     )
 
 internal class NyttEksempel() {
-    internal val utredningsprosess: Utredningsprosess by lazy {
+    internal val prosess: Prosess by lazy {
         søknadprosessTestBygger.utredningsprosess(testPerson).also {
             seksjon1 = it[0]
             seksjon2 = it[1]

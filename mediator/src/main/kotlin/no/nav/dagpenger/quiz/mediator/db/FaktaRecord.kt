@@ -22,7 +22,6 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.math.BigInteger
@@ -99,7 +98,7 @@ class FaktaRecord : FaktaRepository {
         return fakta
     }
 
-    fun rehydrerProsess(prosess: Utredningsprosess): Utredningsprosess {
+    fun rehydrerProsess(prosess: no.nav.dagpenger.model.seksjon.Prosess): no.nav.dagpenger.model.seksjon.Prosess {
         svarList(prosess.fakta.uuid).onEach { row ->
             prosess.fakta.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
         }

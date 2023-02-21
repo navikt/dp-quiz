@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.Faktum.Companion.erAlleBesvart
 import no.nav.dagpenger.model.faktum.Faktum.FaktumTilstand.Ukjent
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.regel.Regel
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 open class EnkelSubsumsjon protected constructor(
@@ -30,11 +30,11 @@ open class EnkelSubsumsjon protected constructor(
 
     override fun saksbehandlerForklaring() = regel.saksbehandlerForklaring(subsumsjonFakta)
 
-    override fun deepCopy(utredningsprosess: Utredningsprosess) = deepCopy(
+    override fun deepCopy(prosess: Prosess) = deepCopy(
         regel,
-        subsumsjonFakta.deepCopy(utredningsprosess),
-        oppfyltSubsumsjon.deepCopy(utredningsprosess),
-        ikkeOppfyltSubsumsjon.deepCopy(utredningsprosess)
+        subsumsjonFakta.deepCopy(prosess),
+        oppfyltSubsumsjon.deepCopy(prosess),
+        ikkeOppfyltSubsumsjon.deepCopy(prosess)
     )
 
     override fun bygg(fakta: Fakta) = deepCopy(

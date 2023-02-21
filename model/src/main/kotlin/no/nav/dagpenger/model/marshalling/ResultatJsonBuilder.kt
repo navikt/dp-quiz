@@ -4,24 +4,24 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import java.time.LocalDateTime
 import java.util.UUID
 
 class ResultatJsonBuilder(
-    private val utredningsprosess: Utredningsprosess,
+    private val prosess: Prosess,
 ) : FaktaJsonBuilder() {
 
     init {
-        utredningsprosess.fakta.accept(this)
-        utredningsprosess.rootSubsumsjon.mulige().accept(this)
+        prosess.fakta.accept(this)
+        prosess.rootSubsumsjon.mulige().accept(this)
 
         ignore = false
-        utredningsprosess.fakta.forEach { if (it.erBesvart()) it.accept(this) }
+        prosess.fakta.forEach { if (it.erBesvart()) it.accept(this) }
     }
 
     override fun resultat(): ObjectNode {
-        if (utredningsprosess.resultat() == null) throw IllegalStateException("Kan ikke lage resultat av subsumsjonstre uten resultat")
+        if (prosess.resultat() == null) throw IllegalStateException("Kan ikke lage resultat av subsumsjonstre uten resultat")
         return super.resultat()
     }
 
@@ -33,7 +33,7 @@ class ResultatJsonBuilder(
         root.put("versjon_id", faktaversjon.versjon)
         root.put("versjon_navn", faktaversjon.faktatype.id)
         root.put("søknad_uuid", "$uuid")
-        root.put("resultat", utredningsprosess.resultat())
+        root.put("resultat", prosess.resultat())
         root.set<ArrayNode>("identer", identerNode)
         root.set<ArrayNode>("fakta", faktaNode)
         root.set<ArrayNode>("subsumsjoner", subsumsjonRoot)

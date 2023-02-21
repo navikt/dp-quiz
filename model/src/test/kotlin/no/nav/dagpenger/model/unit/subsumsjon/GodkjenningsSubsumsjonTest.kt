@@ -6,8 +6,8 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.godkjentAv
 import no.nav.dagpenger.model.subsumsjon.ikkeOppfyltGodkjentAv
@@ -104,7 +104,7 @@ internal class GodkjenningsSubsumsjonTest {
         assertThrows<IllegalArgumentException> { (prototypeFakta.boolsk(1) er true).godkjentAv(prototypeFakta.boolsk(2)) }
     }
 
-    private fun søknadprosess(block: (Fakta) -> Subsumsjon): Utredningsprosess {
+    private fun søknadprosess(block: (Fakta) -> Subsumsjon): Prosess {
         val fakta = Fakta(
             testversjon,
             boolsk faktum "faktum" id 1,
@@ -115,7 +115,7 @@ internal class GodkjenningsSubsumsjonTest {
         godkjenning = fakta boolsk 2
 
         godkjenningsSubsumsjon = block(fakta)
-        return Utredningsprosess(
+        return Prosess(
             fakta,
             Seksjon("seksjon", Rolle.søker, faktum),
             Seksjon("seksjon", Rolle.saksbehandler, godkjenning),

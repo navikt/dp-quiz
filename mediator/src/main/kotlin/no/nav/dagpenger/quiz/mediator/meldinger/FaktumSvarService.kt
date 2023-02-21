@@ -9,10 +9,10 @@ import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
-import no.nav.dagpenger.quiz.mediator.db.UtredningsprosessRepository
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -25,7 +25,7 @@ import no.nav.helse.rapids_rivers.withMDC
 import java.util.UUID
 
 internal class FaktumSvarService(
-    private val utredningsprosessRepository: UtredningsprosessRepository,
+    private val prosessRepository: ProsessRepository,
     private val resultatPersistence: ResultatPersistence,
     rapidsConnection: RapidsConnection,
 ) : River.PacketListener {
@@ -77,7 +77,7 @@ internal class FaktumSvarService(
                 log.info { "Mottok ny(e) fakta (${fakta.joinToString(",") { it["id"].asText() }}) for $søknadUuid" }
                 sikkerlogg.info { "Mottok ny(e) fakta: ${packet.toJson()}" }
 
-                val søknadprosess = utredningsprosessRepository.hent(søknadUuid)
+                val søknadprosess = prosessRepository.hent(søknadUuid)
                 besvarFakta(fakta, søknadprosess)
 
                 val prosessnavn = ProsessVersjonVisitor(søknadprosess).faktatype
@@ -102,25 +102,25 @@ internal class FaktumSvarService(
         }
     }
 
-    private fun besvarFakta(fakta: List<JsonNode>, utredningsprosess: Utredningsprosess) {
+    private fun besvarFakta(fakta: List<JsonNode>, prosess: Prosess) {
         fakta.forEach { faktumNode ->
             val faktumId = faktumNode["id"].asText()
             val svar = faktumNode["svar"]
             val type = faktumNode["type"].asText()
             val besvartAv = faktumNode["besvartAv"]?.asText()
 
-            besvar(utredningsprosess, faktumId, svar, type, besvartAv)
+            besvar(prosess, faktumId, svar, type, besvartAv)
         }
-        utredningsprosessRepository.lagre(utredningsprosess)
+        prosessRepository.lagre(prosess)
     }
 
-    private fun sendResultat(utredningsprosess: Utredningsprosess, context: MessageContext) {
-        ResultatJsonBuilder(utredningsprosess).resultat().also { json ->
-            resultatPersistence.lagreResultat(utredningsprosess.resultat()!!, utredningsprosess.fakta.uuid, json)
+    private fun sendResultat(prosess: Prosess, context: MessageContext) {
+        ResultatJsonBuilder(prosess).resultat().also { json ->
+            resultatPersistence.lagreResultat(prosess.resultat()!!, prosess.fakta.uuid, json)
             context.publish(json.toString())
             sikkerlogg.info { "Send ut resultat: $json" }
         }
-        log.info { "Ferdig med søknad ${utredningsprosess.fakta.uuid}. Resultatet er: ${utredningsprosess.resultat()}" }
+        log.info { "Ferdig med søknad ${prosess.fakta.uuid}. Resultatet er: ${prosess.resultat()}" }
     }
 
     override fun onError(problems: MessageProblems, context: MessageContext) {
@@ -129,33 +129,33 @@ internal class FaktumSvarService(
     }
 
     private fun besvar(
-        utredningsprosess: Utredningsprosess,
+        prosess: Prosess,
         faktumId: String,
         svar: JsonNode,
         type: String,
         besvartAv: String?,
     ) {
-        if (svar.isNull) return utredningsprosess.id(faktumId).tilUbesvart()
+        if (svar.isNull) return prosess.id(faktumId).tilUbesvart()
         when (type) {
-            "land" -> utredningsprosess.land(faktumId).besvar(svar.asLand(), besvartAv)
-            "boolean" -> utredningsprosess.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)
-            "int" -> utredningsprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv) // todo: remove?
-            "integer" -> utredningsprosess.heltall(faktumId).besvar(svar.asInt(), besvartAv)
-            "double" -> utredningsprosess.desimaltall(faktumId).besvar(svar.asDouble(), besvartAv)
-            "localdate" -> utredningsprosess.dato(faktumId).besvar(svar.asLocalDate(), besvartAv)
-            "inntekt" -> utredningsprosess.inntekt(faktumId).besvar(svar.asDouble().årlig, besvartAv)
-            "envalg" -> utredningsprosess.envalg(faktumId).besvar(svar.asEnvalg(), besvartAv)
-            "flervalg" -> utredningsprosess.flervalg(faktumId).besvar(svar.asFlervalg(), besvartAv)
-            "tekst" -> utredningsprosess.tekst(faktumId).besvar(svar.asTekst(), besvartAv)
-            "periode" -> utredningsprosess.periode(faktumId).besvar(svar.asPeriode(), besvartAv)
-            "dokument" -> utredningsprosess.dokument(faktumId).besvar(svar.asDokument(), besvartAv)
+            "land" -> prosess.land(faktumId).besvar(svar.asLand(), besvartAv)
+            "boolean" -> prosess.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)
+            "int" -> prosess.heltall(faktumId).besvar(svar.asInt(), besvartAv) // todo: remove?
+            "integer" -> prosess.heltall(faktumId).besvar(svar.asInt(), besvartAv)
+            "double" -> prosess.desimaltall(faktumId).besvar(svar.asDouble(), besvartAv)
+            "localdate" -> prosess.dato(faktumId).besvar(svar.asLocalDate(), besvartAv)
+            "inntekt" -> prosess.inntekt(faktumId).besvar(svar.asDouble().årlig, besvartAv)
+            "envalg" -> prosess.envalg(faktumId).besvar(svar.asEnvalg(), besvartAv)
+            "flervalg" -> prosess.flervalg(faktumId).besvar(svar.asFlervalg(), besvartAv)
+            "tekst" -> prosess.tekst(faktumId).besvar(svar.asTekst(), besvartAv)
+            "periode" -> prosess.periode(faktumId).besvar(svar.asPeriode(), besvartAv)
+            "dokument" -> prosess.dokument(faktumId).besvar(svar.asDokument(), besvartAv)
             "generator" -> {
                 val svarene = svar as ArrayNode
-                utredningsprosess.generator(faktumId).besvar(svarene.size(), besvartAv)
+                prosess.generator(faktumId).besvar(svarene.size(), besvartAv)
                 svarene.forEachIndexed { index, genererteSvar ->
                     genererteSvar.filter(harSvar()).forEach {
                         besvar(
-                            utredningsprosess,
+                            prosess,
                             "${it["id"].asText()}.${index + 1}}",
                             it["svar"],
                             it["type"].asText(),
@@ -170,11 +170,11 @@ internal class FaktumSvarService(
 
     private fun harSvar() = { faktumNode: JsonNode -> faktumNode.has("svar") }
 
-    private class ProsessVersjonVisitor(utredningsprosess: Utredningsprosess) : UtredningsprosessVisitor {
+    private class ProsessVersjonVisitor(prosess: Prosess) : UtredningsprosessVisitor {
         lateinit var faktatype: Faktatype
 
         init {
-            utredningsprosess.accept(this)
+            prosess.accept(this)
         }
 
         override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {

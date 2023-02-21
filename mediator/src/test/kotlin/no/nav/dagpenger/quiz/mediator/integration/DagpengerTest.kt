@@ -4,10 +4,10 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Land
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
-import no.nav.dagpenger.quiz.mediator.db.UtredningsprosessRepository
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Bosted
@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 
 internal class DagpengerTest : SøknadBesvarer() {
     private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
-    private lateinit var søknadsprosess: Utredningsprosess
+    private lateinit var søknadsprosess: Prosess
 
     @BeforeEach
     fun setup() {
@@ -29,14 +29,14 @@ internal class DagpengerTest : SøknadBesvarer() {
             søknadsprosess = Versjon.id(Dagpenger.VERSJON_ID)
                 .utredningsprosess(prototypeSøknad)
         }
-        val faktaRepository = mockk<UtredningsprosessRepository>().also {
+        val faktaRepository = mockk<ProsessRepository>().also {
             every { it.hent(any()) } returns søknadsprosess
             every { it.lagre(any()) } returns true
         }
 
         testRapid = TestRapid().also {
             FaktumSvarService(
-                utredningsprosessRepository = faktaRepository,
+                prosessRepository = faktaRepository,
                 resultatPersistence = resultatPersistence,
                 rapidsConnection = it,
             )
@@ -57,7 +57,7 @@ internal class DagpengerTest : SøknadBesvarer() {
         }
     }
 
-    private fun Utredningsprosess.verifiserAtNesteSeksjonEr(faktaseksjon: DslFaktaseksjon) {
+    private fun Prosess.verifiserAtNesteSeksjonEr(faktaseksjon: DslFaktaseksjon) {
         assertNotEquals(nesteSeksjoner().size, 0, "Har ikke neste seksjon")
         assertEquals(faktaseksjon.seksjon(fakta)[0].navn, nesteSeksjoner()[0].navn)
     }

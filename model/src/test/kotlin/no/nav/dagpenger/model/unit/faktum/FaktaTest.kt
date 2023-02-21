@@ -13,8 +13,8 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -40,7 +40,7 @@ class FaktaTest {
             boolsk faktum "f12" id 12 avhengerAv 11
         )
 
-        Utredningsprosess(Seksjon("seksjon", Rolle.søker, fakta id 11, fakta id 12))
+        Prosess(Seksjon("seksjon", Rolle.søker, fakta id 11, fakta id 12))
         assertEquals(2, fakta.size)
         fakta.dokument(11).besvar(Dokument(1.januar, "urn:nid:sse"))
         fakta.boolsk(12).besvar(true)
@@ -60,7 +60,7 @@ class FaktaTest {
             maks dato "maksdato" av 3 og 4 og 5 id 345
         )
 
-        Utredningsprosess(Seksjon("seksjon", Rolle.søker, fakta id 345, fakta id 3, fakta id 4, fakta id 5))
+        Prosess(Seksjon("seksjon", Rolle.søker, fakta id 345, fakta id 3, fakta id 4, fakta id 5))
         assertEquals(4, fakta.size)
         fakta.dato(3).besvar(3.januar)
         fakta.dato(4).besvar(4.januar)
@@ -82,7 +82,7 @@ class FaktaTest {
             boolsk faktum "annen forelder får støtte" id 18
         )
         val barneSeksjon = Seksjon("barneseksjon", Rolle.søker, fakta id 15, fakta id 16, fakta id 17, fakta id 18)
-        Utredningsprosess(fakta, barneSeksjon)
+        Prosess(fakta, barneSeksjon)
         assertEquals(TemplateFaktum::class, fakta.id(16)::class)
         assertEquals(GeneratorFaktum::class, fakta.id(15)::class)
         assertEquals(4, fakta.size)

@@ -18,7 +18,7 @@ internal class OpprettNyFaktaVisitorTest {
 
     private companion object {
         private val testRapid = TestRapid()
-        private val søknadPersistance = UtredningsprosessRepositoryFake()
+        private val søknadPersistance = ProsessRepositoryFake()
 
         init {
             AvslagPåMinsteinntektService(søknadPersistance, testRapid, SøknadEksempel.prosessVersjon)
@@ -29,7 +29,7 @@ internal class OpprettNyFaktaVisitorTest {
     fun `Start ny søknadprosess, trigget av innsending_ferdigstilt fra dp-mottak`() {
         testRapid.sendTestMessage(innsendingFerdigstiltJson)
         assertEquals(1, testRapid.inspektør.size)
-        assertNotNull(søknadPersistance.utredningsprosess)
+        assertNotNull(søknadPersistance.prosess)
     }
 
     @Language("JSON")

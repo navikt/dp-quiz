@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.db.UtredningsprosessRepository
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -13,7 +13,7 @@ import no.nav.helse.rapids_rivers.River
 import java.util.UUID
 
 internal class NyProsessBehovLøser(
-    private val utredningsprosessRepository: UtredningsprosessRepository,
+    private val prosessRepository: ProsessRepository,
     rapidsConnection: RapidsConnection,
 ) : River.PacketListener {
     private companion object {
@@ -49,9 +49,9 @@ internal class NyProsessBehovLøser(
                 .folkeregisterIdent(packet["ident"].asText())
                 .build()
 
-            utredningsprosessRepository.ny(identer, prosessversjon, søknadUuid)
+            prosessRepository.ny(identer, prosessversjon, søknadUuid)
                 .also { søknadsprosess ->
-                    utredningsprosessRepository.lagre(søknadsprosess)
+                    prosessRepository.lagre(søknadsprosess)
                     log.info { "Opprettet ny søknadprosess ${søknadsprosess.fakta.uuid}" }
 
                     packet["@løsning"] = mapOf(

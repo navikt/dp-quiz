@@ -29,8 +29,8 @@ import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.assertDeepEquals
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
@@ -47,9 +47,9 @@ internal class AvhengigeFaktaTest {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
     }
 
-    private lateinit var originalUtredningsprosess: Utredningsprosess
-    private lateinit var rehydrertUtredningsprosess: Utredningsprosess
-    private lateinit var utredningsprosessRepository: UtredningsprosessRepository
+    private lateinit var originalProsess: Prosess
+    private lateinit var rehydrertProsess: Prosess
+    private lateinit var prosessRepository: ProsessRepository
 
     @Test
     fun `Avhengig faktum reset`() {
@@ -64,7 +64,7 @@ internal class AvhengigeFaktaTest {
             Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta boolsk 19 er true,
-                Utredningsprosess(
+                Prosess(
                     Seksjon(
                         "seksjon",
                         Rolle.nav,
@@ -73,19 +73,19 @@ internal class AvhengigeFaktaTest {
                 ),
             ).registrer()
             FaktumTable(prototypeFakta)
-            utredningsprosessRepository = UtredningsprosessRepositoryImpl()
-            originalUtredningsprosess = utredningsprosess(prosessVersjon)
+            prosessRepository = ProsessRepositoryImpl()
+            originalProsess = utredningsprosess(prosessVersjon)
 
-            originalUtredningsprosess.dato(2).besvar(2.januar)
-            originalUtredningsprosess.dato(13).besvar(13.januar)
-            originalUtredningsprosess.boolsk(19).besvar(true)
+            originalProsess.dato(2).besvar(2.januar)
+            originalProsess.dato(13).besvar(13.januar)
+            originalProsess.boolsk(19).besvar(true)
             lagreHentOgSammenlign()
             assertRecordCount(0, "gammel_faktum_verdi")
-            assertTrue(rehydrertUtredningsprosess.boolsk(19).svar())
-            originalUtredningsprosess.dato(2).besvar(22.januar)
+            assertTrue(rehydrertProsess.boolsk(19).svar())
+            originalProsess.dato(2).besvar(22.januar)
             lagreHentOgSammenlign()
             assertRecordCount(2, "gammel_faktum_verdi")
-            assertFalse(rehydrertUtredningsprosess.boolsk(19).erBesvart())
+            assertFalse(rehydrertProsess.boolsk(19).erBesvart())
         }
     }
 
@@ -105,7 +105,7 @@ internal class AvhengigeFaktaTest {
             Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta boolsk 1 er true,
-                Utredningsprosess(
+                Prosess(
                     Seksjon(
                         "seksjon",
                         Rolle.nav,
@@ -115,20 +115,20 @@ internal class AvhengigeFaktaTest {
             ).registrer()
             FaktumTable(prototypeFakta)
 
-            utredningsprosessRepository = UtredningsprosessRepositoryImpl()
-            originalUtredningsprosess = utredningsprosess(prosessVersjon)
+            prosessRepository = ProsessRepositoryImpl()
+            originalProsess = utredningsprosess(prosessVersjon)
 
-            originalUtredningsprosess.boolsk(2).besvar(true)
-            originalUtredningsprosess.boolsk(5).besvar(true)
-            originalUtredningsprosess.boolsk(4).besvar(true)
-            originalUtredningsprosess.boolsk(1).besvar(true)
-            originalUtredningsprosess.boolsk(3).besvar(true)
+            originalProsess.boolsk(2).besvar(true)
+            originalProsess.boolsk(5).besvar(true)
+            originalProsess.boolsk(4).besvar(true)
+            originalProsess.boolsk(1).besvar(true)
+            originalProsess.boolsk(3).besvar(true)
 
-            assertEquals(5, originalUtredningsprosess.fakta.count { it.erBesvart() })
-            utredningsprosessRepository.lagre(originalUtredningsprosess)
+            assertEquals(5, originalProsess.fakta.count { it.erBesvart() })
+            prosessRepository.lagre(originalProsess)
 
-            rehydrertUtredningsprosess = utredningsprosessRepository.hent(originalUtredningsprosess.fakta.uuid)
-            assertEquals(5, rehydrertUtredningsprosess.fakta.count { it.erBesvart() })
+            rehydrertProsess = prosessRepository.hent(originalProsess.fakta.uuid)
+            assertEquals(5, rehydrertProsess.fakta.count { it.erBesvart() })
         }
     }
 
@@ -148,7 +148,7 @@ internal class AvhengigeFaktaTest {
             Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta boolsk 1 er true,
-                Utredningsprosess(
+                Prosess(
                     Seksjon(
                         "seksjon",
                         Rolle.nav,
@@ -158,19 +158,19 @@ internal class AvhengigeFaktaTest {
             ).registrer()
             FaktumTable(prototypeFakta)
 
-            utredningsprosessRepository = UtredningsprosessRepositoryImpl()
-            originalUtredningsprosess = utredningsprosess(prosessVersjon)
+            prosessRepository = ProsessRepositoryImpl()
+            originalProsess = utredningsprosess(prosessVersjon)
 
-            originalUtredningsprosess.dato(2).besvar(1.januar)
-            originalUtredningsprosess.dato(3).besvar(10.januar)
-            originalUtredningsprosess.boolsk(1).besvar(true)
-            originalUtredningsprosess.boolsk(5).besvar(true)
+            originalProsess.dato(2).besvar(1.januar)
+            originalProsess.dato(3).besvar(10.januar)
+            originalProsess.boolsk(1).besvar(true)
+            originalProsess.boolsk(5).besvar(true)
 
-            assertEquals(5, originalUtredningsprosess.fakta.count { it.erBesvart() })
-            utredningsprosessRepository.lagre(originalUtredningsprosess)
+            assertEquals(5, originalProsess.fakta.count { it.erBesvart() })
+            prosessRepository.lagre(originalProsess)
 
-            rehydrertUtredningsprosess = utredningsprosessRepository.hent(originalUtredningsprosess.fakta.uuid)
-            assertEquals(5, rehydrertUtredningsprosess.fakta.count { it.erBesvart() })
+            rehydrertProsess = prosessRepository.hent(originalProsess.fakta.uuid)
+            assertEquals(5, rehydrertProsess.fakta.count { it.erBesvart() })
         }
     }
 
@@ -199,7 +199,7 @@ internal class AvhengigeFaktaTest {
             Versjon.Bygger(
                 prototypeFakta,
                 prototypeFakta boolsk 1 er true,
-                Utredningsprosess(
+                Prosess(
                     Seksjon(
                         "seksjon",
                         Rolle.nav,
@@ -209,50 +209,50 @@ internal class AvhengigeFaktaTest {
             ).registrer()
             FaktumTable(prototypeFakta)
 
-            utredningsprosessRepository = UtredningsprosessRepositoryImpl()
-            originalUtredningsprosess = utredningsprosess(prosessVersjon)
+            prosessRepository = ProsessRepositoryImpl()
+            originalProsess = utredningsprosess(prosessVersjon)
 
-            originalUtredningsprosess.boolsk(1).besvar(true)
-            originalUtredningsprosess.dato(2).besvar(10.januar)
-            originalUtredningsprosess.boolsk(3).besvar(false)
-            originalUtredningsprosess.heltall(4).besvar(34)
-            originalUtredningsprosess.dokument(5).besvar(Dokument(LocalDateTime.now(), "urn:si:test:123"))
-            originalUtredningsprosess.desimaltall(6).besvar(2.4)
-            originalUtredningsprosess.envalg(7).besvar(Envalg("f7.valg1"))
-            originalUtredningsprosess.flervalg(8).besvar(Flervalg("f8.valg1", "f8.valg2"))
-            originalUtredningsprosess.heltall(11).besvar(1)
-            originalUtredningsprosess.heltall("9.1").besvar(150)
-            originalUtredningsprosess.heltall("10.1").besvar(160)
-            originalUtredningsprosess.inntekt(12).besvar(100.årlig)
-            originalUtredningsprosess.periode(13).besvar(Periode(LocalDate.now().minusYears(2), LocalDate.now()))
-            originalUtredningsprosess.tekst(14).besvar(Tekst("svar tekst"))
-            originalUtredningsprosess.land(15).besvar(Land("SWE"))
+            originalProsess.boolsk(1).besvar(true)
+            originalProsess.dato(2).besvar(10.januar)
+            originalProsess.boolsk(3).besvar(false)
+            originalProsess.heltall(4).besvar(34)
+            originalProsess.dokument(5).besvar(Dokument(LocalDateTime.now(), "urn:si:test:123"))
+            originalProsess.desimaltall(6).besvar(2.4)
+            originalProsess.envalg(7).besvar(Envalg("f7.valg1"))
+            originalProsess.flervalg(8).besvar(Flervalg("f8.valg1", "f8.valg2"))
+            originalProsess.heltall(11).besvar(1)
+            originalProsess.heltall("9.1").besvar(150)
+            originalProsess.heltall("10.1").besvar(160)
+            originalProsess.inntekt(12).besvar(100.årlig)
+            originalProsess.periode(13).besvar(Periode(LocalDate.now().minusYears(2), LocalDate.now()))
+            originalProsess.tekst(14).besvar(Tekst("svar tekst"))
+            originalProsess.land(15).besvar(Land("SWE"))
 
-            assertEquals(15, originalUtredningsprosess.fakta.count { it.erBesvart() })
-            utredningsprosessRepository.lagre(originalUtredningsprosess)
+            assertEquals(15, originalProsess.fakta.count { it.erBesvart() })
+            prosessRepository.lagre(originalProsess)
 
             assertRecordCount(0, "gammel_faktum_verdi")
-            rehydrertUtredningsprosess = utredningsprosessRepository.hent(originalUtredningsprosess.uuid)
-            assertEquals(rehydrertUtredningsprosess.tekst("14").svar(), Tekst("svar tekst"))
-            assertEquals(15, rehydrertUtredningsprosess.fakta.count { it.erBesvart() })
+            rehydrertProsess = prosessRepository.hent(originalProsess.uuid)
+            assertEquals(rehydrertProsess.tekst("14").svar(), Tekst("svar tekst"))
+            assertEquals(15, rehydrertProsess.fakta.count { it.erBesvart() })
 
-            originalUtredningsprosess.boolsk(1).besvar(false)
-            utredningsprosessRepository.lagre(originalUtredningsprosess)
+            originalProsess.boolsk(1).besvar(false)
+            prosessRepository.lagre(originalProsess)
             assertRecordCount(15, "gammel_faktum_verdi")
-            rehydrertUtredningsprosess = utredningsprosessRepository.hent(originalUtredningsprosess.uuid)
-            assertEquals(1, rehydrertUtredningsprosess.fakta.count { it.erBesvart() })
+            rehydrertProsess = prosessRepository.hent(originalProsess.uuid)
+            assertEquals(1, rehydrertProsess.fakta.count { it.erBesvart() })
         }
     }
 
-    private fun utredningsprosess(prosessVersjon: Faktaversjon): Utredningsprosess {
-        return utredningsprosessRepository.ny(UNG_PERSON_FNR_2018, prosessVersjon)
+    private fun utredningsprosess(prosessVersjon: Faktaversjon): Prosess {
+        return prosessRepository.ny(UNG_PERSON_FNR_2018, prosessVersjon)
     }
 
     private fun lagreHentOgSammenlign() {
-        utredningsprosessRepository.lagre(originalUtredningsprosess)
+        prosessRepository.lagre(originalProsess)
         val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
-        rehydrertUtredningsprosess = utredningsprosessRepository.hent(uuid)
-        assertDeepEquals(originalUtredningsprosess, rehydrertUtredningsprosess)
+        rehydrertProsess = prosessRepository.hent(uuid)
+        assertDeepEquals(originalProsess, rehydrertProsess)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

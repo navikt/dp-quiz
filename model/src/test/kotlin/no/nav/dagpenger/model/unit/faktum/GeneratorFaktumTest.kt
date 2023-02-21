@@ -17,8 +17,8 @@ import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.utfylt
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -45,7 +45,7 @@ class GeneratorFaktumTest {
             faktaPrototype.dato(4) mellom faktaPrototype.dato(2) og faktaPrototype.dato(3)
         }
 
-        val prototypeUtredningsprosess = Utredningsprosess(
+        val prototypeProsess = Prosess(
             Seksjon(
                 "periode antall",
                 Rolle.nav,
@@ -66,7 +66,7 @@ class GeneratorFaktumTest {
         søknadprosessTestBygger = Versjon.Bygger(
             faktaPrototype,
             prototypeSubsumsjon,
-            prototypeUtredningsprosess
+            prototypeProsess
         )
     }
 
@@ -166,28 +166,28 @@ class GeneratorFaktumTest {
         faktaPrototype: Fakta,
         prototypeSubsumsjon: Subsumsjon,
         vararg seksjoner: Seksjon
-    ): Utredningsprosess {
-        val prototypeUtredningsprosess = Utredningsprosess(
+    ): Prosess {
+        val prototypeProsess = Prosess(
             *seksjoner
         )
         val søknadprosessTestBygger =
             Versjon.Bygger(
                 faktaPrototype,
                 prototypeSubsumsjon,
-                prototypeUtredningsprosess
+                prototypeProsess
             )
         return søknadprosessTestBygger.utredningsprosess(testPerson)
     }
 
     private class GeneratorVisitor(
-        utredningsprosess: Utredningsprosess,
+        prosess: Prosess,
         private val generatorer: MutableSet<GeneratorFaktum> = mutableSetOf()
     ) :
         UtredningsprosessVisitor,
         MutableSet<GeneratorFaktum> by generatorer {
 
         init {
-            utredningsprosess.accept(this)
+            prosess.accept(this)
         }
 
         override fun <R : Comparable<R>> visitMedSvar(

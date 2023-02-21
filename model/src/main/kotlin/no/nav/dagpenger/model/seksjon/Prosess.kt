@@ -12,7 +12,7 @@ import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import java.util.UUID
 
-class Utredningsprosess private constructor(
+class Prosess private constructor(
     val fakta: Fakta,
     internal val rootSubsumsjon: Subsumsjon,
     private val seksjoner: MutableList<Seksjon>,
@@ -74,7 +74,7 @@ class Utredningsprosess private constructor(
     fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
 
     internal fun bygg(fakta: Fakta, subsumsjon: Subsumsjon) =
-        Utredningsprosess(fakta, subsumsjon, seksjoner.map { it.bygg(fakta) }.toMutableList())
+        Prosess(fakta, subsumsjon, seksjoner.map { it.bygg(fakta) }.toMutableList())
 
     internal fun nesteFakta() = rootSubsumsjon.nesteFakta()
 

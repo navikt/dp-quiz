@@ -1,7 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
 import mu.KotlinLogging
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -9,7 +9,7 @@ import no.nav.helse.rapids_rivers.MessageProblems
 private val log = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
-fun Utredningsprosess.sendNesteSeksjon(context: MessageContext) {
+fun Prosess.sendNesteSeksjon(context: MessageContext) {
     nesteSeksjoner()
         .onEach { seksjon ->
             val message = seksjon.somSpørsmål().let { JsonMessage(it, MessageProblems(it)) }

@@ -27,8 +27,8 @@ import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.under
 import no.nav.dagpenger.model.regel.utfylt
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -48,7 +48,7 @@ import java.util.UUID
 
 internal class SøkerJsonBuilderTest {
     private lateinit var prototypeFakta: Fakta
-    private lateinit var utredningsprosess: Utredningsprosess
+    private lateinit var prosess: Prosess
 
     @BeforeEach
     fun setup() {
@@ -87,16 +87,16 @@ internal class SøkerJsonBuilderTest {
             dokument faktum "f25" id 25 avhengerAv 24,
             boolsk faktum "f26" id 26 avhengerAv 25
         )
-        utredningsprosess = søknadprosess(søkerSubsumsjon())
+        prosess = søknadprosess(søkerSubsumsjon())
     }
 
     @Test
     fun `SøkerJsonBuilder returnerer besvarte fakta og neste ubesvarte faktum`() {
-        SøkerJsonBuilder(utredningsprosess).resultat().also {
+        SøkerJsonBuilder(prosess).resultat().also {
             assertMetadata(it)
         }
 
-        MedSøknad(utredningsprosess) {
+        MedSøknad(prosess) {
             harAntallSeksjoner(1)
             seksjon("seksjon1") {
                 fakta {
@@ -108,8 +108,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        utredningsprosess.boolsk(1).besvar(true)
-        MedSøknad(utredningsprosess) {
+        prosess.boolsk(1).besvar(true)
+        MedSøknad(prosess) {
             harAntallSeksjoner(1)
             seksjon("seksjon1") {
                 fakta {
@@ -121,8 +121,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        utredningsprosess.boolsk(3).besvar(true)
-        MedSøknad(utredningsprosess) {
+        prosess.boolsk(3).besvar(true)
+        MedSøknad(prosess) {
             harAntallSeksjoner(1)
             seksjon("seksjon1") {
                 fakta {
@@ -134,8 +134,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        utredningsprosess.boolsk(5).besvar(true)
-        MedSøknad(utredningsprosess) {
+        prosess.boolsk(5).besvar(true)
+        MedSøknad(prosess) {
             harAntallSeksjoner(2)
             seksjon("seksjon1") {
                 erFerdig()
@@ -154,10 +154,10 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        utredningsprosess.generator(67).besvar(2)
-        utredningsprosess.heltall("6.1").besvar(11)
-        utredningsprosess.tekst("7.1").besvar(Tekst("Hei"))
-        MedSøknad(utredningsprosess) {
+        prosess.generator(67).besvar(2)
+        prosess.heltall("6.1").besvar(11)
+        prosess.tekst("7.1").besvar(Tekst("Hei"))
+        MedSøknad(prosess) {
             harAntallSeksjoner(2)
             seksjon("seksjon2") {
                 fakta {
@@ -178,8 +178,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        utredningsprosess.heltall("6.2").besvar(19)
-        MedSøknad(utredningsprosess) {
+        prosess.heltall("6.2").besvar(19)
+        MedSøknad(prosess) {
             harAntallSeksjoner(2)
             seksjon("seksjon2") {
                 fakta {
@@ -194,8 +194,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        utredningsprosess.tekst("7.2").besvar(Tekst("Hadet"))
-        MedSøknad(utredningsprosess) {
+        prosess.tekst("7.2").besvar(Tekst("Hadet"))
+        MedSøknad(prosess) {
             harAntallSeksjoner(2)
             seksjon("seksjon2") { erFerdig() }
             seksjon("seksjon2") {
@@ -210,10 +210,10 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        utredningsprosess.dato("8").besvar(LocalDate.now())
-        utredningsprosess.dato("9").besvar(LocalDate.now())
+        prosess.dato("8").besvar(LocalDate.now())
+        prosess.dato("9").besvar(LocalDate.now())
 
-        MedSøknad(utredningsprosess) {
+        MedSøknad(prosess) {
             seksjon("dokumentasjon") {
                 fakta {
                     harAntallFakta(4)
@@ -253,10 +253,10 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        utredningsprosess.dokument(15).besvar(Dokument(LocalDate.now(), "urn:nav:1234"))
-        utredningsprosess.generator(1718).besvar(1)
+        prosess.dokument(15).besvar(Dokument(LocalDate.now(), "urn:nav:1234"))
+        prosess.generator(1718).besvar(1)
 
-        MedSøknad(utredningsprosess) {
+        MedSøknad(prosess) {
             harAntallSeksjoner(4)
             seksjon("seksjon3") {
                 fakta {
@@ -287,10 +287,10 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        utredningsprosess.envalg("17.1").besvar(Envalg("f17.envalg1"))
-        utredningsprosess.flervalg("18.1").besvar(Flervalg("f18.flervalg2"))
+        prosess.envalg("17.1").besvar(Envalg("f17.envalg1"))
+        prosess.flervalg("18.1").besvar(Flervalg("f18.flervalg2"))
 
-        MedSøknad(utredningsprosess) {
+        MedSøknad(prosess) {
             harAntallSeksjoner(5)
             seksjon("Gyldige land") {
                 fakta {
@@ -309,13 +309,13 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        utredningsprosess.land(19).besvar(Land("NOR"))
+        prosess.land(19).besvar(Land("NOR"))
 
-        utredningsprosess.generator(21).besvar(1)
-        utredningsprosess.dato("20.1").besvar(LocalDate.now())
-        utredningsprosess.boolsk(24).besvar(true)
+        prosess.generator(21).besvar(1)
+        prosess.dato("20.1").besvar(LocalDate.now())
+        prosess.boolsk(24).besvar(true)
 
-        MedSøknad(utredningsprosess) {
+        MedSøknad(prosess) {
             seksjon("grunnleggende med dokumentasjon") {
                 fakta {
                     boolsk("f24") {
@@ -330,9 +330,9 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        utredningsprosess.dokument(24).besvar(Dokument(LocalDateTime.now(), "urn:nav:12345"))
+        prosess.dokument(24).besvar(Dokument(LocalDateTime.now(), "urn:nav:12345"))
 
-        MedSøknad(utredningsprosess) { erFerdig() }
+        MedSøknad(prosess) { erFerdig() }
     }
 
     @Test
@@ -419,7 +419,7 @@ internal class SøkerJsonBuilderTest {
         return regeltre
     }
 
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Utredningsprosess {
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess {
         val seksjoner = listOf(
             Seksjon(
                 "seksjon1",
@@ -485,7 +485,7 @@ internal class SøkerJsonBuilderTest {
                 prototypeFakta.dokument(22)
             )
         )
-        val prototypeUtredningsprosess = Utredningsprosess(
+        val prototypeProsess = Prosess(
             prototypeFakta,
             seksjoner = seksjoner.toTypedArray(),
             rootSubsumsjon = prototypeSubsumsjon
@@ -494,7 +494,7 @@ internal class SøkerJsonBuilderTest {
         return Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
-            prototypeUtredningsprosess
+            prototypeProsess
         ).utredningsprosess(testPerson)
     }
 

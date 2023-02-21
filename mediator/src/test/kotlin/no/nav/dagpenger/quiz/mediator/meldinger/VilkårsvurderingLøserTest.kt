@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
 import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
@@ -20,7 +20,7 @@ import kotlin.test.assertTrue
 
 class VilkårsvurderingLøserTest {
 
-    private lateinit var søknadsprosess: Utredningsprosess
+    private lateinit var søknadsprosess: Prosess
     private lateinit var testRapid: TestRapid
     private val vilkårsvurderingIdSlot = slot<UUID>()
 

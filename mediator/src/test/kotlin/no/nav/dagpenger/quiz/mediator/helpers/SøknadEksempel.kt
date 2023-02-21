@@ -13,8 +13,8 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.minst
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 
@@ -36,7 +36,7 @@ internal object SøknadEksempel {
         dokument faktum "arena fagsakid" id 52, // MottattSøknadService trenger dette faktumet
     )
 
-    private val webPrototypeSøknad = Utredningsprosess(
+    private val webPrototypeSøknad = Prosess(
         Seksjon(
             "seksjon1",
             Rolle.nav,

@@ -9,8 +9,8 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
@@ -53,7 +53,7 @@ internal class AvhengigFaktumTest {
             dato faktum "tom" id 3 avhengerAv 2,
             dato faktum "ønsket dato" id 4,
         )
-        val prototypeUtredningsprosess = Utredningsprosess(
+        val prototypeProsess = Prosess(
             Seksjon("periode antall", Rolle.nav, fakta generator 1),
             Seksjon("periode", Rolle.nav, fakta dato 2, fakta dato 3),
             Seksjon("søknadsdato", Rolle.søker, fakta dato 4),
@@ -62,7 +62,7 @@ internal class AvhengigFaktumTest {
             Versjon.Bygger(
                 fakta,
                 TomSubsumsjon,
-                prototypeUtredningsprosess,
+                prototypeProsess,
             )
                 .utredningsprosess(testPerson)
 

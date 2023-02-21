@@ -7,8 +7,8 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.godkjentAv
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
@@ -42,7 +42,7 @@ internal class SaksbehandlerSeksjonerTest {
         } hvisIkkeOppfylt {
             (prototypeFakta.boolsk(5) er true).godkjentAv(prototypeFakta.boolsk(6))
         }
-    private val prototypeUtredningsprosess = Utredningsprosess(
+    private val prototypeProsess = Prosess(
         prototypeFakta,
         Seksjon("søker", Rolle.søker, prototypeFakta.boolsk(1), prototypeFakta.boolsk(3), prototypeFakta.boolsk(5)),
         Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
@@ -51,9 +51,9 @@ internal class SaksbehandlerSeksjonerTest {
     private val søknadprosessTestBygger = Versjon.Bygger(
         prototypeFakta,
         prototypeSubsumsjon,
-        prototypeUtredningsprosess
+        prototypeProsess
     )
-    private lateinit var seksjoner: Utredningsprosess
+    private lateinit var seksjoner: Prosess
     private lateinit var f1: Faktum<Boolean>
     private lateinit var f3: Faktum<Boolean>
     private lateinit var f5: Faktum<Boolean>

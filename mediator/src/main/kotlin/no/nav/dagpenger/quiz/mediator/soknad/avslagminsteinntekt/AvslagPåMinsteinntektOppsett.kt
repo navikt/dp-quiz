@@ -171,7 +171,7 @@ internal object AvslagPåMinsteinntektOppsett {
         Versjon.Bygger(
             prototypeFakta = prototypeFakta,
             prototypeSubsumsjon = regeltre,
-            utredningsprosess = Seksjoner.utredningsprosess,
+            prosess = Seksjoner.prosess,
             faktumNavBehov = faktumNavBehov,
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }

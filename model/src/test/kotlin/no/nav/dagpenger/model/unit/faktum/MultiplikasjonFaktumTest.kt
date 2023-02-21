@@ -9,30 +9,30 @@ import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 internal class MultiplikasjonFaktumTest {
-    private lateinit var utredningsprosess: Utredningsprosess
+    private lateinit var prosess: Prosess
     private lateinit var faktor: Faktum<Double>
     private lateinit var g: Faktum<Inntekt>
     private lateinit var multiplisert: Faktum<Inntekt>
 
     @BeforeEach
     fun setup() {
-        utredningsprosess = Fakta(
+        prosess = Fakta(
             testversjon,
             desimaltall faktum "faktor" id 1,
             inntekt faktum "g" id 2,
             multiplikasjon inntekt "multiplikasjon" av 1 ganger 2 id 3
         ).testSøknadprosess()
 
-        faktor = utredningsprosess desimaltall 1
-        g = utredningsprosess inntekt 2
-        multiplisert = utredningsprosess inntekt 3
+        faktor = prosess desimaltall 1
+        g = prosess inntekt 2
+        multiplisert = prosess inntekt 3
     }
 
     @Test

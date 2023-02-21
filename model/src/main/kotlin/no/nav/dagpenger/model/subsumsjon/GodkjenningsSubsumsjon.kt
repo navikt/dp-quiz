@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Faktum.Companion.deepCopy
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 open class GodkjenningsSubsumsjon private constructor(
@@ -48,13 +48,13 @@ open class GodkjenningsSubsumsjon private constructor(
         }
     }
 
-    override fun deepCopy(utredningsprosess: Utredningsprosess) = GodkjenningsSubsumsjon(
+    override fun deepCopy(prosess: Prosess) = GodkjenningsSubsumsjon(
         navn,
         action,
-        child.deepCopy(utredningsprosess),
-        godkjenningsfakta.map { utredningsprosess.boolsk(it.id) as GrunnleggendeFaktum<Boolean> },
-        oppfyltSubsumsjon.deepCopy(utredningsprosess),
-        ikkeOppfyltSubsumsjon.deepCopy(utredningsprosess)
+        child.deepCopy(prosess),
+        godkjenningsfakta.map { prosess.boolsk(it.id) as GrunnleggendeFaktum<Boolean> },
+        oppfyltSubsumsjon.deepCopy(prosess),
+        ikkeOppfyltSubsumsjon.deepCopy(prosess)
     )
 
     override fun bygg(fakta: Fakta) = GodkjenningsSubsumsjon(

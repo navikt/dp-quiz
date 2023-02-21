@@ -2,7 +2,7 @@ package no.nav.dagpenger.model.subsumsjon
 
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class AlleSubsumsjon private constructor(
@@ -19,11 +19,11 @@ class AlleSubsumsjon private constructor(
         TomSubsumsjon
     )
 
-    override fun deepCopy(utredningsprosess: Utredningsprosess) = AlleSubsumsjon(
+    override fun deepCopy(prosess: Prosess) = AlleSubsumsjon(
         navn,
-        subsumsjoner.map { it.deepCopy(utredningsprosess) }.toMutableList(),
-        oppfyltSubsumsjon.deepCopy(utredningsprosess),
-        ikkeOppfyltSubsumsjon.deepCopy(utredningsprosess)
+        subsumsjoner.map { it.deepCopy(prosess) }.toMutableList(),
+        oppfyltSubsumsjon.deepCopy(prosess),
+        ikkeOppfyltSubsumsjon.deepCopy(prosess)
     )
 
     override fun bygg(fakta: Fakta) = AlleSubsumsjon(

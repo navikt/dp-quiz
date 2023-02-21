@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad
 
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
@@ -11,21 +11,21 @@ import no.nav.dagpenger.quiz.mediator.soknad.innsending.InnsendingMetadataStrate
 import java.util.UUID
 
 internal class ProsessMetadataStrategi : MetadataStrategi {
-    override fun metadata(utredningsprosess: Utredningsprosess): Metadata {
-        return SkjemastrategiVelger(utredningsprosess).skjemakodeStrategi()
+    override fun metadata(prosess: Prosess): Metadata {
+        return SkjemastrategiVelger(prosess).skjemakodeStrategi()
     }
 
-    private class SkjemastrategiVelger(private val utredningsprosess: Utredningsprosess) : UtredningsprosessVisitor {
+    private class SkjemastrategiVelger(private val prosess: Prosess) : UtredningsprosessVisitor {
         private lateinit var metadata: Metadata
 
         init {
-            utredningsprosess.accept(this)
+            prosess.accept(this)
         }
 
         override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
             metadata = when (faktaversjon.faktatype) {
-                Prosessfakta.Dagpenger -> DagpengerMetadataStrategi().metadata(utredningsprosess)
-                Prosessfakta.Innsending -> InnsendingMetadataStrategi().metadata(utredningsprosess)
+                Prosessfakta.Dagpenger -> DagpengerMetadataStrategi().metadata(prosess)
+                Prosessfakta.Innsending -> InnsendingMetadataStrategi().metadata(prosess)
                 else -> throw IllegalArgumentException("Har ikke laget skjemakodestrategi for ${faktaversjon.faktatype}")
             }
         }

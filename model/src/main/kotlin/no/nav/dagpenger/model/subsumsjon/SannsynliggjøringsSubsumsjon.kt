@@ -3,7 +3,7 @@ package no.nav.dagpenger.model.subsumsjon
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class SannsynliggjøringsSubsumsjon private constructor(
@@ -56,9 +56,9 @@ class SannsynliggjøringsSubsumsjon private constructor(
         sannsynliggjøringsFakta.map { faktum -> fakta.dokument(faktum.id) }.toSet()
     )
 
-    override fun deepCopy(utredningsprosess: Utredningsprosess) = SannsynliggjøringsSubsumsjon(
+    override fun deepCopy(prosess: Prosess) = SannsynliggjøringsSubsumsjon(
         navn,
-        child.deepCopy(utredningsprosess),
-        sannsynliggjøringsFakta.map { faktum -> utredningsprosess.dokument(faktum.id) }.toSet()
+        child.deepCopy(prosess),
+        sannsynliggjøringsFakta.map { faktum -> prosess.dokument(faktum.id) }.toSet()
     )
 }

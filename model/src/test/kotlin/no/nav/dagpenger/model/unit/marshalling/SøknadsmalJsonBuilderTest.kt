@@ -21,8 +21,8 @@ import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -64,8 +64,8 @@ internal class SøknadsmalJsonBuilderTest {
         )
     }
 
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Utredningsprosess {
-        val prototypeUtredningsprosess = Utredningsprosess(
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess {
+        val prototypeProsess = Prosess(
             prototypeFakta,
             Seksjon(
                 "seksjon1",
@@ -108,7 +108,7 @@ internal class SøknadsmalJsonBuilderTest {
         return Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
-            prototypeUtredningsprosess
+            prototypeProsess
         ).utredningsprosess(testPerson)
     }
 

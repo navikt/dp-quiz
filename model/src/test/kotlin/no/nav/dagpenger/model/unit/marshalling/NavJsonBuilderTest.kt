@@ -17,8 +17,8 @@ import no.nav.dagpenger.model.marshalling.NavJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -78,7 +78,7 @@ class NavJsonBuilderTest {
             f9Faktum,
             f10Faktum,
         )
-        val prototypeUtredningsprosess = Utredningsprosess(
+        val prototypeProsess = Prosess(
             prototypeFakta,
             søkerSeksjon,
             navSeksjon,
@@ -100,7 +100,7 @@ class NavJsonBuilderTest {
         val fakta = Versjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
-            prototypeUtredningsprosess,
+            prototypeProsess,
             faktumNavBehov,
         ).registrer().fakta(testPerson)
 

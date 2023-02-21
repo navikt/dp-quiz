@@ -18,13 +18,13 @@ import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.lagBeskrivendeIde
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.lagFaktumNode
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilGyldigeLand
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilLandGrupper
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import java.util.UUID
 
-class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : UtredningsprosessVisitor {
+class SøknadsmalJsonBuilder(prosess: Prosess) : UtredningsprosessVisitor {
     companion object {
         private val mapper = ObjectMapper()
     }
@@ -35,7 +35,7 @@ class SøknadsmalJsonBuilder(utredningsprosess: Utredningsprosess) : Utredningsp
     private val generatorFakta = mutableMapOf<GeneratorFaktum, List<Faktum<*>>>()
 
     init {
-        utredningsprosess.accept(this)
+        prosess.accept(this)
     }
 
     fun resultat() = root

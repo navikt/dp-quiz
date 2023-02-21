@@ -1,6 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
@@ -11,23 +11,23 @@ import org.junit.jupiter.api.assertThrows
 
 internal class ProsessfaktaMetadataStrategiTest {
 
-    private lateinit var utredningsprosessDagpenger: Utredningsprosess
-    private lateinit var utredningsprosessInnsending: Utredningsprosess
-    private lateinit var utredningsprosessAvslagPåMinsteinntekt: Utredningsprosess
+    private lateinit var prosessDagpenger: Prosess
+    private lateinit var prosessInnsending: Prosess
+    private lateinit var prosessAvslagPåMinsteinntekt: Prosess
 
     init {
         Dagpenger.registrer { prototypeSøknad ->
-            utredningsprosessDagpenger = Versjon.id(Dagpenger.VERSJON_ID)
+            prosessDagpenger = Versjon.id(Dagpenger.VERSJON_ID)
                 .utredningsprosess(prototypeSøknad)
         }
 
         Innsending.registrer { prototypeSøknad ->
-            utredningsprosessInnsending = Versjon.id(Innsending.VERSJON_ID)
+            prosessInnsending = Versjon.id(Innsending.VERSJON_ID)
                 .utredningsprosess(prototypeSøknad)
         }
 
         AvslagPåMinsteinntektOppsett.registrer { prototype ->
-            utredningsprosessAvslagPåMinsteinntekt = Versjon.id(AvslagPåMinsteinntektOppsett.VERSJON_ID)
+            prosessAvslagPåMinsteinntekt = Versjon.id(AvslagPåMinsteinntektOppsett.VERSJON_ID)
                 .utredningsprosess(prototype)
         }
     }
@@ -35,8 +35,8 @@ internal class ProsessfaktaMetadataStrategiTest {
     @Test
     fun `bestemme hvilken prosess skjemastrategi skal gå etter`() {
         val prosessSkjemakodeStrategi = ProsessMetadataStrategi()
-        assertDoesNotThrow { prosessSkjemakodeStrategi.metadata(utredningsprosessDagpenger) }
-        assertDoesNotThrow { prosessSkjemakodeStrategi.metadata(utredningsprosessInnsending) }
-        assertThrows<IllegalArgumentException> { prosessSkjemakodeStrategi.metadata(utredningsprosessAvslagPåMinsteinntekt) }
+        assertDoesNotThrow { prosessSkjemakodeStrategi.metadata(prosessDagpenger) }
+        assertDoesNotThrow { prosessSkjemakodeStrategi.metadata(prosessInnsending) }
+        assertThrows<IllegalArgumentException> { prosessSkjemakodeStrategi.metadata(prosessAvslagPåMinsteinntekt) }
     }
 }

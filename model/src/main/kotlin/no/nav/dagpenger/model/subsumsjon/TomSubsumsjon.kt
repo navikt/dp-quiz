@@ -3,12 +3,12 @@ package no.nav.dagpenger.model.subsumsjon
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 internal object TomSubsumsjon : Subsumsjon("Tom subsumsjon") {
 
-    override fun deepCopy(utredningsprosess: Utredningsprosess) = this
+    override fun deepCopy(prosess: Prosess) = this
 
     override fun deepCopy(indeks: Int, fakta: Fakta) = this
 

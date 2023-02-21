@@ -6,8 +6,8 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Utredningsprosess
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import org.junit.jupiter.api.Test
@@ -24,7 +24,7 @@ class NesteSeksjonTest {
         val prototypeSubsumsjon = prototypesøknad.boolsk(1) er true hvisOppfylt {
             prototypesøknad.boolsk(2) er true
         }
-        val prototypeUtredningsprosess = Utredningsprosess(
+        val prototypeProsess = Prosess(
             prototypesøknad,
             Seksjon("nav", Rolle.nav, prototypesøknad.boolsk(2)),
             Seksjon("søker", Rolle.søker, prototypesøknad.boolsk(1)),
@@ -33,7 +33,7 @@ class NesteSeksjonTest {
         val fakta = Versjon.Bygger(
             prototypesøknad,
             prototypeSubsumsjon,
-            prototypeUtredningsprosess
+            prototypeProsess
         )
             .utredningsprosess(testPerson)
 
@@ -50,7 +50,7 @@ class NesteSeksjonTest {
         val prototypeSubsumsjon = prototypesøknad.boolsk(1) er true hvisOppfylt {
             prototypesøknad.boolsk(2) er true
         }
-        val prototypeUtredningsprosess = Utredningsprosess(
+        val prototypeProsess = Prosess(
             prototypesøknad,
             Seksjon("søker1", Rolle.søker, prototypesøknad.boolsk(2)),
             Seksjon("søker2", Rolle.søker, prototypesøknad.boolsk(1)),
@@ -60,7 +60,7 @@ class NesteSeksjonTest {
         Versjon.Bygger(
             prototypesøknad,
             prototypeSubsumsjon,
-            prototypeUtredningsprosess
+            prototypeProsess
         )
             .utredningsprosess(testPerson).also { fakta ->
                 assertEquals(listOf(fakta[1]), fakta.nesteSeksjoner())
