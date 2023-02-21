@@ -14,7 +14,7 @@ class Seksjon private constructor(
     private val rolle: Rolle,
     private val seksjonFakta: MutableSet<Faktum<*>>,
     private val avhengerAvFakta: MutableSet<Faktum<*>>,
-    val indeks: Int = 0
+    val indeks: Int = 0,
 ) : MutableSet<Faktum<*>> by seksjonFakta {
     private lateinit var _utredningsprosess: Utredningsprosess
     private val genererteSeksjoner = mutableListOf<Seksjon>()
@@ -43,7 +43,7 @@ class Seksjon private constructor(
         navn,
         rolle,
         fakta.toMutableSet(),
-        mutableSetOf<Faktum<*>>()
+        mutableSetOf<Faktum<*>>(),
     )
 
     internal fun filtrertSeksjon(subsumsjon: Subsumsjon) = filtrertSeksjon(subsumsjon.relevanteFakta())
@@ -53,7 +53,7 @@ class Seksjon private constructor(
             navn,
             rolle,
             seksjonFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet(),
-            avhengerAvFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet()
+            avhengerAvFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet(),
         ).also { it.søknadprosess(_utredningsprosess) }
 
     internal fun gjeldendeFakta(subsumsjon: Subsumsjon) = filtrertSeksjon(subsumsjon.nesteFakta())
@@ -68,11 +68,14 @@ class Seksjon private constructor(
     internal fun bareTemplates() = seksjonFakta.all { it is TemplateFaktum }
 
     internal fun deepCopy(indeks: Int): Seksjon {
-        return if (indeks <= genererteSeksjoner.size) genererteSeksjoner[indeks - 1]
-        else Seksjon(navn, rolle, mutableSetOf(), avhengerAvFakta.toMutableSet(), indeks).also {
-            _utredningsprosess.add(_utredningsprosess.indexOf(this) + indeks, it)
-            genererteSeksjoner.add(it)
-            it.søknadprosess(_utredningsprosess)
+        return if (indeks <= genererteSeksjoner.size) {
+            genererteSeksjoner[indeks - 1]
+        } else {
+            Seksjon(navn, rolle, mutableSetOf(), avhengerAvFakta.toMutableSet(), indeks).also {
+                _utredningsprosess.add(_utredningsprosess.indexOf(this) + indeks, it)
+                genererteSeksjoner.add(it)
+                it.søknadprosess(_utredningsprosess)
+            }
         }
     }
 
@@ -105,7 +108,7 @@ class Seksjon private constructor(
             .toMutableSet(),
         avhengerAvFakta
             .map { fakta.id(it.faktumId) }
-            .toMutableSet()
+            .toMutableSet(),
     )
 
     internal fun tilbakestill(templateFaktumId: FaktumId) {

@@ -40,7 +40,7 @@ internal object Dagpenger {
     )
     private val alleFakta = flatMapAlleFakta()
     private val alleSeksjoner = flatMapAlleSeksjoner()
-    private val prototypeFakta: Fakta
+    val prototypeFakta: Fakta
         get() = Fakta(
             VERSJON_ID,
             *alleFakta,

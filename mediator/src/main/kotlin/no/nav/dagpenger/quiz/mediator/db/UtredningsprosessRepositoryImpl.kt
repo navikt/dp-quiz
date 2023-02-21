@@ -21,19 +21,23 @@ class UtredningsprosessRepositoryImpl : UtredningsprosessRepository {
             session.run(
                 queryOf(
                     //language=PostgreSQL
-                    "SELECT versjon.navn , versjon.versjon_id FROM soknad JOIN v1_prosessversjon AS versjon ON (versjon.id = soknad.versjon_id) WHERE uuid = ?",
+                    "SELECT soknad.person_id, versjon.navn , versjon.versjon_id FROM soknad JOIN v1_prosessversjon AS versjon ON (versjon.id = soknad.versjon_id) WHERE uuid = ?",
                     uuid,
                 ).map { row ->
-                    ProsessRad(row.string(1), row.int(2))
+                    SoknadRad(row.string(1), row.string(2), row.int(3))
                 }.asSingle,
             )
-        } ?: throw IllegalArgumentException("Kan ikke hente en søknad som ikke finnes, uuid: $uuid")
-        val fakta = faktaRepository.hent(uuid)
-        return Versjon.id(Faktaversjon(Prosess(rad.navn), rad.versjonId)).utredningsprosess(fakta)
+        } ?: throw IllegalArgumentException("Kan ikke hente en utredningsprosess som ikke finnes, uuid: $uuid")
+
+        val versjonId = Faktaversjon(Prosess(rad.navn), rad.versjonId)
+        val utredningsprosess = Versjon.id(versjonId).utredningsprosess(PersonRecord().hentPerson(rad.personId), uuid)
+        return faktaRepository.rehydrerProsess(utredningsprosess)
     }
 
     override fun lagre(utredningsprosess: Utredningsprosess) = faktaRepository.lagre(utredningsprosess.fakta)
 
     private data class Prosess(override val id: String) : Faktatype
-    private data class ProsessRad(val navn: String, val versjonId: Int)
+    private data class SoknadRad(val personId: UUID, val navn: String, val versjonId: Int) {
+        constructor(personId: String, navn: String, versjonId: Int) : this(UUID.fromString(personId), navn, versjonId)
+    }
 }

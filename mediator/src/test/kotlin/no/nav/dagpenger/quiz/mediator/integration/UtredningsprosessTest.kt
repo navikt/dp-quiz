@@ -40,7 +40,6 @@ internal class UtredningsprosessTest() {
             it.dato(`dagpenger søknadsdato`).besvar(LocalDate.now())
             it.envalg(`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
             it.generator(arbeidsforhold).besvar(1)
-
             // Når generatoren er besvart skal det være lagt til nylig genererte faktum i samme seksjon
             assertEquals(118, it.aktivSeksjon.antallSpørsmål)
             it.tekst(`arbeidsforhold navn bedrift` index 1).besvar(Tekst("Hei"))
@@ -50,6 +49,33 @@ internal class UtredningsprosessTest() {
         medSeksjon(DinSituasjon) {
             it.land(`arbeidsforhold land` index 1).besvar(Land("NOR"))
         }
+        /*
+        val regeltre = with(prototypeFakta) {
+            "".deltre {
+                (envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`) inneholder Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
+            }
+        }
+
+        val søknadProsess = Prosessversjon("søknad", Dagpenger.VERSJON_ID)
+        val minsteinntektProsess = Prosessversjon("minsteinntekt", Dagpenger.VERSJON_ID)
+        val annenProsess = Utredningsprosess(
+            Seksjon(
+                "test",
+                Rolle.søker,
+                prototypeFakta.envalg(101),
+            ),
+        )
+
+        Versjon.Bygger(
+            minsteinntektProsess,
+            prototypeFakta = prototypeFakta,
+            prototypeSubsumsjon = regeltre,
+            utredningsprosess = annenProsess,
+            faktumNavBehov = FaktumNavBehov(emptyMap()),
+        ).registrer().also {
+            val nyInstans = it.utredningsprosess(søknadsprosess.fakta)
+            println(nyInstans)
+        }*/
 
         assertEquals(false, søknadsprosess.erFerdig())
     }
