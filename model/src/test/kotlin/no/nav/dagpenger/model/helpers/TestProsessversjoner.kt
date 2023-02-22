@@ -9,9 +9,9 @@ enum class TestFakta(override val id: String) : Faktatype {
     Test("test"),
 }
 
-enum class TestProsesser(override val faktatype: Faktatype) : Prosesstype {
-    PrototypeSøknad(TestFakta.PrototypeSøknad),
-    Test(TestFakta.Test),
+enum class TestProsesser(override val navn: String, override val faktatype: Faktatype) : Prosesstype {
+    PrototypeSøknad("PrototypeSøknad", TestFakta.PrototypeSøknad),
+    Test("Test", TestFakta.Test),
 }
 
 const val testprosessversjon = 0
