@@ -51,10 +51,10 @@ internal class FaktaRecordTest {
         Postgres.withMigratedDb {
             byggOriginalFakta()
 
-            assertRecordCount(1, "soknad")
+            assertRecordCount(1, "fakta")
             assertRecordCount(expectedFaktaCount, "faktum_verdi")
             FaktaRecord().ny(UNG_PERSON_FNR_2018, Testprosess.Test)
-            assertRecordCount(2, "soknad")
+            assertRecordCount(2, "fakta")
             assertRecordCount(expectedFaktaCount * 2, "faktum_verdi")
             lagreHentOgSammenlign()
         }
@@ -107,7 +107,7 @@ internal class FaktaRecordTest {
 
             faktaRecord.slett(originalFakta.uuid)
 
-            assertRecordCount(0, "soknad")
+            assertRecordCount(0, "fakta")
             assertRecordCount(0, "faktum_verdi")
             assertRecordCount(0, "gammel_faktum_verdi")
             assertRecordCount(0, "dokument")
