@@ -4,7 +4,6 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
-import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -17,11 +16,11 @@ internal class FlereSøknaderTest {
             val faktaRecord = FaktaRecord()
             val søknad1 = faktaRecord.ny(
                 Identer.Builder().folkeregisterIdent("10987654321").build(),
-                Testprosess.Test,
+                SøknadEksempel1.faktaversjon,
             )
             val søknad2 = faktaRecord.ny(
                 Identer.Builder().folkeregisterIdent("12345678910").build(),
-                Testprosess.Test,
+                SøknadEksempel.faktaversjon,
             )
 
             søknad1.boolsk(10).besvar(true)

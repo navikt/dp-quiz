@@ -6,6 +6,7 @@ import io.mockk.slot
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
@@ -34,7 +35,7 @@ class VilkårsvurderingLøserTest {
         }
 
         val prosessPersistens = mockk<FaktaRepository>().also {
-            every { it.ny(any<Identer>(), any(), capture(vilkårsvurderingIdSlot)) } returns søknadsprosess.fakta
+            every { it.ny(any<Identer>(), any<Prosesstype>(), capture(vilkårsvurderingIdSlot)) } returns søknadsprosess.fakta
             every { it.lagre(any() as Fakta) } returns true
         }
 

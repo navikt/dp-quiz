@@ -19,9 +19,9 @@ import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 
 internal object SøknadEksempel {
-    val prosessVersjon = Faktaversjon(Testfakta.Test, 666)
+    val faktaversjon = Faktaversjon(Testfakta.Test, 666)
     val prototypeFakta1 = Fakta(
-        prosessVersjon,
+        faktaversjon,
         boolsk faktum "f1_bool" id 1 avhengerAv 17,
         boolsk faktum "f2_bool" id 2,
         heltall faktum "f3_heltall" id 3,

@@ -68,10 +68,11 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
         }
 
         private companion object {
-            private fun exists(prosessVersjon: Faktaversjon): Boolean {
-                val query = queryOf( //language=PostgreSQL
+            private fun exists(faktaversjon: Faktaversjon): Boolean {
+                val query = queryOf(
+                    //language=PostgreSQL
                     "SELECT id FROM faktaversjon WHERE navn = :navn AND versjon_id = :versjon_id",
-                    mapOf("navn" to prosessVersjon.faktatype.id, "versjon_id" to prosessVersjon.versjon),
+                    mapOf("navn" to faktaversjon.faktatype.id, "versjon_id" to faktaversjon.versjon),
                 )
                 return using(sessionOf(dataSource)) { session ->
                     session.run(

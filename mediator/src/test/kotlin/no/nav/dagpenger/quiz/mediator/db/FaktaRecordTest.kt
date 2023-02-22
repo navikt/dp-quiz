@@ -372,8 +372,8 @@ internal class FaktaRecordTest {
             byggOriginalFakta()
             val soknadUUID = originalFakta.uuid
             assertEquals(
-                faktaRecord.migrer(soknadUUID, SøknadEksempel1.prosessVersjon),
-                SøknadEksempel1.prosessVersjon,
+                faktaRecord.migrer(soknadUUID, SøknadEksempel1.faktaversjon),
+                SøknadEksempel1.faktaversjon,
                 "Migrering til samme versjon",
             )
 
@@ -381,9 +381,9 @@ internal class FaktaRecordTest {
 
             SøknadEksempel2.v2
             FaktumTable(SøknadEksempel2.prototypeFakta)
-            val nyProsessVersjon = faktaRecord.migrer(soknadUUID, SøknadEksempel2.prosessVersjon)
+            val nyProsessVersjon = faktaRecord.migrer(soknadUUID, SøknadEksempel2.faktaversjon)
 
-            assertEquals(SøknadEksempel2.prosessVersjon, nyProsessVersjon)
+            assertEquals(SøknadEksempel2.faktaversjon, nyProsessVersjon)
 
             with(faktaRecord.hent(soknadUUID)) {
                 assertFalse(heltall("f26").erBesvart())

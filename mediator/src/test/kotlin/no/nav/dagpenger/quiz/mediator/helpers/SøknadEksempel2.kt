@@ -21,10 +21,10 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
 
 internal object SøknadEksempel2 {
-    val prosessVersjon = Faktaversjon(Testfakta.Test, 889)
+    val faktaversjon = Faktaversjon(Testfakta.Test, 889)
     internal val prototypeFakta by lazy {
         Fakta(
-            prosessVersjon,
+            faktaversjon,
             boolsk faktum "f1" id 1 avhengerAv 11,
             dato faktum "f2" id 2,
             dato faktum "f3" id 3,

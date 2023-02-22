@@ -31,9 +31,9 @@ enum class Testprosess(override val navn: String, override val faktatype: Faktat
 }
 
 internal object SøknadEksempel1 {
-    val prosessVersjon = Faktaversjon(Testfakta.Test, 888)
+    val faktaversjon = Faktaversjon(Testfakta.Test, 888)
     internal val prototypeFakta1 = Fakta(
-        prosessVersjon,
+        faktaversjon,
         boolsk faktum "f1" id 1 avhengerAv 11,
         dato faktum "f2" id 2,
         dato faktum "f3" id 3,

@@ -42,7 +42,19 @@ class FaktaRecord : FaktaRepository {
 
     override fun ny(
         identer: Identer,
-        faktaversjon: Prosesstype,
+        prosesstype: Prosesstype,
+        uuid: UUID,
+    ): Fakta {
+        val person = personRecord.hentEllerOpprettPerson(identer)
+        return Versjon.id(prosesstype).fakta(person, uuid).also { fakta ->
+            if (eksisterer(uuid)) return fakta
+            OpprettNyFaktaVisitor(fakta)
+        }
+    }
+
+    override fun ny(
+        identer: Identer,
+        faktaversjon: Faktaversjon,
         uuid: UUID,
     ): Fakta {
         val person = personRecord.hentEllerOpprettPerson(identer)

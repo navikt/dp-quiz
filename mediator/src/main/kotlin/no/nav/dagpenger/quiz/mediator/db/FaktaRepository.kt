@@ -8,7 +8,9 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 interface FaktaRepository {
+    // TODO: Kan vi klare oss med kun en av disse ny-funksjonene? Den med Faktaversjon brukes kun i en test.
     fun ny(identer: Identer, prosesstype: Prosesstype, uuid: UUID = UUID.randomUUID()): Fakta
+    fun ny(identer: Identer, faktaversjon: Faktaversjon, uuid: UUID = UUID.randomUUID()): Fakta
     fun hent(uuid: UUID): Fakta
     fun lagre(fakta: Fakta): Boolean
     fun opprettede(identer: Identer): Map<LocalDateTime, UUID>
