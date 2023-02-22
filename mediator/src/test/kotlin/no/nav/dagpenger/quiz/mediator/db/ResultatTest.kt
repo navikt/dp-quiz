@@ -84,7 +84,7 @@ internal class ResultatTest {
             session.run(
                 queryOf(
                     //language=PostgreSQL
-                    "SELECT grunn FROM manuell_behandling WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
+                    "SELECT grunn FROM manuell_behandling WHERE soknad_id = (SELECT fakta.id FROM fakta WHERE fakta.uuid = ?)",
                     prosess.fakta.uuid,
                 ).map { it.string("grunn") }.asSingle,
             )

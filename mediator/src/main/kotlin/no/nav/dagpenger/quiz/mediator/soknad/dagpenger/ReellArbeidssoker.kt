@@ -79,7 +79,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
         boolsk faktum "faktum.godkjenning-dokumentasjon-bekreftelse-fra-relevant-fagpersonell" id `godkjenning av bekreftelse`
             avhengerAv `dokumentasjon bekreftelse fra lege eller annen behandler`
             og `dokumentasjon fulltid - bekreftelse fra relevant fagpersonell`
-            og `dokumentasjon hele norge - bekreftelse fra relevant fagpersonell`
+            og `dokumentasjon hele norge - bekreftelse fra relevant fagpersonell`,
     )
 
     // https://lovdata.no/lov/1997-02-28-19/§4-5
@@ -89,7 +89,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
                 `søkers arbeidskapasitet`(),
                 `søkers evne til å flytte for arbeid`(),
                 `kan ta alle typer arbeid`(),
-                `kan bytte yrke eller gå ned i lønn`()
+                `kan bytte yrke eller gå ned i lønn`(),
             )
         }
     }
@@ -97,7 +97,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
     private fun Fakta.`søkers arbeidskapasitet`() =
         "Kan jobbe fulltid eller ikke".minstEnAv(
             `jobbe fulltid`(),
-            `jobbe deltid`()
+            `jobbe deltid`(),
         )
 
     private fun Fakta.`jobbe fulltid`() = boolsk(`kan jobbe heltid`) er true
@@ -118,7 +118,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
                 `årsak bare deltid - omsorg for barn med spesielle behov`(),
                 `årsak bare deltid - ansvar for barn til og med syvende klasse eller med spesielle behov og annen forelder jobber skift turnus`(),
                 `årsak bare deltid - over seksti år`(),
-                `årsak bare deltid - annen situasjon`()
+                `årsak bare deltid - annen situasjon`(),
             )
         }
     }
@@ -138,26 +138,26 @@ object ReellArbeidssoker : DslFaktaseksjon {
         (flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-barn-spesielle-behov"))
             .sannsynliggjøresAv(
                 dokument(
-                    `dokumentasjon fulltid - bekreftelse fra relevant fagpersonell`
-                )
+                    `dokumentasjon fulltid - bekreftelse fra relevant fagpersonell`,
+                ),
             )
             .godkjentAv(
                 boolsk(
-                    `godkjenning av bekreftelse`
-                )
+                    `godkjenning av bekreftelse`,
+                ),
             )
 
     private fun Fakta.`årsak bare deltid - ansvar for barn til og med syvende klasse eller med spesielle behov og annen forelder jobber skift turnus`() =
         (flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.skift-turnus"))
             .sannsynliggjøresAv(
                 dokument(
-                    `dokumentasjon fulltid - bekreftelse fra relevant fagpersonell`
-                )
+                    `dokumentasjon fulltid - bekreftelse fra relevant fagpersonell`,
+                ),
             )
             .godkjentAv(
                 boolsk(
-                    `godkjenning av bekreftelse`
-                )
+                    `godkjenning av bekreftelse`,
+                ),
             )
 
     private fun Fakta.`årsak bare deltid - over seksti år`() =
@@ -173,7 +173,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
     private fun Fakta.`søkers evne til å flytte for arbeid`() =
         "Kan ta jobber i hele Norge eller ikke".minstEnAv(
             `jobbe i hele Norge`(),
-            `ikke jobbe i hele Norge`()
+            `ikke jobbe i hele Norge`(),
         )
 
     private fun Fakta.`jobbe i hele Norge`() =
@@ -193,7 +193,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
                 `årsak ikke jobbe i hele Norge - omsorg for barn med spesielle behov`(),
                 `årsak ikke jobbe i hele Norge - ansvar for barn til og med syvende klasse eller med spesielle behov og annen forelder jobber skift turnus`(),
                 `årsak ikke jobbe i hele Norge - over seksti år`(),
-                `årsak ikke jobbe i hele Norge - annen situasjon`()
+                `årsak ikke jobbe i hele Norge - annen situasjon`(),
             )
         }
 
@@ -212,26 +212,26 @@ object ReellArbeidssoker : DslFaktaseksjon {
         (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.omsorg-barn-spesielle-behov"))
             .sannsynliggjøresAv(
                 dokument(
-                    `dokumentasjon hele norge - bekreftelse fra relevant fagpersonell`
-                )
+                    `dokumentasjon hele norge - bekreftelse fra relevant fagpersonell`,
+                ),
             )
             .godkjentAv(
                 boolsk(
-                    `godkjenning av bekreftelse`
-                )
+                    `godkjenning av bekreftelse`,
+                ),
             )
 
     private fun Fakta.`årsak ikke jobbe i hele Norge - ansvar for barn til og med syvende klasse eller med spesielle behov og annen forelder jobber skift turnus`() =
         (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.skift-turnus"))
             .sannsynliggjøresAv(
                 dokument(
-                    `dokumentasjon hele norge - bekreftelse fra relevant fagpersonell`
-                )
+                    `dokumentasjon hele norge - bekreftelse fra relevant fagpersonell`,
+                ),
             )
             .godkjentAv(
                 boolsk(
-                    `godkjenning av bekreftelse`
-                )
+                    `godkjenning av bekreftelse`,
+                ),
             )
 
     private fun Fakta.`årsak ikke jobbe i hele Norge - over seksti år`() =
@@ -249,7 +249,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
             (boolsk(`kan ta alle typer arbeid`) er false)
                 .sannsynliggjøresAv(dokument(`dokumentasjon bekreftelse fra lege eller annen behandler`))
                 .godkjentAv(boolsk(`godkjenning av bekreftelse`)),
-            boolsk(`kan ta alle typer arbeid`) er true
+            boolsk(`kan ta alle typer arbeid`) er true,
         )
 
     private fun Fakta.`kan bytte yrke eller gå ned i lønn`() =

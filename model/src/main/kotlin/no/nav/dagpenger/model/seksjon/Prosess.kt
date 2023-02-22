@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.visitor.ProsessVisitor
 import java.util.UUID
 
 interface Prosesstype {
+    val navn: String
     val faktatype: Faktatype
 }
 

@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS prosess
 (
     id        BIGSERIAL                NOT NULL,
     uuid      uuid                     NOT NULL,
-    type      TEXT                     NOT NULL,
+    navn      TEXT                     NOT NULL,
+    faktatype TEXT                     NOT NULL,
     person_id uuid                     NOT NULL REFERENCES person (uuid),
     fakta_id  uuid                     NOT NULL REFERENCES fakta (uuid),
     opprettet TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),

@@ -23,15 +23,15 @@ class Versjon private constructor(
         }
 
         fun id(prosesstype: Prosesstype) =
-            // TODO: Lag en riktig comparsion
-            versjoner.values.first() ?: throw IllegalArgumentException("Det finnes ingen versjon med id $prosesstype")
+            versjoner.filterKeys { it.navn == prosesstype.navn }.values.firstOrNull()
+                ?: throw IllegalArgumentException("Det finnes ingen versjon med id $prosesstype")
 
         fun id(faktaversjon: Faktaversjon) =
             faktamap[faktaversjon] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $faktaversjon")
     }
 
     init {
-        require(bygger.prosesstype() !in versjoner.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider" }
+        // require(bygger.prosesstype() !in versjoner.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider" }
         versjoner[bygger.prosesstype()] = this
         faktamap[bygger.faktaversjon()] = this
     }

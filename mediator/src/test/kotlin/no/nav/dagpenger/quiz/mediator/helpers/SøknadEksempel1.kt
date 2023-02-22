@@ -26,8 +26,8 @@ enum class Testfakta(override val id: String) : Faktatype {
     Test("test-r"),
 }
 
-enum class Testprosess(override val faktatype: Faktatype) : Prosesstype {
-    Test(Testfakta.Test),
+enum class Testprosess(override val navn: String, override val faktatype: Faktatype) : Prosesstype {
+    Test("Test", Testfakta.Test),
 }
 
 internal object SøknadEksempel1 {
