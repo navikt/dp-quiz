@@ -21,10 +21,10 @@ import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilLandGruppe
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
-import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import java.util.UUID
 
-class SøknadsmalJsonBuilder(prosess: Prosess) : UtredningsprosessVisitor {
+class SøknadsmalJsonBuilder(prosess: Prosess) : ProsessVisitor {
     companion object {
         private val mapper = ObjectMapper()
     }

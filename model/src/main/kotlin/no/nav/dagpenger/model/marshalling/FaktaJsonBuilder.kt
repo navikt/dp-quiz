@@ -24,9 +24,9 @@ import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.GodkjenningsSubsumsjon.Action
 import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 
-abstract class FaktaJsonBuilder : UtredningsprosessVisitor {
+abstract class FaktaJsonBuilder : ProsessVisitor {
     private val mapper = ObjectMapper()
     protected val root: ObjectNode = mapper.createObjectNode()
     protected val faktaNode = mapper.createArrayNode()
@@ -64,7 +64,7 @@ abstract class FaktaJsonBuilder : UtredningsprosessVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
         lagFaktumNode<R>(id, faktum.navn, roller, godkjenner, clazz, besvartAv = null)
     }
@@ -81,7 +81,7 @@ abstract class FaktaJsonBuilder : UtredningsprosessVisitor {
         svar: R,
         besvartAv: String?,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
         lagFaktumNode(id, faktum.navn, roller, godkjenner, clazz, svar, besvartAv)
     }
@@ -93,7 +93,7 @@ abstract class FaktaJsonBuilder : UtredningsprosessVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
-        regel: FaktaRegel<R>
+        regel: FaktaRegel<R>,
     ) {
         lagFaktumNode(id, faktum.navn, type = clazz)
     }
@@ -106,7 +106,7 @@ abstract class FaktaJsonBuilder : UtredningsprosessVisitor {
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         regel: FaktaRegel<R>,
-        svar: R
+        svar: R,
     ) {
         lagFaktumNode(id, faktum.navn, type = clazz, svar = svar)
     }
@@ -120,7 +120,7 @@ abstract class FaktaJsonBuilder : UtredningsprosessVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R,
-        genererteFaktum: Set<Faktum<*>>
+        genererteFaktum: Set<Faktum<*>>,
     ) {
         lagFaktumNode(id, faktum.navn, type = clazz, svar = svar)
     }
@@ -130,7 +130,7 @@ abstract class FaktaJsonBuilder : UtredningsprosessVisitor {
         regel: Regel,
         fakta: List<Faktum<*>>,
         lokaltResultat: Boolean?,
-        resultat: Boolean?
+        resultat: Boolean?,
     ) {
         if (ignoreSubsumsjon != null) return
         subsumsjonNoder.first().addObject().also { subsumsjonNode ->
@@ -186,7 +186,7 @@ abstract class FaktaJsonBuilder : UtredningsprosessVisitor {
         action: Action,
         godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         lokaltResultat: Boolean?,
-        childResultat: Boolean?
+        childResultat: Boolean?,
     ) {
         putSubsumsjon(lokaltResultat, subsumsjon, "Godkjenning subsumsjon")
     }
@@ -196,15 +196,15 @@ abstract class FaktaJsonBuilder : UtredningsprosessVisitor {
         action: Action,
         godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         lokaltResultat: Boolean?,
-        childResultat: Boolean?
+        childResultat: Boolean?,
     ) {
         if (ignoreSubsumsjon != null) return
         subsumsjonNoder.removeAt(0).also {
             if (godkjenning.all { it.erBesvart() } && when (action) {
-                Action.JaAction -> childResultat == true
-                Action.NeiAction -> childResultat == false
-                Action.UansettAction -> true
-            }
+                    Action.JaAction -> childResultat == true
+                    Action.NeiAction -> childResultat == false
+                    Action.UansettAction -> true
+                }
             ) {
                 it.addObject().also { subsumsjonNode ->
                     subsumsjonNode.put("lokalt_resultat", godkjenning.all { it.svar() }) // TODO: Bytt ut med subsumsjon
@@ -237,7 +237,7 @@ abstract class FaktaJsonBuilder : UtredningsprosessVisitor {
     protected open fun putSubsumsjon(
         lokaltResultat: Boolean?,
         subsumsjon: Subsumsjon,
-        type: String
+        type: String,
     ) {
         if (ignoreSubsumsjon != null) return
         subsumsjonNoder.first().addObject().also { subsumsjonNode ->
@@ -256,7 +256,7 @@ abstract class FaktaJsonBuilder : UtredningsprosessVisitor {
         godkjenner: Set<Faktum<*>> = emptySet(),
         type: Class<R>,
         svar: R? = null,
-        besvartAv: String? = null
+        besvartAv: String? = null,
     ) {
         if (ignore) return
         if (id in faktumIder) return

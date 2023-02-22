@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.soknad
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DagpengerMetadataStrategi
@@ -15,7 +15,7 @@ internal class ProsessMetadataStrategi : MetadataStrategi {
         return SkjemastrategiVelger(prosess).skjemakodeStrategi()
     }
 
-    private class SkjemastrategiVelger(private val prosess: Prosess) : UtredningsprosessVisitor {
+    private class SkjemastrategiVelger(private val prosess: Prosess) : ProsessVisitor {
         private lateinit var metadata: Metadata
 
         init {

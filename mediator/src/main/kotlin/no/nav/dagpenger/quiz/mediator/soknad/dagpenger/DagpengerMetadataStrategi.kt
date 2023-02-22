@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
-import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
@@ -18,7 +18,7 @@ class DagpengerMetadataStrategi : MetadataStrategi {
         return DagpengerSkjemakodeFinner(prosess).skjemaKode()
     }
 
-    private class DagpengerSkjemakodeFinner(prosess: Prosess) : UtredningsprosessVisitor {
+    private class DagpengerSkjemakodeFinner(prosess: Prosess) : ProsessVisitor {
         private var permittert: Boolean = false
         private var gjenopptak: Boolean = false
 

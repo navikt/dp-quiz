@@ -21,7 +21,7 @@ import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.godkjentAv
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
-import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -39,7 +39,7 @@ class SannsynliggjøringsSubsumsjonTest {
         boolsk faktum "generert-boolsk1" id 5,
         boolsk faktum "generert-boolsk2" id 6,
         dokument faktum "dokument for generator" id 7 avhengerAv 5 og 6,
-        boolsk faktum "godkjenning for generator" id 8 avhengerAv 7
+        boolsk faktum "godkjenning for generator" id 8 avhengerAv 7,
     )
     private val faktum = fakta boolsk 1
     private val dokument1 = fakta dokument 2
@@ -55,7 +55,7 @@ class SannsynliggjøringsSubsumsjonTest {
     fun `Skal lage sannsynliggjøring for en subsumsjon som kan dokumenteres og skal godkjennes `() {
         val subsumsjon = "må svare ja hvis ikke må en dokumentere neiet".minstEnAv(
             (faktum er false).sannsynliggjøresAv(dokument1, dokument2).godkjentAv(godkjenning),
-            faktum er true
+            faktum er true,
         )
 
         assertEquals(setOf(faktum as GrunnleggendeFaktum), subsumsjon.nesteFakta())
@@ -95,12 +95,12 @@ class SannsynliggjøringsSubsumsjonTest {
         val subsumsjon = generator.med(
             "deltre".deltre {
                 "generator".alle(generatorB1 er true, generatorB2 er true).sannsynliggjøresAv(generatorDokument)
-            }
+            },
         ).godkjentAv(generatorGodkjenning)
         val søknadprosess = fakta.testSøknadprosess(subsumsjon) {
             listOf(
                 fakta.seksjon("bruker", Rolle.søker, 4, 5, 6),
-                fakta.seksjon("bruker", Rolle.saksbehandler, 7, 8)
+                fakta.seksjon("bruker", Rolle.saksbehandler, 7, 8),
             )
         }
 
@@ -150,7 +150,7 @@ class SannsynliggjøringsSubsumsjonTest {
         val subsumsjon = generator.med(
             "deltre".deltre {
                 "generator".alle(generatorB1 er true, generatorB2 er true).sannsynliggjøresAv(generatorDokument)
-            }
+            },
         ).godkjentAv(generatorGodkjenning)
         val prosess = fakta.testSøknadprosess(subsumsjon)
 
@@ -159,7 +159,7 @@ class SannsynliggjøringsSubsumsjonTest {
         assertEquals(2, DuplikatVisitor(prosess).avhengigheter)
     }
 
-    class DuplikatVisitor(søknad: Prosess) : UtredningsprosessVisitor {
+    class DuplikatVisitor(søknad: Prosess) : ProsessVisitor {
         var avhengigheter = 0
 
         init {
@@ -173,7 +173,7 @@ class SannsynliggjøringsSubsumsjonTest {
             avhengerAvFakta: Set<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>,
-            gyldigeValg: GyldigeValg?
+            gyldigeValg: GyldigeValg?,
         ) {
             if (id != "7") return
             avhengigheter = avhengerAvFakta.size

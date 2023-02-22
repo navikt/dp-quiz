@@ -152,9 +152,9 @@ interface FaktaVisitor : PersonVisitor, FaktumVisitor {
     fun postVisit(fakta: Fakta, uuid: UUID) {}
 }
 
-interface UtredningsprosessVisitor : SubsumsjonVisitor, FaktaVisitor {
-    fun preVisit(prosess: Prosess) {}
-    fun postVisit(prosess: Prosess) {}
+interface ProsessVisitor : SubsumsjonVisitor, FaktaVisitor {
+    fun preVisit(prosess: Prosess, uuid: UUID) {}
+    fun postVisit(prosess: Prosess, uuid: UUID) {}
     fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {}
     fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {}
     fun preVisitAvhengerAv(seksjon: Seksjon, avhengerAvFakta: Set<Faktum<*>>) {}

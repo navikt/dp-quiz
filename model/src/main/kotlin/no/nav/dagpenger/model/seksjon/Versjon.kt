@@ -15,7 +15,7 @@ class Versjon private constructor(
 
     companion object {
         val versjoner = mutableMapOf<Prosesstype, Versjon>()
-        val faktamap = mutableMapOf<Faktatype, Versjon>()
+        val faktamap = mutableMapOf<Faktaversjon, Versjon>()
         fun siste(faktatype: Faktatype): Faktaversjon {
             TODO("Skal nok fases ut")
             /*return versjoner.keys.filter { it.faktatype.id == faktatype.id }.maxByOrNull { it.versjon }
@@ -23,15 +23,17 @@ class Versjon private constructor(
         }
 
         fun id(prosesstype: Prosesstype) =
-            versjoner[prosesstype] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $prosesstype")
-        fun id(faktatype: Faktatype) =
-            faktamap[faktatype] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $faktatype")
+            // TODO: Lag en riktig comparsion
+            versjoner.values.first() ?: throw IllegalArgumentException("Det finnes ingen versjon med id $prosesstype")
+
+        fun id(faktaversjon: Faktaversjon) =
+            faktamap[faktaversjon] ?: throw IllegalArgumentException("Det finnes ingen versjon med id $faktaversjon")
     }
 
     init {
         require(bygger.prosesstype() !in versjoner.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider" }
         versjoner[bygger.prosesstype()] = this
-        faktamap[bygger.prosesstype().faktatype] = this
+        faktamap[bygger.faktaversjon()] = this
     }
 
     fun fakta(
@@ -73,6 +75,7 @@ class Versjon private constructor(
         }
 
         internal fun prosesstype() = prosess.type
+        internal fun faktaversjon() = prototypeFakta.faktaversjon
         fun registrer() = Versjon(this)
     }
 }

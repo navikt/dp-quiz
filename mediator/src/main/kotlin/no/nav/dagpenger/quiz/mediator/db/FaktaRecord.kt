@@ -52,6 +52,13 @@ class FaktaRecord : FaktaRepository {
         }
     }
 
+    override fun ny(
+        fakta: Fakta,
+    ): Fakta {
+        OpprettNyFaktaVisitor(fakta)
+        return fakta
+    }
+
     override fun eksisterer(uuid: UUID): Boolean {
         val query = queryOf(
             //language=PostgreSQL
@@ -81,14 +88,14 @@ class FaktaRecord : FaktaRepository {
             session.run(
                 queryOf(
                     //language=PostgreSQL
-                    "SELECT fakta.person_id, versjon.navn , versjon.versjon_id FROM fakta JOIN faktaversjon AS versjon ON (versjon.id = soknad.versjon_id) WHERE uuid = ?",
+                    "SELECT fakta.person_id, versjon.navn , versjon.versjon_id FROM fakta JOIN faktaversjon AS versjon ON (versjon.id = fakta.versjon_id) WHERE uuid = ?",
                     uuid,
                 ).map { row ->
                     SoknadRad(UUID.fromString(row.string(1)), row.string(2), row.int(3))
                 }.asSingle,
             )
-        } ?: throw IllegalArgumentException("Kan ikke hente en søknad som ikke finnes, uuid: $uuid")
-        val fakta = Versjon.id(DaoProsess(rad.navn))
+        } ?: throw IllegalArgumentException("Kan ikke hente fakta som ikke finnes, uuid: $uuid")
+        val fakta = Versjon.id(Faktaversjon(DaoProsess(rad.navn), rad.versjonId))
             .fakta(personRecord.hentPerson(rad.personId), uuid)
 
         svarList(uuid).onEach { row ->
@@ -480,10 +487,10 @@ class FaktaRecord : FaktaRepository {
                    faktum_verdi.desimaltall
             FROM faktum_verdi,
                  faktum,
-                 soknad
+                 fakta 
             WHERE faktum_verdi.faktum_id = faktum.id
-              AND faktum_verdi.soknad_id = soknad.id
-              AND soknad.uuid = ?
+              AND faktum_verdi.soknad_id = fakta.id
+              AND fakta.uuid = ?
               AND faktum.root_id = ?
               AND faktum_verdi.indeks = ?
             """.trimMargin(),

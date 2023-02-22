@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
 
@@ -20,7 +20,7 @@ class InnsendingMetadataStrategi : MetadataStrategi {
     override fun metadata(prosess: Prosess) =
         Metadata("GENERELL_INNSENDING", prosess.innsendingSvar())
 
-    private class HenvendelseType(prosess: Prosess) : UtredningsprosessVisitor {
+    private class HenvendelseType(prosess: Prosess) : ProsessVisitor {
         var hva: String? = null
 
         init {
@@ -39,7 +39,7 @@ class InnsendingMetadataStrategi : MetadataStrategi {
             svar: R,
             besvartAv: String?,
             gyldigeValg: GyldigeValg?,
-            landGrupper: LandGrupper?
+            landGrupper: LandGrupper?,
         ) {
             super.visitMedSvar(
                 faktum,
@@ -53,7 +53,7 @@ class InnsendingMetadataStrategi : MetadataStrategi {
                 svar,
                 besvartAv,
                 gyldigeValg,
-                landGrupper
+                landGrupper,
             )
             if (id != GenerellInnsending.`hvorfor sender du inn dokumentasjon`.toString()) return
             hva = (svar as Envalg).single()

@@ -36,11 +36,12 @@ import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.SammensattSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
-import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import java.io.File
+import java.util.UUID
 
 class SubsumsjonsGraf(prosess: Prosess) :
-    UtredningsprosessVisitor {
+    ProsessVisitor {
 
     var index = 0
     private var currentKanttype = OPPFYLT
@@ -67,7 +68,7 @@ class SubsumsjonsGraf(prosess: Prosess) :
         rotGraf.toGraphviz().scale(5.0).render(Format.PNG).toFile(File(filnavn))
     }
 
-    override fun preVisit(prosess: Prosess) {
+    override fun preVisit(prosess: Prosess, uuid: UUID) {
         noder.add(prosess.rootSubsumsjon)
     }
 
@@ -97,10 +98,15 @@ class SubsumsjonsGraf(prosess: Prosess) :
 
             val tilNode = if (fakta.any { faktum -> faktum.harRolle(Rolle.manuell) }) {
                 node(subsumsjon.navn).with(RED, RED.font())
-            } else node(subsumsjon.navn)
+            } else {
+                node(subsumsjon.navn)
+            }
 
-            if (noder.first() is SammensattSubsumsjon) sammensattTilEnkel(tilNode)
-            else enkelTilEnkel(tilNode)
+            if (noder.first() is SammensattSubsumsjon) {
+                sammensattTilEnkel(tilNode)
+            } else {
+                enkelTilEnkel(tilNode)
+            }
         }
         noder.add(0, subsumsjon)
     }
@@ -110,9 +116,9 @@ class SubsumsjonsGraf(prosess: Prosess) :
             node(noder.first().navn).link(
                 between(
                     port(kantRetning()),
-                    tilNode
-                ).withUtfallAttrs()
-            )
+                    tilNode,
+                ).withUtfallAttrs(),
+            ),
         )
     }
 
@@ -121,9 +127,9 @@ class SubsumsjonsGraf(prosess: Prosess) :
             node(sammensattAnker.first()).link(
                 between(
                     port(kantRetning()),
-                    tilNode
-                ).withUtfallAttrs().with(attr("ltail", "cluster_${noder.first().navn}"))
-            )
+                    tilNode,
+                ).withUtfallAttrs().with(attr("ltail", "cluster_${noder.first().navn}")),
+            ),
         )
     }
 
@@ -203,9 +209,9 @@ class SubsumsjonsGraf(prosess: Prosess) :
             node(parent.navn).link(
                 between(
                     port(kantRetning()),
-                    node("utfall$index").withUtfallAttrs()
-                ).withUtfallAttrs()
-            )
+                    node("utfall$index").withUtfallAttrs(),
+                ).withUtfallAttrs(),
+            ),
         )
     }
 
@@ -214,9 +220,9 @@ class SubsumsjonsGraf(prosess: Prosess) :
             node(sammensattAnker.first()).link(
                 between(
                     port(kantRetning()),
-                    node("utfall$index").withUtfallAttrs()
-                ).withUtfallAttrs().with(attr("ltail", "cluster_${parent.navn}"))
-            )
+                    node("utfall$index").withUtfallAttrs(),
+                ).withUtfallAttrs().with(attr("ltail", "cluster_${parent.navn}")),
+            ),
         )
     }
 
@@ -269,9 +275,9 @@ class SubsumsjonsGraf(prosess: Prosess) :
             node(noder.first().navn).link(
                 between(
                     port(kantRetning()),
-                    node(sammensattAnker.first())
-                ).withUtfallAttrs().with(attr("lhead", "cluster_$tilCluster"), attr("minlen", 2))
-            )
+                    node(sammensattAnker.first()),
+                ).withUtfallAttrs().with(attr("lhead", "cluster_$tilCluster"), attr("minlen", 2)),
+            ),
         )
     }
 
@@ -280,13 +286,13 @@ class SubsumsjonsGraf(prosess: Prosess) :
             node(sammensattAnker[1]).link(
                 between(
                     port(kantRetning()),
-                    node(sammensattAnker.first())
+                    node(sammensattAnker.first()),
                 ).withUtfallAttrs().with(
                     attr("ltail", "cluster_${noder.first().navn}"),
                     attr("lhead", "cluster_$tilCluster"),
-                    attr("minlen", 3)
-                )
-            )
+                    attr("minlen", 3),
+                ),
+            ),
         )
     }
 

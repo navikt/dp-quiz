@@ -17,11 +17,11 @@ import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.putR
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
 
-class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: Int = 0) : UtredningsprosessVisitor {
+class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: Int = 0) : ProsessVisitor {
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
@@ -33,23 +33,32 @@ class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: 
     private var rootId = 0
 
     init {
+        prosess.accept(this)
         prosess.fakta.accept(this)
-        prosess.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(prosess.rootSubsumsjon).accept(this)
+        prosess.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(prosess.rootSubsumsjon)
+            .accept(this)
     }
+
     fun resultat() = root
+
+    override fun preVisit(prosess: Prosess, uuid: UUID) {
+        root.put("søknad_uuid", "$uuid")
+    }
 
     override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
         root.put("@event_name", "faktum_svar")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("@behovId", "${UUID.randomUUID()}")
-        root.put("søknad_uuid", "$uuid")
+        root.put("fakta_uuid", "$uuid")
         root.put("seksjon_navn", seksjonNavn)
         root.set<ArrayNode>("fakta", faktaNode)
         root.set<ArrayNode>("@behov", behovNode)
         root.set<ArrayNode>("identer", identerNode)
-
-        TODO("Skal bli prosessversjon")
+        // TODO("Skal bli prosessversjon")
+        faktumNavBehov = object : FaktumNavBehov(emptyMap()) {
+            override fun get(key: Int) = "test"
+        }
         // faktumNavBehov = Versjon.id(faktaversjon).faktumNavBehov ?: throw IllegalArgumentException("Finner ikke oversettelse til navbehov, versjon: $faktaversjon")
     }
 

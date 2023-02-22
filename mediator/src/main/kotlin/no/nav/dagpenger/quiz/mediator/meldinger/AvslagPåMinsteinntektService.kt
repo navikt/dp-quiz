@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 internal class AvslagPåMinsteinntektService(
     private val prosessRepository: ProsessRepository,
     rapidsConnection: RapidsConnection,
-    private val prosessfaktaVersjon: Prosesstype = Prosesser.AvslagPåMinsteinntekt,
+    private val prosesstype: Prosesstype = Prosesser.AvslagPåMinsteinntekt,
 ) : River.PacketListener {
     private companion object {
         private val log = KotlinLogging.logger {}
@@ -49,12 +49,12 @@ internal class AvslagPåMinsteinntektService(
         val journalpostId = packet["journalpostId"].asText()
         log.info { "Mottok søknad med id $søknadsId " }
 
-        prosessRepository.ny(identer, prosessfaktaVersjon)
-            .also { søknadprosess ->
+        prosessRepository.ny(identer, prosesstype)
+            .also { prosess ->
                 // Arena-fagsakId for at arena-sink skal kunne lage vedtak på riktig sak
                 val fagsakIdNode = packet["fagsakId"]
                 if (!fagsakIdNode.isMissingOrNull()) {
-                    søknadprosess.dokument(arenaFagsakId).besvar(
+                    prosess.dokument(arenaFagsakId).besvar(
                         Dokument(
                             lastOppTidsstempel = LocalDateTime.now(),
                             urn = "urn:fagsakid:${fagsakIdNode.asText()}",
@@ -62,20 +62,20 @@ internal class AvslagPåMinsteinntektService(
                     )
                 }
                 // Litt stygt, men så lenge vi leser fra innsendt søknad, så må vi lagre id-en for å hente ut data fra søknaden.
-                søknadprosess.dokument(innsendtSøknadsId).besvar(
+                prosess.dokument(innsendtSøknadsId).besvar(
                     Dokument(
                         lastOppTidsstempel = LocalDateTime.now(),
                         urn = "urn:soknadid:$søknadsId",
                     ),
                 )
 
-                prosessRepository.lagre(søknadprosess)
-                log.info { "Opprettet ny søknadprosess ${søknadprosess.fakta.uuid} på grunn av journalføring $journalpostId for søknad $søknadsId" }
+                prosessRepository.lagre(prosess)
+                log.info { "Opprettet ny prosess ${prosess.fakta.uuid} på grunn av journalføring $journalpostId for søknad $søknadsId" }
 
-                søknadprosess.nesteSeksjoner()
+                prosess.nesteSeksjoner()
                     .forEach { seksjon ->
                         context.publish(seksjon.somSpørsmål().also { sikkerlogg.debug { it } })
-                        log.info { "Send seksjon ${seksjon.navn} for søknad ${søknadprosess.fakta.uuid}" }
+                        log.info { "Send seksjon ${seksjon.navn} for søknad ${prosess.fakta.uuid}" }
                     }
             }
     }

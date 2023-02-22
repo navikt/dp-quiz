@@ -17,12 +17,12 @@ import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.putR
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
 
 class ManuellBehandlingJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: Int = 0) :
-    UtredningsprosessVisitor {
+    ProsessVisitor {
 
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()

@@ -23,7 +23,7 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
-import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -185,7 +185,7 @@ class GeneratorFaktumTest {
         prosess: Prosess,
         private val generatorer: MutableSet<GeneratorFaktum> = mutableSetOf(),
     ) :
-        UtredningsprosessVisitor,
+        ProsessVisitor,
         MutableSet<GeneratorFaktum> by generatorer {
 
         init {

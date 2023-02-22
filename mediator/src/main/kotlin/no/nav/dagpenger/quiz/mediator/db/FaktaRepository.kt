@@ -15,4 +15,5 @@ interface FaktaRepository {
     fun slett(uuid: UUID): Boolean
     fun migrer(uuid: UUID, tilVersjon: Faktaversjon? = null): Faktaversjon
     fun eksisterer(uuid: UUID): Boolean
+    fun ny(fakta: Fakta): Fakta
 }

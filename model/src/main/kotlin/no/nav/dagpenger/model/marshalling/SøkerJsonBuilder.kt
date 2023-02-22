@@ -28,12 +28,12 @@ import no.nav.dagpenger.model.seksjon.Seksjon.Companion.brukerSeksjoner
 import no.nav.dagpenger.model.subsumsjon.SannsynliggjøringsSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
-import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
 
-class SøkerJsonBuilder(private val prosess: Prosess) : UtredningsprosessVisitor {
+class SøkerJsonBuilder(private val prosess: Prosess) : ProsessVisitor {
     companion object {
         private val mapper = jacksonObjectMapper()
         private val skalIkkeBesvaresAvSøker = ReadOnlyStrategy { it.harIkkeRolle(Rolle.søker) }
@@ -78,7 +78,7 @@ class SøkerJsonBuilder(private val prosess: Prosess) : UtredningsprosessVisitor
         root.set<ArrayNode>("seksjoner", seksjoner)
     }
 
-    override fun postVisit(prosess: Prosess) {
+    override fun postVisit(prosess: Prosess, uuid: UUID) {
         root.put("antallSeksjoner", seksjonerTotalt.brukerSeksjoner().size)
     }
 

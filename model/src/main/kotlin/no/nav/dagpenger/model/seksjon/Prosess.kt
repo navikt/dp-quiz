@@ -10,7 +10,7 @@ import no.nav.dagpenger.model.faktum.TypedFaktum
 import no.nav.dagpenger.model.seksjon.Seksjon.Companion.saksbehandlerSeksjoner
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
-import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import java.util.UUID
 
 interface Prosesstype {
@@ -70,18 +70,18 @@ class Prosess private constructor(
             listOf(
                 seksjoner.firstOrNull { nesteFakta in it } ?: throw NoSuchElementException(
                     "Fant ikke seksjon med fakta:\n ${
-                    nesteFakta.map { "Id=${it.id}, navn='${it.navn}'" }
+                        nesteFakta.map { "Id=${it.id}, navn='${it.navn}'" }
                     }",
                 ),
             )
         }
 
-    fun accept(visitor: UtredningsprosessVisitor) {
-        visitor.preVisit(this)
+    fun accept(visitor: ProsessVisitor) {
+        visitor.preVisit(this, uuid)
         fakta.accept(visitor)
         seksjoner.forEach { it.accept(visitor) }
         rootSubsumsjon.accept(visitor)
-        visitor.postVisit(this)
+        visitor.postVisit(this, uuid)
     }
 
     internal fun faktum(id: FaktumId) = fakta.id(id)

@@ -7,7 +7,7 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.visitor.UtredningsprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 
 class Seksjon private constructor(
     val navn: String,
@@ -79,7 +79,7 @@ class Seksjon private constructor(
         }
     }
 
-    fun accept(visitor: UtredningsprosessVisitor) {
+    fun accept(visitor: ProsessVisitor) {
         visitor.preVisit(this, rolle, seksjonFakta, indeks)
         seksjonFakta.sorted().forEach { it.accept(visitor) }
         visitor.preVisitAvhengerAv(this, avhengerAvFakta)
