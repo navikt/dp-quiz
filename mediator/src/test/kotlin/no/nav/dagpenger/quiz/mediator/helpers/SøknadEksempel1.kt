@@ -24,15 +24,20 @@ import no.nav.dagpenger.model.seksjon.Versjon
 
 enum class Testfakta(override val id: String) : Faktatype {
     Test("test-r"),
+    SøknadEksempel1("SøknadEksempel1"),
 }
 
 enum class Testprosess(override val navn: String, override val faktatype: Faktatype) : Prosesstype {
     Test("Test", Testfakta.Test),
+    SøknadEksempel1("SøknadEksempel1", Testfakta.SøknadEksempel1),
 }
 
 internal object SøknadEksempel1 {
-    val faktaversjon = Faktaversjon(Testfakta.Test, 888)
-    internal val prototypeFakta1 = Fakta(
+    val prosesstype = Testprosess.SøknadEksempel1
+    val faktatype = Testfakta.SøknadEksempel1
+    val faktaversjon = Faktaversjon(faktatype, 888)
+
+    internal val prototypeFakta = Fakta(
         faktaversjon,
         boolsk faktum "f1" id 1 avhengerAv 11,
         dato faktum "f2" id 2,
@@ -63,17 +68,23 @@ internal object SøknadEksempel1 {
         land faktum "f25" id 25,
         desimaltall faktum "f26" id 26,
     )
-    private val webPrototypeSøknad = Prosess(
-        Testprosess.Test,
+
+    private val prosess = Prosess(
+        prosesstype,
         Seksjon(
             "seksjon",
             Rolle.søker,
-            *(prototypeFakta1.map { it }.toTypedArray()),
+            *(prototypeFakta.map { it }.toTypedArray()),
         ),
     )
-    val v = Versjon.Bygger(
-        prototypeFakta1,
-        prototypeFakta1 boolsk 1 er true,
-        webPrototypeSøknad,
-    ).registrer()
+
+    private val prototypeSubsumsjon = prototypeFakta boolsk 1 er true
+
+    val versjon = Versjon.Bygger(
+        prototypeFakta,
+        prototypeSubsumsjon,
+        prosess,
+    ).registrer().also {
+        println("##### Versjon registrert med prosesstype $prosesstype #####")
+    }
 }

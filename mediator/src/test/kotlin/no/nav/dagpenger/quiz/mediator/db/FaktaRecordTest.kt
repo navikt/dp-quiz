@@ -25,7 +25,6 @@ import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel2
-import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -45,6 +44,7 @@ internal class FaktaRecordTest {
     private lateinit var originalFakta: Fakta
     private lateinit var rehydrertFakta: Fakta
     private lateinit var faktaRecord: FaktaRecord
+    private val prosesstype = SøknadEksempel1.prosesstype
 
     @Test
     fun `ny søknadprosess`() {
@@ -53,7 +53,7 @@ internal class FaktaRecordTest {
 
             assertRecordCount(1, "fakta")
             assertRecordCount(expectedFaktaCount, "faktum_verdi")
-            FaktaRecord().ny(UNG_PERSON_FNR_2018, Testprosess.Test)
+            FaktaRecord().ny(UNG_PERSON_FNR_2018, prosesstype)
             assertRecordCount(2, "fakta")
             assertRecordCount(expectedFaktaCount * 2, "faktum_verdi")
             lagreHentOgSammenlign()
@@ -120,10 +120,10 @@ internal class FaktaRecordTest {
     @Test
     @Disabled("Sletting av besvarer for hver søknad er tungt, det må flyttes til en cronjob")
     fun `Skal kun slette besvarer hvis den ikke refererer til andre søknader`() = Postgres.withMigratedDb {
-        FaktumTable(SøknadEksempel1.prototypeFakta1)
+        FaktumTable(SøknadEksempel1.prototypeFakta)
         faktaRecord = FaktaRecord()
-        val søknadProsess1 = fakta(Testprosess.Test)
-        val søknadProsess2 = fakta(Testprosess.Test)
+        val søknadProsess1 = fakta(prosesstype)
+        val søknadProsess2 = fakta(prosesstype)
         val besvarer = "123"
         søknadProsess1.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
         faktaRecord.lagre(søknadProsess1)
@@ -350,12 +350,12 @@ internal class FaktaRecordTest {
     fun `Skal ikke kunne lagre en søknad med samme uuid flere ganger`() {
         Postgres.withMigratedDb {
             val søknadUUId = UUID.randomUUID()
-            FaktumTable(SøknadEksempel1.prototypeFakta1)
+            FaktumTable(SøknadEksempel1.prototypeFakta)
             faktaRecord = FaktaRecord()
             originalFakta =
-                fakta(Testprosess.Test, søknadUUId)
+                fakta(prosesstype, søknadUUId)
             originalFakta =
-                fakta(Testprosess.Test, søknadUUId)
+                fakta(prosesstype, søknadUUId)
 
             originalFakta.dato(2).besvar(LocalDate.now())
 
@@ -379,7 +379,7 @@ internal class FaktaRecordTest {
 
             originalFakta.desimaltall("f26").besvar(9.9)
 
-            SøknadEksempel2.v2
+            SøknadEksempel2.versjon
             FaktumTable(SøknadEksempel2.prototypeFakta)
             val nyProsessVersjon = faktaRecord.migrer(soknadUUID, SøknadEksempel2.faktaversjon)
 
@@ -425,9 +425,9 @@ internal class FaktaRecordTest {
     }
 
     private fun byggOriginalFakta() {
-        FaktumTable(SøknadEksempel1.prototypeFakta1)
+        FaktumTable(SøknadEksempel1.prototypeFakta)
         faktaRecord = FaktaRecord()
-        originalFakta = fakta(Testprosess.Test)
+        originalFakta = fakta(prosesstype)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

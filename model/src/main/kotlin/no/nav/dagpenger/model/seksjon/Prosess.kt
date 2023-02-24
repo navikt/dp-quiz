@@ -71,7 +71,7 @@ class Prosess private constructor(
             listOf(
                 seksjoner.firstOrNull { nesteFakta in it } ?: throw NoSuchElementException(
                     "Fant ikke seksjon med fakta:\n ${
-                        nesteFakta.map { "Id=${it.id}, navn='${it.navn}'" }
+                    nesteFakta.map { "Id=${it.id}, navn='${it.navn}'" }
                     }",
                 ),
             )

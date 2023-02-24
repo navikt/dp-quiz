@@ -1,6 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
-import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
+import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -21,7 +21,7 @@ internal class OpprettNyFaktaVisitorTest {
         private val søknadPersistance = ProsessRepositoryFake()
 
         init {
-            AvslagPåMinsteinntektService(søknadPersistance, testRapid, Testprosess.Test)
+            AvslagPåMinsteinntektService(søknadPersistance, testRapid, SøknadEksempel.prosesstype)
         }
     }
 

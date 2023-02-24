@@ -20,7 +20,7 @@ internal class FaktumTableTest {
     @Test
     fun `Bygg faktum tabell`() {
         Postgres.withMigratedDb {
-            FaktumTable(SøknadEksempel1.prototypeFakta1)
+            FaktumTable(SøknadEksempel1.prototypeFakta)
             assertRecordCount(expectedFaktumRecordCount, "faktum")
             assertRecordCount(6, "utledet_faktum")
             assertRecordCount(3, "template_faktum")
@@ -28,7 +28,7 @@ internal class FaktumTableTest {
             assertRecordCount(2, "faktum_gyldige_valg")
             assertGyldigeValg(Envalg("f20.envalg1", "f20.envalg2"), 20)
             assertGyldigeValg(Flervalg("f21.flervalg1", "f21.flervalg2", "f21.flervalg3"), 21)
-            FaktumTable(SøknadEksempel1.prototypeFakta1)
+            FaktumTable(SøknadEksempel1.prototypeFakta)
             assertRecordCount(expectedFaktumRecordCount, "faktum")
         }
     }

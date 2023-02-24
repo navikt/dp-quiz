@@ -6,7 +6,7 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
-import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
+import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -32,7 +32,7 @@ internal class MediatorTest {
             AvslagPåMinsteinntektService(
                 grupperer,
                 testRapid,
-                Testprosess.Test,
+                SøknadEksempel.prosesstype,
             )
             FaktumSvarService(grupperer, resultatPersistence, testRapid)
         }

@@ -201,10 +201,10 @@ abstract class FaktaJsonBuilder : ProsessVisitor {
         if (ignoreSubsumsjon != null) return
         subsumsjonNoder.removeAt(0).also {
             if (godkjenning.all { it.erBesvart() } && when (action) {
-                    Action.JaAction -> childResultat == true
-                    Action.NeiAction -> childResultat == false
-                    Action.UansettAction -> true
-                }
+                Action.JaAction -> childResultat == true
+                Action.NeiAction -> childResultat == false
+                Action.UansettAction -> true
+            }
             ) {
                 it.addObject().also { subsumsjonNode ->
                     subsumsjonNode.put("lokalt_resultat", godkjenning.all { it.svar() }) // TODO: Bytt ut med subsumsjon

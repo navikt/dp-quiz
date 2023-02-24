@@ -21,7 +21,8 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.seksjon.Versjon
 
 internal object SøknadEksempel2 {
-    val faktaversjon = Faktaversjon(Testfakta.Test, 889)
+    val prosesstype = SøknadEksempel1.prosesstype
+    val faktaversjon = Faktaversjon(SøknadEksempel1.faktatype, 889)
     internal val prototypeFakta by lazy {
         Fakta(
             faktaversjon,
@@ -56,19 +57,24 @@ internal object SøknadEksempel2 {
             envalg faktum "f28" med "valg1" med "valg2" id 28,
         )
     }
-    private val webPrototypeSøknad = Prosess(
-        Testprosess.Test,
+    private val prosess = Prosess(
+        prosesstype,
         Seksjon(
             "seksjon",
             Rolle.søker,
             *(prototypeFakta.map { it }.toTypedArray()),
         ),
     )
-    val v2 by lazy {
+
+    private val prototypeSubsumsjon = prototypeFakta boolsk 1 er true
+
+    val versjon by lazy {
         Versjon.Bygger(
             prototypeFakta,
-            prototypeFakta boolsk 1 er true,
-            webPrototypeSøknad,
-        ).registrer()
+            prototypeSubsumsjon,
+            prosess,
+        )
+    }.also {
+        println("##### Versjon registrert med prosesstype $prosesstype #####")
     }
 }
