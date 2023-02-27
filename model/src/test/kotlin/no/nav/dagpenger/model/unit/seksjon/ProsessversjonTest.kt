@@ -12,13 +12,14 @@ import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.UUID
 import kotlin.test.assertEquals
 
-internal class VersjonTest {
+internal class ProsessversjonTest {
     private lateinit var prosess: Prosess
 
     private companion object {
@@ -29,13 +30,20 @@ internal class VersjonTest {
             boolsk faktum "f17" id 17,
             boolsk faktum "f18" id 18,
         )
-        val prototypeSeksjon = Seksjon("seksjon", Rolle.søker, prototypeFakta id 15, prototypeFakta id 16, prototypeFakta id 17, prototypeFakta id 18)
+        val prototypeSeksjon = Seksjon(
+            "seksjon",
+            Rolle.søker,
+            prototypeFakta id 15,
+            prototypeFakta id 16,
+            prototypeFakta id 17,
+            prototypeFakta id 18,
+        )
         val prototypeProsess = Prosess(
             TestProsesser.Test,
             prototypeSeksjon,
         )
         val prototypeSubsumsjon = prototypeFakta heltall 15 er 6
-        val versjon = Versjon.Bygger(
+        val prosessversjon = Prosessversjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
             prototypeProsess,
@@ -44,8 +52,7 @@ internal class VersjonTest {
 
     @BeforeEach
     fun setup() {
-        val fakta = versjon.fakta(testPerson)
-        prosess = versjon.utredningsprosess(fakta)
+        prosess = prosessversjon.utredningsprosess(testPerson, UUID.randomUUID(), UUID.randomUUID())
     }
 
     @Test

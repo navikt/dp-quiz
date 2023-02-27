@@ -4,8 +4,9 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
+import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
@@ -46,8 +47,11 @@ internal object Innsending {
         )
 
     init {
-        Versjon.Bygger(
-            prototypeFakta = prototypeFakta,
+        FaktaVersjonDingseboms.Bygger(
+            prototypeFakta,
+        ).registrer()
+        Prosessversjon.Bygger(
+            faktatype = Prosessfakta.Innsending,
             prototypeSubsumsjon = regeltre,
             prosess = søknadsprosess,
             faktumNavBehov = faktumNavBehov,

@@ -7,6 +7,7 @@ import kotliquery.using
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
@@ -20,7 +21,6 @@ import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.mai
 import no.nav.dagpenger.model.helpers.mars
-import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.SøknadEksempel1
@@ -44,7 +44,7 @@ internal class FaktaRecordTest {
     private lateinit var originalFakta: Fakta
     private lateinit var rehydrertFakta: Fakta
     private lateinit var faktaRecord: FaktaRecord
-    private val prosesstype = SøknadEksempel1.prosesstype
+    private val faktaversjon = SøknadEksempel1.faktaversjon
 
     @Test
     fun `ny søknadprosess`() {
@@ -53,7 +53,7 @@ internal class FaktaRecordTest {
 
             assertRecordCount(1, "fakta")
             assertRecordCount(expectedFaktaCount, "faktum_verdi")
-            FaktaRecord().ny(UNG_PERSON_FNR_2018, prosesstype)
+            FaktaRecord().ny(UNG_PERSON_FNR_2018, faktaversjon)
             assertRecordCount(2, "fakta")
             assertRecordCount(expectedFaktaCount * 2, "faktum_verdi")
             lagreHentOgSammenlign()
@@ -122,8 +122,8 @@ internal class FaktaRecordTest {
     fun `Skal kun slette besvarer hvis den ikke refererer til andre søknader`() = Postgres.withMigratedDb {
         FaktumTable(SøknadEksempel1.prototypeFakta)
         faktaRecord = FaktaRecord()
-        val søknadProsess1 = fakta(prosesstype)
-        val søknadProsess2 = fakta(prosesstype)
+        val søknadProsess1 = fakta(faktaversjon)
+        val søknadProsess2 = fakta(faktaversjon)
         val besvarer = "123"
         søknadProsess1.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
         faktaRecord.lagre(søknadProsess1)
@@ -353,9 +353,9 @@ internal class FaktaRecordTest {
             FaktumTable(SøknadEksempel1.prototypeFakta)
             faktaRecord = FaktaRecord()
             originalFakta =
-                fakta(prosesstype, søknadUUId)
+                fakta(faktaversjon, søknadUUId)
             originalFakta =
-                fakta(prosesstype, søknadUUId)
+                fakta(faktaversjon, søknadUUId)
 
             originalFakta.dato(2).besvar(LocalDate.now())
 
@@ -379,7 +379,7 @@ internal class FaktaRecordTest {
 
             originalFakta.desimaltall("f26").besvar(9.9)
 
-            SøknadEksempel2.versjon
+            SøknadEksempel2.prosessversjon
             FaktumTable(SøknadEksempel2.prototypeFakta)
             val nyProsessVersjon = faktaRecord.migrer(soknadUUID, SøknadEksempel2.faktaversjon)
 
@@ -409,11 +409,11 @@ internal class FaktaRecordTest {
         }
     }
 
-    private fun fakta(prosesstype: Prosesstype, søknadUUID: UUID): Fakta {
-        return faktaRecord.ny(AvhengigeFaktaTest.UNG_PERSON_FNR_2018, prosesstype, søknadUUID)
+    private fun fakta(faktaversjon: Faktaversjon, søknadUUID: UUID): Fakta {
+        return faktaRecord.ny(AvhengigeFaktaTest.UNG_PERSON_FNR_2018, faktaversjon, søknadUUID)
     }
 
-    private fun fakta(prosesstype: Prosesstype) = fakta(prosesstype, UUID.randomUUID())
+    private fun fakta(faktaversjon: Faktaversjon) = fakta(faktaversjon, UUID.randomUUID())
 
     private fun lagreHentOgSammenlign() {
         faktaRecord.lagre(originalFakta)
@@ -427,7 +427,7 @@ internal class FaktaRecordTest {
     private fun byggOriginalFakta() {
         FaktumTable(SøknadEksempel1.prototypeFakta)
         faktaRecord = FaktaRecord()
-        originalFakta = fakta(prosesstype)
+        originalFakta = fakta(faktaversjon)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {

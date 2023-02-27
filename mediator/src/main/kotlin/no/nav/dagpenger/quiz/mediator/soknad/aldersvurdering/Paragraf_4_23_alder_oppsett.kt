@@ -11,8 +11,9 @@ import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.før
+import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
@@ -84,8 +85,11 @@ internal object Paragraf_4_23_alder_oppsett {
     )
 
     init {
-        Versjon.Bygger(
-            prototypeFakta = prototypeFakta,
+        FaktaVersjonDingseboms.Bygger(
+            prototypeFakta,
+        ).registrer()
+        Prosessversjon.Bygger(
+            Prosessfakta.Paragraf_4_23_alder,
             prototypeSubsumsjon = Subsumsjoner.regeltre,
             prosess = prosess,
             faktumNavBehov = faktumNavBehov,

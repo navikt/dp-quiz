@@ -9,8 +9,8 @@ import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.godkjentAv
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
@@ -50,7 +50,7 @@ internal class SaksbehandlerSeksjonerTest {
         Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
         Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(4), prototypeFakta.boolsk(6)),
     )
-    private val søknadprosessTestBygger = Versjon.Bygger(
+    private val søknadprosessTestBygger = Prosessversjon.Bygger(
         prototypeFakta,
         prototypeSubsumsjon,
         prototypeProsess,

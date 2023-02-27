@@ -81,7 +81,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                     Paragraf_4_23_alder_oppsett.registrer { prototype ->
                         FaktumTable(prototype)
                     }
-                    VilkårsvurderingLøser(rapidsConnection, faktaRecord)
+                    VilkårsvurderingLøser(rapidsConnection, utredningsprosessRepository)
                 }
 
                 NyProsessBehovLøser(utredningsprosessRepository, rapidsConnection)

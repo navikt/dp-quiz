@@ -31,12 +31,13 @@ import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Prosesstype
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.helpers.Testfakta
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
+import no.nav.dagpenger.quiz.mediator.helpers.registrer
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -62,9 +63,9 @@ internal class AvhengigeFaktaTest {
                 boolsk faktum "f1" id 19 avhengerAv 2 og 13,
                 dato faktum "f2" id 2,
                 dato faktum "f3" id 13,
-            )
-            Versjon.Bygger(
-                prototypeFakta,
+            ).registrer()
+            Prosessversjon.Bygger(
+                Testfakta.Test,
                 prototypeFakta boolsk 19 er true,
                 Prosess(
                     Testprosess.Test,
@@ -104,9 +105,9 @@ internal class AvhengigeFaktaTest {
                 boolsk faktum "f3" id 3 avhengerAv 1,
                 boolsk faktum "f4" id 4 avhengerAv 5,
                 boolsk faktum "f5" id 5,
-            )
-            Versjon.Bygger(
-                prototypeFakta,
+            ).registrer()
+            Prosessversjon.Bygger(
+                Testfakta.Test,
                 prototypeFakta boolsk 1 er true,
                 Prosess(
                     Testprosess.Test,
@@ -148,9 +149,9 @@ internal class AvhengigeFaktaTest {
                 dato faktum "f3" id 3,
                 maks dato "f4" av 2 og 3 id 4,
                 boolsk faktum "f1" id 5 avhengerAv 4,
-            )
-            Versjon.Bygger(
-                prototypeFakta,
+            ).registrer()
+            Prosessversjon.Bygger(
+                Testfakta.Test,
                 prototypeFakta boolsk 1 er true,
                 Prosess(
                     Testprosess.Test,
@@ -200,9 +201,9 @@ internal class AvhengigeFaktaTest {
                 periode faktum "f13" id 13 avhengerAv 1,
                 tekst faktum "f14" id 14 avhengerAv 1,
                 land faktum "f15" id 15 avhengerAv 1,
-            )
-            Versjon.Bygger(
-                prototypeFakta,
+            ).registrer()
+            Prosessversjon.Bygger(
+                Testfakta.Test,
                 prototypeFakta boolsk 1 er true,
                 Prosess(
                     Testprosess.Test,

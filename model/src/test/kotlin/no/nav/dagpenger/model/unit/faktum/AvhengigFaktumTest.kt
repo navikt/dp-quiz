@@ -11,8 +11,8 @@ import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -61,7 +61,7 @@ internal class AvhengigFaktumTest {
             Seksjon("søknadsdato", Rolle.søker, fakta dato 4),
         )
         val søknadprosess =
-            Versjon.Bygger(
+            Prosessversjon.Bygger(
                 fakta,
                 TomSubsumsjon,
                 prototypeProsess,

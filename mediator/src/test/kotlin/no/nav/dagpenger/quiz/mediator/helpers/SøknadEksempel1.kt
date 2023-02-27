@@ -19,8 +19,8 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Prosesstype
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 
 enum class Testfakta(override val id: String) : Faktatype {
     Test("test-r"),
@@ -67,7 +67,7 @@ internal object SøknadEksempel1 {
         periode faktum "f24" id 24,
         land faktum "f25" id 25,
         desimaltall faktum "f26" id 26,
-    )
+    ).registrer()
 
     private val prosess = Prosess(
         prosesstype,
@@ -80,8 +80,8 @@ internal object SøknadEksempel1 {
 
     private val prototypeSubsumsjon = prototypeFakta boolsk 1 er true
 
-    val versjon = Versjon.Bygger(
-        prototypeFakta,
+    val prosessversjon = Prosessversjon.Bygger(
+        Testfakta.SøknadEksempel1,
         prototypeSubsumsjon,
         prosess,
     ).registrer().also {

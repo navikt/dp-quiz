@@ -1,6 +1,6 @@
 package no.nav.dagpenger.model.faktum
 
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 
 interface Faktatype {
     val id: String
@@ -16,7 +16,7 @@ class Faktaversjon(val faktatype: Faktatype, val versjon: Int) {
         )
     }
 
-    fun siste() = Versjon.siste(faktatype)
+    fun siste() = FaktaVersjonDingseboms.siste(faktatype)
 
     fun kanMigrereTil(tilVersjon: Faktaversjon): Boolean {
         require(tilVersjon.faktatype.id == faktatype.id) { "Kan ikke migrere til en annen prosesstype." }

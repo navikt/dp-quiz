@@ -19,8 +19,8 @@ import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.visitor.ProsessVisitor
@@ -31,7 +31,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class GeneratorFaktumTest {
-    private lateinit var søknadprosessTestBygger: Versjon.Bygger
+    private lateinit var søknadprosessTestBygger: Prosessversjon.Bygger
 
     @BeforeEach
     fun setup() {
@@ -64,7 +64,7 @@ class GeneratorFaktumTest {
                 faktaPrototype dato 4,
             ),
         )
-        søknadprosessTestBygger = Versjon.Bygger(
+        søknadprosessTestBygger = Prosessversjon.Bygger(
             faktaPrototype,
             prototypeSubsumsjon,
             prototypeProsess,
@@ -173,7 +173,7 @@ class GeneratorFaktumTest {
             *seksjoner,
         )
         val søknadprosessTestBygger =
-            Versjon.Bygger(
+            Prosessversjon.Bygger(
                 faktaPrototype,
                 prototypeSubsumsjon,
                 prototypeProsess,

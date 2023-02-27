@@ -23,7 +23,7 @@ internal class EgenNæringTest {
     @BeforeEach
     fun setup() {
         prosess = fakta.testSøknadprosess(
-            EgenNæring.regeltre(fakta),
+            subsumsjon = EgenNæring.regeltre(fakta),
         ) {
             EgenNæring.seksjon(this)
         }

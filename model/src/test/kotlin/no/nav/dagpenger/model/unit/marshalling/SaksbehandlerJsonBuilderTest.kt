@@ -17,8 +17,8 @@ import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -419,7 +419,7 @@ internal class SaksbehandlerJsonBuilderTest {
             rootSubsumsjon = prototypeSubsumsjon,
         )
 
-        return Versjon.Bygger(
+        return Prosessversjon.Bygger(
             prototypeFakta,
             prototypeSubsumsjon,
             prototypeProsess,

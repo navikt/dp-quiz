@@ -1,7 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
@@ -16,17 +16,17 @@ internal class ProsessfaktaMetadataStrategiTest {
 
     init {
         Dagpenger.registrer { prototypeSøknad ->
-            prosessDagpenger = Versjon.id(Prosesser.Søknad)
+            prosessDagpenger = Prosessversjon.id(Prosesser.Søknad)
                 .utredningsprosess(prototypeSøknad)
         }
 
         Innsending.registrer { prototypeSøknad ->
-            prosessInnsending = Versjon.id(Prosesser.Innsending)
+            prosessInnsending = Prosessversjon.id(Prosesser.Innsending)
                 .utredningsprosess(prototypeSøknad)
         }
 
         AvslagPåMinsteinntektOppsett.registrer { prototype ->
-            prosessAvslagPåMinsteinntekt = Versjon.id(Prosesser.AvslagPåMinsteinntekt)
+            prosessAvslagPåMinsteinntekt = Prosessversjon.id(Prosesser.AvslagPåMinsteinntekt)
                 .utredningsprosess(prototype)
         }
     }

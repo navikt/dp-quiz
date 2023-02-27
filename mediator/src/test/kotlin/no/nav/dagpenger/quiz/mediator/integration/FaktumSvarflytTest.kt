@@ -5,7 +5,7 @@ import io.mockk.mockk
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.MinimalSøknadsprosess
@@ -24,7 +24,7 @@ internal class DagpengerFaktumSvarflytTest : SøknadBesvarer() {
     private val dagpengerSøknadsprosess = MinimalSøknadsprosess(faktaversjon, Rolle.søker)
 
     private val faktaRepository = mockk<ProsessRepository>().also {
-        every { it.hent(any()) } returns Versjon.id(Testprosess.Test)
+        every { it.hent(any()) } returns Prosessversjon.id(Testprosess.Test)
             .utredningsprosess(dagpengerSøknadsprosess.fakta)
         every { it.lagre(any()) } returns true
     }
@@ -67,7 +67,7 @@ internal class AvslagPåMinsteinntektFaktumSvarflytTest : SøknadBesvarer() {
     private val dagpengerSøknadsprosess = MinimalSøknadsprosess(faktaversjon, Rolle.nav)
 
     private val faktaRepository = mockk<ProsessRepository>().also {
-        every { it.hent(any()) } returns Versjon.id(Testprosess.Test)
+        every { it.hent(any()) } returns Prosessversjon.id(Testprosess.Test)
             .utredningsprosess(dagpengerSøknadsprosess.fakta)
         every { it.lagre(any()) } returns true
     }

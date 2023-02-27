@@ -3,12 +3,9 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosesstype
-import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
+import no.nav.dagpenger.model.seksjon.Prosessversjon
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -22,7 +19,6 @@ import java.util.UUID.randomUUID
 import kotlin.test.assertTrue
 
 class VilkårsvurderingLøserTest {
-
     private lateinit var søknadsprosess: Prosess
     private lateinit var testRapid: TestRapid
     private val vilkårsvurderingIdSlot = slot<UUID>()
@@ -30,13 +26,12 @@ class VilkårsvurderingLøserTest {
     @BeforeEach
     fun setup() {
         Paragraf_4_23_alder_oppsett.registrer { prototypeSøknad ->
-            søknadsprosess = Versjon.id(Prosesser.Paragraf_4_23_alder)
+            søknadsprosess = Prosessversjon.id(Prosesser.Paragraf_4_23_alder)
                 .utredningsprosess(prototypeSøknad)
         }
-
-        val prosessPersistens = mockk<FaktaRepository>().also {
-            every { it.ny(any<Identer>(), any<Prosesstype>(), capture(vilkårsvurderingIdSlot)) } returns søknadsprosess.fakta
-            every { it.lagre(any() as Fakta) } returns true
+        val prosessPersistens = mockk<ProsessRepository>().also {
+            every { it.ny(any(), any(), capture(vilkårsvurderingIdSlot), any()) } returns søknadsprosess
+            every { it.lagre(any() as Prosess) } returns true
         }
 
         testRapid = TestRapid().also {

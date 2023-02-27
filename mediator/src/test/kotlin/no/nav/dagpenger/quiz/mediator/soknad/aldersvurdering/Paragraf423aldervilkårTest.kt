@@ -12,14 +12,14 @@ import java.time.LocalDateTime
 import java.util.UUID.randomUUID
 
 internal class Paragraf423aldervilkårTest {
-
     private val søknad = Paragraf_4_23_alder_oppsett.prototypeFakta
     private lateinit var aldersvurderingsprosess: Prosess
 
     @BeforeEach
     fun setup() {
         aldersvurderingsprosess = søknad.testSøknadprosess(
-            Paragraf_4_23_alder_oppsett.Subsumsjoner.regeltre
+            faktatype = Paragraf_4_23_alder_oppsett.VERSJON_ID.faktatype,
+            subsumsjon = Paragraf_4_23_alder_oppsett.Subsumsjoner.regeltre,
         ) {
             listOf(Paragraf_4_23_alder_oppsett.seksjon)
         }

@@ -13,8 +13,8 @@ import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
@@ -104,7 +104,7 @@ private val prototypeWebSøknad = Prosess(
         inntektSisteÅr,
     ),
 )
-private val søknadprosessTestBygger = Versjon.Bygger(
+private val søknadprosessTestBygger = Prosessversjon.Bygger(
     prototypeFakta,
     prototypeSubsumsjon,
     prototypeWebSøknad,

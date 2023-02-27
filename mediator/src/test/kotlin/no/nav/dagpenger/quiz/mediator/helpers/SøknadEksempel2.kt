@@ -17,8 +17,8 @@ import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 
 internal object SøknadEksempel2 {
     val prosesstype = SøknadEksempel1.prosesstype
@@ -55,7 +55,7 @@ internal object SøknadEksempel2 {
             heltall faktum "f26" id 26,
             desimaltall faktum "f27" id 27,
             envalg faktum "f28" med "valg1" med "valg2" id 28,
-        )
+        ).registrer()
     }
     private val prosess = Prosess(
         prosesstype,
@@ -68,9 +68,9 @@ internal object SøknadEksempel2 {
 
     private val prototypeSubsumsjon = prototypeFakta boolsk 1 er true
 
-    val versjon by lazy {
-        Versjon.Bygger(
-            prototypeFakta,
+    val prosessversjon by lazy {
+        Prosessversjon.Bygger(
+            SøknadEksempel1.faktatype,
             prototypeSubsumsjon,
             prosess,
         )

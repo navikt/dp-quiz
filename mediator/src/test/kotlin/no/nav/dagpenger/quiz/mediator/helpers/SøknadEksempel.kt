@@ -14,8 +14,8 @@ import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 
 internal object SøknadEksempel {
@@ -34,7 +34,7 @@ internal object SøknadEksempel {
         boolsk faktum "f8_bool" id 8,
         dokument faktum "innsendt søknadsid" id 17, // MottattSøknadService trenger dette faktumet
         dokument faktum "arena fagsakid" id 52, // MottattSøknadService trenger dette faktumet
-    )
+    ).registrer()
     private val prosess = Prosess(
         prosesstype,
         Seksjon(
@@ -91,8 +91,8 @@ internal object SøknadEksempel {
             17 to "InnsendtSøknadsId",
         ),
     )
-    val versjon = Versjon.Bygger(
-        prototypeFakta,
+    val prosessversjon = Prosessversjon.Bygger(
+        Testfakta.Test,
         prototypeSubsumsjon,
         prosess,
         faktumNavBehov,

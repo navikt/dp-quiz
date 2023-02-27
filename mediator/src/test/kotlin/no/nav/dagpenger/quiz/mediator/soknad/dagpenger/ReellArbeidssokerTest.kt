@@ -30,7 +30,7 @@ internal class ReellArbeidssokerTest {
     @BeforeEach
     fun setup() {
         fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *ReellArbeidssoker.fakta())
-        prosess = fakta.testSøknadprosess(ReellArbeidssoker.regeltre(fakta)) {
+        prosess = fakta.testSøknadprosess(subsumsjon = ReellArbeidssoker.regeltre(fakta)) {
             ReellArbeidssoker.seksjon(this)
         }
     }

@@ -28,7 +28,7 @@ internal class UtdanningTest {
 
     @BeforeEach
     fun setup() {
-        prosess = fakta.testSøknadprosess(Utdanning.regeltre(fakta)) {
+        prosess = fakta.testSøknadprosess(subsumsjon = Utdanning.regeltre(fakta)) {
             Utdanning.seksjon(this)
         }
 

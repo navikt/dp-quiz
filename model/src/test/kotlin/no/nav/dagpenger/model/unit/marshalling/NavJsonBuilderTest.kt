@@ -19,8 +19,8 @@ import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import java.util.UUID
 
 class NavJsonBuilderTest {
     @Test
@@ -99,13 +100,12 @@ class NavJsonBuilderTest {
                 9 to "f9Behov",
             ),
         )
-        val fakta = Versjon.Bygger(
-            prototypeFakta,
+        val prosess = Prosessversjon.Bygger(
+            testversjon.faktatype,
             prototypeSubsumsjon,
             prototypeProsess,
             faktumNavBehov,
-        ).registrer().fakta(testPerson)
-        val prosess = Versjon.id(TestProsesser.Test).utredningsprosess(fakta)
+        ).registrer().utredningsprosess(testPerson, UUID.randomUUID(), UUID.randomUUID())
 
         prosess.boolsk(1).besvar(true)
         prosess.dato(5).besvar(1.januar)

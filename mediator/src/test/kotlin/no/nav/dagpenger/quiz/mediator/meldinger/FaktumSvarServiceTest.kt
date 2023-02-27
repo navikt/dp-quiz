@@ -13,13 +13,14 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.helpers.Testfakta
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
+import no.nav.dagpenger.quiz.mediator.helpers.registrer
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -34,15 +35,15 @@ internal class FaktumSvarServiceTest {
     }
 
     companion object {
-        private val prosessVersjon = Faktaversjon(Testfakta.Test, -3000)
+        private val faktaversjon = Faktaversjon(Testfakta.Test, -3000)
         val prototypeFakta = Fakta(
-            prosessVersjon,
+            faktaversjon,
             heltall faktum "generator" id 10 genererer 11 og 12,
             dato faktum "fom" id 11,
             dato faktum "tom" id 12,
-        )
-        val versjon = Versjon.Bygger(
-            prototypeFakta,
+        ).registrer()
+        val prosessversjon = Prosessversjon.Bygger(
+            Testfakta.Test,
             prototypeFakta heltall 10 er 1 hvisOppfylt { prototypeFakta dato 11 etter (prototypeFakta dato 12) },
             Prosess(
                 Testprosess.Test,
@@ -56,7 +57,7 @@ internal class FaktumSvarServiceTest {
     }
 
     private val faktaRepository = mockk<ProsessRepository>().also {
-        every { it.hent(any()) } returns Versjon.id(Testprosess.Test).utredningsprosess(prototypeFakta)
+        every { it.hent(any()) } returns Prosessversjon.id(Testprosess.Test).utredningsprosess(prototypeFakta)
         every { it.lagre(any()) } returns true
     }
     private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)

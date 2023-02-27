@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DinSituasjon.`dagpenger søknadsdato`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DinSituasjon.`type arbeidstid`
@@ -17,7 +17,7 @@ internal class DagpengerMetadataStrategiTest {
 
     init {
         Dagpenger.registrer { prototypeSøknad ->
-            prosess = Versjon.id(Prosesser.Søknad)
+            prosess = Prosessversjon.id(Prosesser.Søknad)
                 .utredningsprosess(prototypeSøknad)
         }
     }

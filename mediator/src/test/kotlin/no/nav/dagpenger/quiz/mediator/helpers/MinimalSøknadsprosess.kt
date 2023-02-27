@@ -11,9 +11,10 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.utfylt
+import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 
@@ -62,12 +63,19 @@ internal class MinimalSøknadsprosess(private val faktaversjon: Faktaversjon, pr
             faktumTekst to "faktumTekst",
         ),
     )
-    private val versjon = Versjon.Bygger(
-        prototypeFakta = fakta,
-        prototypeSubsumsjon = regeltre,
-        prosess = søknadsprosess,
-        faktumNavBehov = faktumNavBehov,
-    ).registrer().also {
-        logger.info { "\n\n\nREGISTRERT versjon id $faktaversjon \n\n\n\n" }
+
+    init {
+        FaktaVersjonDingseboms.Bygger(
+            fakta,
+        ).registrer()
+
+        Prosessversjon.Bygger(
+            faktatype = faktaversjon.faktatype,
+            prototypeSubsumsjon = regeltre,
+            prosess = søknadsprosess,
+            faktumNavBehov = faktumNavBehov,
+        ).registrer().also {
+            logger.info { "\n\n\nREGISTRERT versjon id $faktaversjon \n\n\n\n" }
+        }
     }
 }

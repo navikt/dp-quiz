@@ -26,7 +26,7 @@ internal class DinSituasjonTest {
 
     @BeforeEach
     fun setup() {
-        prosess = søknad.testSøknadprosess(DinSituasjon.regeltre(søknad)) {
+        prosess = søknad.testSøknadprosess(subsumsjon = DinSituasjon.regeltre(søknad)) {
             DinSituasjon.seksjon(this)
         }
     }
@@ -45,7 +45,7 @@ internal class DinSituasjonTest {
                 alleFakta,
             ),
             "Ikke alle faktum er ikke definert i seksjon.\nMangler seksjon for faktum id: ${
-            alleFakta.toSet().minus(faktaISeksjoner.toSet())
+                alleFakta.toSet().minus(faktaISeksjoner.toSet())
             }",
         )
     }
@@ -461,7 +461,7 @@ internal class DinSituasjonTest {
     fun `Faktarekkefølge i seksjon`() {
         val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *DinSituasjon.fakta())
         val søknadprosess = fakta.testSøknadprosess(
-            DinSituasjon.regeltre(fakta),
+            subsumsjon = DinSituasjon.regeltre(fakta),
         ) {
             DinSituasjon.seksjon(this)
         }

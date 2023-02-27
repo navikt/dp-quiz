@@ -16,8 +16,8 @@ import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
@@ -26,8 +26,8 @@ import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.helpers.Testfakta
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
+import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.Seksjoner
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -124,8 +124,8 @@ class Graftest {
                 }
             }
         }
-        val søknadprosess = Versjon.Bygger(
-            prototypeFakta,
+        val søknadprosess = Prosessversjon.Bygger(
+            Testfakta.Test,
             prototypeSubsumsjon,
             prototypeWebSøknad,
         ).utredningsprosess(
@@ -139,8 +139,8 @@ class Graftest {
     @Test
     @Disabled
     fun `avslag`() {
-        val manglerInntekt = Versjon.Bygger(
-            AvslagPåMinsteinntektOppsett.prototypeFakta,
+        val manglerInntekt = Prosessversjon.Bygger(
+            Prosessfakta.AvslagPåMinsteinntekt,
             AvslagPåMinsteinntekt.regeltre,
             Seksjoner.prosess,
         )

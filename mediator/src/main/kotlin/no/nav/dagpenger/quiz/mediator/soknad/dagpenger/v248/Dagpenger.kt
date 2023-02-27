@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.uansett
@@ -83,8 +83,8 @@ internal object Dagpenger {
         )
 
     init {
-        Versjon.Bygger(
-            prototypeFakta = prototypeFakta,
+        Prosessversjon.Bygger(
+            faktatype = Prosessfakta.Dagpenger,
             prototypeSubsumsjon = regeltre,
             prosess = prosess,
             faktumNavBehov = faktumNavBehov,

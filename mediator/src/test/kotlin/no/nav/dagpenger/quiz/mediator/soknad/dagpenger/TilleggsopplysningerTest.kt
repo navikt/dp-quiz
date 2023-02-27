@@ -28,7 +28,7 @@ internal class TilleggsopplysningerTest {
 
     @BeforeEach
     fun setup() {
-        prosess = fakta.testSøknadprosess(Tilleggsopplysninger.regeltre(fakta)) {
+        prosess = fakta.testSøknadprosess(subsumsjon = Tilleggsopplysninger.regeltre(fakta)) {
             Tilleggsopplysninger.seksjon(this)
         }
         harTilleggsopplysninger = prosess.boolsk(Tilleggsopplysninger.`har tilleggsopplysninger`)

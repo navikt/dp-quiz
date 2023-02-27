@@ -23,7 +23,7 @@ internal class BostedTest {
     fun `Bostedsregel for Norge, Svalbard og Jan Mayen`() {
         val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = fakta.testSøknadprosess(
-            Bosted.regeltre(fakta),
+            subsumsjon = Bosted.regeltre(fakta),
         ) {
             Bosted.seksjon(this)
         }
@@ -39,7 +39,7 @@ internal class BostedTest {
     fun `Bostedsregel for EØS og Sveits ikke reist tilbake `() {
         val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = fakta.testSøknadprosess(
-            Bosted.regeltre(fakta),
+            subsumsjon = Bosted.regeltre(fakta),
         ) {
             Bosted.seksjon(this)
         }
@@ -63,7 +63,7 @@ internal class BostedTest {
     fun `Bostedsregel for EØS og Sveits og har reist tilbake til bostedslandet`() {
         val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = fakta.testSøknadprosess(
-            Bosted.regeltre(fakta),
+            subsumsjon = Bosted.regeltre(fakta),
         ) {
             Bosted.seksjon(this)
         }
@@ -96,7 +96,7 @@ internal class BostedTest {
     fun `Bostedsregel for Storbritannia`() {
         val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = fakta.testSøknadprosess(
-            Bosted.regeltre(fakta),
+            subsumsjon = Bosted.regeltre(fakta),
         ) {
             Bosted.seksjon(this)
         }
@@ -115,7 +115,7 @@ internal class BostedTest {
     fun `Bostedsregel for utenfor EØS`() {
         val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = fakta.testSøknadprosess(
-            Bosted.regeltre(fakta),
+            subsumsjon = Bosted.regeltre(fakta),
         ) {
             Bosted.seksjon(this)
         }
@@ -128,7 +128,7 @@ internal class BostedTest {
     fun `Faktarekkefølge i seksjon`() {
         val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *Bosted.fakta())
         val søknadprosess = fakta.testSøknadprosess(
-            Bosted.regeltre(fakta),
+            subsumsjon = Bosted.regeltre(fakta),
         ) {
             Bosted.seksjon(this)
         }

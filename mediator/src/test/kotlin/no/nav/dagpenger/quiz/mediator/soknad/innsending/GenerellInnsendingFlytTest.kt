@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -15,7 +15,7 @@ class GenerellInnsendingFlytTest {
 
     init {
         Innsending.registrer { prototypeSøknad ->
-            prosess = Versjon.id(Prosesser.Innsending)
+            prosess = Prosessversjon.id(Prosesser.Innsending)
                 .utredningsprosess(prototypeSøknad)
         }
     }
@@ -33,20 +33,20 @@ class GenerellInnsendingFlytTest {
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig for søker. Mangler svar på ${
-            prosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
+                prosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
             }",
         )
 
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
         assertTrue(
             prosess.erFerdig(),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
     }
@@ -64,20 +64,20 @@ class GenerellInnsendingFlytTest {
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig for søker. Mangler svar på ${
-            prosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
+                prosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
             }",
         )
 
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
         assertTrue(
             prosess.erFerdig(),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
     }
@@ -96,20 +96,20 @@ class GenerellInnsendingFlytTest {
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig for søker. Mangler svar på ${
-            prosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
+                prosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
             }",
         )
 
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
         assertTrue(
             prosess.erFerdig(),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
     }

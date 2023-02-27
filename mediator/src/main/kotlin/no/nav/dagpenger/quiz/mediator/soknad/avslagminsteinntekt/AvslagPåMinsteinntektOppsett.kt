@@ -13,7 +13,8 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.multiplikas
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt.regeltre
 
@@ -75,7 +76,6 @@ internal object AvslagPåMinsteinntektOppsett {
     const val jobbetUtenforNorgeManuell = 58
     const val hattLukkedeSakerSiste8Uker = 59
     const val hattLukkedeSakerSiste8UkerManuell = 60
-
     internal val prototypeFakta: Fakta
         get() = Fakta(
             VERSJON_ID,
@@ -129,7 +129,6 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Har hatt lukkede saker siste 8 uker" id hattLukkedeSakerSiste8Uker avhengerAv virkningsdato,
             boolsk faktum "Har hatt lukkede saker siste 8 uker manuell" id hattLukkedeSakerSiste8UkerManuell avhengerAv hattLukkedeSakerSiste8Uker,
         )
-
     private val faktumNavBehov =
         FaktumNavBehov(
             mapOf(
@@ -168,8 +167,12 @@ internal object AvslagPåMinsteinntektOppsett {
         )
 
     init {
-        Versjon.Bygger(
-            prototypeFakta = prototypeFakta,
+        FaktaVersjonDingseboms.Bygger(
+            prototypeFakta,
+        ).registrer()
+
+        Prosessversjon.Bygger(
+            faktatype = Prosessfakta.AvslagPåMinsteinntekt,
             prototypeSubsumsjon = regeltre,
             prosess = Seksjoner.prosess,
             faktumNavBehov = faktumNavBehov,

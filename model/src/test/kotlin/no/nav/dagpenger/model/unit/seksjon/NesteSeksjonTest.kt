@@ -8,8 +8,8 @@ import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -32,7 +32,7 @@ class NesteSeksjonTest {
             Seksjon("søker", Rolle.søker, prototypesøknad.boolsk(1)),
             rootSubsumsjon = prototypeSubsumsjon,
         )
-        val fakta = Versjon.Bygger(
+        val fakta = Prosessversjon.Bygger(
             prototypesøknad,
             prototypeSubsumsjon,
             prototypeProsess,
@@ -60,7 +60,7 @@ class NesteSeksjonTest {
             rootSubsumsjon = prototypeSubsumsjon,
         )
 
-        Versjon.Bygger(
+        Prosessversjon.Bygger(
             prototypesøknad,
             prototypeSubsumsjon,
             prototypeProsess,

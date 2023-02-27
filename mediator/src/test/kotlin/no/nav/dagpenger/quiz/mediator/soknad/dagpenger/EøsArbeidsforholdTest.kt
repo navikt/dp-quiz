@@ -32,7 +32,7 @@ internal class EøsArbeidsforholdTest {
     @BeforeEach
     fun setup() {
         prosess = søknad.testSøknadprosess(
-            EøsArbeidsforhold.regeltre(søknad),
+            subsumsjon = EøsArbeidsforhold.regeltre(søknad),
         ) {
             EøsArbeidsforhold.seksjon(søknad)
         }
@@ -95,7 +95,7 @@ internal class EøsArbeidsforholdTest {
             }
         }
 
-        val søknadprosessForEøsArbeidsforhold = søknad.testSøknadprosess(minimaltRegeltreForEøsArbeidsforhold) {
+        val søknadprosessForEøsArbeidsforhold = søknad.testSøknadprosess(subsumsjon = minimaltRegeltreForEøsArbeidsforhold) {
             EøsArbeidsforhold.seksjon(søknad) + DinSituasjon.seksjon(søknad)
         }
 
@@ -116,7 +116,7 @@ internal class EøsArbeidsforholdTest {
             }
         }
 
-        val søknadprosessForEøsArbeidsforhold = søknad.testSøknadprosess(minimaltRegeltreForEøsArbeidsforhold) {
+        val søknadprosessForEøsArbeidsforhold = søknad.testSøknadprosess(subsumsjon = minimaltRegeltreForEøsArbeidsforhold) {
             EøsArbeidsforhold.seksjon(søknad) + DinSituasjon.seksjon(søknad)
         }
 

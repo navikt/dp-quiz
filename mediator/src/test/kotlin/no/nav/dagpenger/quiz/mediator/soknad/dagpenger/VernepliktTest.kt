@@ -23,7 +23,7 @@ internal class VernepliktTest {
     @BeforeEach
     fun setup() {
         prosess = fakta.testSøknadprosess(
-            Verneplikt.regeltre(fakta),
+            subsumsjon = Verneplikt.regeltre(fakta),
         ) {
             Verneplikt.seksjon(this)
         }
