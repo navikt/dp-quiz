@@ -5,11 +5,11 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.TestProsesser
+import no.nav.dagpenger.model.helpers.testBygger
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.godkjentAv
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
@@ -18,15 +18,11 @@ import no.nav.dagpenger.model.subsumsjon.ikkeOppfyltGodkjentAv
 import no.nav.dagpenger.model.subsumsjon.oppfyltGodkjentAv
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class SaksbehandlerSeksjonerTest {
-    companion object {
-        internal val uuid = UUID.randomUUID()
-    }
 
     private val prototypeFakta = Fakta(
         testversjon,
@@ -49,12 +45,9 @@ internal class SaksbehandlerSeksjonerTest {
         Seksjon("søker", Rolle.søker, prototypeFakta.boolsk(1), prototypeFakta.boolsk(3), prototypeFakta.boolsk(5)),
         Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
         Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(4), prototypeFakta.boolsk(6)),
+        rootSubsumsjon = prototypeSubsumsjon
     )
-    private val søknadprosessTestBygger = Prosessversjon.Bygger(
-        prototypeFakta,
-        prototypeSubsumsjon,
-        prototypeProsess,
-    )
+
     private lateinit var seksjoner: Prosess
     private lateinit var f1: Faktum<Boolean>
     private lateinit var f3: Faktum<Boolean>
@@ -65,7 +58,7 @@ internal class SaksbehandlerSeksjonerTest {
 
     @BeforeEach
     internal fun setup() {
-        seksjoner = søknadprosessTestBygger.utredningsprosess(testPerson, uuid)
+        seksjoner = prototypeProsess.testBygger(testPerson)
         f1 = seksjoner.boolsk(1)
         f3 = seksjoner.boolsk(3)
         f5 = seksjoner.boolsk(5)

@@ -13,7 +13,6 @@ import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.ikkeFør
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
@@ -82,8 +81,9 @@ private val prototypeSubsumsjon = "inngangsvilkår".alle(
         ønsketdato ikkeFør sisteDagMedLønn,
     )
 }
-private val prototypeWebSøknad = Prosess(
+private fun prosess() = Prosess(
     TestProsesser.Test,
+    prototypeFakta,
     Seksjon(
         "seksjon1",
         Rolle.søker,
@@ -103,15 +103,11 @@ private val prototypeWebSøknad = Prosess(
         inntektSiste3år,
         inntektSisteÅr,
     ),
-)
-private val søknadprosessTestBygger = Prosessversjon.Bygger(
-    prototypeFakta,
-    prototypeSubsumsjon,
-    prototypeWebSøknad,
-)
+    rootSubsumsjon = prototypeSubsumsjon
+).testBygger(testPerson)
 
 /* ktlint-disable parameter-list-wrapping */
-internal fun eksempelSøknad() = søknadprosessTestBygger.utredningsprosess(testPerson).also { søknadprosess ->
+internal fun eksempelSøknad() = prosess().also { søknadprosess ->
     bursdag67 = søknadprosess.dato(1) as GrunnleggendeFaktum<LocalDate>
     søknadsdato = søknadprosess.dato(2) as GrunnleggendeFaktum<LocalDate>
     ønsketdato = søknadprosess.dato(3) as GrunnleggendeFaktum<LocalDate>

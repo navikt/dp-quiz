@@ -10,14 +10,12 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.NyttEksempel
 import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -393,36 +391,28 @@ internal class SaksbehandlerJsonBuilderTest {
         assertEquals(expected, json["fakta"].size())
     }
 
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess {
-        val prototypeProsess = Prosess(
-            TestProsesser.Test,
-            prototypeFakta,
-            Seksjon(
-                "søker",
-                Rolle.søker,
-                prototypeFakta.boolsk(1),
-                prototypeFakta.boolsk(3),
-                prototypeFakta.boolsk(5),
-                prototypeFakta.boolsk(6),
-                prototypeFakta.boolsk(7),
-            ),
-            Seksjon(
-                "Genereres",
-                Rolle.søker,
-                prototypeFakta.boolsk(13),
-                prototypeFakta.boolsk(14),
-            ),
-            Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
-            Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeFakta.boolsk(4)),
-            Seksjon("saksbehandler5", Rolle.saksbehandler, prototypeFakta.boolsk(11)),
-            Seksjon("saksbehandler67", Rolle.saksbehandler, prototypeFakta.boolsk(12)),
-            rootSubsumsjon = prototypeSubsumsjon,
-        )
-
-        return Prosessversjon.Bygger(
-            prototypeFakta,
-            prototypeSubsumsjon,
-            prototypeProsess,
-        ).utredningsprosess(testPerson)
-    }
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess = Prosess(
+        TestProsesser.Test,
+        prototypeFakta,
+        Seksjon(
+            "søker",
+            Rolle.søker,
+            prototypeFakta.boolsk(1),
+            prototypeFakta.boolsk(3),
+            prototypeFakta.boolsk(5),
+            prototypeFakta.boolsk(6),
+            prototypeFakta.boolsk(7),
+        ),
+        Seksjon(
+            "Genereres",
+            Rolle.søker,
+            prototypeFakta.boolsk(13),
+            prototypeFakta.boolsk(14),
+        ),
+        Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
+        Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeFakta.boolsk(4)),
+        Seksjon("saksbehandler5", Rolle.saksbehandler, prototypeFakta.boolsk(11)),
+        Seksjon("saksbehandler67", Rolle.saksbehandler, prototypeFakta.boolsk(12)),
+        rootSubsumsjon = prototypeSubsumsjon,
+    )
 }

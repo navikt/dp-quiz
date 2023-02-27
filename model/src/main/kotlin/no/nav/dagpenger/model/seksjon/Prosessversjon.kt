@@ -2,6 +2,7 @@ package no.nav.dagpenger.model.seksjon
 
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktatype
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -10,7 +11,6 @@ import java.util.UUID
 class Prosessversjon private constructor(
     private val bygger: Bygger,
 ) {
-    val faktumNavBehov get() = bygger.faktumNavBehov
 
     companion object {
         val prosesstyper = mutableMapOf<Prosesstype, Prosessversjon>()
@@ -28,8 +28,8 @@ class Prosessversjon private constructor(
     fun utredningsprosess(fakta: Fakta) =
         bygger.utredningsprosess(fakta)
 
-    fun utredningsprosess(person: Person, prosessUUID: UUID = UUID.randomUUID(), faktaUUID: UUID = UUID.randomUUID()) =
-        bygger.utredningsprosess(person, prosessUUID, faktaUUID)
+    fun utredningsprosess(person: Person, prosessUUID: UUID = UUID.randomUUID(), faktaUUID: UUID = UUID.randomUUID(), faktaversjon: Faktaversjon? = null) =
+        bygger.utredningsprosess(person, prosessUUID, faktaUUID, faktaversjon)
 
     class Bygger(
         private val faktatype: Faktatype,
@@ -41,8 +41,12 @@ class Prosessversjon private constructor(
             person: Person,
             prosessUUID: UUID = UUID.randomUUID(),
             faktaUUID: UUID = UUID.randomUUID(),
-        ): Prosess =
-            utredningsprosess(FaktaVersjonDingseboms.id(FaktaVersjonDingseboms.siste(faktatype)).fakta(person, faktaUUID), prosessUUID)
+            siste: Faktaversjon? = null,
+        ): Prosess {
+            val versjon = FaktaVersjonDingseboms.id(siste ?: FaktaVersjonDingseboms.siste(faktatype))
+            println("#### FaktaVersjonDingsebums: $versjon, siste: $siste")
+            return utredningsprosess(versjon.fakta(person, faktaUUID), prosessUUID)
+        }
 
         internal fun utredningsprosess(
             fakta: Fakta,

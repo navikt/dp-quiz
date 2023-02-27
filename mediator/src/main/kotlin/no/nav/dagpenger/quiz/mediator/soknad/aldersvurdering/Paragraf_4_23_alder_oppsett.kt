@@ -87,12 +87,12 @@ internal object Paragraf_4_23_alder_oppsett {
     init {
         FaktaVersjonDingseboms.Bygger(
             prototypeFakta,
+            faktumNavBehov
         ).registrer()
         Prosessversjon.Bygger(
             Prosessfakta.Paragraf_4_23_alder,
             prototypeSubsumsjon = Subsumsjoner.regeltre,
             prosess = prosess,
-            faktumNavBehov = faktumNavBehov,
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID} \n\n\n\n" }
         }

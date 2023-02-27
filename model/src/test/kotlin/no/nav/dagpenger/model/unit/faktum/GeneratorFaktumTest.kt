@@ -13,13 +13,11 @@ import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -31,7 +29,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class GeneratorFaktumTest {
-    private lateinit var søknadprosessTestBygger: Prosessversjon.Bygger
+    private lateinit var søknadprosess: Prosess
 
     @BeforeEach
     fun setup() {
@@ -45,8 +43,9 @@ class GeneratorFaktumTest {
         val prototypeSubsumsjon = faktaPrototype generator 1 har "periode".deltre {
             faktaPrototype.dato(4) mellom faktaPrototype.dato(2) og faktaPrototype.dato(3)
         }
-        val prototypeProsess = Prosess(
+        søknadprosess = Prosess(
             TestProsesser.Test,
+            faktaPrototype,
             Seksjon(
                 "periode antall",
                 Rolle.nav,
@@ -63,17 +62,12 @@ class GeneratorFaktumTest {
                 Rolle.søker,
                 faktaPrototype dato 4,
             ),
-        )
-        søknadprosessTestBygger = Prosessversjon.Bygger(
-            faktaPrototype,
-            prototypeSubsumsjon,
-            prototypeProsess,
+            rootSubsumsjon = prototypeSubsumsjon
         )
     }
 
     @Test
     fun ` periode faktum `() {
-        val søknadprosess = søknadprosessTestBygger.utredningsprosess(testPerson)
         søknadprosess.generator(1).besvar(2)
         søknadprosess.dato(4).besvar(5.januar)
         søknadprosess.dato("2.1").besvar(1.januar)
@@ -92,14 +86,12 @@ class GeneratorFaktumTest {
 
     @Test
     fun ` har med tom generator blir false `() {
-        val søknadprosess = søknadprosessTestBygger.utredningsprosess(testPerson)
         søknadprosess.generator(1).besvar(0)
         assertEquals(false, søknadprosess.rootSubsumsjon.resultat())
     }
 
     @Test
     fun ` har med en oppfylt generert subsumsjon blir true `() {
-        val søknadprosess = søknadprosessTestBygger.utredningsprosess(testPerson)
         søknadprosess.generator(1).besvar(1)
         søknadprosess.dato("2.1").besvar(1.januar)
         søknadprosess.dato("3.1").besvar(8.januar)
@@ -109,7 +101,6 @@ class GeneratorFaktumTest {
 
     @Test
     fun ` har med en ikke oppfylt generert subsumsjon blir false `() {
-        val søknadprosess = søknadprosessTestBygger.utredningsprosess(testPerson)
         søknadprosess.generator(1).besvar(1)
         søknadprosess.dato("2.1").besvar(1.desember)
         søknadprosess.dato("3.1").besvar(8.desember)
@@ -119,7 +110,6 @@ class GeneratorFaktumTest {
 
     @Test
     fun ` har med oppfylt og ikke oppfylt genererte subsumsjoner blir true `() {
-        val søknadprosess = søknadprosessTestBygger.utredningsprosess(testPerson)
         søknadprosess.generator(1).besvar(2)
         søknadprosess.dato("2.1").besvar(1.desember)
         søknadprosess.dato("3.1").besvar(8.desember)
@@ -167,19 +157,12 @@ class GeneratorFaktumTest {
         faktaPrototype: Fakta,
         prototypeSubsumsjon: Subsumsjon,
         vararg seksjoner: Seksjon,
-    ): Prosess {
-        val prototypeProsess = Prosess(
-            TestProsesser.Test,
-            *seksjoner,
-        )
-        val søknadprosessTestBygger =
-            Prosessversjon.Bygger(
-                faktaPrototype,
-                prototypeSubsumsjon,
-                prototypeProsess,
-            )
-        return søknadprosessTestBygger.utredningsprosess(testPerson)
-    }
+    ): Prosess = Prosess(
+        TestProsesser.Test,
+        faktaPrototype,
+        *seksjoner,
+        rootSubsumsjon = prototypeSubsumsjon
+    )
 
     private class GeneratorVisitor(
         prosess: Prosess,

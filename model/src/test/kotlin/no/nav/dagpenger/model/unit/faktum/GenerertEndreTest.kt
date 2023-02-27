@@ -5,12 +5,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.TestProsesser
-import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -28,22 +25,16 @@ class GenerertEndreTest {
             boolsk faktum "template2" id 2,
             boolsk faktum "template3" id 3,
         )
-        val prototypeProsess = Prosess(
+        prosess = Prosess(
             TestProsesser.Test,
             prototypeFakta,
             Seksjon("seksjon14", Rolle.søker, prototypeFakta.boolsk(1), prototypeFakta.generator(4)),
             Seksjon("template23", Rolle.søker, prototypeFakta.boolsk(2), prototypeFakta.boolsk(3)),
         )
-
-        prosess = Prosessversjon.Bygger(
-            prototypeFakta,
-            TomSubsumsjon,
-            prototypeProsess,
-        ).utredningsprosess(testPerson)
     }
 
     @Test
-    fun ` endre generert faktum `() {
+    fun `endre generert faktum `() {
         prosess.generator(4).besvar(3)
         assertEquals(4 + 9, prosess.fakta.size)
         assertEquals(5, prosess.size)

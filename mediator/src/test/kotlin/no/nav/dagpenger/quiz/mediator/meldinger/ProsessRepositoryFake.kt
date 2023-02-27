@@ -1,15 +1,15 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
-import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import java.util.UUID
 
-internal class ProsessRepositoryFake : ProsessRepository {
+internal class ProsessRepositoryFake(val faktaversjon: Faktaversjon? = null) : ProsessRepository {
     var prosess: Prosess? = null
     var hentet: Int = 0
 
@@ -18,12 +18,13 @@ internal class ProsessRepositoryFake : ProsessRepository {
             person = Person(person),
             prosessUUID = uuid,
             faktaUUID = faktaUUID,
+            faktaversjon,
         )
 
     override fun hent(uuid: UUID) = prosess!!.also { hentet++ }
 
     override fun lagre(prosess: Prosess): Boolean {
-        this.prosess = Prosessversjon.id(Testprosess.Test).utredningsprosess(prosess.fakta)
+        this.prosess = prosess
         return true
     }
 

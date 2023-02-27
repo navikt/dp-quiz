@@ -67,13 +67,13 @@ internal class MinimalSøknadsprosess(private val faktaversjon: Faktaversjon, pr
     init {
         FaktaVersjonDingseboms.Bygger(
             fakta,
+            faktumNavBehov
         ).registrer()
 
         Prosessversjon.Bygger(
             faktatype = faktaversjon.faktatype,
             prototypeSubsumsjon = regeltre,
             prosess = søknadsprosess,
-            faktumNavBehov = faktumNavBehov,
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $faktaversjon \n\n\n\n" }
         }

@@ -25,7 +25,7 @@ internal class MediatorTest {
     private companion object {
         private val meldingsfabrikk = TestMeldingFactory("fødselsnummer", "aktør")
         private val testRapid = TestRapid()
-        private val grupperer = ProsessRepositoryFake()
+        private val grupperer = ProsessRepositoryFake(SøknadEksempel.faktaversjon)
         private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
 
         init {

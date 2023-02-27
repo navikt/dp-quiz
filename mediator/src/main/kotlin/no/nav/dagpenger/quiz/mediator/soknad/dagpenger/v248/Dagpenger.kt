@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
+import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -83,11 +84,15 @@ internal object Dagpenger {
         )
 
     init {
+        FaktaVersjonDingseboms.Bygger(
+            prototypeFakta,
+            faktumNavBehov,
+        ).registrer()
+
         Prosessversjon.Bygger(
             faktatype = Prosessfakta.Dagpenger,
             prototypeSubsumsjon = regeltre,
             prosess = prosess,
-            faktumNavBehov = faktumNavBehov,
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
         }

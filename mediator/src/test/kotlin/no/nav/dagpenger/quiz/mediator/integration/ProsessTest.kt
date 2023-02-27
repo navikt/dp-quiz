@@ -5,7 +5,6 @@ import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
-import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.inneholder
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Prosessversjon
@@ -76,7 +75,6 @@ internal class ProsessTest() {
             faktatype = Prosessfakta.Dagpenger,
             prototypeSubsumsjon = regeltre,
             prosess = annenProsess,
-            faktumNavBehov = FaktumNavBehov(emptyMap()),
         ).registrer().also {
             val nyInstans = it.utredningsprosess(søknadsprosess.fakta)
             println(nyInstans)

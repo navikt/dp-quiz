@@ -18,12 +18,10 @@ import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.assertFaktaAsJson
 import no.nav.dagpenger.model.helpers.assertGeneratorFaktaAsJson
 import no.nav.dagpenger.model.helpers.assertValgFaktaAsJson
-import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -65,55 +63,47 @@ internal class SøknadsmalJsonBuilderTest {
         )
     }
 
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess {
-        val prototypeProsess = Prosess(
-            TestProsesser.Test,
-            prototypeFakta,
-            Seksjon(
-                "seksjon1",
-                Rolle.søker,
-                prototypeFakta.boolsk(1),
-                prototypeFakta.heltall(2),
-                prototypeFakta.tekst(15),
-                prototypeFakta.periode(16),
-                prototypeFakta.periode(17),
-            ),
-            Seksjon(
-                "seksjon2",
-                Rolle.søker,
-                prototypeFakta.heltall(3),
-                prototypeFakta.dato(4),
-                prototypeFakta.generator(5),
-                prototypeFakta.desimaltall(6),
-            ),
-            Seksjon(
-                "seksjon3",
-                Rolle.søker,
-                prototypeFakta.flervalg(10),
-                prototypeFakta.envalg(11),
-                prototypeFakta.dato(12),
-                prototypeFakta.inntekt(13),
-                prototypeFakta.envalg(18),
-                prototypeFakta.boolsk(19),
-                prototypeFakta.generator(14),
-            ),
-            Seksjon(
-                "nav",
-                Rolle.nav,
-                prototypeFakta.dokument(7),
-                prototypeFakta.inntekt(8),
-                prototypeFakta.dato(9),
-            ),
-            Seksjon("seksjon4", Rolle.søker, prototypeFakta.land(20), prototypeFakta.inntekt(8)),
-            rootSubsumsjon = prototypeSubsumsjon,
-        )
-
-        return Prosessversjon.Bygger(
-            prototypeFakta,
-            prototypeSubsumsjon,
-            prototypeProsess,
-        ).utredningsprosess(testPerson)
-    }
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess = Prosess(
+        TestProsesser.Test,
+        prototypeFakta,
+        Seksjon(
+            "seksjon1",
+            Rolle.søker,
+            prototypeFakta.boolsk(1),
+            prototypeFakta.heltall(2),
+            prototypeFakta.tekst(15),
+            prototypeFakta.periode(16),
+            prototypeFakta.periode(17),
+        ),
+        Seksjon(
+            "seksjon2",
+            Rolle.søker,
+            prototypeFakta.heltall(3),
+            prototypeFakta.dato(4),
+            prototypeFakta.generator(5),
+            prototypeFakta.desimaltall(6),
+        ),
+        Seksjon(
+            "seksjon3",
+            Rolle.søker,
+            prototypeFakta.flervalg(10),
+            prototypeFakta.envalg(11),
+            prototypeFakta.dato(12),
+            prototypeFakta.inntekt(13),
+            prototypeFakta.envalg(18),
+            prototypeFakta.boolsk(19),
+            prototypeFakta.generator(14),
+        ),
+        Seksjon(
+            "nav",
+            Rolle.nav,
+            prototypeFakta.dokument(7),
+            prototypeFakta.inntekt(8),
+            prototypeFakta.dato(9),
+        ),
+        Seksjon("seksjon4", Rolle.søker, prototypeFakta.land(20), prototypeFakta.inntekt(8)),
+        rootSubsumsjon = prototypeSubsumsjon,
+    )
 
     private fun søkerSubsumsjon() = "regel" deltre {
         "alle".alle(

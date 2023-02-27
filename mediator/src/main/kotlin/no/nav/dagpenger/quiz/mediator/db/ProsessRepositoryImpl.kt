@@ -3,6 +3,7 @@ package no.nav.dagpenger.quiz.mediator.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.dagpenger.model.faktum.Faktatype
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.seksjon.Prosess
@@ -48,20 +49,29 @@ class ProsessRepositoryImpl : ProsessRepository {
         val rad = sessionOf(dataSource).use { session ->
             session.run(
                 queryOf(
+                    // TODO: Ble denne spørringen riktig, får den med seg riktig Faktaversjon?
                     //language=PostgreSQL
                     """
-                    SELECT prosess.person_id, prosess.navn, prosess.faktatype, prosess.fakta_id
-                    FROM prosess 
-                    WHERE uuid = ?
+                    SELECT p.person_id, p.navn, p.faktatype, p.fakta_id, fv.versjon_id FROM prosess AS p 
+                        JOIN fakta AS f ON p.id = f.versjon_id 
+                        JOIN faktaversjon AS fv ON f.versjon_id = fv.id
+                        WHERE p.uuid = ?
                     """.trimMargin(),
                     uuid,
                 ).map { row ->
-                    ProsessRad(row.uuid("person_id"), row.string("navn"), row.string("faktatype"), row.uuid("fakta_id"))
+                    ProsessRad(
+                        row.uuid("person_id"),
+                        row.string("navn"),
+                        row.string("faktatype"),
+                        row.uuid("fakta_id"),
+                        row.int("versjon_id"),
+                    )
                 }.asSingle,
             )
         } ?: throw IllegalArgumentException("Kan ikke hente en utredningsprosess som ikke finnes, uuid: $uuid")
         val utredningsprosess =
-            Prosessversjon.id(rad.prosesstype).utredningsprosess(PersonRecord().hentPerson(rad.personId), uuid, rad.faktaUUID)
+            Prosessversjon.id(rad.prosesstype)
+                .utredningsprosess(PersonRecord().hentPerson(rad.personId), uuid, rad.faktaUUID, rad.faktaversjon)
         return faktaRepository.rehydrerProsess(utredningsprosess)
     }
 
@@ -69,8 +79,15 @@ class ProsessRepositoryImpl : ProsessRepository {
 
     private data class ProsessFakta(override val id: String) : Faktatype
     private data class ProsessType(override val navn: String, override val faktatype: Faktatype) : Prosesstype
-    private data class ProsessRad(val personId: UUID, val navn: String, val faktatype: String, val faktaUUID: UUID) {
+    private data class ProsessRad(
+        val personId: UUID,
+        val navn: String,
+        val faktatype: String,
+        val faktaUUID: UUID,
+        val versjonId: Int,
+    ) {
         val prosesstype = ProsessType(navn, ProsessFakta(faktatype))
+        val faktaversjon = Faktaversjon(ProsessFakta(faktatype), versjonId)
     }
 
     private class PersonIdent(person: Person) : PersonVisitor {

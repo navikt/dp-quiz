@@ -138,10 +138,10 @@ class Fakta private constructor(
     override fun periode(id: String): Faktum<Periode> = periode(FaktumId(id))
     private infix fun periode(faktumId: FaktumId) = id(faktumId) as Faktum<Periode>
 
-    fun bygg(person: Person, prosessVersjon: Faktaversjon, uuid: UUID = UUID.randomUUID()): Fakta {
+    fun bygg(person: Person, uuid: UUID = UUID.randomUUID()): Fakta {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktaMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
-        return Fakta(person, prosessVersjon, uuid, mapOfFakta)
+        return Fakta(person, faktaversjon, uuid, mapOfFakta)
     }
 
     override fun iterator(): MutableIterator<Faktum<*>> {

@@ -4,12 +4,17 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktatype
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Person
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import java.util.UUID
 
 class FaktaVersjonDingseboms private constructor(
     private val bygger: Bygger,
 ) {
-    companion object {
+
+    val faktumNavBehov get() = bygger.faktumNavBehov
+
+    companion
+    object {
         val faktaversjoner = mutableMapOf<Faktaversjon, FaktaVersjonDingseboms>()
         fun siste(faktatype: Faktatype): Faktaversjon {
             return faktaversjoner.keys.filter { it.faktatype.id == faktatype.id }.maxByOrNull { it.versjon }
@@ -22,7 +27,7 @@ class FaktaVersjonDingseboms private constructor(
     }
 
     init {
-        require(bygger.faktaversjon() !in faktaversjoner.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider" }
+        require(bygger.faktaversjon() !in faktaversjoner.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider. id=${bygger.faktaversjon()}" }
         faktaversjoner[bygger.faktaversjon()] = this
     }
 
@@ -34,11 +39,12 @@ class FaktaVersjonDingseboms private constructor(
 
     class Bygger(
         private val prototypeFakta: Fakta,
+        internal val faktumNavBehov: FaktumNavBehov? = null,
     ) {
         fun fakta(
             person: Person,
             faktaUUID: UUID = UUID.randomUUID(),
-        ): Fakta = prototypeFakta.bygg(person, prototypeFakta.faktaversjon, faktaUUID)
+        ): Fakta = prototypeFakta.bygg(person, faktaUUID)
 
         internal fun faktaversjon() = prototypeFakta.faktaversjon
         fun registrer() = FaktaVersjonDingseboms(this)

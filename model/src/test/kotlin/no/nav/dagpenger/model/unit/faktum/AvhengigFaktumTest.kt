@@ -7,13 +7,10 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.TestProsesser
-import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -54,19 +51,13 @@ internal class AvhengigFaktumTest {
             dato faktum "tom" id 3 avhengerAv 2,
             dato faktum "ønsket dato" id 4,
         )
-        val prototypeProsess = Prosess(
+        val søknadprosess = Prosess(
             TestProsesser.Test,
+            fakta,
             Seksjon("periode antall", Rolle.nav, fakta generator 1),
             Seksjon("periode", Rolle.nav, fakta dato 2, fakta dato 3),
             Seksjon("søknadsdato", Rolle.søker, fakta dato 4),
         )
-        val søknadprosess =
-            Prosessversjon.Bygger(
-                fakta,
-                TomSubsumsjon,
-                prototypeProsess,
-            )
-                .utredningsprosess(testPerson)
 
         søknadprosess.generator(1).besvar(1)
         søknadprosess.dato("2.1").besvar(LocalDate.now())

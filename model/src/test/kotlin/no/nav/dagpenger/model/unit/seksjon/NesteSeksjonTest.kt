@@ -3,6 +3,7 @@ package no.nav.dagpenger.model.unit.seksjon
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
+import no.nav.dagpenger.model.helpers.TestFakta
 import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
@@ -33,7 +34,7 @@ class NesteSeksjonTest {
             rootSubsumsjon = prototypeSubsumsjon,
         )
         val fakta = Prosessversjon.Bygger(
-            prototypesøknad,
+            TestFakta.Test,
             prototypeSubsumsjon,
             prototypeProsess,
         )
@@ -61,7 +62,7 @@ class NesteSeksjonTest {
         )
 
         Prosessversjon.Bygger(
-            prototypesøknad,
+            TestFakta.Test,
             prototypeSubsumsjon,
             prototypeProsess,
         )

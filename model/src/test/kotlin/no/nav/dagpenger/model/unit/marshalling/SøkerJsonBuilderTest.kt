@@ -29,7 +29,6 @@ import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.under
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -486,18 +485,14 @@ internal class SøkerJsonBuilderTest {
                 prototypeFakta.dokument(22),
             ),
         )
-        val prototypeProsess = Prosess(
+        val fakta = prototypeFakta.bygg(testPerson)
+        val rootSubsumsjon = prototypeSubsumsjon.bygg(fakta)
+        return Prosess(
             TestProsesser.Test,
             prototypeFakta,
             seksjoner = seksjoner.toTypedArray(),
             rootSubsumsjon = prototypeSubsumsjon,
-        )
-
-        return Prosessversjon.Bygger(
-            prototypeFakta,
-            prototypeSubsumsjon,
-            prototypeProsess,
-        ).utredningsprosess(testPerson)
+        ).bygg(UUID.randomUUID(), fakta, rootSubsumsjon)
     }
 
     private fun assertMetadata(søkerJson: ObjectNode) {

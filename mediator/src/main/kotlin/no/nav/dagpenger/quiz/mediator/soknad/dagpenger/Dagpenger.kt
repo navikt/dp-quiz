@@ -86,13 +86,13 @@ internal object Dagpenger {
     init {
         FaktaVersjonDingseboms.Bygger(
             prototypeFakta,
+            faktumNavBehov,
         ).registrer()
 
         Prosessversjon.Bygger(
             faktatype = Prosessfakta.Dagpenger,
             prototypeSubsumsjon = regeltre,
             prosess = prosess,
-            faktumNavBehov = faktumNavBehov,
         ).registrer().also {
             logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
         }
