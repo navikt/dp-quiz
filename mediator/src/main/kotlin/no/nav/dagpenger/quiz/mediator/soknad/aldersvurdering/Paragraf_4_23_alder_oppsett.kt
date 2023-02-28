@@ -18,6 +18,7 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
+import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett.Subsumsjoner.regeltre
 
 /**
  *  POC - dele opp vilkårsvurdering i kap 4
@@ -88,13 +89,12 @@ internal object Paragraf_4_23_alder_oppsett {
         FaktaVersjonDingseboms.Bygger(
             prototypeFakta,
             faktumNavBehov
-        ).registrer()
-        Prosessversjon.Bygger(
-            Prosessfakta.Paragraf_4_23_alder,
-            prototypeSubsumsjon = Subsumsjoner.regeltre,
-            prosess = prosess,
-        ).registrer().also {
-            logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID} \n\n\n\n" }
+        ).also { bygger ->
+            bygger.leggTilProsess(prosess, regeltre)
+            bygger.registrer()
         }
+
+        logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID} \n\n\n\n" }
+
     }
 }

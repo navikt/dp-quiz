@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.faktum.Faktatype
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
+import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.seksjon.Prosessversjon
@@ -20,9 +21,9 @@ class ProsessRepositoryImpl : ProsessRepository {
     override fun ny(identer: Identer, prosesstype: Prosesstype, uuid: UUID, faktaUUID: UUID): Prosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
 
-        return Prosessversjon.id(prosesstype).utredningsprosess(person, uuid, faktaUUID).also {
+        return FaktaVersjonDingseboms.prosess(person, prosesstype, uuid, faktaUUID).also {
             // TODO: Lag en form for retry om UUID finnes
-            faktaRepository.ny(it.fakta)
+            faktaRepository.rehydrerEllerOpprett(it.fakta, person)
             sessionOf(dataSource).use { session ->
                 session.run(
                     queryOf(
@@ -69,10 +70,11 @@ class ProsessRepositoryImpl : ProsessRepository {
                 }.asSingle,
             )
         } ?: throw IllegalArgumentException("Kan ikke hente en utredningsprosess som ikke finnes, uuid: $uuid")
-        val utredningsprosess =
-            Prosessversjon.id(rad.prosesstype)
-                .utredningsprosess(PersonRecord().hentPerson(rad.personId), uuid, rad.faktaUUID, rad.faktaversjon)
-        return faktaRepository.rehydrerProsess(utredningsprosess)
+        val person = PersonRecord().hentPerson(rad.personId)
+        val utredningsprosess = FaktaVersjonDingseboms.prosess(person, rad.prosesstype, uuid, rad.faktaUUID)
+        faktaRepository.rehydrerFakta(utredningsprosess.fakta)
+
+        return utredningsprosess
     }
 
     override fun lagre(prosess: Prosess) = faktaRepository.lagre(prosess.fakta)

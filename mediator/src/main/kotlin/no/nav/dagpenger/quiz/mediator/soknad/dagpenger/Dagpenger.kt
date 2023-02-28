@@ -15,6 +15,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger.Subsumsjoner.regeltre
 
 internal object Dagpenger {
+    internal val fakta: FaktaVersjonDingseboms.Bygger
     private val logger = KotlinLogging.logger { }
 
     /**
@@ -24,7 +25,7 @@ internal object Dagpenger {
      */
     val VERSJON_ID = Faktaversjon(Prosessfakta.Dagpenger, 249)
 
-    fun registrer(registrer: (prototype: Fakta) -> Unit) {
+    fun registrer(registrer: (prototype: Fakta) -> Unit = {}) {
         registrer(prototypeFakta)
     }
 
@@ -84,18 +85,15 @@ internal object Dagpenger {
         )
 
     init {
-        FaktaVersjonDingseboms.Bygger(
+        fakta = FaktaVersjonDingseboms.Bygger(
             prototypeFakta,
             faktumNavBehov,
-        ).registrer()
-
-        Prosessversjon.Bygger(
-            faktatype = Prosessfakta.Dagpenger,
-            prototypeSubsumsjon = regeltre,
-            prosess = prosess,
-        ).registrer().also {
-            logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
+        ).also {
+            it.registrer()
         }
+
+        fakta.leggTilProsess(prosess, regeltre)
+        logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
     }
 
     private fun flatMapAlleFakta() = faktaseksjoner.flatMap { seksjon ->

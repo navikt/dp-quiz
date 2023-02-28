@@ -6,8 +6,10 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.MedSøknad
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Prosessversjon
+import no.nav.dagpenger.quiz.mediator.helpers.testPerson
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`egne barn`
 import org.junit.jupiter.api.Test
@@ -15,13 +17,13 @@ import java.time.LocalDate
 import kotlin.test.assertTrue
 
 class DagpengerflytTest {
-    private lateinit var prosess: Prosess
+    private var prosess: Prosess
 
     init {
-        Dagpenger.registrer { prototypeSøknad ->
-            prosess = Prosessversjon.id(Prosesser.Søknad)
-                .utredningsprosess(prototypeSøknad)
-        }
+        Dagpenger.registrer()
+        prosess = FaktaVersjonDingseboms.prosess(
+            testPerson, Prosesser.Søknad
+        )
     }
 
     @Test
@@ -75,13 +77,13 @@ class DagpengerflytTest {
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
         assertTrue(
             prosess.erFerdig(),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
     }

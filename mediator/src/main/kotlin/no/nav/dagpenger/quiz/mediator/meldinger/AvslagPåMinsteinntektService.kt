@@ -15,6 +15,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.isMissingOrNull
 import java.time.LocalDateTime
+import java.util.UUID
 
 internal class AvslagPåMinsteinntektService(
     private val prosessRepository: ProsessRepository,

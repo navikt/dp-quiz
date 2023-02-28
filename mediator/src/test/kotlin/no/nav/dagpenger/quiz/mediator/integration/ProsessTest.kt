@@ -63,22 +63,24 @@ internal class ProsessTest() {
             }
         }
         val annenProsess = Prosess(
-            Prosesser.Søknad,
+            Prosesser.AvslagPåAlder,
             Seksjon(
                 "test",
                 Rolle.søker,
                 prototypeFakta.envalg(101),
             ),
-        )
-
-        Prosessversjon.Bygger(
-            faktatype = Prosessfakta.Dagpenger,
-            prototypeSubsumsjon = regeltre,
-            prosess = annenProsess,
-        ).registrer().also {
-            val nyInstans = it.utredningsprosess(søknadsprosess.fakta)
-            println(nyInstans)
+        ).also { prosess ->
+            Dagpenger.fakta.leggTilProsess(prosess, regeltre)
         }
+
+//        Prosessversjon.Bygger(
+//            faktatype = Prosessfakta.Dagpenger,
+//            prototypeSubsumsjon = regeltre,
+//            prosess = annenProsess,
+//        ).registrer().also {
+//            val nyInstans = it.utredningsprosess(søknadsprosess.fakta)
+//            println(nyInstans)
+//        }
 
         assertEquals(false, søknadsprosess.erFerdig())
     }

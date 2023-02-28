@@ -170,14 +170,11 @@ internal object AvslagPåMinsteinntektOppsett {
         FaktaVersjonDingseboms.Bygger(
             prototypeFakta,
             faktumNavBehov
-        ).registrer()
-
-        Prosessversjon.Bygger(
-            faktatype = Prosessfakta.AvslagPåMinsteinntekt,
-            prototypeSubsumsjon = regeltre,
-            prosess = Seksjoner.prosess,
-        ).registrer().also {
-            logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
+        ).also { bygger ->
+            bygger.leggTilProsess(Seksjoner.prosess, regeltre)
+            bygger.registrer()
         }
+
+        logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
     }
 }

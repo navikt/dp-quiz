@@ -21,9 +21,9 @@ import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
+import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
-import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.math.BigInteger
 import java.time.LocalDate
@@ -105,12 +105,12 @@ class FaktaRecord : FaktaRepository {
         return fakta
     }
 
-    fun rehydrerProsess(prosess: Prosess): Prosess {
-        svarList(prosess.fakta.uuid).onEach { row ->
-            prosess.fakta.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
+    fun rehydrerFakta(fakta: Fakta): Fakta {
+        svarList(fakta.uuid).onEach { row ->
+            fakta.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
         }
 
-        return prosess
+        return fakta
     }
 
     override fun lagre(fakta: Fakta): Boolean {
@@ -526,5 +526,13 @@ class FaktaRecord : FaktaRepository {
                 ).map { it.localDateTime(1) to UUID.fromString(it.string(2)) }.asList,
             )
         }.toMap()
+    }
+
+    fun rehydrerEllerOpprett(fakta: Fakta, person: Person) {
+        if (eksisterer(fakta.uuid)) {
+            rehydrerFakta(fakta)
+        } else {
+            ny(fakta)
+        }
     }
 }
