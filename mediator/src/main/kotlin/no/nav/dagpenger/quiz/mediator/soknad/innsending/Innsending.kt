@@ -6,7 +6,6 @@ import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
@@ -16,7 +15,7 @@ internal object Innsending {
     private val logger = KotlinLogging.logger { }
     val VERSJON_ID = Faktaversjon(Prosessfakta.Innsending, 6)
 
-    fun registrer(registrer: (prototype: Fakta) -> Unit) {
+    fun registrer(registrer: (prototype: Fakta) -> Unit = {}) {
         registrer(prototypeFakta)
     }
 
@@ -50,14 +49,11 @@ internal object Innsending {
         FaktaVersjonDingseboms.Bygger(
             prototypeFakta,
             faktumNavBehov,
-        ).registrer()
-        Prosessversjon.Bygger(
-            faktatype = Prosessfakta.Innsending,
-            prototypeSubsumsjon = regeltre,
-            prosess = søknadsprosess,
-        ).registrer().also {
-            logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
+        ).also {
+            it.leggTilProsess(søknadsprosess, regeltre)
+            it.registrer()
         }
+        logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
     }
 
     private fun flatMapAlleFakta() = faktaseksjoner.flatMap { seksjon ->

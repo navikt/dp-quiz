@@ -13,7 +13,6 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
@@ -54,7 +53,7 @@ internal object Paragraf_4_23_alder_oppsett {
         ),
     )
 
-    fun registrer(registrer: (prototype: Fakta) -> Unit) {
+    fun registrer(registrer: (prototype: Fakta) -> Unit = {}) {
         registrer(prototypeFakta)
     }
 
@@ -88,13 +87,12 @@ internal object Paragraf_4_23_alder_oppsett {
     init {
         FaktaVersjonDingseboms.Bygger(
             prototypeFakta,
-            faktumNavBehov
+            faktumNavBehov,
         ).also { bygger ->
             bygger.leggTilProsess(prosess, regeltre)
             bygger.registrer()
         }
 
         logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID} \n\n\n\n" }
-
     }
 }

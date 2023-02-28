@@ -14,7 +14,6 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt.regeltre
 
@@ -23,7 +22,7 @@ internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
     val VERSJON_ID = Faktaversjon(Prosessfakta.AvslagPåMinsteinntekt, 29)
 
-    fun registrer(registrer: (prototype: Fakta) -> Unit) {
+    fun registrer(registrer: (prototype: Fakta) -> Unit = {}) {
         registrer(prototypeFakta)
     }
 
@@ -169,7 +168,7 @@ internal object AvslagPåMinsteinntektOppsett {
     init {
         FaktaVersjonDingseboms.Bygger(
             prototypeFakta,
-            faktumNavBehov
+            faktumNavBehov,
         ).also { bygger ->
             bygger.leggTilProsess(Seksjoner.prosess, regeltre)
             bygger.registrer()

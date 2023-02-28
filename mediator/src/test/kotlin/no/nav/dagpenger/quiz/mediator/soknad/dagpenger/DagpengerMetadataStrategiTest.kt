@@ -4,8 +4,9 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.januar
+import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
+import no.nav.dagpenger.quiz.mediator.helpers.testPerson
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DinSituasjon.`dagpenger søknadsdato`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DinSituasjon.`type arbeidstid`
@@ -16,10 +17,8 @@ internal class DagpengerMetadataStrategiTest {
     private lateinit var prosess: Prosess
 
     init {
-        Dagpenger.registrer { prototypeSøknad ->
-            prosess = Prosessversjon.id(Prosesser.Søknad)
-                .utredningsprosess(prototypeSøknad)
-        }
+        Dagpenger.registrer()
+        prosess = FaktaVersjonDingseboms.prosess(testPerson, Prosesser.Søknad)
     }
 
     @Test

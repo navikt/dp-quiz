@@ -1,7 +1,8 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
+import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
+import no.nav.dagpenger.quiz.mediator.helpers.testPerson
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
@@ -15,20 +16,14 @@ internal class ProsessfaktaMetadataStrategiTest {
     private lateinit var prosessAvslagPåMinsteinntekt: Prosess
 
     init {
-        Dagpenger.registrer { prototypeSøknad ->
-            prosessDagpenger = Prosessversjon.id(Prosesser.Søknad)
-                .utredningsprosess(prototypeSøknad)
-        }
+        Dagpenger.registrer()
+        prosessDagpenger = FaktaVersjonDingseboms.prosess(testPerson, Prosesser.Søknad)
 
-        Innsending.registrer { prototypeSøknad ->
-            prosessInnsending = Prosessversjon.id(Prosesser.Innsending)
-                .utredningsprosess(prototypeSøknad)
-        }
+        Innsending.registrer()
+        prosessInnsending = FaktaVersjonDingseboms.prosess(testPerson, Prosesser.Innsending)
 
-        AvslagPåMinsteinntektOppsett.registrer { prototype ->
-            prosessAvslagPåMinsteinntekt = Prosessversjon.id(Prosesser.AvslagPåMinsteinntekt)
-                .utredningsprosess(prototype)
-        }
+        AvslagPåMinsteinntektOppsett.registrer()
+        prosessAvslagPåMinsteinntekt = FaktaVersjonDingseboms.prosess(testPerson, Prosesser.AvslagPåMinsteinntekt)
     }
 
     @Test
