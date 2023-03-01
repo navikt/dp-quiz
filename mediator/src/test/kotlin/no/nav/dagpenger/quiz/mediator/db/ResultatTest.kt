@@ -7,12 +7,10 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
@@ -35,26 +33,25 @@ internal class ResultatTest {
         val prototypeFakta = Fakta(
             faktaversjon,
             boolsk faktum "f1" id 19,
-        ).registrer()
-
-        Prosessversjon.Bygger(
-            faktaversjon.faktatype,
-            prototypeFakta boolsk 19 er true,
-            Prosess(
-                Testprosess.Test,
-                Seksjon(
-                    "seksjon",
-                    Rolle.nav,
-                    *(prototypeFakta.map { it }.toTypedArray()),
+        ).registrer { prototypeFakta ->
+            leggTilProsess(
+                Prosess(
+                    Testprosess.Test,
+                    Seksjon(
+                        "seksjon",
+                        Rolle.nav,
+                        *(prototypeFakta.map { it }.toTypedArray()),
+                    ),
                 ),
-            ),
-        ).registrer()
+                prototypeFakta boolsk 19 er true,
+            )
+        }
 
         Postgres.withMigratedDb {
             FaktumTable(prototypeFakta)
             faktaRecord = FaktaRecord()
             resultatRecord = ResultatRecord()
-            prosess = Prosessversjon.id(Testprosess.Test).utredningsprosess(Person(IDENT))
+            prosess = ProsessRepositoryImpl().ny(IDENT, Testprosess.Test)
         }
     }
 

@@ -3,8 +3,9 @@ package no.nav.dagpenger.quiz.mediator.soknad.innsending
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
+import no.nav.dagpenger.quiz.mediator.helpers.testPerson
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -14,17 +15,16 @@ class GenerellInnsendingFlytTest {
     private lateinit var prosess: Prosess
 
     init {
-        Innsending.registrer { prototypeSøknad ->
-            prosess = Prosessversjon.id(Prosesser.Innsending)
-                .utredningsprosess(prototypeSøknad)
-        }
+        Innsending.registrer()
+        prosess = FaktaVersjonDingseboms.prosess(testPerson, Prosesser.Innsending)
     }
 
     @Test
     fun `Innsending flyt - letteste vei til ferdig`() {
         prosess.envalg(GenerellInnsending.`hvorfor sender du inn dokumentasjon`)
             .besvar(Envalg("faktum.generell-innsending.hvorfor.svar.endring"))
-        prosess.tekst(GenerellInnsending.`tittel på dokument`).besvar(Tekst("En vakker historie om hva jeg vil"))
+        prosess.tekst(GenerellInnsending.`tittel på dokument`)
+            .besvar(Tekst("En vakker historie om hva jeg vil"))
 
         prosess.nesteSeksjoner().onEach {
             it.somSpørsmål()
@@ -55,7 +55,8 @@ class GenerellInnsendingFlytTest {
     fun `Innsending flyt - uten dokumentasjon`() {
         prosess.envalg(GenerellInnsending.`hvorfor sender du inn dokumentasjon`)
             .besvar(Envalg("faktum.generell-innsending.hvorfor.svar.endring"))
-        prosess.tekst(GenerellInnsending.`tittel på dokument`).besvar(Tekst("En vakker historie om hva jeg vil"))
+        prosess.tekst(GenerellInnsending.`tittel på dokument`)
+            .besvar(Tekst("En vakker historie om hva jeg vil"))
 
         prosess.nesteSeksjoner().onEach {
             it.somSpørsmål()
@@ -86,8 +87,10 @@ class GenerellInnsendingFlytTest {
     fun `Innsending flyt - svar vet-ikke`() {
         prosess.envalg(GenerellInnsending.`hvorfor sender du inn dokumentasjon`)
             .besvar(Envalg("faktum.generell-innsending.hvorfor.svar.annet"))
-        prosess.tekst(GenerellInnsending.`skriv kort hvorfor du sender inn dokumentasjon`).besvar(Tekst("Derfor"))
-        prosess.tekst(GenerellInnsending.`tittel på dokument`).besvar(Tekst("En vakker historie om hva jeg vil"))
+        prosess.tekst(GenerellInnsending.`skriv kort hvorfor du sender inn dokumentasjon`)
+            .besvar(Tekst("Derfor"))
+        prosess.tekst(GenerellInnsending.`tittel på dokument`)
+            .besvar(Tekst("En vakker historie om hva jeg vil"))
 
         prosess.nesteSeksjoner().onEach {
             it.somSpørsmål()
@@ -121,14 +124,16 @@ class GenerellInnsendingFlytTest {
             .besvar(Envalg("faktum.generell-innsending.hvorfor.svar.annet"))
         assertFalse(prosess.tekst(GenerellInnsending.`tittel på dokument`).erBesvart())
         // Er besvart etter svar
-        prosess.tekst(GenerellInnsending.`tittel på dokument`).besvar(Tekst("En vakker historie om hva jeg vil"))
+        prosess.tekst(GenerellInnsending.`tittel på dokument`)
+            .besvar(Tekst("En vakker historie om hva jeg vil"))
         assertTrue(prosess.tekst(GenerellInnsending.`tittel på dokument`).erBesvart())
         // Nulles ut av endret envalg
         prosess.envalg(GenerellInnsending.`hvorfor sender du inn dokumentasjon`)
             .besvar(Envalg("faktum.generell-innsending.hvorfor.svar.ettersending"))
         assertFalse(prosess.tekst(GenerellInnsending.`tittel på dokument`).erBesvart())
         // Nulles ut igjen
-        prosess.tekst(GenerellInnsending.`tittel på dokument`).besvar(Tekst("En vakker historie om hva jeg vil"))
+        prosess.tekst(GenerellInnsending.`tittel på dokument`)
+            .besvar(Tekst("En vakker historie om hva jeg vil"))
         assertTrue(prosess.tekst(GenerellInnsending.`tittel på dokument`).erBesvart())
         prosess.envalg(GenerellInnsending.`hvorfor sender du inn dokumentasjon`)
             .besvar(Envalg("faktum.generell-innsending.hvorfor.svar.annet"))

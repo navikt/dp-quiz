@@ -11,11 +11,9 @@ import java.util.UUID
 class FaktaVersjonDingseboms private constructor(
     private val bygger: Bygger,
 ) {
-
     val faktumNavBehov get() = bygger.faktumNavBehov
 
-    companion
-    object {
+    companion object {
         val faktaversjoner = mutableMapOf<Faktaversjon, FaktaVersjonDingseboms>()
         fun siste(faktatype: Faktatype): Faktaversjon {
             return faktaversjoner.keys.filter { it.faktatype.id == faktatype.id }.maxByOrNull { it.versjon }
@@ -86,7 +84,8 @@ class FaktaVersjonDingseboms private constructor(
             prosessUUID: UUID = UUID.randomUUID(),
             faktaUUID: UUID = UUID.randomUUID(),
         ) =
-            prosesser.filterKeys { it.navn == prosesstype.navn }.values.firstOrNull()?.prosess(person, prosessUUID, faktaUUID)
+            prosesser.filterKeys { it.navn == prosesstype.navn }.values.firstOrNull()
+                ?.prosess(person, prosessUUID, faktaUUID)
                 ?: throw IllegalArgumentException("Ukjent prosesstype: $prosesstype")
     }
 }

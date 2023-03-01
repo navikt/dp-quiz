@@ -2,8 +2,9 @@ package no.nav.dagpenger.quiz.mediator.soknad.innsending
 
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
+import no.nav.dagpenger.quiz.mediator.helpers.testPerson
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -12,10 +13,8 @@ internal class InnsendingMetadataStrategiTest {
     private lateinit var prosess: Prosess
 
     init {
-        Innsending.registrer { prototypeSøknad ->
-            prosess = Prosessversjon.id(Prosesser.Innsending)
-                .utredningsprosess(prototypeSøknad)
-        }
+        Innsending.registrer()
+        prosess = FaktaVersjonDingseboms.prosess(testPerson, Prosesser.Innsending)
     }
 
     @Test

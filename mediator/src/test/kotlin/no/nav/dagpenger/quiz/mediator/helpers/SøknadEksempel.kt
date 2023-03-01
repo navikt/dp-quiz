@@ -13,15 +13,14 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.dokumenteresAv
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.minst
+import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.alle
 
 internal object SøknadEksempel {
     val prosesstype = Testprosess.Test
     val faktaversjon = Faktaversjon(Testfakta.Test, 666)
-
     val faktumNavBehov = FaktumNavBehov(
         mapOf(
             1 to "f1Behov",
@@ -35,7 +34,6 @@ internal object SøknadEksempel {
             17 to "InnsendtSøknadsId",
         ),
     )
-
     val prototypeFakta = Fakta(
         faktaversjon,
         boolsk faktum "f1_bool" id 1 avhengerAv 17,
@@ -48,7 +46,7 @@ internal object SøknadEksempel {
         boolsk faktum "f8_bool" id 8,
         dokument faktum "innsendt søknadsid" id 17, // MottattSøknadService trenger dette faktumet
         dokument faktum "arena fagsakid" id 52, // MottattSøknadService trenger dette faktumet
-    ).registrer(faktumNavBehov)
+    )
     private val prosess = Prosess(
         prosesstype,
         Seksjon(
@@ -92,11 +90,15 @@ internal object SøknadEksempel {
         prototypeFakta inntekt 5 minst (prototypeFakta inntekt 6),
         prototypeFakta boolsk 8 dokumenteresAv (prototypeFakta dokument 7),
     )
-    val prosessversjon = Prosessversjon.Bygger(
-        Testfakta.Test,
-        prototypeSubsumsjon,
-        prosess,
-    ).registrer().also {
-        println("##### Versjon registrert med prosesstype $prosesstype #####")
+
+    init {
+        FaktaVersjonDingseboms.Bygger(
+            prototypeFakta,
+            faktumNavBehov,
+        ).also {
+            it.leggTilProsess(prosess, prototypeSubsumsjon)
+        }.registrer().also {
+            println("##### Versjon registrert med prosesstype $prosesstype #####")
+        }
     }
 }

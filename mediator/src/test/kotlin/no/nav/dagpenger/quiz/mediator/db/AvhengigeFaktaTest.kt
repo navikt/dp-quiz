@@ -31,7 +31,6 @@ import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Prosesstype
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
@@ -52,7 +51,7 @@ internal class AvhengigeFaktaTest {
 
     private lateinit var originalProsess: Prosess
     private lateinit var rehydrertProsess: Prosess
-    private lateinit var prosessRepository: ProsessRepository
+    private val prosessRepository: ProsessRepository = ProsessRepositoryImpl()
 
     @Test
     fun `Avhengig faktum reset`() {
@@ -63,21 +62,20 @@ internal class AvhengigeFaktaTest {
                 boolsk faktum "f1" id 19 avhengerAv 2 og 13,
                 dato faktum "f2" id 2,
                 dato faktum "f3" id 13,
-            ).registrer()
-            Prosessversjon.Bygger(
-                Testfakta.Test,
-                prototypeFakta boolsk 19 er true,
-                Prosess(
-                    Testprosess.Test,
-                    Seksjon(
-                        "seksjon",
-                        Rolle.nav,
-                        *(prototypeFakta.map { it }.toTypedArray()),
+            ).registrer { prototypeFakta ->
+                leggTilProsess(
+                    Prosess(
+                        Testprosess.Test,
+                        Seksjon(
+                            "seksjon",
+                            Rolle.nav,
+                            *(prototypeFakta.map { it }.toTypedArray()),
+                        ),
                     ),
-                ),
-            ).registrer()
+                    prototypeFakta boolsk 19 er true,
+                )
+            }
             FaktumTable(prototypeFakta)
-            prosessRepository = ProsessRepositoryImpl()
             originalProsess = utredningsprosess(Testprosess.Test)
 
             originalProsess.dato(2).besvar(2.januar)
@@ -105,22 +103,21 @@ internal class AvhengigeFaktaTest {
                 boolsk faktum "f3" id 3 avhengerAv 1,
                 boolsk faktum "f4" id 4 avhengerAv 5,
                 boolsk faktum "f5" id 5,
-            ).registrer()
-            Prosessversjon.Bygger(
-                Testfakta.Test,
-                prototypeFakta boolsk 1 er true,
-                Prosess(
-                    Testprosess.Test,
-                    Seksjon(
-                        "seksjon",
-                        Rolle.nav,
-                        *(prototypeFakta.map { it }.toTypedArray()),
+            ).registrer { prototypeFakta ->
+                leggTilProsess(
+                    Prosess(
+                        Testprosess.Test,
+                        Seksjon(
+                            "seksjon",
+                            Rolle.nav,
+                            *(prototypeFakta.map { it }.toTypedArray()),
+                        ),
                     ),
-                ),
-            ).registrer()
-            FaktumTable(prototypeFakta)
+                    prototypeFakta boolsk 1 er true,
+                )
+            }
 
-            prosessRepository = ProsessRepositoryImpl()
+            FaktumTable(prototypeFakta)
             originalProsess = utredningsprosess(Testprosess.Test)
 
             originalProsess.boolsk(2).besvar(true)
@@ -132,7 +129,7 @@ internal class AvhengigeFaktaTest {
             assertEquals(5, originalProsess.fakta.count { it.erBesvart() })
             prosessRepository.lagre(originalProsess)
 
-            rehydrertProsess = prosessRepository.hent(originalProsess.fakta.uuid)
+            rehydrertProsess = prosessRepository.hent(originalProsess.uuid)
             assertEquals(5, rehydrertProsess.fakta.count { it.erBesvart() })
         }
     }
@@ -149,22 +146,21 @@ internal class AvhengigeFaktaTest {
                 dato faktum "f3" id 3,
                 maks dato "f4" av 2 og 3 id 4,
                 boolsk faktum "f1" id 5 avhengerAv 4,
-            ).registrer()
-            Prosessversjon.Bygger(
-                Testfakta.Test,
-                prototypeFakta boolsk 1 er true,
-                Prosess(
-                    Testprosess.Test,
-                    Seksjon(
-                        "seksjon",
-                        Rolle.nav,
-                        *(prototypeFakta.map { it }.toTypedArray()),
+            ).registrer { prototypeFakta ->
+                leggTilProsess(
+                    Prosess(
+                        Testprosess.Test,
+                        Seksjon(
+                            "seksjon",
+                            Rolle.nav,
+                            *(prototypeFakta.map { it }.toTypedArray()),
+                        ),
                     ),
-                ),
-            ).registrer()
-            FaktumTable(prototypeFakta)
+                    prototypeFakta boolsk 1 er true,
+                )
+            }
 
-            prosessRepository = ProsessRepositoryImpl()
+            FaktumTable(prototypeFakta)
             originalProsess = utredningsprosess(Testprosess.Test)
 
             originalProsess.dato(2).besvar(1.januar)
@@ -175,7 +171,7 @@ internal class AvhengigeFaktaTest {
             assertEquals(5, originalProsess.fakta.count { it.erBesvart() })
             prosessRepository.lagre(originalProsess)
 
-            rehydrertProsess = prosessRepository.hent(originalProsess.fakta.uuid)
+            rehydrertProsess = prosessRepository.hent(originalProsess.uuid)
             assertEquals(5, rehydrertProsess.fakta.count { it.erBesvart() })
         }
     }
@@ -201,22 +197,21 @@ internal class AvhengigeFaktaTest {
                 periode faktum "f13" id 13 avhengerAv 1,
                 tekst faktum "f14" id 14 avhengerAv 1,
                 land faktum "f15" id 15 avhengerAv 1,
-            ).registrer()
-            Prosessversjon.Bygger(
-                Testfakta.Test,
-                prototypeFakta boolsk 1 er true,
-                Prosess(
-                    Testprosess.Test,
-                    Seksjon(
-                        "seksjon",
-                        Rolle.nav,
-                        *(prototypeFakta.map { it }.toTypedArray()),
+            ).registrer { prototypeFakta ->
+                leggTilProsess(
+                    Prosess(
+                        Testprosess.Test,
+                        Seksjon(
+                            "seksjon",
+                            Rolle.nav,
+                            *(prototypeFakta.map { it }.toTypedArray()),
+                        ),
                     ),
-                ),
-            ).registrer()
-            FaktumTable(prototypeFakta)
+                    prototypeFakta boolsk 1 er true,
+                )
+            }
 
-            prosessRepository = ProsessRepositoryImpl()
+            FaktumTable(prototypeFakta)
             originalProsess = utredningsprosess(Testprosess.Test)
 
             originalProsess.boolsk(1).besvar(true)
@@ -257,8 +252,7 @@ internal class AvhengigeFaktaTest {
 
     private fun lagreHentOgSammenlign() {
         prosessRepository.lagre(originalProsess)
-        val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
-        rehydrertProsess = prosessRepository.hent(uuid)
+        rehydrertProsess = prosessRepository.hent(originalProsess.uuid)
         assertDeepEquals(originalProsess, rehydrertProsess)
     }
 

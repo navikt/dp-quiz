@@ -18,7 +18,7 @@ interface ResultatPersistence {
 class ResultatRecord : ResultatPersistence {
 
     override fun lagreResultat(resultat: Boolean, søknadUuid: UUID, resultatJson: ObjectNode) {
-        using(sessionOf(dataSource)) { session ->
+        sessionOf(dataSource).use { session ->
             session.run(
                 queryOf( //language=PostgreSQL
                     """

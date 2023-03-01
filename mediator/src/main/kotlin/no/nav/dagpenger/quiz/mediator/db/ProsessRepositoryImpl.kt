@@ -9,7 +9,6 @@ import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Prosesstype
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.visitor.PersonVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.util.UUID

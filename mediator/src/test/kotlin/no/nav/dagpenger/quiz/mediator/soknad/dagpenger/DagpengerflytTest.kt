@@ -8,7 +8,6 @@ import no.nav.dagpenger.model.helpers.MedSøknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.quiz.mediator.helpers.testPerson
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`egne barn`
@@ -77,13 +76,13 @@ class DagpengerflytTest {
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
         assertTrue(
             prosess.erFerdig(),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
     }
