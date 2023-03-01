@@ -17,7 +17,6 @@ import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.putR
 import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.visitor.ProsessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
@@ -30,12 +29,12 @@ class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: 
     private val behovNode = mapper.createArrayNode()
     private val identerNode = mapper.createArrayNode()
     private lateinit var faktumNavBehov: FaktumNavBehov
-    private var ignore = true
+    private var ignoreSeksjoner = true
     private var rootId = 0
 
     init {
         prosess.accept(this)
-        prosess.fakta.accept(this)
+        ignoreSeksjoner = false
         prosess.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(prosess.rootSubsumsjon)
             .accept(this)
     }
@@ -67,14 +66,6 @@ class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: 
         }
     }
 
-    override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
-        ignore = false
-    }
-
-    override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
-        ignore = true
-    }
-
     override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
         this.rootId = rootId
     }
@@ -88,7 +79,7 @@ class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: 
         roller: Set<Rolle>,
         clazz: Class<R>,
     ) {
-        if (ignore) return
+        if (ignoreSeksjoner) return
         if (id in faktumIder) return
         if (avhengerAvFakta.all { it.erBesvart() }) {
             behovNode.add(faktumNavBehov[rootId])
@@ -119,7 +110,7 @@ class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: 
         gyldigeValg: GyldigeValg?,
         landGrupper: LandGrupper?,
     ) {
-        if (ignore) return
+        if (ignoreSeksjoner) return
         if (id in faktumIder) return
         if (avhengerAvFakta.all { it.erBesvart() }) {
             behovNode.add(faktumNavBehov[rootId])
@@ -131,7 +122,7 @@ class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: 
     }
 
     private fun lagFaktumNode(id: String, type: String, templates: ArrayNode? = null) {
-        if (ignore) return
+        if (ignoreSeksjoner) return
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("id", id)
