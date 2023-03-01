@@ -197,7 +197,7 @@ class FaktaRecord : FaktaRepository {
     private fun settVersjon(soknadId: BigInteger, versjon: Faktaversjon) =
         queryOf(
             // language=PostgreSQL
-            """UPDATE soknad
+            """UPDATE fakta 
             |SET versjon_id = (SELECT id FROM faktaversjon WHERE navn = :navn AND versjon_id = :versjonId)
             |WHERE id = :soknadId
             """.trimMargin(),
@@ -222,18 +222,17 @@ class FaktaRecord : FaktaRepository {
         }.asList
 
     private fun prosessversjon(uuid: UUID): Faktaversjon = using(sessionOf(dataSource)) { session ->
-        /*session.run(
+        session.run(
             queryOf(
                 // language=PostgreSQL
                 """SELECT v.navn, v.versjon_id
                 |FROM faktaversjon v
-                |LEFT JOIN soknad s ON v.id=s.versjon_id
+                |LEFT JOIN fakta s ON v.id=s.versjon_id
                 |WHERE s.uuid = :uuid
                 """.trimMargin(),
                 mapOf("uuid" to uuid),
             ).map { Faktaversjon(DaoProsess(it.string("navn")), it.int("versjon_id")) }.asSingle,
-        )*/
-        null // TODO
+        )
     } ?: throw IllegalArgumentException("Kan ikke finne prosessversjon for en søknad som ikke finnes, uuid: $uuid")
 
     private fun skrivNyeFaktum(

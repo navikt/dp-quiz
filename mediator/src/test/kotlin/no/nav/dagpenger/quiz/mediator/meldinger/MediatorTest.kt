@@ -19,22 +19,22 @@ internal class MediatorTest {
     @BeforeEach
     internal fun reset() {
         testRapid.reset()
-        grupperer.reset()
+        repository.reset()
     }
 
     private companion object {
         private val meldingsfabrikk = TestMeldingFactory("fødselsnummer", "aktør")
         private val testRapid = TestRapid()
-        private val grupperer = ProsessRepositoryFake(SøknadEksempel.faktaversjon)
+        private val repository = ProsessRepositoryFake(SøknadEksempel.prosesstype)
         private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
 
         init {
             AvslagPåMinsteinntektService(
-                grupperer,
+                repository,
                 testRapid,
                 SøknadEksempel.prosesstype,
             )
-            FaktumSvarService(grupperer, resultatPersistence, testRapid)
+            FaktumSvarService(repository, resultatPersistence, testRapid)
         }
     }
 
@@ -52,7 +52,7 @@ internal class MediatorTest {
             ),
         )
         assertEquals("faktum_svar", testRapid.inspektør.field(1, "@event_name").asText())
-        assertEquals(true, grupperer.prosess!!.id(1).svar())
+        assertEquals(true, repository.prosess!!.id(1).svar())
 
         testRapid.sendTestMessage(meldingsfabrikk.besvarFaktum(uuid, FaktumSvar(3, "int", "2")))
         testRapid.sendTestMessage(
@@ -91,7 +91,7 @@ internal class MediatorTest {
             ),
         )
         assertEquals(1, testRapid.inspektør.size)
-        assertEquals(0, grupperer.hentet, "Faktum uten svar laster ikke søknaden")
+        assertEquals(0, repository.hentet, "Faktum uten svar laster ikke søknaden")
 
         testRapid.sendTestMessage(
             meldingsfabrikk.besvarFaktum(
@@ -100,7 +100,7 @@ internal class MediatorTest {
             ),
         )
         assertEquals(2, testRapid.inspektør.size)
-        assertEquals(1, grupperer.hentet, "Faktum med et svar laster søknaden")
+        assertEquals(1, repository.hentet, "Faktum med et svar laster søknaden")
 
         testRapid.sendTestMessage(
             meldingsfabrikk.besvarFaktum(
@@ -110,7 +110,7 @@ internal class MediatorTest {
             ),
         )
         assertEquals(3, testRapid.inspektør.size)
-        assertEquals(2, grupperer.hentet, "Fakta hvor minst ett faktum har svar laster søknaden")
+        assertEquals(2, repository.hentet, "Fakta hvor minst ett faktum har svar laster søknaden")
 
         testRapid.sendTestMessage(
             meldingsfabrikk.besvarFaktumMedNull(
@@ -119,7 +119,7 @@ internal class MediatorTest {
             ),
         )
         assertEquals(4, testRapid.inspektør.size)
-        assertEquals(3, grupperer.hentet, "Faktum med null som svar laster søknaden")
+        assertEquals(3, repository.hentet, "Faktum med null som svar laster søknaden")
     }
 }
 

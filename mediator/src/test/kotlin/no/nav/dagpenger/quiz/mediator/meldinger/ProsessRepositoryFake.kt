@@ -1,6 +1,5 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
-import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
 import no.nav.dagpenger.model.seksjon.Prosess
@@ -9,12 +8,15 @@ import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.helpers.testPerson
 import java.util.UUID
 
-internal class ProsessRepositoryFake(val faktaversjon: Faktaversjon? = null) : ProsessRepository {
+internal class ProsessRepositoryFake(private val tvungetProsesstype: Prosesstype? = null) : ProsessRepository {
     var prosess: Prosess? = null
     var hentet: Int = 0
 
-    override fun ny(person: Identer, prosesstype: Prosesstype, uuid: UUID, faktaUUID: UUID) =
-        FaktaVersjonDingseboms.prosess(testPerson, prosesstype, uuid, faktaUUID)
+    override fun ny(person: Identer, prosesstype: Prosesstype, uuid: UUID, faktaUUID: UUID): Prosess {
+        return FaktaVersjonDingseboms.prosess(testPerson, prosesstype(prosesstype), uuid, faktaUUID)
+    }
+
+    private fun prosesstype(prosesstype: Prosesstype) = tvungetProsesstype ?: prosesstype
 
     override fun hent(uuid: UUID) = prosess!!.also { hentet++ }
 
