@@ -18,6 +18,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktatype
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Identer
@@ -34,8 +35,6 @@ import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
-import no.nav.dagpenger.quiz.mediator.helpers.Testfakta
-import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import no.nav.dagpenger.quiz.mediator.helpers.registrer
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -55,17 +54,19 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig faktum reset`() {
-        val prosessVersjon = Faktaversjon(Testfakta.Test, 634)
+        val faktatype = faktatype("Avhengig faktum reset")
+        val faktaversjon = Faktaversjon(faktatype, 634)
+        val prosesstype = prosesstype("Avhengig faktum restet", faktatype)
         Postgres.withMigratedDb {
             val prototypeFakta = Fakta(
-                prosessVersjon,
+                faktaversjon,
                 boolsk faktum "f1" id 19 avhengerAv 2 og 13,
                 dato faktum "f2" id 2,
                 dato faktum "f3" id 13,
             ).registrer { prototypeFakta ->
                 leggTilProsess(
                     Prosess(
-                        Testprosess.Test,
+                        prosesstype,
                         Seksjon(
                             "seksjon",
                             Rolle.nav,
@@ -76,7 +77,7 @@ internal class AvhengigeFaktaTest {
                 )
             }
             FaktumTable(prototypeFakta)
-            originalProsess = utredningsprosess(Testprosess.Test)
+            originalProsess = utredningsprosess(prosesstype)
 
             originalProsess.dato(2).besvar(2.januar)
             originalProsess.dato(13).besvar(13.januar)
@@ -93,11 +94,13 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig faktum rehydreres`() {
-        val prosessVersjon = Faktaversjon(Testfakta.Test, 635)
+        val faktatype = faktatype("Rehydrering")
+        val faktaversjon = Faktaversjon(faktatype, 635)
+        val prosesstype = prosesstype("Rehydrering", faktatype)
 
         Postgres.withMigratedDb {
             val prototypeFakta = Fakta(
-                prosessVersjon,
+                faktaversjon,
                 boolsk faktum "f1" id 1 avhengerAv 4,
                 boolsk faktum "f2" id 2,
                 boolsk faktum "f3" id 3 avhengerAv 1,
@@ -106,7 +109,7 @@ internal class AvhengigeFaktaTest {
             ).registrer { prototypeFakta ->
                 leggTilProsess(
                     Prosess(
-                        Testprosess.Test,
+                        prosesstype,
                         Seksjon(
                             "seksjon",
                             Rolle.nav,
@@ -118,7 +121,7 @@ internal class AvhengigeFaktaTest {
             }
 
             FaktumTable(prototypeFakta)
-            originalProsess = utredningsprosess(Testprosess.Test)
+            originalProsess = utredningsprosess(prosesstype)
 
             originalProsess.boolsk(2).besvar(true)
             originalProsess.boolsk(5).besvar(true)
@@ -136,11 +139,13 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Avhengig av utledet faktum rehydreres`() {
-        val prosessVersjon = Faktaversjon(Testfakta.Test, 636)
+        val faktatype = faktatype("Utledet faktum rehydreres")
+        val faktaversjon = Faktaversjon(faktatype, 636)
+        val prosesstype = prosesstype("Utledet faktum rehydreres", faktatype)
 
         Postgres.withMigratedDb {
             val prototypeFakta = Fakta(
-                prosessVersjon,
+                faktaversjon,
                 boolsk faktum "f1" id 1 avhengerAv 4,
                 dato faktum "f2" id 2,
                 dato faktum "f3" id 3,
@@ -149,7 +154,7 @@ internal class AvhengigeFaktaTest {
             ).registrer { prototypeFakta ->
                 leggTilProsess(
                     Prosess(
-                        Testprosess.Test,
+                        prosesstype,
                         Seksjon(
                             "seksjon",
                             Rolle.nav,
@@ -161,7 +166,7 @@ internal class AvhengigeFaktaTest {
             }
 
             FaktumTable(prototypeFakta)
-            originalProsess = utredningsprosess(Testprosess.Test)
+            originalProsess = utredningsprosess(prosesstype)
 
             originalProsess.dato(2).besvar(1.januar)
             originalProsess.dato(3).besvar(10.januar)
@@ -178,10 +183,13 @@ internal class AvhengigeFaktaTest {
 
     @Test
     fun `Alle avhengige faktumtyper resettes`() {
-        val prosessVersjon = Faktaversjon(Testfakta.Test, 637)
+        val faktatype = faktatype("Resett")
+        val faktaversjon = Faktaversjon(faktatype, 637)
+        val prosesstype = prosesstype("Resett", faktatype)
+
         Postgres.withMigratedDb {
             val prototypeFakta = Fakta(
-                prosessVersjon,
+                faktaversjon,
                 boolsk faktum "f1" id 1,
                 dato faktum "f2" id 2 avhengerAv 1,
                 boolsk faktum "f3" id 3 avhengerAv 1,
@@ -200,7 +208,7 @@ internal class AvhengigeFaktaTest {
             ).registrer { prototypeFakta ->
                 leggTilProsess(
                     Prosess(
-                        Testprosess.Test,
+                        prosesstype,
                         Seksjon(
                             "seksjon",
                             Rolle.nav,
@@ -212,7 +220,7 @@ internal class AvhengigeFaktaTest {
             }
 
             FaktumTable(prototypeFakta)
-            originalProsess = utredningsprosess(Testprosess.Test)
+            originalProsess = utredningsprosess(prosesstype)
 
             originalProsess.boolsk(1).besvar(true)
             originalProsess.dato(2).besvar(10.januar)
@@ -244,6 +252,15 @@ internal class AvhengigeFaktaTest {
             rehydrertProsess = prosessRepository.hent(originalProsess.uuid)
             assertEquals(1, rehydrertProsess.fakta.count { it.erBesvart() })
         }
+    }
+
+    private fun faktatype(navn: String) = object : Faktatype {
+        override val id = navn
+    }
+
+    private fun prosesstype(navn: String, faktatype: Faktatype) = object : Prosesstype {
+        override val navn: String = navn
+        override val faktatype: Faktatype = faktatype
     }
 
     private fun utredningsprosess(prosesstype: Prosesstype): Prosess {
