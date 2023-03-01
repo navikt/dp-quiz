@@ -53,10 +53,10 @@ spec:
   gcp:
     sqlInstances:
       - name: dp-quiz-mediator
-        type: POSTGRES_12
+        type: POSTGRES_12 # Egentlig 14, men vanskelig å synka
         tier: {{db.tier}}
         diskType: SSD
-        highAvailability: false
+        highAvailability: true
         diskSize: {{db.size}}
         diskAutoresize: true
         pointInTimeRecovery: true
