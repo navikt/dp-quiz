@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
@@ -116,11 +117,12 @@ internal class SøknadRecordTest {
             assertRecordCount(0, "dokument")
             assertRecordCount(0, "valgte_verdier")
             assertRecordCount(0, "periode")
-            assertRecordCount(0, "besvarer")
+            // TODO: Flytt dette til batchjobb assertRecordCount(0, "besvarer")
         }
     }
 
     @Test
+    @Disabled("Sletting av besvarer for hver søknad er tungt, det må flyttes til en cronjob")
     fun `Skal kun slette besvarer hvis den ikke refererer til andre søknader`() = Postgres.withMigratedDb {
         FaktumTable(SøknadEksempel1.prototypeFakta1)
         søknadRecord = SøknadRecord()
@@ -376,7 +378,7 @@ internal class SøknadRecordTest {
             assertEquals(
                 søknadRecord.migrer(soknadUUID, SøknadEksempel1.prosessVersjon),
                 SøknadEksempel1.prosessVersjon,
-                "Migrering til samme versjon"
+                "Migrering til samme versjon",
             )
 
             originalSøknadprosess.desimaltall("f26").besvar(9.9)
@@ -432,11 +434,11 @@ internal class SøknadRecordTest {
             using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        "SELECT COUNT (*) FROM $table"
-                    ).map { it.int(1) }.asSingle
+                        "SELECT COUNT (*) FROM $table",
+                    ).map { it.int(1) }.asSingle,
                 )
             },
-            "Forventet $recordCount i tabell $table"
+            "Forventet $recordCount i tabell $table",
         )
     }
 
@@ -444,10 +446,10 @@ internal class SøknadRecordTest {
         return using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL
-                    """SELECT $kolonnenavn FROM gammel_faktum_verdi WHERE $kolonnenavn IS NOT NULL"""
+                    """SELECT $kolonnenavn FROM gammel_faktum_verdi WHERE $kolonnenavn IS NOT NULL""",
                 ).map {
                     it.string(kolonnenavn)
-                }.asSingle
+                }.asSingle,
             )
         }
     }
@@ -460,10 +462,10 @@ internal class SøknadRecordTest {
                 session.run(
                     queryOf(
                         "SELECT sesjon_type_id FROM soknad WHERE uuid = ?",
-                        uuid
-                    ).map { it.int(1) }.asSingle
+                        uuid,
+                    ).map { it.int(1) }.asSingle,
                 )
-            }
+            },
         )
     }
 }

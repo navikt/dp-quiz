@@ -43,7 +43,7 @@ class SøknadRecord : SøknadPersistence {
         identer: Identer,
         type: Versjon.UserInterfaceType,
         prosessVersjon: Prosessversjon,
-        uuid: UUID
+        uuid: UUID,
     ): Søknadprosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
         return Versjon.id(prosessVersjon).søknadprosess(person, type, uuid).also { søknadprosess ->
@@ -53,13 +53,14 @@ class SøknadRecord : SøknadPersistence {
     }
 
     override fun eksisterer(uuid: UUID): Boolean {
-        val query = queryOf( //language=PostgreSQL
+        val query = queryOf(
+            //language=PostgreSQL
             "SELECT id FROM soknad WHERE uuid = :uuid",
-            mapOf("uuid" to uuid)
+            mapOf("uuid" to uuid),
         )
         return using(sessionOf(dataSource)) { session ->
             session.run(
-                query.map { true }.asSingle
+                query.map { true }.asSingle,
             ) ?: false
         }
     }
@@ -71,25 +72,27 @@ class SøknadRecord : SøknadPersistence {
 
         val rad = using(sessionOf(dataSource)) { session ->
             if (type != null) {
-                session.run( //language=PostgreSQL
-                    queryOf("UPDATE soknad SET sesjon_type_id = ? WHERE uuid = ?", type.id, uuid).asUpdate
+                session.run(
+                    //language=PostgreSQL
+                    queryOf("UPDATE soknad SET sesjon_type_id = ? WHERE uuid = ?", type.id, uuid).asUpdate,
                 )
             }
 
             session.run(
-                queryOf( //language=PostgreSQL
+                queryOf(
+                    //language=PostgreSQL
                     "SELECT soknad.person_id, versjon.navn , versjon.versjon_id, soknad.sesjon_type_id FROM soknad JOIN v1_prosessversjon AS versjon ON (versjon.id = soknad.versjon_id) WHERE uuid = ?",
-                    uuid
+                    uuid,
                 ).map { row ->
                     SoknadRad(UUID.fromString(row.string(1)), row.string(2), row.int(3), row.int(4))
-                }.asSingle
+                }.asSingle,
             )
         } ?: throw IllegalArgumentException("Kan ikke hente en søknad som ikke finnes, uuid: $uuid")
 
         return Versjon.id(Prosessversjon(Prosess(rad.navn), rad.versjonId)).søknadprosess(
             person = personRecord.hentPerson(rad.personId),
             type = Versjon.UserInterfaceType.fromId(rad.typeId),
-            uuid = uuid
+            uuid = uuid,
         ).also { søknadprosess ->
             svarList(uuid).onEach { row ->
                 søknadprosess.søknad.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
@@ -113,31 +116,12 @@ class SøknadRecord : SøknadPersistence {
 
     override fun slett(uuid: UUID): Boolean {
         using(sessionOf(dataSource)) { session ->
-            session.transaction { transaction ->
-                transaction.run(
-                    queryOf( //language=PostgreSQL
-                        """
-                            WITH soknad_id AS (DELETE FROM soknad WHERE uuid = :uuid RETURNING id),
-                            be AS (
-                        
-                                SELECT b.besvart_av
-                                FROM faktum_verdi a
-                                FULL OUTER JOIN faktum_verdi b ON  b.besvart_av = a.besvart_av
-                                WHERE a.soknad_id = (SELECT id FROM soknad_id)
-                                  AND a.besvart_av IS NOT NULL
-                                GROUP BY b.besvart_av
-                                HAVING  COUNT(DISTINCT(b.soknad_id)) <= 1
-                                                            
-                            )
-                                               
-                            DELETE
-                            FROM besvarer  
-                            WHERE besvarer.id IN (SELECT id FROM be)           
-                        """,
-                        mapOf("uuid" to uuid)
-                    ).asUpdate
-                )
-            }
+            session.run(
+                queryOf( //language=PostgreSQL
+                    "DELETE FROM soknad WHERE uuid = :uuid",
+                    mapOf("uuid" to uuid),
+                ).asExecute,
+            )
         }
         return true
     }
@@ -168,8 +152,8 @@ class SøknadRecord : SøknadPersistence {
                         mapOf(
                             "soknadId" to soknadId,
                             "gammelFaktumId" to forrigeFaktum.faktumId,
-                            "nyFaktumId" to faktum.faktumId
-                        )
+                            "nyFaktumId" to faktum.faktumId,
+                        ),
                     )
                 }
             }
@@ -188,15 +172,17 @@ class SøknadRecord : SøknadPersistence {
     }
 
     private data class FaktumMigrering(val faktumId: BigInteger, val rootId: Int) {
-        fun opprettQuery(soknadId: BigInteger) = queryOf( //language=PostgreSQL
+        fun opprettQuery(soknadId: BigInteger) = queryOf(
+            //language=PostgreSQL
             "INSERT INTO faktum_verdi (soknad_id, indeks, faktum_id) VALUES (:soknadId, 0, :id)",
-            mapOf("soknadId" to soknadId, "id" to faktumId)
+            mapOf("soknadId" to soknadId, "id" to faktumId),
         ).asUpdate
 
         fun oppdaterQuery(soknadId: BigInteger, gammelFaktumId: BigInteger, nyFaktumId: BigInteger) =
-            queryOf( //language=PostgreSQL
+            queryOf(
+                //language=PostgreSQL
                 "UPDATE faktum_verdi SET faktum_id = :nyFaktumId WHERE soknad_id = :soknadId AND faktum_id = :gammelFaktumId ",
-                mapOf("soknadId" to soknadId, "gammelFaktumId" to gammelFaktumId, "nyFaktumId" to nyFaktumId)
+                mapOf("soknadId" to soknadId, "gammelFaktumId" to gammelFaktumId, "nyFaktumId" to nyFaktumId),
             ).asUpdate
 
         fun opprettEllerOppdater(forrigeFaktum: FaktumMigrering?, soknadId: BigInteger) = when (forrigeFaktum) {
@@ -206,18 +192,20 @@ class SøknadRecord : SøknadPersistence {
     }
 
     private fun internSoknadId(uuid: UUID) =
-        queryOf( // language=PostgreSQL
+        queryOf(
+            // language=PostgreSQL
             "SELECT id FROM soknad WHERE uuid=?",
-            uuid
+            uuid,
         ).map { it.bigDecimal("id").toBigInteger() }.asSingle
 
     private fun settVersjon(soknadId: BigInteger, versjon: Prosessversjon) =
-        queryOf( // language=PostgreSQL
+        queryOf(
+            // language=PostgreSQL
             """UPDATE soknad
             |SET versjon_id = (SELECT id FROM v1_prosessversjon WHERE navn = :navn AND versjon_id = :versjonId)
             |WHERE id = :soknadId
             """.trimMargin(),
-            mapOf("navn" to versjon.prosessnavn.id, "versjonId" to versjon.versjon, "soknadId" to soknadId)
+            mapOf("navn" to versjon.prosessnavn.id, "versjonId" to versjon.versjon, "soknadId" to soknadId),
         ).asUpdate
 
     private fun hentFaktum(sisteVersjon: Prosessversjon) =
@@ -229,24 +217,25 @@ class SøknadRecord : SøknadPersistence {
             |WHERE faktum.versjon_id = v1_prosessversjon.id AND v1_prosessversjon.navn=? AND v1_prosessversjon.versjon_id=?
             """.trimMargin(),
             sisteVersjon.prosessnavn.id,
-            sisteVersjon.versjon
+            sisteVersjon.versjon,
         ).map {
             FaktumMigrering(
                 faktumId = it.bigDecimal("id").toBigInteger(),
-                rootId = it.int("root_id")
+                rootId = it.int("root_id"),
             )
         }.asList
 
     private fun prosessversjon(uuid: UUID) = using(sessionOf(dataSource)) { session ->
         session.run(
-            queryOf( // language=PostgreSQL
+            queryOf(
+                // language=PostgreSQL
                 """SELECT v.navn, v.versjon_id 
                 |FROM v1_prosessversjon v
                 |LEFT JOIN soknad s ON v.id=s.versjon_id
                 |WHERE s.uuid = :uuid
                 """.trimMargin(),
-                mapOf("uuid" to uuid)
-            ).map { Prosessversjon(Prosess(it.string("navn")), it.int("versjon_id")) }.asSingle
+                mapOf("uuid" to uuid),
+            ).map { Prosessversjon(Prosess(it.string("navn")), it.int("versjon_id")) }.asSingle,
         )
     } ?: throw IllegalArgumentException("Kan ikke finne prosessversjon for en søknad som ikke finnes, uuid: $uuid")
 
@@ -254,7 +243,7 @@ class SøknadRecord : SøknadPersistence {
         nyeSvar: MutableMap<String, Faktum<*>?>,
         originalSvar: MutableMap<String, Faktum<*>?>,
         søknad: Søknad,
-        transactionalSession: TransactionalSession
+        transactionalSession: TransactionalSession,
     ) {
         nyeSvar.filterNot { (id, _) -> originalSvar.containsKey(id) }.forEach { (id, svar) ->
             val (rootId, indeks) = søknad.id(id).reflection { rootId, indeks -> rootId to indeks }
@@ -268,7 +257,7 @@ class SøknadRecord : SøknadPersistence {
         originalSvar: MutableMap<String, Faktum<*>?>,
         nyeSvar: MutableMap<String, Faktum<*>?>,
         søknad: Søknad,
-        transactionalSession: TransactionalSession
+        transactionalSession: TransactionalSession,
     ) {
         originalSvar.filterNot { (id, faktum) -> nyeSvar[id]?.svar() == faktum?.svar() }
             .forEach { (id, originaltFaktum) ->
@@ -291,7 +280,7 @@ class SøknadRecord : SøknadPersistence {
         søknad: Søknad,
         nyeSvar: Map<String, Faktum<*>?>,
         originalSvar: MutableMap<String, Faktum<*>?>,
-        transactionalSession: TransactionalSession
+        transactionalSession: TransactionalSession,
     ) {
         originalSvar.keys.toSet().subtract(nyeSvar.keys.toSet())
             .map { FaktumId(it).reflection { rootId, indeks -> Triple(rootId, indeks, it) } }
@@ -320,13 +309,14 @@ class SøknadRecord : SøknadPersistence {
         """.trimIndent(),
         søknad.uuid,
         rootId,
-        indeks
+        indeks,
     ).asExecute
 
     private fun svarList(uuid: UUID): List<FaktumVerdiRow> {
         return using(sessionOf(dataSource)) { session ->
             session.run(
-                queryOf( //language=PostgreSQL
+                queryOf(
+                    //language=PostgreSQL
                     """
                         WITH soknad_faktum AS (SELECT faktum.id AS faktum_id, faktum.root_id AS root_id, soknad.id AS soknad_id FROM soknad, faktum
                                 WHERE faktum.versjon_id = soknad.versjon_id AND faktum.regel IS NULL AND soknad.uuid = ?)
@@ -356,7 +346,7 @@ class SøknadRecord : SøknadPersistence {
                             LEFT JOIN valgte_verdier flervalg ON faktum_verdi.flervalg_id = flervalg.id
                             LEFT JOIN besvarer ON faktum_verdi.besvart_av = besvarer.id
                             ORDER BY indeks""",
-                    uuid
+                    uuid,
                 ).map {
                     FaktumVerdiRow(
                         it.int("root_id"),
@@ -374,9 +364,9 @@ class SøknadRecord : SøknadPersistence {
                         it.stringOrNull("tekst")?.let { verdi -> Tekst(verdi) },
                         it.stringOrNull("land")?.let { verdi -> Land(verdi) },
                         it.localDateOrNull("fom"),
-                        it.localDateOrNull("tom")
+                        it.localDateOrNull("tom"),
                     )
-                }.asList
+                }.asList,
             )
         }
     }
@@ -398,7 +388,7 @@ class SøknadRecord : SøknadPersistence {
         val land: Land?,
         val fom: LocalDate?,
         val tom: LocalDate?,
-        val id: FaktumId = if (indeks == 0) FaktumId(root_id) else FaktumId(root_id).medIndeks(indeks)
+        val id: FaktumId = if (indeks == 0) FaktumId(root_id) else FaktumId(root_id).medIndeks(indeks),
     )
 
     @Suppress("UNCHECKED_CAST")
@@ -430,9 +420,9 @@ class SøknadRecord : SøknadPersistence {
             (faktum as Faktum<Dokument>).rehydrer(
                 Dokument(
                     row.opplastet,
-                    row.urn
+                    row.urn,
                 ),
-                row.besvartAv
+                row.besvartAv,
             )
         }
         if (row.envalg != null) {
@@ -445,9 +435,9 @@ class SøknadRecord : SøknadPersistence {
             (faktum as Faktum<Periode>).rehydrer(
                 Periode(
                     row.fom,
-                    row.tom
+                    row.tom,
                 ),
-                row.besvartAv
+                row.besvartAv,
             )
         }
     }
@@ -459,24 +449,27 @@ class SøknadRecord : SøknadPersistence {
         val besvarer = besvartAv ?: return null
         return using(sessionOf(dataSource)) { session ->
             session.run(
-                queryOf( //language=PostgreSQL
+                queryOf(
+                    //language=PostgreSQL
                     """
                          SELECT id FROM besvarer WHERE identifikator = :besvarer""",
-                    mapOf("besvarer" to besvarer)
-                ).map { it.int(1) }.asSingle
+                    mapOf("besvarer" to besvarer),
+                ).map { it.int(1) }.asSingle,
             ) ?: session.run(
-                queryOf( //language=PostgreSQL
+                queryOf(
+                    //language=PostgreSQL
                     """
                     INSERT INTO besvarer (identifikator) VALUES (:besvarer) RETURNING id
                     """.trimIndent(),
-                    mapOf("besvarer" to besvarer)
-                ).map { it.int(1) }.asSingle
+                    mapOf("besvarer" to besvarer),
+                ).map { it.int(1) }.asSingle,
             )
         }
     }
 
     private fun arkiverFaktum(søknad: Søknad, rootId: Int, indeks: Int): ExecuteQueryAction =
-        queryOf( //language=PostgreSQL
+        queryOf(
+            //language=PostgreSQL
             """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, boolsk, aarlig_inntekt, dokument_id, dato, heltall, envalg_id, flervalg_id, tekst,land, periode_id, opprettet, besvart_av, desimaltall)
             SELECT soknad_id,
                    faktum_verdi.faktum_id,
@@ -505,11 +498,12 @@ class SøknadRecord : SøknadPersistence {
             """.trimMargin(),
             søknad.uuid,
             rootId,
-            indeks
+            indeks,
         ).asExecute
 
     private fun opprettTemplateFaktum(indeks: Int, søknad: Søknad, rootId: Int): ExecuteQueryAction =
-        queryOf( //language=PostgreSQL
+        queryOf(
+            //language=PostgreSQL
             """INSERT INTO faktum_verdi (indeks, soknad_id, faktum_id)
             SELECT :indeks, soknad.id, faktum.id
             FROM soknad,
@@ -521,17 +515,18 @@ class SøknadRecord : SøknadPersistence {
             mapOf(
                 "indeks" to indeks,
                 "soknadUuid" to søknad.uuid,
-                "rootId" to rootId
-            )
+                "rootId" to rootId,
+            ),
         ).asExecute
 
     override fun opprettede(identer: Identer): Map<LocalDateTime, UUID> {
         return using(sessionOf(dataSource)) { session ->
             session.run(
-                queryOf( //language=PostgreSQL
+                queryOf(
+                    //language=PostgreSQL
                     "SELECT opprettet, uuid FROM soknad WHERE person_id = (SELECT person_id FROM folkeregisterident WHERE verdi = ?)",
-                    identer.first { it.type == Ident.Type.FOLKEREGISTERIDENT && !it.historisk }.id
-                ).map { it.localDateTime(1) to UUID.fromString(it.string(2)) }.asList
+                    identer.first { it.type == Ident.Type.FOLKEREGISTERIDENT && !it.historisk }.id,
+                ).map { it.localDateTime(1) to UUID.fromString(it.string(2)) }.asList,
             )
         }.toMap()
     }
