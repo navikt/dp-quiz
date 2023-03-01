@@ -13,15 +13,15 @@ internal class OpprettNyFaktaVisitorTest {
     @BeforeEach
     internal fun reset() {
         testRapid.reset()
-        søknadPersistance.reset()
+        repository.reset()
     }
 
     private companion object {
         private val testRapid = TestRapid()
-        private val søknadPersistance = ProsessRepositoryFake()
+        private val repository = ProsessRepositoryFake(SøknadEksempel.prosesstype)
 
         init {
-            AvslagPåMinsteinntektService(søknadPersistance, testRapid, SøknadEksempel.prosesstype)
+            AvslagPåMinsteinntektService(repository, testRapid, SøknadEksempel.prosesstype)
         }
     }
 
@@ -29,7 +29,7 @@ internal class OpprettNyFaktaVisitorTest {
     fun `Start ny søknadprosess, trigget av innsending_ferdigstilt fra dp-mottak`() {
         testRapid.sendTestMessage(innsendingFerdigstiltJson)
         assertEquals(1, testRapid.inspektør.size)
-        assertNotNull(søknadPersistance.prosess)
+        assertNotNull(repository.prosess)
     }
 
     @Language("JSON")
