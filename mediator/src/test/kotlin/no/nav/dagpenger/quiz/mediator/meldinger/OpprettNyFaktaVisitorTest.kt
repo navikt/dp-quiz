@@ -18,10 +18,10 @@ internal class OpprettNyFaktaVisitorTest {
 
     private companion object {
         private val testRapid = TestRapid()
-        private val repository = ProsessRepositoryFake(SøknadEksempel.prosesstype)
+        private val repository = ProsessRepositoryFake(SøknadEksempel.prosesstype, SøknadEksempel.faktaversjon)
 
         init {
-            AvslagPåMinsteinntektService(repository, testRapid, SøknadEksempel.prosesstype)
+            AvslagPåMinsteinntektService(repository, testRapid)
         }
     }
 

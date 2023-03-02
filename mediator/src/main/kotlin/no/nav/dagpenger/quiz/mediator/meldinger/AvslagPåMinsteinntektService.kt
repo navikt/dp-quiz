@@ -3,7 +3,6 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.arenaFagsakId
@@ -19,7 +18,6 @@ import java.time.LocalDateTime
 internal class AvslagPåMinsteinntektService(
     private val prosessRepository: ProsessRepository,
     rapidsConnection: RapidsConnection,
-    private val prosesstype: Prosesstype = Prosesser.AvslagPåMinsteinntekt,
 ) : River.PacketListener {
     private companion object {
         private val log = KotlinLogging.logger {}
@@ -49,7 +47,7 @@ internal class AvslagPåMinsteinntektService(
         val journalpostId = packet["journalpostId"].asText()
         log.info { "Mottok søknad med id $søknadsId " }
 
-        prosessRepository.ny(identer, prosesstype)
+        prosessRepository.ny(identer, Prosesser.AvslagPåMinsteinntekt)
             .also { prosess ->
                 // Arena-fagsakId for at arena-sink skal kunne lage vedtak på riktig sak
                 val fagsakIdNode = packet["fagsakId"]

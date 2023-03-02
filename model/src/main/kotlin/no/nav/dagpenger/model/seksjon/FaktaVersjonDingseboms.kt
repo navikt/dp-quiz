@@ -34,6 +34,15 @@ class FaktaVersjonDingseboms private constructor(
             faktaUUID: UUID = UUID.randomUUID(),
         ) =
             id(siste(prosesstype.faktatype)).prosess(person, prosesstype, prosessUUID, faktaUUID)
+
+        fun prosess(
+            person: Person,
+            prosesstype: Prosesstype,
+            prosessUUID: UUID = UUID.randomUUID(),
+            faktaUUID: UUID = UUID.randomUUID(),
+            faktaversjon: Faktaversjon,
+        ) =
+            id(faktaversjon).prosess(person, prosesstype, prosessUUID, faktaUUID)
     }
 
     init {

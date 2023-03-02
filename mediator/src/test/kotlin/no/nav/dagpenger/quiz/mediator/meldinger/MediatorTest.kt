@@ -25,14 +25,13 @@ internal class MediatorTest {
     private companion object {
         private val meldingsfabrikk = TestMeldingFactory("fødselsnummer", "aktør")
         private val testRapid = TestRapid()
-        private val repository = ProsessRepositoryFake(SøknadEksempel.prosesstype)
+        private val repository = ProsessRepositoryFake(SøknadEksempel.prosesstype, SøknadEksempel.faktaversjon)
         private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
 
         init {
             AvslagPåMinsteinntektService(
                 repository,
                 testRapid,
-                SøknadEksempel.prosesstype,
             )
             FaktumSvarService(repository, resultatPersistence, testRapid)
         }
