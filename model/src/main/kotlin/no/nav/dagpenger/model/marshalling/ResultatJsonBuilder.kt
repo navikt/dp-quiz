@@ -25,8 +25,8 @@ class ResultatJsonBuilder(
         return super.resultat()
     }
 
-    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
-        super.preVisit(fakta, faktaversjon, uuid)
+    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+        super.preVisit(fakta, faktaversjon, uuid, navBehov)
         root.put("@event_name", "prosess_resultat")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")

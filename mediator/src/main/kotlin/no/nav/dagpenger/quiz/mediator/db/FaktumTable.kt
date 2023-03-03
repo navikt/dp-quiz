@@ -34,6 +34,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.visitor.FaktaVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import org.postgresql.util.PGobject
@@ -63,7 +64,7 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
 
         fun ikkeEksisterer() = !eksisterer
 
-        override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
+        override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
             eksisterer = exists(faktaversjon)
         }
 
@@ -83,7 +84,7 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
         }
     }
 
-    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
         val query = queryOf( //language=PostgreSQL
             "INSERT INTO faktaversjon (navn, versjon_id) VALUES (:navn, :versjon_id) RETURNING id",
             mapOf("navn" to faktaversjon.faktatype.id, "versjon_id" to faktaversjon.versjon),

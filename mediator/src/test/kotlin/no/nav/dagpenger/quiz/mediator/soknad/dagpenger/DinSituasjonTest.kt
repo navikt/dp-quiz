@@ -2,7 +2,6 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
@@ -10,8 +9,8 @@ import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.quiz.mediator.helpers.testFaktaversjon
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
-import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -21,7 +20,7 @@ import kotlin.test.assertTrue
 
 internal class DinSituasjonTest {
     private val fakta = DinSituasjon.fakta()
-    private val søknad = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *fakta)
+    private val søknad = Fakta(testFaktaversjon(), *fakta)
     private lateinit var prosess: Prosess
 
     @BeforeEach
@@ -459,7 +458,7 @@ internal class DinSituasjonTest {
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *DinSituasjon.fakta())
+        val fakta = Fakta(testFaktaversjon(), *DinSituasjon.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             subsumsjon = DinSituasjon.regeltre(fakta),
         ) {

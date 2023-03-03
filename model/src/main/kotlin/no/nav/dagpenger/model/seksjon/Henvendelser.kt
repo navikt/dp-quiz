@@ -64,7 +64,11 @@ class Henvendelser private constructor(
         private val prosess: Prosess,
         private val regeltre: Subsumsjon,
     ) {
-        fun prosess(person: Person, prosessUUID: UUID, faktaUUID: UUID): Prosess {
+        fun prosess(
+            person: Person,
+            prosessUUID: UUID = UUID.randomUUID(),
+            faktaUUID: UUID = UUID.randomUUID(),
+        ): Prosess {
             val fakta = faktaBygger.fakta(person, faktaUUID)
             val subsumsjon = regeltre.bygg(fakta)
             return prosess.bygg(prosessUUID, fakta, subsumsjon)
@@ -80,12 +84,13 @@ class Henvendelser private constructor(
             person: Person,
             faktaUUID: UUID = UUID.randomUUID(),
         ): Fakta = prototypeFakta.bygg(person, faktaUUID)
+            // TODO: Shim på veien til at Fakta eier NAV behov
+            .also { fakta -> faktumNavBehov?.let { fakta.faktumNavBehov(faktumNavBehov) } }
 
         internal fun faktaversjon() = prototypeFakta.faktaversjon
         fun registrer() = Henvendelser(this)
-        fun leggTilProsess(prosess: Prosess, regeltre: Subsumsjon) {
-            prosesser[prosess.type] = ProsessBygger(this, prosess, regeltre)
-        }
+        fun leggTilProsess(prosess: Prosess, regeltre: Subsumsjon) =
+            ProsessBygger(this, prosess, regeltre).also { prosesser[prosess.type] = it }
 
         fun prosess(
             person: Person,

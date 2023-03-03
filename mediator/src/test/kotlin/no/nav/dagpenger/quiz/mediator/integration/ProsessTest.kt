@@ -55,12 +55,8 @@ internal class ProsessTest() {
         medSeksjon(DinSituasjon) {
             it.land(`arbeidsforhold land` index 1).besvar(Land("NOR"))
         }
-        val regeltre = with(prototypeFakta) {
-            "".deltre {
-                (envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`) inneholder Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
-            }
-        }
-        val annenProsess = Prosess(
+        // Lag ny prosess med samme fakta
+        Prosess(
             Prosesser.AvslagPåAlder,
             Seksjon(
                 "test",
@@ -68,17 +64,15 @@ internal class ProsessTest() {
                 prototypeFakta.envalg(101),
             ),
         ).also { prosess ->
-            Dagpenger.fakta.leggTilProsess(prosess, regeltre)
+            Dagpenger.henvendelse.leggTilProsess(
+                prosess,
+                with(prototypeFakta) {
+                    "".deltre {
+                        (envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`) inneholder Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
+                    }
+                },
+            )
         }
-
-//        Prosessversjon.Bygger(
-//            faktatype = Prosessfakta.Dagpenger,
-//            prototypeSubsumsjon = regeltre,
-//            prosess = annenProsess,
-//        ).registrer().also {
-//            val nyInstans = it.utredningsprosess(søknadsprosess.fakta)
-//            println(nyInstans)
-//        }
 
         assertEquals(false, søknadsprosess.erFerdig())
     }

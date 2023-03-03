@@ -7,6 +7,7 @@ import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktatype
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
 import no.nav.dagpenger.model.seksjon.Prosess
@@ -177,7 +178,7 @@ internal class FaktumSvarService(
             prosess.accept(this)
         }
 
-        override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
+        override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
             faktatype = faktaversjon.faktatype
         }
     }

@@ -14,14 +14,8 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
-import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
-import no.nav.dagpenger.model.seksjon.Seksjon
 
 internal object SøknadEksempel2 {
-    val prosesstype = SøknadEksempel1.prosesstype
     val faktaversjon = Faktaversjon(SøknadEksempel1.faktatype, 889)
     internal val prototypeFakta by lazy {
         Fakta(
@@ -56,25 +50,5 @@ internal object SøknadEksempel2 {
             desimaltall faktum "f27" id 27,
             envalg faktum "f28" med "valg1" med "valg2" id 28,
         ).registrer()
-    }
-    private val prosess = Prosess(
-        prosesstype,
-        Seksjon(
-            "seksjon",
-            Rolle.søker,
-            *(prototypeFakta.map { it }.toTypedArray()),
-        ),
-    )
-
-    private val prototypeSubsumsjon = prototypeFakta boolsk 1 er true
-
-    val prosessversjon by lazy {
-        Prosessversjon.Bygger(
-            SøknadEksempel1.faktatype,
-            prototypeSubsumsjon,
-            prosess,
-        )
-    }.also {
-        println("##### Versjon registrert med prosesstype $prosesstype #####")
     }
 }

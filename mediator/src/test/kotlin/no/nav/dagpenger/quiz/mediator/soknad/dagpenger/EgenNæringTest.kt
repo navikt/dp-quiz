@@ -1,13 +1,12 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.quiz.mediator.helpers.testFaktaversjon
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
-import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -17,7 +16,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class EgenNæringTest {
-    private val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, versjon = -1), *EgenNæring.fakta())
+    private val fakta = Fakta(testFaktaversjon(), *EgenNæring.fakta())
     private lateinit var prosess: Prosess
 
     @BeforeEach

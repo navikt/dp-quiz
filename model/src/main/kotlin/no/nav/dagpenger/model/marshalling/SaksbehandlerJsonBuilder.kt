@@ -33,8 +33,8 @@ class SaksbehandlerJsonBuilder(
         genererteFakta.forEach { it.accept(this) }
     }
 
-    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
-        super.preVisit(fakta, faktaversjon, uuid)
+    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+        super.preVisit(fakta, faktaversjon, uuid, navBehov)
         root.put("@event_name", "oppgave")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")

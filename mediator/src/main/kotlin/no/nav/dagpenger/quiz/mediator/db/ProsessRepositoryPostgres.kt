@@ -70,7 +70,7 @@ class ProsessRepositoryPostgres : ProsessRepository {
             )
         } ?: throw IllegalArgumentException("Kan ikke hente en utredningsprosess som ikke finnes, uuid: $uuid")
         val person = PersonRecord().hentPerson(rad.personId)
-        val utredningsprosess = Henvendelser.prosess(person, rad.prosesstype, uuid, rad.faktaUUID)
+        val utredningsprosess = Henvendelser.prosess(person, rad.prosesstype, uuid, rad.faktaUUID, rad.faktaversjon)
         faktaRepository.rehydrerFakta(utredningsprosess.fakta)
 
         return utredningsprosess

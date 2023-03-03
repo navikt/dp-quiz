@@ -7,16 +7,14 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
-import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.minst
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -26,12 +24,12 @@ import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.helpers.Testfakta
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
-import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
+import no.nav.dagpenger.quiz.mediator.helpers.testPerson
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.Seksjoner
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import java.util.UUID
 
 class Graftest {
     @Test
@@ -124,13 +122,10 @@ class Graftest {
                 }
             }
         }
-        val søknadprosess = Prosessversjon.Bygger(
-            Testfakta.Test,
-            prototypeSubsumsjon,
+        val søknadprosess = Henvendelser.FaktaBygger(prototypeFakta).leggTilProsess(
             prototypeWebSøknad,
-        ).utredningsprosess(
-            Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
-        )
+            prototypeSubsumsjon,
+        ).prosess(testPerson)
 
         SubsumsjonsGraf(søknadprosess).skrivTilFil("grafer/ex2.png")
         Runtime.getRuntime().exec("open grafer/ex2.png")
@@ -139,14 +134,7 @@ class Graftest {
     @Test
     @Disabled
     fun `avslag`() {
-        val manglerInntekt = Prosessversjon.Bygger(
-            Prosessfakta.AvslagPåMinsteinntekt,
-            AvslagPåMinsteinntekt.regeltre,
-            Seksjoner.prosess,
-        )
-            .utredningsprosess(
-                Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
-            )
+        val manglerInntekt = AvslagPåMinsteinntektOppsett.henvendelse.prosess(testPerson, Prosesser.AvslagPåMinsteinntekt)
 
         SubsumsjonsGraf(manglerInntekt).skrivTilFil("grafer/ex2.png")
         Runtime.getRuntime().exec("open grafer/ex2.png")

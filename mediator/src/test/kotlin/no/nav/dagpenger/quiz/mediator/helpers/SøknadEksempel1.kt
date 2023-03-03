@@ -15,12 +15,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktatype
 import no.nav.dagpenger.model.faktum.Faktaversjon
-import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Prosesstype
-import no.nav.dagpenger.model.seksjon.Prosessversjon
-import no.nav.dagpenger.model.seksjon.Seksjon
 
 enum class Testfakta(override val id: String) : Faktatype {
     Test("test-r"),
@@ -33,7 +28,6 @@ enum class Testprosess(override val navn: String, override val faktatype: Faktat
 }
 
 internal object SøknadEksempel1 {
-    val prosesstype = Testprosess.SøknadEksempel1
     val faktatype = Testfakta.SøknadEksempel1
     val faktaversjon = Faktaversjon(faktatype, 888)
 
@@ -68,23 +62,4 @@ internal object SøknadEksempel1 {
         land faktum "f25" id 25,
         desimaltall faktum "f26" id 26,
     ).registrer()
-
-    private val prosess = Prosess(
-        prosesstype,
-        Seksjon(
-            "seksjon",
-            Rolle.søker,
-            *(prototypeFakta.map { it }.toTypedArray()),
-        ),
-    )
-
-    private val prototypeSubsumsjon = prototypeFakta boolsk 1 er true
-
-    val prosessversjon = Prosessversjon.Bygger(
-        Testfakta.SøknadEksempel1,
-        prototypeSubsumsjon,
-        prosess,
-    ).registrer().also {
-        println("##### Versjon registrert med prosesstype $prosesstype #####")
-    }
 }

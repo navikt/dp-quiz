@@ -4,6 +4,7 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
@@ -40,7 +41,7 @@ class DagpengerMetadataStrategi : MetadataStrategi {
             }
         }
 
-        override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
+        override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
             require(faktaversjon.faktatype == Prosessfakta.Dagpenger) { "Kan kun håndtere ${Prosessfakta.Dagpenger.name}, var ${faktaversjon.faktatype}" }
         }
 

@@ -5,7 +5,6 @@ import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
@@ -14,10 +13,11 @@ import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
-import no.nav.dagpenger.quiz.mediator.helpers.Testfakta
-import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
+import no.nav.dagpenger.quiz.mediator.helpers.faktaversjon
 import no.nav.dagpenger.quiz.mediator.helpers.registrer
+import no.nav.dagpenger.quiz.mediator.helpers.testProsesstype
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class ResultatTest {
@@ -29,14 +29,16 @@ internal class ResultatTest {
     private lateinit var faktaRecord: FaktaRecord
     private lateinit var resultatRecord: ResultatRecord
 
-    private fun setup(faktaversjon: Faktaversjon) {
+    @BeforeEach
+    fun setup() {
+        val prosesstype = testProsesstype()
         val prototypeFakta = Fakta(
-            faktaversjon,
+            prosesstype.faktaversjon,
             boolsk faktum "f1" id 19,
         ).registrer { prototypeFakta ->
             leggTilProsess(
                 Prosess(
-                    Testprosess.Test,
+                    prosesstype,
                     Seksjon(
                         "seksjon",
                         Rolle.nav,
@@ -51,13 +53,12 @@ internal class ResultatTest {
             FaktumTable(prototypeFakta)
             faktaRecord = FaktaRecord()
             resultatRecord = ResultatRecord()
-            prosess = ProsessRepositoryPostgres().ny(IDENT, Testprosess.Test)
+            prosess = ProsessRepositoryPostgres().ny(IDENT, prosesstype)
         }
     }
 
     @Test
     fun `Lagre resultat`() {
-        setup(Faktaversjon(Testfakta.Test, 935))
         prosess.boolsk(19).besvar(false)
         val resultat = prosess.resultat()
         resultatRecord.lagreResultat(
@@ -72,7 +73,6 @@ internal class ResultatTest {
 
     @Test
     fun `Lagrer sendt til manuell behandling`() {
-        setup(Faktaversjon(Testfakta.Test, 936))
         val seksjonsnavn = "manuell seksjon"
         resultatRecord.lagreManuellBehandling(prosess.fakta.uuid, seksjonsnavn)
         val grunn = using(sessionOf(dataSource)) { session ->

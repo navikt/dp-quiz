@@ -1,21 +1,20 @@
 package no.nav.dagpenger.model.unit.marshalling
 
-import io.mockk.clearStaticMockk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.helpers.NyttEksempel
-import no.nav.dagpenger.model.helpers.TestProsesser
+import no.nav.dagpenger.model.helpers.faktaversjon
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.helpers.testProsesstype
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
@@ -26,23 +25,23 @@ import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.ikkeOppfyltGodkjentAv
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.oppfyltGodkjentAv
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import java.util.ResourceBundle
 import java.util.UUID
 
 internal class SaksbehandlerJsonBuilderTest {
     private lateinit var prototypeFakta: Fakta
+    private lateinit var prosesstype: Prosesstype
 
     @BeforeEach
     fun setup() {
+        prosesstype = testProsesstype()
         prototypeFakta = Fakta(
-            testversjon,
+            prosesstype.faktaversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1,
             boolsk faktum "f3" id 3,
@@ -367,32 +366,8 @@ internal class SaksbehandlerJsonBuilderTest {
         }
     }
 
-    @Test
-    fun `Komplekse seksjoner`() {
-        assertFaktaStørrelseISeksjon(5, "seksjon8")
-        assertFaktaStørrelseISeksjon(4, "seksjon9")
-    }
-
-    @Test
-    fun `Genererte seksjoner kan bli sendt`() {
-        val fakta = NyttEksempel().prosess
-        fakta.heltall(15).besvar(3)
-        var json = SaksbehandlerJsonBuilder(fakta, "seksjon8").resultat()
-        assertEquals(8, json["fakta"].size())
-    }
-
-    @AfterEach
-    fun clean() {
-        clearStaticMockk(ResourceBundle::class)
-    }
-
-    private fun assertFaktaStørrelseISeksjon(expected: Int, seksjonNavn: String) {
-        val json = SaksbehandlerJsonBuilder(NyttEksempel().prosess, seksjonNavn).resultat()
-        assertEquals(expected, json["fakta"].size())
-    }
-
     private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess = Prosess(
-        TestProsesser.Test,
+        prosesstype,
         prototypeFakta,
         Seksjon(
             "søker",

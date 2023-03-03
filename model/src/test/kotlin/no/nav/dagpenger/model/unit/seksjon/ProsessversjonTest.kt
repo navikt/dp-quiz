@@ -3,36 +3,31 @@ package no.nav.dagpenger.model.unit.seksjon
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
-import no.nav.dagpenger.model.helpers.TestFakta
-import no.nav.dagpenger.model.helpers.TestProsesser
-import no.nav.dagpenger.model.helpers.testPerson
+import no.nav.dagpenger.model.helpers.faktaversjon
+import no.nav.dagpenger.model.helpers.testProsess
+import no.nav.dagpenger.model.helpers.testProsesstype
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.UUID
 import kotlin.test.assertEquals
 
 internal class ProsessversjonTest {
     private lateinit var prosess: Prosess
 
     private companion object {
+        val prosesstype = testProsesstype()
         val prototypeFakta = Fakta(
-            Faktaversjon(TestFakta.Test, 1),
+            prosesstype.faktaversjon,
             heltall faktum "f15" id 15 genererer 16 og 17 og 18,
             heltall faktum "f16" id 16,
             boolsk faktum "f17" id 17,
             boolsk faktum "f18" id 18,
-        ).also { fakta ->
-            Henvendelser.FaktaBygger(fakta).registrer()
-        }
+        )
         val prototypeSeksjon = Seksjon(
             "seksjon",
             Rolle.søker,
@@ -41,21 +36,18 @@ internal class ProsessversjonTest {
             prototypeFakta id 17,
             prototypeFakta id 18,
         )
-        val prototypeProsess = Prosess(
-            TestProsesser.Test,
-            prototypeSeksjon,
-        )
         val prototypeSubsumsjon = prototypeFakta heltall 15 er 6
-        val prosessversjon = Prosessversjon.Bygger(
-            TestFakta.Test,
-            prototypeSubsumsjon,
-            prototypeProsess,
-        ).registrer()
+        val prototypeProsess = Prosess(
+            prosesstype,
+            prototypeFakta,
+            prototypeSeksjon,
+            rootSubsumsjon = prototypeSubsumsjon,
+        )
     }
 
     @BeforeEach
     fun setup() {
-        prosess = prosessversjon.utredningsprosess(testPerson, UUID.randomUUID(), UUID.randomUUID())
+        prosess = prototypeProsess.testProsess()
     }
 
     @Test

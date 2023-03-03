@@ -1,7 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Land
@@ -9,8 +8,8 @@ import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.MedSøknad
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.quiz.mediator.helpers.testFaktaversjon
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
-import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`andre ytelser mottatt eller søkt`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`annen ytelse hvem utebetaler`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`annen ytelse hvilken periode`
@@ -33,7 +32,6 @@ import java.time.LocalDate
 import kotlin.test.assertFalse
 
 internal class AndreYtelserTest {
-
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
         AndreYtelser.verifiserFeltsammensetting(29, 145435)
@@ -41,7 +39,7 @@ internal class AndreYtelserTest {
 
     @Test
     fun `Hvis bruker ikke får noen andre ytelser`() {
-        val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(testFaktaversjon(), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             subsumsjon = AndreYtelser.regeltre(fakta),
         ) {
@@ -152,7 +150,7 @@ internal class AndreYtelserTest {
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(testFaktaversjon(), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             subsumsjon = AndreYtelser.regeltre(fakta),
         ) {
@@ -167,7 +165,7 @@ internal class AndreYtelserTest {
 
     @Test
     fun `For et EØS-land skal det være en egen gruppe for kun EØS-land`() {
-        val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(testFaktaversjon(), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             subsumsjon = AndreYtelser.regeltre(fakta),
         ) {
@@ -194,7 +192,7 @@ internal class AndreYtelserTest {
     }
 
     private fun verifiserAnnenYtelseUtenØkonomiskGode(kodeForSpesifikkYtelse: (Prosess) -> Unit) {
-        val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *AndreYtelser.fakta())
+        val fakta = Fakta(testFaktaversjon(), *AndreYtelser.fakta())
         val søknadprosess = fakta.testSøknadprosess(
             subsumsjon = AndreYtelser.regeltre(fakta),
         ) {

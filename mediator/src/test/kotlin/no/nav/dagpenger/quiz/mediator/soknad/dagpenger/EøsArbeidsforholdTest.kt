@@ -2,7 +2,6 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
@@ -11,8 +10,8 @@ import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
+import no.nav.dagpenger.quiz.mediator.helpers.testFaktaversjon
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
-import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eøs arbeidsforhold arbeidsgivernavn`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eøs arbeidsforhold land`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eøs arbeidsforhold personnummer`
@@ -25,8 +24,7 @@ import java.time.LocalDate
 
 internal class EøsArbeidsforholdTest {
     private val fakta = EøsArbeidsforhold.fakta() + DinSituasjon.fakta()
-
-    private val søknad = Fakta(Faktaversjon(Prosessfakta.Dagpenger, versjon = -1), *fakta)
+    private val søknad = Fakta(testFaktaversjon(), *fakta)
     private lateinit var prosess: Prosess
 
     @BeforeEach
@@ -94,17 +92,17 @@ internal class EøsArbeidsforholdTest {
                 EøsArbeidsforhold.regeltre(this)
             }
         }
-
-        val søknadprosessForEøsArbeidsforhold = søknad.testSøknadprosess(subsumsjon = minimaltRegeltreForEøsArbeidsforhold) {
-            EøsArbeidsforhold.seksjon(søknad) + DinSituasjon.seksjon(søknad)
-        }
-
-        val faktaForDinSituasjon = søknadprosessForEøsArbeidsforhold.nesteSeksjoner().first().joinToString(separator = ",\n") { it.id }
+        val søknadprosessForEøsArbeidsforhold =
+            søknad.testSøknadprosess(subsumsjon = minimaltRegeltreForEøsArbeidsforhold) {
+                EøsArbeidsforhold.seksjon(søknad) + DinSituasjon.seksjon(søknad)
+            }
+        val faktaForDinSituasjon =
+            søknadprosessForEøsArbeidsforhold.nesteSeksjoner().first().joinToString(separator = ",\n") { it.id }
         assertEquals(forventetSpørsmålsrekkefølgeForDinSituasjon, faktaForDinSituasjon)
 
         `besvar DinSituasjon`(søknadprosessForEøsArbeidsforhold)
-
-        val faktaForEøsArbeidsforhold = søknadprosessForEøsArbeidsforhold.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        val faktaForEøsArbeidsforhold =
+            søknadprosessForEøsArbeidsforhold.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("9001,9002,9003,9004,9005,9006", faktaForEøsArbeidsforhold)
     }
 
@@ -115,10 +113,10 @@ internal class EøsArbeidsforholdTest {
                 EøsArbeidsforhold.regeltre(this)
             }
         }
-
-        val søknadprosessForEøsArbeidsforhold = søknad.testSøknadprosess(subsumsjon = minimaltRegeltreForEøsArbeidsforhold) {
-            EøsArbeidsforhold.seksjon(søknad) + DinSituasjon.seksjon(søknad)
-        }
+        val søknadprosessForEøsArbeidsforhold =
+            søknad.testSøknadprosess(subsumsjon = minimaltRegeltreForEøsArbeidsforhold) {
+                EøsArbeidsforhold.seksjon(søknad) + DinSituasjon.seksjon(søknad)
+            }
 
         `besvar DinSituasjon`(søknadprosessForEøsArbeidsforhold)
         søknadprosessForEøsArbeidsforhold.boolsk(EøsArbeidsforhold.`eøs arbeid siste 36 mnd`).besvar(true)
@@ -150,7 +148,8 @@ internal class EøsArbeidsforholdTest {
     private fun `gjenopptak men har ikke jobbet siden sist eller hatt endringer i arbeidsforhold`() {
         prosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
-        prosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`).besvar(false)
+        prosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
+            .besvar(false)
     }
 
     private fun `ny søknad men har ikke vært i jobb`() {

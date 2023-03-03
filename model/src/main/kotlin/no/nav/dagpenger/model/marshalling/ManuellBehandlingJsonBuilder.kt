@@ -39,7 +39,7 @@ class ManuellBehandlingJsonBuilder(prosess: Prosess, private val seksjonNavn: St
 
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
         root.put("@event_name", "manuell_behandling")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")

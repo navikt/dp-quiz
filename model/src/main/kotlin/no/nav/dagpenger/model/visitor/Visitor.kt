@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.Regel
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -148,7 +149,7 @@ interface PersonVisitor : IdentVisitor {
 }
 
 interface FaktaVisitor : PersonVisitor, FaktumVisitor {
-    fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {}
+    fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {}
     fun postVisit(fakta: Fakta, uuid: UUID) {}
 }
 

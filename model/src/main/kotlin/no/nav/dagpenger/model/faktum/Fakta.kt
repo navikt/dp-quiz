@@ -1,6 +1,7 @@
 package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.factory.FaktumFactory
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.visitor.FaktaVisitor
 import java.time.LocalDate
@@ -13,8 +14,8 @@ class Fakta private constructor(
     val uuid: UUID,
     private val faktaMap: MutableMap<FaktumId, Faktum<*>>,
 ) : TypedFaktum, Iterable<Faktum<*>> {
-
     internal val size get() = faktaMap.size
+    private var navBehov = FaktumNavBehov(emptyMap())
 
     constructor(faktaversjon: Faktaversjon, vararg factories: FaktumFactory<*>) : this(
         Person.prototype,
@@ -40,6 +41,7 @@ class Fakta private constructor(
             rolle,
             *(spørsmålsrekkefølge.map { id -> this.id(id) }.toTypedArray()),
         )
+
         private fun List<FaktumFactory<*>>.toFaktaMap() =
             tilFakta()
                 .sjekkIder()
@@ -141,7 +143,7 @@ class Fakta private constructor(
     fun bygg(person: Person, uuid: UUID = UUID.randomUUID()): Fakta {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktaMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
-        return Fakta(person, faktaversjon, uuid, mapOfFakta)
+        return Fakta(person, faktaversjon, uuid, mapOfFakta).also { it.faktumNavBehov(navBehov) }
     }
 
     override fun iterator(): MutableIterator<Faktum<*>> {
@@ -172,8 +174,12 @@ class Fakta private constructor(
 
     fun accept(visitor: FaktaVisitor) {
         person.accept(visitor)
-        visitor.preVisit(this, faktaversjon, uuid)
+        visitor.preVisit(this, faktaversjon, uuid, navBehov)
         this.forEach { it.accept(visitor) }
         visitor.postVisit(this, uuid)
+    }
+
+    fun faktumNavBehov(faktumNavBehov: FaktumNavBehov) {
+        navBehov = faktumNavBehov
     }
 }

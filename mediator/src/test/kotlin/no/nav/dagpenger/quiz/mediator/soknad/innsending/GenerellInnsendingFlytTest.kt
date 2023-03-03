@@ -33,20 +33,20 @@ class GenerellInnsendingFlytTest {
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig for søker. Mangler svar på ${
-                prosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
+            prosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
             }",
         )
 
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
         assertTrue(
             prosess.erFerdig(),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
     }
@@ -65,20 +65,20 @@ class GenerellInnsendingFlytTest {
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig for søker. Mangler svar på ${
-                prosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
+            prosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
             }",
         )
 
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
         assertTrue(
             prosess.erFerdig(),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
     }
@@ -99,20 +99,20 @@ class GenerellInnsendingFlytTest {
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig for søker. Mangler svar på ${
-                prosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
+            prosess.nesteSeksjoner().flatten().filterNot { it.erBesvart() }.joinToString { "\n$it" }
             }",
         )
 
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
         assertTrue(
             prosess.erFerdig(),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
     }

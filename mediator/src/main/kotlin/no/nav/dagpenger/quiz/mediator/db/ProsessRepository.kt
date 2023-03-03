@@ -7,7 +7,7 @@ import java.util.UUID
 
 interface ProsessRepository {
     fun ny(
-        person: Identer,
+        identer: Identer,
         prosesstype: Prosesstype,
         uuid: UUID = UUID.randomUUID(),
         faktaUUID: UUID = UUID.randomUUID(),

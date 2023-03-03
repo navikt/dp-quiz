@@ -164,16 +164,15 @@ internal object AvslagPåMinsteinntektOppsett {
                 hattLukkedeSakerSiste8Uker to "HarHattLukketSiste8Uker",
             ),
         )
+    val henvendelse: Henvendelser.FaktaBygger = Henvendelser.FaktaBygger(
+        prototypeFakta,
+        faktumNavBehov,
+    ).also { bygger ->
+        bygger.leggTilProsess(Seksjoner.prosess, regeltre)
+        bygger.registrer()
+    }
 
     init {
-        Henvendelser.FaktaBygger(
-            prototypeFakta,
-            faktumNavBehov,
-        ).also { bygger ->
-            bygger.leggTilProsess(Seksjoner.prosess, regeltre)
-            bygger.registrer()
-        }
-
         logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
     }
 }

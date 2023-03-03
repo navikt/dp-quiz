@@ -2,11 +2,9 @@ package no.nav.dagpenger.model.unit.seksjon
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.TestProsesser
-import no.nav.dagpenger.model.helpers.testBygger
-import no.nav.dagpenger.model.helpers.testPerson
+import no.nav.dagpenger.model.helpers.testProsess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
@@ -23,7 +21,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class SaksbehandlerSeksjonerTest {
-
     private val prototypeFakta = Fakta(
         testversjon,
         boolsk faktum "f1" id 1,
@@ -45,91 +42,74 @@ internal class SaksbehandlerSeksjonerTest {
         Seksjon("søker", Rolle.søker, prototypeFakta.boolsk(1), prototypeFakta.boolsk(3), prototypeFakta.boolsk(5)),
         Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
         Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(4), prototypeFakta.boolsk(6)),
-        rootSubsumsjon = prototypeSubsumsjon
+        rootSubsumsjon = prototypeSubsumsjon,
     )
-
     private lateinit var seksjoner: Prosess
-    private lateinit var f1: Faktum<Boolean>
-    private lateinit var f3: Faktum<Boolean>
-    private lateinit var f5: Faktum<Boolean>
-    private lateinit var approve1: Faktum<Boolean>
-    private lateinit var approve3: Faktum<Boolean>
-    private lateinit var approve5: Faktum<Boolean>
+    private val f1 get() = seksjoner.boolsk(1)
+    private val f3 get() = seksjoner.boolsk(3)
+    private val f5 get() = seksjoner.boolsk(5)
+    private val approve1 get() = seksjoner.boolsk(2)
+    private val approve3 get() = seksjoner.boolsk(4)
+    private val approve5 get() = seksjoner.boolsk(6)
 
     @BeforeEach
     internal fun setup() {
-        seksjoner = prototypeProsess.testBygger(testPerson)
-        f1 = seksjoner.boolsk(1)
-        f3 = seksjoner.boolsk(3)
-        f5 = seksjoner.boolsk(5)
-        approve1 = seksjoner.boolsk(2)
-        approve3 = seksjoner.boolsk(4)
-        approve5 = seksjoner.boolsk(6)
+        seksjoner = prototypeProsess.testProsess()
     }
 
     @Test
     fun `sorter ut irrelevante saksbehandler seksjoner `() {
         assertEquals(listOf(seksjoner[0]), seksjoner.nesteSeksjoner())
-        beTrue(f1)
+        f1.besvar(true)
         assertEquals(listOf(seksjoner[0]), seksjoner.nesteSeksjoner())
-        beFalse(f3)
+        f3.besvar(false)
         seksjoner.nesteSeksjoner().also {
             assertEquals(2, it.size)
             assertTrue(approve1 in it[0] && !approve1.erBesvart())
             assertTrue(approve3 in it[1] && !seksjoner.boolsk(4).erBesvart())
         }
-        beTrue(approve1)
+
+        approve1.besvar(true)
         seksjoner.nesteSeksjoner().also {
             assertEquals(2, it.size)
             assertTrue(approve1 in it[0] && approve1.erBesvart())
             assertTrue(approve3 in it[1] && !approve3.erBesvart())
         }
-        beTrue(approve3)
+
+        approve3.besvar(true)
         seksjoner.nesteSeksjoner().also {
             assertEquals(2, it.size)
             assertTrue(approve1 in it[0] && approve1.erBesvart())
             assertTrue(approve3 in it[1] && approve3.erBesvart())
         }
-        beFalse(f1)
+        f1.besvar(false)
         seksjoner.nesteSeksjoner().also {
             assertEquals(1, it.size)
             assertTrue(f5 in it[0] && !f5.erBesvart())
         }
-        beTrue(f5)
+        f5.besvar(true)
         seksjoner.nesteSeksjoner().also {
             assertEquals(2, it.size)
             assertFalse(approve1 in it[0])
             assertTrue(approve5 in it[1] && !approve5.erBesvart())
         }
-        beTrue(approve5)
+        approve5.besvar(true)
         seksjoner.nesteSeksjoner().also {
             assertEquals(2, it.size)
             assertFalse(approve1 in it[0])
             assertTrue(approve5 in it[1] && approve5.erBesvart())
         }
-        beFalse(f5)
+        f5.besvar(false)
         seksjoner.nesteSeksjoner().also {
             assertEquals(2, it.size)
             assertFalse(approve1 in it[0])
             assertTrue(approve5 in it[1] && !approve5.erBesvart())
         }
-        beFalse(approve5)
+        approve5.besvar(false)
         seksjoner.nesteSeksjoner().also {
             assertEquals(2, it.size)
             assertFalse(approve1 in it[0])
             assertTrue(approve5 in it[1] && approve5.erBesvart())
-        }
-    }
-
-    private fun beTrue(vararg ider: Faktum<Boolean>) {
-        ider.forEach {
-            it.besvar(true)
-        }
-    }
-
-    private fun beFalse(vararg ider: Faktum<Boolean>) {
-        ider.forEach {
-            it.besvar(false)
         }
     }
 }

@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test
 
 @Suppress("UNCHECKED_CAST")
 internal class FaktaSubsumsjonTest {
-
     private lateinit var prosess: Prosess
 
     @BeforeEach

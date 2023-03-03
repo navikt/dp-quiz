@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class DagpengerMetadataStrategiTest {
-    private lateinit var prosess: Prosess
+    private var prosess: Prosess
 
     init {
         Dagpenger.registrer()

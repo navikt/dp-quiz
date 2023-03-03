@@ -11,15 +11,14 @@ import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.helpers.testBygger
 import no.nav.dagpenger.model.helpers.testPerson
+import no.nav.dagpenger.model.helpers.testProsess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.marshalling.NavJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
-import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -34,6 +33,19 @@ import org.junit.jupiter.api.Test
 class NavJsonBuilderTest {
     @Test
     fun `bygger behov event`() {
+        val faktumNavBehov = FaktumNavBehov(
+            mapOf(
+                1 to "f1Behov",
+                2 to "f2Behov",
+                3 to "f3Behov",
+                4 to "f4Behov",
+                5 to "f5Behov",
+                6 to "f6Behov",
+                7 to "f7Behov",
+                8 to "f8Behov",
+                9 to "f9Behov",
+            ),
+        )
         val prototypeFakta = Fakta(
             testversjon,
             boolsk faktum "f1" id 1,
@@ -47,22 +59,7 @@ class NavJsonBuilderTest {
             dato faktum "fom" id 9,
             dato faktum "tom" id 10,
         ).also {
-            Henvendelser.FaktaBygger(
-                it,
-                FaktumNavBehov(
-                    mapOf(
-                        1 to "f1Behov",
-                        2 to "f2Behov",
-                        3 to "f3Behov",
-                        4 to "f4Behov",
-                        5 to "f5Behov",
-                        6 to "f6Behov",
-                        7 to "f7Behov",
-                        8 to "f8Behov",
-                        9 to "f9Behov",
-                    ),
-                ),
-            ).registrer()
+            it.faktumNavBehov(faktumNavBehov)
         }
         val f1Faktum = prototypeFakta.boolsk(1)
         val f2Faktum = prototypeFakta.boolsk(2)
@@ -104,7 +101,7 @@ class NavJsonBuilderTest {
             navSeksjon,
             rootSubsumsjon = prototypeSubsumsjon,
         )
-        val prosess = prototypeProsess.testBygger(testPerson)
+        val prosess = prototypeProsess.testProsess(testPerson)
 
         prosess.boolsk(1).besvar(true)
         prosess.dato(5).besvar(1.januar)

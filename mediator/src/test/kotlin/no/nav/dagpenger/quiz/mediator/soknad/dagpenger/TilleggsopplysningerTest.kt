@@ -1,12 +1,11 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.quiz.mediator.helpers.testFaktaversjon
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
-import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -16,7 +15,7 @@ import kotlin.test.assertTrue
 
 internal class TilleggsopplysningerTest {
 
-    private val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *Tilleggsopplysninger.fakta())
+    private val fakta = Fakta(testFaktaversjon(), *Tilleggsopplysninger.fakta())
     private lateinit var prosess: Prosess
     private lateinit var harTilleggsopplysninger: Faktum<Boolean>
     private lateinit var tilleggsopplysninger: Faktum<Tekst>

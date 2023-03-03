@@ -3,7 +3,6 @@ package no.nav.dagpenger.model.faktum
 import no.nav.dagpenger.model.visitor.PersonVisitor
 import java.util.UUID
 
-// todo navngi til Søker? Hva er jobben til denne klassen>
 class Person(private val uuid: UUID, private val identer: Identer) {
     constructor(identer: Identer) : this(UUID.randomUUID(), identer)
 
@@ -13,7 +12,7 @@ class Person(private val uuid: UUID, private val identer: Identer) {
 
     private constructor(
         fnr: String,
-        aktørId: String
+        aktørId: String,
     ) : this(Identer.Builder().folkeregisterIdent(fnr).aktørId(aktørId).build())
 
     override fun equals(other: Any?) =

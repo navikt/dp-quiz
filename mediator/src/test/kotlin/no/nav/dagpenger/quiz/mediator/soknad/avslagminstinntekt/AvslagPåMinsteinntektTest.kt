@@ -1,16 +1,14 @@
 package no.nav.dagpenger.quiz.mediator.soknad.avslagminstinntekt
 
 import no.nav.dagpenger.model.faktum.Dokument
-import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
-import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
-import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt.regeltre
+import no.nav.dagpenger.quiz.mediator.helpers.testPerson
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.arenaFagsakId
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.behandlingsdato
@@ -45,7 +43,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.verneplikt
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.villigTilÅBytteYrke
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.ønsketDato
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.Seksjoner.prosess
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -54,70 +51,61 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import java.time.LocalDateTime
-import java.util.UUID
 
 internal class AvslagPåMinsteinntektTest {
     private lateinit var manglerInntekt: Prosess
 
     @BeforeEach
     fun setup() {
-        manglerInntekt = Prosessversjon.Bygger(
-            Prosessfakta.AvslagPåMinsteinntekt,
-            regeltre,
-            prosess,
-        )
-            .utredningsprosess(
-                Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
-            )
+        manglerInntekt =
+            AvslagPåMinsteinntektOppsett.henvendelse.prosess(testPerson, Prosesser.AvslagPåMinsteinntekt).apply {
+                dokument(arenaFagsakId).besvar(Dokument(LocalDateTime.now(), "urn:fagsakid:123123"))
+                dokument(innsendtSøknadsId).besvar(Dokument(LocalDateTime.now(), "urn:soknadid:ABCD123"))
 
-        manglerInntekt.apply {
-            dokument(arenaFagsakId).besvar(Dokument(LocalDateTime.now(), "urn:fagsakid:123123"))
-            dokument(innsendtSøknadsId).besvar(Dokument(LocalDateTime.now(), "urn:soknadid:ABCD123"))
+                dato(over67årFradato).besvar(1.desember)
 
-            dato(over67årFradato).besvar(1.desember)
+                dato(behandlingsdato).besvar(5.januar)
+                dato(ønsketDato).besvar(5.januar)
+                dato(søknadstidspunkt).besvar(2.januar)
+                dato(senesteMuligeVirkningsdato).besvar(19.januar)
+                boolsk(harInntektNesteKalendermåned).besvar(false)
 
-            dato(behandlingsdato).besvar(5.januar)
-            dato(ønsketDato).besvar(5.januar)
-            dato(søknadstidspunkt).besvar(2.januar)
-            dato(senesteMuligeVirkningsdato).besvar(19.januar)
-            boolsk(harInntektNesteKalendermåned).besvar(false)
+                boolsk(helseTilAlleTyperJobb).besvar(true)
+                boolsk(kanJobbeHvorSomHelst).besvar(true)
+                boolsk(villigTilÅBytteYrke).besvar(true)
+                boolsk(kanJobbeDeltid).besvar(true)
 
-            boolsk(helseTilAlleTyperJobb).besvar(true)
-            boolsk(kanJobbeHvorSomHelst).besvar(true)
-            boolsk(villigTilÅBytteYrke).besvar(true)
-            boolsk(kanJobbeDeltid).besvar(true)
+                generator(registrertArbeidssøkerPerioder).besvar(1)
+                dato("$registrertArbeidssøkerPeriodeFom.1").besvar(1.januar(2018))
+                dato("$registrertArbeidssøkerPeriodeTom.1").besvar(30.januar(2018))
 
-            generator(registrertArbeidssøkerPerioder).besvar(1)
-            dato("$registrertArbeidssøkerPeriodeFom.1").besvar(1.januar(2018))
-            dato("$registrertArbeidssøkerPeriodeTom.1").besvar(30.januar(2018))
+                boolsk(harHattDagpengerSiste36mnd).besvar(false)
+                boolsk(hattLukkedeSakerSiste8Uker).besvar(false)
+                boolsk(sykepengerSiste36mnd).besvar(false)
 
-            boolsk(harHattDagpengerSiste36mnd).besvar(false)
-            boolsk(hattLukkedeSakerSiste8Uker).besvar(false)
-            boolsk(sykepengerSiste36mnd).besvar(false)
+                dato(inntektsrapporteringsperiodeTom).besvar(5.februar)
+                boolsk(eøsArbeid).besvar(false)
+                boolsk(jobbetUtenforNorge).besvar(false)
 
-            dato(inntektsrapporteringsperiodeTom).besvar(5.februar)
-            boolsk(eøsArbeid).besvar(false)
-            boolsk(jobbetUtenforNorge).besvar(false)
+                boolsk(fangstOgFiskInntektSiste36mnd).besvar(false)
 
-            boolsk(fangstOgFiskInntektSiste36mnd).besvar(false)
+                inntekt(grunnbeløp).besvar(100000.årlig)
+                desimaltall(minsteinntektfaktor12mnd).besvar(1.5)
+                desimaltall(minsteinntektfaktor36mnd).besvar(3.0)
 
-            inntekt(grunnbeløp).besvar(100000.årlig)
-            desimaltall(minsteinntektfaktor12mnd).besvar(1.5)
-            desimaltall(minsteinntektfaktor36mnd).besvar(3.0)
+                boolsk(verneplikt).besvar(false)
 
-            boolsk(verneplikt).besvar(false)
+                inntekt(inntektSiste36mnd).besvar(20000.årlig)
+                inntekt(inntektSiste12mnd).besvar(5000.årlig)
 
-            inntekt(inntektSiste36mnd).besvar(20000.årlig)
-            inntekt(inntektSiste12mnd).besvar(5000.årlig)
+                generator(antallEndredeArbeidsforhold).besvar(1)
+                boolsk("$ordinær.1").besvar(false)
+                boolsk("$permittert.1").besvar(true)
+                boolsk("$lønnsgaranti.1").besvar(false)
+                boolsk("$permittertFiskeforedling.1").besvar(false)
 
-            generator(antallEndredeArbeidsforhold).besvar(1)
-            boolsk("$ordinær.1").besvar(false)
-            boolsk("$permittert.1").besvar(true)
-            boolsk("$lønnsgaranti.1").besvar(false)
-            boolsk("$permittertFiskeforedling.1").besvar(false)
-
-            boolsk(oppfyllerMinsteinntektManuell).besvar(true) // Omgå manuell-seksjon
-        }
+                boolsk(oppfyllerMinsteinntektManuell).besvar(true) // Omgå manuell-seksjon
+            }
     }
 
     @Test

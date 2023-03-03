@@ -14,7 +14,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger.Subsumsjoner.regeltre
 
 internal object Dagpenger {
-    internal val fakta: Henvendelser.FaktaBygger
+    internal val henvendelse: Henvendelser.FaktaBygger
     private val logger = KotlinLogging.logger { }
 
     /**
@@ -84,14 +84,14 @@ internal object Dagpenger {
         )
 
     init {
-        fakta = Henvendelser.FaktaBygger(
+        henvendelse = Henvendelser.FaktaBygger(
             prototypeFakta,
             faktumNavBehov,
         ).also {
             it.registrer()
         }
 
-        fakta.leggTilProsess(prosess, regeltre)
+        henvendelse.leggTilProsess(prosess, regeltre)
         logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
     }
 

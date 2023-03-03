@@ -4,11 +4,13 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.helpers.TestProsesser
-import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.helpers.faktaversjon
+import no.nav.dagpenger.model.helpers.testProsess
+import no.nav.dagpenger.model.helpers.testProsesstype
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
@@ -22,11 +24,13 @@ import org.junit.jupiter.api.assertThrows
 
 internal class ResultatJsonBuilderTest {
     private lateinit var prototypeFakta: Fakta
+    private lateinit var prosesstype: Prosesstype
 
     @BeforeEach
     fun setup() {
+        prosesstype = testProsesstype()
         prototypeFakta = Fakta(
-            testversjon,
+            prosesstype.faktaversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1,
             boolsk faktum "f3" id 3,
@@ -55,8 +59,8 @@ internal class ResultatJsonBuilderTest {
         søknadprosess.boolsk(1).besvar(false)
         ResultatJsonBuilder(søknadprosess).resultat().also {
             assertFalse(it["resultat"].asBoolean())
-            assertEquals(0, it["versjon_id"].asInt())
-            assertEquals("test", it["versjon_navn"].asText())
+            assertEquals(1, it["versjon_id"].asInt())
+            assertTrue(it["versjon_navn"].isTextual)
         }
     }
 
@@ -95,7 +99,7 @@ internal class ResultatJsonBuilderTest {
     }
 
     private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess = Prosess(
-        TestProsesser.Test,
+        prosesstype,
         prototypeFakta,
         Seksjon(
             "søker",
@@ -109,5 +113,5 @@ internal class ResultatJsonBuilderTest {
         Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
         Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeFakta.boolsk(4)),
         rootSubsumsjon = prototypeSubsumsjon,
-    )
+    ).testProsess()
 }

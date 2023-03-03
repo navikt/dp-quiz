@@ -40,7 +40,7 @@ class SøknadsmalJsonBuilder(prosess: Prosess) : ProsessVisitor {
 
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
         root.put("@event_name", "Søknadsmal")
         root.put("versjon_id", faktaversjon.versjon)
         root.put("versjon_navn", faktaversjon.faktatype.id)

@@ -14,29 +14,33 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.assertFaktaAsJson
 import no.nav.dagpenger.model.helpers.assertGeneratorFaktaAsJson
 import no.nav.dagpenger.model.helpers.assertValgFaktaAsJson
-import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.helpers.faktaversjon
+import no.nav.dagpenger.model.helpers.testProsesstype
 import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class SøknadsmalJsonBuilderTest {
     private lateinit var prototypeFakta: Fakta
+    private lateinit var prosesstype: Prosesstype
 
     @BeforeEach
     fun setup() {
+        prosesstype = testProsesstype()
         prototypeFakta = Fakta(
-            testversjon,
+            prosesstype.faktaversjon,
             boolsk faktum "boolsk1" id 1,
             heltall faktum "heltall2" id 2,
             heltall faktum "heltall3" id 3,
@@ -64,7 +68,7 @@ internal class SøknadsmalJsonBuilderTest {
     }
 
     private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess = Prosess(
-        TestProsesser.Test,
+        prosesstype,
         prototypeFakta,
         Seksjon(
             "seksjon1",
@@ -116,8 +120,8 @@ internal class SøknadsmalJsonBuilderTest {
         val regel = søkerSubsumsjon()
         val søknadprosess = søknadprosess(regel)
         val malJson = SøknadsmalJsonBuilder(søknadprosess).resultat()
-        assertEquals(0, malJson["versjon_id"].asInt())
-        assertEquals("test", malJson["versjon_navn"].asText())
+        assertEquals(1, malJson["versjon_id"].asInt())
+        assertTrue(malJson["versjon_navn"].isTextual)
         // NAV seksjoner skal ikke med
         assertEquals(4, malJson["seksjoner"].size())
 

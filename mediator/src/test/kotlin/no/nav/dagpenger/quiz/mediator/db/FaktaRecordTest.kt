@@ -379,7 +379,6 @@ internal class FaktaRecordTest {
 
             originalFakta.desimaltall("f26").besvar(9.9)
 
-            SøknadEksempel2.prosessversjon
             FaktumTable(SøknadEksempel2.prototypeFakta)
             val nyProsessVersjon = faktaRecord.migrer(soknadUUID, SøknadEksempel2.faktaversjon)
 

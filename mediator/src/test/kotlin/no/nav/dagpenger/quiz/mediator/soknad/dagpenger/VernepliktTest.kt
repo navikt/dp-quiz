@@ -1,10 +1,9 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.faktum.Fakta
-import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.quiz.mediator.helpers.testFaktaversjon
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
-import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -12,7 +11,7 @@ import kotlin.test.assertEquals
 
 internal class VernepliktTest {
 
-    private val fakta = Fakta(Faktaversjon(Prosessfakta.Dagpenger, -1), *Verneplikt.fakta())
+    private val fakta = Fakta(testFaktaversjon(), *Verneplikt.fakta())
     private lateinit var prosess: Prosess
 
     @Test

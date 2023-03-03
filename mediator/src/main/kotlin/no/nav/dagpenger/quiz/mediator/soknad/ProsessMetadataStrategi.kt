@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad
 
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.visitor.ProsessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
@@ -22,7 +23,7 @@ internal class ProsessMetadataStrategi : MetadataStrategi {
             prosess.accept(this)
         }
 
-        override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID) {
+        override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
             metadata = when (faktaversjon.faktatype) {
                 Prosessfakta.Dagpenger -> DagpengerMetadataStrategi().metadata(prosess)
                 Prosessfakta.Innsending -> InnsendingMetadataStrategi().metadata(prosess)
