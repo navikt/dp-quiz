@@ -4,9 +4,8 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
-import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.uansett
@@ -84,18 +83,15 @@ internal object Dagpenger {
         )
 
     init {
-        FaktaVersjonDingseboms.Bygger(
+        Henvendelser.FaktaBygger(
             prototypeFakta,
             faktumNavBehov,
-        ).registrer()
-
-        Prosessversjon.Bygger(
-            faktatype = Prosessfakta.Dagpenger,
-            prototypeSubsumsjon = regeltre,
-            prosess = prosess,
-        ).registrer().also {
-            logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
+        ).also {
+            it.registrer()
+            it.leggTilProsess(prosess, regeltre)
         }
+
+        logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
     }
 
     private fun flatMapAlleFakta() = faktaseksjoner.flatMap { seksjon ->

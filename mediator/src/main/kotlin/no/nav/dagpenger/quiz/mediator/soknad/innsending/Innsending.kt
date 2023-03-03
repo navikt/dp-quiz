@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
@@ -46,7 +46,7 @@ internal object Innsending {
         )
 
     init {
-        FaktaVersjonDingseboms.Bygger(
+        Henvendelser.FaktaBygger(
             prototypeFakta,
             faktumNavBehov,
         ).also {

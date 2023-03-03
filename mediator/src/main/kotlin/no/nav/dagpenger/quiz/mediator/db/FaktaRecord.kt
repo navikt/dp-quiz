@@ -23,7 +23,7 @@ import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Person
 import no.nav.dagpenger.model.faktum.Tekst
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.math.BigInteger
 import java.time.LocalDate
@@ -45,7 +45,7 @@ class FaktaRecord : FaktaRepository {
         uuid: UUID,
     ): Fakta {
         val person = personRecord.hentEllerOpprettPerson(identer)
-        return FaktaVersjonDingseboms.id(faktaversjon).fakta(person, uuid).also { fakta ->
+        return Henvendelser.id(faktaversjon).fakta(person, uuid).also { fakta ->
             if (eksisterer(uuid)) return fakta
             OpprettNyFaktaVisitor(fakta)
         }
@@ -94,7 +94,7 @@ class FaktaRecord : FaktaRepository {
                 }.asSingle,
             )
         } ?: throw IllegalArgumentException("Kan ikke hente fakta som ikke finnes, uuid: $uuid")
-        val fakta = FaktaVersjonDingseboms.id(Faktaversjon(DaoProsess(rad.navn), rad.versjonId))
+        val fakta = Henvendelser.id(Faktaversjon(DaoProsess(rad.navn), rad.versjonId))
             .fakta(personRecord.hentPerson(rad.personId), uuid)
 
         svarList(uuid).onEach { row ->

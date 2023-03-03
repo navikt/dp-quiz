@@ -13,7 +13,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.multiplikas
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt.regeltre
 
@@ -166,7 +166,7 @@ internal object AvslagPåMinsteinntektOppsett {
         )
 
     init {
-        FaktaVersjonDingseboms.Bygger(
+        Henvendelser.FaktaBygger(
             prototypeFakta,
             faktumNavBehov,
         ).also { bygger ->

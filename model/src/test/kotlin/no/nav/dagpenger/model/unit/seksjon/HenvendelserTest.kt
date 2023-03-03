@@ -7,21 +7,21 @@ import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
 import org.junit.jupiter.api.Test
 
-class FaktaVersjonDingsebomsTest {
+class HenvendelserTest {
 
     private val prototypeFakta = Fakta(
         testversjon,
-        boolsk faktum "f1" id 1
+        boolsk faktum "f1" id 1,
     )
 
     private val prototypeProsess = Prosess(
         TestProsesser.Test,
-        Seksjon("s1", Rolle.søker, prototypeFakta.boolsk("f1"))
+        Seksjon("s1", Rolle.søker, prototypeFakta.boolsk("f1")),
     )
 
     private val regeltre = with(prototypeFakta) {
@@ -30,9 +30,8 @@ class FaktaVersjonDingsebomsTest {
 
     @Test
     fun `kan opprette nye fakta og ny prosess`() {
-
-        val faktaBygger = FaktaVersjonDingseboms.Bygger(
-            prototypeFakta
+        val faktaBygger = Henvendelser.FaktaBygger(
+            prototypeFakta,
         ).also { bygger ->
             bygger.leggTilProsess(prototypeProsess, regeltre)
         }

@@ -51,7 +51,7 @@ internal class ResultatTest {
             FaktumTable(prototypeFakta)
             faktaRecord = FaktaRecord()
             resultatRecord = ResultatRecord()
-            prosess = ProsessRepositoryImpl().ny(IDENT, Testprosess.Test)
+            prosess = ProsessRepositoryPostgres().ny(IDENT, Testprosess.Test)
         }
     }
 

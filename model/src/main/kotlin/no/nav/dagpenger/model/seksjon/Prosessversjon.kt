@@ -43,7 +43,7 @@ class Prosessversjon private constructor(
             faktaUUID: UUID = UUID.randomUUID(),
             siste: Faktaversjon? = null,
         ): Prosess {
-            val versjon = FaktaVersjonDingseboms.id(siste ?: FaktaVersjonDingseboms.siste(faktatype))
+            val versjon = Henvendelser.id(siste ?: Henvendelser.siste(faktatype))
             println("#### FaktaVersjonDingsebums: $versjon, siste: $siste")
             return utredningsprosess(versjon.fakta(person, faktaUUID), prosessUUID)
         }

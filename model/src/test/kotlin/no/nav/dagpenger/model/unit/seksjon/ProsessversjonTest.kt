@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.helpers.TestFakta
 import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -31,7 +31,7 @@ internal class ProsessversjonTest {
             boolsk faktum "f17" id 17,
             boolsk faktum "f18" id 18,
         ).also { fakta ->
-            FaktaVersjonDingseboms.Bygger(fakta).registrer()
+            Henvendelser.FaktaBygger(fakta).registrer()
         }
         val prototypeSeksjon = Seksjon(
             "seksjon",

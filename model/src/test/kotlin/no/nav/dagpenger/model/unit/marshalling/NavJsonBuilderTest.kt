@@ -19,7 +19,7 @@ import no.nav.dagpenger.model.marshalling.NavJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
@@ -47,7 +47,7 @@ class NavJsonBuilderTest {
             dato faktum "fom" id 9,
             dato faktum "tom" id 10,
         ).also {
-            FaktaVersjonDingseboms.Bygger(
+            Henvendelser.FaktaBygger(
                 it,
                 FaktumNavBehov(
                     mapOf(
@@ -61,7 +61,7 @@ class NavJsonBuilderTest {
                         8 to "f8Behov",
                         9 to "f9Behov",
                     ),
-                )
+                ),
             ).registrer()
         }
         val f1Faktum = prototypeFakta.boolsk(1)

@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
@@ -14,7 +14,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger.Subsumsjoner.regeltre
 
 internal object Dagpenger {
-    internal val fakta: FaktaVersjonDingseboms.Bygger
+    internal val fakta: Henvendelser.FaktaBygger
     private val logger = KotlinLogging.logger { }
 
     /**
@@ -84,7 +84,7 @@ internal object Dagpenger {
         )
 
     init {
-        fakta = FaktaVersjonDingseboms.Bygger(
+        fakta = Henvendelser.FaktaBygger(
             prototypeFakta,
             faktumNavBehov,
         ).also {

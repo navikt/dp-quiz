@@ -10,7 +10,7 @@ import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
 import no.nav.dagpenger.quiz.mediator.db.FaktaRecord
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.runMigration
-import no.nav.dagpenger.quiz.mediator.db.ProsessRepositoryImpl
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepositoryPostgres
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
@@ -48,7 +48,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
         runMigration()
             .also {
                 val faktaRecord = FaktaRecord()
-                val utredningsprosessRepository = ProsessRepositoryImpl()
+                val utredningsprosessRepository = ProsessRepositoryPostgres()
                 val resultatRecord = ResultatRecord()
                 AvslagPåMinsteinntektOppsett.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
                 AvslagPåMinsteinntektService(utredningsprosessRepository, rapidsConnection)

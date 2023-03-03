@@ -2,7 +2,7 @@ package no.nav.dagpenger.quiz.mediator.soknad.innsending
 
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Tekst
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.quiz.mediator.helpers.testPerson
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
@@ -14,7 +14,7 @@ internal class InnsendingMetadataStrategiTest {
 
     init {
         Innsending.registrer()
-        prosess = FaktaVersjonDingseboms.prosess(testPerson, Prosesser.Innsending)
+        prosess = Henvendelser.prosess(testPerson, Prosesser.Innsending)
     }
 
     @Test

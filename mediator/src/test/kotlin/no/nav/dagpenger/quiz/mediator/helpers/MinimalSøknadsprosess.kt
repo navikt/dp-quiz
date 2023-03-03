@@ -11,7 +11,7 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.utfylt
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -65,9 +65,9 @@ internal class MinimalSøknadsprosess(private val faktaversjon: Faktaversjon, pr
     )
 
     init {
-        FaktaVersjonDingseboms.Bygger(
+        Henvendelser.FaktaBygger(
             fakta,
-            faktumNavBehov
+            faktumNavBehov,
         ).registrer()
 
         Prosessversjon.Bygger(

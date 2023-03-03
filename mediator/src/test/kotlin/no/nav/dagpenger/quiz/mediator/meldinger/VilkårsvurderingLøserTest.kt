@@ -3,7 +3,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.helpers.testPerson
@@ -27,7 +27,7 @@ class VilkårsvurderingLøserTest {
     @BeforeEach
     fun setup() {
         Paragraf_4_23_alder_oppsett.registrer()
-        søknadsprosess = FaktaVersjonDingseboms.prosess(testPerson, Prosesser.Paragraf_4_23_alder)
+        søknadsprosess = Henvendelser.prosess(testPerson, Prosesser.Paragraf_4_23_alder)
 
         val prosessPersistens = mockk<ProsessRepository>().also {
             every { it.ny(any(), any(), capture(vilkårsvurderingIdSlot), any()) } returns søknadsprosess

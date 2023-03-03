@@ -16,7 +16,7 @@ import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.minst
 import no.nav.dagpenger.model.regel.under
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Prosessversjon
 import no.nav.dagpenger.model.seksjon.Seksjon
@@ -133,8 +133,8 @@ internal lateinit var seksjon6: Seksjon
 internal lateinit var seksjon7: Seksjon
 internal lateinit var seksjon8: Seksjon
 internal lateinit var rootSubsumsjon: Subsumsjon
-private val faktabygger = FaktaVersjonDingseboms.Bygger(
-    prototypeFakta1
+private val faktabygger = Henvendelser.FaktaBygger(
+    prototypeFakta1,
 ).registrer()
 private val søknadprosessTestBygger =
     Prosessversjon.Bygger(

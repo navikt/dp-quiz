@@ -1,6 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.quiz.mediator.helpers.testPerson
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
@@ -17,13 +17,13 @@ internal class ProsessfaktaMetadataStrategiTest {
 
     init {
         Dagpenger.registrer()
-        prosessDagpenger = FaktaVersjonDingseboms.prosess(testPerson, Prosesser.Søknad)
+        prosessDagpenger = Henvendelser.prosess(testPerson, Prosesser.Søknad)
 
         Innsending.registrer()
-        prosessInnsending = FaktaVersjonDingseboms.prosess(testPerson, Prosesser.Innsending)
+        prosessInnsending = Henvendelser.prosess(testPerson, Prosesser.Innsending)
 
         AvslagPåMinsteinntektOppsett.registrer()
-        prosessAvslagPåMinsteinntekt = FaktaVersjonDingseboms.prosess(testPerson, Prosesser.AvslagPåMinsteinntekt)
+        prosessAvslagPåMinsteinntekt = Henvendelser.prosess(testPerson, Prosesser.AvslagPåMinsteinntekt)
     }
 
     @Test

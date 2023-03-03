@@ -6,21 +6,21 @@ import no.nav.dagpenger.model.faktum.Faktatype
 import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.visitor.PersonVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.util.UUID
 
-class ProsessRepositoryImpl : ProsessRepository {
+class ProsessRepositoryPostgres : ProsessRepository {
     private val personRecord = PersonRecord()
     private val faktaRepository = FaktaRecord()
 
     override fun ny(identer: Identer, prosesstype: Prosesstype, uuid: UUID, faktaUUID: UUID): Prosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
 
-        return FaktaVersjonDingseboms.prosess(person, prosesstype, uuid, faktaUUID).also {
+        return Henvendelser.prosess(person, prosesstype, uuid, faktaUUID).also {
             // TODO: Lag en form for retry om UUID finnes
             faktaRepository.rehydrerEllerOpprett(it.fakta, person)
             sessionOf(dataSource).use { session ->
@@ -70,7 +70,7 @@ class ProsessRepositoryImpl : ProsessRepository {
             )
         } ?: throw IllegalArgumentException("Kan ikke hente en utredningsprosess som ikke finnes, uuid: $uuid")
         val person = PersonRecord().hentPerson(rad.personId)
-        val utredningsprosess = FaktaVersjonDingseboms.prosess(person, rad.prosesstype, uuid, rad.faktaUUID)
+        val utredningsprosess = Henvendelser.prosess(person, rad.prosesstype, uuid, rad.faktaUUID)
         faktaRepository.rehydrerFakta(utredningsprosess.fakta)
 
         return utredningsprosess

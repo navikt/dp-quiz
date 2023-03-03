@@ -10,7 +10,7 @@ import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
-import no.nav.dagpenger.quiz.mediator.db.ProsessRepositoryImpl
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepositoryPostgres
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
@@ -28,7 +28,7 @@ import kotlin.test.assertEquals
 internal class ProsessTest() {
     private lateinit var søknadsprosess: Prosess
     private val søknadUUID = UUID.randomUUID()
-    private val repository = ProsessRepositoryImpl()
+    private val repository = ProsessRepositoryPostgres()
 
     @Test
     fun `Besvarer en prosess uten mocks`() = medProsess {

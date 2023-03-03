@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Land
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
@@ -29,8 +29,9 @@ internal class DagpengerTest : SøknadBesvarer() {
     fun setup() {
         Dagpenger.registrer()
 
-        søknadsprosess = FaktaVersjonDingseboms.prosess(
-            testPerson, Prosesser.Søknad
+        søknadsprosess = Henvendelser.prosess(
+            testPerson,
+            Prosesser.Søknad,
         )
 
         val faktaRepository = mockk<ProsessRepository>().also {

@@ -8,23 +8,23 @@ import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import java.util.UUID
 
-class FaktaVersjonDingseboms private constructor(
-    private val bygger: Bygger,
+class Henvendelser private constructor(
+    private val faktaBygger: FaktaBygger,
 ) {
-    val faktumNavBehov get() = bygger.faktumNavBehov
+    val faktumNavBehov get() = faktaBygger.faktumNavBehov
 
     companion object {
-        val faktaversjoner = mutableMapOf<Faktaversjon, FaktaVersjonDingseboms>()
+        val henvendelser = mutableMapOf<Faktaversjon, Henvendelser>()
         fun siste(faktatype: Faktatype): Faktaversjon {
-            return faktaversjoner.keys.filter { it.faktatype.id == faktatype.id }.maxByOrNull { it.versjon }
+            return henvendelser.keys.filter { it.faktatype.id == faktatype.id }.maxByOrNull { it.versjon }
                 ?: throw IllegalArgumentException("Det finnes ingen versjoner av type=$faktatype. Er den registrert?")
         }
 
         fun id(faktaversjon: Faktaversjon) =
-            faktaversjoner[faktaversjon]
+            henvendelser[faktaversjon]
                 ?: throw IllegalArgumentException("Det finnes ingen versjon med id $faktaversjon")
 
-        fun type(prosesstype: Prosesstype) = faktaversjoner[siste(prosesstype.faktatype)]
+        fun type(prosesstype: Prosesstype) = henvendelser[siste(prosesstype.faktatype)]
             ?: throw IllegalArgumentException("Det finnes ingen prosesstype: $prosesstype")
 
         fun prosess(
@@ -46,21 +46,21 @@ class FaktaVersjonDingseboms private constructor(
     }
 
     init {
-        require(bygger.faktaversjon() !in faktaversjoner.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider. id=${bygger.faktaversjon()}" }
-        faktaversjoner[bygger.faktaversjon()] = this
+        require(faktaBygger.faktaversjon() !in henvendelser.keys) { "Ugyldig forsøk på å opprette duplikat Versjon ider. id=${faktaBygger.faktaversjon()}" }
+        henvendelser[faktaBygger.faktaversjon()] = this
     }
 
     fun fakta(
         person: Person,
         faktaUUID: UUID = UUID.randomUUID(),
     ): Fakta =
-        bygger.fakta(person, faktaUUID)
+        faktaBygger.fakta(person, faktaUUID)
 
     fun prosess(person: Person, prosesstype: Prosesstype, prosessUUID: UUID, faktaUUID: UUID) =
-        bygger.prosess(person, prosesstype, prosessUUID, faktaUUID)
+        faktaBygger.prosess(person, prosesstype, prosessUUID, faktaUUID)
 
     class ProsessBygger(
-        private val faktaBygger: Bygger,
+        private val faktaBygger: FaktaBygger,
         private val prosess: Prosess,
         private val regeltre: Subsumsjon,
     ) {
@@ -71,7 +71,7 @@ class FaktaVersjonDingseboms private constructor(
         }
     }
 
-    class Bygger(
+    class FaktaBygger(
         private val prototypeFakta: Fakta,
         internal val faktumNavBehov: FaktumNavBehov? = null,
         private val prosesser: MutableMap<Prosesstype, ProsessBygger> = mutableMapOf(),
@@ -82,7 +82,7 @@ class FaktaVersjonDingseboms private constructor(
         ): Fakta = prototypeFakta.bygg(person, faktaUUID)
 
         internal fun faktaversjon() = prototypeFakta.faktaversjon
-        fun registrer() = FaktaVersjonDingseboms(this)
+        fun registrer() = Henvendelser(this)
         fun leggTilProsess(prosess: Prosess, regeltre: Subsumsjon) {
             prosesser[prosess.type] = ProsessBygger(this, prosess, regeltre)
         }

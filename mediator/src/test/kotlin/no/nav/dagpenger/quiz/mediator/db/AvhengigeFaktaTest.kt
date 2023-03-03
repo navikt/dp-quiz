@@ -50,7 +50,7 @@ internal class AvhengigeFaktaTest {
 
     private lateinit var originalProsess: Prosess
     private lateinit var rehydrertProsess: Prosess
-    private val prosessRepository: ProsessRepository = ProsessRepositoryImpl()
+    private val prosessRepository: ProsessRepository = ProsessRepositoryPostgres()
 
     @Test
     fun `Avhengig faktum reset`() {

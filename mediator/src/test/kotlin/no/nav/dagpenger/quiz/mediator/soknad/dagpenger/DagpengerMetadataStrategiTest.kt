@@ -4,7 +4,7 @@ import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.seksjon.FaktaVersjonDingseboms
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.quiz.mediator.helpers.testPerson
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
@@ -18,7 +18,7 @@ internal class DagpengerMetadataStrategiTest {
 
     init {
         Dagpenger.registrer()
-        prosess = FaktaVersjonDingseboms.prosess(testPerson, Prosesser.Søknad)
+        prosess = Henvendelser.prosess(testPerson, Prosesser.Søknad)
     }
 
     @Test
