@@ -1,0 +1,3 @@
+-- TODO: Vent med å gjøre denne migreringen til etter prosess-endringen er i prod
+-- ALTER TABLE soknad DROP COLUMN sesjon_type_id;
+-- DROP TABLE sesjon_type
