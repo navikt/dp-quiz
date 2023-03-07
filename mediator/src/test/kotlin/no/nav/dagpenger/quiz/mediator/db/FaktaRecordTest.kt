@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
@@ -454,20 +455,5 @@ internal class FaktaRecordTest {
                 }.asSingle,
             )
         }
-    }
-
-    private fun assertSesjonType(sesjonType: Versjon.UserInterfaceType) {
-        val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
-        assertEquals(
-            sesjonType.id,
-            using(sessionOf(dataSource)) { session ->
-                session.run(
-                    queryOf(
-                        "SELECT sesjon_type_id FROM soknad WHERE uuid = ?",
-                        uuid,
-                    ).map { it.int(1) }.asSingle,
-                )
-            },
-        )
     }
 }

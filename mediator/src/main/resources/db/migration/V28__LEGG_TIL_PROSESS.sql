@@ -17,4 +17,7 @@ CREATE TABLE IF NOT EXISTS prosess
 
 INSERT INTO prosess (uuid, person_id, fakta_id, opprettet)
 SELECT uuid, person_id, uuid, opprettet
-FROM fakta
+FROM fakta;
+
+ALTER TABLE IF EXISTS fakta
+    ALTER COLUMN sesjon_type_id DROP NOT NULL;

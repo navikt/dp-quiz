@@ -77,13 +77,6 @@ class FaktaRecord : FaktaRepository {
         data class SoknadRad(val personId: UUID, val navn: String, val versjonId: Int)
 
         val rad = using(sessionOf(dataSource)) { session ->
-            if (type != null) {
-                session.run(
-                    //language=PostgreSQL
-                    queryOf("UPDATE soknad SET sesjon_type_id = ? WHERE uuid = ?", type.id, uuid).asUpdate,
-                )
-            }
-
             session.run(
                 queryOf(
                     //language=PostgreSQL
@@ -128,11 +121,11 @@ class FaktaRecord : FaktaRepository {
     }
 
     override fun slett(uuid: UUID): Boolean {
-        using(sessionOf(dataSource)) { session ->
+        sessionOf(dataSource).use { session ->
             session.run(
                 queryOf(
-                        //language=PostgreSQL
-                    "DELETE FROM soknad WHERE uuid = :uuid",
+                    //language=PostgreSQL
+                    "DELETE FROM fakta WHERE uuid = :uuid",
                     mapOf("uuid" to uuid),
                 ).asExecute,
             )
