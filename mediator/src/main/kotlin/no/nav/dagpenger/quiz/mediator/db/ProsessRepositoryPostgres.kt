@@ -28,14 +28,13 @@ class ProsessRepositoryPostgres : ProsessRepository {
                     queryOf(
                         //language=PostgreSQL
                         """
-                        INSERT INTO prosess (person_id, navn, faktatype, uuid, fakta_id)
-                        VALUES (:personId, :navn, :faktatype, :uuid, :faktaId)
+                        INSERT INTO prosess (person_id, navn, uuid, fakta_id)
+                        VALUES (:personId, :navn, :uuid, :faktaId)
                         ON CONFLICT DO NOTHING
                         """.trimIndent(),
                         mapOf(
                             "personId" to PersonIdent(person).personId,
                             "navn" to prosesstype.navn,
-                            "faktatype" to prosesstype.faktatype.id,
                             "uuid" to uuid,
                             "faktaId" to faktaUUID,
                         ),
@@ -52,7 +51,7 @@ class ProsessRepositoryPostgres : ProsessRepository {
                     // TODO: Ble denne spørringen riktig, får den med seg riktig Faktaversjon?
                     //language=PostgreSQL
                     """
-                    SELECT p.person_id, p.navn, p.faktatype, p.fakta_id, fv.versjon_id FROM prosess AS p 
+                    SELECT p.person_id, p.navn, fv.navn AS faktatype, p.fakta_id, fv.versjon_id FROM prosess AS p 
                         JOIN fakta AS f ON p.id = f.versjon_id 
                         JOIN faktaversjon AS fv ON f.versjon_id = fv.id
                         WHERE p.uuid = ?
@@ -60,11 +59,11 @@ class ProsessRepositoryPostgres : ProsessRepository {
                     uuid,
                 ).map { row ->
                     ProsessRad(
-                        row.uuid("person_id"),
-                        row.string("navn"),
-                        row.string("faktatype"),
-                        row.uuid("fakta_id"),
-                        row.int("versjon_id"),
+                        personId = row.uuid("person_id"),
+                        navn = row.string("navn"),
+                        faktatype = row.string("faktatype"),
+                        faktaUUID = row.uuid("fakta_id"),
+                        versjonId = row.int("versjon_id"),
                     )
                 }.asSingle,
             )
