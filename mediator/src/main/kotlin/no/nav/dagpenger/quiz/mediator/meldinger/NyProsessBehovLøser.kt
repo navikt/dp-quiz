@@ -3,6 +3,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.faktum.Identer
+import no.nav.dagpenger.model.seksjon.Henvendelser
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -52,13 +53,14 @@ internal class NyProsessBehovLøser(
                 .also { søknadsprosess ->
                     prosessRepository.lagre(søknadsprosess)
                     log.info { "Opprettet ny søknadprosess ${søknadsprosess.fakta.uuid}" }
+                    val faktaversjon = Henvendelser.siste(prosessversjon.faktatype)
 
                     packet["@løsning"] = mapOf(
                         behovNavn to mapOf(
                             "prosessversjon" to mapOf(
                                 "prosessnavn" to prosessversjon.faktatype.id,
                                 // TODO: Denne trengs ikke om vi slutter med migrering fra dp-soknad
-                                // "versjon" to prosessversjon.faktatype.versjon,
+                                "versjon" to faktaversjon.versjon,
                             ),
                         ),
                     )
