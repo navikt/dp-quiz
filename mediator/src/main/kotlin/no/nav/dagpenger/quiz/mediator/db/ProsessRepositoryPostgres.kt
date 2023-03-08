@@ -48,11 +48,10 @@ class ProsessRepositoryPostgres : ProsessRepository {
         val rad = sessionOf(dataSource).use { session ->
             session.run(
                 queryOf(
-                    // TODO: Ble denne spørringen riktig, får den med seg riktig Faktaversjon?
                     //language=PostgreSQL
                     """
                     SELECT p.person_id, p.navn, fv.navn AS faktatype, p.fakta_id, fv.versjon_id FROM prosess AS p 
-                        JOIN fakta AS f ON p.id = f.versjon_id 
+                        JOIN fakta AS f ON f.uuid = p.fakta_id
                         JOIN faktaversjon AS fv ON f.versjon_id = fv.id
                         WHERE p.uuid = ?
                     """.trimMargin(),
