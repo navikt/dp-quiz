@@ -58,10 +58,8 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 }
                 Dagpenger.registrer { prototype ->
                     FaktumTable(prototype)
-
-                    TODO("Se om denne trengs")
-                    /*Versjon.id(Versjon.siste(Prosessfakta.Dagpenger)).also { versjon ->
-                        val søknadsprosess = versjon.utredningsprosess(prototype)
+                    /*Henvendelser.id(Henvendelser.siste(Prosessfakta.Dagpenger)).also { versjon ->
+                        val søknadsprosess = versjon.prosess(prototype)
                         val malJson = SøknadsmalJsonBuilder(søknadsprosess).resultat().toString()
                         rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
                     }*/
@@ -69,7 +67,6 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
 
                 Innsending.registrer { prototype ->
                     FaktumTable(prototype)
-
                     /*Versjon.id(Versjon.siste(Prosessfakta.Innsending)).also { versjon ->
                         val søknadsprosess = versjon.utredningsprosess(prototype)
                         val malJson = SøknadsmalJsonBuilder(søknadsprosess).resultat().toString()
