@@ -78,8 +78,8 @@ internal class ProsessTest() {
     }
 
     private fun medProsess(block: () -> Unit) = Postgres.withMigratedDb {
-        Dagpenger.registrer { fakta ->
-            FaktumTable(fakta)
+        Dagpenger.registrer { prosess ->
+            FaktumTable(prosess.fakta)
         }
 
         lagNyProsess()

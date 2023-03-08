@@ -15,8 +15,8 @@ internal object Innsending {
     private val logger = KotlinLogging.logger { }
     val VERSJON_ID = Faktaversjon(Prosessfakta.Innsending, 6)
 
-    fun registrer(registrer: (prototype: Fakta) -> Unit = {}) {
-        registrer(prototypeFakta)
+    fun registrer(registrer: (prototypeProsess: Prosess) -> Unit = {}) {
+        registrer(søknadsprosess)
     }
 
     private val faktaseksjoner = listOf(

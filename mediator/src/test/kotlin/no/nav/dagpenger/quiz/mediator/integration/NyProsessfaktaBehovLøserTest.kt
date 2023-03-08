@@ -22,8 +22,8 @@ internal class NyProsessfaktaBehovLøserTest : SøknadBesvarer() {
     @BeforeEach
     fun setup() {
         Postgres.withMigratedDb {
-            Dagpenger.registrer(::FaktumTable)
-            Innsending.registrer(::FaktumTable)
+            Dagpenger.registrer { FaktumTable(it.fakta) }
+            Innsending.registrer { FaktumTable(it.fakta) }
             val søknadPersistence = ProsessRepositoryPostgres()
             val resultatPersistence = ResultatRecord()
             testRapid = TestRapid().also {
