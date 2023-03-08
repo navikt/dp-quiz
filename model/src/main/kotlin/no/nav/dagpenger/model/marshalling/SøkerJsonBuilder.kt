@@ -58,13 +58,16 @@ class SøkerJsonBuilder(private val prosess: Prosess) : ProsessVisitor {
 
     fun resultat() = root
 
+    override fun preVisit(prosess: Prosess, uuid: UUID) {
+        root.put("søknad_uuid", "$uuid")
+    }
+
     override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
         root.put("@event_name", "søker_oppgave")
         root.put("versjon_id", faktaversjon.versjon)
         root.put("versjon_navn", faktaversjon.faktatype.id)
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
-        root.put("søknad_uuid", "$uuid")
         root.put("ferdig", ferdig)
     }
 

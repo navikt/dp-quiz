@@ -38,7 +38,7 @@ import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -419,6 +419,8 @@ internal class SøkerJsonBuilderTest {
         return regeltre
     }
 
+    private val uuid = UUID.randomUUID()
+
     private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess {
         val seksjoner = listOf(
             Seksjon(
@@ -492,14 +494,14 @@ internal class SøkerJsonBuilderTest {
             prototypeFakta,
             seksjoner = seksjoner.toTypedArray(),
             rootSubsumsjon = prototypeSubsumsjon,
-        ).bygg(UUID.randomUUID(), fakta, rootSubsumsjon)
+        ).bygg(uuid, fakta, rootSubsumsjon)
     }
 
     private fun assertMetadata(søkerJson: ObjectNode) {
         assertEquals("søker_oppgave", søkerJson["@event_name"].asText())
-        Assertions.assertDoesNotThrow { søkerJson["@id"].asText().also { UUID.fromString(it) } }
-        Assertions.assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
-        Assertions.assertDoesNotThrow { søkerJson["søknad_uuid"].asText().also { UUID.fromString(it) } }
+        assertDoesNotThrow { søkerJson["@id"].asText().also { UUID.fromString(it) } }
+        assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
+        assertEquals(søkerJson["søknad_uuid"].asText().let { UUID.fromString(it) }, uuid)
         assertEquals("12020052345", søkerJson["fødselsnummer"].asText())
     }
 }
