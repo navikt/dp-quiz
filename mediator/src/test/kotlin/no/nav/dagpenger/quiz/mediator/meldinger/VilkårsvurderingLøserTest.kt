@@ -3,10 +3,11 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.model.seksjon.Henvendelser
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
+import no.nav.dagpenger.quiz.mediator.helpers.testPerson
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.intellij.lang.annotations.Language
@@ -19,27 +20,24 @@ import java.util.UUID.randomUUID
 import kotlin.test.assertTrue
 
 class VilkårsvurderingLøserTest {
-
-    private lateinit var søknadsprosess: Søknadprosess
+    private lateinit var søknadsprosess: Prosess
     private lateinit var testRapid: TestRapid
     private val vilkårsvurderingIdSlot = slot<UUID>()
 
     @BeforeEach
     fun setup() {
-        Paragraf_4_23_alder_oppsett.registrer { prototypeSøknad ->
-            søknadsprosess = Versjon.id(Paragraf_4_23_alder_oppsett.VERSJON_ID)
-                .søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
-        }
+        Paragraf_4_23_alder_oppsett.registrer()
+        søknadsprosess = Henvendelser.prosess(testPerson, Prosesser.Paragraf_4_23_alder)
 
-        val prosessPersistens = mockk<SøknadPersistence>().also {
-            every { it.ny(any(), any(), any(), capture(vilkårsvurderingIdSlot)) } returns søknadsprosess
-            every { it.lagre(any() as Søknad) } returns true
+        val prosessPersistens = mockk<ProsessRepository>().also {
+            every { it.ny(any(), any(), capture(vilkårsvurderingIdSlot), any()) } returns søknadsprosess
+            every { it.lagre(any() as Prosess) } returns true
         }
 
         testRapid = TestRapid().also {
             VilkårsvurderingLøser(
                 rapidsConnection = it,
-                prosessPersistence = prosessPersistens
+                prosessPersistence = prosessPersistens,
             )
         }
     }

@@ -1,8 +1,8 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class MinstEnAvSubsumsjon private constructor(
@@ -19,26 +19,26 @@ class MinstEnAvSubsumsjon private constructor(
         TomSubsumsjon
     )
 
-    override fun deepCopy(søknadprosess: Søknadprosess) = MinstEnAvSubsumsjon(
+    override fun deepCopy(prosess: Prosess) = MinstEnAvSubsumsjon(
         navn,
-        subsumsjoner.map { it.deepCopy(søknadprosess) },
-        oppfyltSubsumsjon.deepCopy(søknadprosess),
-        ikkeOppfyltSubsumsjon.deepCopy(søknadprosess)
+        subsumsjoner.map { it.deepCopy(prosess) },
+        oppfyltSubsumsjon.deepCopy(prosess),
+        ikkeOppfyltSubsumsjon.deepCopy(prosess)
     )
 
-    override fun bygg(søknad: Søknad) = MinstEnAvSubsumsjon(
+    override fun bygg(fakta: Fakta) = MinstEnAvSubsumsjon(
         navn,
-        subsumsjoner.map { it.bygg(søknad) }.toMutableList(),
-        oppfyltSubsumsjon.bygg(søknad),
-        ikkeOppfyltSubsumsjon.bygg(søknad)
+        subsumsjoner.map { it.bygg(fakta) }.toMutableList(),
+        oppfyltSubsumsjon.bygg(fakta),
+        ikkeOppfyltSubsumsjon.bygg(fakta)
     )
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Subsumsjon {
+    override fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon {
         return MinstEnAvSubsumsjon(
             "$navn [$indeks]",
-            subsumsjoner.map { it.deepCopy(indeks, søknad) }.toMutableList(),
-            oppfyltSubsumsjon.deepCopy(indeks, søknad),
-            ikkeOppfyltSubsumsjon.deepCopy(indeks, søknad)
+            subsumsjoner.map { it.deepCopy(indeks, fakta) }.toMutableList(),
+            oppfyltSubsumsjon.deepCopy(indeks, fakta),
+            ikkeOppfyltSubsumsjon.deepCopy(indeks, fakta)
         )
     }
 

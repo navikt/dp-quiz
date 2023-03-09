@@ -4,6 +4,8 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.factory.FaktaRegel
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
@@ -11,17 +13,15 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
+import no.nav.dagpenger.model.visitor.FaktaVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.util.UUID
 
-class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) : SøknadVisitor {
+class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
     private var internVersjonId = 0
     private var rootId = 0
     private var indeks = 0
@@ -31,27 +31,27 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
     private val faktumParametre = mutableListOf<Map<String, Any>>()
 
     init {
-        søknad.accept(this)
+        fakta.accept(this)
     }
 
     override fun preVisit(person: Person, uuid: UUID) {
         personId = uuid
     }
 
-    private fun hentInternId(prosessVersjon: Prosessversjon): Int {
+    private fun hentInternId(prosessVersjon: Faktaversjon): Int {
         val query = queryOf( //language=PostgreSQL
-            "SELECT id FROM v1_prosessversjon WHERE navn = :navn AND versjon_id = :versjon_id",
-            mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon)
+            "SELECT id FROM faktaversjon WHERE navn = :navn AND versjon_id = :versjon_id",
+            mapOf("navn" to prosessVersjon.faktatype.id, "versjon_id" to prosessVersjon.versjon),
         )
         return using(sessionOf(dataSource)) { session ->
             session.run(
-                query.map { it.intOrNull("id") }.asSingle
+                query.map { it.intOrNull("id") }.asSingle,
             ) ?: throw IllegalStateException("Fant ikke internid for prosessversjon $prosessVersjon")
         }
     }
 
-    override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
-        this.internVersjonId = hentInternId(prosessVersjon)
+    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+        this.internVersjonId = hentInternId(faktaversjon)
         this.søknadUUID = uuid
     }
 
@@ -60,7 +60,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         this.indeks = indeks
     }
 
-    override fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun postVisit(fakta: Fakta, uuid: UUID) {
         val faktumInsertStatement = //language=PostgreSQL
             """INSERT INTO faktum_verdi
                                 (soknad_id, indeks, faktum_id)
@@ -72,17 +72,16 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
                 val id = transactionalSession.run(
                     queryOf( //language=PostgreSQL
                         """
-                         INSERT INTO soknad(uuid, versjon_id, person_id, sesjon_type_id) 
-                         VALUES (:uuid, :versjon_id, :person_id, :sesjon_type_id) 
+                         INSERT INTO fakta(uuid, versjon_id, person_id) 
+                         VALUES (:uuid, :versjon_id, :person_id) 
                          RETURNING id                        
                         """.trimIndent(),
                         mapOf(
                             "uuid" to søknadUUID,
                             "versjon_id" to internVersjonId,
                             "person_id" to personId,
-                            "sesjon_type_id" to type.id
-                        )
-                    ).map { it.long(1) }.asSingle
+                        ),
+                    ).map { it.long(1) }.asSingle,
                 )
                 val params = faktumParametre.map { originalParameter -> mapOf("soknadId" to id) + originalParameter }
                 transactionalSession.batchPreparedNamedStatement(faktumInsertStatement, params)
@@ -100,7 +99,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
         skrivFaktumVerdi(faktum)
     }
@@ -112,7 +111,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         avhengerAvFakta: Set<Faktum<*>>,
         templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
     ) {
         skrivFaktumVerdi(faktum)
     }
@@ -124,7 +123,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
     ) {
         skrivFaktumVerdi(faktum)
     }
@@ -136,7 +135,7 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
         avhengerAvFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
-        regel: FaktaRegel<R>
+        regel: FaktaRegel<R>,
     ) {
         skrivFaktumVerdi(faktum)
     }
@@ -147,8 +146,8 @@ class NySøknad(søknad: Søknad, private val type: Versjon.UserInterfaceType) :
             mapOf(
                 "indeks" to indeks,
                 "internVersjonId" to internVersjonId,
-                "rootId" to rootId
-            )
+                "rootId" to rootId,
+            ),
         )
     }
 }

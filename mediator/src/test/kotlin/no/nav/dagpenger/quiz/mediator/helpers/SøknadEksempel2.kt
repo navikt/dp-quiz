@@ -12,19 +12,14 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 
 internal object SøknadEksempel2 {
-    val prosessVersjon = Prosessversjon(Testprosess.Test, 889)
+    val faktaversjon = Faktaversjon(SøknadEksempel1.faktatype, 889)
     internal val prototypeFakta by lazy {
-        Søknad(
-            prosessVersjon,
+        Fakta(
+            faktaversjon,
             boolsk faktum "f1" id 1 avhengerAv 11,
             dato faktum "f2" id 2,
             dato faktum "f3" id 3,
@@ -53,37 +48,7 @@ internal object SøknadEksempel2 {
             land faktum "f25" id 25,
             heltall faktum "f26" id 26,
             desimaltall faktum "f27" id 27,
-            envalg faktum "f28" med "valg1" med "valg2" id 28
-        )
-    }
-    private val webPrototypeSøknad = Søknadprosess(
-        Seksjon(
-            "seksjon",
-            Rolle.søker,
-            *(prototypeFakta.map { it }.toTypedArray())
-        )
-    )
-    private val mobilePrototypeSøknad = Søknadprosess(
-        Seksjon(
-            "seksjon",
-            Rolle.søker,
-            *(prototypeFakta.map { it }.toTypedArray())
-        ),
-        Seksjon(
-            "template seksjon",
-            Rolle.søker,
-            prototypeFakta.heltall(16),
-            prototypeFakta.boolsk(17)
-        )
-    )
-    val v2 by lazy {
-        Versjon.Bygger(
-            prototypeFakta,
-            prototypeFakta boolsk 1 er true,
-            mapOf(
-                Versjon.UserInterfaceType.Web to webPrototypeSøknad,
-                Versjon.UserInterfaceType.Mobile to mobilePrototypeSøknad
-            )
+            envalg faktum "f28" med "valg1" med "valg2" id 28,
         ).registrer()
     }
 }

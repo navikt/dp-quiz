@@ -2,15 +2,16 @@ package no.nav.dagpenger.model.unit.marshalling
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.helpers.testPerson
-import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.helpers.faktaversjon
+import no.nav.dagpenger.model.helpers.testProsess
+import no.nav.dagpenger.model.helpers.testProsesstype
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
@@ -22,12 +23,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class ResultatJsonBuilderTest {
-    private lateinit var prototypeSøknad: Søknad
+    private lateinit var prototypeFakta: Fakta
+    private lateinit var prosesstype: Prosesstype
 
     @BeforeEach
     fun setup() {
-        prototypeSøknad = Søknad(
-            testversjon,
+        prosesstype = testProsesstype()
+        prototypeFakta = Fakta(
+            prosesstype.faktaversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1,
             boolsk faktum "f3" id 3,
@@ -35,14 +38,14 @@ internal class ResultatJsonBuilderTest {
             boolsk faktum "f5" id 5,
             boolsk faktum "f6" id 6,
             boolsk faktum "f7" id 7,
-            heltall faktum "f67" id 67 genererer 6 og 7
+            heltall faktum "f67" id 67 genererer 6 og 7,
         )
     }
 
     @Test
     fun `bygger prossess_resultat event`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true
+            prototypeFakta.boolsk(1) er true,
         )
         assertThrows<IllegalStateException> {
             ResultatJsonBuilder(søknadprosess).resultat()
@@ -56,19 +59,19 @@ internal class ResultatJsonBuilderTest {
         søknadprosess.boolsk(1).besvar(false)
         ResultatJsonBuilder(søknadprosess).resultat().also {
             assertFalse(it["resultat"].asBoolean())
-            assertEquals(0, it["versjon_id"].asInt())
-            assertEquals("test", it["versjon_navn"].asText())
+            assertEquals(1, it["versjon_id"].asInt())
+            assertTrue(it["versjon_navn"].isTextual)
         }
     }
 
     @Test
     fun `inkluderer kun mulige paths`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true hvisOppfylt {
-                prototypeSøknad.boolsk(2) er true
+            prototypeFakta.boolsk(1) er true hvisOppfylt {
+                prototypeFakta.boolsk(2) er true
             } hvisIkkeOppfylt {
-                prototypeSøknad.boolsk(3) er true
-            }
+                prototypeFakta.boolsk(3) er true
+            },
         )
         søknadprosess.boolsk(1).besvar(true)
         søknadprosess.boolsk(2).besvar(true)
@@ -82,11 +85,11 @@ internal class ResultatJsonBuilderTest {
     @Test
     fun `inkluderer besvartAv`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true hvisOppfylt {
-                prototypeSøknad.boolsk(2) er true
+            prototypeFakta.boolsk(1) er true hvisOppfylt {
+                prototypeFakta.boolsk(2) er true
             } hvisIkkeOppfylt {
-                prototypeSøknad.boolsk(3) er true
-            }
+                prototypeFakta.boolsk(3) er true
+            },
         )
         søknadprosess.boolsk(1).besvar(true, "A123456")
         søknadprosess.boolsk(2).besvar(true)
@@ -95,27 +98,20 @@ internal class ResultatJsonBuilderTest {
         }
     }
 
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Søknadprosess {
-        val prototypeFaktagrupper = Søknadprosess(
-            prototypeSøknad,
-            Seksjon(
-                "søker",
-                Rolle.søker,
-                prototypeSøknad.boolsk(1),
-                prototypeSøknad.boolsk(3),
-                prototypeSøknad.boolsk(5),
-                prototypeSøknad.boolsk(6),
-                prototypeSøknad.boolsk(7)
-            ),
-            Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.boolsk(2)),
-            Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeSøknad.boolsk(4)),
-            rootSubsumsjon = prototypeSubsumsjon,
-        )
-
-        return Versjon.Bygger(
-            prototypeSøknad,
-            prototypeSubsumsjon,
-            mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
-        ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
-    }
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess = Prosess(
+        prosesstype,
+        prototypeFakta,
+        Seksjon(
+            "søker",
+            Rolle.søker,
+            prototypeFakta.boolsk(1),
+            prototypeFakta.boolsk(3),
+            prototypeFakta.boolsk(5),
+            prototypeFakta.boolsk(6),
+            prototypeFakta.boolsk(7),
+        ),
+        Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
+        Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeFakta.boolsk(4)),
+        rootSubsumsjon = prototypeSubsumsjon,
+    ).testProsess()
 }

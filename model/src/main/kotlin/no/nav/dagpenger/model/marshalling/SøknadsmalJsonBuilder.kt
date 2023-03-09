@@ -3,14 +3,14 @@ package no.nav.dagpenger.model.marshalling
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.LandGrupper
-import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.erBoolean
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.erLand
@@ -18,13 +18,13 @@ import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.lagBeskrivendeIde
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.lagFaktumNode
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilGyldigeLand
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.leggTilLandGrupper
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.FaktumVisitor
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import java.util.UUID
 
-class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
+class SøknadsmalJsonBuilder(prosess: Prosess) : ProsessVisitor {
     companion object {
         private val mapper = ObjectMapper()
     }
@@ -35,18 +35,18 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
     private val generatorFakta = mutableMapOf<GeneratorFaktum, List<Faktum<*>>>()
 
     init {
-        søknadprosess.accept(this)
+        prosess.accept(this)
     }
 
     fun resultat() = root
 
-    override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
         root.put("@event_name", "Søknadsmal")
-        root.put("versjon_id", prosessVersjon.versjon)
-        root.put("versjon_navn", prosessVersjon.prosessnavn.id)
+        root.put("versjon_id", faktaversjon.versjon)
+        root.put("versjon_navn", faktaversjon.faktatype.id)
     }
 
-    override fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun postVisit(fakta: Fakta, uuid: UUID) {
         root.set<ArrayNode>("seksjoner", seksjoner)
     }
 
@@ -73,7 +73,7 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
         avhengerAvFakta: Set<Faktum<*>>,
         templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
     ) {
         generatorFakta.putIfAbsent(faktum, templates)
         if (!::fakta.isInitialized) return
@@ -90,7 +90,7 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
         if (!::fakta.isInitialized) return
         fakta.addAll(avhengerAvFakta)
@@ -103,18 +103,18 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
         avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
     ) {
         if (!::fakta.isInitialized) return
         fakta.addAll(
             generatorFakta.filter { (_, templates) ->
                 templates.contains(faktum)
-            }.keys
+            }.keys,
         )
     }
 
     private class SøknadFaktumVisitor(
-        faktum: Faktum<*>
+        faktum: Faktum<*>,
     ) :
         FaktumVisitor {
         val root: ObjectNode = mapper.createObjectNode()
@@ -130,7 +130,7 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
             avhengerAvFakta: Set<Faktum<*>>,
             roller: Set<Rolle>,
             clazz: Class<R>,
-            gyldigeValg: GyldigeValg?
+            gyldigeValg: GyldigeValg?,
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
 
@@ -143,7 +143,7 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
                 faktum.navn,
                 roller,
                 null,
-                overstyrbareGyldigeValg
+                overstyrbareGyldigeValg,
             )
         }
 
@@ -154,7 +154,7 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
             avhengerAvFakta: Set<Faktum<*>>,
             templates: List<TemplateFaktum<*>>,
             roller: Set<Rolle>,
-            clazz: Class<R>
+            clazz: Class<R>,
         ) {
             val jsonTemplates = mapper.createArrayNode()
             templates.forEach { template ->
@@ -173,7 +173,7 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
             roller: Set<Rolle>,
             clazz: Class<R>,
             gyldigeValg: GyldigeValg?,
-            landGrupper: LandGrupper?
+            landGrupper: LandGrupper?,
         ) {
             var overstyrbareGyldigeValg = gyldigeValg
             if (clazz.erBoolean()) {
@@ -185,7 +185,7 @@ class SøknadsmalJsonBuilder(søknadprosess: Søknadprosess) : SøknadprosessVis
                 faktum.navn,
                 roller,
                 null,
-                overstyrbareGyldigeValg
+                overstyrbareGyldigeValg,
             )
             if (clazz.erLand()) {
                 this.root.leggTilGyldigeLand()

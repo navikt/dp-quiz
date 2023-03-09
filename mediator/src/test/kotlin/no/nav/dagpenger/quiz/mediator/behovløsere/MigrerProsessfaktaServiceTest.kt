@@ -3,25 +3,28 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-internal class MigrerProsessServiceTest {
-    private val søknadPersistence = mockk<SøknadPersistence>(relaxed = true)
+internal class MigrerProsessfaktaServiceTest {
+    private val prosessRepository = mockk<ProsessRepository>(relaxed = true)
+    private val faktaRepository = mockk<FaktaRepository>(relaxed = true)
     private val søknadUUID = UUID.randomUUID()
     private val rapid = TestRapid().apply {
-        MigrerProsessService(this, søknadPersistence)
+        MigrerProsessService(this, faktaRepository, prosessRepository)
     }
 
     @Test
     fun `besvarer migreringsbehov`() {
         every {
-            søknadPersistence.eksisterer(søknadUUID)
+            faktaRepository.eksisterer(søknadUUID)
         } returns true
+
         rapid.sendTestMessage( //language=JSON
             """
             {
@@ -42,7 +45,7 @@ internal class MigrerProsessServiceTest {
                 }
               ]
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         with(rapid.inspektør) {
@@ -53,8 +56,8 @@ internal class MigrerProsessServiceTest {
         }
 
         verify(exactly = 1) {
-            søknadPersistence.migrer(søknadUUID, any())
-            søknadPersistence.hent(søknadUUID)
+            faktaRepository.eksisterer(søknadUUID)
+            faktaRepository.migrer(søknadUUID, any())
         }
     }
 }

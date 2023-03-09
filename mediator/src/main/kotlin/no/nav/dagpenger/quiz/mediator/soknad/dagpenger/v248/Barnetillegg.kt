@@ -6,9 +6,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.minst
@@ -90,14 +90,14 @@ object Barnetillegg : DslFaktaseksjon {
             avhengerAv `dokumentasjon fødselsattest bostedsbevis for barn under 18år`
     )
 
-    override fun seksjon(søknad: Søknad): List<Seksjon> {
-        val barnetilleggRegister = søknad.seksjon("barnetillegg-register", Rolle.nav, *navSpørsmålsrekkefølge)
-        val barnetillegg = søknad.seksjon("barnetillegg", Rolle.søker, *spørsmålsrekkefølgeForSøker())
+    override fun seksjon(fakta: Fakta): List<Seksjon> {
+        val barnetilleggRegister = fakta.seksjon("barnetillegg-register", Rolle.nav, *navSpørsmålsrekkefølge)
+        val barnetillegg = fakta.seksjon("barnetillegg", Rolle.søker, *spørsmålsrekkefølgeForSøker())
 
         return listOf(barnetilleggRegister, barnetillegg)
     }
 
-    override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
+    override fun regeltre(fakta: Fakta): DeltreSubsumsjon = with(fakta) {
         "barnetillegg".deltre {
             "barnetillegg fra PDL register".minstEnAv(
                 generator(`barn liste register`) minst 0,
@@ -132,7 +132,7 @@ object Barnetillegg : DslFaktaseksjon {
         }
     }
 
-    private fun Søknad.`barnets navn, fødselsdato og bostedsland`() = "navn, dato og bostedsland".alle(
+    private fun Fakta.`barnets navn, fødselsdato og bostedsland`() = "navn, dato og bostedsland".alle(
         tekst(`barn fornavn mellomnavn`).utfylt(),
         tekst(`barn etternavn`).utfylt(),
         dato(`barn fødselsdato`).utfylt(),

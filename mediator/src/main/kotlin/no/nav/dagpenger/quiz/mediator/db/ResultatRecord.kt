@@ -18,22 +18,22 @@ interface ResultatPersistence {
 class ResultatRecord : ResultatPersistence {
 
     override fun lagreResultat(resultat: Boolean, søknadUuid: UUID, resultatJson: ObjectNode) {
-        using(sessionOf(dataSource)) { session ->
+        sessionOf(dataSource).use { session ->
             session.run(
                 queryOf( //language=PostgreSQL
                     """
                     INSERT INTO resultat (resultat, data, soknad_id) 
-                        SELECT ?, ?, soknad.id
-                        FROM soknad 
-                        WHERE soknad.uuid = ? 
+                        SELECT ?, ?, fakta.id
+                        FROM fakta 
+                        WHERE fakta.uuid = ? 
                     """.trimMargin(),
                     resultat,
                     PGobject().apply {
                         type = "jsonb"
                         value = resultatJson.toString()
                     },
-                    søknadUuid
-                ).asExecute
+                    søknadUuid,
+                ).asExecute,
             )
         }
     }
@@ -42,9 +42,9 @@ class ResultatRecord : ResultatPersistence {
         return using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL
-                    "SELECT resultat FROM resultat WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
-                    søknadUuid
-                ).map { it.boolean("resultat") }.asSingle
+                    "SELECT resultat FROM resultat WHERE soknad_id = (SELECT fakta.id FROM fakta WHERE fakta.uuid = ?)",
+                    søknadUuid,
+                ).map { it.boolean("resultat") }.asSingle,
             )
         } ?: throw IllegalArgumentException("Resultat finnes ikke for søknad, uuid: $søknadUuid")
     }
@@ -55,13 +55,13 @@ class ResultatRecord : ResultatPersistence {
                 queryOf( //language=PostgreSQL
                     """
                     INSERT INTO manuell_behandling (soknad_id, grunn) 
-                        SELECT soknad.id, ?
-                        FROM soknad 
-                        WHERE soknad.uuid = ? 
+                        SELECT fakta.id, ?
+                        FROM fakta 
+                        WHERE fakta.uuid = ? 
                     """.trimMargin(),
                     grunn,
-                    søknadUuid
-                ).asExecute
+                    søknadUuid,
+                ).asExecute,
             )
         }
     }

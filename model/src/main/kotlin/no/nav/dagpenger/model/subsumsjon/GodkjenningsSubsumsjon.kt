@@ -1,10 +1,10 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Faktum.Companion.deepCopy
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 open class GodkjenningsSubsumsjon private constructor(
@@ -48,22 +48,22 @@ open class GodkjenningsSubsumsjon private constructor(
         }
     }
 
-    override fun deepCopy(søknadprosess: Søknadprosess) = GodkjenningsSubsumsjon(
+    override fun deepCopy(prosess: Prosess) = GodkjenningsSubsumsjon(
         navn,
         action,
-        child.deepCopy(søknadprosess),
-        godkjenningsfakta.map { søknadprosess.boolsk(it.id) as GrunnleggendeFaktum<Boolean> },
-        oppfyltSubsumsjon.deepCopy(søknadprosess),
-        ikkeOppfyltSubsumsjon.deepCopy(søknadprosess)
+        child.deepCopy(prosess),
+        godkjenningsfakta.map { prosess.boolsk(it.id) as GrunnleggendeFaktum<Boolean> },
+        oppfyltSubsumsjon.deepCopy(prosess),
+        ikkeOppfyltSubsumsjon.deepCopy(prosess)
     )
 
-    override fun bygg(søknad: Søknad) = GodkjenningsSubsumsjon(
+    override fun bygg(fakta: Fakta) = GodkjenningsSubsumsjon(
         navn,
         action,
-        child.bygg(søknad),
-        godkjenningsfakta.map { søknad.boolsk(it.id) as GrunnleggendeFaktum<Boolean> },
-        oppfyltSubsumsjon.bygg(søknad),
-        ikkeOppfyltSubsumsjon.bygg(søknad)
+        child.bygg(fakta),
+        godkjenningsfakta.map { fakta.boolsk(it.id) as GrunnleggendeFaktum<Boolean> },
+        oppfyltSubsumsjon.bygg(fakta),
+        ikkeOppfyltSubsumsjon.bygg(fakta)
     )
 
     override fun alleFakta(): List<Faktum<*>> = child.alleFakta()
@@ -79,14 +79,14 @@ open class GodkjenningsSubsumsjon private constructor(
         )
     }
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Subsumsjon {
+    override fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon {
         return GodkjenningsSubsumsjon(
             "$navn [$indeks]",
             action,
-            child.deepCopy(indeks, søknad),
-            godkjenningsfakta.deepCopy(indeks, søknad) as List<GrunnleggendeFaktum<Boolean>>,
-            oppfyltSubsumsjon.deepCopy(indeks, søknad),
-            ikkeOppfyltSubsumsjon.deepCopy(indeks, søknad)
+            child.deepCopy(indeks, fakta),
+            godkjenningsfakta.deepCopy(indeks, fakta) as List<GrunnleggendeFaktum<Boolean>>,
+            oppfyltSubsumsjon.deepCopy(indeks, fakta),
+            ikkeOppfyltSubsumsjon.deepCopy(indeks, fakta)
         )
     }
 

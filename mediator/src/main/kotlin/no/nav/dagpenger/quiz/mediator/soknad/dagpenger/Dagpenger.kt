@@ -1,18 +1,20 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import mu.KotlinLogging
-import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Henvendelser
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.uansett
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
+import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger.Subsumsjoner.regeltre
 
 internal object Dagpenger {
+    internal val henvendelse: Henvendelser.FaktaBygger
     private val logger = KotlinLogging.logger { }
 
     /**
@@ -20,10 +22,10 @@ internal object Dagpenger {
      *
      * Dette for at innsendte søknader fortsatt skal kunne lastes, uten å bli migrert fram.
      */
-    val VERSJON_ID = Prosessversjon(Prosess.Dagpenger, 249)
+    val VERSJON_ID = Faktaversjon(Prosessfakta.Dagpenger, 249)
 
-    fun registrer(registrer: (prototype: Søknad) -> Unit) {
-        registrer(prototypeSøknad)
+    fun registrer(registrer: (prototypeProsess: Prosess) -> Unit = {}) {
+        registrer(prosess.bygg(prototypeFakta, regeltre))
     }
 
     private val faktaseksjoner = listOf(
@@ -36,19 +38,22 @@ internal object Dagpenger {
         Utdanning,
         Barnetillegg,
         ReellArbeidssoker,
-        Tilleggsopplysninger
+        Tilleggsopplysninger,
     )
     private val alleFakta = flatMapAlleFakta()
     private val alleSeksjoner = flatMapAlleSeksjoner()
-    private val prototypeSøknad: Søknad
-        get() = Søknad(
+    val prototypeFakta: Fakta
+        get() = Fakta(
             VERSJON_ID,
-            *alleFakta
+            *alleFakta,
         )
-    private val søknadsprosess: Søknadprosess = Søknadprosess(*alleSeksjoner)
+    private val prosess: Prosess = Prosess(
+        Prosesser.Søknad,
+        *alleSeksjoner,
+    )
 
     object Subsumsjoner {
-        val regeltre: Subsumsjon = with(prototypeSøknad) {
+        val regeltre: Subsumsjon = with(prototypeFakta) {
             Bosted.regeltre(this).hvisOppfylt {
                 DinSituasjon.regeltre(this).uansett {
                     EøsArbeidsforhold.regeltre(this).uansett {
@@ -74,21 +79,20 @@ internal object Dagpenger {
     private val faktumNavBehov =
         FaktumNavBehov(
             mapOf(
-                Barnetillegg.`barn liste register` to "Barn"
-            )
+                Barnetillegg.`barn liste register` to "Barn",
+            ),
         )
 
     init {
-        Versjon.Bygger(
-            prototypeSøknad = prototypeSøknad,
-            prototypeSubsumsjon = regeltre,
-            prototypeUserInterfaces = mapOf(
-                Versjon.UserInterfaceType.Web to søknadsprosess
-            ),
-            faktumNavBehov = faktumNavBehov
-        ).registrer().also {
-            logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
+        henvendelse = Henvendelser.FaktaBygger(
+            prototypeFakta,
+            faktumNavBehov,
+        ).also {
+            it.registrer()
         }
+
+        henvendelse.leggTilProsess(prosess, regeltre)
+        logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
     }
 
     private fun flatMapAlleFakta() = faktaseksjoner.flatMap { seksjon ->
@@ -96,6 +100,6 @@ internal object Dagpenger {
     }.toTypedArray()
 
     private fun flatMapAlleSeksjoner() = faktaseksjoner.map { faktaSeksjon ->
-        faktaSeksjon.seksjon(prototypeSøknad)
+        faktaSeksjon.seksjon(prototypeFakta)
     }.flatten().toTypedArray()
 }

@@ -1,19 +1,17 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.quiz.mediator.helpers.testFaktaversjon
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertEquals
 
 internal class BostedTest {
-
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
         Bosted.verifiserFeltsammensetting(6, 36021)
@@ -21,9 +19,9 @@ internal class BostedTest {
 
     @Test
     fun `Bostedsregel for Norge, Svalbard og Jan Mayen`() {
-        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
-        val søknadprosess = søknad.testSøknadprosess(
-            Bosted.regeltre(søknad)
+        val fakta = Fakta(testFaktaversjon(), *Bosted.fakta())
+        val søknadprosess = fakta.testSøknadprosess(
+            subsumsjon = Bosted.regeltre(fakta),
         ) {
             Bosted.seksjon(this)
         }
@@ -37,9 +35,9 @@ internal class BostedTest {
 
     @Test
     fun `Bostedsregel for EØS og Sveits ikke reist tilbake `() {
-        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
-        val søknadprosess = søknad.testSøknadprosess(
-            Bosted.regeltre(søknad)
+        val fakta = Fakta(testFaktaversjon(), *Bosted.fakta())
+        val søknadprosess = fakta.testSøknadprosess(
+            subsumsjon = Bosted.regeltre(fakta),
         ) {
             Bosted.seksjon(this)
         }
@@ -58,11 +56,12 @@ internal class BostedTest {
             assertEquals(true, søknadprosess.resultat())
         }
     }
+
     @Test
     fun `Bostedsregel for EØS og Sveits og har reist tilbake til bostedslandet`() {
-        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
-        val søknadprosess = søknad.testSøknadprosess(
-            Bosted.regeltre(søknad)
+        val fakta = Fakta(testFaktaversjon(), *Bosted.fakta())
+        val søknadprosess = fakta.testSøknadprosess(
+            subsumsjon = Bosted.regeltre(fakta),
         ) {
             Bosted.seksjon(this)
         }
@@ -74,8 +73,8 @@ internal class BostedTest {
             søknadprosess.periode(Bosted.`reist tilbake periode`).besvar(
                 Periode(
                     fom = LocalDate.now().minusDays(20),
-                    tom = LocalDate.now()
-                )
+                    tom = LocalDate.now(),
+                ),
             )
             assertEquals(null, søknadprosess.resultat())
             søknadprosess.tekst(Bosted.`reist tilbake årsak`).besvar(Tekst("Varmt vann og SOL i utlandet"))
@@ -93,9 +92,9 @@ internal class BostedTest {
 
     @Test
     fun `Bostedsregel for Storbritannia`() {
-        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
-        val søknadprosess = søknad.testSøknadprosess(
-            Bosted.regeltre(søknad)
+        val fakta = Fakta(testFaktaversjon(), *Bosted.fakta())
+        val søknadprosess = fakta.testSøknadprosess(
+            subsumsjon = Bosted.regeltre(fakta),
         ) {
             Bosted.seksjon(this)
         }
@@ -112,9 +111,9 @@ internal class BostedTest {
 
     @Test
     fun `Bostedsregel for utenfor EØS`() {
-        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
-        val søknadprosess = søknad.testSøknadprosess(
-            Bosted.regeltre(søknad)
+        val fakta = Fakta(testFaktaversjon(), *Bosted.fakta())
+        val søknadprosess = fakta.testSøknadprosess(
+            subsumsjon = Bosted.regeltre(fakta),
         ) {
             Bosted.seksjon(this)
         }
@@ -125,9 +124,9 @@ internal class BostedTest {
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Bosted.fakta())
-        val søknadprosess = søknad.testSøknadprosess(
-            Bosted.regeltre(søknad)
+        val fakta = Fakta(testFaktaversjon(), *Bosted.fakta())
+        val søknadprosess = fakta.testSøknadprosess(
+            subsumsjon = Bosted.regeltre(fakta),
         ) {
             Bosted.seksjon(this)
         }
@@ -165,7 +164,7 @@ internal class BostedTest {
         "CZE",
         "DEU",
         "HUN",
-        "AUT"
+        "AUT",
     ).map { land ->
         Land(land)
     }

@@ -6,25 +6,25 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
 
 class InnsendingMetadataStrategi : MetadataStrategi {
-    private fun Søknadprosess.innsendingSvar() = when (HenvendelseType(this).hva) {
+    private fun Prosess.innsendingSvar() = when (HenvendelseType(this).hva) {
         // "faktum.hvorfor.svar.endring" -> "Melding om endring som kan påvirke Dagpenger"
         else -> "Generell innsending"
     }
 
-    override fun metadata(søknadprosess: Søknadprosess) =
-        Metadata("GENERELL_INNSENDING", søknadprosess.innsendingSvar())
+    override fun metadata(prosess: Prosess) =
+        Metadata("GENERELL_INNSENDING", prosess.innsendingSvar())
 
-    private class HenvendelseType(søknadprosess: Søknadprosess) : SøknadprosessVisitor {
+    private class HenvendelseType(prosess: Prosess) : ProsessVisitor {
         var hva: String? = null
 
         init {
-            søknadprosess.accept(this)
+            prosess.accept(this)
         }
 
         override fun <R : Comparable<R>> visitMedSvar(
@@ -39,7 +39,7 @@ class InnsendingMetadataStrategi : MetadataStrategi {
             svar: R,
             besvartAv: String?,
             gyldigeValg: GyldigeValg?,
-            landGrupper: LandGrupper?
+            landGrupper: LandGrupper?,
         ) {
             super.visitMedSvar(
                 faktum,
@@ -53,7 +53,7 @@ class InnsendingMetadataStrategi : MetadataStrategi {
                 svar,
                 besvartAv,
                 gyldigeValg,
-                landGrupper
+                landGrupper,
             )
             if (id != GenerellInnsending.`hvorfor sender du inn dokumentasjon`.toString()) return
             hva = (svar as Envalg).single()

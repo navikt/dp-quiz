@@ -18,6 +18,8 @@ import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.factory.FaktumFactory
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.Flervalg
@@ -28,20 +30,19 @@ import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
-import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
+import no.nav.dagpenger.model.visitor.FaktaVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import org.postgresql.util.PGobject
 import java.time.LocalDate
 import java.util.UUID
 
 // Forstår initialisering av faktum tabellen
-class FaktumTable(søknad: Søknad) : SøknadVisitor {
+class FaktumTable(fakta: Fakta) : FaktaVisitor {
 
     private var rootId: Int = 0
     private var indeks: Int = 0
@@ -50,47 +51,48 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
     private var prosessVersjonId = 0
 
     init {
-        if (Versjonsjekker(søknad).ikkeEksisterer()) søknad.accept(this)
+        if (Versjonsjekker(fakta).ikkeEksisterer()) fakta.accept(this)
     }
 
-    private class Versjonsjekker(søknad: Søknad) : SøknadVisitor {
+    private class Versjonsjekker(fakta: Fakta) : FaktaVisitor {
 
         init {
-            søknad.accept(this)
+            fakta.accept(this)
         }
 
         private var eksisterer = false
 
         fun ikkeEksisterer() = !eksisterer
 
-        override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
-            eksisterer = exists(prosessVersjon)
+        override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+            eksisterer = exists(faktaversjon)
         }
 
         private companion object {
-            private fun exists(prosessVersjon: Prosessversjon): Boolean {
-                val query = queryOf( //language=PostgreSQL
-                    "SELECT id FROM V1_PROSESSVERSJON WHERE navn = :navn AND versjon_id = :versjon_id",
-                    mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon)
+            private fun exists(faktaversjon: Faktaversjon): Boolean {
+                val query = queryOf(
+                    //language=PostgreSQL
+                    "SELECT id FROM faktaversjon WHERE navn = :navn AND versjon_id = :versjon_id",
+                    mapOf("navn" to faktaversjon.faktatype.id, "versjon_id" to faktaversjon.versjon),
                 )
                 return using(sessionOf(dataSource)) { session ->
                     session.run(
-                        query.map { true }.asSingle
+                        query.map { true }.asSingle,
                     ) ?: false
                 }
             }
         }
     }
 
-    override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
         val query = queryOf( //language=PostgreSQL
-            "INSERT INTO V1_PROSESSVERSJON (navn, versjon_id) VALUES (:navn, :versjon_id) RETURNING id",
-            mapOf("navn" to prosessVersjon.prosessnavn.id, "versjon_id" to prosessVersjon.versjon)
+            "INSERT INTO faktaversjon (navn, versjon_id) VALUES (:navn, :versjon_id) RETURNING id",
+            mapOf("navn" to faktaversjon.faktatype.id, "versjon_id" to faktaversjon.versjon),
         )
         prosessVersjonId = using(sessionOf(dataSource)) { session ->
             session.run(
-                query.map { rad -> rad.int("id") }.asSingle
-            ) ?: throw IllegalStateException("Klarte ikke å opprette prosessversjon, $prosessVersjon")
+                query.map { rad -> rad.int("id") }.asSingle,
+            ) ?: throw IllegalStateException("Klarte ikke å opprette prosessversjon, $faktaversjon")
         }
     }
 
@@ -109,7 +111,7 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
         val dbId = skrivFaktum(faktum, clazz)
         gyldigeValg?.let {
@@ -125,7 +127,7 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
     ) {
         skrivFaktum(faktum, clazz)
         faktumFaktum(skrivFaktum(faktum, clazz), templates, "template_faktum")
@@ -139,7 +141,7 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
     ) {
         skrivFaktum(faktum, clazz)
         avhengigheter[faktum] = avhengigeFakta
@@ -152,14 +154,14 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
-        regel: FaktaRegel<R>
+        regel: FaktaRegel<R>,
     ) {
         if (dbIder.containsKey(faktum)) return
         faktumFaktum(skrivFaktum(faktum, clazz, regel), children, "utledet_faktum")
         avhengigheter[faktum] = avhengigeFakta
     }
 
-    override fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun postVisit(fakta: Fakta, uuid: UUID) {
         avhengigheter.forEach { (parent, children) -> faktumFaktum(dbIder[parent]!!, children, "avhengig_faktum") }
     }
 
@@ -172,8 +174,8 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
                     PGobject().apply {
                         type = "TEXT[]"
                         value = "{${gyldigeValg.joinToString { """"$it"""" }}}"
-                    }
-                ).asExecute
+                    },
+                ).asExecute,
             )
         }
     }
@@ -185,15 +187,17 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
                     queryOf(
                         "INSERT INTO $table (parent_id, child_id) VALUES (?, ?)".trimMargin(),
                         parentId,
-                        dbIder[child]
-                    ).asExecute
+                        dbIder[child],
+                    ).asExecute,
                 )
             }
         }
     }
 
     private fun <R : Comparable<R>> skrivFaktum(faktum: Faktum<*>, clazz: Class<R>, regel: FaktaRegel<R>? = null) =
-        if (dbIder.containsKey(faktum)) dbIder[faktum]!! else
+        if (dbIder.containsKey(faktum)) {
+            dbIder[faktum]!!
+        } else {
             using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
@@ -204,12 +208,13 @@ class FaktumTable(søknad: Søknad) : SøknadVisitor {
                         prosessVersjonId,
                         ClassKode[clazz],
                         rootId,
-                        regel?.navn
-                    ).map { it.int(1) }.asSingle
+                        regel?.navn,
+                    ).map { it.int(1) }.asSingle,
                 )
             }!!.also { dbId ->
                 dbIder[faktum] = dbId
             }
+        }
 
     // Understands an encoding of basic Faktum types
     internal class ClassKode {

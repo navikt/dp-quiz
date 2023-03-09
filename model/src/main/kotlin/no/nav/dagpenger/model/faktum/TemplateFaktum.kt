@@ -12,7 +12,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     avhengerAvFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     roller: MutableSet<Rolle> = mutableSetOf(),
     private val gyldigeValg: GyldigeValg? = null,
-    private val landgrupper: LandGrupper? = null
+    private val landgrupper: LandGrupper? = null,
 ) : Faktum<R>(faktumId, navn, avhengigeFakta, avhengerAvFakta, roller) {
     private val seksjoner = mutableListOf<Seksjon>()
 
@@ -46,12 +46,12 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
     override fun add(seksjon: Seksjon) =
         seksjoner.add(seksjon)
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Faktum<*> {
-        return søknad.idOrNull(faktumId medIndeks indeks)
+    override fun deepCopy(indeks: Int, fakta: Fakta): Faktum<*> {
+        return fakta.idOrNull(faktumId medIndeks indeks)
             ?: deepCopy(indeks)
                 .also { lagdFaktum ->
-                    søknad.add(lagdFaktum)
-                    leggTilAvhengighet(søknad, indeks, lagdFaktum)
+                    fakta.add(lagdFaktum)
+                    leggTilAvhengighet(fakta, indeks, lagdFaktum)
                 }
     }
 
@@ -64,54 +64,61 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
         godkjenner = mutableSetOf(),
         roller = roller,
         gyldigeValg = gyldigeValg,
-        landGrupper = landgrupper
+        landGrupper = landgrupper,
     )
 
     // Lag instans av template faktum ved besvar eller rehydrering av søknad
-    internal fun generate(generator: Int, søknad: Søknad) {
-        // Seksjoner dette templatet ligger i
-        seksjoner.forEach { originalSeksjon ->
-            generator.forHvertSvar { indeks: Int ->
-                // Sjekker om seksjonen er *kun* templates, og skal dermed klones før vi lager instanser av template i den
-                val seksjon = instansiertSeksjon(originalSeksjon, indeks)
-                deepCopy(indeks).also { lagdFaktum: GrunnleggendeFaktum<R> ->
+    internal fun generate(generator: Int, fakta: Fakta) {
+        val genererteInstanser = generator.forHvertSvar { indeks: Int ->
+            Pair(indeks, deepCopy(indeks))
+        }
+        genererteInstanser.forEach { (indeks, lagdFaktum) ->
+            if (seksjoner.isEmpty()) { // Vi rehydrerer fakta fra databasen
+                fakta.add(lagdFaktum)
+                leggTilAvhengighet(fakta, indeks, lagdFaktum as GrunnleggendeFaktum<R>)
+            } else { // Vi kobler fakta og prosess
+                // Gå gjennom alle seksjoner dette templatet ligger i
+                seksjoner.forEach { originalSeksjon ->
+                    // Sjekker om seksjonen er *kun* templates, og skal dermed klones før vi lager instanser av template i den
+                    val seksjon = instansiertSeksjon(originalSeksjon, indeks)
                     seksjon.add(lagdFaktum)
-                    leggTilAvhengighet(søknad, indeks, lagdFaktum)
+                    leggTilAvhengighet(fakta, indeks, lagdFaktum as GrunnleggendeFaktum<R>)
                 }
             }
         }
     }
 
     private fun leggTilAvhengighet(
-        søknad: Søknad,
+        fakta: Fakta,
         indeks: Int,
-        lagdFaktum: GrunnleggendeFaktum<R>
-
+        lagdFaktum: GrunnleggendeFaktum<R>,
     ) {
         avhengerAvFakta.map { avhengighet ->
-            søknad.finnEksisterende(avhengighet, indeks) ?: avhengighet.deepCopy(indeks, søknad)
+            fakta.finnEksisterende(avhengighet, indeks) ?: avhengighet.deepCopy(indeks, fakta)
         }.forEach { it.leggTilAvhengighet(lagdFaktum) }
     }
 
     // Finner et allerede instansiert faktum, eller lager ett nytt
-    private fun Søknad.finnEksisterende(avhengighet: Faktum<*>, indeks: Int) = when (avhengighet) {
+    private fun Fakta.finnEksisterende(avhengighet: Faktum<*>, indeks: Int) = when (avhengighet) {
         is TemplateFaktum<*> -> singleOrNull {
             it.faktumId == avhengighet.faktumId medIndeks indeks
         }
+
         else -> idOrNull(avhengighet.faktumId)
     }
 
     // Sjekker om seksjonen er *kun* templates, og skal dermed klones før vi lager instanser av template i den
     private fun instansiertSeksjon(
         originalSeksjon: Seksjon,
-        indeks: Int
+        indeks: Int,
     ) = if (originalSeksjon.bareTemplates()) {
         originalSeksjon.deepCopy(indeks)
     } else {
         originalSeksjon
     }
 
-    private fun Int.forHvertSvar(block: (Int) -> Unit) = (1..this).forEach { block(it) }
+    private fun Int.forHvertSvar(block: (Int) -> Pair<Int, GrunnleggendeFaktum<R>>): List<Pair<Int, GrunnleggendeFaktum<*>>> =
+        (1..this).map { block(it) }
 
     internal fun tilbakestill() {
         seksjoner.medSøknadprosess().forEach { it.tilbakestill(faktumId) }
@@ -128,7 +135,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
             avhengerAvFakta,
             roller,
             gyldigeValg,
-            landgrupper
+            landgrupper,
         )
             .also { byggetFakta[faktumId] = it }
     }

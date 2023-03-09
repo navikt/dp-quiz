@@ -1,13 +1,13 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.Faktum.Companion.deepCopy
 import no.nav.dagpenger.model.faktum.Faktum.Companion.erAlleBesvart
 import no.nav.dagpenger.model.faktum.Faktum.FaktumTilstand.Ukjent
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.regel.Regel
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 open class EnkelSubsumsjon protected constructor(
@@ -30,18 +30,18 @@ open class EnkelSubsumsjon protected constructor(
 
     override fun saksbehandlerForklaring() = regel.saksbehandlerForklaring(subsumsjonFakta)
 
-    override fun deepCopy(søknadprosess: Søknadprosess) = deepCopy(
+    override fun deepCopy(prosess: Prosess) = deepCopy(
         regel,
-        subsumsjonFakta.deepCopy(søknadprosess),
-        oppfyltSubsumsjon.deepCopy(søknadprosess),
-        ikkeOppfyltSubsumsjon.deepCopy(søknadprosess)
+        subsumsjonFakta.deepCopy(prosess),
+        oppfyltSubsumsjon.deepCopy(prosess),
+        ikkeOppfyltSubsumsjon.deepCopy(prosess)
     )
 
-    override fun bygg(søknad: Søknad) = deepCopy(
+    override fun bygg(fakta: Fakta) = deepCopy(
         regel,
-        this.subsumsjonFakta.map { søknad.id(it.faktumId) },
-        oppfyltSubsumsjon.bygg(søknad),
-        ikkeOppfyltSubsumsjon.bygg(søknad)
+        this.subsumsjonFakta.map { fakta.id(it.faktumId) },
+        oppfyltSubsumsjon.bygg(fakta),
+        ikkeOppfyltSubsumsjon.bygg(fakta)
     )
 
     override fun deepCopy() = deepCopy(
@@ -51,11 +51,11 @@ open class EnkelSubsumsjon protected constructor(
         ikkeOppfyltSubsumsjon.deepCopy()
     )
 
-    override fun deepCopy(indeks: Int, søknad: Søknad) = deepCopy(
+    override fun deepCopy(indeks: Int, fakta: Fakta) = deepCopy(
         regel,
-        subsumsjonFakta.deepCopy(indeks, søknad),
-        oppfyltSubsumsjon.deepCopy(indeks, søknad),
-        ikkeOppfyltSubsumsjon.deepCopy(indeks, søknad)
+        subsumsjonFakta.deepCopy(indeks, fakta),
+        oppfyltSubsumsjon.deepCopy(indeks, fakta),
+        ikkeOppfyltSubsumsjon.deepCopy(indeks, fakta)
     )
 
     private fun deepCopy(

@@ -4,8 +4,8 @@ import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepositoryPostgres
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
-import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
@@ -52,13 +52,13 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
     fun setup() {
         Postgres.withMigratedDb {
             AvslagPåMinsteinntektOppsett.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
-            val søknadPersistence = SøknadRecord()
+            val søknadPersistence = ProsessRepositoryPostgres()
             val resultatPersistence = ResultatRecord()
             testRapid = TestRapid().also {
                 FaktumSvarService(
-                    søknadPersistence = søknadPersistence,
+                    prosessRepository = søknadPersistence,
                     resultatPersistence = resultatPersistence,
-                    rapidsConnection = it
+                    rapidsConnection = it,
                 )
                 AvslagPåMinsteinntektService(søknadPersistence, it)
             }
@@ -80,9 +80,9 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
                         "$ordinær.1" to false,
                         "$permittert.1" to true,
                         "$lønnsgaranti.1" to false,
-                        "$permittertFiskeforedling.1" to false
-                    )
-                )
+                        "$permittertFiskeforedling.1" to false,
+                    ),
+                ),
             )
             assertGjeldendeSeksjon("virkningstidspunkt vi ikke kan håndtere")
         }
@@ -100,16 +100,16 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
                         "$ordinær.1" to false,
                         "$permittert.1" to true,
                         "$lønnsgaranti.1" to false,
-                        "$permittertFiskeforedling.1" to false
+                        "$permittertFiskeforedling.1" to false,
                     ),
                     listOf(
                         "$ordinær.2" to false,
                         "$permittert.2" to true,
                         "$lønnsgaranti.2" to false,
-                        "$permittertFiskeforedling.2" to false
+                        "$permittertFiskeforedling.2" to false,
                     ),
 
-                )
+                ),
             )
 
             besvar(behandlingsdato, 5.januar)
@@ -152,9 +152,9 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
                 listOf(
                     listOf(
                         "$registrertArbeidssøkerPeriodeFom.1" to 1.januar(2018),
-                        "$registrertArbeidssøkerPeriodeTom.1" to 30.januar(2018)
-                    )
-                )
+                        "$registrertArbeidssøkerPeriodeTom.1" to 30.januar(2018),
+                    ),
+                ),
             )
 
             assertGjeldendeSeksjon("minsteinntektKonstanter")

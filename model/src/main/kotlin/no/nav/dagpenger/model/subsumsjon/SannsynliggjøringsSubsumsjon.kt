@@ -1,9 +1,9 @@
 package no.nav.dagpenger.model.subsumsjon
 
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 
 class SannsynliggjøringsSubsumsjon private constructor(
@@ -42,23 +42,23 @@ class SannsynliggjøringsSubsumsjon private constructor(
         )
     }
 
-    override fun deepCopy(indeks: Int, søknad: Søknad): Subsumsjon {
+    override fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon {
         return SannsynliggjøringsSubsumsjon(
             "$navn [$indeks]",
-            child.deepCopy(indeks, søknad),
-            sannsynliggjøringsFakta.map { it.deepCopy(indeks, søknad) }.toSet()
+            child.deepCopy(indeks, fakta),
+            sannsynliggjøringsFakta.map { it.deepCopy(indeks, fakta) }.toSet()
         )
     }
 
-    override fun bygg(søknad: Søknad) = SannsynliggjøringsSubsumsjon(
+    override fun bygg(fakta: Fakta) = SannsynliggjøringsSubsumsjon(
         navn,
-        child.bygg(søknad),
-        sannsynliggjøringsFakta.map { faktum -> søknad.dokument(faktum.id) }.toSet()
+        child.bygg(fakta),
+        sannsynliggjøringsFakta.map { faktum -> fakta.dokument(faktum.id) }.toSet()
     )
 
-    override fun deepCopy(søknadprosess: Søknadprosess) = SannsynliggjøringsSubsumsjon(
+    override fun deepCopy(prosess: Prosess) = SannsynliggjøringsSubsumsjon(
         navn,
-        child.deepCopy(søknadprosess),
-        sannsynliggjøringsFakta.map { faktum -> søknadprosess.dokument(faktum.id) }.toSet()
+        child.deepCopy(prosess),
+        sannsynliggjøringsFakta.map { faktum -> prosess.dokument(faktum.id) }.toSet()
     )
 }

@@ -27,7 +27,7 @@ import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.Kanttype.IKKE_OPPFYLT
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf.Kanttype.OPPFYLT
 import no.nav.dagpenger.model.regel.Regel
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.EnkelSubsumsjon
@@ -36,12 +36,12 @@ import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.SammensattSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import java.io.File
 import java.util.UUID
 
-class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
-    SøknadprosessVisitor {
+class SubsumsjonsGraf(prosess: Prosess) :
+    ProsessVisitor {
 
     var index = 0
     private var currentKanttype = OPPFYLT
@@ -61,15 +61,15 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
 
     init {
         subGrafer.add(0, rotGraf)
-        søknadprosess.accept(this)
+        prosess.accept(this)
     }
 
     fun skrivTilFil(filnavn: String) {
         rotGraf.toGraphviz().scale(5.0).render(Format.PNG).toFile(File(filnavn))
     }
 
-    override fun preVisit(søknadprosess: Søknadprosess, uuid: UUID) {
-        noder.add(søknadprosess.rootSubsumsjon)
+    override fun preVisit(prosess: Prosess, uuid: UUID) {
+        noder.add(prosess.rootSubsumsjon)
     }
 
     override fun preVisit(subsumsjon: GeneratorSubsumsjon, deltre: DeltreSubsumsjon) {
@@ -98,10 +98,15 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
 
             val tilNode = if (fakta.any { faktum -> faktum.harRolle(Rolle.manuell) }) {
                 node(subsumsjon.navn).with(RED, RED.font())
-            } else node(subsumsjon.navn)
+            } else {
+                node(subsumsjon.navn)
+            }
 
-            if (noder.first() is SammensattSubsumsjon) sammensattTilEnkel(tilNode)
-            else enkelTilEnkel(tilNode)
+            if (noder.first() is SammensattSubsumsjon) {
+                sammensattTilEnkel(tilNode)
+            } else {
+                enkelTilEnkel(tilNode)
+            }
         }
         noder.add(0, subsumsjon)
     }
@@ -111,9 +116,9 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
             node(noder.first().navn).link(
                 between(
                     port(kantRetning()),
-                    tilNode
-                ).withUtfallAttrs()
-            )
+                    tilNode,
+                ).withUtfallAttrs(),
+            ),
         )
     }
 
@@ -122,9 +127,9 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
             node(sammensattAnker.first()).link(
                 between(
                     port(kantRetning()),
-                    tilNode
-                ).withUtfallAttrs().with(attr("ltail", "cluster_${noder.first().navn}"))
-            )
+                    tilNode,
+                ).withUtfallAttrs().with(attr("ltail", "cluster_${noder.first().navn}")),
+            ),
         )
     }
 
@@ -204,9 +209,9 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
             node(parent.navn).link(
                 between(
                     port(kantRetning()),
-                    node("utfall$index").withUtfallAttrs()
-                ).withUtfallAttrs()
-            )
+                    node("utfall$index").withUtfallAttrs(),
+                ).withUtfallAttrs(),
+            ),
         )
     }
 
@@ -215,9 +220,9 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
             node(sammensattAnker.first()).link(
                 between(
                     port(kantRetning()),
-                    node("utfall$index").withUtfallAttrs()
-                ).withUtfallAttrs().with(attr("ltail", "cluster_${parent.navn}"))
-            )
+                    node("utfall$index").withUtfallAttrs(),
+                ).withUtfallAttrs().with(attr("ltail", "cluster_${parent.navn}")),
+            ),
         )
     }
 
@@ -270,9 +275,9 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
             node(noder.first().navn).link(
                 between(
                     port(kantRetning()),
-                    node(sammensattAnker.first())
-                ).withUtfallAttrs().with(attr("lhead", "cluster_$tilCluster"), attr("minlen", 2))
-            )
+                    node(sammensattAnker.first()),
+                ).withUtfallAttrs().with(attr("lhead", "cluster_$tilCluster"), attr("minlen", 2)),
+            ),
         )
     }
 
@@ -281,13 +286,13 @@ class SubsumsjonsGraf(søknadprosess: Søknadprosess) :
             node(sammensattAnker[1]).link(
                 between(
                     port(kantRetning()),
-                    node(sammensattAnker.first())
+                    node(sammensattAnker.first()),
                 ).withUtfallAttrs().with(
                     attr("ltail", "cluster_${noder.first().navn}"),
                     attr("lhead", "cluster_$tilCluster"),
-                    attr("minlen", 3)
-                )
-            )
+                    attr("minlen", 3),
+                ),
+            ),
         )
     }
 

@@ -1,8 +1,8 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepositoryPostgres
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
-import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.NyProsessBehovLøser
@@ -18,19 +18,19 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class NyProsessBehovLøserTest : SøknadBesvarer() {
+internal class NyProsessfaktaBehovLøserTest : SøknadBesvarer() {
     @BeforeEach
     fun setup() {
         Postgres.withMigratedDb {
-            Dagpenger.registrer(::FaktumTable)
-            Innsending.registrer(::FaktumTable)
-            val søknadPersistence = SøknadRecord()
+            Dagpenger.registrer { FaktumTable(it.fakta) }
+            Innsending.registrer { FaktumTable(it.fakta) }
+            val søknadPersistence = ProsessRepositoryPostgres()
             val resultatPersistence = ResultatRecord()
             testRapid = TestRapid().also {
                 FaktumSvarService(
-                    søknadPersistence = søknadPersistence,
+                    prosessRepository = søknadPersistence,
                     resultatPersistence = resultatPersistence,
-                    rapidsConnection = it
+                    rapidsConnection = it,
                 )
                 NyProsessBehovLøser(søknadPersistence, it)
             }
@@ -51,7 +51,7 @@ internal class NyProsessBehovLøserTest : SøknadBesvarer() {
                 assertEquals("behov", it["@event_name"].asText())
                 assertEquals(
                     listOf("NySøknad"),
-                    it["@behov"].map { it.asText() }
+                    it["@behov"].map { it.asText() },
                 )
                 assertFalse(it["@løsning"]["NySøknad"].isNull, "NySøknad behov skal besvares med søknad id")
             }

@@ -17,25 +17,25 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktatype
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.assertDeepEquals
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
-import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
+import no.nav.dagpenger.quiz.mediator.helpers.registrer
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -48,146 +48,148 @@ internal class AvhengigeFaktaTest {
         internal val UNG_PERSON_FNR_2018 = Identer.Builder().folkeregisterIdent("12020052345").build()
     }
 
-    private lateinit var originalSøknadprosess: Søknadprosess
-    private lateinit var rehydrertSøknadprosess: Søknadprosess
-    private lateinit var søknadRecord: SøknadRecord
+    private lateinit var originalProsess: Prosess
+    private lateinit var rehydrertProsess: Prosess
+    private val prosessRepository: ProsessRepository = ProsessRepositoryPostgres()
 
     @Test
     fun `Avhengig faktum reset`() {
-        val prosessVersjon = Prosessversjon(Testprosess.Test, 634)
+        val faktatype = faktatype("Avhengig faktum reset")
+        val faktaversjon = Faktaversjon(faktatype, 634)
+        val prosesstype = prosesstype("Avhengig faktum restet", faktatype)
         Postgres.withMigratedDb {
-            val prototypeFakta = Søknad(
-                prosessVersjon,
+            val prototypeFakta = Fakta(
+                faktaversjon,
                 boolsk faktum "f1" id 19 avhengerAv 2 og 13,
                 dato faktum "f2" id 2,
                 dato faktum "f3" id 13,
-
-            )
-            Versjon.Bygger(
-                prototypeFakta,
-                prototypeFakta boolsk 19 er true,
-                mapOf(
-                    Web to Søknadprosess(
+            ).registrer { prototypeFakta ->
+                leggTilProsess(
+                    Prosess(
+                        prosesstype,
                         Seksjon(
                             "seksjon",
                             Rolle.nav,
-                            *(prototypeFakta.map { it }.toTypedArray())
-                        )
-                    )
+                            *(prototypeFakta.map { it }.toTypedArray()),
+                        ),
+                    ),
+                    prototypeFakta boolsk 19 er true,
                 )
-            ).registrer()
+            }
             FaktumTable(prototypeFakta)
-            søknadRecord = SøknadRecord()
-            originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
+            originalProsess = utredningsprosess(prosesstype)
 
-            originalSøknadprosess.dato(2).besvar(2.januar)
-            originalSøknadprosess.dato(13).besvar(13.januar)
-            originalSøknadprosess.boolsk(19).besvar(true)
+            originalProsess.dato(2).besvar(2.januar)
+            originalProsess.dato(13).besvar(13.januar)
+            originalProsess.boolsk(19).besvar(true)
             lagreHentOgSammenlign()
             assertRecordCount(0, "gammel_faktum_verdi")
-            assertTrue(rehydrertSøknadprosess.boolsk(19).svar())
-            originalSøknadprosess.dato(2).besvar(22.januar)
+            assertTrue(rehydrertProsess.boolsk(19).svar())
+            originalProsess.dato(2).besvar(22.januar)
             lagreHentOgSammenlign()
             assertRecordCount(2, "gammel_faktum_verdi")
-            assertFalse(rehydrertSøknadprosess.boolsk(19).erBesvart())
+            assertFalse(rehydrertProsess.boolsk(19).erBesvart())
         }
     }
 
     @Test
     fun `Avhengig faktum rehydreres`() {
-        val prosessVersjon = Prosessversjon(Testprosess.Test, 635)
+        val faktatype = faktatype("Rehydrering")
+        val faktaversjon = Faktaversjon(faktatype, 635)
+        val prosesstype = prosesstype("Rehydrering", faktatype)
 
         Postgres.withMigratedDb {
-            val prototypeFakta = Søknad(
-                prosessVersjon,
+            val prototypeFakta = Fakta(
+                faktaversjon,
                 boolsk faktum "f1" id 1 avhengerAv 4,
                 boolsk faktum "f2" id 2,
                 boolsk faktum "f3" id 3 avhengerAv 1,
                 boolsk faktum "f4" id 4 avhengerAv 5,
                 boolsk faktum "f5" id 5,
-            )
-            Versjon.Bygger(
-                prototypeFakta,
-                prototypeFakta boolsk 1 er true,
-                mapOf(
-                    Web to Søknadprosess(
+            ).registrer { prototypeFakta ->
+                leggTilProsess(
+                    Prosess(
+                        prosesstype,
                         Seksjon(
                             "seksjon",
                             Rolle.nav,
-                            *(prototypeFakta.map { it }.toTypedArray())
-                        )
-                    )
+                            *(prototypeFakta.map { it }.toTypedArray()),
+                        ),
+                    ),
+                    prototypeFakta boolsk 1 er true,
                 )
-            ).registrer()
+            }
+
             FaktumTable(prototypeFakta)
+            originalProsess = utredningsprosess(prosesstype)
 
-            søknadRecord = SøknadRecord()
-            originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
+            originalProsess.boolsk(2).besvar(true)
+            originalProsess.boolsk(5).besvar(true)
+            originalProsess.boolsk(4).besvar(true)
+            originalProsess.boolsk(1).besvar(true)
+            originalProsess.boolsk(3).besvar(true)
 
-            originalSøknadprosess.boolsk(2).besvar(true)
-            originalSøknadprosess.boolsk(5).besvar(true)
-            originalSøknadprosess.boolsk(4).besvar(true)
-            originalSøknadprosess.boolsk(1).besvar(true)
-            originalSøknadprosess.boolsk(3).besvar(true)
+            assertEquals(5, originalProsess.fakta.count { it.erBesvart() })
+            prosessRepository.lagre(originalProsess)
 
-            assertEquals(5, originalSøknadprosess.søknad.count { it.erBesvart() })
-            søknadRecord.lagre(originalSøknadprosess.søknad)
-
-            rehydrertSøknadprosess = søknadRecord.hent(originalSøknadprosess.søknad.uuid)
-            assertEquals(5, rehydrertSøknadprosess.søknad.count { it.erBesvart() })
+            rehydrertProsess = prosessRepository.hent(originalProsess.uuid)
+            assertEquals(5, rehydrertProsess.fakta.count { it.erBesvart() })
         }
     }
 
     @Test
     fun `Avhengig av utledet faktum rehydreres`() {
-        val prosessVersjon = Prosessversjon(Testprosess.Test, 636)
+        val faktatype = faktatype("Utledet faktum rehydreres")
+        val faktaversjon = Faktaversjon(faktatype, 636)
+        val prosesstype = prosesstype("Utledet faktum rehydreres", faktatype)
 
         Postgres.withMigratedDb {
-            val prototypeFakta = Søknad(
-                prosessVersjon,
+            val prototypeFakta = Fakta(
+                faktaversjon,
                 boolsk faktum "f1" id 1 avhengerAv 4,
                 dato faktum "f2" id 2,
                 dato faktum "f3" id 3,
                 maks dato "f4" av 2 og 3 id 4,
                 boolsk faktum "f1" id 5 avhengerAv 4,
-            )
-            Versjon.Bygger(
-                prototypeFakta,
-                prototypeFakta boolsk 1 er true,
-                mapOf(
-                    Web to Søknadprosess(
+            ).registrer { prototypeFakta ->
+                leggTilProsess(
+                    Prosess(
+                        prosesstype,
                         Seksjon(
                             "seksjon",
                             Rolle.nav,
-                            *(prototypeFakta.map { it }.toTypedArray())
-                        )
-                    )
+                            *(prototypeFakta.map { it }.toTypedArray()),
+                        ),
+                    ),
+                    prototypeFakta boolsk 1 er true,
                 )
-            ).registrer()
+            }
+
             FaktumTable(prototypeFakta)
+            originalProsess = utredningsprosess(prosesstype)
 
-            søknadRecord = SøknadRecord()
-            originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
+            originalProsess.dato(2).besvar(1.januar)
+            originalProsess.dato(3).besvar(10.januar)
+            originalProsess.boolsk(1).besvar(true)
+            originalProsess.boolsk(5).besvar(true)
 
-            originalSøknadprosess.dato(2).besvar(1.januar)
-            originalSøknadprosess.dato(3).besvar(10.januar)
-            originalSøknadprosess.boolsk(1).besvar(true)
-            originalSøknadprosess.boolsk(5).besvar(true)
+            assertEquals(5, originalProsess.fakta.count { it.erBesvart() })
+            prosessRepository.lagre(originalProsess)
 
-            assertEquals(5, originalSøknadprosess.søknad.count { it.erBesvart() })
-            søknadRecord.lagre(originalSøknadprosess.søknad)
-
-            rehydrertSøknadprosess = søknadRecord.hent(originalSøknadprosess.søknad.uuid)
-            assertEquals(5, rehydrertSøknadprosess.søknad.count { it.erBesvart() })
+            rehydrertProsess = prosessRepository.hent(originalProsess.uuid)
+            assertEquals(5, rehydrertProsess.fakta.count { it.erBesvart() })
         }
     }
 
     @Test
     fun `Alle avhengige faktumtyper resettes`() {
-        val prosessVersjon = Prosessversjon(Testprosess.Test, 637)
+        val faktatype = faktatype("Resett")
+        val faktaversjon = Faktaversjon(faktatype, 637)
+        val prosesstype = prosesstype("Resett", faktatype)
+
         Postgres.withMigratedDb {
-            val prototypeFakta = Søknad(
-                prosessVersjon,
+            val prototypeFakta = Fakta(
+                faktaversjon,
                 boolsk faktum "f1" id 1,
                 dato faktum "f2" id 2 avhengerAv 1,
                 boolsk faktum "f3" id 3 avhengerAv 1,
@@ -203,61 +205,72 @@ internal class AvhengigeFaktaTest {
                 periode faktum "f13" id 13 avhengerAv 1,
                 tekst faktum "f14" id 14 avhengerAv 1,
                 land faktum "f15" id 15 avhengerAv 1,
-            )
-            Versjon.Bygger(
-                prototypeFakta,
-                prototypeFakta boolsk 1 er true,
-                mapOf(
-                    Web to Søknadprosess(
+            ).registrer { prototypeFakta ->
+                leggTilProsess(
+                    Prosess(
+                        prosesstype,
                         Seksjon(
                             "seksjon",
                             Rolle.nav,
-                            *(prototypeFakta.map { it }.toTypedArray())
-                        )
-                    )
+                            *(prototypeFakta.map { it }.toTypedArray()),
+                        ),
+                    ),
+                    prototypeFakta boolsk 1 er true,
                 )
-            ).registrer()
+            }
+
             FaktumTable(prototypeFakta)
+            originalProsess = utredningsprosess(prosesstype)
 
-            søknadRecord = SøknadRecord()
-            originalSøknadprosess = søknadRecord.ny(SøknadRecordTest.UNG_PERSON_FNR_2018, Web, prosessVersjon)
+            originalProsess.boolsk(1).besvar(true)
+            originalProsess.dato(2).besvar(10.januar)
+            originalProsess.boolsk(3).besvar(false)
+            originalProsess.heltall(4).besvar(34)
+            originalProsess.dokument(5).besvar(Dokument(LocalDateTime.now(), "urn:si:test:123"))
+            originalProsess.desimaltall(6).besvar(2.4)
+            originalProsess.envalg(7).besvar(Envalg("f7.valg1"))
+            originalProsess.flervalg(8).besvar(Flervalg("f8.valg1", "f8.valg2"))
+            originalProsess.heltall(11).besvar(1)
+            originalProsess.heltall("9.1").besvar(150)
+            originalProsess.heltall("10.1").besvar(160)
+            originalProsess.inntekt(12).besvar(100.årlig)
+            originalProsess.periode(13).besvar(Periode(LocalDate.now().minusYears(2), LocalDate.now()))
+            originalProsess.tekst(14).besvar(Tekst("svar tekst"))
+            originalProsess.land(15).besvar(Land("SWE"))
 
-            originalSøknadprosess.boolsk(1).besvar(true)
-            originalSøknadprosess.dato(2).besvar(10.januar)
-            originalSøknadprosess.boolsk(3).besvar(false)
-            originalSøknadprosess.heltall(4).besvar(34)
-            originalSøknadprosess.dokument(5).besvar(Dokument(LocalDateTime.now(), "urn:si:test:123"))
-            originalSøknadprosess.desimaltall(6).besvar(2.4)
-            originalSøknadprosess.envalg(7).besvar(Envalg("f7.valg1"))
-            originalSøknadprosess.flervalg(8).besvar(Flervalg("f8.valg1", "f8.valg2"))
-            originalSøknadprosess.heltall(11).besvar(1)
-            originalSøknadprosess.heltall("9.1").besvar(150)
-            originalSøknadprosess.heltall("10.1").besvar(160)
-            originalSøknadprosess.inntekt(12).besvar(100.årlig)
-            originalSøknadprosess.periode(13).besvar(Periode(LocalDate.now().minusYears(2), LocalDate.now()))
-            originalSøknadprosess.tekst(14).besvar(Tekst("svar tekst"))
-            originalSøknadprosess.land(15).besvar(Land("SWE"))
-
-            assertEquals(15, originalSøknadprosess.søknad.count { it.erBesvart() })
-            søknadRecord.lagre(originalSøknadprosess.søknad)
+            assertEquals(15, originalProsess.fakta.count { it.erBesvart() })
+            prosessRepository.lagre(originalProsess)
 
             assertRecordCount(0, "gammel_faktum_verdi")
-            rehydrertSøknadprosess = søknadRecord.hent(originalSøknadprosess.søknad.uuid)
-            assertEquals(15, rehydrertSøknadprosess.søknad.count { it.erBesvart() })
+            rehydrertProsess = prosessRepository.hent(originalProsess.uuid)
+            assertEquals(rehydrertProsess.tekst("14").svar(), Tekst("svar tekst"))
+            assertEquals(15, rehydrertProsess.fakta.count { it.erBesvart() })
 
-            originalSøknadprosess.boolsk(1).besvar(false)
-            søknadRecord.lagre(originalSøknadprosess.søknad)
+            originalProsess.boolsk(1).besvar(false)
+            prosessRepository.lagre(originalProsess)
             assertRecordCount(15, "gammel_faktum_verdi")
-            rehydrertSøknadprosess = søknadRecord.hent(originalSøknadprosess.søknad.uuid)
-            assertEquals(1, rehydrertSøknadprosess.søknad.count { it.erBesvart() })
+            rehydrertProsess = prosessRepository.hent(originalProsess.uuid)
+            assertEquals(1, rehydrertProsess.fakta.count { it.erBesvart() })
         }
     }
 
-    private fun lagreHentOgSammenlign(userInterfaceType: Versjon.UserInterfaceType = Web) {
-        søknadRecord.lagre(originalSøknadprosess.søknad)
-        val uuid = SøknadRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
-        rehydrertSøknadprosess = søknadRecord.hent(uuid, userInterfaceType)
-        assertDeepEquals(originalSøknadprosess, rehydrertSøknadprosess)
+    private fun faktatype(navn: String) = object : Faktatype {
+        override val id = navn
+    }
+
+    private fun prosesstype(navn: String, faktatype: Faktatype) = object : Prosesstype {
+        override val navn: String = navn
+        override val faktatype: Faktatype = faktatype
+    }
+
+    private fun utredningsprosess(prosesstype: Prosesstype): Prosess {
+        return prosessRepository.ny(UNG_PERSON_FNR_2018, prosesstype)
+    }
+
+    private fun lagreHentOgSammenlign() {
+        prosessRepository.lagre(originalProsess)
+        rehydrertProsess = prosessRepository.hent(originalProsess.uuid)
+        assertDeepEquals(originalProsess, rehydrertProsess)
     }
 
     private fun assertRecordCount(recordCount: Int, table: String) {
@@ -266,10 +279,10 @@ internal class AvhengigeFaktaTest {
             using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        "SELECT COUNT (*) FROM $table"
-                    ).map { it.int(1) }.asSingle
+                        "SELECT COUNT (*) FROM $table",
+                    ).map { it.int(1) }.asSingle,
                 )
-            }
+            },
         )
     }
 }

@@ -11,33 +11,36 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.assertFaktaAsJson
 import no.nav.dagpenger.model.helpers.assertGeneratorFaktaAsJson
 import no.nav.dagpenger.model.helpers.assertValgFaktaAsJson
-import no.nav.dagpenger.model.helpers.testPerson
-import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.helpers.faktaversjon
+import no.nav.dagpenger.model.helpers.testProsesstype
 import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class SøknadsmalJsonBuilderTest {
-    private lateinit var prototypeSøknad: Søknad
+    private lateinit var prototypeFakta: Fakta
+    private lateinit var prosesstype: Prosesstype
 
     @BeforeEach
     fun setup() {
-        prototypeSøknad = Søknad(
-            testversjon,
+        prosesstype = testProsesstype()
+        prototypeFakta = Fakta(
+            prosesstype.faktaversjon,
             boolsk faktum "boolsk1" id 1,
             heltall faktum "heltall2" id 2,
             heltall faktum "heltall3" id 3,
@@ -60,61 +63,55 @@ internal class SøknadsmalJsonBuilderTest {
             land faktum "f20"
                 gruppe "eøs" med listOf(Land("SWE"))
                 gruppe "storbritannia" med listOf(Land("GBR"))
-                gruppe "norge-jan-mayen" med listOf(Land("NOR")) id 20
+                gruppe "norge-jan-mayen" med listOf(Land("NOR")) id 20,
         )
     }
 
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Søknadprosess {
-        val prototypeFaktagrupper = Søknadprosess(
-            prototypeSøknad,
-            Seksjon(
-                "seksjon1",
-                Rolle.søker,
-                prototypeSøknad.boolsk(1),
-                prototypeSøknad.heltall(2),
-                prototypeSøknad.tekst(15),
-                prototypeSøknad.periode(16),
-                prototypeSøknad.periode(17)
-            ),
-            Seksjon(
-                "seksjon2",
-                Rolle.søker,
-                prototypeSøknad.heltall(3),
-                prototypeSøknad.dato(4),
-                prototypeSøknad.generator(5),
-                prototypeSøknad.desimaltall(6),
-            ),
-            Seksjon(
-                "seksjon3",
-                Rolle.søker,
-                prototypeSøknad.flervalg(10),
-                prototypeSøknad.envalg(11),
-                prototypeSøknad.dato(12),
-                prototypeSøknad.inntekt(13),
-                prototypeSøknad.envalg(18),
-                prototypeSøknad.boolsk(19),
-                prototypeSøknad.generator(14),
-            ),
-            Seksjon(
-                "nav", Rolle.nav,
-                prototypeSøknad.dokument(7),
-                prototypeSøknad.inntekt(8),
-                prototypeSøknad.dato(9)
-            ),
-            Seksjon("seksjon4", Rolle.søker, prototypeSøknad.land(20), prototypeSøknad.inntekt(8)),
-            rootSubsumsjon = prototypeSubsumsjon
-        )
-
-        return Versjon.Bygger(
-            prototypeSøknad,
-            prototypeSubsumsjon,
-            mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
-        ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
-    }
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess = Prosess(
+        prosesstype,
+        prototypeFakta,
+        Seksjon(
+            "seksjon1",
+            Rolle.søker,
+            prototypeFakta.boolsk(1),
+            prototypeFakta.heltall(2),
+            prototypeFakta.tekst(15),
+            prototypeFakta.periode(16),
+            prototypeFakta.periode(17),
+        ),
+        Seksjon(
+            "seksjon2",
+            Rolle.søker,
+            prototypeFakta.heltall(3),
+            prototypeFakta.dato(4),
+            prototypeFakta.generator(5),
+            prototypeFakta.desimaltall(6),
+        ),
+        Seksjon(
+            "seksjon3",
+            Rolle.søker,
+            prototypeFakta.flervalg(10),
+            prototypeFakta.envalg(11),
+            prototypeFakta.dato(12),
+            prototypeFakta.inntekt(13),
+            prototypeFakta.envalg(18),
+            prototypeFakta.boolsk(19),
+            prototypeFakta.generator(14),
+        ),
+        Seksjon(
+            "nav",
+            Rolle.nav,
+            prototypeFakta.dokument(7),
+            prototypeFakta.inntekt(8),
+            prototypeFakta.dato(9),
+        ),
+        Seksjon("seksjon4", Rolle.søker, prototypeFakta.land(20), prototypeFakta.inntekt(8)),
+        rootSubsumsjon = prototypeSubsumsjon,
+    )
 
     private fun søkerSubsumsjon() = "regel" deltre {
         "alle".alle(
-            prototypeSøknad.boolsk(1) er true
+            prototypeFakta.boolsk(1) er true,
         )
     }
 
@@ -123,8 +120,8 @@ internal class SøknadsmalJsonBuilderTest {
         val regel = søkerSubsumsjon()
         val søknadprosess = søknadprosess(regel)
         val malJson = SøknadsmalJsonBuilder(søknadprosess).resultat()
-        assertEquals(0, malJson["versjon_id"].asInt())
-        assertEquals("test", malJson["versjon_navn"].asText())
+        assertEquals(1, malJson["versjon_id"].asInt())
+        assertTrue(malJson["versjon_navn"].isTextual)
         // NAV seksjoner skal ikke med
         assertEquals(4, malJson["seksjoner"].size())
 
@@ -136,7 +133,7 @@ internal class SøknadsmalJsonBuilderTest {
                 "boolean",
                 "boolsk1",
                 listOf("søker"),
-                listOf("svar.ja", "svar.nei")
+                listOf("svar.ja", "svar.nei"),
             )
             this["fakta"][1].assertFaktaAsJson("2", "int", "heltall2", listOf("søker"))
             this["fakta"][2].assertFaktaAsJson("15", "tekst", "tekst15", listOf("søker"))
@@ -148,11 +145,14 @@ internal class SøknadsmalJsonBuilderTest {
             assertEquals("seksjon2", this["beskrivendeId"].asText())
             assertEquals(2, this["fakta"].size())
             this["fakta"][0].assertGeneratorFaktaAsJson(
-                "5", "generator", "generator5", listOf("søker"),
+                "5",
+                "generator",
+                "generator5",
+                listOf("søker"),
                 assertTemplates = listOf(
                     { it.assertFaktaAsJson("3", "int", "heltall3", listOf("søker")) },
-                    { it.assertFaktaAsJson("4", "localdate", "dato4", listOf("søker")) }
-                )
+                    { it.assertFaktaAsJson("4", "localdate", "dato4", listOf("søker")) },
+                ),
             )
             this["fakta"][1].assertFaktaAsJson("6", "double", "desimaltall6", listOf("søker"))
         }
@@ -164,17 +164,20 @@ internal class SøknadsmalJsonBuilderTest {
                 "flervalg",
                 "flervalg10",
                 listOf("søker"),
-                listOf("valg1", "valg2", "valg3")
+                listOf("valg1", "valg2", "valg3"),
             )
             this["fakta"][1].assertValgFaktaAsJson(
                 "11",
                 "envalg",
                 "envalg11",
                 listOf("søker"),
-                listOf("valg1", "valg2", "valg3")
+                listOf("valg1", "valg2", "valg3"),
             )
             this["fakta"][2].assertGeneratorFaktaAsJson(
-                "14", "generator", "generator14", listOf("søker"),
+                "14",
+                "generator",
+                "generator14",
+                listOf("søker"),
                 assertTemplates = listOf(
                     { it.assertFaktaAsJson("12", "localdate", "dato12", listOf("søker")) },
                     { it.assertFaktaAsJson("13", "inntekt", "inntekt13", listOf("søker")) },
@@ -184,7 +187,7 @@ internal class SøknadsmalJsonBuilderTest {
                             "envalg",
                             "envalg18",
                             listOf("søker"),
-                            listOf("valg1", "valg2")
+                            listOf("valg1", "valg2"),
                         )
                     },
                     {
@@ -193,10 +196,10 @@ internal class SøknadsmalJsonBuilderTest {
                             "boolean",
                             "boolsk19",
                             listOf("søker"),
-                            listOf("svar.ja", "svar.nei")
+                            listOf("svar.ja", "svar.nei"),
                         )
                     },
-                )
+                ),
             )
         }
         with(malJson["seksjoner"][3]) {
@@ -207,11 +210,14 @@ internal class SøknadsmalJsonBuilderTest {
             assertEquals(249, this["fakta"][0]["gyldigeLand"].size())
             // Kommer via avhengigAv
             this["fakta"][1].assertGeneratorFaktaAsJson(
-                "9", "generator", "dato9", listOf("nav"),
+                "9",
+                "generator",
+                "dato9",
+                listOf("nav"),
                 assertTemplates = listOf(
                     { it.assertFaktaAsJson("7", "dokument", "dokument7", listOf("nav")) },
-                    { it.assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav", "søker")) }
-                )
+                    { it.assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav", "søker")) },
+                ),
             )
         }
     }

@@ -12,23 +12,27 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.faktum.Prosessnavn
-import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.regel.er
-import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktatype
+import no.nav.dagpenger.model.faktum.Faktaversjon
+import no.nav.dagpenger.model.seksjon.Prosesstype
 
-enum class Testprosess(override val id: String) : Prosessnavn {
-    Test("test-r")
+enum class Testfakta(override val id: String) : Faktatype {
+    Test("test-r"),
+    SøknadEksempel1("SøknadEksempel1"),
+}
+
+enum class Testprosess(override val navn: String, override val faktatype: Faktatype) : Prosesstype {
+    Test("Test", Testfakta.Test),
+    SøknadEksempel1("SøknadEksempel1", Testfakta.SøknadEksempel1),
 }
 
 internal object SøknadEksempel1 {
-    val prosessVersjon = Prosessversjon(Testprosess.Test, 888)
-    internal val prototypeFakta1 = Søknad(
-        prosessVersjon,
+    val faktatype = Testfakta.SøknadEksempel1
+    val faktaversjon = Faktaversjon(faktatype, 888)
+
+    internal val prototypeFakta = Fakta(
+        faktaversjon,
         boolsk faktum "f1" id 1 avhengerAv 11,
         dato faktum "f2" id 2,
         dato faktum "f3" id 3,
@@ -56,34 +60,6 @@ internal object SøknadEksempel1 {
         tekst faktum "f23" id 23,
         periode faktum "f24" id 24,
         land faktum "f25" id 25,
-        desimaltall faktum "f26" id 26
-    )
-    private val webPrototypeSøknad = Søknadprosess(
-        Seksjon(
-            "seksjon",
-            Rolle.søker,
-            *(prototypeFakta1.map { it }.toTypedArray())
-        )
-    )
-    private val mobilePrototypeSøknad = Søknadprosess(
-        Seksjon(
-            "seksjon",
-            Rolle.søker,
-            *(prototypeFakta1.map { it }.toTypedArray())
-        ),
-        Seksjon(
-            "template seksjon",
-            Rolle.søker,
-            prototypeFakta1.heltall(16),
-            prototypeFakta1.boolsk(17)
-        )
-    )
-    val v = Versjon.Bygger(
-        prototypeFakta1,
-        prototypeFakta1 boolsk 1 er true,
-        mapOf(
-            Versjon.UserInterfaceType.Web to webPrototypeSøknad,
-            Versjon.UserInterfaceType.Mobile to mobilePrototypeSøknad
-        )
+        desimaltall faktum "f26" id 26,
     ).registrer()
 }

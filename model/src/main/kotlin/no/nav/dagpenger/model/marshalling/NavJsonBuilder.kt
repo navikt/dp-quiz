@@ -3,6 +3,8 @@ package no.nav.dagpenger.model.marshalling
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
@@ -10,19 +12,15 @@ import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer.Ident.Type
 import no.nav.dagpenger.model.faktum.LandGrupper
-import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.marshalling.FaktumTilJsonHjelper.putR
-import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
 
-class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: String, indeks: Int = 0) : SøknadprosessVisitor {
+class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: Int = 0) : ProsessVisitor {
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
@@ -30,27 +28,33 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
     private val behovNode = mapper.createArrayNode()
     private val identerNode = mapper.createArrayNode()
     private lateinit var faktumNavBehov: FaktumNavBehov
-    private var ignore = true
+    private var ignoreSeksjoner = true
     private var rootId = 0
 
     init {
-        søknadprosess.søknad.accept(this)
-        søknadprosess.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(søknadprosess.rootSubsumsjon).accept(this)
+        prosess.accept(this)
+        ignoreSeksjoner = false
+        prosess.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(prosess.rootSubsumsjon)
+            .accept(this)
     }
+
     fun resultat() = root
 
-    override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
+    override fun preVisit(prosess: Prosess, uuid: UUID) {
+        root.put("søknad_uuid", "$uuid")
+    }
+
+    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
         root.put("@event_name", "faktum_svar")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
         root.put("@behovId", "${UUID.randomUUID()}")
-        root.put("søknad_uuid", "$uuid")
+        root.put("fakta_uuid", "$uuid")
         root.put("seksjon_navn", seksjonNavn)
         root.set<ArrayNode>("fakta", faktaNode)
         root.set<ArrayNode>("@behov", behovNode)
         root.set<ArrayNode>("identer", identerNode)
-
-        faktumNavBehov = Versjon.id(prosessVersjon).faktumNavBehov ?: throw IllegalArgumentException("Finner ikke oversettelse til navbehov, versjon: $prosessVersjon")
+        faktumNavBehov = navBehov
     }
 
     override fun visit(type: Type, id: String, historisk: Boolean) {
@@ -59,14 +63,6 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
             identNode.put("type", type.name.lowercase())
             identNode.put("historisk", historisk)
         }
-    }
-
-    override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
-        ignore = false
-    }
-
-    override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
-        ignore = true
     }
 
     override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
@@ -80,10 +76,9 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
         avhengerAvFakta: Set<Faktum<*>>,
         templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
     ) {
-
-        if (ignore) return
+        if (ignoreSeksjoner) return
         if (id in faktumIder) return
         if (avhengerAvFakta.all { it.erBesvart() }) {
             behovNode.add(faktumNavBehov[rootId])
@@ -112,9 +107,9 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
-        if (ignore) return
+        if (ignoreSeksjoner) return
         if (id in faktumIder) return
         if (avhengerAvFakta.all { it.erBesvart() }) {
             behovNode.add(faktumNavBehov[rootId])
@@ -126,7 +121,7 @@ class NavJsonBuilder(søknadprosess: Søknadprosess, private val seksjonNavn: St
     }
 
     private fun lagFaktumNode(id: String, type: String, templates: ArrayNode? = null) {
-        if (ignore) return
+        if (ignoreSeksjoner) return
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
             faktumNode.put("id", id)

@@ -1,6 +1,8 @@
 package no.nav.dagpenger.model.visitor
 
 import no.nav.dagpenger.model.factory.FaktaRegel
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GeneratorFaktum
@@ -9,14 +11,13 @@ import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Identer
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.faktum.UtledetFaktum
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.regel.Regel
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.subsumsjon.AlleSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.BareEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
@@ -39,7 +40,7 @@ interface FaktumVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
     }
 
@@ -55,7 +56,7 @@ interface FaktumVisitor {
         svar: R,
         besvartAv: String?,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
     }
 
@@ -66,7 +67,7 @@ interface FaktumVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         roller: Set<Rolle>,
         clazz: Class<R>,
-        gyldigeValg: GyldigeValg?
+        gyldigeValg: GyldigeValg?,
     ) {
     }
 
@@ -77,7 +78,7 @@ interface FaktumVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         templates: List<TemplateFaktum<*>>,
         roller: Set<Rolle>,
-        clazz: Class<R>
+        clazz: Class<R>,
     ) {
     }
 
@@ -90,7 +91,7 @@ interface FaktumVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         svar: R,
-        genererteFaktum: Set<Faktum<*>>
+        genererteFaktum: Set<Faktum<*>>,
     ) {
     }
 
@@ -102,7 +103,7 @@ interface FaktumVisitor {
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         regel: FaktaRegel<R>,
-        svar: R
+        svar: R,
     ) {
     }
 
@@ -113,7 +114,7 @@ interface FaktumVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
-        regel: FaktaRegel<R>
+        regel: FaktaRegel<R>,
     ) {
     }
 
@@ -121,14 +122,14 @@ interface FaktumVisitor {
         faktum: UtledetFaktum<R>,
         id: String,
         children: Set<Faktum<*>>,
-        clazz: Class<R>
+        clazz: Class<R>,
     ) {
     }
 
     fun visit(
         faktumId: FaktumId,
         rootId: Int,
-        indeks: Int
+        indeks: Int,
     ) {
     }
 
@@ -147,14 +148,14 @@ interface PersonVisitor : IdentVisitor {
     fun postVisit(person: Person, uuid: UUID) {}
 }
 
-interface SøknadVisitor : PersonVisitor, FaktumVisitor {
-    fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {}
-    fun postVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {}
+interface FaktaVisitor : PersonVisitor, FaktumVisitor {
+    fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {}
+    fun postVisit(fakta: Fakta, uuid: UUID) {}
 }
 
-interface SøknadprosessVisitor : SubsumsjonVisitor, SøknadVisitor {
-    fun preVisit(søknadprosess: Søknadprosess, uuid: UUID) {}
-    fun postVisit(søknadprosess: Søknadprosess) {}
+interface ProsessVisitor : SubsumsjonVisitor, FaktaVisitor {
+    fun preVisit(prosess: Prosess, uuid: UUID) {}
+    fun postVisit(prosess: Prosess, uuid: UUID) {}
     fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {}
     fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {}
     fun preVisitAvhengerAv(seksjon: Seksjon, avhengerAvFakta: Set<Faktum<*>>) {}
@@ -167,7 +168,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         regel: Regel,
         fakta: List<Faktum<*>>,
         lokaltResultat: Boolean?,
-        resultat: Boolean?
+        resultat: Boolean?,
     ) {
     }
 
@@ -176,7 +177,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         regel: Regel,
         fakta: List<Faktum<*>>,
         lokaltResultat: Boolean?,
-        resultat: Boolean?
+        resultat: Boolean?,
     ) {
     }
 
@@ -187,7 +188,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         subsumsjon: AlleSubsumsjon,
         subsumsjoner: List<Subsumsjon>,
         lokaltResultat: Boolean?,
-        resultat: Boolean?
+        resultat: Boolean?,
     ) {
     }
 
@@ -195,7 +196,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         subsumsjon: AlleSubsumsjon,
         subsumsjoner: List<Subsumsjon>,
         lokaltResultat: Boolean?,
-        resultat: Boolean?
+        resultat: Boolean?,
     ) {
     }
 
@@ -203,7 +204,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         subsumsjon: MinstEnAvSubsumsjon,
         subsumsjoner: List<Subsumsjon>,
         lokaltResultat: Boolean?,
-        resultat: Boolean?
+        resultat: Boolean?,
     ) {
     }
 
@@ -211,7 +212,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         subsumsjon: MinstEnAvSubsumsjon,
         subsumsjoner: List<Subsumsjon>,
         lokaltResultat: Boolean?,
-        resultat: Boolean?
+        resultat: Boolean?,
     ) {
     }
 
@@ -224,7 +225,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
         action: GodkjenningsSubsumsjon.Action,
         godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         lokaltResultat: Boolean?,
-        childResultat: Boolean?
+        childResultat: Boolean?,
     ) {
     }
 
@@ -233,21 +234,21 @@ interface SubsumsjonVisitor : FaktumVisitor {
         action: GodkjenningsSubsumsjon.Action,
         godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         resultat: Boolean?,
-        childResultat: Boolean?
+        childResultat: Boolean?,
     ) {
     }
 
     fun preVisit(
         subsumsjon: SannsynliggjøringsSubsumsjon,
         sannsynliggjøringsFakta: GrunnleggendeFaktum<*>,
-        lokaltResultat: Boolean?
+        lokaltResultat: Boolean?,
     ) {
     }
 
     fun postVisit(
         subsumsjon: SannsynliggjøringsSubsumsjon,
         sannsynliggjøringsFakta: GrunnleggendeFaktum<*>,
-        lokaltResultat: Boolean?
+        lokaltResultat: Boolean?,
     ) {
     }
 
@@ -255,7 +256,7 @@ interface SubsumsjonVisitor : FaktumVisitor {
     fun postVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,
-        lokaltResultat: Boolean?
+        lokaltResultat: Boolean?,
     ) {
     }
 

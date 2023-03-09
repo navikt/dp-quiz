@@ -1,7 +1,7 @@
 package no.nav.dagpenger.model.faktum
 
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
 abstract class Faktum<R : Comparable<R>> internal constructor(
@@ -9,37 +9,37 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     val navn: String,
     protected val avhengigeFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     protected val avhengerAvFakta: MutableSet<Faktum<*>> = mutableSetOf(),
-    protected val roller: MutableSet<Rolle> = mutableSetOf()
+    protected val roller: MutableSet<Rolle> = mutableSetOf(),
 ) : Comparable<Faktum<*>> {
     val id: String get() = faktumId.id
 
     companion object {
         internal fun Collection<Faktum<*>>.erAlleBesvart() = this.all { it.erBesvart() }
-        private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, søknadprosess: Søknadprosess) {
-            faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { søknadprosess.faktum(it.faktumId) })
-            faktum.avhengerAvFakta.addAll(this.avhengerAvFakta.map { søknadprosess.faktum(it.faktumId) })
+        private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, prosess: Prosess) {
+            faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { prosess.faktum(it.faktumId) })
+            faktum.avhengerAvFakta.addAll(this.avhengerAvFakta.map { prosess.faktum(it.faktumId) })
         }
 
-        internal fun List<Faktum<*>>.deepCopy(søknadprosess: Søknadprosess): List<Faktum<*>> = this
+        internal fun List<Faktum<*>>.deepCopy(prosess: Prosess): List<Faktum<*>> = this
             .map { prototype ->
-                søknadprosess.faktum(prototype.faktumId).also {
-                    prototype.deepCopyAvhengigheter(it, søknadprosess)
+                prosess.faktum(prototype.faktumId).also {
+                    prototype.deepCopyAvhengigheter(it, prosess)
                 }
             }
             .also {
                 require(it.size == this.size) { "Mangler fakta" }
             }
 
-        internal fun List<Faktum<*>>.deepCopy(indeks: Int, søknad: Søknad): List<Faktum<*>> = this
+        internal fun List<Faktum<*>>.deepCopy(indeks: Int, fakta: Fakta): List<Faktum<*>> = this
             .map { faktum ->
-                faktum.deepCopy(indeks, søknad)
+                faktum.deepCopy(indeks, fakta)
             }
 
         private val prioritet = listOf(
             GrunnleggendeFaktum::class.java,
             TemplateFaktum::class.java,
             GeneratorFaktum::class.java,
-            UtledetFaktum::class.java
+            UtledetFaktum::class.java,
         )
     }
 
@@ -79,11 +79,11 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
         other.avhengerAvFakta.add(this)
     }
 
-    internal open fun deepCopy(indeks: Int, søknad: Søknad): Faktum<*> = this
+    internal open fun deepCopy(indeks: Int, fakta: Fakta): Faktum<*> = this
 
     enum class FaktumTilstand {
         Ukjent,
-        Kjent
+        Kjent,
     }
 
     override fun toString() = "$navn med id $id"
@@ -99,8 +99,11 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     }
 
     private fun prioritet(faktum: Faktum<*>) =
-        if (!prioritet.contains(faktum::class.java)) throw Exception("Mangler prioritet for ${faktum::class.simpleName}")
-        else prioritet.indexOf(faktum::class.java)
+        if (!prioritet.contains(faktum::class.java)) {
+            throw Exception("Mangler prioritet for ${faktum::class.simpleName}")
+        } else {
+            prioritet.indexOf(faktum::class.java)
+        }
 
     internal fun leggTilAvhengigheter(fakta: MutableSet<Faktum<*>>) {
         fakta.addAll(avhengerAvFakta)

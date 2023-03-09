@@ -5,21 +5,22 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.desember
 import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testPerson
+import no.nav.dagpenger.model.helpers.testProsess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.marshalling.NavJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.mellom
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -32,7 +33,20 @@ import org.junit.jupiter.api.Test
 class NavJsonBuilderTest {
     @Test
     fun `bygger behov event`() {
-        val prototypeSøknad = Søknad(
+        val faktumNavBehov = FaktumNavBehov(
+            mapOf(
+                1 to "f1Behov",
+                2 to "f2Behov",
+                3 to "f3Behov",
+                4 to "f4Behov",
+                5 to "f5Behov",
+                6 to "f6Behov",
+                7 to "f7Behov",
+                8 to "f8Behov",
+                9 to "f9Behov",
+            ),
+        )
+        val prototypeFakta = Fakta(
             testversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f1" id 2 avhengerAv 1,
@@ -43,16 +57,18 @@ class NavJsonBuilderTest {
             maks dato "f56" av 5 og 6 id 7,
             heltall faktum "periode" id 8 genererer 9 og 10,
             dato faktum "fom" id 9,
-            dato faktum "tom" id 10
-        )
-        val f1Faktum = prototypeSøknad.boolsk(1)
-        val f2Faktum = prototypeSøknad.boolsk(2)
-        val f3Faktum = prototypeSøknad.boolsk(3)
-        val f4Faktum = prototypeSøknad.boolsk(4)
-        val f7Faktum = prototypeSøknad.dato(5)
-        val f8Faktum = prototypeSøknad.generator(8)
-        val f9Faktum = prototypeSøknad.dato(9)
-        val f10Faktum = prototypeSøknad.dato(10)
+            dato faktum "tom" id 10,
+        ).also {
+            it.faktumNavBehov(faktumNavBehov)
+        }
+        val f1Faktum = prototypeFakta.boolsk(1)
+        val f2Faktum = prototypeFakta.boolsk(2)
+        val f3Faktum = prototypeFakta.boolsk(3)
+        val f4Faktum = prototypeFakta.boolsk(4)
+        val f7Faktum = prototypeFakta.dato(5)
+        val f8Faktum = prototypeFakta.generator(8)
+        val f9Faktum = prototypeFakta.dato(9)
+        val f10Faktum = prototypeFakta.dato(10)
         val periodeSubsumsjon = f8Faktum har "periode".deltre {
             f7Faktum mellom f9Faktum og f10Faktum
         }
@@ -62,7 +78,7 @@ class NavJsonBuilderTest {
                     f2Faktum er true,
                     f3Faktum er true,
                     f4Faktum er true,
-                    periodeSubsumsjon
+                    periodeSubsumsjon,
                 )
             }
         val søkerSeksjon = Seksjon("seksjon søker", Rolle.søker, f1Faktum)
@@ -76,89 +92,72 @@ class NavJsonBuilderTest {
             f7Faktum,
             f8Faktum,
             f9Faktum,
-            f10Faktum
+            f10Faktum,
         )
-        val prototypeFaktagrupper = Søknadprosess(
-            prototypeSøknad,
+        val prototypeProsess = Prosess(
+            TestProsesser.Test,
+            prototypeFakta,
             søkerSeksjon,
             navSeksjon,
-            rootSubsumsjon = prototypeSubsumsjon
+            rootSubsumsjon = prototypeSubsumsjon,
         )
-        val faktumNavBehov = FaktumNavBehov(
-            mapOf(
-                1 to "f1Behov",
-                2 to "f2Behov",
-                3 to "f3Behov",
-                4 to "f4Behov",
-                5 to "f5Behov",
-                6 to "f6Behov",
-                7 to "f7Behov",
-                8 to "f8Behov",
-                9 to "f9Behov"
-            )
-        )
-        val fakta = Versjon.Bygger(
-            prototypeSøknad,
-            prototypeSubsumsjon,
-            mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper),
-            faktumNavBehov
-        ).registrer().søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
+        val prosess = prototypeProsess.testProsess(testPerson)
 
-        fakta.boolsk(1).besvar(true)
-        fakta.dato(5).besvar(1.januar)
+        prosess.boolsk(1).besvar(true)
+        prosess.dato(5).besvar(1.januar)
 
         assertBehovJson(
-            json = NavJsonBuilder(fakta, "seksjon nav").resultat(),
+            json = NavJsonBuilder(prosess, "seksjon nav").resultat(),
             faktumOgBehov = mapOf(2 to "f2Behov", 3 to "f3Behov", 8 to "f8Behov", 6 to "f6Behov"),
-            avhengigeBehov = listOf("f1Behov")
+            avhengigeBehov = listOf("f1Behov"),
         )
 
-        fakta.dato(6).besvar(1.januar)
+        prosess.dato(6).besvar(1.januar)
 
         assertBehovJson(
-            json = NavJsonBuilder(fakta, "seksjon nav").resultat(),
+            json = NavJsonBuilder(prosess, "seksjon nav").resultat(),
             faktumOgBehov = mapOf(2 to "f2Behov", 3 to "f3Behov", 4 to "f4Behov", 8 to "f8Behov"),
-            avhengigeBehov = listOf("f7Behov")
+            avhengigeBehov = listOf("f7Behov"),
         )
 
-        fakta.dato(2).besvar(1.januar)
-        fakta.dato(4).besvar(1.januar)
+        prosess.dato(2).besvar(1.januar)
+        prosess.dato(4).besvar(1.januar)
 
         assertBehovJson(
-            json = NavJsonBuilder(fakta, "seksjon nav").resultat(),
+            json = NavJsonBuilder(prosess, "seksjon nav").resultat(),
             faktumOgBehov = mapOf(3 to "f3Behov", 8 to "f8Behov"),
-            avhengigeBehov = emptyList()
+            avhengigeBehov = emptyList(),
         )
 
-        fakta.dato(3).besvar(1.januar)
+        prosess.dato(3).besvar(1.januar)
 
-        NavJsonBuilder(fakta, "seksjon nav").resultat().also {
+        NavJsonBuilder(prosess, "seksjon nav").resultat().also {
             assertBehovJson(
                 json = it,
                 faktumOgBehov = mapOf(8 to "f8Behov"),
-                avhengigeBehov = emptyList()
+                avhengigeBehov = emptyList(),
             )
             assertEquals(
                 """[{"id":"9","navn":"fom","type":"localdate"},{"id":"10","navn":"tom","type":"localdate"}]""",
-                it["fakta"][0]["templates"].toString()
+                it["fakta"][0]["templates"].toString(),
             )
         }
 
-        fakta.generator(8).besvar(1)
-        fakta.dato("9.1").besvar(31.desember(2017))
-        fakta.dato("10.1").besvar(2.februar)
+        prosess.generator(8).besvar(1)
+        prosess.dato("9.1").besvar(31.desember(2017))
+        prosess.dato("10.1").besvar(2.februar)
 
         assertBehovJson(
-            json = NavJsonBuilder(fakta, "seksjon nav").resultat(),
+            json = NavJsonBuilder(prosess, "seksjon nav").resultat(),
             faktumOgBehov = mapOf(),
-            avhengigeBehov = emptyList()
+            avhengigeBehov = emptyList(),
         )
     }
 
     private fun assertBehovJson(
         json: JsonNode,
         faktumOgBehov: Map<Int, String>,
-        avhengigeBehov: List<String>
+        avhengigeBehov: List<String>,
     ) {
         assertEquals("faktum_svar", json["@event_name"].asText())
         assertEquals("folkeregisterident", json["identer"][0]["type"].asText())

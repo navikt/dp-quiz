@@ -4,19 +4,20 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.Prosessversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.ResultatJsonBuilder
 import no.nav.dagpenger.model.regel.er
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
-import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
+import no.nav.dagpenger.quiz.mediator.helpers.faktaversjon
+import no.nav.dagpenger.quiz.mediator.helpers.registrer
+import no.nav.dagpenger.quiz.mediator.helpers.testProsesstype
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class ResultatTest {
@@ -24,72 +25,63 @@ internal class ResultatTest {
         internal val IDENT = Identer.Builder().folkeregisterIdent("12020052345").build()
     }
 
-    private lateinit var søknadprosess: Søknadprosess
-    private lateinit var søknadRecord: SøknadRecord
+    private lateinit var prosess: Prosess
+    private lateinit var faktaRecord: FaktaRecord
     private lateinit var resultatRecord: ResultatRecord
 
-    private fun setup(prosessVersjon: Prosessversjon) {
-        val prototypeFakta = Søknad(
-            prosessVersjon,
-            boolsk faktum "f1" id 19
-        )
-
-        Versjon.Bygger(
-            prototypeFakta,
-            prototypeFakta boolsk 19 er true,
-            mapOf(
-                Versjon.UserInterfaceType.Web to Søknadprosess(
+    @BeforeEach
+    fun setup() {
+        val prosesstype = testProsesstype()
+        val prototypeFakta = Fakta(
+            prosesstype.faktaversjon,
+            boolsk faktum "f1" id 19,
+        ).registrer { prototypeFakta ->
+            leggTilProsess(
+                Prosess(
+                    prosesstype,
                     Seksjon(
                         "seksjon",
                         Rolle.nav,
-                        *(prototypeFakta.map { it }.toTypedArray())
-                    )
-                )
+                        *(prototypeFakta.map { it }.toTypedArray()),
+                    ),
+                ),
+                prototypeFakta boolsk 19 er true,
             )
-        ).registrer()
+        }
 
         Postgres.withMigratedDb {
             FaktumTable(prototypeFakta)
-            søknadRecord = SøknadRecord()
+            faktaRecord = FaktaRecord()
             resultatRecord = ResultatRecord()
-
-            søknadprosess = søknadRecord.ny(
-                IDENT,
-                Versjon.UserInterfaceType.Web,
-                prosessVersjon
-            )
+            prosess = ProsessRepositoryPostgres().ny(IDENT, prosesstype)
         }
     }
 
     @Test
     fun `Lagre resultat`() {
-        setup(Prosessversjon(Testprosess.Test, 935))
-        søknadprosess.boolsk(19).besvar(false)
-
-        val resultat = søknadprosess.resultat()
+        prosess.boolsk(19).besvar(false)
+        val resultat = prosess.resultat()
         resultatRecord.lagreResultat(
             resultat!!,
-            søknadprosess.søknad.uuid,
-            ResultatJsonBuilder(søknadprosess).resultat()
+            prosess.fakta.uuid,
+            ResultatJsonBuilder(prosess).resultat(),
         )
-
-        val hentaResultat = resultatRecord.hentResultat(søknadprosess.søknad.uuid)
+        val hentaResultat = resultatRecord.hentResultat(prosess.fakta.uuid)
 
         assertEquals(resultat, hentaResultat)
     }
 
     @Test
     fun `Lagrer sendt til manuell behandling`() {
-        setup(Prosessversjon(Testprosess.Test, 936))
         val seksjonsnavn = "manuell seksjon"
-        resultatRecord.lagreManuellBehandling(søknadprosess.søknad.uuid, seksjonsnavn)
-
+        resultatRecord.lagreManuellBehandling(prosess.fakta.uuid, seksjonsnavn)
         val grunn = using(sessionOf(dataSource)) { session ->
             session.run(
-                queryOf( //language=PostgreSQL
-                    "SELECT grunn FROM manuell_behandling WHERE soknad_id = (SELECT soknad.id FROM soknad WHERE soknad.uuid = ?)",
-                    søknadprosess.søknad.uuid
-                ).map { it.string("grunn") }.asSingle
+                queryOf(
+                    //language=PostgreSQL
+                    "SELECT grunn FROM manuell_behandling WHERE soknad_id = (SELECT fakta.id FROM fakta WHERE fakta.uuid = ?)",
+                    prosess.fakta.uuid,
+                ).map { it.string("grunn") }.asSingle,
             )
         }
 

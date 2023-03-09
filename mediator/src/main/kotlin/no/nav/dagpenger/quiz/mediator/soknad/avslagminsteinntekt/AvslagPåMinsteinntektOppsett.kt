@@ -10,21 +10,20 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.min
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.multiplikasjon
-import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.marshalling.FaktumNavBehov
-import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.model.seksjon.Henvendelser
+import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt.regeltre
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.Seksjoner.søknadprosess
 
 // Forstår dagpengesøknaden
 internal object AvslagPåMinsteinntektOppsett {
     private val logger = KotlinLogging.logger { }
-    val VERSJON_ID = Prosessversjon(Prosess.AvslagPåMinsteinntekt, 29)
+    val VERSJON_ID = Faktaversjon(Prosessfakta.AvslagPåMinsteinntekt, 29)
 
-    fun registrer(registrer: (prototype: Søknad) -> Unit) {
-        registrer(prototypeSøknad)
+    fun registrer(registrer: (prototype: Fakta) -> Unit = {}) {
+        registrer(prototypeFakta)
     }
 
     const val ønsketDato = 1
@@ -76,9 +75,8 @@ internal object AvslagPåMinsteinntektOppsett {
     const val jobbetUtenforNorgeManuell = 58
     const val hattLukkedeSakerSiste8Uker = 59
     const val hattLukkedeSakerSiste8UkerManuell = 60
-
-    internal val prototypeSøknad: Søknad
-        get() = Søknad(
+    internal val prototypeFakta: Fakta
+        get() = Fakta(
             VERSJON_ID,
             dato faktum "Ønsker dagpenger fra dato" id ønsketDato avhengerAv innsendtSøknadsId,
             maks dato "Virkningsdato" av ønsketDato og søknadstidspunkt id virkningsdato,
@@ -128,9 +126,8 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Har jobbet utenfor Norge" id jobbetUtenforNorge avhengerAv innsendtSøknadsId,
             boolsk faktum "Har jobbet utenfor Norge manuell" id jobbetUtenforNorgeManuell avhengerAv jobbetUtenforNorge,
             boolsk faktum "Har hatt lukkede saker siste 8 uker" id hattLukkedeSakerSiste8Uker avhengerAv virkningsdato,
-            boolsk faktum "Har hatt lukkede saker siste 8 uker manuell" id hattLukkedeSakerSiste8UkerManuell avhengerAv hattLukkedeSakerSiste8Uker
+            boolsk faktum "Har hatt lukkede saker siste 8 uker manuell" id hattLukkedeSakerSiste8UkerManuell avhengerAv hattLukkedeSakerSiste8Uker,
         )
-
     private val faktumNavBehov =
         FaktumNavBehov(
             mapOf(
@@ -164,20 +161,18 @@ internal object AvslagPåMinsteinntektOppsett {
                 inntektsrapporteringsperiodeTom to "InntektsrapporteringsperiodeTom",
                 over67årFradato to "ForGammelGrensedato",
                 jobbetUtenforNorge to "JobbetUtenforNorge",
-                hattLukkedeSakerSiste8Uker to "HarHattLukketSiste8Uker"
-            )
+                hattLukkedeSakerSiste8Uker to "HarHattLukketSiste8Uker",
+            ),
         )
+    val henvendelse: Henvendelser.FaktaBygger = Henvendelser.FaktaBygger(
+        prototypeFakta,
+        faktumNavBehov,
+    ).also { bygger ->
+        bygger.leggTilProsess(Seksjoner.prosess, regeltre)
+        bygger.registrer()
+    }
 
     init {
-        Versjon.Bygger(
-            prototypeSøknad = prototypeSøknad,
-            prototypeSubsumsjon = regeltre,
-            prototypeUserInterfaces = mapOf(
-                Versjon.UserInterfaceType.Web to søknadprosess
-            ),
-            faktumNavBehov = faktumNavBehov
-        ).registrer().also {
-            logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
-        }
+        logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
     }
 }

@@ -1,16 +1,16 @@
 package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.LandGrupper
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.visitor.FaktaVisitor
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -18,21 +18,21 @@ internal class FaktumBesvartAvTest {
 
     @Test
     fun `Sjekk at ident blir lagt på når saksbehandler besvarer`() {
-        val søknad = Søknad(
+        val fakta = Fakta(
             testversjon,
             boolsk faktum "f1" id 1,
         ).testSøknadprosess()
-        val ja1 = søknad.boolsk(1)
+        val ja1 = fakta.boolsk(1)
 
         ja1.besvar(true, "A123456")
-        assertEquals("A123456", BesvartAvVisitor(søknad).identer.first())
+        assertEquals("A123456", BesvartAvVisitor(fakta).identer.first())
     }
 
-    private class BesvartAvVisitor(søknadprosess: Søknadprosess) : SøknadVisitor {
+    private class BesvartAvVisitor(prosess: Prosess) : FaktaVisitor {
 
         val identer = mutableListOf<String>()
         init {
-            søknadprosess.søknad.accept(this)
+            prosess.fakta.accept(this)
         }
 
         override fun <R : Comparable<R>> visitMedSvar(

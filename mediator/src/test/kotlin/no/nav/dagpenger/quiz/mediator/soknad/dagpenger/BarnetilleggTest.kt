@@ -1,12 +1,11 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Land
-import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.quiz.mediator.helpers.testFaktaversjon
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn etternavn`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn etternavn register`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Barnetillegg.`barn fornavn mellomnavn`
@@ -28,13 +27,13 @@ import java.time.LocalDate
 import kotlin.test.assertTrue
 
 internal class BarnetilleggTest {
-    private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Barnetillegg.fakta())
-    private lateinit var søknadprosess: Søknadprosess
+    private val fakta = Fakta(testFaktaversjon(), *Barnetillegg.fakta())
+    private lateinit var prosess: Prosess
 
     @BeforeEach
     fun setup() {
-        søknadprosess = søknad.testSøknadprosess(
-            Barnetillegg.regeltre(søknad)
+        prosess = fakta.testSøknadprosess(
+            subsumsjon = Barnetillegg.regeltre(fakta),
         ) {
             Barnetillegg.seksjon(this)
         }
@@ -47,62 +46,62 @@ internal class BarnetilleggTest {
 
     @Test
     fun `Må ikke besvare noe om vi ikke finner noen barn i registeret`() {
-        søknadprosess.generator(`barn liste register`).besvar(0)
-        søknadprosess.boolsk(`egne barn`).besvar(false)
-        assertEquals(true, søknadprosess.resultat())
+        prosess.generator(`barn liste register`).besvar(0)
+        prosess.boolsk(`egne barn`).besvar(false)
+        assertEquals(true, prosess.resultat())
     }
 
     @Test
     fun `Søker har ingen barn i registeret men registrerer 1 barn manuelt`() {
-        søknadprosess.generator(`barn liste register`).besvar(0)
-        søknadprosess.boolsk(`egne barn`).besvar(true)
-        søknadprosess.generator(`barn liste`).besvar(1)
-        assertEquals(null, søknadprosess.resultat())
+        prosess.generator(`barn liste register`).besvar(0)
+        prosess.boolsk(`egne barn`).besvar(true)
+        prosess.generator(`barn liste`).besvar(1)
+        assertEquals(null, prosess.resultat())
 
-        søknadprosess.tekst("${`barn fornavn mellomnavn`}.1").besvar(Tekst("Ola"))
-        søknadprosess.tekst("${`barn etternavn`}.1").besvar(Tekst("Nordmann"))
-        søknadprosess.dato("${`barn fødselsdato`}.1").besvar(LocalDate.now().minusYears(1))
-        søknadprosess.land("${`barn statsborgerskap`}.1").besvar(Land("NOR"))
-        søknadprosess.boolsk("${`forsørger du barnet`}.1").besvar(false)
-        assertEquals(true, søknadprosess.resultat())
+        prosess.tekst("${`barn fornavn mellomnavn`}.1").besvar(Tekst("Ola"))
+        prosess.tekst("${`barn etternavn`}.1").besvar(Tekst("Nordmann"))
+        prosess.dato("${`barn fødselsdato`}.1").besvar(LocalDate.now().minusYears(1))
+        prosess.land("${`barn statsborgerskap`}.1").besvar(Land("NOR"))
+        prosess.boolsk("${`forsørger du barnet`}.1").besvar(false)
+        assertEquals(true, prosess.resultat())
 
-        søknadprosess.boolsk("${`forsørger du barnet`}.1").besvar(true)
+        prosess.boolsk("${`forsørger du barnet`}.1").besvar(true)
 
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, prosess.resultat())
     }
 
     @Test
     fun `Søker har 1 barn i registeret`() {
-        søknadprosess.generator(`barn liste register`).besvar(1)
-        søknadprosess.boolsk(`egne barn`).besvar(false)
-        søknadprosess.generator(`barn liste`).besvar(0)
-        assertEquals(null, søknadprosess.resultat())
+        prosess.generator(`barn liste register`).besvar(1)
+        prosess.boolsk(`egne barn`).besvar(false)
+        prosess.generator(`barn liste`).besvar(0)
+        assertEquals(null, prosess.resultat())
 
-        søknadprosess.tekst("${`barn fornavn mellomnavn register`}.1").besvar(Tekst("Ola"))
-        søknadprosess.tekst("${`barn etternavn register`}.1").besvar(Tekst("Nordmann"))
-        søknadprosess.dato("${`barn fødselsdato register`}.1").besvar(LocalDate.now().minusYears(1))
-        søknadprosess.land("${`barn statsborgerskap register`}.1").besvar(Land("NOR"))
-        val seksjon = søknadprosess.nesteSeksjoner().first()
+        prosess.tekst("${`barn fornavn mellomnavn register`}.1").besvar(Tekst("Ola"))
+        prosess.tekst("${`barn etternavn register`}.1").besvar(Tekst("Nordmann"))
+        prosess.dato("${`barn fødselsdato register`}.1").besvar(LocalDate.now().minusYears(1))
+        prosess.land("${`barn statsborgerskap register`}.1").besvar(Land("NOR"))
+        val seksjon = prosess.nesteSeksjoner().first()
         assertEquals("barnetillegg", seksjon.navn)
-        assertTrue(seksjon.contains(søknadprosess.boolsk("${`forsørger du barnet register`}.1")))
+        assertTrue(seksjon.contains(prosess.boolsk("${`forsørger du barnet register`}.1")))
 
-        søknadprosess.boolsk("${`forsørger du barnet register`}.1").besvar(false)
-        assertEquals(true, søknadprosess.resultat())
+        prosess.boolsk("${`forsørger du barnet register`}.1").besvar(false)
+        assertEquals(true, prosess.resultat())
 
-        søknadprosess.boolsk("${`forsørger du barnet register`}.1").besvar(true)
+        prosess.boolsk("${`forsørger du barnet register`}.1").besvar(true)
 
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, prosess.resultat())
     }
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
         val faktaFraRegister =
-            søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+            prosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("1008,1009,1010,1012,1011", faktaFraRegister)
 
-        søknadprosess.generator(`barn liste register`).besvar(0)
+        prosess.generator(`barn liste register`).besvar(0)
         val faktaForSøker =
-            søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+            prosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("1013,1007,1001,1002,1003,1004,1005,1006,1014", faktaForSøker)
     }
 }

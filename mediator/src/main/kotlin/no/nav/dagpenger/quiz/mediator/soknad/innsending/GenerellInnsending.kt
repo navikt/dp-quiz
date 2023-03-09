@@ -5,9 +5,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dokument
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.envalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Envalg
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.inneholder
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
@@ -41,15 +41,15 @@ object GenerellInnsending : DslFaktaseksjon {
         boolsk faktum "faktum.generell-innsending.godkjenning-dokumentasjon" id `godkjenning av dokumentasjon` avhengerAv dokumentasjon
     )
 
-    override fun seksjon(søknad: Søknad) = listOf(
-        søknad.seksjon(
+    override fun seksjon(fakta: Fakta) = listOf(
+        fakta.seksjon(
             "generell-innsending",
             Rolle.søker,
             *spørsmålsrekkefølgeForSøker()
         )
     )
 
-    override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
+    override fun regeltre(fakta: Fakta): DeltreSubsumsjon = with(fakta) {
         "spørsmål".deltre {
             "alle spørsmålene må være besvart".alle(
                 (envalg(`hvorfor sender du inn dokumentasjon`) inneholder Envalg("faktum.generell-innsending.hvorfor.svar.annet")) hvisOppfylt {

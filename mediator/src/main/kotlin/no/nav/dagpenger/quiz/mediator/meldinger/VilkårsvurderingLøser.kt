@@ -4,9 +4,8 @@ import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -17,7 +16,7 @@ import java.util.UUID
 
 internal class VilkårsvurderingLøser(
     rapidsConnection: RapidsConnection,
-    private val prosessPersistence: SøknadPersistence
+    private val prosessPersistence: ProsessRepository,
 ) :
     River.PacketListener {
     val behov = "Paragraf_4_23_alder"
@@ -36,7 +35,6 @@ internal class VilkårsvurderingLøser(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-
         val vilkårsvurderingId = packet["vilkårsvurderingId"].asText().let { UUID.fromString(it) }
         val søknadUuid = packet["søknad_uuid"].asText().let { UUID.fromString(it) }
         withLoggingContext(
@@ -46,29 +44,20 @@ internal class VilkårsvurderingLøser(
                 val vilkår = packet["@behov"].map { it.asText() }.first()
                 logger.info { "Mottok behov om vurdering av $vilkår" }
                 val prosessversjon = when (vilkår) {
-                    behov -> Versjon.siste(Prosess.Paragraf_4_23_alder)
+                    behov -> Prosesser.Paragraf_4_23_alder
                     else -> {
                         logger.error { "Det er ikke støtte for vurdering av $vilkår enda." }
                         null
                     }
                 } ?: return
-
                 val identer = Identer.Builder().folkeregisterIdent(packet["ident"].asText()).build()
-
-                val paragraf_4_23_alder_prosess =
-                    prosessPersistence.ny(
-                        identer = identer,
-                        type = Versjon.UserInterfaceType.Web,
-                        prosessVersjon = prosessversjon,
-                        uuid = vilkårsvurderingId
-                    )
+                val paragraf_4_23_alder_prosess = prosessPersistence.ny(identer, prosessversjon, vilkårsvurderingId)
 
                 paragraf_4_23_alder_prosess.dokument(Paragraf_4_23_alder_oppsett.innsendtSøknadId)
                     .besvar(Dokument(LocalDateTime.now(), "urn:soknadid:$søknadUuid"))
 
-                prosessPersistence.lagre(paragraf_4_23_alder_prosess.søknad)
-
-                val prosessUuid = paragraf_4_23_alder_prosess.søknad.uuid.toString()
+                prosessPersistence.lagre(paragraf_4_23_alder_prosess)
+                val prosessUuid = paragraf_4_23_alder_prosess.fakta.uuid.toString()
                 packet["@løsning"] = mapOf(behov to prosessUuid)
                 paragraf_4_23_alder_prosess.sendNesteSeksjon(context)
 

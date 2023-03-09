@@ -1,38 +1,37 @@
 package no.nav.dagpenger.quiz.mediator
+
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
-import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.faktum.Person
-import no.nav.dagpenger.model.faktum.Prosessversjon
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.marshalling.SubsumsjonsGraf
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.før
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.minst
+import no.nav.dagpenger.model.seksjon.Henvendelser
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfyltManuell
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
+import no.nav.dagpenger.quiz.mediator.helpers.Testfakta
 import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
+import no.nav.dagpenger.quiz.mediator.helpers.testPerson
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntekt
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.Seksjoner
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import java.util.UUID
 
 class Graftest {
-
     @Test
     @Disabled
     fun `tegne subsumsjonsgraf`() {
@@ -50,9 +49,8 @@ class Graftest {
         val registrertArbeidssøker = 12
         val registrertArbeidssøkerPerioder = 13
         val registrertArbeidssøkerPeriodeTom = 15
-
-        val prototypeSøknad = Søknad(
-            Prosessversjon(Testprosess.Test, 509),
+        val prototypeFakta = Fakta(
+            Faktaversjon(Testfakta.Test, 509),
             dato faktum "Datoen du fyller 67" id bursdag67,
             dato faktum "Datoen du søker om dagpenger" id søknadsdato,
             dato faktum "Datoen du ønsker dagpenger fra" id ønsketdato,
@@ -66,12 +64,12 @@ class Graftest {
             boolsk faktum "Manuell fordi noe" id manuell,
             boolsk faktum "Registrert arbeidssøker" id registrertArbeidssøker,
             heltall faktum "Antall arbeidsøker registeringsperioder" id registrertArbeidssøkerPerioder genererer registrertArbeidssøkerPeriodeTom,
-            dato faktum "arbeidssøker til" id registrertArbeidssøkerPeriodeTom
+            dato faktum "arbeidssøker til" id registrertArbeidssøkerPeriodeTom,
         )
-
         val prototypeWebSøknad =
-            with(prototypeSøknad) {
-                Søknadprosess(
+            with(prototypeFakta) {
+                Prosess(
+                    Testprosess.Test,
                     Seksjon(
                         "seksjon1",
                         Rolle.søker,
@@ -85,17 +83,16 @@ class Graftest {
                         inntekt(inntekt3G),
                         inntekt(inntektSiste3år),
                         inntekt(inntektSisteÅr),
-                        boolsk(registrertArbeidssøker)
+                        boolsk(registrertArbeidssøker),
                     ),
                     Seksjon(
                         "manuell",
                         Rolle.manuell,
-                        boolsk(manuell)
-                    )
+                        boolsk(manuell),
+                    ),
                 )
             }
-
-        val prototypeSubsumsjon = with(prototypeSøknad) {
+        val prototypeSubsumsjon = with(prototypeFakta) {
             boolsk(registrertArbeidssøker) er true hvisOppfylt {
                 generator(registrertArbeidssøkerPerioder) har "arbeidsøkerregistrering".deltre {
                     dato(søknadsdato) før dato(registrertArbeidssøkerPeriodeTom)
@@ -105,19 +102,19 @@ class Graftest {
                     "bursdagssjekker".alle(
                         dato(bursdag67) før dato(sisteDagMedLønn) hvisOppfylt { dato(bursdag67) før dato(bursdag67) },
                         "flere sjekker".minstEnAv(
-                            dato(bursdag67) før dato(dimisjonsdato)
+                            dato(bursdag67) før dato(dimisjonsdato),
                         ) hvisOppfylt { dato(ønsketdato) før dato(ønsketdato) },
                         "enda flere sjekker ".minstEnAv(
                             inntekt(inntekt15G) minst inntekt(inntekt3G),
-                            inntekt(inntekt15G) minst inntekt(inntekt15G)
-                        )
+                            inntekt(inntekt15G) minst inntekt(inntekt15G),
+                        ),
                     ) hvisOppfylt {
                         "minst ein".minstEnAv(dato(sisteDagMedLønn) før dato(sisteDagMedLønn))
                     } hvisIkkeOppfylt {
                         "deltre".deltre {
                             inntekt(inntektSisteÅr) minst inntekt(inntekt15G) hvisIkkeOppfyltManuell (
                                 boolsk(
-                                    manuell
+                                    manuell,
                                 )
                                 )
                         }
@@ -125,15 +122,10 @@ class Graftest {
                 }
             }
         }
-
-        val søknadprosess = Versjon.Bygger(
-            prototypeSøknad,
+        val søknadprosess = Henvendelser.FaktaBygger(prototypeFakta).leggTilProsess(
+            prototypeWebSøknad,
             prototypeSubsumsjon,
-            mapOf(Versjon.UserInterfaceType.Web to prototypeWebSøknad)
-        ).søknadprosess(
-            Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
-            Versjon.UserInterfaceType.Web,
-        )
+        ).prosess(testPerson)
 
         SubsumsjonsGraf(søknadprosess).skrivTilFil("grafer/ex2.png")
         Runtime.getRuntime().exec("open grafer/ex2.png")
@@ -142,16 +134,7 @@ class Graftest {
     @Test
     @Disabled
     fun `avslag`() {
-
-        val manglerInntekt = Versjon.Bygger(
-            AvslagPåMinsteinntektOppsett.prototypeSøknad,
-            AvslagPåMinsteinntekt.regeltre,
-            mapOf(Versjon.UserInterfaceType.Web to Seksjoner.søknadprosess)
-        )
-            .søknadprosess(
-                Person(UUID.randomUUID(), Identer.Builder().folkeregisterIdent("12345678910").build()),
-                Versjon.UserInterfaceType.Web
-            )
+        val manglerInntekt = AvslagPåMinsteinntektOppsett.henvendelse.prosess(testPerson, Prosesser.AvslagPåMinsteinntekt)
 
         SubsumsjonsGraf(manglerInntekt).skrivTilFil("grafer/ex2.png")
         Runtime.getRuntime().exec("open grafer/ex2.png")

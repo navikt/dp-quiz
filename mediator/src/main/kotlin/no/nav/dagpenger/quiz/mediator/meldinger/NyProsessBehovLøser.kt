@@ -3,9 +3,9 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.faktum.Identer
-import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.quiz.mediator.db.SøknadRecord
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
+import no.nav.dagpenger.model.seksjon.Henvendelser
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -13,8 +13,8 @@ import no.nav.helse.rapids_rivers.River
 import java.util.UUID
 
 internal class NyProsessBehovLøser(
-    private val søknadPersistence: SøknadRecord,
-    rapidsConnection: RapidsConnection
+    private val prosessRepository: ProsessRepository,
+    rapidsConnection: RapidsConnection,
 ) : River.PacketListener {
     private companion object {
         private val log = KotlinLogging.logger {}
@@ -35,38 +35,39 @@ internal class NyProsessBehovLøser(
         val behovNavn = packet["@behov"].single().asText()
         val prosessnavn = packet["prosessnavn"].asText()
         val prosessversjon = when (prosessnavn) {
-            "Dagpenger" -> Versjon.siste(Prosess.Dagpenger)
-            "Innsending" -> Versjon.siste(Prosess.Innsending)
+            "Dagpenger" -> Prosesser.Søknad
+            "Innsending" -> Prosesser.Innsending
             else -> throw Error("Mangler prosess for $prosessnavn")
         }
         val søknadUuid = packet["søknad_uuid"].asText().let { søknadUuid -> UUID.fromString(søknadUuid) }
 
         withLoggingContext(
-            "søknad_uuid" to søknadUuid.toString()
+            "søknad_uuid" to søknadUuid.toString(),
         ) {
             log.info { "Mottok $behovNavn behov" }
             val identer = Identer.Builder()
                 .folkeregisterIdent(packet["ident"].asText())
-                // @todo: Aktør id?
                 .build()
 
-            søknadPersistence.ny(identer, Versjon.UserInterfaceType.Web, prosessversjon, søknadUuid)
+            prosessRepository.ny(identer, prosessversjon, søknadUuid)
                 .also { søknadsprosess ->
-                    søknadPersistence.lagre(søknadsprosess.søknad)
-                    log.info { "Opprettet ny søknadprosess ${søknadsprosess.søknad.uuid}" }
+                    prosessRepository.lagre(søknadsprosess)
+                    log.info { "Opprettet ny søknadprosess ${søknadsprosess.fakta.uuid}" }
+                    val faktaversjon = Henvendelser.siste(prosessversjon.faktatype)
 
                     packet["@løsning"] = mapOf(
                         behovNavn to mapOf(
                             "prosessversjon" to mapOf(
-                                "prosessnavn" to prosessversjon.prosessnavn.id,
-                                "versjon" to prosessversjon.versjon
-                            )
-                        )
+                                "prosessnavn" to prosessversjon.faktatype.id,
+                                // TODO: Denne trengs ikke om vi slutter med migrering fra dp-soknad
+                                "versjon" to faktaversjon.versjon,
+                            ),
+                        ),
                     )
                     context.publish(
                         packet.toJson().also {
                             log.info { "Publiserer løsning med prosessversjon=$prosessversjon" }
-                        }
+                        },
                     )
 
                     søknadsprosess.sendNesteSeksjon(context)

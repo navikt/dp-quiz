@@ -6,9 +6,9 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.land
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.periode
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.faktum.Envalg
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.inneholder
@@ -48,7 +48,7 @@ object EøsArbeidsforhold : DslFaktaseksjon {
         periode faktum "faktum.eos-arbeidsforhold.varighet" id `eøs arbeidsforhold varighet`
     )
 
-    override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
+    override fun regeltre(fakta: Fakta): DeltreSubsumsjon = with(fakta) {
         "arbeidsforhold eøs".deltre {
             `er gjenopptak`() hvisOppfylt {
                 `har jobbet siden sist eller hatt endringer i arbeidsforhold`() hvisOppfylt { `eøs arbeidsforhold`() }
@@ -58,7 +58,7 @@ object EøsArbeidsforhold : DslFaktaseksjon {
         }
     }
 
-    private fun Søknad.`eøs arbeidsforhold`() = "Arbeidsforhold i EØS området".minstEnAv(
+    private fun Fakta.`eøs arbeidsforhold`() = "Arbeidsforhold i EØS området".minstEnAv(
         boolsk(`eøs arbeid siste 36 mnd`) er false,
         boolsk(`eøs arbeid siste 36 mnd`) er true hvisOppfylt {
             "Hvis ja, må det oppgi arbeidsforhold".alle(
@@ -75,21 +75,21 @@ object EøsArbeidsforhold : DslFaktaseksjon {
         }
     )
 
-    private fun Søknad.`er gjenopptak`() =
+    private fun Fakta.`er gjenopptak`() =
         envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`) inneholder Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja")
 
-    private fun Søknad.`har jobbet siden sist eller hatt endringer i arbeidsforhold`() =
+    private fun Fakta.`har jobbet siden sist eller hatt endringer i arbeidsforhold`() =
         boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`) er true
 
-    private fun Søknad.`hatt fast, varierende eller kombinert arbeidstid`() =
+    private fun Fakta.`hatt fast, varierende eller kombinert arbeidstid`() =
         "har hatt fast, varierende eller kombinasjon arbeidstid".minstEnAv(
             envalg(DinSituasjon.`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.fast"),
             envalg(DinSituasjon.`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.varierende"),
             envalg(DinSituasjon.`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.kombinasjon")
         )
 
-    override fun seksjon(søknad: Søknad) =
-        listOf(søknad.seksjon("eos-arbeidsforhold", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
+    override fun seksjon(fakta: Fakta) =
+        listOf(fakta.seksjon("eos-arbeidsforhold", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
     override val spørsmålsrekkefølgeForSøker = listOf(
         `eøs arbeid siste 36 mnd`,

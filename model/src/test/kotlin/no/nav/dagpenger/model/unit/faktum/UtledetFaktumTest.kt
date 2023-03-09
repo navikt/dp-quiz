@@ -2,12 +2,12 @@ package no.nav.dagpenger.model.unit.faktum
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.helpers.januar
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Prosess
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -15,7 +15,7 @@ import java.time.LocalDate
 import kotlin.test.assertEquals
 
 internal class UtledetFaktumTest {
-    private lateinit var søknadprosess: Søknadprosess
+    private lateinit var prosess: Prosess
     private lateinit var maks4: Faktum<LocalDate>
     private lateinit var maks3: Faktum<LocalDate>
     private lateinit var dato1: Faktum<LocalDate>
@@ -25,7 +25,7 @@ internal class UtledetFaktumTest {
 
     @BeforeEach
     fun setup() {
-        søknadprosess = Søknad(
+        prosess = Fakta(
             testversjon,
             maks dato "maks dato" av 1 og 3 og 6 id 4,
             maks dato "maks dato" av 1 og 2 og 5 id 3,
@@ -35,12 +35,12 @@ internal class UtledetFaktumTest {
             dato faktum "dato6" id 6
         ).testSøknadprosess()
 
-        maks4 = søknadprosess dato 4
-        maks3 = søknadprosess dato 3
-        dato1 = søknadprosess dato 1
-        dato2 = søknadprosess dato 2
-        dato5 = søknadprosess dato 5
-        dato6 = søknadprosess dato 6
+        maks4 = prosess dato 4
+        maks3 = prosess dato 3
+        dato1 = prosess dato 1
+        dato2 = prosess dato 2
+        dato5 = prosess dato 5
+        dato6 = prosess dato 6
     }
 
     @Test

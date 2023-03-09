@@ -5,10 +5,10 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.desimaltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.flervalg
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.inneholder
@@ -86,10 +86,10 @@ object EgenNæring : DslFaktaseksjon {
             avhengerAv `driver du eget gårdsbruk`,
     )
 
-    override fun seksjon(søknad: Søknad) =
-        listOf(søknad.seksjon("egen-naering", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
+    override fun seksjon(fakta: Fakta) =
+        listOf(fakta.seksjon("egen-naering", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
-    override fun regeltre(søknad: Søknad): DeltreSubsumsjon = with(søknad) {
+    override fun regeltre(fakta: Fakta): DeltreSubsumsjon = with(fakta) {
         "egennæring".deltre {
             "Egen næring".alle(
                 "driver egen næring eller ikke".minstEnAv(
@@ -108,7 +108,7 @@ object EgenNæring : DslFaktaseksjon {
         }
     }
 
-    private fun Søknad.`næringenes organisasjonsnummer og arbeidstimer`() =
+    private fun Fakta.`næringenes organisasjonsnummer og arbeidstimer`() =
         "organisasjonsnummer og arbeidstimer".alle(
             generator(`egen næring organisasjonsnummer liste`) har "en eller flere organisasjonsnummer".deltre {
                 "organisasjonsnummer for alle næringer".alle(
@@ -118,13 +118,13 @@ object EgenNæring : DslFaktaseksjon {
             `arbeidstimer for næringen før og nå`()
         )
 
-    private fun Søknad.`arbeidstimer for næringen før og nå`() =
+    private fun Fakta.`arbeidstimer for næringen før og nå`() =
         "spørsmål om arbeidstimer".alle(
             desimaltall(`egen næring arbeidstimer nå`).utfylt(),
             desimaltall(`egen næring arbeidstimer før`).utfylt()
         )
 
-    private fun Søknad.`organisasjonsnummer, type gårdsbruk og eier`() =
+    private fun Fakta.`organisasjonsnummer, type gårdsbruk og eier`() =
         "spørsmål om gårdsbruket".alle(
             heltall(`eget gårdsbruk organisasjonsnummer`).utfylt(),
             flervalg(`eget gårdsbruk type gårdsbruk`).utfylt(),
@@ -136,22 +136,22 @@ object EgenNæring : DslFaktaseksjon {
             )
         )
 
-    private fun Søknad.`søkeren eier selv`() =
+    private fun Fakta.`søkeren eier selv`() =
         flervalg(`eget gårdsbruk hvem eier`) inneholder Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.selv") hvisOppfylt {
             desimaltall(`eget gårdsbruk jeg andel inntekt`).utfylt()
         }
 
-    private fun Søknad.`søkerens ektefelle eller samboer eier`() =
+    private fun Fakta.`søkerens ektefelle eller samboer eier`() =
         flervalg(`eget gårdsbruk hvem eier`) inneholder Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.ektefelle-samboer") hvisOppfylt {
             desimaltall(`eget gårdsbruk ektefelle samboer andel inntekt`).utfylt()
         }
 
-    private fun Søknad.`noen andre eier`() =
+    private fun Fakta.`noen andre eier`() =
         flervalg(`eget gårdsbruk hvem eier`) inneholder Flervalg("faktum.eget-gaardsbruk-hvem-eier.svar.andre") hvisOppfylt {
             desimaltall(`eget gårdsbruk andre andel inntekt`).utfylt()
         }
 
-    private fun Søknad.`arbeidsår, arbeidstimer og forklaring på beregning`() = "info arbeidstimer".alle(
+    private fun Fakta.`arbeidsår, arbeidstimer og forklaring på beregning`() = "info arbeidstimer".alle(
         heltall(`eget gårdsbruk arbeidsår for timer`).utfylt(),
         desimaltall(`eget gårdsbruk arbeidstimer år`).utfylt(),
         tekst(`eget gårdsbruk arbeidstimer beregning`).utfylt()

@@ -1,10 +1,9 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
-import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.quiz.mediator.helpers.testFaktaversjon
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -12,8 +11,8 @@ import kotlin.test.assertEquals
 
 internal class VernepliktTest {
 
-    private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Verneplikt.fakta())
-    private lateinit var søknadprosess: Søknadprosess
+    private val fakta = Fakta(testFaktaversjon(), *Verneplikt.fakta())
+    private lateinit var prosess: Prosess
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
@@ -22,8 +21,8 @@ internal class VernepliktTest {
 
     @BeforeEach
     fun setup() {
-        søknadprosess = søknad.testSøknadprosess(
-            Verneplikt.regeltre(søknad)
+        prosess = fakta.testSøknadprosess(
+            subsumsjon = Verneplikt.regeltre(fakta),
         ) {
             Verneplikt.seksjon(this)
         }
@@ -31,19 +30,19 @@ internal class VernepliktTest {
 
     @Test
     fun `Har ikke avtjent verneplikt`() {
-        søknadprosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(false)
-        assertEquals(true, søknadprosess.resultat())
+        prosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(false)
+        assertEquals(true, prosess.resultat())
     }
 
     @Test
     fun `Har avtjent verneplikt`() {
-        søknadprosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(true)
-        assertEquals(true, søknadprosess.resultat())
+        prosess.boolsk(Verneplikt.`avtjent militær sivilforsvar tjeneste siste 12 mnd`).besvar(true)
+        assertEquals(true, prosess.resultat())
     }
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val faktaFraVerneplikt = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        val faktaFraVerneplikt = prosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("7001,7002,7003", faktaFraVerneplikt)
     }
 }

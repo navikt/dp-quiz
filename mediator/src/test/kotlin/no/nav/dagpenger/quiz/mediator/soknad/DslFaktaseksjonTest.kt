@@ -3,9 +3,9 @@ package no.nav.dagpenger.quiz.mediator.soknad
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -24,12 +24,12 @@ internal class DslFaktaseksjonTest {
             heltall faktum "faktum 3" id id3
         )
 
-        override fun seksjon(søknad: Søknad) =
-            listOf(søknad.seksjon("dummy-seksjon", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
+        override fun seksjon(fakta: Fakta) =
+            listOf(fakta.seksjon("dummy-seksjon", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
-        override fun regeltre(søknad: Søknad): DeltreSubsumsjon =
+        override fun regeltre(fakta: Fakta): DeltreSubsumsjon =
             "deltre".deltre {
-                søknad.id(id1).utfylt()
+                fakta.id(id1).utfylt()
             }
 
         override val spørsmålsrekkefølgeForSøker: List<Int> = listOf(id1, id2, id3)

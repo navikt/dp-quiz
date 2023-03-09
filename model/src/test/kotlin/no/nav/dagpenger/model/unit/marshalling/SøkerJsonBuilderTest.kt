@@ -12,12 +12,13 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.model.helpers.MedSøknad
+import no.nav.dagpenger.model.helpers.TestProsesser
 import no.nav.dagpenger.model.helpers.testPerson
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
@@ -27,9 +28,8 @@ import no.nav.dagpenger.model.regel.har
 import no.nav.dagpenger.model.regel.med
 import no.nav.dagpenger.model.regel.under
 import no.nav.dagpenger.model.regel.utfylt
+import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -38,7 +38,7 @@ import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -47,12 +47,12 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class SøkerJsonBuilderTest {
-    private lateinit var prototypeSøknad: Søknad
-    private lateinit var søknadprosess: Søknadprosess
+    private lateinit var prototypeFakta: Fakta
+    private lateinit var prosess: Prosess
 
     @BeforeEach
     fun setup() {
-        prototypeSøknad = Søknad(
+        prototypeFakta = Fakta(
             testversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1,
@@ -77,7 +77,7 @@ internal class SøkerJsonBuilderTest {
             heltall faktum "f1718" id 1718 genererer 17 og 18,
             land faktum "f19" gruppe "eøs" med listOf(Land("SWE")) gruppe "norge-jan-mayen" med listOf(
                 Land("NOR"),
-                Land("SJM")
+                Land("SJM"),
             ) id 19,
             dato faktum "f20" id 20,
             heltall faktum "f21" genererer 20 id 21,
@@ -85,18 +85,18 @@ internal class SøkerJsonBuilderTest {
             boolsk faktum "f23" id 23 avhengerAv 22,
             boolsk faktum "f24" id 24,
             dokument faktum "f25" id 25 avhengerAv 24,
-            boolsk faktum "f26" id 26 avhengerAv 25
+            boolsk faktum "f26" id 26 avhengerAv 25,
         )
-        søknadprosess = søknadprosess(søkerSubsumsjon())
+        prosess = søknadprosess(søkerSubsumsjon())
     }
 
     @Test
     fun `SøkerJsonBuilder returnerer besvarte fakta og neste ubesvarte faktum`() {
-        SøkerJsonBuilder(søknadprosess).resultat().also {
+        SøkerJsonBuilder(prosess).resultat().also {
             assertMetadata(it)
         }
 
-        MedSøknad(søknadprosess) {
+        MedSøknad(prosess) {
             harAntallSeksjoner(1)
             seksjon("seksjon1") {
                 fakta {
@@ -108,8 +108,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.boolsk(1).besvar(true)
-        MedSøknad(søknadprosess) {
+        prosess.boolsk(1).besvar(true)
+        MedSøknad(prosess) {
             harAntallSeksjoner(1)
             seksjon("seksjon1") {
                 fakta {
@@ -121,8 +121,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.boolsk(3).besvar(true)
-        MedSøknad(søknadprosess) {
+        prosess.boolsk(3).besvar(true)
+        MedSøknad(prosess) {
             harAntallSeksjoner(1)
             seksjon("seksjon1") {
                 fakta {
@@ -134,8 +134,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.boolsk(5).besvar(true)
-        MedSøknad(søknadprosess) {
+        prosess.boolsk(5).besvar(true)
+        MedSøknad(prosess) {
             harAntallSeksjoner(2)
             seksjon("seksjon1") {
                 erFerdig()
@@ -154,10 +154,10 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.generator(67).besvar(2)
-        søknadprosess.heltall("6.1").besvar(11)
-        søknadprosess.tekst("7.1").besvar(Tekst("Hei"))
-        MedSøknad(søknadprosess) {
+        prosess.generator(67).besvar(2)
+        prosess.heltall("6.1").besvar(11)
+        prosess.tekst("7.1").besvar(Tekst("Hei"))
+        MedSøknad(prosess) {
             harAntallSeksjoner(2)
             seksjon("seksjon2") {
                 fakta {
@@ -178,8 +178,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.heltall("6.2").besvar(19)
-        MedSøknad(søknadprosess) {
+        prosess.heltall("6.2").besvar(19)
+        MedSøknad(prosess) {
             harAntallSeksjoner(2)
             seksjon("seksjon2") {
                 fakta {
@@ -194,8 +194,8 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.tekst("7.2").besvar(Tekst("Hadet"))
-        MedSøknad(søknadprosess) {
+        prosess.tekst("7.2").besvar(Tekst("Hadet"))
+        MedSøknad(prosess) {
             harAntallSeksjoner(2)
             seksjon("seksjon2") { erFerdig() }
             seksjon("seksjon2") {
@@ -210,10 +210,10 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.dato("8").besvar(LocalDate.now())
-        søknadprosess.dato("9").besvar(LocalDate.now())
+        prosess.dato("8").besvar(LocalDate.now())
+        prosess.dato("9").besvar(LocalDate.now())
 
-        MedSøknad(søknadprosess) {
+        MedSøknad(prosess) {
             seksjon("dokumentasjon") {
                 fakta {
                     harAntallFakta(4)
@@ -253,10 +253,10 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.dokument(15).besvar(Dokument(LocalDate.now(), "urn:nav:1234"))
-        søknadprosess.generator(1718).besvar(1)
+        prosess.dokument(15).besvar(Dokument(LocalDate.now(), "urn:nav:1234"))
+        prosess.generator(1718).besvar(1)
 
-        MedSøknad(søknadprosess) {
+        MedSøknad(prosess) {
             harAntallSeksjoner(4)
             seksjon("seksjon3") {
                 fakta {
@@ -287,10 +287,10 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.envalg("17.1").besvar(Envalg("f17.envalg1"))
-        søknadprosess.flervalg("18.1").besvar(Flervalg("f18.flervalg2"))
+        prosess.envalg("17.1").besvar(Envalg("f17.envalg1"))
+        prosess.flervalg("18.1").besvar(Flervalg("f18.flervalg2"))
 
-        MedSøknad(søknadprosess) {
+        MedSøknad(prosess) {
             harAntallSeksjoner(5)
             seksjon("Gyldige land") {
                 fakta {
@@ -309,13 +309,13 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.land(19).besvar(Land("NOR"))
+        prosess.land(19).besvar(Land("NOR"))
 
-        søknadprosess.generator(21).besvar(1)
-        søknadprosess.dato("20.1").besvar(LocalDate.now())
-        søknadprosess.boolsk(24).besvar(true)
+        prosess.generator(21).besvar(1)
+        prosess.dato("20.1").besvar(LocalDate.now())
+        prosess.boolsk(24).besvar(true)
 
-        MedSøknad(søknadprosess) {
+        MedSøknad(prosess) {
             seksjon("grunnleggende med dokumentasjon") {
                 fakta {
                     boolsk("f24") {
@@ -330,9 +330,9 @@ internal class SøkerJsonBuilderTest {
             }
         }
 
-        søknadprosess.dokument(24).besvar(Dokument(LocalDateTime.now(), "urn:nav:12345"))
+        prosess.dokument(24).besvar(Dokument(LocalDateTime.now(), "urn:nav:12345"))
 
-        MedSøknad(søknadprosess) { erFerdig() }
+        MedSøknad(prosess) { erFerdig() }
     }
 
     @Test
@@ -353,7 +353,7 @@ internal class SøkerJsonBuilderTest {
                     boolsk("f1") {
                         harGyldigeValg(
                             "f1.svar.ja",
-                            "f1.svar.nei"
+                            "f1.svar.nei",
                         )
                     }
                 }
@@ -363,146 +363,145 @@ internal class SøkerJsonBuilderTest {
 
     private fun søkerSubsumsjon(): Subsumsjon {
         val alleBarnMåværeUnder18år =
-            (prototypeSøknad.heltall(6) under 18).sannsynliggjøresAv(prototypeSøknad.dokument(22))
+            (prototypeFakta.heltall(6) under 18).sannsynliggjøresAv(prototypeFakta.dokument(22))
         val deltre = "§ 1.2 har kun ikke myndige barn".deltre {
             alleBarnMåværeUnder18år.hvisIkkeOppfylt {
-                prototypeSøknad.boolsk(7).utfylt()
+                prototypeFakta.boolsk(7).utfylt()
             }
         }
-        val generatorSubsumsjon67 = (prototypeSøknad.generator(67) med deltre).godkjentAv(prototypeSøknad.boolsk(23))
-        val generatorSubsumsjon1718 = prototypeSøknad.generator(1718) med "Besvarte valg".deltre {
+        val generatorSubsumsjon67 = (prototypeFakta.generator(67) med deltre).godkjentAv(prototypeFakta.boolsk(23))
+        val generatorSubsumsjon1718 = prototypeFakta.generator(1718) med "Besvarte valg".deltre {
             "alle må være besvarte".alle(
-                prototypeSøknad.envalg(17).utfylt(),
-                prototypeSøknad.envalg(18).utfylt()
+                prototypeFakta.envalg(17).utfylt(),
+                prototypeFakta.envalg(18).utfylt(),
             )
         }
         val regeltre = "regel" deltre {
             "alle i søknaden skal være besvart".alle(
                 "alle i seksjon 1".alle(
-                    (prototypeSøknad.boolsk(1) er true).hvisIkkeOppfylt {
-                        prototypeSøknad.boolsk(2).utfylt()
+                    (prototypeFakta.boolsk(1) er true).hvisIkkeOppfylt {
+                        prototypeFakta.boolsk(2).utfylt()
                     },
-                    (prototypeSøknad.boolsk(3) er true).hvisIkkeOppfylt {
-                        prototypeSøknad.boolsk(4).utfylt()
+                    (prototypeFakta.boolsk(3) er true).hvisIkkeOppfylt {
+                        prototypeFakta.boolsk(4).utfylt()
                     },
-                    prototypeSøknad.boolsk(5).utfylt()
+                    prototypeFakta.boolsk(5).utfylt(),
                 ),
                 "alle i seksjon 2".alle(
-                    generatorSubsumsjon67
+                    generatorSubsumsjon67,
                 ),
                 "NAV-systemer vil svare automatisk på følgende fakta".alle(
-                    prototypeSøknad.dato(8).utfylt(),
-                    prototypeSøknad.dato(9).utfylt()
+                    prototypeFakta.dato(8).utfylt(),
+                    prototypeFakta.dato(9).utfylt(),
                 ),
                 "dokumentasjon".alle(
-                    prototypeSøknad.boolsk(5) er true hvisOppfylt {
-                        prototypeSøknad.boolsk(16) dokumenteresAv prototypeSøknad.dokument(15)
-                    }
+                    prototypeFakta.boolsk(5) er true hvisOppfylt {
+                        prototypeFakta.boolsk(16) dokumenteresAv prototypeFakta.dokument(15)
+                    },
                 ),
                 "Generator med valg".alle(
-                    generatorSubsumsjon1718
+                    generatorSubsumsjon1718,
                 ),
                 "Land".alle(
-                    prototypeSøknad.land(19).utfylt()
+                    prototypeFakta.land(19).utfylt(),
                 ),
-                prototypeSøknad.generator(21) har
+                prototypeFakta.generator(21) har
                     "deltre".deltre {
-                        prototypeSøknad.dato(20).utfylt()
+                        prototypeFakta.dato(20).utfylt()
                     },
                 "Grunnleggende med dokumentasjon".minstEnAv(
-                    (prototypeSøknad.boolsk(24) er true).sannsynliggjøresAv(prototypeSøknad.dokument(25))
-                        .godkjentAv(prototypeSøknad.boolsk(26)),
-                    prototypeSøknad.boolsk(24) er false
-                )
+                    (prototypeFakta.boolsk(24) er true).sannsynliggjøresAv(prototypeFakta.dokument(25))
+                        .godkjentAv(prototypeFakta.boolsk(26)),
+                    prototypeFakta.boolsk(24) er false,
+                ),
             )
         }
         return regeltre
     }
 
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Søknadprosess {
+    private val uuid = UUID.randomUUID()
+
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess {
         val seksjoner = listOf(
             Seksjon(
                 "seksjon1",
                 Rolle.søker,
-                prototypeSøknad.boolsk(1),
-                prototypeSøknad.boolsk(2),
-                prototypeSøknad.boolsk(3),
-                prototypeSøknad.boolsk(4),
-                prototypeSøknad.boolsk(5)
+                prototypeFakta.boolsk(1),
+                prototypeFakta.boolsk(2),
+                prototypeFakta.boolsk(3),
+                prototypeFakta.boolsk(4),
+                prototypeFakta.boolsk(5),
             ),
             Seksjon(
                 "seksjon2",
                 Rolle.søker,
-                prototypeSøknad.heltall(6),
-                prototypeSøknad.boolsk(7),
-                prototypeSøknad.heltall(67)
+                prototypeFakta.heltall(6),
+                prototypeFakta.boolsk(7),
+                prototypeFakta.heltall(67),
             ),
             Seksjon(
                 "navseksjon",
                 Rolle.nav,
-                prototypeSøknad.dato(8),
-                prototypeSøknad.dato(9)
+                prototypeFakta.dato(8),
+                prototypeFakta.dato(9),
             ),
             Seksjon(
                 "dokumentasjon",
                 Rolle.søker,
-                prototypeSøknad.dokument(15)
+                prototypeFakta.dokument(15),
             ),
             Seksjon(
                 "seksjon3",
                 Rolle.søker,
-                prototypeSøknad.generator(1718),
-                prototypeSøknad.envalg(17),
-                prototypeSøknad.flervalg(18)
+                prototypeFakta.generator(1718),
+                prototypeFakta.envalg(17),
+                prototypeFakta.flervalg(18),
             ),
             Seksjon(
                 "saksbehandler godkjenning",
                 Rolle.saksbehandler,
-                prototypeSøknad.boolsk(16)
+                prototypeFakta.boolsk(16),
             ),
             Seksjon(
                 "Gyldige land",
                 Rolle.søker,
-                prototypeSøknad.land(19)
+                prototypeFakta.land(19),
             ),
             Seksjon(
                 "nav generator fakta",
                 Rolle.nav,
-                prototypeSøknad.generator(21),
-                prototypeSøknad.dato(20)
+                prototypeFakta.generator(21),
+                prototypeFakta.dato(20),
             ),
             Seksjon(
                 "grunnleggende med dokumentasjon",
                 Rolle.søker,
-                prototypeSøknad.boolsk(24),
-                prototypeSøknad.dokument(25)
+                prototypeFakta.boolsk(24),
+                prototypeFakta.dokument(25),
             ),
             Seksjon(
                 "godkjenner seksjon",
                 Rolle.saksbehandler,
-                prototypeSøknad.boolsk(23),
-                prototypeSøknad.boolsk(26),
-                prototypeSøknad.dokument(22)
-            )
+                prototypeFakta.boolsk(23),
+                prototypeFakta.boolsk(26),
+                prototypeFakta.dokument(22),
+            ),
         )
-        val prototypeFaktagrupper = Søknadprosess(
-            prototypeSøknad,
+        val fakta = prototypeFakta.bygg(testPerson)
+        val rootSubsumsjon = prototypeSubsumsjon.bygg(fakta)
+        return Prosess(
+            TestProsesser.Test,
+            prototypeFakta,
             seksjoner = seksjoner.toTypedArray(),
-            rootSubsumsjon = prototypeSubsumsjon
-        )
-
-        return Versjon.Bygger(
-            prototypeSøknad,
-            prototypeSubsumsjon,
-            mapOf(Versjon.UserInterfaceType.Web to prototypeFaktagrupper)
-        ).søknadprosess(testPerson, Versjon.UserInterfaceType.Web)
+            rootSubsumsjon = prototypeSubsumsjon,
+        ).bygg(uuid, fakta, rootSubsumsjon)
     }
 
     private fun assertMetadata(søkerJson: ObjectNode) {
         assertEquals("søker_oppgave", søkerJson["@event_name"].asText())
-        Assertions.assertDoesNotThrow { søkerJson["@id"].asText().also { UUID.fromString(it) } }
-        Assertions.assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
-        Assertions.assertDoesNotThrow { søkerJson["søknad_uuid"].asText().also { UUID.fromString(it) } }
+        assertDoesNotThrow { søkerJson["@id"].asText().also { UUID.fromString(it) } }
+        assertDoesNotThrow { søkerJson["@opprettet"].asText().also { LocalDateTime.parse(it) } }
+        assertEquals(søkerJson["søknad_uuid"].asText().let { UUID.fromString(it) }, uuid)
         assertEquals("12020052345", søkerJson["fødselsnummer"].asText())
     }
 }

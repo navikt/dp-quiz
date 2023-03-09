@@ -1,22 +1,22 @@
 package no.nav.dagpenger.model.seksjon
 
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
 import no.nav.dagpenger.model.faktum.FaktumId
 import no.nav.dagpenger.model.faktum.GrunnleggendeFaktum
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.TemplateFaktum
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 
 class Seksjon private constructor(
     val navn: String,
     private val rolle: Rolle,
     private val seksjonFakta: MutableSet<Faktum<*>>,
     private val avhengerAvFakta: MutableSet<Faktum<*>>,
-    val indeks: Int = 0
+    val indeks: Int = 0,
 ) : MutableSet<Faktum<*>> by seksjonFakta {
-    private lateinit var _søknadprosess: Søknadprosess
+    private lateinit var _prosess: Prosess
     private val genererteSeksjoner = mutableListOf<Seksjon>()
 
     init {
@@ -36,14 +36,14 @@ class Seksjon private constructor(
         internal fun Collection<Seksjon>.brukerSeksjoner() =
             this.filter { it.rolle == Rolle.søker }
 
-        internal fun List<Seksjon>.medSøknadprosess() = filter { it::_søknadprosess.isInitialized }
+        internal fun List<Seksjon>.medSøknadprosess() = filter { it::_prosess.isInitialized }
     }
 
     constructor(navn: String, rolle: Rolle, vararg fakta: Faktum<*>) : this(
         navn,
         rolle,
         fakta.toMutableSet(),
-        mutableSetOf<Faktum<*>>()
+        mutableSetOf<Faktum<*>>(),
     )
 
     internal fun filtrertSeksjon(subsumsjon: Subsumsjon) = filtrertSeksjon(subsumsjon.relevanteFakta())
@@ -53,30 +53,33 @@ class Seksjon private constructor(
             navn,
             rolle,
             seksjonFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet(),
-            avhengerAvFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet()
-        ).also { it.søknadprosess(_søknadprosess) }
+            avhengerAvFakta.filter { faktum -> faktum.erBesvart() || faktum in relevanteFakta }.toMutableSet(),
+        ).also { it.søknadprosess(_prosess) }
 
     internal fun gjeldendeFakta(subsumsjon: Subsumsjon) = filtrertSeksjon(subsumsjon.nesteFakta())
 
     internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>) =
         nesteFakta.any { it in seksjonFakta }
 
-    internal fun søknadprosess(søknadprosess: Søknadprosess) {
-        this._søknadprosess = søknadprosess
+    internal fun søknadprosess(prosess: Prosess) {
+        this._prosess = prosess
     }
 
     internal fun bareTemplates() = seksjonFakta.all { it is TemplateFaktum }
 
     internal fun deepCopy(indeks: Int): Seksjon {
-        return if (indeks <= genererteSeksjoner.size) genererteSeksjoner[indeks - 1]
-        else Seksjon(navn, rolle, mutableSetOf(), avhengerAvFakta.toMutableSet(), indeks).also {
-            _søknadprosess.add(_søknadprosess.indexOf(this) + indeks, it)
-            genererteSeksjoner.add(it)
-            it.søknadprosess(_søknadprosess)
+        return if (indeks <= genererteSeksjoner.size) {
+            genererteSeksjoner[indeks - 1]
+        } else {
+            Seksjon(navn, rolle, mutableSetOf(), avhengerAvFakta.toMutableSet(), indeks).also {
+                _prosess.add(_prosess.indexOf(this) + indeks, it)
+                genererteSeksjoner.add(it)
+                it.søknadprosess(_prosess)
+            }
         }
     }
 
-    fun accept(visitor: SøknadprosessVisitor) {
+    fun accept(visitor: ProsessVisitor) {
         visitor.preVisit(this, rolle, seksjonFakta, indeks)
         seksjonFakta.sorted().forEach { it.accept(visitor) }
         visitor.preVisitAvhengerAv(this, avhengerAvFakta)
@@ -86,26 +89,26 @@ class Seksjon private constructor(
     }
 
     internal fun add(faktum: GrunnleggendeFaktum<*>): Boolean =
-        _søknadprosess.idOrNull(faktum.faktumId).let { eksisterendeFaktum ->
+        _prosess.idOrNull(faktum.faktumId).let { eksisterendeFaktum ->
             (eksisterendeFaktum == null).also {
                 if (it) { // Use existing Faktum
                     seksjonFakta.add(faktum)
-                    _søknadprosess.add(faktum)
+                    _prosess.add(faktum)
                 } else { // Use new Faktum
                     seksjonFakta.add(eksisterendeFaktum as GrunnleggendeFaktum<*>)
                 }
             }
         }
 
-    internal fun bygg(søknad: Søknad) = Seksjon(
+    internal fun bygg(fakta: Fakta) = Seksjon(
         navn,
         rolle,
         seksjonFakta
-            .map { søknad.id(it.faktumId) }
+            .map { fakta.id(it.faktumId) }
             .toMutableSet(),
         avhengerAvFakta
-            .map { søknad.id(it.faktumId) }
-            .toMutableSet()
+            .map { fakta.id(it.faktumId) }
+            .toMutableSet(),
     )
 
     internal fun tilbakestill(templateFaktumId: FaktumId) {
@@ -114,8 +117,8 @@ class Seksjon private constructor(
             it.tilbakestill(templateFaktumId)
             if (it.isEmpty()) genererteSeksjoner.remove(it)
         }
-        _søknadprosess.removeIf { it.isEmpty() }
+        _prosess.removeIf { it.isEmpty() }
     }
 
-    fun somSpørsmål() = rolle.spørsmål(_søknadprosess, navn)
+    fun somSpørsmål() = rolle.spørsmål(_prosess, navn)
 }

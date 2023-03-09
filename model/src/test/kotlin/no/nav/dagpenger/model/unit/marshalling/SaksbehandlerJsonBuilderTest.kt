@@ -1,24 +1,21 @@
 package no.nav.dagpenger.model.unit.marshalling
 
-import io.mockk.clearStaticMockk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.heltall
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.helpers.NyttEksempel
+import no.nav.dagpenger.model.helpers.faktaversjon
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.helpers.testPerson
-import no.nav.dagpenger.model.helpers.testversjon
+import no.nav.dagpenger.model.helpers.testProsesstype
 import no.nav.dagpenger.model.marshalling.SaksbehandlerJsonBuilder
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.etter
 import no.nav.dagpenger.model.regel.med
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.seksjon.Prosesstype
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
-import no.nav.dagpenger.model.seksjon.Versjon.UserInterfaceType.Web
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -28,23 +25,23 @@ import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.ikkeOppfyltGodkjentAv
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.oppfyltGodkjentAv
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import java.util.ResourceBundle
 import java.util.UUID
 
 internal class SaksbehandlerJsonBuilderTest {
-    private lateinit var prototypeSøknad: Søknad
+    private lateinit var prototypeFakta: Fakta
+    private lateinit var prosesstype: Prosesstype
 
     @BeforeEach
     fun setup() {
-        prototypeSøknad = Søknad(
-            testversjon,
+        prosesstype = testProsesstype()
+        prototypeFakta = Fakta(
+            prosesstype.faktaversjon,
             boolsk faktum "f1" id 1,
             boolsk faktum "f2" id 2 avhengerAv 1,
             boolsk faktum "f3" id 3,
@@ -67,7 +64,7 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `inkluderer genererte faktum som faktumet avhengerAv`() {
         val søknadsprosess = søknadprosess(
-            (prototypeSøknad.heltall(67) er 1).godkjentAv(prototypeSøknad.boolsk(12))
+            (prototypeFakta.heltall(67) er 1).godkjentAv(prototypeFakta.boolsk(12)),
         )
         søknadsprosess.heltall(67).besvar(1)
         søknadsprosess.boolsk("6.1").besvar(true)
@@ -91,8 +88,8 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `bygger oppgave event`() {
         val søknadprosess = søknadprosess(
-            (prototypeSøknad.boolsk(1) er true).oppfyltGodkjentAv(prototypeSøknad.boolsk(2)) hvisOppfylt
-                { (prototypeSøknad.boolsk(3) er true).ikkeOppfyltGodkjentAv(prototypeSøknad.boolsk(4)) }
+            (prototypeFakta.boolsk(1) er true).oppfyltGodkjentAv(prototypeFakta.boolsk(2)) hvisOppfylt
+                { (prototypeFakta.boolsk(3) er true).ikkeOppfyltGodkjentAv(prototypeFakta.boolsk(4)) },
         )
 
         søknadprosess.boolsk(1).besvar(true)
@@ -107,11 +104,11 @@ internal class SaksbehandlerJsonBuilderTest {
         assertEquals("boolean", json["fakta"][0]["type"].asText())
         assertEquals(
             setOf(Rolle.saksbehandler.typeNavn),
-            json["fakta"][0]["roller"].map { it.asText() }.toSet()
+            json["fakta"][0]["roller"].map { it.asText() }.toSet(),
         )
         assertEquals(
             setOf(Rolle.søker.typeNavn),
-            json["fakta"][1]["roller"].map { it.asText() }.toSet()
+            json["fakta"][1]["roller"].map { it.asText() }.toSet(),
         )
         assertEquals(listOf("1"), json["fakta"][0]["godkjenner"].map { it.asText() })
         assertTrue(json["fakta"][1]["godkjenner"].map { it.asText() }.isEmpty())
@@ -120,7 +117,7 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `inkluderer utledede faktum`() {
         val søknadprosess =
-            søknadprosess((prototypeSøknad.dato(10) etter prototypeSøknad.dato(8)).godkjentAv(prototypeSøknad.boolsk(11)))
+            søknadprosess((prototypeFakta.dato(10) etter prototypeFakta.dato(8)).godkjentAv(prototypeFakta.boolsk(11)))
         søknadprosess.dato(8).besvar(1.januar)
         søknadprosess.dato(9).besvar(10.januar)
 
@@ -132,7 +129,7 @@ internal class SaksbehandlerJsonBuilderTest {
 
     @Test
     fun `enkel subsumsjon`() {
-        val søknadprosess = søknadprosess(prototypeSøknad.boolsk(1) er true)
+        val søknadprosess = søknadprosess(prototypeFakta.boolsk(1) er true)
         søknadprosess.boolsk(1).besvar(true)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
             assertEquals(1, json["subsumsjoner"].size())
@@ -143,9 +140,9 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `subsumsjon med oppfylt sti`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true hvisOppfylt {
-                prototypeSøknad.boolsk(3) er true
-            }
+            prototypeFakta.boolsk(1) er true hvisOppfylt {
+                prototypeFakta.boolsk(3) er true
+            },
         )
         søknadprosess.boolsk(1).besvar(true)
         søknadprosess.boolsk(3).besvar(false)
@@ -165,9 +162,9 @@ internal class SaksbehandlerJsonBuilderTest {
     @Test
     fun `subsumsjon med ikke oppfylt sti`() {
         val søknadprosess = søknadprosess(
-            prototypeSøknad.boolsk(1) er true hvisIkkeOppfylt {
-                prototypeSøknad.boolsk(3) er true
-            }
+            prototypeFakta.boolsk(1) er true hvisIkkeOppfylt {
+                prototypeFakta.boolsk(3) er true
+            },
         )
         søknadprosess.boolsk(1).besvar(false)
         søknadprosess.boolsk(3).besvar(false)
@@ -188,9 +185,9 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `allesubsumsjon`() {
         val søknadprosess = søknadprosess(
             "alle".alle(
-                prototypeSøknad.boolsk(1) er true,
-                prototypeSøknad.boolsk(3) er true
-            )
+                prototypeFakta.boolsk(1) er true,
+                prototypeFakta.boolsk(3) er true,
+            ),
         )
         søknadprosess.boolsk(1).besvar(true)
         søknadprosess.boolsk(3).besvar(false)
@@ -207,9 +204,9 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `minstEnAv subsumsjon`() {
         val søknadprosess = søknadprosess(
             "minstEnAv".minstEnAv(
-                prototypeSøknad.boolsk(1) er true,
-                prototypeSøknad.boolsk(3) er true
-            )
+                prototypeFakta.boolsk(1) er true,
+                prototypeFakta.boolsk(3) er true,
+            ),
         )
         søknadprosess.boolsk(1).besvar(true)
         SaksbehandlerJsonBuilder(søknadprosess, "saksbehandler2").resultat().also { json ->
@@ -234,10 +231,10 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `deltre subsumsjon`() {
         val søknadprosess = søknadprosess(
             "deltre" deltre {
-                prototypeSøknad.boolsk(1) er true hvisIkkeOppfylt {
-                    prototypeSøknad.boolsk(3) er true
+                prototypeFakta.boolsk(1) er true hvisIkkeOppfylt {
+                    prototypeFakta.boolsk(3) er true
                 }
-            }
+            },
         )
 
         søknadprosess.boolsk(1).besvar(false)
@@ -263,12 +260,12 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `kombinasjoner av samensatte subsumsjoner`() {
         val søknadprosess = søknadprosess(
             "alle".alle(
-                "deltre nivå 2" deltre { prototypeSøknad.boolsk(1) er true },
+                "deltre nivå 2" deltre { prototypeFakta.boolsk(1) er true },
                 "alle nivå 2".alle(
-                    prototypeSøknad.boolsk(3) er true,
-                    prototypeSøknad.boolsk(5) er true
-                )
-            )
+                    prototypeFakta.boolsk(3) er true,
+                    prototypeFakta.boolsk(5) er true,
+                ),
+            ),
         )
 
         søknadprosess.boolsk(1).besvar(false)
@@ -300,8 +297,8 @@ internal class SaksbehandlerJsonBuilderTest {
     fun `godkjenningsubsumsjoner`() {
         val søknadprosess = søknadprosess(
             (
-                prototypeSøknad.boolsk(1) er true
-                ).oppfyltGodkjentAv(prototypeSøknad.boolsk(2))
+                prototypeFakta.boolsk(1) er true
+                ).oppfyltGodkjentAv(prototypeFakta.boolsk(2)),
         )
 
         søknadprosess.boolsk(1).besvar(true)
@@ -328,12 +325,12 @@ internal class SaksbehandlerJsonBuilderTest {
     fun ` template subsumsjoner`() {
         val template = "template" deltre {
             "alle".alle(
-                prototypeSøknad.boolsk(6) er true,
-                prototypeSøknad.boolsk(7) er true
+                prototypeFakta.boolsk(6) er true,
+                prototypeFakta.boolsk(7) er true,
             )
         }
         val søknadprosess = søknadprosess(
-            prototypeSøknad.generator(67) med template
+            prototypeFakta.generator(67) med template,
         )
         søknadprosess.generator(67).besvar(3)
         søknadprosess.boolsk("6.1").besvar(true)
@@ -353,75 +350,44 @@ internal class SaksbehandlerJsonBuilderTest {
             assertEquals(3, json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"].size())
             assertEquals(
                 "Deltre subsumsjon",
-                json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["type"].asText()
+                json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["type"].asText(),
             )
             assertEquals(1, json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"].size())
             assertEquals(
                 "Alle subsumsjon",
-                json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"][0]["type"].asText()
+                json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"][0]["type"].asText(),
             )
             assertEquals(
                 2,
-                json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"][0]["subsumsjoner"].size()
+                json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"][0]["subsumsjoner"].size(),
             )
             assertTrue(json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][0]["subsumsjoner"][0]["subsumsjoner"][0]["lokalt_resultat"].asBoolean())
             assertFalse(json["subsumsjoner"][0]["subsumsjoner"][1]["subsumsjoner"][2]["subsumsjoner"][0]["subsumsjoner"][1]["lokalt_resultat"].asBoolean())
         }
     }
 
-    @Test
-    fun `Komplekse seksjoner`() {
-        assertFaktaStørrelseISeksjon(5, "seksjon8")
-        assertFaktaStørrelseISeksjon(4, "seksjon9")
-    }
-
-    @Test
-    fun `Genererte seksjoner kan bli sendt`() {
-        val fakta = NyttEksempel().søknadprosess
-        fakta.heltall(15).besvar(3)
-        var json = SaksbehandlerJsonBuilder(fakta, "seksjon8").resultat()
-        assertEquals(8, json["fakta"].size())
-    }
-
-    @AfterEach
-    fun clean() {
-        clearStaticMockk(ResourceBundle::class)
-    }
-
-    private fun assertFaktaStørrelseISeksjon(expected: Int, seksjonNavn: String) {
-        val json = SaksbehandlerJsonBuilder(NyttEksempel().søknadprosess, seksjonNavn).resultat()
-        assertEquals(expected, json["fakta"].size())
-    }
-
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Søknadprosess {
-        val prototypeFaktagrupper = Søknadprosess(
-            prototypeSøknad,
-            Seksjon(
-                "søker",
-                Rolle.søker,
-                prototypeSøknad.boolsk(1),
-                prototypeSøknad.boolsk(3),
-                prototypeSøknad.boolsk(5),
-                prototypeSøknad.boolsk(6),
-                prototypeSøknad.boolsk(7)
-            ),
-            Seksjon(
-                "Genereres",
-                Rolle.søker,
-                prototypeSøknad.boolsk(13),
-                prototypeSøknad.boolsk(14)
-            ),
-            Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeSøknad.boolsk(2)),
-            Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeSøknad.boolsk(4)),
-            Seksjon("saksbehandler5", Rolle.saksbehandler, prototypeSøknad.boolsk(11)),
-            Seksjon("saksbehandler67", Rolle.saksbehandler, prototypeSøknad.boolsk(12)),
-            rootSubsumsjon = prototypeSubsumsjon
-        )
-
-        return Versjon.Bygger(
-            prototypeSøknad,
-            prototypeSubsumsjon,
-            mapOf(Web to prototypeFaktagrupper)
-        ).søknadprosess(testPerson, Web)
-    }
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess = Prosess(
+        prosesstype,
+        prototypeFakta,
+        Seksjon(
+            "søker",
+            Rolle.søker,
+            prototypeFakta.boolsk(1),
+            prototypeFakta.boolsk(3),
+            prototypeFakta.boolsk(5),
+            prototypeFakta.boolsk(6),
+            prototypeFakta.boolsk(7),
+        ),
+        Seksjon(
+            "Genereres",
+            Rolle.søker,
+            prototypeFakta.boolsk(13),
+            prototypeFakta.boolsk(14),
+        ),
+        Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
+        Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeFakta.boolsk(4)),
+        Seksjon("saksbehandler5", Rolle.saksbehandler, prototypeFakta.boolsk(11)),
+        Seksjon("saksbehandler67", Rolle.saksbehandler, prototypeFakta.boolsk(12)),
+        rootSubsumsjon = prototypeSubsumsjon,
+    )
 }

@@ -3,7 +3,8 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -11,11 +12,12 @@ import no.nav.helse.rapids_rivers.River
 
 class MigrerProsessService(
     rapidsConnection: RapidsConnection,
-    private val søknadPersistence: SøknadPersistence
+    private val faktaRepository: FaktaRepository,
+    private val prosessRepository: ProsessRepository,
 ) : River.PacketListener {
     private companion object {
         val logger = KotlinLogging.logger { }
-        val behov = "MigrerProsess"
+        const val behov = "MigrerProsess"
     }
 
     init {
@@ -33,20 +35,20 @@ class MigrerProsessService(
         withLoggingContext("søknadId" to søknadId.toString()) {
             logger.info { "Løser $behov" }
 
-            if (!søknadPersistence.eksisterer(søknadId)) {
+            if (!faktaRepository.eksisterer(søknadId)) {
                 logger.warn { "Migrering av søknadId=$søknadId kunne ikke migreres siden den ikke eksisterer" }
                 return
             }
-            val prosessversjon = søknadPersistence.migrer(søknadId)
-            val søknad = søknadPersistence.hent(søknadId)
+            val prosessversjon = faktaRepository.migrer(søknadId)
+            val søknad = prosessRepository.hent(søknadId)
             val søknadData = SøkerJsonBuilder(søknad).resultat().toString()
 
             packet["@løsning"] = mapOf(
                 behov to mapOf(
-                    "prosessnavn" to prosessversjon.prosessnavn,
+                    "prosessnavn" to prosessversjon.faktatype,
                     "versjon" to prosessversjon.versjon,
-                    "data" to søknadData
-                )
+                    "data" to søknadData,
+                ),
             )
 
             context.publish(packet.toJson()).also {

@@ -1,9 +1,10 @@
 package no.nav.dagpenger.quiz.mediator.soknad
 
-import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.visitor.SøknadprosessVisitor
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Faktaversjon
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.model.visitor.ProsessVisitor
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DagpengerMetadataStrategi
@@ -11,22 +12,22 @@ import no.nav.dagpenger.quiz.mediator.soknad.innsending.InnsendingMetadataStrate
 import java.util.UUID
 
 internal class ProsessMetadataStrategi : MetadataStrategi {
-    override fun metadata(søknadprosess: Søknadprosess): Metadata {
-        return SkjemastrategiVelger(søknadprosess).skjemakodeStrategi()
+    override fun metadata(prosess: Prosess): Metadata {
+        return SkjemastrategiVelger(prosess).skjemakodeStrategi()
     }
 
-    private class SkjemastrategiVelger(private val søknadprosess: Søknadprosess) : SøknadprosessVisitor {
+    private class SkjemastrategiVelger(private val prosess: Prosess) : ProsessVisitor {
         private lateinit var metadata: Metadata
 
         init {
-            søknadprosess.accept(this)
+            prosess.accept(this)
         }
 
-        override fun preVisit(søknad: Søknad, prosessVersjon: Prosessversjon, uuid: UUID) {
-            metadata = when (prosessVersjon.prosessnavn) {
-                Prosess.Dagpenger -> DagpengerMetadataStrategi().metadata(søknadprosess)
-                Prosess.Innsending -> InnsendingMetadataStrategi().metadata(søknadprosess)
-                else -> throw IllegalArgumentException("Har ikke laget skjemakodestrategi for ${prosessVersjon.prosessnavn}")
+        override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+            metadata = when (faktaversjon.faktatype) {
+                Prosessfakta.Dagpenger -> DagpengerMetadataStrategi().metadata(prosess)
+                Prosessfakta.Innsending -> InnsendingMetadataStrategi().metadata(prosess)
+                else -> throw IllegalArgumentException("Har ikke laget skjemakodestrategi for ${faktaversjon.faktatype}")
             }
         }
 

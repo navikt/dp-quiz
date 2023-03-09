@@ -2,17 +2,17 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class DokumentkravSvarServiceTest {
-    val søknadPersistence = mockk<SøknadPersistence>(relaxed = true)
+    private val prosessRepository = mockk<ProsessRepository>(relaxed = true)
 
     private val rapid = TestRapid().apply {
-        DokumentkravSvarService(this, søknadPersistence)
+        DokumentkravSvarService(this, prosessRepository)
     }
 
     @Test
@@ -38,7 +38,7 @@ internal class DokumentkravSvarServiceTest {
           "@id": "12345",
           "@opprettet": "2022-09-26T09:47:15.296036"
         }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         with(rapid.inspektør) {
@@ -47,8 +47,8 @@ internal class DokumentkravSvarServiceTest {
         }
 
         verify(exactly = 1) {
-            søknadPersistence.hent(søknadUUID, any())
-            søknadPersistence.lagre(any())
+            prosessRepository.hent(søknadUUID)
+            prosessRepository.lagre(any())
         }
     }
 }

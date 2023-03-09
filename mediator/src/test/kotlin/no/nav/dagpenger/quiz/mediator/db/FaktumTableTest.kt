@@ -20,7 +20,7 @@ internal class FaktumTableTest {
     @Test
     fun `Bygg faktum tabell`() {
         Postgres.withMigratedDb {
-            FaktumTable(SøknadEksempel1.prototypeFakta1)
+            FaktumTable(SøknadEksempel1.prototypeFakta)
             assertRecordCount(expectedFaktumRecordCount, "faktum")
             assertRecordCount(6, "utledet_faktum")
             assertRecordCount(3, "template_faktum")
@@ -28,7 +28,7 @@ internal class FaktumTableTest {
             assertRecordCount(2, "faktum_gyldige_valg")
             assertGyldigeValg(Envalg("f20.envalg1", "f20.envalg2"), 20)
             assertGyldigeValg(Flervalg("f21.flervalg1", "f21.flervalg2", "f21.flervalg3"), 21)
-            FaktumTable(SøknadEksempel1.prototypeFakta1)
+            FaktumTable(SøknadEksempel1.prototypeFakta)
             assertRecordCount(expectedFaktumRecordCount, "faktum")
         }
     }
@@ -38,14 +38,14 @@ internal class FaktumTableTest {
             session.run(
                 queryOf( //language=PostgreSQL
                     "SELECT verdier FROM faktum_gyldige_valg LEFT JOIN faktum ON faktum.id = faktum_gyldige_valg.faktum_id WHERE faktum.root_id = ?",
-                    faktumRootId
-                ).map { it.array<String>(1) }.asSingle
+                    faktumRootId,
+                ).map { it.array<String>(1) }.asSingle,
             )
         }
         assertEquals(
             valg.joinToString { it },
             verdier?.joinToString { it },
-            "forventet $valg men var $verdier "
+            "forventet $valg men var $verdier ",
         )
     }
 
@@ -55,11 +55,11 @@ internal class FaktumTableTest {
             using(sessionOf(dataSource)) { session ->
                 session.run(
                     queryOf(
-                        "SELECT COUNT (*) FROM $table"
-                    ).map { it.int(1) }.asSingle
+                        "SELECT COUNT (*) FROM $table",
+                    ).map { it.int(1) }.asSingle,
                 )
             },
-            "forventet $recordCount poster i $table"
+            "forventet $recordCount poster i $table",
         )
     }
 }

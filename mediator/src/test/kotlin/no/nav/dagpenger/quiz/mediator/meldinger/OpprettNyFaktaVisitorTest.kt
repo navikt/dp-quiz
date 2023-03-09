@@ -8,20 +8,20 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class NySøknadTest {
+internal class OpprettNyFaktaVisitorTest {
 
     @BeforeEach
     internal fun reset() {
         testRapid.reset()
-        søknadPersistance.reset()
+        repository.reset()
     }
 
     private companion object {
         private val testRapid = TestRapid()
-        private val søknadPersistance = SøknadPersistenceFake()
+        private val repository = ProsessRepositoryFake(SøknadEksempel.prosesstype, SøknadEksempel.faktaversjon)
 
         init {
-            AvslagPåMinsteinntektService(søknadPersistance, testRapid, SøknadEksempel.prosessVersjon)
+            AvslagPåMinsteinntektService(repository, testRapid)
         }
     }
 
@@ -29,7 +29,7 @@ internal class NySøknadTest {
     fun `Start ny søknadprosess, trigget av innsending_ferdigstilt fra dp-mottak`() {
         testRapid.sendTestMessage(innsendingFerdigstiltJson)
         assertEquals(1, testRapid.inspektør.size)
-        assertNotNull(søknadPersistance.søknadprosess)
+        assertNotNull(repository.prosess)
     }
 
     @Language("JSON")

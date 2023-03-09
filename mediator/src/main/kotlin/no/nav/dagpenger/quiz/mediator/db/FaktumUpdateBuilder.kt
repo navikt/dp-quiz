@@ -5,27 +5,27 @@ import kotliquery.action.UpdateQueryAction
 import kotliquery.queryOf
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
-import no.nav.dagpenger.model.faktum.Søknad
 import no.nav.dagpenger.model.faktum.Tekst
 import org.intellij.lang.annotations.Language
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
+internal class FaktumUpdateBuilder(fakta: Fakta, indeks: Int, rootId: Int) {
     //language=PostgreSQL
     private val whereClause = """
-               WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, soknad, faktum
-                WHERE soknad.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id AND soknad.versjon_id = faktum.versjon_id
-                AND soknad.uuid = :uuid AND faktum_verdi.indeks = :indeks AND faktum.root_id = :rootId)
+                WHERE id = (SELECT faktum_verdi.id FROM faktum_verdi, fakta, faktum
+                WHERE fakta.id = faktum_verdi.soknad_id AND faktum.id = faktum_verdi.faktum_id AND fakta.versjon_id = faktum.versjon_id
+                AND fakta.uuid = :uuid AND faktum_verdi.indeks = :indeks AND faktum.root_id = :rootId)
             """
     private val whereClauseParameters = mapOf(
-        "uuid" to søknad.uuid,
+        "uuid" to fakta.uuid,
         "indeks" to indeks,
-        "rootId" to rootId
+        "rootId" to rootId,
     )
 
     fun build(svar: Any?, besvartAv: Int?): UpdateQueryAction {
@@ -49,7 +49,7 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
     private fun build(updateClauseBuilder: UpdateClauseBuilder): UpdateQueryAction {
         return queryOf(
             statement = updateClauseBuilder.updateClause() + " " + whereClause,
-            paramMap = whereClauseParameters + updateClauseBuilder.paramMap()
+            paramMap = whereClauseParameters + updateClauseBuilder.paramMap(),
         ).asUpdate
     }
 
@@ -95,7 +95,7 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
     private class EnvalgBuilder(svar: Envalg, private val besvartAv: Int?) : UpdateClauseBuilder {
         private val arrayString = svar.joinToString { """"$it"""" }
         override fun updateClause(): String {
-            return """WITH valg_inserted_id AS (INSERT INTO valgte_verdier (soknad_id, verdier) VALUES ((SELECT id FROM soknad WHERE uuid = :uuid), '{$arrayString}') returning id) 
+            return """WITH valg_inserted_id AS (INSERT INTO valgte_verdier (soknad_id, verdier) VALUES ((SELECT id FROM fakta WHERE uuid = :uuid), '{$arrayString}') returning id) 
                                            UPDATE faktum_verdi SET envalg_id = (SELECT id FROM valg_inserted_id) , besvart_av = $besvartAv,
               opprettet=NOW() AT TIME ZONE 'utc' """
         }
@@ -106,7 +106,7 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
 
         @Language("PostgreSQL")
         override fun updateClause(): String {
-            return """WITH valg_inserted_id AS (INSERT INTO valgte_verdier (soknad_id, verdier) VALUES ((SELECT id FROM soknad WHERE uuid = :uuid), '{$arrayString}') returning id)
+            return """WITH valg_inserted_id AS (INSERT INTO valgte_verdier (soknad_id, verdier) VALUES ((SELECT id FROM fakta WHERE uuid = :uuid), '{$arrayString}') returning id)
                                            UPDATE faktum_verdi SET flervalg_id = (SELECT id FROM valg_inserted_id) , besvart_av = $besvartAv,
               opprettet=NOW() AT TIME ZONE 'utc' """
         }
@@ -126,7 +126,7 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
         @Language("PostgreSQL")
         override fun updateClause() =
             """
-        WITH inserted_id AS (INSERT INTO periode (soknad_id, fom, tom) VALUES ((SELECT id FROM soknad WHERE uuid = :uuid), :fom, :tom) returning id)
+        WITH inserted_id AS (INSERT INTO periode (soknad_id, fom, tom) VALUES ((SELECT id FROM fakta WHERE uuid = :uuid), :fom, :tom) returning id)
         UPDATE faktum_verdi SET periode_id = (SELECT id FROM inserted_id) , besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc' 
            """
 
@@ -176,7 +176,7 @@ internal class FaktumUpdateBuilder(søknad: Søknad, indeks: Int, rootId: Int) {
         @Language("PostgreSQL")
         override fun updateClause() =
             """
-        WITH inserted_id AS (INSERT INTO dokument (soknad_id,opplastet, urn) VALUES ((SELECT id FROM soknad WHERE uuid = :uuid), :opplastet, :urn) returning id)
+        WITH inserted_id AS (INSERT INTO dokument (soknad_id,opplastet, urn) VALUES ((SELECT id FROM fakta WHERE uuid = :uuid), :opplastet, :urn) returning id)
         UPDATE faktum_verdi SET dokument_id = (SELECT id FROM inserted_id) , besvart_av = $besvartAv , opprettet=NOW() AT TIME ZONE 'utc' 
            """
 

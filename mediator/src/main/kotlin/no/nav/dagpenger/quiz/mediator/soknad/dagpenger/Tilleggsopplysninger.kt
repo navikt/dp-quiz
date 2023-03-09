@@ -2,9 +2,9 @@ package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
+import no.nav.dagpenger.model.faktum.Fakta
+import no.nav.dagpenger.model.faktum.Fakta.Companion.seksjon
 import no.nav.dagpenger.model.faktum.Rolle
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.faktum.Søknad.Companion.seksjon
 import no.nav.dagpenger.model.regel.er
 import no.nav.dagpenger.model.regel.utfylt
 import no.nav.dagpenger.model.subsumsjon.deltre
@@ -22,10 +22,10 @@ object Tilleggsopplysninger : DslFaktaseksjon {
         boolsk faktum "faktum.tilleggsopplysninger.har-tilleggsopplysninger" id `har tilleggsopplysninger`
     )
 
-    override fun seksjon(søknad: Søknad) =
-        listOf(søknad.seksjon("tilleggsopplysninger", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
+    override fun seksjon(fakta: Fakta) =
+        listOf(fakta.seksjon("tilleggsopplysninger", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
-    override fun regeltre(søknad: Søknad) = with(søknad) {
+    override fun regeltre(fakta: Fakta) = with(fakta) {
         "tilleggsopplysninger".deltre {
             "har tilleggsopplysninger eller ikke".minstEnAv(
                 boolsk(`har tilleggsopplysninger`) er false,

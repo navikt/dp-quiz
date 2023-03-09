@@ -1,11 +1,10 @@
 package no.nav.dagpenger.quiz.mediator.soknad.dagpenger
 
+import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktum
-import no.nav.dagpenger.model.faktum.Prosessversjon
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.seksjon.Søknadprosess
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.quiz.mediator.helpers.testFaktaversjon
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
-import no.nav.dagpenger.quiz.mediator.soknad.Prosess
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -15,8 +14,8 @@ import kotlin.test.assertTrue
 
 internal class UtdanningTest {
 
-    private val søknad = Søknad(Prosessversjon(Prosess.Dagpenger, -1), *Utdanning.fakta())
-    private lateinit var søknadprosess: Søknadprosess
+    private val fakta = Fakta(testFaktaversjon(), *Utdanning.fakta())
+    private lateinit var prosess: Prosess
     private lateinit var tarUtdanning: Faktum<Boolean>
     private lateinit var nyligAvsluttetUtdanning: Faktum<Boolean>
     private lateinit var planleggerUtdanning: Faktum<Boolean>
@@ -28,29 +27,29 @@ internal class UtdanningTest {
 
     @BeforeEach
     fun setup() {
-        søknadprosess = søknad.testSøknadprosess(Utdanning.regeltre(søknad)) {
+        prosess = fakta.testSøknadprosess(subsumsjon = Utdanning.regeltre(fakta)) {
             Utdanning.seksjon(this)
         }
 
-        tarUtdanning = søknadprosess.boolsk(Utdanning.`tar du utdanning`)
-        nyligAvsluttetUtdanning = søknadprosess.boolsk(Utdanning.`avsluttet utdanning siste 6 mnd`)
-        planleggerUtdanning = søknadprosess.boolsk(Utdanning.`planlegger utdanning med dagpenger`)
+        tarUtdanning = prosess.boolsk(Utdanning.`tar du utdanning`)
+        nyligAvsluttetUtdanning = prosess.boolsk(Utdanning.`avsluttet utdanning siste 6 mnd`)
+        planleggerUtdanning = prosess.boolsk(Utdanning.`planlegger utdanning med dagpenger`)
     }
 
     @Test
     fun `Tar utdanning`() {
         tarUtdanning.besvar(true)
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, prosess.resultat())
     }
 
     @Test
     fun `Ingen utdanning`() {
         tarUtdanning.besvar(false)
-        assertEquals(null, søknadprosess.resultat())
+        assertEquals(null, prosess.resultat())
 
         nyligAvsluttetUtdanning.besvar(true)
         planleggerUtdanning.besvar(true)
-        assertEquals(true, søknadprosess.resultat())
+        assertEquals(true, prosess.resultat())
     }
 
     @Test
@@ -66,7 +65,7 @@ internal class UtdanningTest {
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val faktaFraUtdanning = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
+        val faktaFraUtdanning = prosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("2001,2002,2003,2004,2005", faktaFraUtdanning)
     }
 

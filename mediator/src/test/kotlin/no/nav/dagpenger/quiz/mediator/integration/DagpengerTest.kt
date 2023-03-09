@@ -4,13 +4,14 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Land
-import no.nav.dagpenger.model.faktum.Søknad
-import no.nav.dagpenger.model.seksjon.Søknadprosess
-import no.nav.dagpenger.model.seksjon.Versjon
+import no.nav.dagpenger.model.seksjon.Henvendelser
+import no.nav.dagpenger.model.seksjon.Prosess
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
-import no.nav.dagpenger.quiz.mediator.db.SøknadPersistence
+import no.nav.dagpenger.quiz.mediator.helpers.testPerson
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
+import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Bosted
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DinSituasjon
@@ -22,24 +23,27 @@ import kotlin.test.assertEquals
 
 internal class DagpengerTest : SøknadBesvarer() {
     private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
-    private lateinit var søknadsprosess: Søknadprosess
+    private lateinit var søknadsprosess: Prosess
 
     @BeforeEach
     fun setup() {
-        Dagpenger.registrer { prototypeSøknad ->
-            søknadsprosess = Versjon.id(Dagpenger.VERSJON_ID)
-                .søknadprosess(prototypeSøknad, Versjon.UserInterfaceType.Web)
-        }
-        val søknadPersistence = mockk<SøknadPersistence>().also {
-            every { it.hent(any(), any()) } returns søknadsprosess
-            every { it.lagre(any() as Søknad) } returns true
+        Dagpenger.registrer()
+
+        søknadsprosess = Henvendelser.prosess(
+            testPerson,
+            Prosesser.Søknad,
+        )
+
+        val faktaRepository = mockk<ProsessRepository>().also {
+            every { it.hent(any()) } returns søknadsprosess
+            every { it.lagre(any()) } returns true
         }
 
         testRapid = TestRapid().also {
             FaktumSvarService(
-                søknadPersistence = søknadPersistence,
+                prosessRepository = faktaRepository,
                 resultatPersistence = resultatPersistence,
-                rapidsConnection = it
+                rapidsConnection = it,
             )
         }
     }
@@ -58,8 +62,8 @@ internal class DagpengerTest : SøknadBesvarer() {
         }
     }
 
-    private fun Søknadprosess.verifiserAtNesteSeksjonEr(faktaseksjon: DslFaktaseksjon) {
+    private fun Prosess.verifiserAtNesteSeksjonEr(faktaseksjon: DslFaktaseksjon) {
         assertNotEquals(nesteSeksjoner().size, 0, "Har ikke neste seksjon")
-        assertEquals(faktaseksjon.seksjon(søknad)[0].navn, nesteSeksjoner()[0].navn)
+        assertEquals(faktaseksjon.seksjon(fakta)[0].navn, nesteSeksjoner()[0].navn)
     }
 }

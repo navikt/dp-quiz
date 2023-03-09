@@ -1,45 +1,47 @@
 package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.factory.FaktumFactory
+import no.nav.dagpenger.model.marshalling.FaktumNavBehov
 import no.nav.dagpenger.model.seksjon.Seksjon
-import no.nav.dagpenger.model.visitor.SøknadVisitor
+import no.nav.dagpenger.model.visitor.FaktaVisitor
 import java.time.LocalDate
 import java.util.UUID
 
 @Suppress("UNCHECKED_CAST")
-class Søknad private constructor(
+class Fakta private constructor(
     private val person: Person,
-    internal val prosessVersjon: Prosessversjon,
+    internal val faktaversjon: Faktaversjon,
     val uuid: UUID,
-    private val faktaMap: MutableMap<FaktumId, Faktum<*>>
+    private val faktaMap: MutableMap<FaktumId, Faktum<*>>,
 ) : TypedFaktum, Iterable<Faktum<*>> {
-
     internal val size get() = faktaMap.size
+    private var navBehov = FaktumNavBehov(emptyMap())
 
-    constructor(prosessVersjon: Prosessversjon, vararg factories: FaktumFactory<*>) : this(
+    constructor(faktaversjon: Faktaversjon, vararg factories: FaktumFactory<*>) : this(
         Person.prototype,
-        prosessVersjon,
+        faktaversjon,
         UUID.randomUUID(),
-        factories.toList()
+        factories.toList(),
     )
 
-    constructor(person: Person, prosessVersjon: Prosessversjon, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
+    constructor(person: Person, faktaversjon: Faktaversjon, uuid: UUID, factories: List<FaktumFactory<*>>) : this(
         person,
-        prosessVersjon,
+        faktaversjon,
         uuid,
-        factories.toFaktaMap()
+        factories.toFaktaMap(),
     )
 
     init {
-        this.forEach { if (it is GeneratorFaktum) it.søknad = this }
+        this.forEach { if (it is GeneratorFaktum) it.fakta = this }
     }
 
     companion object {
-        fun Søknad.seksjon(navn: String, rolle: Rolle, vararg spørsmålsrekkefølge: Int) = Seksjon(
+        fun Fakta.seksjon(navn: String, rolle: Rolle, vararg spørsmålsrekkefølge: Int) = Seksjon(
             navn,
             rolle,
-            *(spørsmålsrekkefølge.map { id -> this.id(id) }.toTypedArray())
+            *(spørsmålsrekkefølge.map { id -> this.id(id) }.toTypedArray()),
         )
+
         private fun List<FaktumFactory<*>>.toFaktaMap() =
             tilFakta()
                 .sjekkIder()
@@ -138,10 +140,10 @@ class Søknad private constructor(
     override fun periode(id: String): Faktum<Periode> = periode(FaktumId(id))
     private infix fun periode(faktumId: FaktumId) = id(faktumId) as Faktum<Periode>
 
-    fun bygg(person: Person, prosessVersjon: Prosessversjon, uuid: UUID = UUID.randomUUID()): Søknad {
+    fun bygg(person: Person, uuid: UUID = UUID.randomUUID()): Fakta {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktaMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
-        return Søknad(person, prosessVersjon, uuid, mapOfFakta)
+        return Fakta(person, faktaversjon, uuid, mapOfFakta).also { it.faktumNavBehov(navBehov) }
     }
 
     override fun iterator(): MutableIterator<Faktum<*>> {
@@ -170,10 +172,14 @@ class Søknad private constructor(
         }
     }
 
-    fun accept(visitor: SøknadVisitor) {
+    fun accept(visitor: FaktaVisitor) {
         person.accept(visitor)
-        visitor.preVisit(this, prosessVersjon, uuid)
+        visitor.preVisit(this, faktaversjon, uuid, navBehov)
         this.forEach { it.accept(visitor) }
-        visitor.postVisit(this, prosessVersjon, uuid)
+        visitor.postVisit(this, uuid)
+    }
+
+    fun faktumNavBehov(faktumNavBehov: FaktumNavBehov) {
+        navBehov = faktumNavBehov
     }
 }
