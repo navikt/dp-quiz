@@ -25,7 +25,7 @@ internal object Dagpenger {
     val VERSJON_ID = Faktaversjon(Prosessfakta.Dagpenger, 249)
 
     fun registrer(registrer: (prototypeProsess: Prosess) -> Unit = {}) {
-        registrer(prosess)
+        registrer(prosess.bygg(prototypeFakta, regeltre))
     }
 
     private val faktaseksjoner = listOf(

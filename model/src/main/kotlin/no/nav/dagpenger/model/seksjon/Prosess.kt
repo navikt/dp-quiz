@@ -92,6 +92,10 @@ class Prosess private constructor(
     internal fun bygg(prosessUUID: UUID, fakta: Fakta, subsumsjon: Subsumsjon) =
         Prosess(prosessUUID, type, fakta, subsumsjon, seksjoner.map { it.bygg(fakta) }.toMutableList())
 
+    // Brukes for å bygge en prosess uten person, for publisering av maler
+    fun bygg(fakta: Fakta, subsumsjon: Subsumsjon) =
+        Prosess(UUID.randomUUID(), type, fakta, subsumsjon, seksjoner.map { it.bygg(fakta) }.toMutableList())
+
     internal fun nesteFakta() = rootSubsumsjon.nesteFakta()
 
     fun resultat() = rootSubsumsjon.resultat()

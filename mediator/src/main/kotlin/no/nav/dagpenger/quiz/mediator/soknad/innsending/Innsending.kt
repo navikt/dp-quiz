@@ -16,7 +16,7 @@ internal object Innsending {
     val VERSJON_ID = Faktaversjon(Prosessfakta.Innsending, 6)
 
     fun registrer(registrer: (prototypeProsess: Prosess) -> Unit = {}) {
-        registrer(søknadsprosess)
+        registrer(søknadsprosess.bygg(prototypeFakta, regeltre))
     }
 
     private val faktaseksjoner = listOf(
