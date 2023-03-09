@@ -1,7 +1,7 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
 import mu.KotlinLogging
-import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -11,11 +11,12 @@ import java.util.UUID
 
 internal class SøknadSlettetService(
     rapidsConnection: RapidsConnection,
-    private val faktaRepository: FaktaRepository,
+    private val prosessRepository: ProsessRepository,
 ) : River.PacketListener {
 
     companion object {
         private val logger = KotlinLogging.logger {}
+        private val sikkerlogg = KotlinLogging.logger("tjenestekall")
     }
 
     init {
@@ -30,9 +31,9 @@ internal class SøknadSlettetService(
         withMDC("søknad_uuid" to uuid.toString()) {
             try {
                 logger.info { "Forsøker å slette søknad: $uuid" }
-                faktaRepository.slett(uuid)
+                prosessRepository.slett(uuid)
             } catch (e: Exception) {
-                logger.error { "Sletting av søknad med uuid: $uuid feilet" }
+                sikkerlogg.error(e) { "Sletting av søknad med uuid: $uuid feilet" }
             }
         }
     }

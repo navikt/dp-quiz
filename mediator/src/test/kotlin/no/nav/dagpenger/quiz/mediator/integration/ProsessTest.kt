@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.regel.inneholder
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.deltre
+import no.nav.dagpenger.quiz.mediator.db.FaktaRecord
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepositoryPostgres
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
@@ -24,10 +25,13 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
-internal class ProsessTest() {
+internal class ProsessTest {
     private lateinit var søknadsprosess: Prosess
     private val søknadUUID = UUID.randomUUID()
+    private val faktaUUID = UUID.randomUUID()
     private val repository = ProsessRepositoryPostgres()
 
     @Test
@@ -77,6 +81,20 @@ internal class ProsessTest() {
         assertEquals(false, søknadsprosess.erFerdig())
     }
 
+    @Test
+    fun `Skal kunne slette en prosess og tilhørende fakta`() = medProsess {
+        medSeksjon(Bosted) {
+            it.tekst(`reist tilbake årsak`).besvar(Tekst("Dummy årsak"))
+        }
+
+        val faktaRepository = FaktaRecord()
+        assertTrue(faktaRepository.eksisterer(faktaUUID))
+
+        repository.slett(søknadUUID)
+
+        assertFalse(faktaRepository.eksisterer(faktaUUID))
+    }
+
     private fun medProsess(block: () -> Unit) = Postgres.withMigratedDb {
         Dagpenger.registrer { prosess ->
             FaktumTable(prosess.fakta)
@@ -91,6 +109,7 @@ internal class ProsessTest() {
             Identer(identer = setOf(Identer.Ident(Identer.Ident.Type.FOLKEREGISTERIDENT, "12312312311", false))),
             Prosesser.Søknad,
             søknadUUID,
+            faktaUUID,
         )
     }
 

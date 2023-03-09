@@ -52,10 +52,10 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
         runMigration()
             .also {
                 val faktaRecord = FaktaRecord()
-                val utredningsprosessRepository = ProsessRepositoryPostgres()
+                val prosessRepository = ProsessRepositoryPostgres()
                 val resultatRecord = ResultatRecord()
                 AvslagPåMinsteinntektOppsett.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
-                AvslagPåMinsteinntektService(utredningsprosessRepository, rapidsConnection)
+                AvslagPåMinsteinntektService(prosessRepository, rapidsConnection)
 
                 Dagpenger248.registrer {
                     logger.info("Sørger for å støtte gamle versjoner, registrerer dagpenger versjon 248")
@@ -77,23 +77,23 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                     Paragraf_4_23_alder_oppsett.registrer { prototype ->
                         FaktumTable(prototype)
                     }
-                    VilkårsvurderingLøser(rapidsConnection, utredningsprosessRepository)
+                    VilkårsvurderingLøser(rapidsConnection, prosessRepository)
                 }
 
-                NyProsessBehovLøser(utredningsprosessRepository, rapidsConnection)
-                FaktumSvarService(utredningsprosessRepository, resultatRecord, rapidsConnection)
+                NyProsessBehovLøser(prosessRepository, rapidsConnection)
+                FaktumSvarService(prosessRepository, resultatRecord, rapidsConnection)
                 BehandlingsdatoService(rapidsConnection)
                 SenesteMuligeVirkningsdatoService(rapidsConnection)
                 TerskelFaktorService(rapidsConnection)
                 ManuellBehandlingSink(rapidsConnection, resultatRecord)
-                SøknadSlettetService(rapidsConnection, faktaRecord)
+                SøknadSlettetService(rapidsConnection, prosessRepository)
                 MetadataService(
                     rapidsConnection,
-                    utredningsprosessRepository,
+                    prosessRepository,
                     ProsessMetadataStrategi(),
                 )
-                DokumentkravSvarService(rapidsConnection, utredningsprosessRepository)
-                MigrerProsessService(rapidsConnection, faktaRecord, utredningsprosessRepository)
+                DokumentkravSvarService(rapidsConnection, prosessRepository)
+                MigrerProsessService(rapidsConnection, faktaRecord, prosessRepository)
             }
     }
 }

@@ -66,15 +66,30 @@ class ProsessRepositoryPostgres : ProsessRepository {
                     )
                 }.asSingle,
             )
-        } ?: throw IllegalArgumentException("Kan ikke hente en utredningsprosess som ikke finnes, uuid: $uuid")
+        } ?: throw IllegalArgumentException("Kan ikke hente en prosess som ikke finnes, uuid: $uuid")
         val person = PersonRecord().hentPerson(rad.personId)
-        val utredningsprosess = Henvendelser.prosess(person, rad.prosesstype, uuid, rad.faktaUUID, rad.faktaversjon)
-        faktaRepository.rehydrerFakta(utredningsprosess.fakta)
+        val prosess = Henvendelser.prosess(person, rad.prosesstype, uuid, rad.faktaUUID, rad.faktaversjon)
+        faktaRepository.rehydrerFakta(prosess.fakta)
 
-        return utredningsprosess
+        return prosess
     }
 
     override fun lagre(prosess: Prosess) = faktaRepository.lagre(prosess.fakta)
+
+    override fun slett(uuid: UUID) {
+        val tilhørendeFaktaUUID = sessionOf(dataSource).use { session ->
+            session.run(
+                queryOf(
+                    //language=PostgreSQL
+                    "DELETE FROM prosess WHERE uuid = :uuid RETURNING fakta_id",
+                    mapOf("uuid" to uuid),
+                ).map { row ->
+                    row.uuid("fakta_id")
+                }.asSingle,
+            )
+        } ?: throw IllegalArgumentException("Klarte ikke å slette prosessen med UUID=$uuid, og kan dermed heller ikke slette tilhørende fakta.")
+        faktaRepository.slett(tilhørendeFaktaUUID)
+    }
 
     private data class ProsessFakta(override val id: String) : Faktatype
     private data class ProsessType(override val navn: String, override val faktatype: Faktatype) : Prosesstype

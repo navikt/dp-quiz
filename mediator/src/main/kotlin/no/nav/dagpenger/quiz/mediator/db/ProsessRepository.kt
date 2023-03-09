@@ -15,4 +15,5 @@ interface ProsessRepository {
 
     fun hent(uuid: UUID): Prosess
     fun lagre(prosess: Prosess): Boolean
+    fun slett(uuid: UUID)
 }

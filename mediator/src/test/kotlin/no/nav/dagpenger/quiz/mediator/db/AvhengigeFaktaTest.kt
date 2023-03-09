@@ -77,7 +77,7 @@ internal class AvhengigeFaktaTest {
                 )
             }
             FaktumTable(prototypeFakta)
-            originalProsess = utredningsprosess(prosesstype)
+            originalProsess = prosess(prosesstype)
 
             originalProsess.dato(2).besvar(2.januar)
             originalProsess.dato(13).besvar(13.januar)
@@ -121,7 +121,7 @@ internal class AvhengigeFaktaTest {
             }
 
             FaktumTable(prototypeFakta)
-            originalProsess = utredningsprosess(prosesstype)
+            originalProsess = prosess(prosesstype)
 
             originalProsess.boolsk(2).besvar(true)
             originalProsess.boolsk(5).besvar(true)
@@ -166,7 +166,7 @@ internal class AvhengigeFaktaTest {
             }
 
             FaktumTable(prototypeFakta)
-            originalProsess = utredningsprosess(prosesstype)
+            originalProsess = prosess(prosesstype)
 
             originalProsess.dato(2).besvar(1.januar)
             originalProsess.dato(3).besvar(10.januar)
@@ -220,7 +220,7 @@ internal class AvhengigeFaktaTest {
             }
 
             FaktumTable(prototypeFakta)
-            originalProsess = utredningsprosess(prosesstype)
+            originalProsess = prosess(prosesstype)
 
             originalProsess.boolsk(1).besvar(true)
             originalProsess.dato(2).besvar(10.januar)
@@ -263,7 +263,7 @@ internal class AvhengigeFaktaTest {
         override val faktatype: Faktatype = faktatype
     }
 
-    private fun utredningsprosess(prosesstype: Prosesstype): Prosess {
+    private fun prosess(prosesstype: Prosesstype): Prosess {
         return prosessRepository.ny(UNG_PERSON_FNR_2018, prosesstype)
     }
 
