@@ -9,6 +9,7 @@ import no.nav.dagpenger.model.regel.inneholder
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.deltre
+import no.nav.dagpenger.quiz.mediator.db.FaktaRecord
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepositoryPostgres
 import no.nav.dagpenger.quiz.mediator.helpers.Postgres
@@ -24,10 +25,13 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
-internal class ProsessTest() {
+internal class ProsessTest {
     private lateinit var søknadsprosess: Prosess
-    private val søknadUUID = UUID.randomUUID()
+    private val prosessUUID = UUID.randomUUID()
+    private val faktaUUID = UUID.randomUUID()
     private val repository = ProsessRepositoryPostgres()
 
     @Test
@@ -77,26 +81,58 @@ internal class ProsessTest() {
         assertEquals(false, søknadsprosess.erFerdig())
     }
 
+    @Test
+    fun `Ved sletting av en prosess så skal tilhørende fakta beholdes, om er brukt i andre prosesser`() = medProsess {
+        val faktaRepository = FaktaRecord()
+        val ekstraProsessUUID = UUID.randomUUID()
+        val annenFaktaUUID = UUID.randomUUID()
+
+        medSeksjon(Bosted) {
+            it.tekst(`reist tilbake årsak`).besvar(Tekst("Dummy årsak"))
+        }
+        lagNyProsess(ekstraProsessUUID) // Lag en ny prosess som bruker samme fakta
+        lagNyProsess(UUID.randomUUID(), annenFaktaUUID) // Lag en ny prosess som bruker andre fakta
+        assertTrue("Fakta brukt i prosess skal eksistere") { faktaRepository.eksisterer(faktaUUID) }
+
+        repository.slett(prosessUUID)
+
+        assertTrue("Fakta skal fortsatt eksistere, fordi den er brukt i andre prosesser") {
+            faktaRepository.eksisterer(
+                faktaUUID,
+            )
+        }
+
+        repository.slett(ekstraProsessUUID)
+
+        assertFalse("Fakta skal ikke lengre eksistere, fordi ingen prosesser bruker den") {
+            faktaRepository.eksisterer(faktaUUID)
+        }
+        assertTrue("Fakta skal ikke eksistere, fordi den har ingenting med prosessen som ble slettet") {
+            faktaRepository.eksisterer(annenFaktaUUID)
+        }
+    }
+
     private fun medProsess(block: () -> Unit) = Postgres.withMigratedDb {
         Dagpenger.registrer { prosess ->
             FaktumTable(prosess.fakta)
         }
 
-        lagNyProsess()
+        lagNyProsess(prosessUUID)
         block()
     }
 
-    private fun lagNyProsess() {
+    private fun lagNyProsess(prosessUUID: UUID = this.prosessUUID, faktaUUID: UUID = this.faktaUUID) {
         søknadsprosess = repository.ny(
             Identer(identer = setOf(Identer.Ident(Identer.Ident.Type.FOLKEREGISTERIDENT, "12312312311", false))),
             Prosesser.Søknad,
-            søknadUUID,
+            prosessUUID,
+            faktaUUID,
         )
     }
 
     private fun lagreOgHent() {
         repository.lagre(søknadsprosess)
-        søknadsprosess = repository.hent(søknadUUID)
+        søknadsprosess = repository.hent(prosessUUID)
     }
 
     private val Prosess.aktivSeksjon

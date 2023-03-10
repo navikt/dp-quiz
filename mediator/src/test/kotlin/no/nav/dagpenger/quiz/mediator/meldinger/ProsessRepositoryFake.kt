@@ -25,6 +25,10 @@ internal class ProsessRepositoryFake(private val prosesstype: Prosesstype, priva
         return true
     }
 
+    override fun slett(uuid: UUID) {
+        prosess = null
+    }
+
     fun reset() {
         prosess = null
         hentet = 0

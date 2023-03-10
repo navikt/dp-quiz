@@ -34,9 +34,12 @@ import java.util.UUID
 class FaktaRecord : FaktaRepository {
     private val personRecord = PersonRecord()
 
+    override fun registrer(prosessRepository: ProsessRepository) {
+        prosessRepository.addObserver(SlettForeldreløseFakta())
+    }
+
     private companion object {
         val logger = KotlinLogging.logger {}
-        val sikkerlogg = KotlinLogging.logger("tjenestekall")
     }
 
     override fun ny(
@@ -98,7 +101,7 @@ class FaktaRecord : FaktaRepository {
         return fakta
     }
 
-    fun rehydrerFakta(fakta: Fakta): Fakta {
+    override fun rehydrerFakta(fakta: Fakta): Fakta {
         svarList(fakta.uuid).onEach { row ->
             fakta.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
         }
@@ -520,11 +523,34 @@ class FaktaRecord : FaktaRepository {
         }.toMap()
     }
 
-    fun rehydrerEllerOpprett(fakta: Fakta, person: Person) {
+    override fun rehydrerEllerOpprett(fakta: Fakta, person: Person) {
         if (eksisterer(fakta.uuid)) {
             rehydrerFakta(fakta)
         } else {
             ny(fakta)
+        }
+    }
+
+    private class SlettForeldreløseFakta : ProsessRepositoryObserver {
+        override fun slett(prosessUUID: UUID, faktaUUID: UUID) {
+            return sessionOf(dataSource).use { session ->
+                session.run(
+                    queryOf(
+                        //language=PostgreSQL
+                        """
+                        DELETE
+                        FROM fakta
+                        WHERE fakta.uuid = :uuid
+                          AND NOT EXISTS(
+                                SELECT NULL FROM prosess WHERE prosess.fakta_id = :uuid
+                            )
+                        """.trimIndent(),
+                        mapOf(
+                            "uuid" to faktaUUID,
+                        ),
+                    ).asExecute,
+                )
+            }
         }
     }
 }

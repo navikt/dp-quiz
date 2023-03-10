@@ -6,6 +6,7 @@ import no.nav.dagpenger.model.seksjon.Prosesstype
 import java.util.UUID
 
 interface ProsessRepository {
+    fun addObserver(observer: ProsessRepositoryObserver) {}
     fun ny(
         identer: Identer,
         prosesstype: Prosesstype,
@@ -15,4 +16,9 @@ interface ProsessRepository {
 
     fun hent(uuid: UUID): Prosess
     fun lagre(prosess: Prosess): Boolean
+    fun slett(uuid: UUID)
+}
+
+interface ProsessRepositoryObserver {
+    fun slett(prosessUUID: UUID, faktaUUID: UUID)
 }

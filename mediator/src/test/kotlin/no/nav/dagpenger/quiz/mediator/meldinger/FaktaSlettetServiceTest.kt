@@ -3,25 +3,24 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
+import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import java.lang.Exception
 import java.util.UUID
 
 internal class FaktaSlettetServiceTest {
 
     val søknadUUIDfeilerIkke = UUID.randomUUID()
     val søknadUUIDfeiler = UUID.randomUUID()
-    val faktaRepository = mockk<FaktaRepository>(relaxed = true).also {
+    val prosessRepository = mockk<ProsessRepository>(relaxed = true).also {
         every { it.slett(søknadUUIDfeiler) } throws Exception("Noe gikk galt under sletting")
-        every { it.slett(søknadUUIDfeilerIkke) } returns true
+        every { it.slett(søknadUUIDfeilerIkke) } returns Unit
     }
     val testRapid = TestRapid().also {
         SøknadSlettetService(
             rapidsConnection = it,
-            faktaRepository = faktaRepository,
+            prosessRepository = prosessRepository,
         )
     }
 
@@ -29,7 +28,7 @@ internal class FaktaSlettetServiceTest {
     fun `tar i mot søknadSlettetEvent`() {
         testRapid.sendTestMessage(søknadSlettetEvent(søknadUUIDfeilerIkke))
         verify {
-            faktaRepository.slett(søknadUUIDfeilerIkke)
+            prosessRepository.slett(søknadUUIDfeilerIkke)
         }
     }
 
@@ -38,7 +37,7 @@ internal class FaktaSlettetServiceTest {
         assertDoesNotThrow {
             testRapid.sendTestMessage(søknadSlettetEvent(søknadUUIDfeiler))
             verify {
-                faktaRepository.slett(søknadUUIDfeiler)
+                prosessRepository.slett(søknadUUIDfeiler)
             }
         }
     }
