@@ -13,9 +13,24 @@ import no.nav.dagpenger.model.visitor.PersonVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.util.UUID
 
-class ProsessRepositoryPostgres : ProsessRepository {
-    private val personRecord = PersonRecord()
-    private val faktaRepository = FaktaRecord()
+class ProsessRepositoryPostgres private constructor(
+    private val personRecord: PersonRecord,
+    private val faktaRepository: FaktaRepository,
+    private val observers: MutableList<ProsessRepositoryObserver>,
+) : ProsessRepository {
+    constructor() : this(
+        personRecord = PersonRecord(),
+        faktaRepository = FaktaRecord(),
+        observers = mutableListOf<ProsessRepositoryObserver>(),
+    )
+
+    init {
+        faktaRepository.registrer(this)
+    }
+
+    override fun addObserver(observer: ProsessRepositoryObserver) {
+        observers.add(observer)
+    }
 
     override fun ny(identer: Identer, prosesstype: Prosesstype, uuid: UUID, faktaUUID: UUID): Prosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
@@ -81,10 +96,12 @@ class ProsessRepositoryPostgres : ProsessRepository {
             session.run(
                 queryOf(
                     //language=PostgreSQL
-                    "DELETE FROM prosess WHERE uuid = :uuid",
+                    "DELETE FROM prosess WHERE uuid = :uuid RETURNING fakta_id",
                     mapOf("uuid" to uuid),
-                ).asExecute,
+                ).map { it.uuid("fakta_id") }.asSingle,
             )
+        }?.let { faktaUUID ->
+            observers.forEach { it.slett(uuid, faktaUUID) }
         }
     }
 
