@@ -147,7 +147,7 @@ internal class ProsessTest {
     private infix fun Int.index(generatorIndex: Int) = "$this.$generatorIndex"
 
     private fun <T : DslFaktaseksjon> medSeksjon(faktaseksjon: T, block: T.(fakta: Prosess) -> Unit) {
-        assertNotEquals(søknadsprosess.nesteSeksjoner().size, 0, "Har ikke neste seksjon")
+        assertNotEquals(søknadsprosess.nesteSeksjoner().size, 0, "Har vitterligen ikke neste seksjon")
         block(faktaseksjon, søknadsprosess)
         lagreOgHent()
     }
