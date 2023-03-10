@@ -19,10 +19,10 @@ jobs:
         with:
           arguments: --configuration-cache build installDist
 
-      - name: Publish results (unit test)
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        with:
-          junit_files: "**/build/test-results/test/TEST-*.xml"
+#      - name: Publish results (unit test)
+#        uses: EnricoMi/publish-unit-test-result-action@v2
+#        with:
+#          junit_files: "**/build/test-results/test/TEST-*.xml"
       - name: docker-build-push
         uses: nais/docker-build-push@v0
         id: docker-build-push
