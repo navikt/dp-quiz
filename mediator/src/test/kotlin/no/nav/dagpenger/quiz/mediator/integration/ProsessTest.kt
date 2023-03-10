@@ -25,7 +25,6 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class ProsessTest {
@@ -82,17 +81,17 @@ internal class ProsessTest {
     }
 
     @Test
-    fun `Skal kunne slette en prosess og tilhørende fakta`() = medProsess {
+    fun `Ved sletting av en prosess så skal tilhørende fakta beholdes, da de kan brukes i andre prosesser`() = medProsess {
         medSeksjon(Bosted) {
             it.tekst(`reist tilbake årsak`).besvar(Tekst("Dummy årsak"))
         }
 
         val faktaRepository = FaktaRecord()
-        assertTrue(faktaRepository.eksisterer(faktaUUID))
+        assertTrue("Fakta brukt i prosesens skal eksistere") { faktaRepository.eksisterer(faktaUUID) }
 
         repository.slett(søknadUUID)
 
-        assertFalse(faktaRepository.eksisterer(faktaUUID))
+        assertTrue("Fakta skal fortsatt eksistere, for bruk i andre prosesser") { faktaRepository.eksisterer(faktaUUID) }
     }
 
     private fun medProsess(block: () -> Unit) = Postgres.withMigratedDb {

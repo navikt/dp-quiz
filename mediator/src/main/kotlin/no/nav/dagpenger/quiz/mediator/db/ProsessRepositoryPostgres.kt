@@ -77,18 +77,15 @@ class ProsessRepositoryPostgres : ProsessRepository {
     override fun lagre(prosess: Prosess) = faktaRepository.lagre(prosess.fakta)
 
     override fun slett(uuid: UUID) {
-        val tilhørendeFaktaUUID = sessionOf(dataSource).use { session ->
+        sessionOf(dataSource).use { session ->
             session.run(
                 queryOf(
                     //language=PostgreSQL
-                    "DELETE FROM prosess WHERE uuid = :uuid RETURNING fakta_id",
+                    "DELETE FROM prosess WHERE uuid = :uuid",
                     mapOf("uuid" to uuid),
-                ).map { row ->
-                    row.uuid("fakta_id")
-                }.asSingle,
+                ).asExecute,
             )
-        } ?: throw IllegalArgumentException("Klarte ikke å slette prosessen med UUID=$uuid, og kan dermed heller ikke slette tilhørende fakta.")
-        faktaRepository.slett(tilhørendeFaktaUUID)
+        }
     }
 
     private data class ProsessFakta(override val id: String) : Faktatype
