@@ -18,7 +18,7 @@ internal class FaktaSlettetServiceTest {
         every { it.slett(søknadUUIDfeilerIkke) } returns Unit
     }
     val testRapid = TestRapid().also {
-        SøknadSlettetService(
+        FaktaSlettetService(
             rapidsConnection = it,
             prosessRepository = prosessRepository,
         )
