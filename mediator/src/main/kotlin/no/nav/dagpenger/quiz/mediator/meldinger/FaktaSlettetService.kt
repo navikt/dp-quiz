@@ -27,9 +27,9 @@ internal class FaktaSlettetService(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        sikkerlogg.info { "Mottok sletteevent: ${packet.toJson()}" }
         val uuid = UUID.fromString(packet["søknad_uuid"].asText())
         withMDC("søknad_uuid" to uuid.toString()) {
+            sikkerlogg.info { "Mottok sletteevent: ${packet.toJson()}" }
             try {
                 logger.info { "Forsøker å slette søknad: $uuid" }
                 prosessRepository.slett(uuid)
