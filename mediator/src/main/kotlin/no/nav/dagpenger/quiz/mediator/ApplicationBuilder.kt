@@ -15,10 +15,10 @@ import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepositoryPostgres
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
 import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
+import no.nav.dagpenger.quiz.mediator.meldinger.FaktaSlettetService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.ManuellBehandlingSink
 import no.nav.dagpenger.quiz.mediator.meldinger.NyProsessBehovLøser
-import no.nav.dagpenger.quiz.mediator.meldinger.SøknadSlettetService
 import no.nav.dagpenger.quiz.mediator.meldinger.VilkårsvurderingLøser
 import no.nav.dagpenger.quiz.mediator.soknad.ProsessMetadataStrategi
 import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
@@ -86,7 +86,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 SenesteMuligeVirkningsdatoService(rapidsConnection)
                 TerskelFaktorService(rapidsConnection)
                 ManuellBehandlingSink(rapidsConnection, resultatRecord)
-                SøknadSlettetService(rapidsConnection, prosessRepository)
+                FaktaSlettetService(rapidsConnection, prosessRepository)
                 MetadataService(
                     rapidsConnection,
                     prosessRepository,

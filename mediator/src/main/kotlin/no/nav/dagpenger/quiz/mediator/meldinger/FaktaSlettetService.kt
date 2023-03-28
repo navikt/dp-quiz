@@ -9,7 +9,7 @@ import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.withMDC
 import java.util.UUID
 
-internal class SøknadSlettetService(
+internal class FaktaSlettetService(
     rapidsConnection: RapidsConnection,
     private val prosessRepository: ProsessRepository,
 ) : River.PacketListener {
@@ -27,6 +27,7 @@ internal class SøknadSlettetService(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
+        sikkerlogg.info { "Mottok sletteevent: ${packet.toJson()}" }
         val uuid = UUID.fromString(packet["søknad_uuid"].asText())
         withMDC("søknad_uuid" to uuid.toString()) {
             try {
