@@ -9,7 +9,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.innsendtSøknadsId
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.isMissingOrNull
@@ -76,10 +75,5 @@ internal class AvslagPåMinsteinntektService(
                         log.info { "Send seksjon ${seksjon.navn} for søknad ${prosess.fakta.uuid}" }
                     }
             }
-    }
-
-    override fun onError(problems: MessageProblems, context: MessageContext) {
-        log.error { problems.toString() }
-        sikkerlogg.error { problems.toExtendedReport() }
     }
 }
