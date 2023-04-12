@@ -10,7 +10,9 @@ spec:
   image: {{image}}
   port: 8080
   strategy:
-    type: RollingUpdate # Bruk kun Recreate når vi deployer store/ukompatible migreringer
+    rollingUpdate:  # Bruk kun Recreate når vi deployer store/ukompatible migreringer
+      maxSurge: 100%
+      maxUnavailable: 99%
   liveness:
     path: /isalive
     timeout: 1
