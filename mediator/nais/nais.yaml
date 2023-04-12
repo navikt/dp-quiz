@@ -12,7 +12,7 @@ spec:
   strategy:
     rollingUpdate:  # Bruk kun Recreate når vi deployer store/ukompatible migreringer
       maxSurge: 100%
-      maxUnavailable: 50%
+      maxUnavailable: 99%
   liveness:
     path: /isalive
     timeout: 1
