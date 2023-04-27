@@ -61,11 +61,6 @@ subprojects {
         mavenCentral()
         maven("https://jitpack.io")
     }
-
-    tasks.named("compileKotlin") {
-        dependsOn("spotlessApply")
-    }
-
     dependencies {
         testImplementation(kotlin("test"))
         testImplementation(Junit5.api)
