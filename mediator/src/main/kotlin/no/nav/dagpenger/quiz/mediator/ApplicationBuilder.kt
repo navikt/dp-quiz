@@ -14,6 +14,7 @@ import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepositoryPostgres
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
+import no.nav.dagpenger.quiz.mediator.meldinger.AvslagPåMinsteinntektService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktaSlettetService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.ManuellBehandlingSink
@@ -54,8 +55,8 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 val prosessRepository = ProsessRepositoryPostgres()
                 val resultatRecord = ResultatRecord()
                 AvslagPåMinsteinntektOppsett.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
-                // Skrudd av i forbindelse med G-justering i helga 26-28. Mai
-                // AvslagPåMinsteinntektService(prosessRepository, rapidsConnection)
+                AvslagPåMinsteinntektService(prosessRepository, rapidsConnection)
+
                 Dagpenger248.registrer {
                     logger.info("Sørger for å støtte gamle versjoner, registrerer dagpenger versjon 248")
                 }
