@@ -13,6 +13,7 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
+import java.util.UUID
 
 internal class VirkningsdatoerBehovLøser(
     rapidsConnection: RapidsConnection,
@@ -27,13 +28,13 @@ internal class VirkningsdatoerBehovLøser(
         River(rapidsConnection).apply {
             validate { it.demandValue("@event_name", "behov") }
             validate { it.demandAll("@behov", listOf(behov)) }
-            validate { it.requireKey("søknad_uuid") }
+            validate { it.requireKey("Virkningsdatoer.søknad_uuid") }
             validate { it.forbid("@løsning") }
         }.register(this)
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        val søknadId = packet.søknadUUID()
+        val søknadId = packet["Virkningsdatoer.søknad_uuid"].asText().let { UUID.fromString(it) }
 
         withLoggingContext("søknadId" to søknadId.toString()) {
             val prosess: Prosess = utredningsRepository.hent(søknadId)

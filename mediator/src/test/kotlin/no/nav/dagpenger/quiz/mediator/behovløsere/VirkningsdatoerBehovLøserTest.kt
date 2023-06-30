@@ -35,7 +35,9 @@ class VirkningsdatoerBehovLøserTest {
             """{
               "@event_name": "behov",
               "@behov": [ "Virkningsdatoer" ],
-              "søknad_uuid": "$prosessId"
+              "Virkningsdatoer": {
+                "søknad_uuid": "$prosessId"
+              }
             }
             """.trimIndent(),
         )
@@ -60,7 +62,9 @@ class VirkningsdatoerBehovLøserTest {
             """{
               "@event_name": "behov",
               "@behov": [ "Virkningsdatoer" ],
-              "søknad_uuid": "$gjenopptakProsessId"
+              "Virkningsdatoer": {
+                "søknad_uuid": "$gjenopptakProsessId"
+              }
             }
             """.trimIndent(),
         )
