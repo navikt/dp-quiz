@@ -179,14 +179,14 @@ object DinSituasjon : DslFaktaseksjon {
         tekst faktum "faktum.arbeidsforhold.navn-bedrift" id `arbeidsforhold navn bedrift`,
         land faktum "faktum.arbeidsforhold.land" id `arbeidsforhold land`,
         envalg faktum "faktum.arbeidsforhold.endret"
-            med "svar.ikke-endret"
-            med "svar.avskjediget"
             med "svar.sagt-opp-av-arbeidsgiver"
-            med "svar.arbeidsgiver-konkurs"
-            med "svar.kontrakt-utgaatt"
             med "svar.sagt-opp-selv"
+            med "svar.avskjediget"
+            med "svar.kontrakt-utgaatt"
             med "svar.redusert-arbeidstid"
-            med "svar.permittert" id `arbeidsforhold endret`,
+            med "svar.arbeidsgiver-konkurs"
+            med "svar.permittert"
+            med "svar.ikke-endret" id `arbeidsforhold endret`,
         boolsk faktum "faktum.arbeidsforhold.kjent-antall-timer-jobbet" id `arbeidsforhold kjent antall timer jobbet`
             avhengerAv `arbeidsforhold endret`,
         desimaltall faktum "faktum.arbeidsforhold.antall-timer-jobbet" id `arbeidsforhold antall timer jobbet`
