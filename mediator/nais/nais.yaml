@@ -32,10 +32,9 @@ spec:
     max: {{replicas}}
   resources:
     limits:
-      cpu: 2500m
       memory: 512Mi
     requests:
-      cpu: 2000m
+      cpu: 512m
       memory: 512Mi
   secureLogs:
     enabled: true
