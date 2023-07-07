@@ -15,5 +15,5 @@ dependencies {
     testFixturesApi(Jackson.kotlin)
     testFixturesApi(Jackson.jsr310)
     testFixturesApi(Junit5.api)
-    testFixturesApi("org.jetbrains.kotlin:kotlin-test:1.8.22")
+    testFixturesApi("org.jetbrains.kotlin:kotlin-test:1.9.0")
 }
