@@ -61,8 +61,8 @@ internal class SøknadsmalJsonBuilderTest {
             periode faktum "periode16" id 16,
             periode faktum "pågåendePeriode17" id 17,
             land faktum "f20"
-                gruppe "eøs" med listOf(Land("SWE"))
-                gruppe "storbritannia" med listOf(Land("GBR"))
+                gruppe "eøs" med listOf(Land("SWE"), Land("DKK"))
+                gruppe "storbritannia" med listOf(Land("GBR"), Land("DKK"))
                 gruppe "norge-jan-mayen" med listOf(Land("NOR")) id 20,
         )
     }
@@ -207,7 +207,7 @@ internal class SøknadsmalJsonBuilderTest {
             assertEquals(2, this["fakta"].size())
             this["fakta"][0].assertFaktaAsJson("20", "land", "f20", listOf("søker"))
             assertEquals(3, this["fakta"][0]["grupper"].size())
-            assertEquals(249, this["fakta"][0]["gyldigeLand"].size())
+            assertEquals(4, this["fakta"][0]["gyldigeLand"].size(), "gyldigeLand skal være summen av land i grupper, minus duplikater")
             // Kommer via avhengigAv
             this["fakta"][1].assertGeneratorFaktaAsJson(
                 "9",

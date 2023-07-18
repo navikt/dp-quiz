@@ -20,6 +20,7 @@ import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
+import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.eøsEllerSveits
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object EøsArbeidsforhold : DslFaktaseksjon {
@@ -41,11 +42,11 @@ object EøsArbeidsforhold : DslFaktaseksjon {
 
         tekst faktum "faktum.eos-arbeidsforhold.arbeidsgivernavn" id `eøs arbeidsforhold arbeidsgivernavn`,
 
-        land faktum "faktum.eos-arbeidsforhold.land" gruppe "eøs" med eøsEllerSveits() id `eøs arbeidsforhold land`,
+        land faktum "faktum.eos-arbeidsforhold.land" gruppe "eøs" med eøsEllerSveits id `eøs arbeidsforhold land`,
 
         tekst faktum "faktum.eos-arbeidsforhold.personnummer" id `eøs arbeidsforhold personnummer`,
 
-        periode faktum "faktum.eos-arbeidsforhold.varighet" id `eøs arbeidsforhold varighet`
+        periode faktum "faktum.eos-arbeidsforhold.varighet" id `eøs arbeidsforhold varighet`,
     )
 
     override fun regeltre(fakta: Fakta): DeltreSubsumsjon = with(fakta) {
@@ -68,11 +69,11 @@ object EøsArbeidsforhold : DslFaktaseksjon {
                         tekst(`eøs arbeidsforhold arbeidsgivernavn`).utfylt(),
                         land(`eøs arbeidsforhold land`).utfylt(),
                         tekst(`eøs arbeidsforhold personnummer`).utfylt(),
-                        periode(`eøs arbeidsforhold varighet`).utfylt()
+                        periode(`eøs arbeidsforhold varighet`).utfylt(),
                     )
-                }
+                },
             )
-        }
+        },
     )
 
     private fun Fakta.`er gjenopptak`() =
@@ -85,7 +86,7 @@ object EøsArbeidsforhold : DslFaktaseksjon {
         "har hatt fast, varierende eller kombinasjon arbeidstid".minstEnAv(
             envalg(DinSituasjon.`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.fast"),
             envalg(DinSituasjon.`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.varierende"),
-            envalg(DinSituasjon.`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.kombinasjon")
+            envalg(DinSituasjon.`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.kombinasjon"),
         )
 
     override fun seksjon(fakta: Fakta) =
@@ -97,6 +98,6 @@ object EøsArbeidsforhold : DslFaktaseksjon {
         `eøs arbeidsforhold arbeidsgivernavn`,
         `eøs arbeidsforhold land`,
         `eøs arbeidsforhold personnummer`,
-        `eøs arbeidsforhold varighet`
+        `eøs arbeidsforhold varighet`,
     )
 }

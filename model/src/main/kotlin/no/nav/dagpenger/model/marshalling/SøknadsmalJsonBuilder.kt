@@ -188,7 +188,7 @@ class SøknadsmalJsonBuilder(prosess: Prosess) : ProsessVisitor {
                 overstyrbareGyldigeValg,
             )
             if (clazz.erLand()) {
-                this.root.leggTilGyldigeLand()
+                this.root.leggTilGyldigeLand(landGrupper)
                 this.root.leggTilLandGrupper(landGrupper)
             }
         }

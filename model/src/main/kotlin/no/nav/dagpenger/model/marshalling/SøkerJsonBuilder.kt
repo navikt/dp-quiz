@@ -328,7 +328,7 @@ class SøkerJsonBuilder(private val prosess: Prosess) : ProsessVisitor {
                 besvartAv,
             )
             if (clazz.erLand()) {
-                this.root.leggTilGyldigeLand()
+                this.root.leggTilGyldigeLand(landGrupper)
                 this.root.leggTilLandGrupper(landGrupper)
             }
             val sannsynliggjøringerAsJson = avhengigeFakta.filter { it.type() == Dokument::class.java }

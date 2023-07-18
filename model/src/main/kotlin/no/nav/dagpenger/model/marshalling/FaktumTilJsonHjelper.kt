@@ -12,7 +12,6 @@ import no.nav.dagpenger.model.faktum.GyldigeValg
 import no.nav.dagpenger.model.faktum.Inntekt
 import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.LandGrupper
-import no.nav.dagpenger.model.faktum.LandOppslag
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.faktum.Tekst
@@ -82,7 +81,6 @@ object FaktumTilJsonHjelper {
         svar: R? = null,
         besvartAv: String? = null,
     ) {
-
         this.also { faktumNode ->
             faktumNode.put("id", id)
             faktumNode.put("type", clazz)
@@ -118,11 +116,9 @@ object FaktumTilJsonHjelper {
         }
     }
 
-    internal fun ObjectNode.leggTilGyldigeLand() {
-        this.putArray("gyldigeLand").also { arrayNode ->
-            LandOppslag.land().forEach { land ->
-                arrayNode.add(land.alpha3Code)
-            }
-        }
+    internal fun ObjectNode.leggTilGyldigeLand(landGrupper: LandGrupper?) {
+        this.putArray("gyldigeLand").addAll(
+            landGrupper?.flatMap { (_, land) -> land }?.toSet()?.map { this.textNode(it.alpha3Code) },
+        )
     }
 }
