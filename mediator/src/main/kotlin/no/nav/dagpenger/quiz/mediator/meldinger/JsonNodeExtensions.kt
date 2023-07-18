@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
-import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
+import no.nav.dagpenger.quiz.mediator.land.Landfabrikken
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
 import no.nav.helse.rapids_rivers.asOptionalLocalDate
@@ -32,7 +32,7 @@ fun JsonNode.asFlervalg(): Flervalg {
 
 fun JsonNode.asTekst() = Tekst(asText())
 
-fun JsonNode.asLand() = Land(asText())
+fun JsonNode.asLand() = Landfabrikken.land(asText())
 
 fun JsonNode.asPeriode(): Periode {
     val fom = this["fom"].asLocalDate()

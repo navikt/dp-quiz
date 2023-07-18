@@ -16,6 +16,10 @@ import no.nav.dagpenger.model.subsumsjon.bareEnAv
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
+import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.eøsEllerSveits
+import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.norge
+import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.storbritannia
+import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.tredjeland
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Bosted : DslFaktaseksjon {
@@ -28,9 +32,10 @@ object Bosted : DslFaktaseksjon {
 
     override val fakta = listOf(
         land faktum "faktum.hvilket-land-bor-du-i"
-            gruppe "eøs" med eøsEllerSveits()
-            gruppe "norge-jan-mayen" med norge()
-            gruppe "storbritannia" med storbritannia() id `hvilket land bor du i`,
+            gruppe "tredjeland" med tredjeland
+            gruppe "eøs" med eøsEllerSveits
+            gruppe "norge-jan-mayen" med norge
+            gruppe "storbritannia" med storbritannia id `hvilket land bor du i`,
 
         boolsk faktum "faktum.reist-tilbake-etter-arbeidsledig" id `reist tilbake etter arbeidsledig`
             avhengerAv `hvilket land bor du i`,
@@ -45,7 +50,7 @@ object Bosted : DslFaktaseksjon {
             avhengerAv `hvilket land bor du i`,
 
         boolsk faktum "faktum.reist-i-takt-med-rotasjon" id `reist i takt med rotasjon`
-            avhengerAv `reist tilbake en gang i uka eller mer`
+            avhengerAv `reist tilbake en gang i uka eller mer`,
     )
 
     override fun seksjon(fakta: Fakta) =
@@ -58,27 +63,27 @@ object Bosted : DslFaktaseksjon {
                 `innenfor Norge`(),
                 `innenfor Storbritannia`(),
                 `innenfor EØS eller Sveits`(),
-                `utenfor EØS`()
+                `utenfor EØS`(),
             )
         }
     }
 
     private fun Fakta.`innenfor Norge`() = "§ 4-2 Opphold i Norge".bareEnAv(
-        *norge().map { land ->
+        *norge.map { land ->
             land(`hvilket land bor du i`).er(land)
-        }.toTypedArray()
+        }.toTypedArray(),
     )
 
     private fun Fakta.`innenfor Storbritannia`() = "§ x.x om Storbritannia og brexit ".bareEnAv(
-        *storbritannia().map { land ->
+        *storbritannia.map { land ->
             land(`hvilket land bor du i`).er(land)
-        }.toTypedArray()
+        }.toTypedArray(),
     )
 
     private fun Fakta.`innenfor EØS eller Sveits`() = "§ x.x innenfor EØS eller Sveits forskrift".bareEnAv(
-        *eøsEllerSveits().map { land ->
+        *eøsEllerSveits.map { land ->
             land(`hvilket land bor du i`).er(land)
-        }.toTypedArray()
+        }.toTypedArray(),
     ).hvisOppfylt {
         val `reist tilbake en gang i uka eller mer regel` =
             boolsk(`reist tilbake en gang i uka eller mer`) er true hvisIkkeOppfylt {
@@ -99,9 +104,9 @@ object Bosted : DslFaktaseksjon {
     }
 
     private fun Fakta.`utenfor EØS`() = "§ x.x om resten av verden".alle(
-        *(norge() + storbritannia() + eøsEllerSveits()).map { `et EØS-land` ->
+        *(norge + storbritannia + eøsEllerSveits).map { `et EØS-land` ->
             land(`hvilket land bor du i`).erIkke(`et EØS-land`)
-        }.toTypedArray()
+        }.toTypedArray(),
     )
 
     override val spørsmålsrekkefølgeForSøker = listOf(
@@ -110,6 +115,6 @@ object Bosted : DslFaktaseksjon {
         `reist tilbake periode`,
         `reist tilbake årsak`,
         `reist tilbake en gang i uka eller mer`,
-        `reist i takt med rotasjon`
+        `reist i takt med rotasjon`,
     )
 }

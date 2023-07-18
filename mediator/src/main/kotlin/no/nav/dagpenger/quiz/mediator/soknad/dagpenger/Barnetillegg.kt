@@ -22,6 +22,7 @@ import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
+import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.verden
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object Barnetillegg : DslFaktaseksjon {
@@ -56,7 +57,7 @@ object Barnetillegg : DslFaktaseksjon {
 
         dato faktum "faktum.barn-foedselsdato" id `barn fødselsdato register`,
 
-        land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap register`,
+        land faktum "faktum.barn-statsborgerskap" gruppe "verden" med verden id `barn statsborgerskap register`,
 
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsørger du barnet register` avhengerAv `barn liste register`,
 
@@ -78,7 +79,7 @@ object Barnetillegg : DslFaktaseksjon {
 
         dato faktum "faktum.barn-foedselsdato" id `barn fødselsdato`,
 
-        land faktum "faktum.barn-statsborgerskap" id `barn statsborgerskap`,
+        land faktum "faktum.barn-statsborgerskap" gruppe "verden" med verden id `barn statsborgerskap`,
 
         boolsk faktum "faktum.forsoerger-du-barnet" id `forsørger du barnet`,
 
@@ -87,7 +88,7 @@ object Barnetillegg : DslFaktaseksjon {
 
         boolsk faktum "faktum.godkjenning-dokumentasjon-foedselsattest-bostedsbevis-for-barn-under-18aar"
             id `godkjenning av fødselsattest bostedsbevis for barn under 18år`
-            avhengerAv `dokumentasjon fødselsattest bostedsbevis for barn under 18år`
+            avhengerAv `dokumentasjon fødselsattest bostedsbevis for barn under 18år`,
     )
 
     override fun seksjon(fakta: Fakta): List<Seksjon> {
@@ -105,7 +106,7 @@ object Barnetillegg : DslFaktaseksjon {
                     generator(`barn liste register`) med "et eller flere barn".deltre {
                         boolsk(`forsørger du barnet register`).utfylt()
                     }
-                }
+                },
             ).hvisOppfylt {
                 boolsk(`egne barn`) er false hvisIkkeOppfylt {
                     "barnetillegg fra søker".minstEnAv(
@@ -116,16 +117,16 @@ object Barnetillegg : DslFaktaseksjon {
                                     "forsørger barnet eller ikke".minstEnAv(
                                         (boolsk(`forsørger du barnet`) er true)
                                             .sannsynliggjøresAv(
-                                                dokument(`dokumentasjon fødselsattest bostedsbevis for barn under 18år`)
+                                                dokument(`dokumentasjon fødselsattest bostedsbevis for barn under 18år`),
                                             )
                                             .godkjentAv(
-                                                boolsk(`godkjenning av fødselsattest bostedsbevis for barn under 18år`)
+                                                boolsk(`godkjenning av fødselsattest bostedsbevis for barn under 18år`),
                                             ),
-                                        boolsk(`forsørger du barnet`) er false
+                                        boolsk(`forsørger du barnet`) er false,
                                     )
                                 }
                             }
-                        }
+                        },
                     )
                 }
             }
@@ -136,7 +137,7 @@ object Barnetillegg : DslFaktaseksjon {
         tekst(`barn fornavn mellomnavn`).utfylt(),
         tekst(`barn etternavn`).utfylt(),
         dato(`barn fødselsdato`).utfylt(),
-        land(`barn statsborgerskap`).utfylt()
+        land(`barn statsborgerskap`).utfylt(),
     )
 
     override val spørsmålsrekkefølgeForSøker = listOf(
@@ -148,13 +149,13 @@ object Barnetillegg : DslFaktaseksjon {
         `barn fødselsdato`,
         `barn statsborgerskap`,
         `forsørger du barnet`,
-        `dokumentasjon fødselsattest bostedsbevis for barn under 18år`
+        `dokumentasjon fødselsattest bostedsbevis for barn under 18år`,
     )
     private val navSpørsmålsrekkefølge = listOf(
         `barn liste register`,
         `barn fornavn mellomnavn register`,
         `barn etternavn register`,
         `barn statsborgerskap register`,
-        `barn fødselsdato register`
+        `barn fødselsdato register`,
     ).toIntArray()
 }

@@ -17,7 +17,7 @@ import java.time.LocalDate
 
 class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     private val clazz: Class<T>,
-    private val navn: String
+    private val navn: String,
 ) : FaktumFactory<T>() {
     private val templateIder = mutableListOf<Int>()
     private val gyldigeValg = mutableSetOf<String>()
@@ -78,11 +78,11 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 
     class LandGruppe<T : Comparable<T>>(
         private val baseFaktumFactory: BaseFaktumFactory<T>,
-        private val gruppeNavn: String
+        private val gruppeNavn: String,
     ) {
-        infix fun med(land: List<Land>): BaseFaktumFactory<T> {
+        infix fun med(land: Collection<Land>): BaseFaktumFactory<T> {
             return baseFaktumFactory.landGruppe(
-                Pair(gruppeNavn, land)
+                Pair(gruppeNavn, land.toList()),
             )
         }
     }
@@ -98,22 +98,25 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
                 faktumId = faktumId,
                 navn = navn,
                 clazz = clazz,
-                gyldigeValg = GyldigeValg(gyldigeValg)
+                gyldigeValg = GyldigeValg(gyldigeValg),
             ) as Faktum<T>
 
             Flervalg::class.java -> GrunnleggendeFaktum(
                 faktumId = faktumId,
                 navn = navn,
                 clazz = clazz,
-                gyldigeValg = GyldigeValg(gyldigeValg)
+                gyldigeValg = GyldigeValg(gyldigeValg),
             ) as Faktum<T>
 
-            Land::class.java -> GrunnleggendeFaktum(
-                faktumId = faktumId,
-                navn = navn,
-                clazz = clazz,
-                landGrupper = landGrupper
-            ) as Faktum<T>
+            Land::class.java -> {
+                require(landGrupper.isNotEmpty()) { "Kan ikke lage landfaktum $navn uten noen grupper" }
+                GrunnleggendeFaktum(
+                    faktumId = faktumId,
+                    navn = navn,
+                    clazz = clazz,
+                    landGrupper = landGrupper,
+                ) as Faktum<T>
+            }
 
             else -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz)
         }
@@ -121,8 +124,11 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 
     @Suppress("UNCHECKED_CAST")
     override fun og(otherId: Int): FaktumFactory<T> =
-        if (templateIder.isEmpty()) super.og(otherId)
-        else genererer(otherId) as FaktumFactory<T>
+        if (templateIder.isEmpty()) {
+            super.og(otherId)
+        } else {
+            genererer(otherId) as FaktumFactory<T>
+        }
 
     @Suppress("UNCHECKED_CAST")
     override infix fun genererer(otherId: Int): BaseFaktumFactory<Int> = (this as BaseFaktumFactory<Int>)
@@ -145,7 +151,7 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
             faktumId,
             navn,
             templateIder.map { otherId -> faktumMap[FaktumId(otherId)] as TemplateFaktum<*> },
-            navngittAv = navngittAvFaktumId
+            navngittAv = navngittAvFaktumId,
         )
             .also { generatorfaktum -> faktumMap[faktumId] = generatorfaktum }
     }

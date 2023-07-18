@@ -12,6 +12,7 @@ import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.quiz.mediator.helpers.testFaktaversjon
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
+import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.eøsEllerSveits
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eøs arbeidsforhold arbeidsgivernavn`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eøs arbeidsforhold land`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.EøsArbeidsforhold.`eøs arbeidsforhold personnummer`
@@ -132,7 +133,7 @@ internal class EøsArbeidsforholdTest {
                             land("faktum.eos-arbeidsforhold.land") {
                                 grupper(sjekkAlle = false) {
                                     gruppe("faktum.eos-arbeidsforhold.land.gruppe.eøs") {
-                                        eøsEllerSveits().forEach { eøsLand ->
+                                        eøsEllerSveits.forEach { eøsLand ->
                                             harLand(eøsLand.alpha3Code)
                                         }
                                     }

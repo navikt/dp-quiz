@@ -10,6 +10,7 @@ import no.nav.dagpenger.model.helpers.MedSøknad
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.quiz.mediator.helpers.testFaktaversjon
 import no.nav.dagpenger.quiz.mediator.helpers.testSøknadprosess
+import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.eøsEllerSveits
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`andre ytelser mottatt eller søkt`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`annen ytelse hvem utebetaler`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.AndreYtelser.`annen ytelse hvilken periode`
@@ -180,7 +181,7 @@ internal class AndreYtelserTest {
                     land("faktum.dagpenger-hvilket-eos-land-utbetaler") {
                         grupper(sjekkAlle = false) {
                             gruppe("faktum.dagpenger-hvilket-eos-land-utbetaler.gruppe.eøs") {
-                                eøsEllerSveits().forEach { eøsLand ->
+                                eøsEllerSveits.forEach { eøsLand ->
                                     harLand(eøsLand.alpha3Code)
                                 }
                             }

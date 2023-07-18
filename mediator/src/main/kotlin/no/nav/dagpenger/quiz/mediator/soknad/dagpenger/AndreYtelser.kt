@@ -20,6 +20,7 @@ import no.nav.dagpenger.model.subsumsjon.godkjentAv
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
+import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.eøsEllerSveits
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object AndreYtelser : DslFaktaseksjon {
@@ -82,7 +83,7 @@ object AndreYtelser : DslFaktaseksjon {
         dokument faktum "faktum.dokument-etterlonn" id `dokumentasjon etterlønn` avhengerAv `hvilke andre ytelser`,
         boolsk faktum "faktum.godkjenning-dokument-etterlonn" id `godkjenning dokumentasjon etterlønn` avhengerAv `dokumentasjon etterlønn`,
 
-        land faktum "faktum.dagpenger-hvilket-eos-land-utbetaler" gruppe "eøs" med eøsEllerSveits() id `dagpenger hvilket eøs land utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
+        land faktum "faktum.dagpenger-hvilket-eos-land-utbetaler" gruppe "eøs" med eøsEllerSveits id `dagpenger hvilket eøs land utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
         periode faktum "faktum.dagpenger-eos-land-hvilken-periode" id `dagpenger eøs land hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
         dokument faktum "faktum.dokument-dagpenger-eos-land" id `dokumentasjon dagpenger eøs land` avhengerAv `hvilke andre ytelser`,
         boolsk faktum "faktum.godkjenning-dokument-dagpenger-eos-land" id `godkjenning dokumentasjon dagpenger eøs land` avhengerAv `dokumentasjon dagpenger eøs land`,
@@ -96,7 +97,7 @@ object AndreYtelser : DslFaktaseksjon {
         boolsk faktum "faktum.utbetaling-eller-okonomisk-gode-tidligere-arbeidsgiver" id `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
         tekst faktum "faktum.okonomisk-gode-tidligere-arbeidsgiver-hva-omfatter-avtalen" id `økonomisk gode tidligere arbeidsgiver hva omfatter avtalen` avhengerAv `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
         dokument faktum "faktum.dokument-okonomiske-goder-tidligere-arbeidsgiver" id `dokumentasjon økonomiske goder fra tidligere arbeidsgiver` avhengerAv `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
-        boolsk faktum "faktum.godkjenning-dokument-okonomiske-goder-tidligere-arbeidsgiver" id `godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver` avhengerAv `dokumentasjon økonomiske goder fra tidligere arbeidsgiver`
+        boolsk faktum "faktum.godkjenning-dokument-okonomiske-goder-tidligere-arbeidsgiver" id `godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver` avhengerAv `dokumentasjon økonomiske goder fra tidligere arbeidsgiver`,
     )
 
     override fun seksjon(fakta: Fakta) = listOf(fakta.seksjon("andre-ytelser", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
@@ -111,9 +112,9 @@ object AndreYtelser : DslFaktaseksjon {
                         garantilottFraGFF(),
                         etterlønnFraArbeidsgiver(),
                         dagpengerFraAnnetEøsLand(),
-                        annenYtelse()
+                        annenYtelse(),
                     )
-                }
+                },
             ).hvisOppfylt {
                 "Felles avsluttningsspørsmål".minstEnAv(
                     boolsk(`utbetaling eller økonomisk gode tidligere arbeidsgiver`) er false,
@@ -121,7 +122,7 @@ object AndreYtelser : DslFaktaseksjon {
                         .sannsynliggjøresAv(dokument(`dokumentasjon økonomiske goder fra tidligere arbeidsgiver`))
                         .godkjentAv(boolsk(`godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver`)) hvisOppfylt {
                         tekst(`økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`).utfylt()
-                    }
+                    },
                 )
             }
         }
@@ -133,7 +134,7 @@ object AndreYtelser : DslFaktaseksjon {
             .godkjentAv(boolsk(`godkjenning dokumentasjon tjenestepensjon`)) hvisOppfylt {
             "hvem utbetaler pensjonen og for hvilken periode".alle(
                 tekst(`tjenestepensjon hvem utbetaler`).utfylt(),
-                periode(`tjenestepensjon hvilken periode`).utfylt()
+                periode(`tjenestepensjon hvilken periode`).utfylt(),
 
             )
         }
@@ -143,7 +144,7 @@ object AndreYtelser : DslFaktaseksjon {
             .sannsynliggjøresAv(dokument(`dokumentasjon arbeidsløs GFF periode`))
             .godkjentAv(boolsk(`godkjenning dokumentasjon arbeidsløs GFF periode`)) hvisOppfylt {
             "for hvilken periode".alle(
-                periode(`arbeidsløs GFF hvilken periode`).utfylt()
+                periode(`arbeidsløs GFF hvilken periode`).utfylt(),
             )
         }
 
@@ -152,7 +153,7 @@ object AndreYtelser : DslFaktaseksjon {
             .sannsynliggjøresAv(dokument(`dokumentasjon garantilott fra GFF periode`))
             .godkjentAv(boolsk(`godkjenning dokumentasjon garantilott fra GFF periode`)) hvisOppfylt {
             "for hvilken periode".alle(
-                periode(`garantilott fra GFF hvilken periode`).utfylt()
+                periode(`garantilott fra GFF hvilken periode`).utfylt(),
             )
         }
 
@@ -162,7 +163,7 @@ object AndreYtelser : DslFaktaseksjon {
             .godkjentAv(boolsk(`godkjenning dokumentasjon etterlønn`)) hvisOppfylt {
             "hvem utbetaler etterlønnen og for hvilken periode".alle(
                 tekst(`etterlønn arbeidsgiver hvem utbetaler`).utfylt(),
-                periode(`etterlønn arbeidsgiver hvilken periode`).utfylt()
+                periode(`etterlønn arbeidsgiver hvilken periode`).utfylt(),
             )
         }
 
@@ -172,7 +173,7 @@ object AndreYtelser : DslFaktaseksjon {
             .godkjentAv(boolsk(`godkjenning dokumentasjon dagpenger eøs land`)) hvisOppfylt {
             "hvilket land utbetaler og for hvilken periode".alle(
                 land(`dagpenger hvilket eøs land utbetaler`).utfylt(),
-                periode(`dagpenger eøs land hvilken periode`).utfylt()
+                periode(`dagpenger eøs land hvilken periode`).utfylt(),
             )
         }
 
@@ -183,7 +184,7 @@ object AndreYtelser : DslFaktaseksjon {
             "hvem utbetaler og for hvilken periode".alle(
                 tekst(`hvilken annen ytelse`).utfylt(),
                 tekst(`annen ytelse hvem utebetaler`).utfylt(),
-                periode(`annen ytelse hvilken periode`).utfylt()
+                periode(`annen ytelse hvilken periode`).utfylt(),
             )
         }
 
@@ -217,6 +218,6 @@ object AndreYtelser : DslFaktaseksjon {
         `dokumentasjon annen ytelse`,
         `godkjenning dokumentasjon annen ytelse`,
         `dokumentasjon økonomiske goder fra tidligere arbeidsgiver`,
-        `godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver`
+        `godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver`,
     )
 }
