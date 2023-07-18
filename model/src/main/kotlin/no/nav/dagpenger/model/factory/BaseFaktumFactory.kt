@@ -108,12 +108,15 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
                 gyldigeValg = GyldigeValg(gyldigeValg),
             ) as Faktum<T>
 
-            Land::class.java -> GrunnleggendeFaktum(
-                faktumId = faktumId,
-                navn = navn,
-                clazz = clazz,
-                landGrupper = landGrupper,
-            ) as Faktum<T>
+            Land::class.java -> {
+                require(landGrupper.isNotEmpty()) { "Kan ikke lage landfaktum $navn uten noen grupper" }
+                GrunnleggendeFaktum(
+                    faktumId = faktumId,
+                    navn = navn,
+                    clazz = clazz,
+                    landGrupper = landGrupper,
+                ) as Faktum<T>
+            }
 
             else -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz)
         }

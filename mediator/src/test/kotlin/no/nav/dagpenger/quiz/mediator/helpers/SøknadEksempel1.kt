@@ -15,6 +15,7 @@ import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktatype
 import no.nav.dagpenger.model.faktum.Faktaversjon
+import no.nav.dagpenger.model.faktum.Land
 import no.nav.dagpenger.model.seksjon.Prosesstype
 
 enum class Testfakta(override val id: String) : Faktatype {
@@ -59,7 +60,7 @@ internal object SøknadEksempel1 {
         heltall faktum "f22" id 22,
         tekst faktum "f23" id 23,
         periode faktum "f24" id 24,
-        land faktum "f25" id 25,
+        land faktum "f25" gruppe "gruppe" med setOf(Land("BUL")) id 25,
         desimaltall faktum "f26" id 26,
     ).registrer()
 }

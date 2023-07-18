@@ -26,6 +26,7 @@ import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
+import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.verden
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object DinSituasjon : DslFaktaseksjon {
@@ -177,7 +178,7 @@ object DinSituasjon : DslFaktaseksjon {
             og `dokumentasjon arbeidsforhold redusert arbeidstid`
             og `dokumentasjon arbeidsforhold permittert`,
         tekst faktum "faktum.arbeidsforhold.navn-bedrift" id `arbeidsforhold navn bedrift`,
-        land faktum "faktum.arbeidsforhold.land" id `arbeidsforhold land`,
+        land faktum "faktum.arbeidsforhold.land" gruppe "verden" med verden id `arbeidsforhold land`,
         envalg faktum "faktum.arbeidsforhold.endret"
             med "svar.sagt-opp-av-arbeidsgiver"
             med "svar.sagt-opp-selv"
@@ -329,7 +330,7 @@ object DinSituasjon : DslFaktaseksjon {
             og `dokumentasjon brev fra bobestyrer eller konkursforvalter`
             og `dokumentasjon arbeidsforhold sagt opp selv`
             og `dokumentasjon arbeidsforhold redusert arbeidstid`
-            og `dokumentasjon arbeidsforhold permittert`
+            og `dokumentasjon arbeidsforhold permittert`,
 
     )
 
@@ -357,8 +358,8 @@ object DinSituasjon : DslFaktaseksjon {
                 boolsk(`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`) er false,
                 boolsk(`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`) er true hvisOppfylt {
                     `ønske om ny beregning og fastsatt ny arbeidstid eller ikke`()
-                }
-            )
+                },
+            ),
         )
 
     private fun Fakta.`ønske om ny beregning og fastsatt ny arbeidstid eller ikke`() =
@@ -374,11 +375,11 @@ object DinSituasjon : DslFaktaseksjon {
                     boolsk(`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`) er true hvisOppfylt {
                         "type arbeidstid og arbeidsforhold".alle(
                             envalg(`type arbeidstid`).utfylt(),
-                            `alle arbeidsforhold`()
+                            `alle arbeidsforhold`(),
                         )
-                    }
+                    },
                 )
-            }
+            },
         )
 
     private fun Fakta.`ny søknad`() = "søknadsdato, type arbeidstid og arbeidsforhold".alle(
@@ -387,13 +388,13 @@ object DinSituasjon : DslFaktaseksjon {
             `alle arbeidsforhold`()
         } hvisIkkeOppfylt {
             envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.ingen-passer")
-        }
+        },
     )
 
     private fun Fakta.`har hatt arbeidstid`() = "fast, varierende eller kombinert".minstEnAv(
         envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.fast"),
         envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.varierende"),
-        envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.kombinasjon")
+        envalg(`type arbeidstid`) inneholder Envalg("faktum.type-arbeidstid.svar.kombinasjon"),
     )
 
     private fun Fakta.`alle arbeidsforhold`() =
@@ -409,8 +410,8 @@ object DinSituasjon : DslFaktaseksjon {
                     `kontrakten er utgått`(),
                     `sagt opp selv`(),
                     `redusert arbeidstid`(),
-                    permittert()
-                )
+                    permittert(),
+                ),
             )
         }
 
@@ -422,8 +423,8 @@ object DinSituasjon : DslFaktaseksjon {
                     boolsk(`arbeidsforhold har tilleggsopplysninger`) er false,
                     boolsk(`arbeidsforhold har tilleggsopplysninger`) er true hvisOppfylt {
                         tekst(`arbeidsforhold tilleggsopplysninger`).utfylt()
-                    }
-                )
+                    },
+                ),
             )
         }
 
@@ -432,21 +433,21 @@ object DinSituasjon : DslFaktaseksjon {
             boolsk(`arbeidsforhold kjent antall timer jobbet`) er false,
             boolsk(`arbeidsforhold kjent antall timer jobbet`) er true hvisOppfylt {
                 desimaltall(`arbeidsforhold antall timer jobbet`).utfylt()
-            }
+            },
         )
 
     private fun Fakta.avskjediget() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.avskjediget"))
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
-                dokument(`dokumentasjon arbeidsforhold avskjediget`)
+                dokument(`dokumentasjon arbeidsforhold avskjediget`),
             ).godkjentAv(
-                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
+                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`),
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 `arbeidstimer før mistet jobb`(),
-                tekst(`arbeidsforhold hva er årsak til avskjediget`).utfylt()
+                tekst(`arbeidsforhold hva er årsak til avskjediget`).utfylt(),
             )
         }
 
@@ -455,7 +456,7 @@ object DinSituasjon : DslFaktaseksjon {
             boolsk(`arbeidsforhold vet du antall timer før mistet jobb`) er false,
             boolsk(`arbeidsforhold vet du antall timer før mistet jobb`) er true hvisOppfylt {
                 `antall timer jobbet`()
-            }
+            },
         )
 
     private fun Fakta.`antall timer jobbet`() =
@@ -465,16 +466,16 @@ object DinSituasjon : DslFaktaseksjon {
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
-                dokument(`dokumentasjon arbeidsforhold blitt sagt opp`)
+                dokument(`dokumentasjon arbeidsforhold blitt sagt opp`),
             ).godkjentAv(
-                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
+                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`),
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 `arbeidstimer før mistet jobb`(),
                 tekst(`arbeidsforhold hva er årsak til sagt opp av arbeidsgiver`).utfylt(),
                 `tilbud om annen stilling eller annet sted i Norge`(),
-                `skift, turnus og rotasjon`()
+                `skift, turnus og rotasjon`(),
             )
         }
 
@@ -492,30 +493,30 @@ object DinSituasjon : DslFaktaseksjon {
                 (boolsk(`arbeidsforhold rotasjon`) er true)
                     .sannsynliggjøresAv(dokument(`dokumentasjon timelister`))
                     .godkjentAv(
-                        boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
+                        boolsk(`godkjenning av arbeidsforhold-dokumentasjon`),
                     ) hvisOppfylt {
                     "oppfølgingsspørsmål om rotasjonen".alle(
                         heltall(`arbeidsforhold arbeidsdager siste rotasjon`).utfylt(),
-                        heltall(`arbeidsforhold fridager siste rotasjon`).utfylt()
+                        heltall(`arbeidsforhold fridager siste rotasjon`).utfylt(),
                     )
-                }
-            )
+                },
+            ),
         )
 
     private fun Fakta.`arbeidsgiver er konkurs`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs"))
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
-                dokument(`dokumentasjon brev fra bobestyrer eller konkursforvalter`)
+                dokument(`dokumentasjon brev fra bobestyrer eller konkursforvalter`),
             ).godkjentAv(
-                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
+                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`),
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 envalg(`arbeidsforhold midlertidig arbeidsforhold med sluttdato`).utfylt(),
                 `arbeidstimer før konkurs`(),
                 lønnsgarantimidler(),
-                `skift, turnus og rotasjon`()
+                `skift, turnus og rotasjon`(),
             )
         }
 
@@ -524,7 +525,7 @@ object DinSituasjon : DslFaktaseksjon {
             boolsk(`arbeidsforhold vet du antall timer før konkurs`) er false,
             boolsk(`arbeidsforhold vet du antall timer før konkurs`) er true hvisOppfylt {
                 `antall timer jobbet`()
-            }
+            },
         )
 
     private fun Fakta.lønnsgarantimidler() =
@@ -534,7 +535,7 @@ object DinSituasjon : DslFaktaseksjon {
             },
             boolsk(`arbeidsforhold søke forskudd lønnsgarantimidler`) er true hvisOppfylt {
                 `oppfølgingsspørsmål om lønnsgarantimidler`()
-            }
+            },
         )
 
     private fun Fakta.`oppfølgingsspørsmål om lønnsgarantimidler`() =
@@ -543,7 +544,7 @@ object DinSituasjon : DslFaktaseksjon {
                 boolsk(`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`) er false,
                 boolsk(`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`) er true hvisOppfylt {
                     boolsk(`arbeidsforhold godta trekk direkte fra konkursboet`).utfylt()
-                }
+                },
             ),
             boolsk(`arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`).utfylt(),
             envalg(`arbeidsforhold har søkt om lønnsgarantimidler`).utfylt(),
@@ -552,21 +553,21 @@ object DinSituasjon : DslFaktaseksjon {
                 boolsk(`arbeidsforhold utbetalt lønn etter konkurs`) er false,
                 boolsk(`arbeidsforhold utbetalt lønn etter konkurs`) er true hvisOppfylt {
                     dato(`arbeidsforhold siste dag utbetalt for konkurs`).utfylt()
-                }
-            )
+                },
+            ),
         )
 
     private fun Fakta.`kontrakten er utgått`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt"))
             .sannsynliggjøresAv(dokument(`dokumentasjon arbeidsavtale`))
             .godkjentAv(
-                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
+                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`),
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 `arbeidstimer før utgått kontrakt`(),
                 `tilbud om forlengelse eller annen stilling`(),
-                `skift, turnus og rotasjon`()
+                `skift, turnus og rotasjon`(),
             )
         }
 
@@ -575,7 +576,7 @@ object DinSituasjon : DslFaktaseksjon {
             boolsk(`arbeidsforhold vet du antall timer før kontrakt utgikk`) er false,
             boolsk(`arbeidsforhold vet du antall timer før kontrakt utgikk`) er true hvisOppfylt {
                 `antall timer jobbet`()
-            }
+            },
         )
 
     private fun Fakta.`tilbud om forlengelse eller annen stilling`() =
@@ -589,25 +590,25 @@ object DinSituasjon : DslFaktaseksjon {
                         inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei") hvisOppfylt {
                         tekst(`arbeidsforhold årsak til ikke akseptert tilbud`).utfylt()
                     },
-                    envalg(`arbeidsforhold svar på forlengelse eller annen stilling`) inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ikke-svart")
+                    envalg(`arbeidsforhold svar på forlengelse eller annen stilling`) inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ikke-svart"),
                 )
-            }
+            },
         )
 
     private fun Fakta.`sagt opp selv`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv"))
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
-                dokument(`dokumentasjon arbeidsforhold sagt opp selv`)
+                dokument(`dokumentasjon arbeidsforhold sagt opp selv`),
             )
             .godkjentAv(
-                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
+                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`),
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `varighet på arbeidsforholdet`(),
                 `arbeidstimer før sagt opp selv`(),
                 tekst(`arbeidsforhold årsak til du sa opp`).utfylt(),
-                `skift, turnus og rotasjon`()
+                `skift, turnus og rotasjon`(),
             )
         }
 
@@ -616,17 +617,17 @@ object DinSituasjon : DslFaktaseksjon {
             boolsk(`arbeidsforhold vet du antall timer før du sa opp`) er false,
             boolsk(`arbeidsforhold vet du antall timer før du sa opp`) er true hvisOppfylt {
                 `antall timer jobbet`()
-            }
+            },
         )
 
     private fun Fakta.`redusert arbeidstid`() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid"))
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
-                dokument(`dokumentasjon arbeidsforhold redusert arbeidstid`)
+                dokument(`dokumentasjon arbeidsforhold redusert arbeidstid`),
             )
             .godkjentAv(
-                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
+                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`),
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 dato(`arbeidsforhold startdato arbeidsforhold`).utfylt(),
@@ -634,7 +635,7 @@ object DinSituasjon : DslFaktaseksjon {
                 `arbeidstimer før redusert arbeidstid`(),
                 tekst(`arbeidsforhold hva er årsak til redusert arbeidstid`).utfylt(),
                 `tilbud om annen stilling eller annet sted i Norge`(),
-                `skift, turnus og rotasjon`()
+                `skift, turnus og rotasjon`(),
             )
         }
 
@@ -643,17 +644,17 @@ object DinSituasjon : DslFaktaseksjon {
             boolsk(`arbeidsforhold vet du antall timer før redusert arbeidstid`) er false,
             boolsk(`arbeidsforhold vet du antall timer før redusert arbeidstid`) er true hvisOppfylt {
                 `antall timer jobbet`()
-            }
+            },
         )
 
     private fun Fakta.permittert() =
         (envalg(`arbeidsforhold endret`) inneholder Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
-                dokument(`dokumentasjon arbeidsforhold permittert`)
+                dokument(`dokumentasjon arbeidsforhold permittert`),
             )
             .godkjentAv(
-                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`)
+                boolsk(`godkjenning av arbeidsforhold-dokumentasjon`),
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
                 `midlertidig arbeidsforhold med sluttdato`(),
@@ -663,7 +664,7 @@ object DinSituasjon : DslFaktaseksjon {
                 periode(`arbeidsforhold permittert periode`).utfylt(),
                 heltall(`arbeidsforhold permittert prosent`).utfylt(),
                 lønnspliktsperiode(),
-                `skift, turnus og rotasjon`()
+                `skift, turnus og rotasjon`(),
             )
         }
 
@@ -672,7 +673,7 @@ object DinSituasjon : DslFaktaseksjon {
             envalg(`arbeidsforhold midlertidig med kontraktfestet sluttdato`) inneholder Envalg("faktum.arbeidsforhold.midlertidig-med-kontraktfestet-sluttdato.svar.ja") hvisOppfylt {
                 dato(`arbeidsforhold kontraktfestet sluttdato`).utfylt()
             },
-            envalg(`arbeidsforhold midlertidig med kontraktfestet sluttdato`).utfylt()
+            envalg(`arbeidsforhold midlertidig med kontraktfestet sluttdato`).utfylt(),
         )
 
     private fun Fakta.`arbeidstimer før permittert`() =
@@ -680,7 +681,7 @@ object DinSituasjon : DslFaktaseksjon {
             boolsk(`arbeidsforhold vet du antall timer før permittert`) er false,
             boolsk(`arbeidsforhold vet du antall timer før permittert`) er true hvisOppfylt {
                 `antall timer jobbet`()
-            }
+            },
         )
 
     private fun Fakta.lønnspliktsperiode() =
@@ -688,7 +689,7 @@ object DinSituasjon : DslFaktaseksjon {
             boolsk(`arbeidsforhold vet du lønnsplikt periode`) er false,
             boolsk(`arbeidsforhold vet du lønnsplikt periode`) er true hvisOppfylt {
                 periode(`arbeidsforhold når var lønnsplikt periode`).utfylt()
-            }
+            },
         )
 
     override val spørsmålsrekkefølgeForSøker = listOf(
@@ -755,6 +756,6 @@ object DinSituasjon : DslFaktaseksjon {
         `dokumentasjon arbeidsforhold sagt opp selv`,
         `dokumentasjon arbeidsforhold redusert arbeidstid`,
         `dokumentasjon arbeidsforhold permittert`,
-        `godkjenning av arbeidsforhold-dokumentasjon`
+        `godkjenning av arbeidsforhold-dokumentasjon`,
     )
 }

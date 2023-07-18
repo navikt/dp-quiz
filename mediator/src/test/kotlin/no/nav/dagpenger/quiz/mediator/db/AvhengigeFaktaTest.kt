@@ -204,7 +204,7 @@ internal class AvhengigeFaktaTest {
                 inntekt faktum "f12" id 12 avhengerAv 1,
                 periode faktum "f13" id 13 avhengerAv 1,
                 tekst faktum "f14" id 14 avhengerAv 1,
-                land faktum "f15" id 15 avhengerAv 1,
+                land faktum "f15" gruppe "gruppe" med setOf(Land("BUL")) id 15 avhengerAv 1,
             ).registrer { prototypeFakta ->
                 leggTilProsess(
                     Prosess(

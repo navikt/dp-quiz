@@ -14,6 +14,7 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.tekst
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktaversjon
+import no.nav.dagpenger.model.faktum.Land
 
 internal object SøknadEksempel2 {
     val faktaversjon = Faktaversjon(SøknadEksempel1.faktatype, 889)
@@ -45,7 +46,7 @@ internal object SøknadEksempel2 {
             flervalg faktum "f21" med "flervalg1" med "flervalg2" med "flervalg3" id 21,
             heltall faktum "f22" id 22,
             periode faktum "f24" id 24,
-            land faktum "f25" id 25,
+            land faktum "f25" gruppe "gruppe" med setOf(Land("BUL")) id 25,
             heltall faktum "f26" id 26,
             desimaltall faktum "f27" id 27,
             envalg faktum "f28" med "valg1" med "valg2" id 28,
