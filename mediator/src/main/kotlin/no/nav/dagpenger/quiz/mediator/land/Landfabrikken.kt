@@ -23,11 +23,11 @@ internal object Landfabrikken {
 
     val tredjeland by lazy { land - norge - storbritannia - eøsEllerSveits }
 
-    val norge = tilLand("NOR", "SJM")
+    val norge = land("NOR", "SJM")
 
-    val storbritannia = tilLand("GBR", "JEY", "IMN")
+    val storbritannia = land("GBR", "JEY", "IMN")
 
-    val eøsEllerSveits = tilLand(
+    val eøsEllerSveits = land(
         "BEL",
         "BGR",
         "DNK",
@@ -60,5 +60,5 @@ internal object Landfabrikken {
         "AUT",
     )
 
-    private fun tilLand(vararg land: String) = land.map { this.land(it) }.toSet()
+    private fun land(vararg land: String) = land.map { this.land(it) }.toSet()
 }
