@@ -9,7 +9,6 @@ import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataService
 import no.nav.dagpenger.quiz.mediator.behovløsere.MigrerProsessService
 import no.nav.dagpenger.quiz.mediator.behovløsere.SenesteMuligeVirkningsdatoService
 import no.nav.dagpenger.quiz.mediator.behovløsere.TerskelFaktorService
-import no.nav.dagpenger.quiz.mediator.behovløsere.VirkningsdatoerBehovLøser
 import no.nav.dagpenger.quiz.mediator.db.FaktaRecord
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.runMigration
@@ -95,7 +94,6 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 )
                 DokumentkravSvarService(rapidsConnection, prosessRepository)
                 MigrerProsessService(rapidsConnection, faktaRecord, prosessRepository)
-                VirkningsdatoerBehovLøser(rapidsConnection, prosessRepository)
             }
     }
 }
