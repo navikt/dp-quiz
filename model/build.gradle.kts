@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation(Jackson.kotlin)
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.10")
 
     implementation("guru.nidi:graphviz-java:0.18.1")
     implementation("guru.nidi:graphviz-kotlin:0.18.1")
