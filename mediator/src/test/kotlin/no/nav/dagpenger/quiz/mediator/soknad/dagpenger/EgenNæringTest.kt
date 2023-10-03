@@ -45,8 +45,8 @@ internal class EgenNæringTest {
         prosess.heltall("${EgenNæring.`egen næring organisasjonsnummer`}.2").besvar(456)
         assertEquals(null, prosess.resultat())
 
-        prosess.desimaltall(EgenNæring.`egen næring arbeidstimer nå`).besvar(37.5)
         prosess.desimaltall(EgenNæring.`egen næring arbeidstimer før`).besvar(35.0)
+        prosess.desimaltall(EgenNæring.`egen næring arbeidstimer nå`).besvar(37.5)
 
         prosess.boolsk(EgenNæring.`driver du eget gårdsbruk`).besvar(false)
         assertEquals(true, prosess.resultat())
@@ -132,7 +132,7 @@ internal class EgenNæringTest {
     @Test
     fun `Faktarekkefølge i seksjon`() {
         val faktaFraEgenNæring = prosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
-        assertEquals("3001,3002,3003,3005,3004,3006,3007,3008,3009,3010,3011,3012,3014,3013,3015", faktaFraEgenNæring)
+        assertEquals("3001,3002,3003,3004,3005,3006,3007,3008,3009,3010,3011,3012,3014,3013,3015", faktaFraEgenNæring)
     }
 
     private fun assertErBesvarte(vararg fakta: Faktum<*>) =

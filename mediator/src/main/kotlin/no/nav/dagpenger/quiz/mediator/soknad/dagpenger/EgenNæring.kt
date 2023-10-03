@@ -120,8 +120,8 @@ object EgenNæring : DslFaktaseksjon {
 
     private fun Fakta.`arbeidstimer for næringen før og nå`() =
         "spørsmål om arbeidstimer".alle(
-            desimaltall(`egen næring arbeidstimer nå`).utfylt(),
-            desimaltall(`egen næring arbeidstimer før`).utfylt()
+            desimaltall(`egen næring arbeidstimer før`).utfylt(),
+            desimaltall(`egen næring arbeidstimer nå`).utfylt()
         )
 
     private fun Fakta.`organisasjonsnummer, type gårdsbruk og eier`() =
@@ -161,8 +161,8 @@ object EgenNæring : DslFaktaseksjon {
         `driver du egen næring`,
         `egen næring organisasjonsnummer liste`,
         `egen næring organisasjonsnummer`,
-        `egen næring arbeidstimer nå`,
         `egen næring arbeidstimer før`,
+        `egen næring arbeidstimer nå`,
         `driver du eget gårdsbruk`,
         `eget gårdsbruk organisasjonsnummer`,
         `eget gårdsbruk type gårdsbruk`,
