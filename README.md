@@ -40,6 +40,13 @@ KAFKA_BOOTSTRAP_SERVERS=127.0.0.1:9092
 ```
 docker-compose up
 ```
+3. Sende meldinger:
+```shell
+## Kjør setup filen for å sjekke at alle nødvendigheter er installert
+test-meldinger/setup.sh
+## For å sende f.eks. en NySøknad behov
+test-meldinger/ny-soknad-behov.sh
+```
 
 ## Coding style
 
