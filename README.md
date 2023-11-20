@@ -26,6 +26,21 @@ Gradle brukes som byggverktøy og er bundlet inn.
 
 `./gradlew build`
 
+## Lokal utvikling
+1. Legg til følgende envs i IntelliJ:
+```
+DB_DATABASE=postgres
+DB_HOST=localhost
+DB_PASSWORD=postgres
+DB_PORT=5432
+DB_USERNAME=postgres
+KAFKA_BOOTSTRAP_SERVERS=127.0.0.1:9092
+```
+2. Start lokal database og Kafka:
+```
+docker-compose up
+```
+
 ## Coding style
 
 Vi bruker [`ktlint`](https://github.com/pinterest/ktlint) som linter og formatter for Kotlin.
