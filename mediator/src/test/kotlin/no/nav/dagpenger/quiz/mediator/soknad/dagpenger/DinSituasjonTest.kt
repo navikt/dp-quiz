@@ -32,7 +32,7 @@ internal class DinSituasjonTest {
 
     @Test
     fun `Sjekk om faktasammensettingen har endret seg siden sist`() {
-        DinSituasjon.verifiserFeltsammensetting(64, 8480)
+        DinSituasjon.verifiserFeltsammensetting(62, 8269)
     }
 
     @Test
@@ -80,36 +80,23 @@ internal class DinSituasjonTest {
         prosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
             .besvar(true)
 
-        prosess.boolsk(DinSituasjon.`gjenopptak ønsker ny beregning av dagpenger`).besvar(false)
         `besvar spørsmål for et arbeidsforhold`()
         assertEquals(true, prosess.resultat())
-
-        prosess.boolsk(DinSituasjon.`gjenopptak ønsker ny beregning av dagpenger`).besvar(true)
-        assertEquals(null, prosess.resultat())
-
-        prosess.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`).besvar(false)
-        assertEquals(true, prosess.resultat())
-
-        prosess.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`).besvar(true)
-        assertEquals(null, prosess.resultat())
 
         prosess.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
         assertEquals(true, prosess.resultat())
 
         // Avhengigheter
-        prosess.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`).besvar(false)
-        assertErUbesvarte(prosess.envalg(DinSituasjon.`type arbeidstid`))
-
         prosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.vet-ikke"))
+        assertErUbesvarte(prosess.envalg(DinSituasjon.`type arbeidstid`))
+
         assertEquals(null, prosess.resultat())
 
         assertErUbesvarte(
             prosess.tekst(DinSituasjon.`gjenopptak årsak til stans av dagpenger`),
             prosess.dato(DinSituasjon.`gjenopptak søknadsdato`),
             prosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`),
-            prosess.boolsk(DinSituasjon.`gjenopptak ønsker ny beregning av dagpenger`),
-            prosess.boolsk(DinSituasjon.`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`),
         )
     }
 
@@ -478,8 +465,6 @@ internal class DinSituasjonTest {
 103,
 104,
 102,
-105,
-106,
 108,
 107,
 109,

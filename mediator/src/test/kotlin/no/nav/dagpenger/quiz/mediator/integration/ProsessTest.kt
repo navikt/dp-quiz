@@ -42,7 +42,7 @@ internal class ProsessTest {
         medSeksjon(DinSituasjon) {
             with(it.aktivSeksjon) {
                 assertEquals("din-situasjon", navn)
-                assertEquals(64, antallSpørsmål)
+                assertEquals(62, antallSpørsmål)
             }
 
             it.envalg(`mottatt dagpenger siste 12 mnd`)
@@ -51,7 +51,7 @@ internal class ProsessTest {
             it.envalg(`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
             it.generator(arbeidsforhold).besvar(1)
             // Når generatoren er besvart skal det være lagt til nylig genererte faktum i samme seksjon
-            assertEquals(118, it.aktivSeksjon.antallSpørsmål)
+            assertEquals(116, it.aktivSeksjon.antallSpørsmål)
             it.tekst(`arbeidsforhold navn bedrift` index 1).besvar(Tekst("Hei"))
         }
 

@@ -185,8 +185,6 @@ internal class EøsArbeidsforholdTest {
 103,
 104,
 102,
-105,
-106,
 108,
 107,
 109,
