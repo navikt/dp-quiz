@@ -4,4 +4,4 @@ db:
   point_in_time_recovery_days: 2
 kafka:
   pool: nav-dev
-replicas: 4
+replicas: 3
