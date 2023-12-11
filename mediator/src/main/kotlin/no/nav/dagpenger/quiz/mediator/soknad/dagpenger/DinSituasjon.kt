@@ -34,8 +34,6 @@ object DinSituasjon : DslFaktaseksjon {
     const val `gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold` = 102
     const val `gjenopptak årsak til stans av dagpenger` = 103
     const val `gjenopptak søknadsdato` = 104
-    const val `gjenopptak ønsker ny beregning av dagpenger` = 105
-    const val `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid` = 106
     const val `type arbeidstid` = 107
     const val `dagpenger søknadsdato` = 108
     const val arbeidsforhold = 109
@@ -109,17 +107,11 @@ object DinSituasjon : DslFaktaseksjon {
         boolsk faktum "faktum.arbeidsforhold.gjenopptak.jobbet-siden-sist-eller-endring-i-arbeidsforhold"
             id `gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`
             avhengerAv `mottatt dagpenger siste 12 mnd`,
-        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-ny-beregning"
-            id `gjenopptak ønsker ny beregning av dagpenger`
-            avhengerAv `gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`,
-        boolsk faktum "faktum.arbeidsforhold.gjenopptak.onsker-faa-fastsatt-ny-vanlig-arbeidstid"
-            id `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`
-            avhengerAv `gjenopptak ønsker ny beregning av dagpenger`,
         envalg faktum "faktum.type-arbeidstid"
             med "svar.fast"
             med "svar.varierende"
             med "svar.kombinasjon"
-            med "svar.ingen-passer" id `type arbeidstid` avhengerAv `mottatt dagpenger siste 12 mnd` og `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
+            med "svar.ingen-passer" id `type arbeidstid` avhengerAv `mottatt dagpenger siste 12 mnd`,
         dato faktum "faktum.dagpenger-soknadsdato" id `dagpenger søknadsdato` avhengerAv `mottatt dagpenger siste 12 mnd`,
         heltall faktum "faktum.arbeidsforhold" id arbeidsforhold
             genererer `arbeidsforhold navn bedrift`
@@ -357,29 +349,9 @@ object DinSituasjon : DslFaktaseksjon {
             "jobbet siden sist/hatt endringer i arbeidsforhold siden sist eller ikke".minstEnAv(
                 boolsk(`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`) er false,
                 boolsk(`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`) er true hvisOppfylt {
-                    `ønske om ny beregning og fastsatt ny arbeidstid eller ikke`()
+                    `alle arbeidsforhold`()
                 },
             ),
-        )
-
-    private fun Fakta.`ønske om ny beregning og fastsatt ny arbeidstid eller ikke`() =
-        "ønsker ny beregning av dagpenger eller ikke".minstEnAv(
-            boolsk(`gjenopptak ønsker ny beregning av dagpenger`) er false hvisOppfylt {
-                `alle arbeidsforhold`()
-            },
-            boolsk(`gjenopptak ønsker ny beregning av dagpenger`) er true hvisOppfylt {
-                "ønsker å få fastsatt ny vanlig arbeidstid eller ikke".minstEnAv(
-                    boolsk(`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`) er false hvisOppfylt {
-                        `alle arbeidsforhold`()
-                    },
-                    boolsk(`gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`) er true hvisOppfylt {
-                        "type arbeidstid og arbeidsforhold".alle(
-                            envalg(`type arbeidstid`).utfylt(),
-                            `alle arbeidsforhold`(),
-                        )
-                    },
-                )
-            },
         )
 
     private fun Fakta.`ny søknad`() = "søknadsdato, type arbeidstid og arbeidsforhold".alle(
@@ -697,8 +669,6 @@ object DinSituasjon : DslFaktaseksjon {
         `gjenopptak årsak til stans av dagpenger`,
         `gjenopptak søknadsdato`,
         `gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`,
-        `gjenopptak ønsker ny beregning av dagpenger`,
-        `gjenopptak ønsker å få fastsatt ny vanlig arbeidstid`,
         `dagpenger søknadsdato`,
         `type arbeidstid`,
         arbeidsforhold,
