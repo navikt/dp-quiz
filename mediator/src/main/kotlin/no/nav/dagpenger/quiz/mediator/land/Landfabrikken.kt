@@ -60,5 +60,7 @@ internal object Landfabrikken {
         "AUT",
     )
 
+    val eøsOgSveitsOgStorbritannia = eøsEllerSveits + storbritannia
+
     private fun land(vararg land: String) = land.map { this.land(it) }.toSet()
 }
