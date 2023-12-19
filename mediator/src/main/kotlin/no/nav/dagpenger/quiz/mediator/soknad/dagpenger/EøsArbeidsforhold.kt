@@ -20,7 +20,7 @@ import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
-import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.eøsEllerSveits
+import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.eøsOgSveitsOgStorbritannia
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object EøsArbeidsforhold : DslFaktaseksjon {
@@ -42,7 +42,7 @@ object EøsArbeidsforhold : DslFaktaseksjon {
 
         tekst faktum "faktum.eos-arbeidsforhold.arbeidsgivernavn" id `eøs arbeidsforhold arbeidsgivernavn`,
 
-        land faktum "faktum.eos-arbeidsforhold.land" gruppe "eøs" med eøsEllerSveits id `eøs arbeidsforhold land`,
+        land faktum "faktum.eos-arbeidsforhold.land" gruppe "eøs" med eøsOgSveitsOgStorbritannia id `eøs arbeidsforhold land`,
 
         tekst faktum "faktum.eos-arbeidsforhold.personnummer" id `eøs arbeidsforhold personnummer`,
 
