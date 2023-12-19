@@ -43,7 +43,7 @@ jobs:
 
   deploy-dev:
     needs: [ build ]
-    if: github.ref == 'refs/heads/feature/legg-til-storbritannia-i-eøs-liste'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
