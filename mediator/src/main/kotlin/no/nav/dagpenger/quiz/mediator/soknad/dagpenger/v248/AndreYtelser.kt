@@ -20,7 +20,7 @@ import no.nav.dagpenger.model.subsumsjon.godkjentAv
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
-import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.eøsOgSveitsOgStorbritannia
+import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.eøsEllerSveits
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
 object AndreYtelser : DslFaktaseksjon {
@@ -83,7 +83,7 @@ object AndreYtelser : DslFaktaseksjon {
         dokument faktum "faktum.dokument-etterlonn" id `dokumentasjon etterlønn` avhengerAv `hvilke andre ytelser`,
         boolsk faktum "faktum.godkjenning-dokument-etterlonn" id `godkjenning dokumentasjon etterlønn` avhengerAv `dokumentasjon etterlønn`,
 
-        land faktum "faktum.dagpenger-hvilket-eos-land-utbetaler" gruppe "eøs" med eøsOgSveitsOgStorbritannia id `dagpenger hvilket eøs land utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
+        land faktum "faktum.dagpenger-hvilket-eos-land-utbetaler" gruppe "eøs" med eøsEllerSveits id `dagpenger hvilket eøs land utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
         periode faktum "faktum.dagpenger-eos-land-hvilken-periode" id `dagpenger eøs land hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
         dokument faktum "faktum.dokument-dagpenger-eos-land" id `dokumentasjon dagpenger eøs land` avhengerAv `hvilke andre ytelser`,
         boolsk faktum "faktum.godkjenning-dokument-dagpenger-eos-land" id `godkjenning dokumentasjon dagpenger eøs land` avhengerAv `dokumentasjon dagpenger eøs land`,
