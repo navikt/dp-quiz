@@ -8,13 +8,10 @@ application {
 
 dependencies {
     implementation(project(":model"))
-    implementation(RapidAndRiversKtor2)
-    implementation(Database.Flyway)
-    implementation(Database.HikariCP)
-    implementation(Database.Postgres)
-    implementation(Database.Kotlinquery)
-    implementation(Konfig.konfig)
-    implementation(Kotlin.Logging.kotlinLogging)
+    implementation(libs.rapids.and.rivers)
+    implementation(libs.bundles.postgres)
+    implementation(libs.konfig)
+    implementation(libs.kotlin.logging)
     implementation("de.slub-dresden:urnlib:2.0.1")
 
     // unleash
@@ -22,8 +19,8 @@ dependencies {
         exclude("org.apache.logging.log4j")
     }
 
-    testImplementation(Mockk.mockk)
-    testImplementation(TestContainers.postgresql)
-    testImplementation(Junit5.params)
+    testImplementation(libs.bundles.postgres.test)
+    testImplementation(libs.mockk)
+    testImplementation("org.junit.jupiter:junit-jupiter-params:${libs.versions.junit}")
     testImplementation(testFixtures(project(":model")))
 }
