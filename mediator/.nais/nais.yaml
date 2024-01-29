@@ -62,7 +62,7 @@ spec:
         diskAutoresize: true
         pointInTimeRecovery: true
         retainedBackups: {{db.point_in_time_recovery_days}}
-        autoBackupTime: "03:00"
+        autoBackupHour: 3
         maintenance:
           day: 1
           hour: 3
