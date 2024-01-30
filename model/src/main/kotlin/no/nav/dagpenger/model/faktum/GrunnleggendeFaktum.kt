@@ -44,12 +44,12 @@ open class GrunnleggendeFaktum<R : Comparable<R>> internal constructor(
 
     override fun type() = clazz
 
-    override fun besvar(r: R, besvarer: String?) = this.apply {
-        when (r) {
-            is ValgteVerdier -> requireNotNull(gyldigeValg) { "Et valg faktum uten gyldigeValg?" }.sjekk(r)
+    override fun besvar(verdi: R, besvarer: String?) = this.apply {
+        when (verdi) {
+            is ValgteVerdier -> requireNotNull(gyldigeValg) { "Et valg faktum uten gyldigeValg?" }.sjekk(verdi)
         }
-        super.besvar(r, besvarer)
-        gjeldendeSvar = r
+        super.besvar(verdi, besvarer)
+        gjeldendeSvar = verdi
         tilstand = Kjent
         besvartAv = besvarer?.let { Besvarer(it) }
     }
