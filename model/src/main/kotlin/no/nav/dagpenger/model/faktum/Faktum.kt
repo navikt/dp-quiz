@@ -49,7 +49,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     internal abstract fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*>
 
-    open fun besvar(r: R, besvarer: String? = null): Faktum<R> =
+    open fun besvar(verdi: R, besvarer: String? = null): Faktum<R> =
         this.also { avhengigeFakta.forEach { it.tilUbesvart() } }
 
     open fun rehydrer(r: R, besvarer: String?): Faktum<R> = this

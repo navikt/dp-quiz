@@ -19,9 +19,7 @@ import no.nav.dagpenger.quiz.mediator.meldinger.FaktaSlettetService
 import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.ManuellBehandlingSink
 import no.nav.dagpenger.quiz.mediator.meldinger.NyProsessBehovLøser
-import no.nav.dagpenger.quiz.mediator.meldinger.VilkårsvurderingLøser
 import no.nav.dagpenger.quiz.mediator.soknad.ProsessMetadataStrategi
-import no.nav.dagpenger.quiz.mediator.soknad.aldersvurdering.Paragraf_4_23_alder_oppsett
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
@@ -71,13 +69,6 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                     FaktumTable(prototype.fakta)
                     val malJson = SøknadsmalJsonBuilder(prototype).resultat().toString()
                     rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
-                }
-
-                if (Cluster.DEV_GCP == Cluster.current) {
-                    Paragraf_4_23_alder_oppsett.registrer { prototype ->
-                        FaktumTable(prototype)
-                    }
-                    VilkårsvurderingLøser(rapidsConnection, prosessRepository)
                 }
 
                 NyProsessBehovLøser(prosessRepository, rapidsConnection)
