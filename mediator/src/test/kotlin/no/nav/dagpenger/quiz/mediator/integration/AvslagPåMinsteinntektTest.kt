@@ -145,7 +145,13 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
             //
             // assertGjeldendeSeksjon("sykepengehistorikk")
             // besvar(sykepengerSiste36mnd, false)
-            be
+            besvar(
+                1, mapOf(
+                    harHattDagpengerSiste36mnd to false,
+                    hattLukkedeSakerSiste8Uker to false,
+                    sykepengerSiste36mnd to false
+                )
+            )
 
             assertGjeldendeSeksjon("arbeidsøkerperioder")
             besvar(

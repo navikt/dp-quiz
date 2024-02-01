@@ -39,7 +39,7 @@ abstract class SøknadBesvarer {
         ) -> Unit
     ) {
         val søknadsId = triggNySøknadsprosess(førsteEvent)
-        block { søknadsId: String, faktumId: Int, svar: Any ->
+        block {  faktumId: Int, svar: Any ->
             besvar(søknadsId, faktumId, svar)
         }
     }
@@ -167,7 +167,7 @@ abstract class SøknadBesvarer {
         svar: Map<Int, Boolean>
     ) {
         val fakta = svar.map { (faktumId, svar) ->
-            """{"id": "$faktumId", "svar": $svar, "type": "enkel"}"""
+            """{"id": "$faktumId", "svar": $svar, "type": "boolean"}"""
         }.joinToString(",")
 
         val message = """{
