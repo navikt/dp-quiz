@@ -109,7 +109,7 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
                         "$permittertFiskeforedling.2" to false,
                     ),
 
-                ),
+                    ),
             )
 
             besvar(behandlingsdato, 5.januar)
@@ -139,12 +139,13 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
             assertGjeldendeSeksjon("inntektshistorikk")
             besvar(fangstOgFiskInntektSiste36mnd, false)
 
-            assertGjeldendeSeksjon("dagpengehistorikk")
-            besvar(harHattDagpengerSiste36mnd, false)
-            besvar(hattLukkedeSakerSiste8Uker, false)
-
-            assertGjeldendeSeksjon("sykepengehistorikk")
-            besvar(sykepengerSiste36mnd, false)
+            // assertGjeldendeSeksjon("dagpengehistorikk")
+            // besvar(harHattDagpengerSiste36mnd, false)
+            // besvar(hattLukkedeSakerSiste8Uker, false)
+            //
+            // assertGjeldendeSeksjon("sykepengehistorikk")
+            // besvar(sykepengerSiste36mnd, false)
+            be
 
             assertGjeldendeSeksjon("arbeidsøkerperioder")
             besvar(

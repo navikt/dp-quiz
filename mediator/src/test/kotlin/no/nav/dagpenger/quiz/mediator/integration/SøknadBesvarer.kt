@@ -39,16 +39,18 @@ abstract class SøknadBesvarer {
         ) -> Unit
     ) {
         val søknadsId = triggNySøknadsprosess(førsteEvent)
-        block { faktumId: Int, svar: Any ->
+        block { søknadsId: String, faktumId: Int, svar: Any ->
             besvar(søknadsId, faktumId, svar)
         }
     }
+
     protected fun besvar(søknadsId: String, faktumId: Int, svar: Any) = when (svar) {
         is Inntekt -> besvarInntekt(søknadsId, faktumId, svar)
         is Periode -> besvarPeriode(søknadsId, faktumId, svar)
         is Tekst -> besvarTekst(søknadsId, faktumId, svar)
         is Envalg, is Flervalg -> besvarValg(søknadsId, faktumId, svar as Valg)
         is Dokument -> besvarDokument(søknadsId, faktumId, svar)
+        is Map<*, *> -> besvarMange(søknadsId, svar as Map<Int, Boolean>)
         is List<*> -> besvarGenerator(søknadsId, faktumId, svar as List<List<Pair<String, Any>>>)
         is Land -> besvarLand(søknadsId, faktumId, svar)
         else -> besvarSimpeltFaktum(søknadsId, faktumId, svar)
@@ -64,6 +66,7 @@ abstract class SøknadBesvarer {
             besvar(søknadsId.toString(), faktumId, svar)
         }
     }
+
     protected fun besvarDokument(søknadsId: String, faktumId: Int, svar: Dokument) {
         //language=JSON
         val message = svar.reflection { lastOppTidsstempel, urn: String ->
@@ -152,6 +155,25 @@ abstract class SøknadBesvarer {
                 "type": "${svar::class.java.simpleName.lowercase()}"
             }
               ],
+              "@opprettet": "${LocalDateTime.now()}",
+              "@id": "${UUID.randomUUID()}"
+            }
+        """.trimIndent()
+        testRapid.sendTestMessage(message)
+    }
+
+    protected fun besvarMange(
+        søknadsId: String,
+        svar: Map<Int, Boolean>
+    ) {
+        val fakta = svar.map { (faktumId, svar) ->
+            """{"id": "$faktumId", "svar": $svar, "type": "enkel"}"""
+        }.joinToString(",")
+
+        val message = """{
+              "søknad_uuid": "$søknadsId",
+              "@event_name": "faktum_svar",
+              "fakta": [$fakta], 
               "@opprettet": "${LocalDateTime.now()}",
               "@id": "${UUID.randomUUID()}"
             }
