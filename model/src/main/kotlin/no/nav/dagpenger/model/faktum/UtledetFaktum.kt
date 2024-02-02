@@ -2,7 +2,6 @@ package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.factory.FaktaRegel
 import no.nav.dagpenger.model.visitor.FaktumVisitor
-import java.time.LocalDate
 
 class UtledetFaktum<R : Comparable<R>> internal constructor(
     faktumId: FaktumId,
@@ -17,8 +16,6 @@ class UtledetFaktum<R : Comparable<R>> internal constructor(
         underordnede.first().svar() as Number * underordnede.last().svar() as Inntekt
 
     internal fun alle(): Boolean = underordnede.all { it.svar() as Boolean }
-    internal fun grensedato67år(): LocalDate =
-        (underordnede.first().svar() as LocalDate).plusYears(67).plusMonths(1).withDayOfMonth(1)
 
     override fun type() = underordnede.toList().first().type()
 

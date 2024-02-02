@@ -1,6 +1,5 @@
 package no.nav.dagpenger.model.factory
 
-import no.nav.dagpenger.model.factory.FaktaRegel.Companion.`67_ÅR_GRENSEDATO`
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.ALLE_JA
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MAKS_DATO
 import no.nav.dagpenger.model.factory.FaktaRegel.Companion.MAKS_INNTEKT
@@ -35,10 +34,6 @@ class UtledetFaktumFactory<T : Comparable<T>>(
 
         object alle {
             infix fun ja(navn: String) = UtledetFaktumFactory(navn, ALLE_JA)
-        }
-
-        object grensedato67år {
-            infix fun dato(navn: String) = UtledetFaktumFactory(navn, `67_ÅR_GRENSEDATO`)
         }
     }
 
@@ -75,6 +70,5 @@ class FaktaRegel<R : Comparable<R>> private constructor(
         internal val MULTIPLIKASJON_INNTEKT =
             FaktaRegel("MULTIPLIKASJON_INNTEKT", UtledetFaktum<Inntekt>::multiplikasjon)
         internal val ALLE_JA = FaktaRegel("ALLE_JA", UtledetFaktum<Boolean>::alle)
-        internal val `67_ÅR_GRENSEDATO` = FaktaRegel("67_ÅR_GRENSEDATO", UtledetFaktum<LocalDate>::grensedato67år)
     }
 }

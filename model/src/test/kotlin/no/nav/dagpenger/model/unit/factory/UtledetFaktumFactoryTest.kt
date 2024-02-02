@@ -4,15 +4,12 @@ import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.boolsk
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.dato
 import no.nav.dagpenger.model.factory.BaseFaktumFactory.Companion.inntekt
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.alle
-import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.grensedato67år
 import no.nav.dagpenger.model.factory.UtledetFaktumFactory.Companion.maks
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Inntekt.Companion.årlig
 import no.nav.dagpenger.model.faktum.Rolle
 import no.nav.dagpenger.model.helpers.TestProsesser
-import no.nav.dagpenger.model.helpers.februar
 import no.nav.dagpenger.model.helpers.januar
-import no.nav.dagpenger.model.helpers.mars
 import no.nav.dagpenger.model.helpers.testSøknadprosess
 import no.nav.dagpenger.model.helpers.testversjon
 import no.nav.dagpenger.model.seksjon.Prosess
@@ -154,23 +151,5 @@ internal class UtledetFaktumFactoryTest {
         assertTrue(fakta.boolsk(4).erBesvart())
         fakta.dato(3).besvar(4.januar)
         assertFalse(fakta.boolsk(4).erBesvart())
-    }
-
-    @Test
-    fun `grensedato for 67 år`() {
-        val fakta = Fakta(
-            testversjon,
-            dato faktum "dato1" id 1,
-            grensedato67år dato "utledetDato" av 1 id 2,
-        ).testSøknadprosess()
-
-        fakta.dato(1).besvar(1.januar(1950))
-        assertEquals(1.februar(2017), fakta.id(2).svar())
-
-        fakta.dato(1).besvar(31.januar(1950))
-        assertEquals(1.februar(2017), fakta.id(2).svar())
-
-        fakta.dato(1).besvar(1.februar(1950))
-        assertEquals(1.mars(2017), fakta.id(2).svar())
     }
 }
