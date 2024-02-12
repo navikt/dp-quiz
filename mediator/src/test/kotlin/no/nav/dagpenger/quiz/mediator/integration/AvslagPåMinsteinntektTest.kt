@@ -13,7 +13,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.antallEndredeArbeidsforhold
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeid
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste13mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
@@ -121,7 +120,6 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
             assertGjeldendeSeksjon("datafrasøknad")
             besvar(eøsArbeid, false)
             besvar(jobbetUtenforNorge, false)
-            besvar(fangstOgFiskInntektSiste36mnd, false)
             besvar(verneplikt, false)
             besvar(ønsketDato, 5.januar)
             besvar(harInntektNesteKalendermåned, false)
@@ -135,9 +133,6 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
 
             assertGjeldendeSeksjon("inntektsrapporteringsperioder")
             besvar(inntektsrapporteringsperiodeTom, 10.januar)
-
-            assertGjeldendeSeksjon("inntektshistorikk")
-            besvar(fangstOgFiskInntektSiste36mnd, false)
 
             assertGjeldendeSeksjon("dagpengehistorikk")
             besvar(harHattDagpengerSiste13mnd, false)

@@ -8,8 +8,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeidManuell
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste13mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
@@ -119,13 +117,7 @@ internal object Seksjoner {
             boolsk(hattLukkedeSakerSiste8Uker),
         )
     }
-    private val inntektshistorikk = with(prototypeFakta) {
-        Seksjon(
-            "inntektshistorikk",
-            Rolle.nav,
-            boolsk(fangstOgFiskInntektSiste36mnd),
-        )
-    }
+
     private val sykepengehistorikk = with(prototypeFakta) {
         Seksjon(
             "sykepengehistorikk",
@@ -149,16 +141,6 @@ internal object Seksjoner {
         )
     }
 
-    /*
-
-    private val godkjennSluttårsak = with(søknad) {
-        Seksjon(
-            "godkjenn sluttårsak",
-            Rolle.saksbehandler,
-            boolsk(godkjenningSluttårsak),
-        )
-    }
-     */
     private val endredeArbeidsforhold = with(prototypeFakta) {
         Seksjon(
             "arbeidsforhold",
@@ -191,13 +173,7 @@ internal object Seksjoner {
             boolsk(svangerskapsrelaterteSykepengerManuell),
         )
     }
-    private val manuellFangstOgFisk = with(prototypeFakta) {
-        Seksjon(
-            "mulige inntekter fra fangst og fisk",
-            Rolle.manuell,
-            boolsk(fangstOgFiskManuell),
-        )
-    }
+
     private val manuellEøs = with(prototypeFakta) {
         Seksjon(
             "EØS-arbeid",
@@ -280,7 +256,6 @@ internal object Seksjoner {
             arbeidsøkerPerioder,
             dagpengehistorikk,
             lukkedeSaker,
-            inntektshistorikk,
             sykepengehistorikk,
             inntekter,
             inntektNesteKalendermåned,
@@ -289,7 +264,6 @@ internal object Seksjoner {
             alder,
             manuellGjenopptak,
             manuellSykepenger,
-            manuellFangstOgFisk,
             manuellEøs,
             manuellDatoer,
             manuellOppfyllerKraveneTilMinsteArbeidsinntekt,

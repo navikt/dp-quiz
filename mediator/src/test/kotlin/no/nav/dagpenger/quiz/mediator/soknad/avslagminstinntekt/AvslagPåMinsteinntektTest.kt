@@ -13,7 +13,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.arenaFagsakId
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.behandlingsdato
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeid
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.grunnbeløp
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste13mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
@@ -87,8 +86,6 @@ internal class AvslagPåMinsteinntektTest {
                 boolsk(eøsArbeid).besvar(false)
                 boolsk(jobbetUtenforNorge).besvar(false)
 
-                boolsk(fangstOgFiskInntektSiste36mnd).besvar(false)
-
                 inntekt(grunnbeløp).besvar(100000.årlig)
                 desimaltall(minsteinntektfaktor12mnd).besvar(1.5)
                 desimaltall(minsteinntektfaktor36mnd).besvar(3.0)
@@ -158,12 +155,6 @@ internal class AvslagPåMinsteinntektTest {
     fun `Skal manuelt behandles hvis har sykepenger`() {
         manglerInntekt.boolsk(sykepengerSiste36mnd).besvar(true)
         assertNesteSeksjon("svangerskapsrelaterte sykepenger")
-    }
-
-    @Test
-    fun `Fangst og fisk skal manuelt behandles`() {
-        manglerInntekt.boolsk(fangstOgFiskInntektSiste36mnd).besvar(true)
-        assertNesteSeksjon("mulige inntekter fra fangst og fisk")
     }
 
     @Test
