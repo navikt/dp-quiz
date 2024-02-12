@@ -15,7 +15,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.grunnbeløp
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste13mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.hattLukkedeSakerSiste8Uker
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.helseTilAlleTyperJobb
@@ -140,7 +140,7 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
             besvar(fangstOgFiskInntektSiste36mnd, false)
 
             assertGjeldendeSeksjon("dagpengehistorikk")
-            besvar(harHattDagpengerSiste36mnd, false)
+            besvar(harHattDagpengerSiste13mnd, false)
             besvar(hattLukkedeSakerSiste8Uker, false)
 
             assertGjeldendeSeksjon("sykepengehistorikk")
