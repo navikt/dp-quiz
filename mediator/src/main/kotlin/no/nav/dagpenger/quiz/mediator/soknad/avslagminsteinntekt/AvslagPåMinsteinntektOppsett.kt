@@ -49,7 +49,7 @@ internal object AvslagPåMinsteinntektOppsett {
     const val permittert = 28
     const val lønnsgaranti = 29
     const val permittertFiskeforedling = 30
-    const val harHattDagpengerSiste36mnd = 32
+    const val harHattDagpengerSiste13mnd = 32
     const val periodeOppbruktManuell = 33
     const val sykepengerSiste36mnd = 34
     const val svangerskapsrelaterteSykepengerManuell = 35
@@ -100,8 +100,8 @@ internal object AvslagPåMinsteinntektOppsett {
             boolsk faktum "Ordinær" id ordinær,
             boolsk faktum "Lønnsgaranti" id lønnsgaranti,
             boolsk faktum "PermittertFiskeforedling" id permittertFiskeforedling,
-            boolsk faktum "Har hatt dagpenger siste 36mnd" id harHattDagpengerSiste36mnd avhengerAv virkningsdato,
-            boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbruktManuell avhengerAv harHattDagpengerSiste36mnd,
+            boolsk faktum "Har hatt dagpenger siste 13mnd" id harHattDagpengerSiste13mnd avhengerAv virkningsdato,
+            boolsk faktum "Har brukt opp forrige dagpengeperiode" id periodeOppbruktManuell avhengerAv harHattDagpengerSiste13mnd,
             boolsk faktum "Sykepenger siste 36 mnd" id sykepengerSiste36mnd avhengerAv virkningsdato,
             boolsk faktum "Svangerskapsrelaterte sykepenger" id svangerskapsrelaterteSykepengerManuell avhengerAv sykepengerSiste36mnd,
             boolsk faktum "Fangst og fisk manuell" id fangstOgFiskManuell avhengerAv fangstOgFiskInntektSiste36mnd,
@@ -150,7 +150,7 @@ internal object AvslagPåMinsteinntektOppsett {
                 permittert to "Permittert",
                 lønnsgaranti to "Lønnsgaranti",
                 permittertFiskeforedling to "PermittertFiskeforedling",
-                harHattDagpengerSiste36mnd to "HarHattDagpengerSiste36Mnd",
+                harHattDagpengerSiste13mnd to "HarHattDagpengerSiste13Mnd",
                 sykepengerSiste36mnd to "SykepengerSiste36Måneder",
                 eøsArbeid to "EØSArbeid",
                 harInntektNesteKalendermåned to "HarRapportertInntektNesteMåned",

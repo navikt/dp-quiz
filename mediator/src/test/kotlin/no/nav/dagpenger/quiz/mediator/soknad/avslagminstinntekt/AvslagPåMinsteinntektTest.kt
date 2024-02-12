@@ -15,7 +15,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.grunnbeløp
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste36mnd
+import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste13mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harInntektNesteKalendermåned
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.hattLukkedeSakerSiste8Uker
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.helseTilAlleTyperJobb
@@ -79,7 +79,7 @@ internal class AvslagPåMinsteinntektTest {
                 dato("$registrertArbeidssøkerPeriodeFom.1").besvar(1.januar(2018))
                 dato("$registrertArbeidssøkerPeriodeTom.1").besvar(30.januar(2018))
 
-                boolsk(harHattDagpengerSiste36mnd).besvar(false)
+                boolsk(harHattDagpengerSiste13mnd).besvar(false)
                 boolsk(hattLukkedeSakerSiste8Uker).besvar(false)
                 boolsk(sykepengerSiste36mnd).besvar(false)
 
@@ -125,7 +125,7 @@ internal class AvslagPåMinsteinntektTest {
 
     @Test
     fun `Søknader fra brukere som har hatt dagpenger de siste 36 månedene blir ikke behandlet`() {
-        manglerInntekt.boolsk(harHattDagpengerSiste36mnd).besvar(true)
+        manglerInntekt.boolsk(harHattDagpengerSiste13mnd).besvar(true)
         assertNesteSeksjon("mulig gjenopptak")
     }
 
