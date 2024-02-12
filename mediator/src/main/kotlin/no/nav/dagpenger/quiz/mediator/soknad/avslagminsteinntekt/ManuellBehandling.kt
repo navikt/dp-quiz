@@ -6,8 +6,6 @@ import no.nav.dagpenger.model.subsumsjon.hvisOppfyltManuell
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeid
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.eøsArbeidManuell
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskInntektSiste36mnd
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.fangstOgFiskManuell
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.harHattDagpengerSiste13mnd
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.hattLukkedeSakerSiste8Uker
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.hattLukkedeSakerSiste8UkerManuell
@@ -22,9 +20,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinste
 import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett.virkningsdato
 
 internal object ManuellBehandling {
-    private val hattInntektFraFangstOgFisk = with(prototypeFakta) {
-        boolsk(fangstOgFiskInntektSiste36mnd) er true hvisOppfyltManuell (boolsk(fangstOgFiskManuell))
-    }
 
     private val harArbeidetEøs = with(prototypeFakta) {
         boolsk(eøsArbeid) er true hvisOppfyltManuell (boolsk(eøsArbeidManuell))
@@ -58,7 +53,6 @@ internal object ManuellBehandling {
         "manuelt behandles".minstEnAv(
             virkningsdatoEtterNåværendeInntektsrapporteringsperiode,
             harArbeidetEøs,
-            hattInntektFraFangstOgFisk,
             erMuligGjenopptak,
             harHattSykepenger,
             harJobbetUtenforNorge,
