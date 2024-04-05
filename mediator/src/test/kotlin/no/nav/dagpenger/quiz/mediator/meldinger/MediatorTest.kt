@@ -125,71 +125,88 @@ internal class MediatorTest {
 private data class FaktumSvar(val faktumId: Int, val type: String, val svar: Any?)
 
 private class TestMeldingFactory(private val fnr: String, private val aktørId: String) {
-    fun nySøknadMelding(): String = nyHendelse(
-        "innsending_ferdigstilt",
-        mapOf(
-            "fødselsnummer" to fnr,
-            "aktørId" to aktørId,
-            "type" to "NySøknad",
-            "journalpostId" to "493389306",
-            "søknadsData" to mapOf("søknad_uuid" to "mf68etellerannet"),
-        ),
-    )
+    fun nySøknadMelding(): String =
+        nyHendelse(
+            "innsending_ferdigstilt",
+            mapOf(
+                "fødselsnummer" to fnr,
+                "aktørId" to aktørId,
+                "bruk-dp-behandling" to false,
+                "type" to "NySøknad",
+                "journalpostId" to "493389306",
+                "søknadsData" to mapOf("søknad_uuid" to "mf68etellerannet"),
+            ),
+        )
 
-    private fun nyHendelse(navn: String, hendelse: Map<String, Any>) =
-        JsonMessage.newMessage(nyHendelse(navn) + hendelse).toJson()
+    private fun nyHendelse(
+        navn: String,
+        hendelse: Map<String, Any>,
+    ) = JsonMessage.newMessage(nyHendelse(navn) + hendelse).toJson()
 
-    private fun nyHendelse(navn: String) = mutableMapOf<String, Any>(
-        "@id" to UUID.randomUUID(),
-        "@event_name" to navn,
-        "@opprettet" to LocalDateTime.now(),
-    )
+    private fun nyHendelse(navn: String) =
+        mutableMapOf<String, Any>(
+            "@id" to UUID.randomUUID(),
+            "@event_name" to navn,
+            "@opprettet" to LocalDateTime.now(),
+        )
 
-    fun besvarFaktum(søknadUuid: UUID, vararg faktumSvarListe: FaktumSvar) = nyHendelse(
+    fun besvarFaktum(
+        søknadUuid: UUID,
+        vararg faktumSvarListe: FaktumSvar,
+    ) = nyHendelse(
         "faktum_svar",
         mapOf(
             "opprettet" to LocalDateTime.now(),
             "søknad_uuid" to søknadUuid,
-            "fakta" to faktumSvarListe.asList().map { faktumSvar ->
-                mapOf(
-                    "id" to faktumSvar.faktumId,
-                    "type" to faktumSvar.type,
-                ).let { fakta ->
-                    fakta + faktumSvar.svar?.let {
-                        mapOf(
-                            "svar" to when (faktumSvar.svar) {
-                                is String -> faktumSvar.svar
-                                is Dokument -> faktumSvar.svar.reflection { lastOppTidsstempel, urn: String ->
-                                    mapOf(
-                                        "lastOppTidsstempel" to lastOppTidsstempel,
-                                        "urn" to urn,
-                                    )
-                                }
+            "fakta" to
+                faktumSvarListe.asList().map { faktumSvar ->
+                    mapOf(
+                        "id" to faktumSvar.faktumId,
+                        "type" to faktumSvar.type,
+                    ).let { fakta ->
+                        fakta +
+                            faktumSvar.svar?.let {
+                                mapOf(
+                                    "svar" to
+                                        when (faktumSvar.svar) {
+                                            is String -> faktumSvar.svar
+                                            is Dokument ->
+                                                faktumSvar.svar.reflection { lastOppTidsstempel, urn: String ->
+                                                    mapOf(
+                                                        "lastOppTidsstempel" to lastOppTidsstempel,
+                                                        "urn" to urn,
+                                                    )
+                                                }
 
-                                else -> throw IllegalArgumentException("Ustøtta svar-type")
-                            },
-                        )
-                    }.orEmpty()
-                }
-            },
+                                            else -> throw IllegalArgumentException("Ustøtta svar-type")
+                                        },
+                                )
+                            }.orEmpty()
+                    }
+                },
         ),
     )
 
-    fun besvarFaktumMedNull(søknadUuid: UUID, vararg faktumSvarListe: FaktumSvar) = nyHendelse(
+    fun besvarFaktumMedNull(
+        søknadUuid: UUID,
+        vararg faktumSvarListe: FaktumSvar,
+    ) = nyHendelse(
         "faktum_svar",
         mapOf(
             "opprettet" to LocalDateTime.now(),
             "søknad_uuid" to søknadUuid,
-            "fakta" to faktumSvarListe.asList().map { faktumSvar ->
-                mapOf(
-                    "id" to faktumSvar.faktumId,
-                    "type" to faktumSvar.type,
-                ).let { fakta ->
-                    fakta + mapOf(
-                        "svar" to null,
-                    )
-                }
-            },
+            "fakta" to
+                faktumSvarListe.asList().map { faktumSvar ->
+                    mapOf(
+                        "id" to faktumSvar.faktumId,
+                        "type" to faktumSvar.type,
+                    ).let { fakta ->
+                        fakta +
+                            mapOf(
+                                "svar" to null,
+                            )
+                    }
+                },
         ),
     )
 }

@@ -8,7 +8,8 @@ import org.testcontainers.containers.PostgreSQLContainer.POSTGRESQL_PORT
 internal object Postgres {
 
     val instance by lazy {
-        PostgreSQLContainer<Nothing>("postgres:14.4").apply {
+        PostgreSQLContainer<Nothing>("postgres:15.2").apply {
+            withReuse(true)
             start()
         }
     }

@@ -46,21 +46,21 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
-
     @BeforeEach
     fun setup() {
         Postgres.withMigratedDb {
             AvslagPåMinsteinntektOppsett.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
             val søknadPersistence = ProsessRepositoryPostgres()
             val resultatPersistence = ResultatRecord()
-            testRapid = TestRapid().also {
-                FaktumSvarService(
-                    prosessRepository = søknadPersistence,
-                    resultatPersistence = resultatPersistence,
-                    rapidsConnection = it,
-                )
-                AvslagPåMinsteinntektService(søknadPersistence, it)
-            }
+            testRapid =
+                TestRapid().also {
+                    FaktumSvarService(
+                        prosessRepository = søknadPersistence,
+                        resultatPersistence = resultatPersistence,
+                        rapidsConnection = it,
+                    )
+                    AvslagPåMinsteinntektService(søknadPersistence, it)
+                }
         }
     }
 
@@ -107,7 +107,6 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
                         "$lønnsgaranti.2" to false,
                         "$permittertFiskeforedling.2" to false,
                     ),
-
                 ),
             )
 
@@ -169,16 +168,18 @@ internal class AvslagPåMinsteinntektTest : SøknadBesvarer() {
 
     //language=JSON
     private val søknadFraInnsending =
-        """{
-              "@event_name": "innsending_ferdigstilt",
-              "fødselsnummer": "123456789",
-              "aktørId": "",
-              "søknadsId": "9876",
-              "journalpostId": "493389306",
-              "type": "NySøknad",
-              "søknadsData": {
-            "søknad_uuid": "10010WQMW"
+        """
+        {
+            "@event_name": "innsending_ferdigstilt",
+            "fødselsnummer": "123456789",
+            "bruk-dp-behandling": false,
+            "aktørId": "",
+            "søknadsId": "9876",
+            "journalpostId": "493389306",
+            "type": "NySøknad",
+            "søknadsData": {
+          "søknad_uuid": "10010WQMW"
+        }
           }
-            }
         """.trimIndent()
 }

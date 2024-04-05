@@ -33,7 +33,7 @@ internal class NyProsessBehovLøser(
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val behovNavn = packet["@behov"].single().asText()
-        val prosessnavn = packet["prosessnavn"].asText()
+        val prosessnavn = packet.get("prosessnavn").asText()
         val prosessversjon = when (prosessnavn) {
             "Dagpenger" -> Prosesser.Søknad
             "Innsending" -> Prosesser.Innsending

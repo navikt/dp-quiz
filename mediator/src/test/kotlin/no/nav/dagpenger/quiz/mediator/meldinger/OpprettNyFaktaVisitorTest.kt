@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class OpprettNyFaktaVisitorTest {
-
     @BeforeEach
     internal fun reset() {
         testRapid.reset()
@@ -40,6 +39,7 @@ internal class OpprettNyFaktaVisitorTest {
           "journalpostId": "493389306",
           "datoRegistrert": "2021-05-07T11:13:00",
           "type": "NySøknad",
+          "bruk-dp-behandling": false,
           "fødselsnummer": "12345678910",
           "aktørId": "1000000000000",
           "fagsakId": "237504895",

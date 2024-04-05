@@ -28,6 +28,8 @@ internal class AvslagPåMinsteinntektService(
             validate {
                 it.demandValue("@event_name", "innsending_ferdigstilt")
                 it.demandValue("type", "NySøknad")
+                // Feature flag fra dp-mottak i overgangen til dp-behandling
+                it.demandValue("bruk-dp-behandling", false)
                 it.requireKey("søknadsData.søknad_uuid")
                 it.requireKey("fødselsnummer")
                 it.requireKey("aktørId")
@@ -37,12 +39,16 @@ internal class AvslagPåMinsteinntektService(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+    ) {
         val søknadsId = packet["søknadsData.søknad_uuid"].asText()
-        val identer = Identer.Builder()
-            .folkeregisterIdent(packet["fødselsnummer"].asText())
-            .aktørId(packet["aktørId"].asText())
-            .build()
+        val identer =
+            Identer.Builder()
+                .folkeregisterIdent(packet["fødselsnummer"].asText())
+                .aktørId(packet["aktørId"].asText())
+                .build()
         val journalpostId = packet["journalpostId"].asText()
         log.info { "Mottok søknad med id $søknadsId " }
 
