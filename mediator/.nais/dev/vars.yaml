@@ -1,7 +1,7 @@
 db:
   tier: db-custom-1-3840
   size: 10
-  point_in_time_recovery_days: 2
+  point_in_time_recovery_days: 7
 kafka:
   pool: nav-dev
 replicas: 3
