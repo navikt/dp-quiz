@@ -16,6 +16,7 @@ import no.nav.dagpenger.model.subsumsjon.DeltreSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 import no.nav.dagpenger.model.subsumsjon.deltre
 import no.nav.dagpenger.model.subsumsjon.godkjentAv
+import no.nav.dagpenger.model.subsumsjon.hvisIkkeOppfylt
 import no.nav.dagpenger.model.subsumsjon.hvisOppfylt
 import no.nav.dagpenger.model.subsumsjon.minstEnAv
 import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
@@ -24,7 +25,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 object ReellArbeidssoker : DslFaktaseksjon {
     const val `kan jobbe heltid` = 1
     const val `årsak til kun deltid` = 2
-    const val `skriv kort om situasjonen din` = 3
+    const val `kort om hvorfor ikke jobbe heltid` = 3
     const val `antall timer deltid du kan jobbe` = 4
     const val `kan du jobbe i hele Norge` = 5
     const val `årsak kan ikke jobbe i hele Norge` = 6
@@ -46,13 +47,14 @@ object ReellArbeidssoker : DslFaktaseksjon {
             med "svar.eneansvar-barn"
             med "svar.omsorg-barn-spesielle-behov"
             med "svar.skift-turnus"
+            med "svar.permittert"
             med "svar.har-fylt-60"
             med "svar.annen-situasjon" id `årsak til kun deltid` avhengerAv `kan jobbe heltid`,
 
         desimaltall faktum "faktum.kun-deltid-aarsak-antall-timer" id `antall timer deltid du kan jobbe`
             avhengerAv `kan jobbe heltid`,
 
-        tekst faktum "faktum.kort-om-hvorfor-kun-deltid" id `skriv kort om situasjonen din`
+        tekst faktum "faktum.kort-om-hvorfor-kun-deltid" id `kort om hvorfor ikke jobbe heltid`
             avhengerAv `årsak til kun deltid`,
 
         boolsk faktum "faktum.jobbe-hele-norge" id `kan du jobbe i hele Norge`,
@@ -63,6 +65,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
             med "svar.eneansvar-barn"
             med "svar.omsorg-barn-spesielle-behov"
             med "svar.skift-turnus"
+            med "svar.permittert"
             med "svar.har-fylt-60"
             med "svar.annen-situasjon" id `årsak kan ikke jobbe i hele Norge` avhengerAv `kan du jobbe i hele Norge`,
 
@@ -117,9 +120,12 @@ object ReellArbeidssoker : DslFaktaseksjon {
                 `årsak bare deltid - ansvar for barn til og med syvende klasse`(),
                 `årsak bare deltid - omsorg for barn med spesielle behov`(),
                 `årsak bare deltid - ansvar for barn til og med syvende klasse eller med spesielle behov og annen forelder jobber skift turnus`(),
+                `årsak bare deltid - permittert`(),
                 `årsak bare deltid - over seksti år`(),
                 `årsak bare deltid - annen situasjon`(),
-            )
+            ) hvisOppfylt {
+                `trenger tilleggsinformasjon om årsak til bare deltid`()
+            }
         }
     }
 
@@ -160,14 +166,25 @@ object ReellArbeidssoker : DslFaktaseksjon {
                 ),
             )
 
+    private fun Fakta.`årsak bare deltid - permittert`() =
+        flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.permittert")
+
     private fun Fakta.`årsak bare deltid - over seksti år`() =
         flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.har-fylt-60")
 
     private fun Fakta.`årsak bare deltid - annen situasjon`() =
         (flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon"))
             .sannsynliggjøresAv(dokument(`dokumentasjon fulltid - bekreftelse fra relevant fagpersonell`))
-            .godkjentAv(boolsk(`godkjenning av bekreftelse`)) hvisOppfylt {
-            tekst(`skriv kort om situasjonen din`).utfylt()
+            .godkjentAv(boolsk(`godkjenning av bekreftelse`))
+
+    private fun Fakta.`trenger tilleggsinformasjon om årsak til bare deltid`() =
+        "Trenger tilleggsinformasjon".minstEnAv(
+            (flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.permittert")),
+            (flervalg(`årsak til kun deltid`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon")),
+        ) hvisOppfylt {
+            tekst(`kort om hvorfor ikke jobbe heltid`).utfylt()
+        } hvisIkkeOppfylt {
+            flervalg(`årsak til kun deltid`).utfylt()
         }
 
     private fun Fakta.`søkers evne til å flytte for arbeid`() =
@@ -192,9 +209,12 @@ object ReellArbeidssoker : DslFaktaseksjon {
                 `årsak ikke jobbe i hele Norge - ansvar for barn til og med syvende klasse`(),
                 `årsak ikke jobbe i hele Norge - omsorg for barn med spesielle behov`(),
                 `årsak ikke jobbe i hele Norge - ansvar for barn til og med syvende klasse eller med spesielle behov og annen forelder jobber skift turnus`(),
+                `årsak ikke jobbe i hele Norge - permittert`(),
                 `årsak ikke jobbe i hele Norge - over seksti år`(),
                 `årsak ikke jobbe i hele Norge - annen situasjon`(),
-            )
+            ) hvisOppfylt {
+                `trenger tilleggsinformasjon om årsak til hvorfor ikke jobbe i hele Norge`()
+            }
         }
 
     private fun Fakta.`årsak ikke jobbe i hele Norge - redusert helse`() =
@@ -234,14 +254,25 @@ object ReellArbeidssoker : DslFaktaseksjon {
                 ),
             )
 
+    private fun Fakta.`årsak ikke jobbe i hele Norge - permittert`() =
+        flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.permittert")
+
     private fun Fakta.`årsak ikke jobbe i hele Norge - over seksti år`() =
         flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.har-fylt-60")
 
     private fun Fakta.`årsak ikke jobbe i hele Norge - annen situasjon`() =
         (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.annen-situasjon"))
             .sannsynliggjøresAv(dokument(`dokumentasjon hele norge - bekreftelse fra relevant fagpersonell`))
-            .godkjentAv(boolsk(`godkjenning av bekreftelse`)) hvisOppfylt {
+            .godkjentAv(boolsk(`godkjenning av bekreftelse`))
+
+    private fun Fakta.`trenger tilleggsinformasjon om årsak til hvorfor ikke jobbe i hele Norge`() =
+        "Trenger tilleggsinformasjon".minstEnAv(
+            (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.permittert")),
+            (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon")),
+        ) hvisOppfylt {
             tekst(`kort om hvorfor ikke jobbe hele norge`).utfylt()
+        } hvisIkkeOppfylt {
+            flervalg(`årsak kan ikke jobbe i hele Norge`).utfylt()
         }
 
     private fun Fakta.`kan ta alle typer arbeid`() =
@@ -261,7 +292,7 @@ object ReellArbeidssoker : DslFaktaseksjon {
     override val spørsmålsrekkefølgeForSøker = listOf(
         `kan jobbe heltid`,
         `årsak til kun deltid`,
-        `skriv kort om situasjonen din`,
+        `kort om hvorfor ikke jobbe heltid`,
         `antall timer deltid du kan jobbe`,
         `kan du jobbe i hele Norge`,
         `årsak kan ikke jobbe i hele Norge`,
