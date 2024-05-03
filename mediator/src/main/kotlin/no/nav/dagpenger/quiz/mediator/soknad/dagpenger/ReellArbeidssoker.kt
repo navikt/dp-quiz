@@ -267,8 +267,8 @@ object ReellArbeidssoker : DslFaktaseksjon {
 
     private fun Fakta.`trenger tilleggsinformasjon om årsak til hvorfor ikke jobbe i hele Norge`() =
         "Trenger tilleggsinformasjon".minstEnAv(
-            (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.permittert")),
-            (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon")),
+            (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.permittert")),
+            (flervalg(`årsak kan ikke jobbe i hele Norge`) inneholder Flervalg("faktum.ikke-jobbe-hele-norge.svar.annen-situasjon")),
         ) hvisOppfylt {
             tekst(`kort om hvorfor ikke jobbe hele norge`).utfylt()
         } hvisIkkeOppfylt {
