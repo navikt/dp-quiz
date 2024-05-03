@@ -7,7 +7,5 @@ enum class Prosesser(override val navn: String, override val faktatype: Faktatyp
     Søknad("Søknad", Prosessfakta.Dagpenger),
     Dokumentkrav("Dokumentkrav", Prosessfakta.Dagpenger),
     AvslagPåAlder("AvslagPåAlder", Prosessfakta.Dagpenger),
-    Paragraf_4_23_alder("Paragraf_4_23_alder", Prosessfakta.Paragraf_4_23_alder),
-    AvslagPåMinsteinntekt("AvslagPåMinsteinntekt", Prosessfakta.AvslagPåMinsteinntekt),
     Innsending("Innsending", Prosessfakta.Innsending),
 }

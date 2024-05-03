@@ -19,7 +19,6 @@ import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.ManuellBehandlingSink
 import no.nav.dagpenger.quiz.mediator.meldinger.NyProsessBehovLøser
 import no.nav.dagpenger.quiz.mediator.soknad.ProsessMetadataStrategi
-import no.nav.dagpenger.quiz.mediator.soknad.avslagminsteinntekt.AvslagPåMinsteinntektOppsett
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -51,7 +50,6 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
                 val faktaRecord = FaktaRecord()
                 val prosessRepository = ProsessRepositoryPostgres()
                 val resultatRecord = ResultatRecord()
-                AvslagPåMinsteinntektOppsett.registrer { prototypeSøknad -> FaktumTable(prototypeSøknad) }
 
                 Dagpenger248.registrer {
                     logger.info("Sørger for å støtte gamle versjoner, registrerer dagpenger versjon 248")

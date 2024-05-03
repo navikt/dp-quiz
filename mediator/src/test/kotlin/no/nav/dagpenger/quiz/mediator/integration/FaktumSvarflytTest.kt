@@ -35,7 +35,7 @@ internal class FaktumSvarflytTest : SøknadBesvarer() {
     }
 
     @Test
-    fun `Sjekker minimalt regeltre for avslag på minsteinnekt`() {
+    fun `Sjekker minimalt regeltre for avslag`() {
         besvar(UUID.randomUUID().toString(), MinimalSøknadsprosess.faktumBoolsk, true)
 
         melding(0).also {
