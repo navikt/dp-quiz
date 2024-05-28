@@ -44,7 +44,7 @@ jobs:
 
   deploy-dev:
     needs: [ build ]
-    if: github.ref == 'refs/heads/feature/aarsakReellArbeidssoker'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
