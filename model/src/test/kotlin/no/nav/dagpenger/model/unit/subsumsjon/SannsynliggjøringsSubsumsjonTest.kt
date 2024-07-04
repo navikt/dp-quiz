@@ -29,19 +29,20 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class SannsynliggjøringsSubsumsjonTest {
-    private val fakta = Fakta(
-        testversjon,
-        boolsk faktum "faktum" id 1,
-        dokument faktum "dokument" id 2 avhengerAv 1,
-        dokument faktum "dokument2" id 21 avhengerAv 1,
-        boolsk faktum "godkjenning" id 3 avhengerAv 2 og 21,
-        heltall faktum "generator" id 4 genererer 5 og 6 og 7,
-        boolsk faktum "generert-boolsk1" id 5,
-        boolsk faktum "generert-boolsk2" id 6,
-        dokument faktum "dokument for generator" id 7 avhengerAv 5 og 6,
-        boolsk faktum "godkjenning for generator" id 8 avhengerAv 7,
-    )
-    private val faktum = fakta boolsk 1
+    private val fakta =
+        Fakta(
+            testversjon,
+            boolsk faktum "faktum" id 1,
+            dokument faktum "dokument" id 2 avhengerAv 1,
+            dokument faktum "dokument2" id 21 avhengerAv 1,
+            boolsk faktum "godkjenning" id 3 avhengerAv 2 og 21,
+            heltall faktum "generator" id 4 genererer 5 og 6 og 7,
+            boolsk faktum "generert-boolsk1" id 5,
+            boolsk faktum "generert-boolsk2" id 6,
+            dokument faktum "dokument for generator" id 7 avhengerAv 5 og 6,
+            boolsk faktum "godkjenning for generator" id 8 avhengerAv 7,
+        )
+    private val faktum: Faktum<Boolean> = fakta boolsk 1
     private val dokument1 = fakta dokument 2
     private val dokument2 = fakta dokument 21
     private val godkjenning = fakta boolsk 3
@@ -53,10 +54,11 @@ class SannsynliggjøringsSubsumsjonTest {
 
     @Test
     fun `Skal lage sannsynliggjøring for en subsumsjon som kan dokumenteres og skal godkjennes `() {
-        val subsumsjon = "må svare ja hvis ikke må en dokumentere neiet".minstEnAv(
-            (faktum er false).sannsynliggjøresAv(dokument1, dokument2).godkjentAv(godkjenning),
-            faktum er true,
-        )
+        val subsumsjon =
+            "må svare ja hvis ikke må en dokumentere neiet".minstEnAv(
+                (faktum er false).sannsynliggjøresAv(dokument1, dokument2).godkjentAv(godkjenning),
+                faktum er true,
+            )
 
         assertEquals(setOf(faktum as GrunnleggendeFaktum), subsumsjon.nesteFakta())
 
@@ -92,17 +94,19 @@ class SannsynliggjøringsSubsumsjonTest {
 
     @Test
     fun `Skal lage sannsynliggjøring for en subsumsjon med generator som kan dokumenteres og skal godkjennes `() {
-        val subsumsjon = generator.med(
-            "deltre".deltre {
-                "generator".alle(generatorB1 er true, generatorB2 er true).sannsynliggjøresAv(generatorDokument)
-            },
-        ).godkjentAv(generatorGodkjenning)
-        val søknadprosess = fakta.testSøknadprosess(subsumsjon) {
-            listOf(
-                fakta.seksjon("bruker", Rolle.søker, 4, 5, 6),
-                fakta.seksjon("bruker", Rolle.saksbehandler, 7, 8),
-            )
-        }
+        val subsumsjon =
+            generator.med(
+                "deltre".deltre {
+                    "generator".alle(generatorB1 er true, generatorB2 er true).sannsynliggjøresAv(generatorDokument)
+                },
+            ).godkjentAv(generatorGodkjenning)
+        val søknadprosess =
+            fakta.testSøknadprosess(subsumsjon) {
+                listOf(
+                    fakta.seksjon("bruker", Rolle.søker, 4, 5, 6),
+                    fakta.seksjon("bruker", Rolle.saksbehandler, 7, 8),
+                )
+            }
 
         with(søknadprosess) {
             generator(4).besvar(2)
@@ -147,11 +151,12 @@ class SannsynliggjøringsSubsumsjonTest {
 
     @Test
     fun `Lager bare avhengigheter til fakta som sannsynligjøres en gang`() {
-        val subsumsjon = generator.med(
-            "deltre".deltre {
-                "generator".alle(generatorB1 er true, generatorB2 er true).sannsynliggjøresAv(generatorDokument)
-            },
-        ).godkjentAv(generatorGodkjenning)
+        val subsumsjon =
+            generator.med(
+                "deltre".deltre {
+                    "generator".alle(generatorB1 er true, generatorB2 er true).sannsynliggjøresAv(generatorDokument)
+                },
+            ).godkjentAv(generatorGodkjenning)
         val prosess = fakta.testSøknadprosess(subsumsjon)
 
         repeat(10) { fakta.testSøknadprosess(subsumsjon) }
