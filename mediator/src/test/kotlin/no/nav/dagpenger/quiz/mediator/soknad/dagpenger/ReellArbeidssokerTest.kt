@@ -13,7 +13,7 @@ import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker.`kan du
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker.`kan jobbe heltid`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker.`kan ta alle typer arbeid`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker.`kort om hvorfor ikke jobbe hele norge`
-import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker.`skriv kort om situasjonen din`
+import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker.`kort om hvorfor ikke jobbe heltid`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker.`årsak kan ikke jobbe i hele Norge`
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.ReellArbeidssoker.`årsak til kun deltid`
 import no.nav.dagpenger.quiz.mediator.soknad.verifiserFeltsammensetting
@@ -47,11 +47,11 @@ internal class ReellArbeidssokerTest {
         assertEquals(null, prosess.resultat())
 
         prosess.flervalg(`årsak til kun deltid`).besvar(
-            Flervalg("faktum.kun-deltid-aarsak.svar.omsorg-baby", "faktum.kun-deltid-aarsak.svar.annen-situasjon"),
+            Flervalg("faktum.kun-deltid-aarsak.svar.permittert", "faktum.kun-deltid-aarsak.svar.annen-situasjon"),
         )
         assertEquals(null, prosess.resultat())
 
-        prosess.tekst(`skriv kort om situasjonen din`).besvar(Tekst("Jeg er omringet av maur"))
+        prosess.tekst(`kort om hvorfor ikke jobbe heltid`).besvar(Tekst("Jeg er omringet av maur"))
         assertEquals(null, prosess.resultat())
 
         prosess.desimaltall(`antall timer deltid du kan jobbe`).besvar(30.0)
@@ -61,7 +61,7 @@ internal class ReellArbeidssokerTest {
         assertEquals(null, prosess.resultat())
 
         prosess.flervalg(`årsak kan ikke jobbe i hele Norge`).besvar(
-            Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse", "faktum.ikke-jobbe-hele-norge.svar.annen-situasjon"),
+            Flervalg("faktum.ikke-jobbe-hele-norge.svar.redusert-helse", "faktum.ikke-jobbe-hele-norge.svar.permittert"),
         )
         assertEquals(null, prosess.resultat())
 
@@ -77,7 +77,7 @@ internal class ReellArbeidssokerTest {
         assertFaktaErBesvart(
             prosess.boolsk(`kan jobbe heltid`),
             prosess.flervalg(`årsak til kun deltid`),
-            prosess.tekst(`skriv kort om situasjonen din`),
+            prosess.tekst(`kort om hvorfor ikke jobbe heltid`),
             prosess.desimaltall(`antall timer deltid du kan jobbe`),
             prosess.boolsk(`kan du jobbe i hele Norge`),
             prosess.flervalg(`årsak kan ikke jobbe i hele Norge`),
@@ -116,7 +116,7 @@ internal class ReellArbeidssokerTest {
         assertFaktaErBesvart(
             prosess.boolsk(`kan jobbe heltid`),
             prosess.flervalg(`årsak til kun deltid`),
-            prosess.tekst(`skriv kort om situasjonen din`),
+            prosess.tekst(`kort om hvorfor ikke jobbe heltid`),
             prosess.desimaltall(`antall timer deltid du kan jobbe`),
         )
     }
@@ -128,7 +128,7 @@ internal class ReellArbeidssokerTest {
 
         assertAvhengigeFaktaInvalideres(
             prosess.flervalg(`årsak til kun deltid`),
-            prosess.tekst(`skriv kort om situasjonen din`),
+            prosess.tekst(`kort om hvorfor ikke jobbe heltid`),
             prosess.desimaltall(`antall timer deltid du kan jobbe`),
         )
 
@@ -136,11 +136,11 @@ internal class ReellArbeidssokerTest {
         prosess.flervalg(`årsak til kun deltid`).besvar(Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon"))
 
         assertAvhengigeFaktaInvalideres(
-            prosess.tekst(`skriv kort om situasjonen din`),
+            prosess.tekst(`kort om hvorfor ikke jobbe heltid`),
         )
 
         `Besvar alle fakta hvorfor deltid`()
-        prosess.tekst(`skriv kort om situasjonen din`).besvar(Tekst("Noe greier"))
+        prosess.tekst(`kort om hvorfor ikke jobbe heltid`).besvar(Tekst("Noe greier"))
     }
 
     @Test
@@ -193,7 +193,7 @@ internal class ReellArbeidssokerTest {
         prosess.flervalg(`årsak til kun deltid`).besvar(
             Flervalg("faktum.kun-deltid-aarsak.svar.annen-situasjon"),
         )
-        prosess.tekst(`skriv kort om situasjonen din`).besvar(Tekst("Jeg er omringet av maur"))
+        prosess.tekst(`kort om hvorfor ikke jobbe heltid`).besvar(Tekst("Jeg er omringet av maur"))
         prosess.desimaltall(`antall timer deltid du kan jobbe`).besvar(20.5)
     }
 
@@ -214,13 +214,13 @@ internal class ReellArbeidssokerTest {
 
     private fun assertFaktaErBesvart(vararg fakta: Faktum<*>) {
         fakta.forEach { faktum ->
-            assertEquals(true, faktum.erBesvart())
+            assertEquals(true, faktum.erBesvart(), "Faktum ${faktum.navn} skal være besvart")
         }
     }
 
     private fun assertAvhengigeFaktaInvalideres(vararg fakta: Faktum<*>) {
         fakta.forEach { faktum ->
-            assertEquals(false, faktum.erBesvart())
+            assertEquals(false, faktum.erBesvart(), "Faktum ${faktum.navn} skal være invalidert")
         }
     }
 }
