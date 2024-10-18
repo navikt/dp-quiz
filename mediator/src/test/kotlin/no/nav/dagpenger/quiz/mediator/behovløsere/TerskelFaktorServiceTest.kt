@@ -1,26 +1,28 @@
 package no.nav.dagpenger.quiz.mediator.behovløsere
 
-import no.nav.helse.rapids_rivers.testsupport.TestRapid
+import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class TerskelFaktorServiceTest {
-    private val rapid = TestRapid().apply {
-        TerskelFaktorService(this)
-    }
+    private val rapid =
+        TestRapid().apply {
+            TerskelFaktorService(this)
+        }
 
     @Test
     fun `at vi får løsning på tersklene`() {
         //language=JSON
         rapid.sendTestMessage(
-            """{
-          "@behov": [
-            "ØvreTerskelFaktor",
-            "NedreTerskelFaktor"
-          ],
-          "Virkningstidspunkt": "2020-12-01"
-        }
-            """.trimIndent()
+            """
+            {
+              "@behov": [
+                "ØvreTerskelFaktor",
+                "NedreTerskelFaktor"
+              ],
+              "Virkningstidspunkt": "2020-12-01"
+            }
+            """.trimIndent(),
         )
 
         with(rapid.inspektør) {

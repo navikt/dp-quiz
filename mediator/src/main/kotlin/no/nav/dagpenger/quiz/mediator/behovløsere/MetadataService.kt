@@ -1,13 +1,13 @@
 package no.nav.dagpenger.quiz.mediator.behovløsere
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
+import com.github.navikt.tbd_libs.rapids_and_rivers.River
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.seksjon.Prosess
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.helse.rapids_rivers.River
 
 internal class MetadataService(
     rapidsConnection: RapidsConnection,
@@ -28,14 +28,18 @@ internal class MetadataService(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+    ) {
         val søknadId = packet.søknadUUID()
 
         withLoggingContext("søknadId" to søknadId.toString()) {
             val metadata = metadataStrategi.metadata(utredningsRepository.hent(søknadId))
-            packet["@løsning"] = mapOf(
-                behov to metadata,
-            )
+            packet["@løsning"] =
+                mapOf(
+                    behov to metadata,
+                )
 
             context.publish(packet.toJson())
             logger.info { "Løser $behov med $metadata" }

@@ -1,5 +1,8 @@
 package no.nav.dagpenger.quiz.mediator
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import jsonNodeToMap
 import mu.KotlinLogging
 import no.nav.dagpenger.model.marshalling.SøknadsmalJsonBuilder
 import no.nav.dagpenger.model.seksjon.Prosess
@@ -21,17 +24,12 @@ import no.nav.dagpenger.quiz.mediator.meldinger.NyProsessBehovLøser
 import no.nav.dagpenger.quiz.mediator.soknad.ProsessMetadataStrategi
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidApplication
-import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.v248.Dagpenger as Dagpenger248
 
 // Understands how to build our application server
 internal class ApplicationBuilder : RapidsConnection.StatusListener {
-    private val rapidsConnection = RapidApplication.Builder(
-        RapidApplication.RapidApplicationConfig.fromEnv(Configuration.config),
-    ).build()
+    private val rapidsConnection = RapidApplication.create(Configuration.config)
 
     private companion object {
         val logger = KotlinLogging.logger {}
@@ -42,6 +40,7 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
     }
 
     fun start() = rapidsConnection.start()
+
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
@@ -57,14 +56,16 @@ internal class ApplicationBuilder : RapidsConnection.StatusListener {
 
                 Dagpenger.registrer { prototype: Prosess ->
                     FaktumTable(prototype.fakta)
-                    val malJson = SøknadsmalJsonBuilder(prototype).resultat().toString()
-                    rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
+                    val malJson = SøknadsmalJsonBuilder(prototype).resultat()
+                    val message = JsonMessage.newMessage(jsonNodeToMap(malJson))
+                    rapidsConnection.publish(message.toJson())
                 }
 
                 Innsending.registrer { prototype: Prosess ->
                     FaktumTable(prototype.fakta)
-                    val malJson = SøknadsmalJsonBuilder(prototype).resultat().toString()
-                    rapidsConnection.publish(JsonMessage(malJson, MessageProblems(malJson)).toJson())
+                    val malJson = SøknadsmalJsonBuilder(prototype).resultat()
+                    val message = JsonMessage.newMessage(jsonNodeToMap(malJson))
+                    rapidsConnection.publish(message.toJson())
                 }
 
                 NyProsessBehovLøser(prosessRepository, rapidsConnection)

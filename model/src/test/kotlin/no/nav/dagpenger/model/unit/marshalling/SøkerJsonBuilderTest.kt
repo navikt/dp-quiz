@@ -52,41 +52,43 @@ internal class SøkerJsonBuilderTest {
 
     @BeforeEach
     fun setup() {
-        prototypeFakta = Fakta(
-            testversjon,
-            boolsk faktum "f1" id 1,
-            boolsk faktum "f2" id 2 avhengerAv 1,
-            boolsk faktum "f3" id 3,
-            boolsk faktum "f4" id 4 avhengerAv 3,
-            boolsk faktum "f5" id 5,
-            heltall faktum "f6" id 6,
-            tekst faktum "f7" id 7,
-            heltall faktum "f67" id 67 navngittAv 7 genererer 6 og 7 og 22,
-            dato faktum "f8" id 8,
-            dato faktum "f9" id 9,
-            maks dato "f10" av 8 og 9 id 10,
-            boolsk faktum "f11" id 11 avhengerAv 10,
-            boolsk faktum "f12" id 12 avhengerAv 67,
-            heltall faktum "f1314" id 1314 genererer 13 og 14,
-            boolsk faktum "f13" id 13,
-            boolsk faktum "f14" id 14,
-            dokument faktum "f15" id 15 avhengerAv 5 og 8 og 67,
-            boolsk faktum "f16" id 16 avhengerAv 15,
-            envalg faktum "f17" id 17 med "envalg1" med "envalg2",
-            flervalg faktum "f18" id 18 med "flervalg1" med "flervalg2",
-            heltall faktum "f1718" id 1718 genererer 17 og 18,
-            land faktum "f19" gruppe "eøs" med listOf(Land("SWE")) gruppe "norge-jan-mayen" med listOf(
-                Land("NOR"),
-                Land("SJM"),
-            ) id 19,
-            dato faktum "f20" id 20,
-            heltall faktum "f21" genererer 20 id 21,
-            dokument faktum "f22" id 22 avhengerAv 6,
-            boolsk faktum "f23" id 23 avhengerAv 22,
-            boolsk faktum "f24" id 24,
-            dokument faktum "f25" id 25 avhengerAv 24,
-            boolsk faktum "f26" id 26 avhengerAv 25,
-        )
+        prototypeFakta =
+            Fakta(
+                testversjon,
+                boolsk faktum "f1" id 1,
+                boolsk faktum "f2" id 2 avhengerAv 1,
+                boolsk faktum "f3" id 3,
+                boolsk faktum "f4" id 4 avhengerAv 3,
+                boolsk faktum "f5" id 5,
+                heltall faktum "f6" id 6,
+                tekst faktum "f7" id 7,
+                heltall faktum "f67" id 67 navngittAv 7 genererer 6 og 7 og 22,
+                dato faktum "f8" id 8,
+                dato faktum "f9" id 9,
+                maks dato "f10" av 8 og 9 id 10,
+                boolsk faktum "f11" id 11 avhengerAv 10,
+                boolsk faktum "f12" id 12 avhengerAv 67,
+                heltall faktum "f1314" id 1314 genererer 13 og 14,
+                boolsk faktum "f13" id 13,
+                boolsk faktum "f14" id 14,
+                dokument faktum "f15" id 15 avhengerAv 5 og 8 og 67,
+                boolsk faktum "f16" id 16 avhengerAv 15,
+                envalg faktum "f17" id 17 med "envalg1" med "envalg2",
+                flervalg faktum "f18" id 18 med "flervalg1" med "flervalg2",
+                heltall faktum "f1718" id 1718 genererer 17 og 18,
+                land faktum "f19" gruppe "eøs" med listOf(Land("SWE")) gruppe "norge-jan-mayen" med
+                    listOf(
+                        Land("NOR"),
+                        Land("SJM"),
+                    ) id 19,
+                dato faktum "f20" id 20,
+                heltall faktum "f21" genererer 20 id 21,
+                dokument faktum "f22" id 22 avhengerAv 6,
+                boolsk faktum "f23" id 23 avhengerAv 22,
+                boolsk faktum "f24" id 24,
+                dokument faktum "f25" id 25 avhengerAv 24,
+                boolsk faktum "f26" id 26 avhengerAv 25,
+            )
         prosess = søknadprosess(søkerSubsumsjon())
     }
 
@@ -364,129 +366,134 @@ internal class SøkerJsonBuilderTest {
     private fun søkerSubsumsjon(): Subsumsjon {
         val alleBarnMåværeUnder18år =
             (prototypeFakta.heltall(6) under 18).sannsynliggjøresAv(prototypeFakta.dokument(22))
-        val deltre = "§ 1.2 har kun ikke myndige barn".deltre {
-            alleBarnMåværeUnder18år.hvisIkkeOppfylt {
-                prototypeFakta.boolsk(7).utfylt()
+        val deltre =
+            "§ 1.2 har kun ikke myndige barn".deltre {
+                alleBarnMåværeUnder18år.hvisIkkeOppfylt {
+                    prototypeFakta.boolsk(7).utfylt()
+                }
             }
-        }
         val generatorSubsumsjon67 = (prototypeFakta.generator(67) med deltre).godkjentAv(prototypeFakta.boolsk(23))
-        val generatorSubsumsjon1718 = prototypeFakta.generator(1718) med "Besvarte valg".deltre {
-            "alle må være besvarte".alle(
-                prototypeFakta.envalg(17).utfylt(),
-                prototypeFakta.envalg(18).utfylt(),
-            )
-        }
-        val regeltre = "regel" deltre {
-            "alle i søknaden skal være besvart".alle(
-                "alle i seksjon 1".alle(
-                    (prototypeFakta.boolsk(1) er true).hvisIkkeOppfylt {
-                        prototypeFakta.boolsk(2).utfylt()
-                    },
-                    (prototypeFakta.boolsk(3) er true).hvisIkkeOppfylt {
-                        prototypeFakta.boolsk(4).utfylt()
-                    },
-                    prototypeFakta.boolsk(5).utfylt(),
-                ),
-                "alle i seksjon 2".alle(
-                    generatorSubsumsjon67,
-                ),
-                "NAV-systemer vil svare automatisk på følgende fakta".alle(
-                    prototypeFakta.dato(8).utfylt(),
-                    prototypeFakta.dato(9).utfylt(),
-                ),
-                "dokumentasjon".alle(
-                    prototypeFakta.boolsk(5) er true hvisOppfylt {
-                        prototypeFakta.boolsk(16) dokumenteresAv prototypeFakta.dokument(15)
-                    },
-                ),
-                "Generator med valg".alle(
-                    generatorSubsumsjon1718,
-                ),
-                "Land".alle(
-                    prototypeFakta.land(19).utfylt(),
-                ),
-                prototypeFakta.generator(21) har
-                    "deltre".deltre {
-                        prototypeFakta.dato(20).utfylt()
-                    },
-                "Grunnleggende med dokumentasjon".minstEnAv(
-                    (prototypeFakta.boolsk(24) er true).sannsynliggjøresAv(prototypeFakta.dokument(25))
-                        .godkjentAv(prototypeFakta.boolsk(26)),
-                    prototypeFakta.boolsk(24) er false,
-                ),
-            )
-        }
+        val generatorSubsumsjon1718 =
+            prototypeFakta.generator(1718) med
+                "Besvarte valg".deltre {
+                    "alle må være besvarte".alle(
+                        prototypeFakta.envalg(17).utfylt(),
+                        prototypeFakta.envalg(18).utfylt(),
+                    )
+                }
+        val regeltre =
+            "regel" deltre {
+                "alle i søknaden skal være besvart".alle(
+                    "alle i seksjon 1".alle(
+                        (prototypeFakta.boolsk(1) er true).hvisIkkeOppfylt {
+                            prototypeFakta.boolsk(2).utfylt()
+                        },
+                        (prototypeFakta.boolsk(3) er true).hvisIkkeOppfylt {
+                            prototypeFakta.boolsk(4).utfylt()
+                        },
+                        prototypeFakta.boolsk(5).utfylt(),
+                    ),
+                    "alle i seksjon 2".alle(
+                        generatorSubsumsjon67,
+                    ),
+                    "NAV-systemer vil svare automatisk på følgende fakta".alle(
+                        prototypeFakta.dato(8).utfylt(),
+                        prototypeFakta.dato(9).utfylt(),
+                    ),
+                    "dokumentasjon".alle(
+                        prototypeFakta.boolsk(5) er true hvisOppfylt {
+                            prototypeFakta.boolsk(16) dokumenteresAv prototypeFakta.dokument(15)
+                        },
+                    ),
+                    "Generator med valg".alle(
+                        generatorSubsumsjon1718,
+                    ),
+                    "Land".alle(
+                        prototypeFakta.land(19).utfylt(),
+                    ),
+                    prototypeFakta.generator(21) har
+                        "deltre".deltre {
+                            prototypeFakta.dato(20).utfylt()
+                        },
+                    "Grunnleggende med dokumentasjon".minstEnAv(
+                        (prototypeFakta.boolsk(24) er true).sannsynliggjøresAv(prototypeFakta.dokument(25))
+                            .godkjentAv(prototypeFakta.boolsk(26)),
+                        prototypeFakta.boolsk(24) er false,
+                    ),
+                )
+            }
         return regeltre
     }
 
     private val uuid = UUID.randomUUID()
 
     private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess {
-        val seksjoner = listOf(
-            Seksjon(
-                "seksjon1",
-                Rolle.søker,
-                prototypeFakta.boolsk(1),
-                prototypeFakta.boolsk(2),
-                prototypeFakta.boolsk(3),
-                prototypeFakta.boolsk(4),
-                prototypeFakta.boolsk(5),
-            ),
-            Seksjon(
-                "seksjon2",
-                Rolle.søker,
-                prototypeFakta.heltall(6),
-                prototypeFakta.boolsk(7),
-                prototypeFakta.heltall(67),
-            ),
-            Seksjon(
-                "navseksjon",
-                Rolle.nav,
-                prototypeFakta.dato(8),
-                prototypeFakta.dato(9),
-            ),
-            Seksjon(
-                "dokumentasjon",
-                Rolle.søker,
-                prototypeFakta.dokument(15),
-            ),
-            Seksjon(
-                "seksjon3",
-                Rolle.søker,
-                prototypeFakta.generator(1718),
-                prototypeFakta.envalg(17),
-                prototypeFakta.flervalg(18),
-            ),
-            Seksjon(
-                "saksbehandler godkjenning",
-                Rolle.saksbehandler,
-                prototypeFakta.boolsk(16),
-            ),
-            Seksjon(
-                "Gyldige land",
-                Rolle.søker,
-                prototypeFakta.land(19),
-            ),
-            Seksjon(
-                "nav generator fakta",
-                Rolle.nav,
-                prototypeFakta.generator(21),
-                prototypeFakta.dato(20),
-            ),
-            Seksjon(
-                "grunnleggende med dokumentasjon",
-                Rolle.søker,
-                prototypeFakta.boolsk(24),
-                prototypeFakta.dokument(25),
-            ),
-            Seksjon(
-                "godkjenner seksjon",
-                Rolle.saksbehandler,
-                prototypeFakta.boolsk(23),
-                prototypeFakta.boolsk(26),
-                prototypeFakta.dokument(22),
-            ),
-        )
+        val seksjoner =
+            listOf(
+                Seksjon(
+                    "seksjon1",
+                    Rolle.søker,
+                    prototypeFakta.boolsk(1),
+                    prototypeFakta.boolsk(2),
+                    prototypeFakta.boolsk(3),
+                    prototypeFakta.boolsk(4),
+                    prototypeFakta.boolsk(5),
+                ),
+                Seksjon(
+                    "seksjon2",
+                    Rolle.søker,
+                    prototypeFakta.heltall(6),
+                    prototypeFakta.boolsk(7),
+                    prototypeFakta.heltall(67),
+                ),
+                Seksjon(
+                    "navseksjon",
+                    Rolle.nav,
+                    prototypeFakta.dato(8),
+                    prototypeFakta.dato(9),
+                ),
+                Seksjon(
+                    "dokumentasjon",
+                    Rolle.søker,
+                    prototypeFakta.dokument(15),
+                ),
+                Seksjon(
+                    "seksjon3",
+                    Rolle.søker,
+                    prototypeFakta.generator(1718),
+                    prototypeFakta.envalg(17),
+                    prototypeFakta.flervalg(18),
+                ),
+                Seksjon(
+                    "saksbehandler godkjenning",
+                    Rolle.saksbehandler,
+                    prototypeFakta.boolsk(16),
+                ),
+                Seksjon(
+                    "Gyldige land",
+                    Rolle.søker,
+                    prototypeFakta.land(19),
+                ),
+                Seksjon(
+                    "nav generator fakta",
+                    Rolle.nav,
+                    prototypeFakta.generator(21),
+                    prototypeFakta.dato(20),
+                ),
+                Seksjon(
+                    "grunnleggende med dokumentasjon",
+                    Rolle.søker,
+                    prototypeFakta.boolsk(24),
+                    prototypeFakta.dokument(25),
+                ),
+                Seksjon(
+                    "godkjenner seksjon",
+                    Rolle.saksbehandler,
+                    prototypeFakta.boolsk(23),
+                    prototypeFakta.boolsk(26),
+                    prototypeFakta.dokument(22),
+                ),
+            )
         val fakta = prototypeFakta.bygg(testPerson)
         val rootSubsumsjon = prototypeSubsumsjon.bygg(fakta)
         return Prosess(

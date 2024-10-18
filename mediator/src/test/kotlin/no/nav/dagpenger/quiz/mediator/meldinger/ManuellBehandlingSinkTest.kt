@@ -1,14 +1,13 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
-import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class ManuellBehandlingSinkTest {
-
     private val testRapid = TestRapid()
 
     @Test

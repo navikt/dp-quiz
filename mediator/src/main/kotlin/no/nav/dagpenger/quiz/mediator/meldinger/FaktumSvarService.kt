@@ -2,6 +2,16 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
+import com.github.navikt.tbd_libs.rapids_and_rivers.River
+import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDate
+import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
+import com.github.navikt.tbd_libs.rapids_and_rivers.withMDC
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import jsonNodeToMap
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Fakta
 import no.nav.dagpenger.model.faktum.Faktatype
@@ -15,14 +25,6 @@ import no.nav.dagpenger.model.visitor.ProsessVisitor
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.db.ResultatPersistence
 import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.MessageProblems
-import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.helse.rapids_rivers.River
-import no.nav.helse.rapids_rivers.asLocalDate
-import no.nav.helse.rapids_rivers.asLocalDateTime
-import no.nav.helse.rapids_rivers.withMDC
 import java.util.UUID
 
 internal class FaktumSvarService(
@@ -57,7 +59,10 @@ internal class FaktumSvarService(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+    ) {
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
         if ((ignorerSøknadUUID.contains(søknadUuid)) &&
             System.getenv()["NAIS_CLUSTER_NAME"] == "dev-gcp"
@@ -85,8 +90,8 @@ internal class FaktumSvarService(
                 if (søknadprosess.erFerdig()) {
                     // TODO: Lag en bedre måte å håndtere disse prosessene
                     if (prosessnavn == Prosessfakta.Dagpenger || prosessnavn == Prosessfakta.Innsending) {
-                        SøkerJsonBuilder(søknadprosess).resultat().also { json ->
-                            val message = json.toString().let { JsonMessage(it, MessageProblems(it)) }
+                        SøkerJsonBuilder(søknadprosess).resultat().also { json: ObjectNode ->
+                            val message = JsonMessage.newMessage(jsonNodeToMap(json))
                             context.publish(message.toJson())
                         }
                         log.info { "Ferdig med søknad ${søknadprosess.fakta.uuid}. Resultatet er: ${søknadprosess.resultat()}" }
@@ -103,7 +108,10 @@ internal class FaktumSvarService(
         }
     }
 
-    private fun besvarFakta(fakta: List<JsonNode>, prosess: Prosess) {
+    private fun besvarFakta(
+        fakta: List<JsonNode>,
+        prosess: Prosess,
+    ) {
         fakta.forEach { faktumNode ->
             val faktumId = faktumNode["id"].asText()
             val svar = faktumNode["svar"]
@@ -115,7 +123,10 @@ internal class FaktumSvarService(
         prosessRepository.lagre(prosess)
     }
 
-    private fun sendResultat(prosess: Prosess, context: MessageContext) {
+    private fun sendResultat(
+        prosess: Prosess,
+        context: MessageContext,
+    ) {
         ResultatJsonBuilder(prosess).resultat().also { json ->
             resultatPersistence.lagreResultat(prosess.resultat()!!, prosess.fakta.uuid, json)
             context.publish(json.toString())
@@ -124,7 +135,10 @@ internal class FaktumSvarService(
         log.info { "Ferdig med søknad ${prosess.fakta.uuid}. Resultatet er: ${prosess.resultat()}" }
     }
 
-    override fun onError(problems: MessageProblems, context: MessageContext) {
+    override fun onError(
+        problems: MessageProblems,
+        context: MessageContext,
+    ) {
         log.error { problems.toString() }
         sikkerlogg.error { problems.toExtendedReport() }
     }
@@ -165,6 +179,7 @@ internal class FaktumSvarService(
                     }
                 }
             }
+
             else -> throw IllegalArgumentException("Ukjent svar-type: $type")
         }
     }
@@ -178,7 +193,12 @@ internal class FaktumSvarService(
             prosess.accept(this)
         }
 
-        override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+        override fun preVisit(
+            fakta: Fakta,
+            faktaversjon: Faktaversjon,
+            uuid: UUID,
+            navBehov: FaktumNavBehov,
+        ) {
             faktatype = faktaversjon.faktatype
         }
     }

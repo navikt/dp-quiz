@@ -2,24 +2,25 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
+import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDate
+import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
+import com.github.navikt.tbd_libs.rapids_and_rivers.asOptionalLocalDate
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Flervalg
 import no.nav.dagpenger.model.faktum.Periode
 import no.nav.dagpenger.model.faktum.Tekst
 import no.nav.dagpenger.quiz.mediator.land.Landfabrikken
-import no.nav.helse.rapids_rivers.asLocalDate
-import no.nav.helse.rapids_rivers.asLocalDateTime
-import no.nav.helse.rapids_rivers.asOptionalLocalDate
 
 fun JsonNode.asEnvalg(): Envalg {
-    val svarene: List<String> = if (this.isArray) {
-        val array = this as ArrayNode
-        array.map { it.asText() }
-    } else {
-        val valg = this.asText()
-        listOf(valg)
-    }
+    val svarene: List<String> =
+        if (this.isArray) {
+            val array = this as ArrayNode
+            array.map { it.asText() }
+        } else {
+            val valg = this.asText()
+            listOf(valg)
+        }
     val valgteSvaralternativer = svarene.map { it }
     return Envalg(*valgteSvaralternativer.toTypedArray())
 }

@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.dagpenger.model.faktum.Envalg
@@ -15,7 +16,6 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosesser
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Bosted
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.DinSituasjon
-import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -29,23 +29,26 @@ internal class DagpengerTest : SøknadBesvarer() {
     fun setup() {
         Dagpenger.registrer()
 
-        søknadsprosess = Henvendelser.prosess(
-            testPerson,
-            Prosesser.Søknad,
-        )
-
-        val faktaRepository = mockk<ProsessRepository>().also {
-            every { it.hent(any()) } returns søknadsprosess
-            every { it.lagre(any()) } returns true
-        }
-
-        testRapid = TestRapid().also {
-            FaktumSvarService(
-                prosessRepository = faktaRepository,
-                resultatPersistence = resultatPersistence,
-                rapidsConnection = it,
+        søknadsprosess =
+            Henvendelser.prosess(
+                testPerson,
+                Prosesser.Søknad,
             )
-        }
+
+        val faktaRepository =
+            mockk<ProsessRepository>().also {
+                every { it.hent(any()) } returns søknadsprosess
+                every { it.lagre(any()) } returns true
+            }
+
+        testRapid =
+            TestRapid().also {
+                FaktumSvarService(
+                    prosessRepository = faktaRepository,
+                    resultatPersistence = resultatPersistence,
+                    rapidsConnection = it,
+                )
+            }
     }
 
     @Test
