@@ -23,4 +23,5 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation("org.junit.jupiter:junit-jupiter-params:${libs.versions.junit}")
     testImplementation(testFixtures(project(":model")))
+    testImplementation(libs.rapids.and.rivers.test)
 }

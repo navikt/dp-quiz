@@ -1,28 +1,29 @@
 package no.nav.dagpenger.quiz.mediator.meldinger
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
-import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.util.UUID
 
 internal class FaktaSlettetServiceTest {
-
     val søknadUUIDfeilerIkke = UUID.randomUUID()
     val søknadUUIDfeiler = UUID.randomUUID()
-    val prosessRepository = mockk<ProsessRepository>(relaxed = true).also {
-        every { it.slett(søknadUUIDfeiler) } throws Exception("Noe gikk galt under sletting")
-        every { it.slett(søknadUUIDfeilerIkke) } returns Unit
-    }
-    val testRapid = TestRapid().also {
-        FaktaSlettetService(
-            rapidsConnection = it,
-            prosessRepository = prosessRepository,
-        )
-    }
+    val prosessRepository =
+        mockk<ProsessRepository>(relaxed = true).also {
+            every { it.slett(søknadUUIDfeiler) } throws Exception("Noe gikk galt under sletting")
+            every { it.slett(søknadUUIDfeilerIkke) } returns Unit
+        }
+    val testRapid =
+        TestRapid().also {
+            FaktaSlettetService(
+                rapidsConnection = it,
+                prosessRepository = prosessRepository,
+            )
+        }
 
     @Test
     fun `tar i mot søknadSlettetEvent`() {

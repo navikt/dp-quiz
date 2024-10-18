@@ -1,11 +1,11 @@
 package no.nav.dagpenger.quiz.mediator.behovløsere
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.dagpenger.quiz.mediator.db.FaktaRepository
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
-import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -15,9 +15,10 @@ internal class MigrerProsessfaktaServiceTest {
     private val prosessRepository = mockk<ProsessRepository>(relaxed = true)
     private val faktaRepository = mockk<FaktaRepository>(relaxed = true)
     private val søknadUUID = UUID.randomUUID()
-    private val rapid = TestRapid().apply {
-        MigrerProsessService(this, faktaRepository, prosessRepository)
-    }
+    private val rapid =
+        TestRapid().apply {
+            MigrerProsessService(this, faktaRepository, prosessRepository)
+        }
 
     @Test
     fun `besvarer migreringsbehov`() {

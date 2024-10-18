@@ -1,5 +1,6 @@
 package no.nav.dagpenger.quiz.mediator.integration
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import no.nav.dagpenger.quiz.mediator.db.FaktumTable
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepositoryPostgres
 import no.nav.dagpenger.quiz.mediator.db.ResultatRecord
@@ -8,7 +9,6 @@ import no.nav.dagpenger.quiz.mediator.meldinger.FaktumSvarService
 import no.nav.dagpenger.quiz.mediator.meldinger.NyProsessBehovLøser
 import no.nav.dagpenger.quiz.mediator.soknad.dagpenger.Dagpenger
 import no.nav.dagpenger.quiz.mediator.soknad.innsending.Innsending
-import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -26,14 +26,15 @@ internal class NyProsessfaktaBehovLøserTest : SøknadBesvarer() {
             Innsending.registrer { FaktumTable(it.fakta) }
             val søknadPersistence = ProsessRepositoryPostgres()
             val resultatPersistence = ResultatRecord()
-            testRapid = TestRapid().also {
-                FaktumSvarService(
-                    prosessRepository = søknadPersistence,
-                    resultatPersistence = resultatPersistence,
-                    rapidsConnection = it,
-                )
-                NyProsessBehovLøser(søknadPersistence, it)
-            }
+            testRapid =
+                TestRapid().also {
+                    FaktumSvarService(
+                        prosessRepository = søknadPersistence,
+                        resultatPersistence = resultatPersistence,
+                        rapidsConnection = it,
+                    )
+                    NyProsessBehovLøser(søknadPersistence, it)
+                }
         }
     }
 
@@ -71,7 +72,10 @@ internal class NyProsessfaktaBehovLøserTest : SøknadBesvarer() {
             UUID.fromString(uuid)
         }
 
-        assertEquals("faktum.generell-innsending.hvorfor", testRapid.inspektør.message(1)["seksjoner"][0]["fakta"][0]["beskrivendeId"].asText())
+        assertEquals(
+            "faktum.generell-innsending.hvorfor",
+            testRapid.inspektør.message(1)["seksjoner"][0]["fakta"][0]["beskrivendeId"].asText(),
+        )
     }
 
     @Test

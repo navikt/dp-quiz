@@ -2,6 +2,7 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -21,7 +22,6 @@ import no.nav.dagpenger.quiz.mediator.helpers.Testprosess
 import no.nav.dagpenger.quiz.mediator.helpers.testFaktaversjon
 import no.nav.dagpenger.quiz.mediator.helpers.testPerson
 import no.nav.dagpenger.quiz.mediator.helpers.testProsess
-import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -37,43 +37,48 @@ internal class FaktumSvarServiceTest {
 
     companion object {
         private val faktaversjon = testFaktaversjon()
-        private val prototypeFakta = Fakta(
-            faktaversjon,
-            heltall faktum "generator" id 10 genererer 11 og 12,
-            dato faktum "fom" id 11,
-            dato faktum "tom" id 12,
-        )
-        private val prototypeProsess = Prosess(
-            Testprosess.Test,
-            Seksjon(
-                "seksjon",
-                Rolle.nav,
-                *(prototypeFakta.map { it }.toTypedArray()),
-            ),
-        )
+        private val prototypeFakta =
+            Fakta(
+                faktaversjon,
+                heltall faktum "generator" id 10 genererer 11 og 12,
+                dato faktum "fom" id 11,
+                dato faktum "tom" id 12,
+            )
+        private val prototypeProsess =
+            Prosess(
+                Testprosess.Test,
+                Seksjon(
+                    "seksjon",
+                    Rolle.nav,
+                    *(prototypeFakta.map { it }.toTypedArray()),
+                ),
+            )
         private val prototypeSubsumsjon =
             prototypeFakta heltall 10 er 1 hvisOppfylt { prototypeFakta dato 11 etter (prototypeFakta dato 12) }
     }
 
     private lateinit var prosess: Prosess
 
-    private val faktaRepository = mockk<ProsessRepository>().also {
-        every { it.lagre(any()) } returns true
-    }
+    private val faktaRepository =
+        mockk<ProsessRepository>().also {
+            every { it.lagre(any()) } returns true
+        }
     private val resultatPersistence = mockk<ResultatPersistence>(relaxed = true)
-    private val testRapid = TestRapid().also {
-        FaktumSvarService(
-            prosessRepository = faktaRepository,
-            resultatPersistence = resultatPersistence,
-            rapidsConnection = it,
-        )
-    }
+    private val testRapid =
+        TestRapid().also {
+            FaktumSvarService(
+                prosessRepository = faktaRepository,
+                resultatPersistence = resultatPersistence,
+                rapidsConnection = it,
+            )
+        }
 
     @BeforeEach
     fun setup() {
-        prosess = Henvendelser.testProsess(prototypeFakta, prototypeProsess, prototypeSubsumsjon).prosess(
-            testPerson,
-        )
+        prosess =
+            Henvendelser.testProsess(prototypeFakta, prototypeProsess, prototypeSubsumsjon).prosess(
+                testPerson,
+            )
         every { faktaRepository.hent(any()) } returns prosess
     }
 
@@ -106,7 +111,9 @@ internal class FaktumSvarServiceTest {
     }
 
     //language=json
-    private val faktumSvarMedGeneratorFaktum = """{
+    private val faktumSvarMedGeneratorFaktum =
+        """
+        {
   "@event_name": "faktum_svar",
   "@opprettet": "2020-11-18T11:04:32.867824",
   "@id": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
@@ -181,5 +188,5 @@ internal class FaktumSvarServiceTest {
   "system_read_count": 0,
   "@final": true
 }
-    """.trimIndent()
+        """.trimIndent()
 }
