@@ -4,7 +4,9 @@ import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
 import com.github.navikt.tbd_libs.rapids_and_rivers.withMDC
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import io.micrometer.core.instrument.MeterRegistry
 import mu.KotlinLogging
 import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import java.util.UUID
@@ -20,7 +22,7 @@ internal class FaktaSlettetService(
 
     init {
         River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "søknad_slettet") }
+            precondition { it.requireValue("@event_name", "søknad_slettet") }
             validate { it.requireKey("søknad_uuid") }
         }.register(this)
     }
@@ -28,6 +30,8 @@ internal class FaktaSlettetService(
     override fun onPacket(
         packet: JsonMessage,
         context: MessageContext,
+        metadata: MessageMetadata,
+        meterRegistry: MeterRegistry,
     ) {
         val uuid = UUID.fromString(packet["søknad_uuid"].asText())
         withMDC("søknad_uuid" to uuid.toString()) {

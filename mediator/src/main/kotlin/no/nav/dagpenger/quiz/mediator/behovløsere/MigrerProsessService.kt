@@ -3,7 +3,9 @@ package no.nav.dagpenger.quiz.mediator.behovløsere
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import io.micrometer.core.instrument.MeterRegistry
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.marshalling.SøkerJsonBuilder
@@ -22,16 +24,22 @@ class MigrerProsessService(
 
     init {
         River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "behov") }
-            validate { it.demandAll("@behov", listOf(BEHOV)) }
-            validate { it.requireKey("søknad_uuid") }
-            validate { it.forbid("@løsning") }
+            precondition {
+                it.requireValue("@event_name", "behov")
+                it.requireAllOrAny("@behov", listOf(BEHOV))
+                it.forbid("@løsning")
+            }
+            validate {
+                it.requireKey("søknad_uuid")
+            }
         }.register(this)
     }
 
     override fun onPacket(
         packet: JsonMessage,
         context: MessageContext,
+        metadata: MessageMetadata,
+        meterRegistry: MeterRegistry,
     ) {
         val søknadId = packet.søknadUUID()
 

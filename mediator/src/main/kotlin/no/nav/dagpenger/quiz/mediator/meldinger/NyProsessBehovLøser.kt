@@ -3,7 +3,9 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import io.micrometer.core.instrument.MeterRegistry
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.model.faktum.Identer
@@ -23,17 +25,24 @@ internal class NyProsessBehovLøser(
 
     init {
         River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "behov") }
-            validate { it.demandAllOrAny("@behov", listOf("NySøknad")) }
-            validate { it.requireKey("@id", "@opprettet") }
-            validate { it.requireKey("søknad_uuid", "prosessnavn", "ident") }
-            validate { it.forbid("@løsning") }
+            precondition {
+                it.requireValue("@event_name", "behov")
+                it.requireAllOrAny("@behov", listOf("NySøknad"))
+            }
+
+            validate {
+                it.requireKey("@id", "@opprettet")
+                it.requireKey("søknad_uuid", "prosessnavn", "ident")
+                it.forbid("@løsning")
+            }
         }.register(this)
     }
 
     override fun onPacket(
         packet: JsonMessage,
         context: MessageContext,
+        metadata: MessageMetadata,
+        meterRegistry: MeterRegistry,
     ) {
         val behovNavn = packet["@behov"].single().asText()
         val prosessnavn = packet.get("prosessnavn").asText()

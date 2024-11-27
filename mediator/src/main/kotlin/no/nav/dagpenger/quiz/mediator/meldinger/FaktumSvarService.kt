@@ -9,8 +9,10 @@ import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDate
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
 import com.github.navikt.tbd_libs.rapids_and_rivers.withMDC
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import io.micrometer.core.instrument.MeterRegistry
 import jsonNodeToMap
 import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Fakta
@@ -43,15 +45,15 @@ internal class FaktumSvarService(
 
     init {
         River(rapidsConnection).apply {
-            validate { message ->
-                message.demandValue("@event_name", "faktum_svar")
-                message.requireKey(
+            precondition { it.requireValue("@event_name", "faktum_svar") }
+            validate {
+                it.requireKey(
                     "søknad_uuid",
                     "fakta",
                 )
-                message.require("@opprettet", JsonNode::asLocalDateTime)
-                message.require("@id") { UUID.fromString(it.asText()) }
-                message.requireArray("fakta") {
+                it.require("@opprettet", JsonNode::asLocalDateTime)
+                it.require("@id") { UUID.fromString(it.asText()) }
+                it.requireArray("fakta") {
                     requireKey("id")
                     requireKey("type")
                 }
@@ -62,6 +64,8 @@ internal class FaktumSvarService(
     override fun onPacket(
         packet: JsonMessage,
         context: MessageContext,
+        metadata: MessageMetadata,
+        meterRegistry: MeterRegistry,
     ) {
         val søknadUuid = UUID.fromString(packet["søknad_uuid"].asText())
         if ((ignorerSøknadUUID.contains(søknadUuid)) &&
@@ -138,6 +142,7 @@ internal class FaktumSvarService(
     override fun onError(
         problems: MessageProblems,
         context: MessageContext,
+        metadata: MessageMetadata,
     ) {
         log.error { problems.toString() }
         sikkerlogg.error { problems.toExtendedReport() }
