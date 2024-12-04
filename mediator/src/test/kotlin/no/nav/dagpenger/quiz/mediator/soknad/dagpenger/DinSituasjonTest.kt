@@ -25,9 +25,10 @@ internal class DinSituasjonTest {
 
     @BeforeEach
     fun setup() {
-        prosess = søknad.testSøknadprosess(subsumsjon = DinSituasjon.regeltre(søknad)) {
-            DinSituasjon.seksjon(this)
-        }
+        prosess =
+            søknad.testSøknadprosess(subsumsjon = DinSituasjon.regeltre(søknad)) {
+                DinSituasjon.seksjon(this)
+            }
     }
 
     @Test
@@ -380,15 +381,20 @@ internal class DinSituasjonTest {
         prosess.dato("${DinSituasjon.`arbeidsforhold kontraktfestet sluttdato`}.1").besvar(1.februar)
         prosess.dato("${DinSituasjon.`arbeidsforhold midlertidig arbeidsforhold oppstartsdato`}.1")
             .besvar(1.januar)
-        prosess.boolsk("${DinSituasjon.`arbeidsforhold permittert fra fiskeri næring`}.1").besvar(true)
+        prosess.boolsk("${DinSituasjon.`arbeidsforhold permittert fra fiskeri næring`}.1").besvar(false)
         prosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før permittert`}.1").besvar(false)
         prosess.periode("${DinSituasjon.`arbeidsforhold permittert periode`}.1").besvar(Periode(5.januar))
         prosess.heltall("${DinSituasjon.`arbeidsforhold permittert prosent`}.1").besvar(40)
+
+        `besvar spørsmål om skift, turnus og rotasjon`()
+        assertEquals(true, prosess.resultat())
+
+        prosess.boolsk("${DinSituasjon.`arbeidsforhold permittert fra fiskeri næring`}.1").besvar(true)
+        assertEquals(null, prosess.resultat())
+
         prosess.boolsk("${DinSituasjon.`arbeidsforhold vet du lønnsplikt periode`}.1").besvar(true)
         prosess.periode("${DinSituasjon.`arbeidsforhold når var lønnsplikt periode`}.1")
             .besvar(Periode(6.januar, 20.januar))
-
-        `besvar spørsmål om skift, turnus og rotasjon`()
         assertEquals(true, prosess.resultat())
 
         // Avhengigheter
@@ -432,13 +438,7 @@ internal class DinSituasjonTest {
 
     private fun `besvar spørsmål om skift, turnus og rotasjon`() {
         prosess.boolsk("${DinSituasjon.`arbeidsforhold skift eller turnus`}.1").besvar(true)
-
-        prosess.boolsk("${DinSituasjon.`arbeidsforhold rotasjon`}.1").besvar(false)
-        assertEquals(true, prosess.resultat())
-
         prosess.boolsk("${DinSituasjon.`arbeidsforhold rotasjon`}.1").besvar(true)
-        assertEquals(null, prosess.resultat())
-
         prosess.heltall("${DinSituasjon.`arbeidsforhold arbeidsdager siste rotasjon`}.1").besvar(20)
         prosess.heltall("${DinSituasjon.`arbeidsforhold fridager siste rotasjon`}.1").besvar(2)
     }
@@ -446,11 +446,12 @@ internal class DinSituasjonTest {
     @Test
     fun `Faktarekkefølge i seksjon`() {
         val fakta = Fakta(testFaktaversjon(), *DinSituasjon.fakta())
-        val søknadprosess = fakta.testSøknadprosess(
-            subsumsjon = DinSituasjon.regeltre(fakta),
-        ) {
-            DinSituasjon.seksjon(this)
-        }
+        val søknadprosess =
+            fakta.testSøknadprosess(
+                subsumsjon = DinSituasjon.regeltre(fakta),
+            ) {
+                DinSituasjon.seksjon(this)
+            }
         val faktaFraDinSituasjon = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",\n") { it.id }
         assertEquals(forventetSpørsmålsrekkefølgeForSøker, faktaFraDinSituasjon)
     }
@@ -460,7 +461,8 @@ internal class DinSituasjonTest {
             assertFalse(faktum.erBesvart())
         }
 
-    private val forventetSpørsmålsrekkefølgeForSøker = """
+    private val forventetSpørsmålsrekkefølgeForSøker =
+        """
 101,
 103,
 104,
@@ -523,5 +525,5 @@ internal class DinSituasjonTest {
 161,
 162,
 163
-    """.trimIndent()
+        """.trimIndent()
 }
