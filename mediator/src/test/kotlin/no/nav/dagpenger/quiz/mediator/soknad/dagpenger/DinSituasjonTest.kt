@@ -381,7 +381,7 @@ internal class DinSituasjonTest {
         prosess.dato("${DinSituasjon.`arbeidsforhold kontraktfestet sluttdato`}.1").besvar(1.februar)
         prosess.dato("${DinSituasjon.`arbeidsforhold midlertidig arbeidsforhold oppstartsdato`}.1")
             .besvar(1.januar)
-        prosess.boolsk("${DinSituasjon.`arbeidsforhold permittert fra fiskeri næring`}.1").besvar(false)
+        prosess.boolsk("${DinSituasjon.`arbeidsforhold permittert fra fiskeri næring`}.1").besvar(true)
         prosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før permittert`}.1").besvar(false)
         prosess.periode("${DinSituasjon.`arbeidsforhold permittert periode`}.1").besvar(Periode(5.januar))
         prosess.heltall("${DinSituasjon.`arbeidsforhold permittert prosent`}.1").besvar(40)
@@ -389,7 +389,7 @@ internal class DinSituasjonTest {
         `besvar spørsmål om skift, turnus og rotasjon`()
         assertEquals(true, prosess.resultat())
 
-        prosess.boolsk("${DinSituasjon.`arbeidsforhold permittert fra fiskeri næring`}.1").besvar(true)
+        prosess.boolsk("${DinSituasjon.`arbeidsforhold permittert fra fiskeri næring`}.1").besvar(false)
         assertEquals(null, prosess.resultat())
 
         prosess.boolsk("${DinSituasjon.`arbeidsforhold vet du lønnsplikt periode`}.1").besvar(true)

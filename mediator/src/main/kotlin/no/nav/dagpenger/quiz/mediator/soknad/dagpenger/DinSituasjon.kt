@@ -236,7 +236,7 @@ object DinSituasjon : DslFaktaseksjon {
             heltall faktum "faktum.arbeidsforhold.permittert-prosent" id `arbeidsforhold permittert prosent`
                 avhengerAv `arbeidsforhold endret`,
             boolsk faktum "faktum.arbeidsforhold.vet-du-lonnsplikt-periode" id `arbeidsforhold vet du lønnsplikt periode`
-                avhengerAv `arbeidsforhold endret`,
+                avhengerAv `arbeidsforhold permittert fra fiskeri næring`,
             periode faktum "faktum.arbeidsforhold.naar-var-lonnsplikt-periode" id `arbeidsforhold når var lønnsplikt periode`
                 avhengerAv `arbeidsforhold vet du lønnsplikt periode`,
             tekst faktum "faktum.arbeidsforhold.aarsak-til-du-sa-opp" id `arbeidsforhold årsak til du sa opp`
@@ -663,8 +663,8 @@ object DinSituasjon : DslFaktaseksjon {
 
     private fun Fakta.lønnspliktsperiode() =
         "skal spørre om lønnsplikt eller ikke".minstEnAv(
-            boolsk(`arbeidsforhold permittert fra fiskeri næring`) er false,
-            boolsk(`arbeidsforhold permittert fra fiskeri næring`) er true hvisOppfylt {
+            boolsk(`arbeidsforhold permittert fra fiskeri næring`) er true,
+            boolsk(`arbeidsforhold permittert fra fiskeri næring`) er false hvisOppfylt {
                 "vet hva lønnspliktsperioden er eller ikke".minstEnAv(
                     boolsk(`arbeidsforhold vet du lønnsplikt periode`) er false,
                     boolsk(`arbeidsforhold vet du lønnsplikt periode`) er true hvisOppfylt {
