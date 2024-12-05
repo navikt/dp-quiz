@@ -29,6 +29,7 @@ import no.nav.dagpenger.model.subsumsjon.sannsynliggjøresAv
 import no.nav.dagpenger.quiz.mediator.land.Landfabrikken.verden
 import no.nav.dagpenger.quiz.mediator.soknad.DslFaktaseksjon
 
+@Suppress("ktlint:standard:property-naming")
 object DinSituasjon : DslFaktaseksjon {
     const val `mottatt dagpenger siste 12 mnd` = 101
     const val `gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold` = 102
@@ -235,7 +236,7 @@ object DinSituasjon : DslFaktaseksjon {
             heltall faktum "faktum.arbeidsforhold.permittert-prosent" id `arbeidsforhold permittert prosent`
                 avhengerAv `arbeidsforhold endret`,
             boolsk faktum "faktum.arbeidsforhold.vet-du-lonnsplikt-periode" id `arbeidsforhold vet du lønnsplikt periode`
-                avhengerAv `arbeidsforhold endret`,
+                avhengerAv `arbeidsforhold permittert fra fiskeri næring`,
             periode faktum "faktum.arbeidsforhold.naar-var-lonnsplikt-periode" id `arbeidsforhold når var lønnsplikt periode`
                 avhengerAv `arbeidsforhold vet du lønnsplikt periode`,
             tekst faktum "faktum.arbeidsforhold.aarsak-til-du-sa-opp" id `arbeidsforhold årsak til du sa opp`
@@ -661,10 +662,15 @@ object DinSituasjon : DslFaktaseksjon {
         )
 
     private fun Fakta.lønnspliktsperiode() =
-        "vet hva lønnspliktsperioden er eller ikke".minstEnAv(
-            boolsk(`arbeidsforhold vet du lønnsplikt periode`) er false,
-            boolsk(`arbeidsforhold vet du lønnsplikt periode`) er true hvisOppfylt {
-                periode(`arbeidsforhold når var lønnsplikt periode`).utfylt()
+        "skal spørre om lønnsplikt eller ikke".minstEnAv(
+            boolsk(`arbeidsforhold permittert fra fiskeri næring`) er true,
+            boolsk(`arbeidsforhold permittert fra fiskeri næring`) er false hvisOppfylt {
+                "vet hva lønnspliktsperioden er eller ikke".minstEnAv(
+                    boolsk(`arbeidsforhold vet du lønnsplikt periode`) er false,
+                    boolsk(`arbeidsforhold vet du lønnsplikt periode`) er true hvisOppfylt {
+                        periode(`arbeidsforhold når var lønnsplikt periode`).utfylt()
+                    },
+                )
             },
         )
 
