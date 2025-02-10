@@ -1,6 +1,7 @@
 package no.nav.dagpenger.quiz.mediator
 
 import io.getunleash.DefaultUnleash
+import io.getunleash.UnleashContext
 import io.getunleash.strategy.Strategy
 import io.getunleash.util.UnleashConfig
 
@@ -20,7 +21,7 @@ fun setupUnleash(unleashApiUrl: String): DefaultUnleash {
 class ByClusterStrategy(private val currentCluster: Cluster) : Strategy {
     override fun getName(): String = "byCluster"
 
-    override fun isEnabled(parameters: MutableMap<String, String>): Boolean {
+    override fun isEnabled(parameters: MutableMap<String, String>, unleashContext: UnleashContext): Boolean {
         val clustersParameter = parameters["cluster"] ?: return false
         val alleClustere = clustersParameter.split(",").map { it.trim() }.map { it.lowercase() }.toList()
         return alleClustere.contains(currentCluster.asString())
