@@ -15,7 +15,7 @@ dependencies {
     implementation("de.slub-dresden:urnlib:2.0.1")
 
     // unleash
-    implementation("io.getunleash:unleash-client-java:10.1.0") {
+    implementation("io.getunleash:unleash-client-java:10.1.1") {
         exclude("org.apache.logging.log4j")
     }
 
