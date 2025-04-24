@@ -22,7 +22,7 @@ Sentrale begreper i QUIZ:
 
 ## Komme i gang
 
-Gradle brukes som byggverktøy og er bundlet inn.
+Gradle brukes som byggverktøy og er bundlet inn!
 
 `./gradlew build`
 
