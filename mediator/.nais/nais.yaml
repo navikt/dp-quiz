@@ -7,7 +7,7 @@ metadata:
     team: teamdagpenger
     app: dp-quiz-mediator
 spec:
-  image: {{image}}
+  image: "{{image}}"
   port: 8080
   strategy:
     rollingUpdate:  # Bruk kun Recreate når vi deployer store/ukompatible migreringer
@@ -28,8 +28,8 @@ spec:
     enabled: true
   replicas:
     # Antall partisjoner på Kafka rapid + 1
-    min: {{replicas}}
-    max: {{replicas}}
+    min: "{{replicas}}"
+    max: "{{replicas}}"
   resources:
     limits:
       memory: 1024Mi
@@ -50,18 +50,18 @@ spec:
     - secret: serviceuser-srvdp-quiz-mediator
       mountPath: "/var/run/secrets/nais.io/service_user"
   kafka:
-    pool: {{kafka.pool}}
+    pool: "{{kafka.pool}}"
   gcp:
     sqlInstances:
       - name: dp-quiz-mediator
         type: POSTGRES_14
-        tier: {{db.tier}}
+        tier: "{{db.tier}}"
         diskType: SSD
         highAvailability: true
-        diskSize: {{db.size}}
+        diskSize: "{{db.size}}"
         diskAutoresize: true
         pointInTimeRecovery: true
-        retainedBackups: {{db.point_in_time_recovery_days}}
+        retainedBackups: "{{db.point_in_time_recovery_days}}"
         autoBackupHour: 3
         maintenance:
           day: 1
