@@ -28,8 +28,8 @@ spec:
     enabled: true
   replicas:
     # Antall partisjoner på Kafka rapid + 1
-    min: "{{replicas}}"
-    max: "{{replicas}}"
+    min: {{replicas}}
+    max: {{replicas}}
   resources:
     limits:
       memory: 1024Mi
