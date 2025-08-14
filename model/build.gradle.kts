@@ -9,7 +9,7 @@ dependencies {
 
     implementation("guru.nidi:graphviz-java:0.18.1")
     implementation("guru.nidi:graphviz-kotlin:0.18.1")
-    api("de.slub-dresden:urnlib:2.0.1")
+    api("de.slub-dresden:urnlib:3.0.0")
 
     testImplementation(libs.mockk)
     testFixturesApi(libs.jackson.kotlin)
