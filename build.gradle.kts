@@ -4,7 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     application
-    kotlin("jvm") version "2.2.10"
+    kotlin("jvm") version "2.2.20"
     id(Spotless.spotless) version "6.11.0"
 }
 
