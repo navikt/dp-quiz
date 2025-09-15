@@ -1,12 +1,12 @@
 package no.nav.dagpenger.quiz.mediator.db
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotliquery.TransactionalSession
 import kotliquery.action.ExecuteQueryAction
 import kotliquery.action.UpdateQueryAction
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import mu.KotlinLogging
 import no.nav.dagpenger.model.faktum.Dokument
 import no.nav.dagpenger.model.faktum.Envalg
 import no.nav.dagpenger.model.faktum.Fakta
