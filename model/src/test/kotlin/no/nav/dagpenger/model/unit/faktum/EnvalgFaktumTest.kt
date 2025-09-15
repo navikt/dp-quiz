@@ -20,14 +20,14 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class EnvalgFaktumTest {
-
-    val prototypeFakta = Fakta(
-        testversjon,
-        envalg faktum "envalg" med "valg1" med "valg2" id 1,
-        envalg faktum "envalg2" med "valg1" med "valg2" med "valg3" id 2,
-        dato faktum "dato" id 3,
-        heltall faktum "generator" id 4 genererer 2 og 3
-    )
+    val prototypeFakta =
+        Fakta(
+            testversjon,
+            envalg faktum "envalg" med "valg1" med "valg2" id 1,
+            envalg faktum "envalg2" med "valg1" med "valg2" med "valg3" id 2,
+            dato faktum "dato" id 3,
+            heltall faktum "generator" id 4 genererer 2 og 3,
+        )
 
     lateinit var søknad: Prosess
 
@@ -52,7 +52,7 @@ class EnvalgFaktumTest {
         assertThrows<IllegalArgumentException> {
             Fakta(
                 testversjon,
-                envalg faktum "envalg" id 1
+                envalg faktum "envalg" id 1,
             ).testSøknadprosess(TomSubsumsjon)
         }
     }

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class FaktumNavBehovTest {
-
     @Test
     fun `skal kunne registere faktum til nav-behov mapper`() {
         val map = mapOf(1 to "1")

@@ -3,7 +3,10 @@ package no.nav.dagpenger.model.faktum
 import no.nav.dagpenger.model.visitor.PersonVisitor
 import java.util.UUID
 
-class Person(private val uuid: UUID, private val identer: Identer) {
+class Person(
+    private val uuid: UUID,
+    private val identer: Identer,
+) {
     constructor(identer: Identer) : this(UUID.randomUUID(), identer)
 
     companion object {
@@ -13,10 +16,15 @@ class Person(private val uuid: UUID, private val identer: Identer) {
     private constructor(
         fnr: String,
         aktørId: String,
-    ) : this(Identer.Builder().folkeregisterIdent(fnr).aktørId(aktørId).build())
+    ) : this(
+        Identer
+            .Builder()
+            .folkeregisterIdent(fnr)
+            .aktørId(aktørId)
+            .build(),
+    )
 
-    override fun equals(other: Any?) =
-        other is Person && this.identer == other.identer
+    override fun equals(other: Any?) = other is Person && this.identer == other.identer
 
     override fun hashCode() = identer.hashCode()
 

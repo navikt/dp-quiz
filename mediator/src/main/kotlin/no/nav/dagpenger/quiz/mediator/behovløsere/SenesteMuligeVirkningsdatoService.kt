@@ -8,18 +8,20 @@ import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.micrometer.core.instrument.MeterRegistry
 
-internal class SenesteMuligeVirkningsdatoService(rapidsConnection: RapidsConnection) :
-    River.PacketListener {
+internal class SenesteMuligeVirkningsdatoService(
+    rapidsConnection: RapidsConnection,
+) : River.PacketListener {
     init {
-        River(rapidsConnection).apply {
-            precondition {
-                it.requireAllOrAny("@behov", listOf("SenesteMuligeVirkningstidspunkt"))
-                it.forbid("@løsning")
-            }
-            validate {
-                it.requireKey("Behandlingsdato")
-            }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                precondition {
+                    it.requireAllOrAny("@behov", listOf("SenesteMuligeVirkningstidspunkt"))
+                    it.forbid("@løsning")
+                }
+                validate {
+                    it.requireKey("Behandlingsdato")
+                }
+            }.register(this)
     }
 
     override fun onPacket(

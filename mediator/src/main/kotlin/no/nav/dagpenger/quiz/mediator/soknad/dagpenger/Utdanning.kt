@@ -23,54 +23,54 @@ object Utdanning : DslFaktaseksjon {
     const val `dokumentasjon på sluttdato` = 2004
     const val `godkjenning dokumentasjon på sluttdato` = 2005
 
-    override val fakta = listOf(
-        boolsk faktum "faktum.tar-du-utdanning" id `tar du utdanning`,
+    override val fakta =
+        listOf(
+            boolsk faktum "faktum.tar-du-utdanning" id `tar du utdanning`,
+            boolsk faktum "faktum.avsluttet-utdanning-siste-6-mnd" id `avsluttet utdanning siste 6 mnd`
+                avhengerAv `tar du utdanning`,
+            boolsk faktum "faktum.planlegger-utdanning-med-dagpenger" id `planlegger utdanning med dagpenger`
+                avhengerAv `tar du utdanning`,
+            dokument faktum "faktum.dokument-utdanning-sluttdato" id `dokumentasjon på sluttdato`
+                avhengerAv `avsluttet utdanning siste 6 mnd`,
+            boolsk faktum "faktum.dokument-utdanning-sluttdato-godkjenning" id `godkjenning dokumentasjon på sluttdato`
+                avhengerAv `dokumentasjon på sluttdato`,
+        )
 
-        boolsk faktum "faktum.avsluttet-utdanning-siste-6-mnd" id `avsluttet utdanning siste 6 mnd`
-            avhengerAv `tar du utdanning`,
+    override fun seksjon(fakta: Fakta) = listOf(fakta.seksjon("utdanning", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
-        boolsk faktum "faktum.planlegger-utdanning-med-dagpenger" id `planlegger utdanning med dagpenger`
-            avhengerAv `tar du utdanning`,
-
-        dokument faktum "faktum.dokument-utdanning-sluttdato" id `dokumentasjon på sluttdato`
-            avhengerAv `avsluttet utdanning siste 6 mnd`,
-        boolsk faktum "faktum.dokument-utdanning-sluttdato-godkjenning" id `godkjenning dokumentasjon på sluttdato`
-            avhengerAv `dokumentasjon på sluttdato`
-    )
-
-    override fun seksjon(fakta: Fakta) =
-        listOf(fakta.seksjon("utdanning", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
-
-    override fun regeltre(fakta: Fakta) = with(fakta) {
-        "utdanning".deltre {
-            "Utdanning".alle(
-                "tar utdanning eller ikke".minstEnAv(
-                    boolsk(`tar du utdanning`) er true,
-                    boolsk(`tar du utdanning`) er false hvisOppfylt {
-                        "nylig avsluttet utdanning eller planer om utdanning".alle(
-                            "avsluttet utdanning må dokumenteres".minstEnAv(
-                                boolsk(`avsluttet utdanning siste 6 mnd`) er false,
-                                (boolsk(`avsluttet utdanning siste 6 mnd`) er true).sannsynliggjøresAv(
-                                    dokument(`dokumentasjon på sluttdato`)
-                                ).godkjentAv(
-                                    boolsk(
-                                        `godkjenning dokumentasjon på sluttdato`
-                                    )
-                                )
-                            ),
-                            boolsk(`planlegger utdanning med dagpenger`).utfylt()
-                        )
-                    }
+    override fun regeltre(fakta: Fakta) =
+        with(fakta) {
+            "utdanning".deltre {
+                "Utdanning".alle(
+                    "tar utdanning eller ikke".minstEnAv(
+                        boolsk(`tar du utdanning`) er true,
+                        boolsk(`tar du utdanning`) er false hvisOppfylt {
+                            "nylig avsluttet utdanning eller planer om utdanning".alle(
+                                "avsluttet utdanning må dokumenteres".minstEnAv(
+                                    boolsk(`avsluttet utdanning siste 6 mnd`) er false,
+                                    (boolsk(`avsluttet utdanning siste 6 mnd`) er true)
+                                        .sannsynliggjøresAv(
+                                            dokument(`dokumentasjon på sluttdato`),
+                                        ).godkjentAv(
+                                            boolsk(
+                                                `godkjenning dokumentasjon på sluttdato`,
+                                            ),
+                                        ),
+                                ),
+                                boolsk(`planlegger utdanning med dagpenger`).utfylt(),
+                            )
+                        },
+                    ),
                 )
-            )
+            }
         }
-    }
 
-    override val spørsmålsrekkefølgeForSøker = listOf(
-        `tar du utdanning`,
-        `avsluttet utdanning siste 6 mnd`,
-        `planlegger utdanning med dagpenger`,
-        `dokumentasjon på sluttdato`,
-        `godkjenning dokumentasjon på sluttdato`
-    )
+    override val spørsmålsrekkefølgeForSøker =
+        listOf(
+            `tar du utdanning`,
+            `avsluttet utdanning siste 6 mnd`,
+            `planlegger utdanning med dagpenger`,
+            `dokumentasjon på sluttdato`,
+            `godkjenning dokumentasjon på sluttdato`,
+        )
 }

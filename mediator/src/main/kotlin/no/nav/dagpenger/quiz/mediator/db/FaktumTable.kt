@@ -42,8 +42,9 @@ import java.time.LocalDate
 import java.util.UUID
 
 // Forstår initialisering av faktum tabellen
-class FaktumTable(fakta: Fakta) : FaktaVisitor {
-
+class FaktumTable(
+    fakta: Fakta,
+) : FaktaVisitor {
     private var rootId: Int = 0
     private var indeks: Int = 0
     private val dbIder = mutableMapOf<Faktum<*>, Int>()
@@ -54,8 +55,9 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
         if (Versjonsjekker(fakta).ikkeEksisterer()) fakta.accept(this)
     }
 
-    private class Versjonsjekker(fakta: Fakta) : FaktaVisitor {
-
+    private class Versjonsjekker(
+        fakta: Fakta,
+    ) : FaktaVisitor {
         init {
             fakta.accept(this)
         }
@@ -64,17 +66,23 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
 
         fun ikkeEksisterer() = !eksisterer
 
-        override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+        override fun preVisit(
+            fakta: Fakta,
+            faktaversjon: Faktaversjon,
+            uuid: UUID,
+            navBehov: FaktumNavBehov,
+        ) {
             eksisterer = exists(faktaversjon)
         }
 
         private companion object {
             private fun exists(faktaversjon: Faktaversjon): Boolean {
-                val query = queryOf(
-                    //language=PostgreSQL
-                    "SELECT id FROM faktaversjon WHERE navn = :navn AND versjon_id = :versjon_id",
-                    mapOf("navn" to faktaversjon.faktatype.id, "versjon_id" to faktaversjon.versjon),
-                )
+                val query =
+                    queryOf(
+                        //language=PostgreSQL
+                        "SELECT id FROM faktaversjon WHERE navn = :navn AND versjon_id = :versjon_id",
+                        mapOf("navn" to faktaversjon.faktatype.id, "versjon_id" to faktaversjon.versjon),
+                    )
                 return using(sessionOf(dataSource)) { session ->
                     session.run(
                         query.map { true }.asSingle,
@@ -84,19 +92,30 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
         }
     }
 
-    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
-        val query = queryOf( //language=PostgreSQL
-            "INSERT INTO faktaversjon (navn, versjon_id) VALUES (:navn, :versjon_id) RETURNING id",
-            mapOf("navn" to faktaversjon.faktatype.id, "versjon_id" to faktaversjon.versjon),
-        )
-        prosessVersjonId = using(sessionOf(dataSource)) { session ->
-            session.run(
-                query.map { rad -> rad.int("id") }.asSingle,
-            ) ?: throw IllegalStateException("Klarte ikke å opprette prosessversjon, $faktaversjon")
-        }
+    override fun preVisit(
+        fakta: Fakta,
+        faktaversjon: Faktaversjon,
+        uuid: UUID,
+        navBehov: FaktumNavBehov,
+    ) {
+        val query =
+            queryOf( //language=PostgreSQL
+                "INSERT INTO faktaversjon (navn, versjon_id) VALUES (:navn, :versjon_id) RETURNING id",
+                mapOf("navn" to faktaversjon.faktatype.id, "versjon_id" to faktaversjon.versjon),
+            )
+        prosessVersjonId =
+            using(sessionOf(dataSource)) { session ->
+                session.run(
+                    query.map { rad -> rad.int("id") }.asSingle,
+                ) ?: throw IllegalStateException("Klarte ikke å opprette prosessversjon, $faktaversjon")
+            }
     }
 
-    override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
+    override fun visit(
+        faktumId: FaktumId,
+        rootId: Int,
+        indeks: Int,
+    ) {
         this.rootId = rootId
         this.indeks = indeks
     }
@@ -161,11 +180,17 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
         avhengigheter[faktum] = avhengigeFakta
     }
 
-    override fun postVisit(fakta: Fakta, uuid: UUID) {
+    override fun postVisit(
+        fakta: Fakta,
+        uuid: UUID,
+    ) {
         avhengigheter.forEach { (parent, children) -> faktumFaktum(dbIder[parent]!!, children, "avhengig_faktum") }
     }
 
-    private fun valgFaktum(faktumId: Int, gyldigeValg: GyldigeValg) {
+    private fun valgFaktum(
+        faktumId: Int,
+        gyldigeValg: GyldigeValg,
+    ) {
         using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
@@ -180,7 +205,11 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
         }
     }
 
-    private fun faktumFaktum(parentId: Int, children: Collection<Faktum<*>>, table: String) {
+    private fun faktumFaktum(
+        parentId: Int,
+        children: Collection<Faktum<*>>,
+        table: String,
+    ) {
         children.forEach { child ->
             using(sessionOf(dataSource)) { session ->
                 session.run(
@@ -194,27 +223,30 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
         }
     }
 
-    private fun <R : Comparable<R>> skrivFaktum(faktum: Faktum<*>, clazz: Class<R>, regel: FaktaRegel<R>? = null) =
-        if (dbIder.containsKey(faktum)) {
-            dbIder[faktum]!!
-        } else {
-            using(sessionOf(dataSource)) { session ->
-                session.run(
-                    queryOf(
-                        """WITH inserted_id as (INSERT INTO navn (navn) values (?) returning id)
+    private fun <R : Comparable<R>> skrivFaktum(
+        faktum: Faktum<*>,
+        clazz: Class<R>,
+        regel: FaktaRegel<R>? = null,
+    ) = if (dbIder.containsKey(faktum)) {
+        dbIder[faktum]!!
+    } else {
+        using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf(
+                    """WITH inserted_id as (INSERT INTO navn (navn) values (?) returning id)
                                INSERT INTO faktum (versjon_id, faktum_type, root_id, regel, navn_id ) SELECT ?, ?, ?, ?, id from inserted_id returning id
-                        """.trimMargin(),
-                        faktum.navn,
-                        prosessVersjonId,
-                        ClassKode[clazz],
-                        rootId,
-                        regel?.navn,
-                    ).map { it.int(1) }.asSingle,
-                )
-            }!!.also { dbId ->
-                dbIder[faktum] = dbId
-            }
+                    """.trimMargin(),
+                    faktum.navn,
+                    prosessVersjonId,
+                    ClassKode[clazz],
+                    rootId,
+                    regel?.navn,
+                ).map { it.int(1) }.asSingle,
+            )
+        }!!.also { dbId ->
+            dbIder[faktum] = dbId
         }
+    }
 
     // Understands an encoding of basic Faktum types
     internal class ClassKode {
@@ -222,7 +254,11 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
             private val factoryMap = mutableMapOf<Int, (String, Int) -> FaktumFactory<*>>()
             private val kodeMap = mutableMapOf<Class<*>, Int>()
 
-            private fun byggMap(clazz: Class<*>, kode: Int, block: (String, Int) -> FaktumFactory<*>) {
+            private fun byggMap(
+                clazz: Class<*>,
+                kode: Int,
+                block: (String, Int) -> FaktumFactory<*>,
+            ) {
                 factoryMap[kode] = block
                 kodeMap[clazz] = kode
             }
@@ -242,6 +278,7 @@ class FaktumTable(fakta: Fakta) : FaktaVisitor {
             }
 
             operator fun get(clazz: Class<*>) = kodeMap[clazz] ?: throw NoSuchElementException("Ukjent klasse $clazz")
+
             operator fun get(kode: Int) = factoryMap[kode] ?: throw NoSuchElementException("Ukjent kode $kode")
         }
     }

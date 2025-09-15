@@ -24,18 +24,19 @@ internal class NyProsessBehovLøser(
     }
 
     init {
-        River(rapidsConnection).apply {
-            precondition {
-                it.requireValue("@event_name", "behov")
-                it.requireAllOrAny("@behov", listOf("NySøknad"))
-            }
+        River(rapidsConnection)
+            .apply {
+                precondition {
+                    it.requireValue("@event_name", "behov")
+                    it.requireAllOrAny("@behov", listOf("NySøknad"))
+                }
 
-            validate {
-                it.requireKey("@id", "@opprettet")
-                it.requireKey("søknad_uuid", "prosessnavn", "ident")
-                it.forbid("@løsning")
-            }
-        }.register(this)
+                validate {
+                    it.requireKey("@id", "@opprettet")
+                    it.requireKey("søknad_uuid", "prosessnavn", "ident")
+                    it.forbid("@løsning")
+                }
+            }.register(this)
     }
 
     override fun onPacket(
@@ -59,11 +60,13 @@ internal class NyProsessBehovLøser(
         ) {
             log.info { "Mottok $behovNavn behov" }
             val identer =
-                Identer.Builder()
+                Identer
+                    .Builder()
                     .folkeregisterIdent(packet["ident"].asText())
                     .build()
 
-            prosessRepository.ny(identer, prosessversjon, søknadUuid)
+            prosessRepository
+                .ny(identer, prosessversjon, søknadUuid)
                 .also { søknadsprosess ->
                     prosessRepository.lagre(søknadsprosess)
                     log.info { "Opprettet ny søknadprosess ${søknadsprosess.fakta.uuid}" }

@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 internal class InntektTest {
-
     @Test
     fun equality() {
         assertEquals(1000.årlig, 1000.årlig)

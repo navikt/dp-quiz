@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class PostgresMigrationTest {
-
     @Test
     fun `Migration scripts are applied successfully`() {
         withCleanDb {

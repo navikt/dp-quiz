@@ -133,33 +133,98 @@ interface FaktumVisitor {
     ) {
     }
 
-    fun <R : Comparable<R>> preVisitAvhengerAvFakta(faktum: Faktum<R>, avhengerAvFakta: MutableSet<Faktum<*>>) {}
-    fun <R : Comparable<R>> postVisitAvhengerAvFakta(faktum: Faktum<R>, avhengerAvFakta: MutableSet<Faktum<*>>) {}
-    fun <R : Comparable<R>> preVisitAvhengigeFakta(faktum: Faktum<R>, avhengigeFakta: MutableSet<Faktum<*>>) {}
-    fun <R : Comparable<R>> postVisitAvhengigeFakta(faktum: Faktum<R>, avhengigeFakta: MutableSet<Faktum<*>>) {}
+    fun <R : Comparable<R>> preVisitAvhengerAvFakta(
+        faktum: Faktum<R>,
+        avhengerAvFakta: MutableSet<Faktum<*>>,
+    ) {}
+
+    fun <R : Comparable<R>> postVisitAvhengerAvFakta(
+        faktum: Faktum<R>,
+        avhengerAvFakta: MutableSet<Faktum<*>>,
+    ) {}
+
+    fun <R : Comparable<R>> preVisitAvhengigeFakta(
+        faktum: Faktum<R>,
+        avhengigeFakta: MutableSet<Faktum<*>>,
+    ) {}
+
+    fun <R : Comparable<R>> postVisitAvhengigeFakta(
+        faktum: Faktum<R>,
+        avhengigeFakta: MutableSet<Faktum<*>>,
+    ) {}
 }
 
 interface IdentVisitor {
-    fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {}
+    fun visit(
+        type: Identer.Ident.Type,
+        id: String,
+        historisk: Boolean,
+    ) {}
 }
 
 interface PersonVisitor : IdentVisitor {
-    fun preVisit(person: Person, uuid: UUID) {}
-    fun postVisit(person: Person, uuid: UUID) {}
+    fun preVisit(
+        person: Person,
+        uuid: UUID,
+    ) {}
+
+    fun postVisit(
+        person: Person,
+        uuid: UUID,
+    ) {}
 }
 
-interface FaktaVisitor : PersonVisitor, FaktumVisitor {
-    fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {}
-    fun postVisit(fakta: Fakta, uuid: UUID) {}
+interface FaktaVisitor :
+    PersonVisitor,
+    FaktumVisitor {
+    fun preVisit(
+        fakta: Fakta,
+        faktaversjon: Faktaversjon,
+        uuid: UUID,
+        navBehov: FaktumNavBehov,
+    ) {}
+
+    fun postVisit(
+        fakta: Fakta,
+        uuid: UUID,
+    ) {}
 }
 
-interface ProsessVisitor : SubsumsjonVisitor, FaktaVisitor {
-    fun preVisit(prosess: Prosess, uuid: UUID) {}
-    fun postVisit(prosess: Prosess, uuid: UUID) {}
-    fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {}
-    fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {}
-    fun preVisitAvhengerAv(seksjon: Seksjon, avhengerAvFakta: Set<Faktum<*>>) {}
-    fun postVisitAvhengerAv(seksjon: Seksjon, avhengerAvFakta: Set<Faktum<*>>) {}
+interface ProsessVisitor :
+    SubsumsjonVisitor,
+    FaktaVisitor {
+    fun preVisit(
+        prosess: Prosess,
+        uuid: UUID,
+    ) {}
+
+    fun postVisit(
+        prosess: Prosess,
+        uuid: UUID,
+    ) {}
+
+    fun preVisit(
+        seksjon: Seksjon,
+        rolle: Rolle,
+        fakta: Set<Faktum<*>>,
+        indeks: Int,
+    ) {}
+
+    fun postVisit(
+        seksjon: Seksjon,
+        rolle: Rolle,
+        indeks: Int,
+    ) {}
+
+    fun preVisitAvhengerAv(
+        seksjon: Seksjon,
+        avhengerAvFakta: Set<Faktum<*>>,
+    ) {}
+
+    fun postVisitAvhengerAv(
+        seksjon: Seksjon,
+        avhengerAvFakta: Set<Faktum<*>>,
+    ) {}
 }
 
 interface SubsumsjonVisitor : FaktumVisitor {
@@ -181,8 +246,15 @@ interface SubsumsjonVisitor : FaktumVisitor {
     ) {
     }
 
-    fun preVisit(subsumsjon: GeneratorSubsumsjon, deltre: DeltreSubsumsjon) {}
-    fun postVisit(subsumsjon: GeneratorSubsumsjon, deltre: DeltreSubsumsjon) {}
+    fun preVisit(
+        subsumsjon: GeneratorSubsumsjon,
+        deltre: DeltreSubsumsjon,
+    ) {}
+
+    fun postVisit(
+        subsumsjon: GeneratorSubsumsjon,
+        deltre: DeltreSubsumsjon,
+    ) {}
 
     fun preVisit(
         subsumsjon: AlleSubsumsjon,
@@ -216,10 +288,32 @@ interface SubsumsjonVisitor : FaktumVisitor {
     ) {
     }
 
-    fun preVisit(subsumsjon: BareEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun postVisit(subsumsjon: BareEnAvSubsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun preVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
-    fun postVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {}
+    fun preVisit(
+        subsumsjon: BareEnAvSubsumsjon,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {}
+
+    fun postVisit(
+        subsumsjon: BareEnAvSubsumsjon,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {}
+
+    fun preVisit(
+        subsumsjon: DeltreSubsumsjon,
+        child: Subsumsjon,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {}
+
+    fun postVisit(
+        subsumsjon: DeltreSubsumsjon,
+        child: Subsumsjon,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {}
+
     fun preVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,
@@ -252,7 +346,12 @@ interface SubsumsjonVisitor : FaktumVisitor {
     ) {
     }
 
-    fun preVisit(subsumsjon: GodkjenningsSubsumsjon, action: GodkjenningsSubsumsjon.Action, lokaltResultat: Boolean?) {}
+    fun preVisit(
+        subsumsjon: GodkjenningsSubsumsjon,
+        action: GodkjenningsSubsumsjon.Action,
+        lokaltResultat: Boolean?,
+    ) {}
+
     fun postVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,
@@ -260,8 +359,23 @@ interface SubsumsjonVisitor : FaktumVisitor {
     ) {
     }
 
-    fun preVisitOppfylt(parent: Subsumsjon, child: Subsumsjon) {}
-    fun postVisitOppfylt(parent: Subsumsjon, child: Subsumsjon) {}
-    fun preVisitIkkeOppfylt(parent: Subsumsjon, child: Subsumsjon) {}
-    fun postVisitIkkeOppfylt(parent: Subsumsjon, child: Subsumsjon) {}
+    fun preVisitOppfylt(
+        parent: Subsumsjon,
+        child: Subsumsjon,
+    ) {}
+
+    fun postVisitOppfylt(
+        parent: Subsumsjon,
+        child: Subsumsjon,
+    ) {}
+
+    fun preVisitIkkeOppfylt(
+        parent: Subsumsjon,
+        child: Subsumsjon,
+    ) {}
+
+    fun postVisitIkkeOppfylt(
+        parent: Subsumsjon,
+        child: Subsumsjon,
+    ) {}
 }

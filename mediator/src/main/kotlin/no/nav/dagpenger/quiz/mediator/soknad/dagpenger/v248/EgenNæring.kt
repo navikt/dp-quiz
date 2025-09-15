@@ -37,91 +37,80 @@ object EgenNæring : DslFaktaseksjon {
     const val `eget gårdsbruk arbeidsår for timer` = 3014
     const val `eget gårdsbruk arbeidstimer beregning` = 3015
 
-    override val fakta = listOf(
-        boolsk faktum "faktum.driver-du-egen-naering" id `driver du egen næring`,
+    override val fakta =
+        listOf(
+            boolsk faktum "faktum.driver-du-egen-naering" id `driver du egen næring`,
+            heltall faktum "faktum.egen-naering-organisasjonsnummer-liste" id `egen næring organisasjonsnummer liste`
+                genererer `egen næring organisasjonsnummer` avhengerAv `driver du egen næring`,
+            heltall faktum "faktum.egen-naering-organisasjonsnummer" id `egen næring organisasjonsnummer`,
+            desimaltall faktum "faktum.egen-naering-arbeidstimer-for" id `egen næring arbeidstimer før`
+                avhengerAv `driver du egen næring`,
+            desimaltall faktum "faktum.egen-naering-arbeidstimer-naa" id `egen næring arbeidstimer nå`
+                avhengerAv `driver du egen næring`,
+            boolsk faktum "faktum.driver-du-eget-gaardsbruk" id `driver du eget gårdsbruk`,
+            heltall faktum "faktum.eget-gaardsbruk-organisasjonsnummer" id `eget gårdsbruk organisasjonsnummer`
+                avhengerAv `driver du eget gårdsbruk`,
+            flervalg faktum "faktum.eget-gaardsbruk-type-gaardsbruk"
+                med "svar.dyr"
+                med "svar.jord"
+                med "svar.skog"
+                med "svar.annet" id `eget gårdsbruk type gårdsbruk` avhengerAv `driver du eget gårdsbruk`,
+            flervalg faktum "faktum.eget-gaardsbruk-hvem-eier"
+                med "svar.selv"
+                med "svar.ektefelle-samboer"
+                med "svar.andre" id `eget gårdsbruk hvem eier` avhengerAv `driver du eget gårdsbruk`,
+            desimaltall faktum "faktum.eget-gaardsbruk-jeg-andel-inntekt" id `eget gårdsbruk jeg andel inntekt`
+                avhengerAv `driver du eget gårdsbruk`,
+            desimaltall faktum "faktum.eget-gaardsbruk-ektefelle-samboer-andel-inntekt" id `eget gårdsbruk ektefelle samboer andel inntekt`
+                avhengerAv `driver du eget gårdsbruk`,
+            desimaltall faktum "faktum.eget-gaardsbruk-andre-andel-inntekt" id `eget gårdsbruk andre andel inntekt`
+                avhengerAv `driver du eget gårdsbruk`,
+            desimaltall faktum "faktum.eget-gaardsbruk-arbeidstimer-aar" id `eget gårdsbruk arbeidstimer år`
+                avhengerAv `driver du eget gårdsbruk`,
+            heltall faktum "faktum.eget-gaardsbruk-arbeidsaar-for-timer" id `eget gårdsbruk arbeidsår for timer`
+                avhengerAv `driver du eget gårdsbruk`,
+            // @todo: Skal denne være tekst?
+            tekst faktum "faktum.eget-gaardsbruk-arbeidstimer-beregning" id `eget gårdsbruk arbeidstimer beregning`
+                avhengerAv `driver du eget gårdsbruk`,
+        )
 
-        heltall faktum "faktum.egen-naering-organisasjonsnummer-liste" id `egen næring organisasjonsnummer liste`
-            genererer `egen næring organisasjonsnummer` avhengerAv `driver du egen næring`,
+    override fun seksjon(fakta: Fakta) = listOf(fakta.seksjon("egen-naering", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
-        heltall faktum "faktum.egen-naering-organisasjonsnummer" id `egen næring organisasjonsnummer`,
-
-        desimaltall faktum "faktum.egen-naering-arbeidstimer-for" id `egen næring arbeidstimer før`
-            avhengerAv `driver du egen næring`,
-
-        desimaltall faktum "faktum.egen-naering-arbeidstimer-naa" id `egen næring arbeidstimer nå`
-            avhengerAv `driver du egen næring`,
-
-        boolsk faktum "faktum.driver-du-eget-gaardsbruk" id `driver du eget gårdsbruk`,
-
-        heltall faktum "faktum.eget-gaardsbruk-organisasjonsnummer" id `eget gårdsbruk organisasjonsnummer`
-            avhengerAv `driver du eget gårdsbruk`,
-
-        flervalg faktum "faktum.eget-gaardsbruk-type-gaardsbruk"
-            med "svar.dyr"
-            med "svar.jord"
-            med "svar.skog"
-            med "svar.annet" id `eget gårdsbruk type gårdsbruk` avhengerAv `driver du eget gårdsbruk`,
-
-        flervalg faktum "faktum.eget-gaardsbruk-hvem-eier"
-            med "svar.selv"
-            med "svar.ektefelle-samboer"
-            med "svar.andre" id `eget gårdsbruk hvem eier` avhengerAv `driver du eget gårdsbruk`,
-
-        desimaltall faktum "faktum.eget-gaardsbruk-jeg-andel-inntekt" id `eget gårdsbruk jeg andel inntekt`
-            avhengerAv `driver du eget gårdsbruk`,
-
-        desimaltall faktum "faktum.eget-gaardsbruk-ektefelle-samboer-andel-inntekt" id `eget gårdsbruk ektefelle samboer andel inntekt`
-            avhengerAv `driver du eget gårdsbruk`,
-
-        desimaltall faktum "faktum.eget-gaardsbruk-andre-andel-inntekt" id `eget gårdsbruk andre andel inntekt`
-            avhengerAv `driver du eget gårdsbruk`,
-
-        desimaltall faktum "faktum.eget-gaardsbruk-arbeidstimer-aar" id `eget gårdsbruk arbeidstimer år`
-            avhengerAv `driver du eget gårdsbruk`,
-
-        heltall faktum "faktum.eget-gaardsbruk-arbeidsaar-for-timer" id `eget gårdsbruk arbeidsår for timer`
-            avhengerAv `driver du eget gårdsbruk`,
-        // @todo: Skal denne være tekst?
-        tekst faktum "faktum.eget-gaardsbruk-arbeidstimer-beregning" id `eget gårdsbruk arbeidstimer beregning`
-            avhengerAv `driver du eget gårdsbruk`,
-    )
-
-    override fun seksjon(fakta: Fakta) =
-        listOf(fakta.seksjon("egen-naering", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
-
-    override fun regeltre(fakta: Fakta): DeltreSubsumsjon = with(fakta) {
-        "egennæring".deltre {
-            "Egen næring".alle(
-                "driver egen næring eller ikke".minstEnAv(
-                    boolsk(`driver du egen næring`) er false,
-                    boolsk(`driver du egen næring`) er true hvisOppfylt {
-                        `næringenes organisasjonsnummer og arbeidstimer`()
-                    }
-                ),
-                "driver eget gårdsbruk eller ikke".minstEnAv(
-                    boolsk(`driver du eget gårdsbruk`) er false,
-                    boolsk(`driver du eget gårdsbruk`) er true hvisOppfylt {
-                        `organisasjonsnummer, type gårdsbruk og eier`()
-                    }
+    override fun regeltre(fakta: Fakta): DeltreSubsumsjon =
+        with(fakta) {
+            "egennæring".deltre {
+                "Egen næring".alle(
+                    "driver egen næring eller ikke".minstEnAv(
+                        boolsk(`driver du egen næring`) er false,
+                        boolsk(`driver du egen næring`) er true hvisOppfylt {
+                            `næringenes organisasjonsnummer og arbeidstimer`()
+                        },
+                    ),
+                    "driver eget gårdsbruk eller ikke".minstEnAv(
+                        boolsk(`driver du eget gårdsbruk`) er false,
+                        boolsk(`driver du eget gårdsbruk`) er true hvisOppfylt {
+                            `organisasjonsnummer, type gårdsbruk og eier`()
+                        },
+                    ),
                 )
-            )
+            }
         }
-    }
 
     private fun Fakta.`næringenes organisasjonsnummer og arbeidstimer`() =
         "organisasjonsnummer og arbeidstimer".alle(
-            generator(`egen næring organisasjonsnummer liste`) har "en eller flere organisasjonsnummer".deltre {
-                "organisasjonsnummer for alle næringer".alle(
-                    heltall(`egen næring organisasjonsnummer`).utfylt()
-                )
-            },
-            `arbeidstimer for næringen før og nå`()
+            generator(`egen næring organisasjonsnummer liste`) har
+                "en eller flere organisasjonsnummer".deltre {
+                    "organisasjonsnummer for alle næringer".alle(
+                        heltall(`egen næring organisasjonsnummer`).utfylt(),
+                    )
+                },
+            `arbeidstimer for næringen før og nå`(),
         )
 
     private fun Fakta.`arbeidstimer for næringen før og nå`() =
         "spørsmål om arbeidstimer".alle(
             desimaltall(`egen næring arbeidstimer nå`).utfylt(),
-            desimaltall(`egen næring arbeidstimer før`).utfylt()
+            desimaltall(`egen næring arbeidstimer før`).utfylt(),
         )
 
     private fun Fakta.`organisasjonsnummer, type gårdsbruk og eier`() =
@@ -132,8 +121,8 @@ object EgenNæring : DslFaktaseksjon {
                 `søkeren eier selv`(),
                 `søkerens ektefelle eller samboer eier`(),
                 `noen andre eier`(),
-                `arbeidsår, arbeidstimer og forklaring på beregning`()
-            )
+                `arbeidsår, arbeidstimer og forklaring på beregning`(),
+            ),
         )
 
     private fun Fakta.`søkeren eier selv`() =
@@ -151,27 +140,29 @@ object EgenNæring : DslFaktaseksjon {
             desimaltall(`eget gårdsbruk andre andel inntekt`).utfylt()
         }
 
-    private fun Fakta.`arbeidsår, arbeidstimer og forklaring på beregning`() = "info arbeidstimer".alle(
-        heltall(`eget gårdsbruk arbeidsår for timer`).utfylt(),
-        desimaltall(`eget gårdsbruk arbeidstimer år`).utfylt(),
-        tekst(`eget gårdsbruk arbeidstimer beregning`).utfylt()
-    )
+    private fun Fakta.`arbeidsår, arbeidstimer og forklaring på beregning`() =
+        "info arbeidstimer".alle(
+            heltall(`eget gårdsbruk arbeidsår for timer`).utfylt(),
+            desimaltall(`eget gårdsbruk arbeidstimer år`).utfylt(),
+            tekst(`eget gårdsbruk arbeidstimer beregning`).utfylt(),
+        )
 
-    override val spørsmålsrekkefølgeForSøker = listOf(
-        `driver du egen næring`,
-        `egen næring organisasjonsnummer liste`,
-        `egen næring organisasjonsnummer`,
-        `egen næring arbeidstimer nå`,
-        `egen næring arbeidstimer før`,
-        `driver du eget gårdsbruk`,
-        `eget gårdsbruk organisasjonsnummer`,
-        `eget gårdsbruk type gårdsbruk`,
-        `eget gårdsbruk hvem eier`,
-        `eget gårdsbruk jeg andel inntekt`,
-        `eget gårdsbruk ektefelle samboer andel inntekt`,
-        `eget gårdsbruk andre andel inntekt`,
-        `eget gårdsbruk arbeidsår for timer`,
-        `eget gårdsbruk arbeidstimer år`,
-        `eget gårdsbruk arbeidstimer beregning`
-    )
+    override val spørsmålsrekkefølgeForSøker =
+        listOf(
+            `driver du egen næring`,
+            `egen næring organisasjonsnummer liste`,
+            `egen næring organisasjonsnummer`,
+            `egen næring arbeidstimer nå`,
+            `egen næring arbeidstimer før`,
+            `driver du eget gårdsbruk`,
+            `eget gårdsbruk organisasjonsnummer`,
+            `eget gårdsbruk type gårdsbruk`,
+            `eget gårdsbruk hvem eier`,
+            `eget gårdsbruk jeg andel inntekt`,
+            `eget gårdsbruk ektefelle samboer andel inntekt`,
+            `eget gårdsbruk andre andel inntekt`,
+            `eget gårdsbruk arbeidsår for timer`,
+            `eget gårdsbruk arbeidstimer år`,
+            `eget gårdsbruk arbeidstimer beregning`,
+        )
 }

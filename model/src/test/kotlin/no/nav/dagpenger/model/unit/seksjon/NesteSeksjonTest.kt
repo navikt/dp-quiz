@@ -16,21 +16,24 @@ import kotlin.test.assertEquals
 class NesteSeksjonTest {
     @Test
     fun ` neste seksjon bug - rolle ble kopiert fra avehengig faktum til seksjon `() {
-        val prototypeFakta = Fakta(
-            testversjon,
-            boolsk faktum "f1" id 1,
-            boolsk faktum "f2" id 2 avhengerAv 1,
-        )
-        val prototypeSubsumsjon = prototypeFakta.boolsk(1) er true hvisOppfylt {
-            prototypeFakta.boolsk(2) er true
-        }
-        val prototypeProsess = Prosess(
-            TestProsesser.Test,
-            prototypeFakta,
-            Seksjon("nav", Rolle.nav, prototypeFakta.boolsk(2)),
-            Seksjon("søker", Rolle.søker, prototypeFakta.boolsk(1)),
-            rootSubsumsjon = prototypeSubsumsjon,
-        )
+        val prototypeFakta =
+            Fakta(
+                testversjon,
+                boolsk faktum "f1" id 1,
+                boolsk faktum "f2" id 2 avhengerAv 1,
+            )
+        val prototypeSubsumsjon =
+            prototypeFakta.boolsk(1) er true hvisOppfylt {
+                prototypeFakta.boolsk(2) er true
+            }
+        val prototypeProsess =
+            Prosess(
+                TestProsesser.Test,
+                prototypeFakta,
+                Seksjon("nav", Rolle.nav, prototypeFakta.boolsk(2)),
+                Seksjon("søker", Rolle.søker, prototypeFakta.boolsk(1)),
+                rootSubsumsjon = prototypeSubsumsjon,
+            )
         prototypeProsess.testProsess().also {
             assertEquals(listOf(it[1]), it.nesteSeksjoner())
         }
@@ -38,21 +41,24 @@ class NesteSeksjonTest {
 
     @Test
     fun ` bug-fiks read-only fakta i seksjonen`() {
-        val prototypeFakta = Fakta(
-            testversjon,
-            boolsk faktum "f1" id 1,
-            boolsk faktum "f2" id 2 avhengerAv 1,
-        )
-        val prototypeSubsumsjon = prototypeFakta.boolsk(1) er true hvisOppfylt {
-            prototypeFakta.boolsk(2) er true
-        }
-        val prototypeProsess = Prosess(
-            TestProsesser.Test,
-            prototypeFakta,
-            Seksjon("søker1", Rolle.søker, prototypeFakta.boolsk(2)),
-            Seksjon("søker2", Rolle.søker, prototypeFakta.boolsk(1)),
-            rootSubsumsjon = prototypeSubsumsjon,
-        )
+        val prototypeFakta =
+            Fakta(
+                testversjon,
+                boolsk faktum "f1" id 1,
+                boolsk faktum "f2" id 2 avhengerAv 1,
+            )
+        val prototypeSubsumsjon =
+            prototypeFakta.boolsk(1) er true hvisOppfylt {
+                prototypeFakta.boolsk(2) er true
+            }
+        val prototypeProsess =
+            Prosess(
+                TestProsesser.Test,
+                prototypeFakta,
+                Seksjon("søker1", Rolle.søker, prototypeFakta.boolsk(2)),
+                Seksjon("søker2", Rolle.søker, prototypeFakta.boolsk(1)),
+                rootSubsumsjon = prototypeSubsumsjon,
+            )
 
         prototypeProsess.testProsess().also {
             assertEquals(listOf(it[1]), it.nesteSeksjoner())

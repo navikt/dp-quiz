@@ -18,12 +18,15 @@ import no.nav.dagpenger.model.faktum.Tekst
 import java.time.LocalDate
 
 object FaktumTilJsonHjelper {
+    private val mapper =
+        ObjectMapper().also {
+            it.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+        }
 
-    private val mapper = ObjectMapper().also {
-        it.setSerializationInclusion(JsonInclude.Include.NON_NULL)
-    }
-
-    internal fun <R> ObjectNode.putR(beskrivendeId: String = "svar", svar: R) {
+    internal fun <R> ObjectNode.putR(
+        beskrivendeId: String = "svar",
+        svar: R,
+    ) {
         when (svar) {
             is Boolean -> this.put(beskrivendeId, svar)
             is Int -> this.put(beskrivendeId, svar)
@@ -65,10 +68,10 @@ object FaktumTilJsonHjelper {
 
     private fun Inntekt.asJsonNode() = reflection { årlig, _, _, _ -> årlig }
 
-    internal fun <Boolean : Comparable<Boolean>> Faktum<Boolean>.lagBeskrivendeIderForGyldigeBoolskeValg() =
-        GyldigeValg("$navn.svar.ja", "$navn.svar.nei")
+    internal fun <Boolean : Comparable<Boolean>> Faktum<Boolean>.lagBeskrivendeIderForGyldigeBoolskeValg() = GyldigeValg("$navn.svar.ja", "$navn.svar.nei")
 
     internal fun Class<*>.erBoolean() = this.isAssignableFrom(Boolean::class.java)
+
     internal fun Class<*>.erLand() = this.isAssignableFrom(Land::class.java)
 
     internal fun <R : Comparable<R>> ObjectNode.lagFaktumNode(

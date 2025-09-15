@@ -27,13 +27,20 @@ class SaksbehandlerJsonBuilder(
     init {
         prosess.fakta.accept(this)
         prosess.rootSubsumsjon.mulige().accept(this)
-        prosess.first { seksjonNavn == it.navn && indeks == it.indeks }
-            .filtrertSeksjon(prosess.rootSubsumsjon).accept(this)
+        prosess
+            .first { seksjonNavn == it.navn && indeks == it.indeks }
+            .filtrertSeksjon(prosess.rootSubsumsjon)
+            .accept(this)
         ignore = false
         genererteFakta.forEach { it.accept(this) }
     }
 
-    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+    override fun preVisit(
+        fakta: Fakta,
+        faktaversjon: Faktaversjon,
+        uuid: UUID,
+        navBehov: FaktumNavBehov,
+    ) {
         super.preVisit(fakta, faktaversjon, uuid, navBehov)
         root.put("@event_name", "oppgave")
         root.put("@opprettet", "${LocalDateTime.now()}")
@@ -105,13 +112,14 @@ class SaksbehandlerJsonBuilder(
         genererteFaktum: Set<Faktum<*>>,
     ) {
         if (!ignore) {
-            val genererte = prosess.flatMap {
-                it.filter { faktum ->
-                    templates.any { template ->
-                        faktum.faktumId.generertFra(template.faktumId)
+            val genererte =
+                prosess.flatMap {
+                    it.filter { faktum ->
+                        templates.any { template ->
+                            faktum.faktumId.generertFra(template.faktumId)
+                        }
                     }
                 }
-            }
             relevanteFakta += genererte.map { it.id }
             genererteFakta += genererte
         }

@@ -9,18 +9,20 @@ import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.micrometer.core.instrument.MeterRegistry
 import no.nav.dagpenger.quiz.mediator.behovløsere.MinstearbeidsinntektFaktorStrategi.finnFaktor
 
-internal class TerskelFaktorService(rapidsConnection: RapidsConnection) :
-    River.PacketListener {
+internal class TerskelFaktorService(
+    rapidsConnection: RapidsConnection,
+) : River.PacketListener {
     init {
-        River(rapidsConnection).apply {
-            precondition {
-                it.requireAll("@behov", listOf("ØvreTerskelFaktor", "NedreTerskelFaktor"))
-                it.forbid("@løsning")
-            }
-            validate {
-                it.requireKey("Virkningstidspunkt")
-            }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                precondition {
+                    it.requireAll("@behov", listOf("ØvreTerskelFaktor", "NedreTerskelFaktor"))
+                    it.forbid("@løsning")
+                }
+                validate {
+                    it.requireKey("Virkningstidspunkt")
+                }
+            }.register(this)
     }
 
     override fun onPacket(

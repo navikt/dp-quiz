@@ -7,7 +7,6 @@ import java.time.LocalDate
 import kotlin.test.assertEquals
 
 class MinstearbeidsinntektStrategiTest {
-
     @Test
     fun `skal returnere terskel i henhold til §4-4 `() {
         assertEquals(Faktor(1.5, 3.0), finnFaktor(LocalDate.of(2020, 3, 19)))

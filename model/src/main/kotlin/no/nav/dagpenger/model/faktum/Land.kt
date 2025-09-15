@@ -1,6 +1,8 @@
 package no.nav.dagpenger.model.faktum
 
-class Land(alpha3Code: String) : Comparable<Land> {
+class Land(
+    alpha3Code: String,
+) : Comparable<Land> {
     val alpha3Code: String
 
     init {
@@ -11,19 +13,11 @@ class Land(alpha3Code: String) : Comparable<Land> {
         this.alpha3Code = alpha3Code.uppercase()
     }
 
-    override fun compareTo(other: Land): Int {
-        return this.alpha3Code.compareTo(other.alpha3Code)
-    }
+    override fun compareTo(other: Land): Int = this.alpha3Code.compareTo(other.alpha3Code)
 
-    override fun equals(other: Any?): Boolean {
-        return other is Land && this.alpha3Code == other.alpha3Code
-    }
+    override fun equals(other: Any?): Boolean = other is Land && this.alpha3Code == other.alpha3Code
 
-    override fun hashCode(): Int {
-        return this.alpha3Code.hashCode()
-    }
+    override fun hashCode(): Int = this.alpha3Code.hashCode()
 
-    override fun toString(): String {
-        return "Land(alpha3Code='$alpha3Code')"
-    }
+    override fun toString(): String = "Land(alpha3Code='$alpha3Code')"
 }

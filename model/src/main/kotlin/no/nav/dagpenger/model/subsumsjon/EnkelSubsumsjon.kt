@@ -14,7 +14,7 @@ open class EnkelSubsumsjon protected constructor(
     protected val regel: Regel,
     private val subsumsjonFakta: List<Faktum<*>>,
     oppfyltSubsumsjon: Subsumsjon,
-    ikkeOppfyltSubsumsjon: Subsumsjon
+    ikkeOppfyltSubsumsjon: Subsumsjon,
 ) : Subsumsjon(regel.toString(subsumsjonFakta), oppfyltSubsumsjon, ikkeOppfyltSubsumsjon) {
     internal constructor(regel: Regel, vararg fakta: Faktum<*>) :
         this(regel, fakta.toList(), TomSubsumsjon, TomSubsumsjon)
@@ -30,46 +30,53 @@ open class EnkelSubsumsjon protected constructor(
 
     override fun saksbehandlerForklaring() = regel.saksbehandlerForklaring(subsumsjonFakta)
 
-    override fun deepCopy(prosess: Prosess) = deepCopy(
-        regel,
-        subsumsjonFakta.deepCopy(prosess),
-        oppfyltSubsumsjon.deepCopy(prosess),
-        ikkeOppfyltSubsumsjon.deepCopy(prosess)
-    )
+    override fun deepCopy(prosess: Prosess) =
+        deepCopy(
+            regel,
+            subsumsjonFakta.deepCopy(prosess),
+            oppfyltSubsumsjon.deepCopy(prosess),
+            ikkeOppfyltSubsumsjon.deepCopy(prosess),
+        )
 
-    override fun bygg(fakta: Fakta) = deepCopy(
-        regel,
-        this.subsumsjonFakta.map { fakta.id(it.faktumId) },
-        oppfyltSubsumsjon.bygg(fakta),
-        ikkeOppfyltSubsumsjon.bygg(fakta)
-    )
+    override fun bygg(fakta: Fakta) =
+        deepCopy(
+            regel,
+            this.subsumsjonFakta.map { fakta.id(it.faktumId) },
+            oppfyltSubsumsjon.bygg(fakta),
+            ikkeOppfyltSubsumsjon.bygg(fakta),
+        )
 
-    override fun deepCopy() = deepCopy(
-        regel,
-        subsumsjonFakta,
-        oppfyltSubsumsjon.deepCopy(),
-        ikkeOppfyltSubsumsjon.deepCopy()
-    )
+    override fun deepCopy() =
+        deepCopy(
+            regel,
+            subsumsjonFakta,
+            oppfyltSubsumsjon.deepCopy(),
+            ikkeOppfyltSubsumsjon.deepCopy(),
+        )
 
-    override fun deepCopy(indeks: Int, fakta: Fakta) = deepCopy(
+    override fun deepCopy(
+        indeks: Int,
+        fakta: Fakta,
+    ) = deepCopy(
         regel,
         subsumsjonFakta.deepCopy(indeks, fakta),
         oppfyltSubsumsjon.deepCopy(indeks, fakta),
-        ikkeOppfyltSubsumsjon.deepCopy(indeks, fakta)
+        ikkeOppfyltSubsumsjon.deepCopy(indeks, fakta),
     )
 
     private fun deepCopy(
         regel: Regel,
         fakta: List<Faktum<*>>,
         oppfyltSubsumsjon: Subsumsjon,
-        ikkeOppfyltSubsumsjon: Subsumsjon
+        ikkeOppfyltSubsumsjon: Subsumsjon,
     ) = EnkelSubsumsjon(regel, fakta, oppfyltSubsumsjon, ikkeOppfyltSubsumsjon)
 
     override fun nesteFakta() = ukjenteFakta().takeIf { it.isNotEmpty() } ?: nesteSubsumsjon().nesteFakta()
 
-    internal open fun ukjenteFakta(): Set<GrunnleggendeFaktum<*>> = mutableSetOf<GrunnleggendeFaktum<*>>().also {
-        subsumsjonFakta.forEach { faktum -> faktum.leggTilHvis(Ukjent, it) }
-    }
+    internal open fun ukjenteFakta(): Set<GrunnleggendeFaktum<*>> =
+        mutableSetOf<GrunnleggendeFaktum<*>>().also {
+            subsumsjonFakta.forEach { faktum -> faktum.leggTilHvis(Ukjent, it) }
+        }
 
     private fun nesteSubsumsjon() = if (lokaltResultat() == true) oppfyltSubsumsjon else ikkeOppfyltSubsumsjon
 
@@ -81,10 +88,10 @@ open class EnkelSubsumsjon protected constructor(
 
     override fun alleFakta(): List<Faktum<*>> = subsumsjonFakta
 
-    override fun iterator(): Iterator<Subsumsjon> {
-        return object : Iterator<Subsumsjon> {
+    override fun iterator(): Iterator<Subsumsjon> =
+        object : Iterator<Subsumsjon> {
             override fun hasNext() = false
+
             override fun next() = throw NoSuchElementException()
         }
-    }
 }

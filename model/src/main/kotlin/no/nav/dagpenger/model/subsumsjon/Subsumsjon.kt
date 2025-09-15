@@ -17,7 +17,7 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 abstract class Subsumsjon protected constructor(
     internal val navn: String,
     oppfyltSubsumsjon: Subsumsjon?,
-    ikkeOppfyltSubsumsjon: Subsumsjon?
+    ikkeOppfyltSubsumsjon: Subsumsjon?,
 ) : Iterable<Subsumsjon> {
     protected lateinit var oppfyltSubsumsjon: Subsumsjon
     protected lateinit var ikkeOppfyltSubsumsjon: Subsumsjon
@@ -29,11 +29,12 @@ abstract class Subsumsjon protected constructor(
 
     internal constructor(navn: String) : this(navn, TomSubsumsjon, TomSubsumsjon)
 
-    open fun resultat(): Boolean? = when (lokaltResultat()) {
-        true -> if (oppfylt is TomSubsumsjon) true else oppfylt.resultat()
-        false -> if (ikkeOppfylt is TomSubsumsjon) false else ikkeOppfylt.resultat()
-        null -> null
-    }
+    open fun resultat(): Boolean? =
+        when (lokaltResultat()) {
+            true -> if (oppfylt is TomSubsumsjon) true else oppfylt.resultat()
+            false -> if (ikkeOppfylt is TomSubsumsjon) false else ikkeOppfylt.resultat()
+            null -> null
+        }
 
     open fun saksbehandlerForklaring(): String = "saksbehandlerforklaring"
 
@@ -43,7 +44,10 @@ abstract class Subsumsjon protected constructor(
 
     abstract fun deepCopy(): Subsumsjon
 
-    internal abstract fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon
+    internal abstract fun deepCopy(
+        indeks: Int,
+        fakta: Fakta,
+    ): Subsumsjon
 
     internal abstract fun lokaltResultat(): Boolean?
 
@@ -75,27 +79,31 @@ abstract class Subsumsjon protected constructor(
 
     internal fun mulige(): Subsumsjon = this.deepCopy()._mulige()
 
-    internal open fun _mulige(): Subsumsjon = this.also { copy ->
-        when (lokaltResultat()) {
-            true -> {
-                copy.ikkeOppfylt(TomSubsumsjon)
-                copy.oppfyltSubsumsjon._mulige()
-            }
-            false -> {
-                copy.oppfylt(TomSubsumsjon)
-                copy.ikkeOppfyltSubsumsjon._mulige()
-            }
-            null -> {
-                copy.oppfyltSubsumsjon._mulige()
-                copy.ikkeOppfyltSubsumsjon._mulige()
+    internal open fun _mulige(): Subsumsjon =
+        this.also { copy ->
+            when (lokaltResultat()) {
+                true -> {
+                    copy.ikkeOppfylt(TomSubsumsjon)
+                    copy.oppfyltSubsumsjon._mulige()
+                }
+                false -> {
+                    copy.oppfylt(TomSubsumsjon)
+                    copy.ikkeOppfyltSubsumsjon._mulige()
+                }
+                null -> {
+                    copy.oppfyltSubsumsjon._mulige()
+                    copy.ikkeOppfyltSubsumsjon._mulige()
+                }
             }
         }
-    }
 
     internal fun relevanteFakta() = RelevanteFakta(this).resultater
+
     internal abstract fun alleFakta(): List<Faktum<*>>
 
-    private class RelevanteFakta(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
+    private class RelevanteFakta(
+        subsumsjon: Subsumsjon,
+    ) : SubsumsjonVisitor {
         val resultater = mutableSetOf<Faktum<*>>()
         private var ignore = false
 
@@ -106,20 +114,21 @@ abstract class Subsumsjon protected constructor(
         override fun preVisit(
             subsumsjon: GodkjenningsSubsumsjon,
             action: GodkjenningsSubsumsjon.Action,
-            lokaltResultat: Boolean?
+            lokaltResultat: Boolean?,
         ) {
-            ignore = when (action) {
-                GodkjenningsSubsumsjon.Action.JaAction -> lokaltResultat == false
-                GodkjenningsSubsumsjon.Action.NeiAction -> lokaltResultat == true
-                GodkjenningsSubsumsjon.Action.UansettAction -> false
-            }
+            ignore =
+                when (action) {
+                    GodkjenningsSubsumsjon.Action.JaAction -> lokaltResultat == false
+                    GodkjenningsSubsumsjon.Action.NeiAction -> lokaltResultat == true
+                    GodkjenningsSubsumsjon.Action.UansettAction -> false
+                }
             if (lokaltResultat == null) ignore = true
         }
 
         override fun postVisit(
             subsumsjon: GodkjenningsSubsumsjon,
             action: GodkjenningsSubsumsjon.Action,
-            lokaltResultat: Boolean?
+            lokaltResultat: Boolean?,
         ) {
             ignore = false
         }
@@ -134,7 +143,7 @@ abstract class Subsumsjon protected constructor(
             roller: Set<Rolle>,
             clazz: Class<R>,
             gyldigeValg: GyldigeValg?,
-            landGrupper: LandGrupper?
+            landGrupper: LandGrupper?,
         ) {
             if (!ignore) {
                 resultater.add(faktum)
@@ -153,7 +162,7 @@ abstract class Subsumsjon protected constructor(
             svar: R,
             besvartAv: String?,
             gyldigeValg: GyldigeValg?,
-            landGrupper: LandGrupper?
+            landGrupper: LandGrupper?,
         ) {
             if (!ignore) {
                 resultater.add(faktum)
@@ -167,7 +176,7 @@ abstract class Subsumsjon protected constructor(
             avhengerAvFakta: Set<Faktum<*>>,
             templates: List<TemplateFaktum<*>>,
             roller: Set<Rolle>,
-            clazz: Class<R>
+            clazz: Class<R>,
         ) {
             if (!ignore) {
                 resultater.add(faktum)
@@ -183,21 +192,7 @@ abstract class Subsumsjon protected constructor(
             roller: Set<Rolle>,
             clazz: Class<R>,
             svar: R,
-            genererteFaktum: Set<Faktum<*>>
-        ) {
-            if (!ignore) {
-                resultater.add(faktum)
-            }
-        }
-
-        override fun <R : Comparable<R>> preVisit(
-            faktum: UtledetFaktum<R>,
-            id: String,
-            avhengigeFakta: Set<Faktum<*>>,
-            avhengerAvFakta: Set<Faktum<*>>,
-            children: Set<Faktum<*>>,
-            clazz: Class<R>,
-            regel: FaktaRegel<R>
+            genererteFaktum: Set<Faktum<*>>,
         ) {
             if (!ignore) {
                 resultater.add(faktum)
@@ -212,7 +207,21 @@ abstract class Subsumsjon protected constructor(
             children: Set<Faktum<*>>,
             clazz: Class<R>,
             regel: FaktaRegel<R>,
-            svar: R
+        ) {
+            if (!ignore) {
+                resultater.add(faktum)
+            }
+        }
+
+        override fun <R : Comparable<R>> preVisit(
+            faktum: UtledetFaktum<R>,
+            id: String,
+            avhengigeFakta: Set<Faktum<*>>,
+            avhengerAvFakta: Set<Faktum<*>>,
+            children: Set<Faktum<*>>,
+            clazz: Class<R>,
+            regel: FaktaRegel<R>,
+            svar: R,
         ) {
             if (!ignore) {
                 resultater.add(faktum)
@@ -221,27 +230,26 @@ abstract class Subsumsjon protected constructor(
     }
 }
 
-fun String.alle(vararg subsumsjoner: Subsumsjon): Subsumsjon {
-    return AlleSubsumsjon(this, subsumsjoner.toList())
-}
+fun String.alle(vararg subsumsjoner: Subsumsjon): Subsumsjon = AlleSubsumsjon(this, subsumsjoner.toList())
 
-fun String.minstEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon {
-    return MinstEnAvSubsumsjon(this, subsumsjoner.toList())
-}
+fun String.minstEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon = MinstEnAvSubsumsjon(this, subsumsjoner.toList())
 
 fun String.bareEnAv(vararg subsumsjoner: Subsumsjon): Subsumsjon = BareEnAvSubsumsjon(this, subsumsjoner.toList())
 
-infix fun Subsumsjon.hvisOppfylt(block: SubsumsjonGenerator) = this.also {
-    require(it.oppfylt is TomSubsumsjon) { " Kan ikke overskrive oppfylt gren, er allerede satt til subsumsjon '${it.oppfylt.navn}'" }
-    this.oppfylt(block())
-}
+infix fun Subsumsjon.hvisOppfylt(block: SubsumsjonGenerator) =
+    this.also {
+        require(it.oppfylt is TomSubsumsjon) { " Kan ikke overskrive oppfylt gren, er allerede satt til subsumsjon '${it.oppfylt.navn}'" }
+        this.oppfylt(block())
+    }
 
-infix fun Subsumsjon.hvisIkkeOppfylt(block: SubsumsjonGenerator) = this.also {
-    require(it.ikkeOppfylt is TomSubsumsjon) { " Kan ikke overskrive IKKE oppfylt gren, er allerede satt til subsumsjon '${it.ikkeOppfylt.navn}'" }
-    this.ikkeOppfylt(block())
-}
+infix fun Subsumsjon.hvisIkkeOppfylt(block: SubsumsjonGenerator) =
+    this.also {
+        require(it.ikkeOppfylt is TomSubsumsjon) { " Kan ikke overskrive IKKE oppfylt gren, er allerede satt til subsumsjon '${it.ikkeOppfylt.navn}'" }
+        this.ikkeOppfylt(block())
+    }
 
 infix fun Subsumsjon.hvisIkkeOppfyltManuell(manuellFaktum: Faktum<Boolean>) = hvisIkkeOppfylt { manuellFaktum er true }
+
 infix fun Subsumsjon.hvisOppfyltManuell(manuellFaktum: Faktum<Boolean>) = hvisOppfylt { manuellFaktum er true }
 
 infix fun String.deltre(block: SubsumsjonGenerator) = DeltreSubsumsjon(this, block())
@@ -254,21 +262,22 @@ infix fun Subsumsjon.uansett(block: SubsumsjonGenerator): Subsumsjon {
     }
 }
 
-fun Subsumsjon.sannsynliggjøresAv(vararg sannsynliggjøringsFaktum: Faktum<*>) = SannsynliggjøringsSubsumsjon(
-    this.apply {
-        alleFakta().forEach {
-            it.sannsynliggjøresAv(sannsynliggjøringsFaktum.toList())
-        }
-    },
-    sannsynliggjøringsFaktum.toList()
-)
+fun Subsumsjon.sannsynliggjøresAv(vararg sannsynliggjøringsFaktum: Faktum<*>) =
+    SannsynliggjøringsSubsumsjon(
+        this.apply {
+            alleFakta().forEach {
+                it.sannsynliggjøresAv(sannsynliggjøringsFaktum.toList())
+            }
+        },
+        sannsynliggjøringsFaktum.toList(),
+    )
 typealias SubsumsjonGenerator = () -> Subsumsjon
 
 fun Subsumsjon.godkjentAv(vararg faktum: Faktum<Boolean>) =
     GodkjenningsSubsumsjon(
         GodkjenningsSubsumsjon.Action.UansettAction,
         this,
-        faktum.map { it as GrunnleggendeFaktum<Boolean> }
+        faktum.map { it as GrunnleggendeFaktum<Boolean> },
     ).also {
         faktum.forEach { it.sjekkAvhengigheter() }
     }
@@ -277,7 +286,7 @@ fun Subsumsjon.oppfyltGodkjentAv(vararg faktum: Faktum<Boolean>) =
     GodkjenningsSubsumsjon(
         GodkjenningsSubsumsjon.Action.JaAction,
         this,
-        faktum.map { it as GrunnleggendeFaktum<Boolean> }
+        faktum.map { it as GrunnleggendeFaktum<Boolean> },
     ).also {
         faktum.forEach { it.sjekkAvhengigheter() }
     }
@@ -286,7 +295,7 @@ fun Subsumsjon.ikkeOppfyltGodkjentAv(vararg faktum: Faktum<Boolean>) =
     GodkjenningsSubsumsjon(
         GodkjenningsSubsumsjon.Action.NeiAction,
         this,
-        faktum.map { it as GrunnleggendeFaktum<Boolean> }
+        faktum.map { it as GrunnleggendeFaktum<Boolean> },
     ).also {
         faktum.forEach { it.sjekkAvhengigheter() }
     }

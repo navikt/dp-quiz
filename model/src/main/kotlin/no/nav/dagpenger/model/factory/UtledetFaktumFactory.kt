@@ -13,7 +13,7 @@ import java.time.LocalDate
 
 class UtledetFaktumFactory<T : Comparable<T>>(
     private val navn: String,
-    private val regel: FaktaRegel<T>
+    private val regel: FaktaRegel<T>,
 ) : FaktumFactory<T>() {
     private val fakta = mutableSetOf<Faktum<T>>()
     private val childIder = mutableSetOf<Int>()
@@ -21,6 +21,7 @@ class UtledetFaktumFactory<T : Comparable<T>>(
     companion object {
         object maks {
             infix fun dato(navn: String) = UtledetFaktumFactory(navn, MAKS_DATO)
+
             infix fun inntekt(navn: String) = UtledetFaktumFactory(navn, MAKS_INNTEKT)
         }
 
@@ -51,7 +52,7 @@ class UtledetFaktumFactory<T : Comparable<T>>(
         (faktumMap[FaktumId(rootId)] as UtledetFaktum).addAll(
             childIder.map { otherId ->
                 faktumMap[FaktumId(otherId)] as Faktum
-            }
+            },
         )
     }
 
@@ -60,9 +61,8 @@ class UtledetFaktumFactory<T : Comparable<T>>(
 
 class FaktaRegel<R : Comparable<R>> private constructor(
     val navn: String,
-    internal val strategy: (UtledetFaktum<R>) -> R
+    internal val strategy: (UtledetFaktum<R>) -> R,
 ) {
-
     companion object {
         internal val MAKS_DATO = FaktaRegel("MAKS_DATO", UtledetFaktum<LocalDate>::max)
         internal val MIN_DATO = FaktaRegel("MIN_DATO", UtledetFaktum<LocalDate>::min)

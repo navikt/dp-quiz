@@ -12,15 +12,17 @@ import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi
 import no.nav.dagpenger.quiz.mediator.behovløsere.MetadataStrategi.Metadata
 
 class InnsendingMetadataStrategi : MetadataStrategi {
-    private fun Prosess.innsendingSvar() = when (HenvendelseType(this).hva) {
-        // "faktum.hvorfor.svar.endring" -> "Melding om endring som kan påvirke Dagpenger"
-        else -> "Generell innsending"
-    }
+    private fun Prosess.innsendingSvar() =
+        when (HenvendelseType(this).hva) {
+            // "faktum.hvorfor.svar.endring" -> "Melding om endring som kan påvirke Dagpenger"
+            else -> "Generell innsending"
+        }
 
-    override fun metadata(prosess: Prosess) =
-        Metadata("GENERELL_INNSENDING", prosess.innsendingSvar())
+    override fun metadata(prosess: Prosess) = Metadata("GENERELL_INNSENDING", prosess.innsendingSvar())
 
-    private class HenvendelseType(prosess: Prosess) : ProsessVisitor {
+    private class HenvendelseType(
+        prosess: Prosess,
+    ) : ProsessVisitor {
         var hva: String? = null
 
         init {

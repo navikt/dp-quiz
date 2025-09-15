@@ -41,11 +41,12 @@ internal class AndreYtelserTest {
     @Test
     fun `Hvis bruker ikke får noen andre ytelser`() {
         val fakta = Fakta(testFaktaversjon(), *AndreYtelser.fakta())
-        val søknadprosess = fakta.testSøknadprosess(
-            subsumsjon = AndreYtelser.regeltre(fakta),
-        ) {
-            AndreYtelser.seksjon(this)
-        }
+        val søknadprosess =
+            fakta.testSøknadprosess(
+                subsumsjon = AndreYtelser.regeltre(fakta),
+            ) {
+                AndreYtelser.seksjon(this)
+            }
 
         søknadprosess.boolsk(`andre ytelser mottatt eller søkt`).besvar(false)
         søknadprosess.boolsk(`utbetaling eller økonomisk gode tidligere arbeidsgiver`).besvar(false)
@@ -53,7 +54,8 @@ internal class AndreYtelserTest {
 
         søknadprosess.boolsk(`utbetaling eller økonomisk gode tidligere arbeidsgiver`).besvar(true)
         assertEquals(null, søknadprosess.resultat())
-        søknadprosess.tekst(`økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`)
+        søknadprosess
+            .tekst(`økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`)
             .besvar(Tekst("dummy begrunnelse"))
         assertEquals(true, søknadprosess.resultat())
     }
@@ -110,7 +112,8 @@ internal class AndreYtelserTest {
             besvarAlleFaktaForDagpengerFraAnnetEØSLand(søknadprosess)
             besvarAlleFaktaForAnnenYtelse(søknadprosess)
             søknadprosess.boolsk(`utbetaling eller økonomisk gode tidligere arbeidsgiver`).besvar(true)
-            søknadprosess.tekst(`økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`)
+            søknadprosess
+                .tekst(`økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`)
                 .besvar(Tekst("dummy begrunnelse"))
 
             assertEquals(true, søknadprosess.resultat())
@@ -127,7 +130,8 @@ internal class AndreYtelserTest {
             besvarAlleFaktaForDagpengerFraAnnetEØSLand(søknadprosess)
             besvarAlleFaktaForAnnenYtelse(søknadprosess)
             søknadprosess.boolsk(`utbetaling eller økonomisk gode tidligere arbeidsgiver`).besvar(true)
-            søknadprosess.tekst(`økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`)
+            søknadprosess
+                .tekst(`økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`)
                 .besvar(Tekst("dummy begrunnelse"))
 
             søknadprosess.boolsk(`andre ytelser mottatt eller søkt`).besvar(false)
@@ -152,11 +156,12 @@ internal class AndreYtelserTest {
     @Test
     fun `Faktarekkefølge i seksjon`() {
         val fakta = Fakta(testFaktaversjon(), *AndreYtelser.fakta())
-        val søknadprosess = fakta.testSøknadprosess(
-            subsumsjon = AndreYtelser.regeltre(fakta),
-        ) {
-            AndreYtelser.seksjon(this)
-        }
+        val søknadprosess =
+            fakta.testSøknadprosess(
+                subsumsjon = AndreYtelser.regeltre(fakta),
+            ) {
+                AndreYtelser.seksjon(this)
+            }
         val faktarekkefølge = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals(
             "5001,5002,5003,5004,5014,5015,5005,5006,5007,5008,5009,5010,5011,5012,5013,5016,5017,5018,5019,5020,5021,5022,5023,5024,5025,5026,5027,5028,5029",
@@ -167,11 +172,12 @@ internal class AndreYtelserTest {
     @Test
     fun `For et EØS-land skal det være en egen gruppe for kun EØS-land`() {
         val fakta = Fakta(testFaktaversjon(), *AndreYtelser.fakta())
-        val søknadprosess = fakta.testSøknadprosess(
-            subsumsjon = AndreYtelser.regeltre(fakta),
-        ) {
-            AndreYtelser.seksjon(this)
-        }
+        val søknadprosess =
+            fakta.testSøknadprosess(
+                subsumsjon = AndreYtelser.regeltre(fakta),
+            ) {
+                AndreYtelser.seksjon(this)
+            }
         besvarAlleFaktaForDagpengerFraAnnetEØSLand(søknadprosess)
 
         MedSøknad(søknadprosess) {
@@ -194,11 +200,12 @@ internal class AndreYtelserTest {
 
     private fun verifiserAnnenYtelseUtenØkonomiskGode(kodeForSpesifikkYtelse: (Prosess) -> Unit) {
         val fakta = Fakta(testFaktaversjon(), *AndreYtelser.fakta())
-        val søknadprosess = fakta.testSøknadprosess(
-            subsumsjon = AndreYtelser.regeltre(fakta),
-        ) {
-            AndreYtelser.seksjon(this)
-        }
+        val søknadprosess =
+            fakta.testSøknadprosess(
+                subsumsjon = AndreYtelser.regeltre(fakta),
+            ) {
+                AndreYtelser.seksjon(this)
+            }
         søknadprosess.boolsk(`andre ytelser mottatt eller søkt`).besvar(true)
         søknadprosess.boolsk(`utbetaling eller økonomisk gode tidligere arbeidsgiver`).besvar(false)
 
@@ -208,7 +215,8 @@ internal class AndreYtelserTest {
     }
 
     private fun besvarAlleFaktaForTjenestepensjon(prosess: Prosess) {
-        prosess.flervalg(`hvilke andre ytelser`)
+        prosess
+            .flervalg(`hvilke andre ytelser`)
             .besvar(Flervalg("faktum.hvilke-andre-ytelser.svar.pensjon-offentlig-tjenestepensjon"))
         prosess.tekst(`tjenestepensjon hvem utbetaler`).besvar(Tekst("dummy arbeidsgiver"))
         val nå = LocalDate.now()
@@ -216,21 +224,24 @@ internal class AndreYtelserTest {
     }
 
     private fun besvarAlleFaktaForGFF(prosess: Prosess) {
-        prosess.flervalg(`hvilke andre ytelser`)
+        prosess
+            .flervalg(`hvilke andre ytelser`)
             .besvar(Flervalg("faktum.hvilke-andre-ytelser.svar.arbeidsloshet-garantikassen-for-fiskere"))
         val nå = LocalDate.now()
         prosess.periode(`arbeidsløs GFF hvilken periode`).besvar(Periode(nå.minusYears(3), nå))
     }
 
     private fun besvarAlleFaktaForGarantiloggFraGFF(prosess: Prosess) {
-        prosess.flervalg(`hvilke andre ytelser`)
+        prosess
+            .flervalg(`hvilke andre ytelser`)
             .besvar(Flervalg("faktum.hvilke-andre-ytelser.svar.garantilott-garantikassen-for-fiskere"))
         val nå = LocalDate.now()
         prosess.periode(`garantilott fra GFF hvilken periode`).besvar(Periode(nå.minusYears(4), nå))
     }
 
     private fun besvarAlleFaktaForEtterlønn(prosess: Prosess) {
-        prosess.flervalg(`hvilke andre ytelser`)
+        prosess
+            .flervalg(`hvilke andre ytelser`)
             .besvar(Flervalg("faktum.hvilke-andre-ytelser.svar.etterlonn-arbeidsgiver"))
         prosess.tekst(`etterlønn arbeidsgiver hvem utbetaler`).besvar(Tekst("dummy arbeidsgiver"))
         val nå = LocalDate.now()
@@ -238,7 +249,8 @@ internal class AndreYtelserTest {
     }
 
     private fun besvarAlleFaktaForDagpengerFraAnnetEØSLand(prosess: Prosess) {
-        prosess.flervalg(`hvilke andre ytelser`)
+        prosess
+            .flervalg(`hvilke andre ytelser`)
             .besvar(Flervalg("faktum.hvilke-andre-ytelser.svar.dagpenger-annet-eos-land"))
         prosess.land(`dagpenger hvilket eøs land utbetaler`).besvar(Land("SWE"))
         val nå = LocalDate.now()

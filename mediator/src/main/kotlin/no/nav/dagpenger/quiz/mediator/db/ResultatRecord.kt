@@ -9,15 +9,27 @@ import org.postgresql.util.PGobject
 import java.util.UUID
 
 interface ResultatPersistence {
-    fun lagreResultat(resultat: Boolean, søknadUuid: UUID, resultatJson: ObjectNode)
+    fun lagreResultat(
+        resultat: Boolean,
+        søknadUuid: UUID,
+        resultatJson: ObjectNode,
+    )
+
     fun hentResultat(søknadUuid: UUID): Boolean
-    fun lagreManuellBehandling(søknadUuid: UUID, grunn: String)
+
+    fun lagreManuellBehandling(
+        søknadUuid: UUID,
+        grunn: String,
+    )
 }
 
 // Skjønner utfallet av behandlingen av en søknad
 class ResultatRecord : ResultatPersistence {
-
-    override fun lagreResultat(resultat: Boolean, søknadUuid: UUID, resultatJson: ObjectNode) {
+    override fun lagreResultat(
+        resultat: Boolean,
+        søknadUuid: UUID,
+        resultatJson: ObjectNode,
+    ) {
         sessionOf(dataSource).use { session ->
             session.run(
                 queryOf( //language=PostgreSQL
@@ -38,8 +50,8 @@ class ResultatRecord : ResultatPersistence {
         }
     }
 
-    override fun hentResultat(søknadUuid: UUID): Boolean {
-        return using(sessionOf(dataSource)) { session ->
+    override fun hentResultat(søknadUuid: UUID): Boolean =
+        using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL
                     "SELECT resultat FROM resultat WHERE soknad_id = (SELECT fakta.id FROM fakta WHERE fakta.uuid = ?)",
@@ -47,9 +59,11 @@ class ResultatRecord : ResultatPersistence {
                 ).map { it.boolean("resultat") }.asSingle,
             )
         } ?: throw IllegalArgumentException("Resultat finnes ikke for søknad, uuid: $søknadUuid")
-    }
 
-    override fun lagreManuellBehandling(søknadUuid: UUID, grunn: String) {
+    override fun lagreManuellBehandling(
+        søknadUuid: UUID,
+        grunn: String,
+    ) {
         using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf( //language=PostgreSQL

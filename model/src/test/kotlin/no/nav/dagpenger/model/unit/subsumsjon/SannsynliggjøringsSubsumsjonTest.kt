@@ -95,11 +95,12 @@ class SannsynliggjøringsSubsumsjonTest {
     @Test
     fun `Skal lage sannsynliggjøring for en subsumsjon med generator som kan dokumenteres og skal godkjennes `() {
         val subsumsjon =
-            generator.med(
-                "deltre".deltre {
-                    "generator".alle(generatorB1 er true, generatorB2 er true).sannsynliggjøresAv(generatorDokument)
-                },
-            ).godkjentAv(generatorGodkjenning)
+            generator
+                .med(
+                    "deltre".deltre {
+                        "generator".alle(generatorB1 er true, generatorB2 er true).sannsynliggjøresAv(generatorDokument)
+                    },
+                ).godkjentAv(generatorGodkjenning)
         val søknadprosess =
             fakta.testSøknadprosess(subsumsjon) {
                 listOf(
@@ -152,11 +153,12 @@ class SannsynliggjøringsSubsumsjonTest {
     @Test
     fun `Lager bare avhengigheter til fakta som sannsynligjøres en gang`() {
         val subsumsjon =
-            generator.med(
-                "deltre".deltre {
-                    "generator".alle(generatorB1 er true, generatorB2 er true).sannsynliggjøresAv(generatorDokument)
-                },
-            ).godkjentAv(generatorGodkjenning)
+            generator
+                .med(
+                    "deltre".deltre {
+                        "generator".alle(generatorB1 er true, generatorB2 er true).sannsynliggjøresAv(generatorDokument)
+                    },
+                ).godkjentAv(generatorGodkjenning)
         val prosess = fakta.testSøknadprosess(subsumsjon)
 
         repeat(10) { fakta.testSøknadprosess(subsumsjon) }
@@ -164,7 +166,9 @@ class SannsynliggjøringsSubsumsjonTest {
         assertEquals(2, DuplikatVisitor(prosess).avhengigheter)
     }
 
-    class DuplikatVisitor(søknad: Prosess) : ProsessVisitor {
+    class DuplikatVisitor(
+        søknad: Prosess,
+    ) : ProsessVisitor {
         var avhengigheter = 0
 
         init {

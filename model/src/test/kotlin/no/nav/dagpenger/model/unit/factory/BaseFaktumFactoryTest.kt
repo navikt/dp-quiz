@@ -22,7 +22,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class BaseFaktumFactoryTest {
-
     @Test
     fun boolean() {
         (boolsk faktum "boolean" id 3).also { factory ->

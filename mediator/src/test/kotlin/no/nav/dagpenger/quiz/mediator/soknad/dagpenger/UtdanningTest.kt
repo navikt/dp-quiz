@@ -13,7 +13,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class UtdanningTest {
-
     private val fakta = Fakta(testFaktaversjon(), *Utdanning.fakta())
     private lateinit var prosess: Prosess
     private lateinit var tarUtdanning: Faktum<Boolean>
@@ -27,9 +26,10 @@ internal class UtdanningTest {
 
     @BeforeEach
     fun setup() {
-        prosess = fakta.testSøknadprosess(subsumsjon = Utdanning.regeltre(fakta)) {
-            Utdanning.seksjon(this)
-        }
+        prosess =
+            fakta.testSøknadprosess(subsumsjon = Utdanning.regeltre(fakta)) {
+                Utdanning.seksjon(this)
+            }
 
         tarUtdanning = prosess.boolsk(Utdanning.`tar du utdanning`)
         nyligAvsluttetUtdanning = prosess.boolsk(Utdanning.`avsluttet utdanning siste 6 mnd`)

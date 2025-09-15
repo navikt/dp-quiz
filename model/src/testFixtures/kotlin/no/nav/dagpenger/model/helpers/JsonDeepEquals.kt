@@ -21,7 +21,7 @@ private class FaktumSerializer : JsonSerializer<Faktum<*>>() {
     override fun serialize(
         faktum: Faktum<*>,
         jsonGenerator: JsonGenerator,
-        serializers: SerializerProvider?
+        serializers: SerializerProvider?,
     ) {
         FaktumVisitor(faktum, jsonGenerator)
     }
@@ -29,9 +29,8 @@ private class FaktumSerializer : JsonSerializer<Faktum<*>>() {
 
 private class FaktumVisitor(
     val faktum: Faktum<*>,
-    private val jsonGenerator: JsonGenerator
+    private val jsonGenerator: JsonGenerator,
 ) : FaktumVisitor {
-
     init {
         faktum.accept(this)
     }
@@ -46,7 +45,7 @@ private class FaktumVisitor(
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
         jsonGenerator.writeStartObject()
         jsonGenerator.skrivStandardFelt(id, tilstand, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
@@ -66,7 +65,7 @@ private class FaktumVisitor(
         svar: R,
         besvartAv: String?,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
         jsonGenerator.writeStartObject()
         jsonGenerator.skrivStandardFelt(id, tilstand, clazz, avhengigeFakta, avhengerAvFakta, godkjenner, roller)
@@ -90,7 +89,7 @@ private class FaktumVisitor(
         avhengigeFakta: Set<Faktum<*>>,
         avhengerAvFakta: Set<Faktum<*>>,
         godkjenner: Set<Faktum<*>>,
-        roller: Set<Rolle>
+        roller: Set<Rolle>,
     ) {
         jsonGenerator.writeStringField("id", id)
         jsonGenerator.writeStringField("tilstand", tilstand.name)
@@ -111,22 +110,27 @@ private class FaktumVisitor(
     }
 }
 
-private val module = SimpleModule()
-    .also {
-        it.addSerializer(
-            Faktum::class.java,
-            FaktumSerializer()
-        )
-    }
+private val module =
+    SimpleModule()
+        .also {
+            it.addSerializer(
+                Faktum::class.java,
+                FaktumSerializer(),
+            )
+        }
 
-private val objectMapper = jacksonObjectMapper()
-    .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY)
-    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-    .registerModule(module)
-    .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE)
-    .registerModule(JavaTimeModule())
+private val objectMapper =
+    jacksonObjectMapper()
+        .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY)
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .registerModule(module)
+        .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE)
+        .registerModule(JavaTimeModule())
 
-fun assertJsonEquals(expected: Any, actual: Any) {
+fun assertJsonEquals(
+    expected: Any,
+    actual: Any,
+) {
     val expectedJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(expected)
     val actualJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(actual)
     assertEquals(expectedJson, actualJson)

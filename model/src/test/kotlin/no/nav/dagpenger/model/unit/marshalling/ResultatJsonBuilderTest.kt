@@ -29,24 +29,26 @@ internal class ResultatJsonBuilderTest {
     @BeforeEach
     fun setup() {
         prosesstype = testProsesstype()
-        prototypeFakta = Fakta(
-            prosesstype.faktaversjon,
-            boolsk faktum "f1" id 1,
-            boolsk faktum "f2" id 2 avhengerAv 1,
-            boolsk faktum "f3" id 3,
-            boolsk faktum "f4" id 4 avhengerAv 3,
-            boolsk faktum "f5" id 5,
-            boolsk faktum "f6" id 6,
-            boolsk faktum "f7" id 7,
-            heltall faktum "f67" id 67 genererer 6 og 7,
-        )
+        prototypeFakta =
+            Fakta(
+                prosesstype.faktaversjon,
+                boolsk faktum "f1" id 1,
+                boolsk faktum "f2" id 2 avhengerAv 1,
+                boolsk faktum "f3" id 3,
+                boolsk faktum "f4" id 4 avhengerAv 3,
+                boolsk faktum "f5" id 5,
+                boolsk faktum "f6" id 6,
+                boolsk faktum "f7" id 7,
+                heltall faktum "f67" id 67 genererer 6 og 7,
+            )
     }
 
     @Test
     fun `bygger prossess_resultat event`() {
-        val søknadprosess = søknadprosess(
-            prototypeFakta.boolsk(1) er true,
-        )
+        val søknadprosess =
+            søknadprosess(
+                prototypeFakta.boolsk(1) er true,
+            )
         assertThrows<IllegalStateException> {
             ResultatJsonBuilder(søknadprosess).resultat()
         }
@@ -66,13 +68,14 @@ internal class ResultatJsonBuilderTest {
 
     @Test
     fun `inkluderer kun mulige paths`() {
-        val søknadprosess = søknadprosess(
-            prototypeFakta.boolsk(1) er true hvisOppfylt {
-                prototypeFakta.boolsk(2) er true
-            } hvisIkkeOppfylt {
-                prototypeFakta.boolsk(3) er true
-            },
-        )
+        val søknadprosess =
+            søknadprosess(
+                prototypeFakta.boolsk(1) er true hvisOppfylt {
+                    prototypeFakta.boolsk(2) er true
+                } hvisIkkeOppfylt {
+                    prototypeFakta.boolsk(3) er true
+                },
+            )
         søknadprosess.boolsk(1).besvar(true)
         søknadprosess.boolsk(2).besvar(true)
         ResultatJsonBuilder(søknadprosess).resultat().also {
@@ -84,13 +87,14 @@ internal class ResultatJsonBuilderTest {
 
     @Test
     fun `inkluderer besvartAv`() {
-        val søknadprosess = søknadprosess(
-            prototypeFakta.boolsk(1) er true hvisOppfylt {
-                prototypeFakta.boolsk(2) er true
-            } hvisIkkeOppfylt {
-                prototypeFakta.boolsk(3) er true
-            },
-        )
+        val søknadprosess =
+            søknadprosess(
+                prototypeFakta.boolsk(1) er true hvisOppfylt {
+                    prototypeFakta.boolsk(2) er true
+                } hvisIkkeOppfylt {
+                    prototypeFakta.boolsk(3) er true
+                },
+            )
         søknadprosess.boolsk(1).besvar(true, "A123456")
         søknadprosess.boolsk(2).besvar(true)
         ResultatJsonBuilder(søknadprosess).resultat().also {
@@ -98,20 +102,21 @@ internal class ResultatJsonBuilderTest {
         }
     }
 
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess = Prosess(
-        prosesstype,
-        prototypeFakta,
-        Seksjon(
-            "søker",
-            Rolle.søker,
-            prototypeFakta.boolsk(1),
-            prototypeFakta.boolsk(3),
-            prototypeFakta.boolsk(5),
-            prototypeFakta.boolsk(6),
-            prototypeFakta.boolsk(7),
-        ),
-        Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
-        Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeFakta.boolsk(4)),
-        rootSubsumsjon = prototypeSubsumsjon,
-    ).testProsess()
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess =
+        Prosess(
+            prosesstype,
+            prototypeFakta,
+            Seksjon(
+                "søker",
+                Rolle.søker,
+                prototypeFakta.boolsk(1),
+                prototypeFakta.boolsk(3),
+                prototypeFakta.boolsk(5),
+                prototypeFakta.boolsk(6),
+                prototypeFakta.boolsk(7),
+            ),
+            Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
+            Seksjon("saksbehandler4", Rolle.saksbehandler, prototypeFakta.boolsk(4)),
+            rootSubsumsjon = prototypeSubsumsjon,
+        ).testProsess()
 }

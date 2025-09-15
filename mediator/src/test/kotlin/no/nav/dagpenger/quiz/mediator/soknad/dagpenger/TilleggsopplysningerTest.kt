@@ -14,7 +14,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class TilleggsopplysningerTest {
-
     private val fakta = Fakta(testFaktaversjon(), *Tilleggsopplysninger.fakta())
     private lateinit var prosess: Prosess
     private lateinit var harTilleggsopplysninger: Faktum<Boolean>
@@ -27,9 +26,10 @@ internal class TilleggsopplysningerTest {
 
     @BeforeEach
     fun setup() {
-        prosess = fakta.testSøknadprosess(subsumsjon = Tilleggsopplysninger.regeltre(fakta)) {
-            Tilleggsopplysninger.seksjon(this)
-        }
+        prosess =
+            fakta.testSøknadprosess(subsumsjon = Tilleggsopplysninger.regeltre(fakta)) {
+                Tilleggsopplysninger.seksjon(this)
+            }
         harTilleggsopplysninger = prosess.boolsk(Tilleggsopplysninger.`har tilleggsopplysninger`)
         tilleggsopplysninger = prosess.tekst(Tilleggsopplysninger.tilleggsopplysninger)
     }

@@ -31,12 +31,13 @@ internal class EnkelSubsumsjonsTest {
 
     @BeforeEach
     fun setup() {
-        prosess = Fakta(
-            testversjon,
-            dato faktum "Datoen du fyller 67" id 1,
-            dato faktum "Datoen du søker om dagpenger" id 2,
-            boolsk faktum "Et valg" id 3
-        ).testSøknadprosess()
+        prosess =
+            Fakta(
+                testversjon,
+                dato faktum "Datoen du fyller 67" id 1,
+                dato faktum "Datoen du søker om dagpenger" id 2,
+                boolsk faktum "Et valg" id 3,
+            ).testSøknadprosess()
         bursdag67 = prosess dato 1
         søknadsdato = prosess dato 2
         etValg = prosess boolsk 3

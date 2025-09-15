@@ -45,23 +45,26 @@ internal class DinSituasjonTest {
                 alleFakta,
             ),
             "Ikke alle faktum er ikke definert i seksjon.\nMangler seksjon for faktum id: ${
-            alleFakta.toSet().minus(faktaISeksjoner.toSet())
+                alleFakta.toSet().minus(faktaISeksjoner.toSet())
             }",
         )
     }
 
     @Test
     fun `Gjenopptak søknad - har ikke jobbet siden sist eller hatt noen endring i arbeidsforhold`() {
-        prosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        prosess
+            .envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
         prosess.tekst(DinSituasjon.`gjenopptak årsak til stans av dagpenger`).besvar(Tekst("Årsak"))
         prosess.dato(DinSituasjon.`gjenopptak søknadsdato`).besvar(1.januar)
-        prosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
+        prosess
+            .boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
             .besvar(false)
         assertEquals(true, prosess.resultat())
 
         // Avhengigheter
-        prosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        prosess
+            .envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
         assertEquals(null, prosess.resultat())
 
@@ -74,11 +77,13 @@ internal class DinSituasjonTest {
 
     @Test
     fun `Gjenopptak søknad - har jobbet siden sist eller hatt endring i arbeidsforhold`() {
-        prosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        prosess
+            .envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
         prosess.tekst(DinSituasjon.`gjenopptak årsak til stans av dagpenger`).besvar(Tekst("Årsak"))
         prosess.dato(DinSituasjon.`gjenopptak søknadsdato`).besvar(1.januar)
-        prosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
+        prosess
+            .boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
             .besvar(true)
 
         `besvar spørsmål for et arbeidsforhold`()
@@ -88,7 +93,8 @@ internal class DinSituasjonTest {
         assertEquals(true, prosess.resultat())
 
         // Avhengigheter
-        prosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        prosess
+            .envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.vet-ikke"))
         assertErUbesvarte(prosess.envalg(DinSituasjon.`type arbeidstid`))
 
@@ -103,14 +109,16 @@ internal class DinSituasjonTest {
 
     @Test
     fun `Ny søknad - type arbeidstid er besvart med Ingen alternativer passer`() {
-        prosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        prosess
+            .envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
         prosess.dato(DinSituasjon.`dagpenger søknadsdato`).besvar(1.januar)
         prosess.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
         assertEquals(true, prosess.resultat())
 
         // Avhengigheter
-        prosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        prosess
+            .envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
         assertEquals(null, prosess.resultat())
 
@@ -124,7 +132,8 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - ikke endret`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret"))
         prosess.boolsk("${DinSituasjon.`arbeidsforhold kjent antall timer jobbet`}.1").besvar(true)
         prosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer jobbet`}.1").besvar(40.5)
@@ -134,12 +143,14 @@ internal class DinSituasjonTest {
         prosess.boolsk("${DinSituasjon.`arbeidsforhold har tilleggsopplysninger`}.1").besvar(true)
         assertEquals(null, prosess.resultat())
 
-        prosess.tekst("${DinSituasjon.`arbeidsforhold tilleggsopplysninger`}.1")
+        prosess
+            .tekst("${DinSituasjon.`arbeidsforhold tilleggsopplysninger`}.1")
             .besvar(Tekst("Tilleggsopplysninger"))
         assertEquals(true, prosess.resultat())
 
         // Avhengigheter
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.avskjediget"))
         assertEquals(null, prosess.resultat())
 
@@ -155,7 +166,8 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - avskjediget`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.avskjediget"))
         prosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
         prosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før mistet jobb`}.1").besvar(true)
@@ -164,7 +176,8 @@ internal class DinSituasjonTest {
         assertEquals(true, prosess.resultat())
 
         // Avhengigheter
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
         assertEquals(null, prosess.resultat())
 
@@ -179,22 +192,26 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - sagt opp av arbeidsgiver`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-av-arbeidsgiver"))
 
         prosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
         prosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før mistet jobb`}.1").besvar(true)
         prosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1").besvar(40.5)
-        prosess.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til sagt opp av arbeidsgiver`}.1")
+        prosess
+            .tekst("${DinSituasjon.`arbeidsforhold hva er årsak til sagt opp av arbeidsgiver`}.1")
             .besvar(Tekst("Årsak"))
-        prosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
+        prosess
+            .boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
             .besvar(true)
 
         `besvar spørsmål om skift, turnus og rotasjon`()
         assertEquals(true, prosess.resultat())
 
         // Avhengigheter
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs"))
         assertEquals(null, prosess.resultat())
 
@@ -211,11 +228,13 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - arbeidsgiver er konkurs`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.arbeidsgiver-konkurs"))
 
         prosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
-        prosess.boolsk("${DinSituasjon.`arbeidsforhold midlertidig arbeidsforhold med sluttdato`}.1")
+        prosess
+            .boolsk("${DinSituasjon.`arbeidsforhold midlertidig arbeidsforhold med sluttdato`}.1")
             .besvar(true)
         prosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før konkurs`}.1").besvar(true)
         prosess.desimaltall("${DinSituasjon.`arbeidsforhold antall timer dette arbeidsforhold`}.1").besvar(40.5)
@@ -228,14 +247,18 @@ internal class DinSituasjonTest {
         prosess.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler`}.1").besvar(true)
         assertEquals(null, prosess.resultat())
 
-        prosess.boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`}.1")
+        prosess
+            .boolsk("${DinSituasjon.`arbeidsforhold søke forskudd lønnsgarantimidler i tillegg til dagpenger`}.1")
             .besvar(true)
         prosess.boolsk("${DinSituasjon.`arbeidsforhold godta trekk direkte fra konkursboet`}.1").besvar(true)
-        prosess.boolsk("${DinSituasjon.`arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`}.1")
+        prosess
+            .boolsk("${DinSituasjon.`arbeidsforhold godta trekk fra nav av forskudd fra lønnsgarantimidler`}.1")
             .besvar(true)
-        prosess.envalg("${DinSituasjon.`arbeidsforhold har søkt om lønnsgarantimidler`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold har søkt om lønnsgarantimidler`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.har-sokt-om-lonnsgarantimidler.svar.ja"))
-        prosess.envalg("${DinSituasjon.`arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold dekker lønnsgarantiordningen lønnskravet ditt`}.1")
             .besvar(
                 Envalg("faktum.arbeidsforhold.dekker-lonnsgarantiordningen-lonnskravet-ditt.svar.ja"),
             )
@@ -245,7 +268,8 @@ internal class DinSituasjonTest {
         assertEquals(true, prosess.resultat())
 
         // Avhengigheter
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt"))
         assertEquals(null, prosess.resultat())
 
@@ -269,39 +293,48 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - utgått kontrakt`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.kontrakt-utgaatt"))
 
         prosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
-        prosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før kontrakt utgikk`}.1")
+        prosess
+            .boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før kontrakt utgikk`}.1")
             .besvar(false)
-        prosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om forlengelse eller annen stilling`}.1")
+        prosess
+            .boolsk("${DinSituasjon.`arbeidsforhold tilbud om forlengelse eller annen stilling`}.1")
             .besvar(false)
         `besvar spørsmål om skift, turnus og rotasjon`()
         assertEquals(true, prosess.resultat())
 
-        prosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om forlengelse eller annen stilling`}.1")
+        prosess
+            .boolsk("${DinSituasjon.`arbeidsforhold tilbud om forlengelse eller annen stilling`}.1")
             .besvar(true)
         assertEquals(null, prosess.resultat())
 
-        prosess.envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ja"))
         assertEquals(true, prosess.resultat())
 
-        prosess.envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ikke-svart"))
         assertEquals(true, prosess.resultat())
 
-        prosess.envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold svar på forlengelse eller annen stilling`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei"))
         assertEquals(null, prosess.resultat())
 
-        prosess.tekst("${DinSituasjon.`arbeidsforhold årsak til ikke akseptert tilbud`}.1")
+        prosess
+            .tekst("${DinSituasjon.`arbeidsforhold årsak til ikke akseptert tilbud`}.1")
             .besvar(Tekst("Årsak"))
         assertEquals(true, prosess.resultat())
 
         // Avhengigheter
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv"))
         assertEquals(null, prosess.resultat())
 
@@ -317,7 +350,8 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - sagt opp selv`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.sagt-opp-selv"))
         prosess.periode("${DinSituasjon.`arbeidsforhold varighet`}.1").besvar(Periode(1.januar, 1.februar))
         prosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før du sa opp`}.1").besvar(false)
@@ -327,7 +361,8 @@ internal class DinSituasjonTest {
         assertEquals(true, prosess.resultat())
 
         // Avhengigheter
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid"))
         assertEquals(null, prosess.resultat())
 
@@ -342,22 +377,27 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - redusert arbeidstid`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid"))
         prosess.dato("${DinSituasjon.`arbeidsforhold startdato arbeidsforhold`}.1").besvar(1.januar)
         prosess.dato("${DinSituasjon.`arbeidsforhold arbeidstid redusert fra dato`}.1").besvar(1.februar)
-        prosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før redusert arbeidstid`}.1")
+        prosess
+            .boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før redusert arbeidstid`}.1")
             .besvar(false)
-        prosess.tekst("${DinSituasjon.`arbeidsforhold hva er årsak til redusert arbeidstid`}.1")
+        prosess
+            .tekst("${DinSituasjon.`arbeidsforhold hva er årsak til redusert arbeidstid`}.1")
             .besvar(Tekst("Årsak"))
-        prosess.boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
+        prosess
+            .boolsk("${DinSituasjon.`arbeidsforhold tilbud om annen stilling eller annet sted i norge`}.1")
             .besvar(true)
 
         `besvar spørsmål om skift, turnus og rotasjon`()
         assertEquals(true, prosess.resultat())
 
         // Avhengigheter
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
         assertEquals(null, prosess.resultat())
 
@@ -374,12 +414,15 @@ internal class DinSituasjonTest {
     fun `Arbeidsforhold - permittert`() {
         `besvar innledende spørsmål om situasjon og arbeidsforhold`()
 
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.permittert"))
-        prosess.envalg("${DinSituasjon.`arbeidsforhold midlertidig med kontraktfestet sluttdato`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold midlertidig med kontraktfestet sluttdato`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.midlertidig-med-kontraktfestet-sluttdato.svar.ja"))
         prosess.dato("${DinSituasjon.`arbeidsforhold kontraktfestet sluttdato`}.1").besvar(1.februar)
-        prosess.dato("${DinSituasjon.`arbeidsforhold midlertidig arbeidsforhold oppstartsdato`}.1")
+        prosess
+            .dato("${DinSituasjon.`arbeidsforhold midlertidig arbeidsforhold oppstartsdato`}.1")
             .besvar(1.januar)
         prosess.boolsk("${DinSituasjon.`arbeidsforhold permittert fra fiskeri næring`}.1").besvar(true)
         prosess.boolsk("${DinSituasjon.`arbeidsforhold vet du antall timer før permittert`}.1").besvar(false)
@@ -393,12 +436,14 @@ internal class DinSituasjonTest {
         assertEquals(null, prosess.resultat())
 
         prosess.boolsk("${DinSituasjon.`arbeidsforhold vet du lønnsplikt periode`}.1").besvar(true)
-        prosess.periode("${DinSituasjon.`arbeidsforhold når var lønnsplikt periode`}.1")
+        prosess
+            .periode("${DinSituasjon.`arbeidsforhold når var lønnsplikt periode`}.1")
             .besvar(Periode(6.januar, 20.januar))
         assertEquals(true, prosess.resultat())
 
         // Avhengigheter
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.redusert-arbeidstid"))
         assertEquals(null, prosess.resultat())
 
@@ -419,14 +464,16 @@ internal class DinSituasjonTest {
         prosess.generator(DinSituasjon.arbeidsforhold).besvar(1)
         prosess.tekst("${DinSituasjon.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))
         prosess.land("${DinSituasjon.`arbeidsforhold land`}.1").besvar(Land("NOR"))
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret"))
         prosess.boolsk("${DinSituasjon.`arbeidsforhold kjent antall timer jobbet`}.1").besvar(false)
         prosess.boolsk("${DinSituasjon.`arbeidsforhold har tilleggsopplysninger`}.1").besvar(false)
     }
 
     private fun `besvar innledende spørsmål om situasjon og arbeidsforhold`() {
-        prosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        prosess
+            .envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
         prosess.dato(DinSituasjon.`dagpenger søknadsdato`).besvar(1.januar)
         prosess.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))

@@ -339,8 +339,7 @@ object DinSituasjon : DslFaktaseksjon {
             }
         }
 
-    private fun Fakta.`har mottatt dagpenger siste tolv måneder`() =
-        (envalg(`mottatt dagpenger siste 12 mnd`) inneholder Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
+    private fun Fakta.`har mottatt dagpenger siste tolv måneder`() = (envalg(`mottatt dagpenger siste 12 mnd`) inneholder Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
 
     private fun Fakta.gjenopptak() =
         "spørsmål om gjenopptaket".alle(
@@ -455,8 +454,7 @@ object DinSituasjon : DslFaktaseksjon {
 
     private fun Fakta.`varighet på arbeidsforholdet`() = periode(`arbeidsforhold varighet`).utfylt()
 
-    private fun Fakta.`tilbud om annen stilling eller annet sted i Norge`() =
-        boolsk(`arbeidsforhold tilbud om annen stilling eller annet sted i norge`).utfylt()
+    private fun Fakta.`tilbud om annen stilling eller annet sted i Norge`() = boolsk(`arbeidsforhold tilbud om annen stilling eller annet sted i norge`).utfylt()
 
     private fun Fakta.`skift, turnus og rotasjon`() =
         "spørsmål om skift, turnus og rotasjon".alle(
@@ -561,8 +559,8 @@ object DinSituasjon : DslFaktaseksjon {
                         inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ja"),
                     envalg(`arbeidsforhold svar på forlengelse eller annen stilling`)
                         inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.nei") hvisOppfylt {
-                        tekst(`arbeidsforhold årsak til ikke akseptert tilbud`).utfylt()
-                    },
+                            tekst(`arbeidsforhold årsak til ikke akseptert tilbud`).utfylt()
+                        },
                     envalg(
                         `arbeidsforhold svar på forlengelse eller annen stilling`,
                     ) inneholder Envalg("faktum.arbeidsforhold.svar-paa-forlengelse-eller-annen-stilling.svar.ikke-svart"),
@@ -575,8 +573,7 @@ object DinSituasjon : DslFaktaseksjon {
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
                 dokument(`dokumentasjon arbeidsforhold sagt opp selv`),
-            )
-            .godkjentAv(
+            ).godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`),
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
@@ -600,8 +597,7 @@ object DinSituasjon : DslFaktaseksjon {
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
                 dokument(`dokumentasjon arbeidsforhold redusert arbeidstid`),
-            )
-            .godkjentAv(
+            ).godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`),
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(
@@ -627,8 +623,7 @@ object DinSituasjon : DslFaktaseksjon {
             .sannsynliggjøresAv(
                 dokument(`dokumentasjon arbeidsavtale`),
                 dokument(`dokumentasjon arbeidsforhold permittert`),
-            )
-            .godkjentAv(
+            ).godkjentAv(
                 boolsk(`godkjenning av arbeidsforhold-dokumentasjon`),
             ) hvisOppfylt {
             "spørsmål om arbeidsforholdet".alle(

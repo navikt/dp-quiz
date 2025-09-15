@@ -14,6 +14,6 @@ dependencies {
     testImplementation(libs.mockk)
     testFixturesApi(libs.jackson.kotlin)
     testFixturesApi(libs.jackson.datatype.jsr310)
-    testFixturesApi(Junit5.api)
+    testFixturesApi("org.junit.jupiter:junit-jupiter-api:5.9.2")
     testFixturesApi("org.jetbrains.kotlin:kotlin-test:2.2.20")
 }

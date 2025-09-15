@@ -39,81 +39,84 @@ internal class SøknadsmalJsonBuilderTest {
     @BeforeEach
     fun setup() {
         prosesstype = testProsesstype()
-        prototypeFakta = Fakta(
-            prosesstype.faktaversjon,
-            boolsk faktum "boolsk1" id 1,
-            heltall faktum "heltall2" id 2,
-            heltall faktum "heltall3" id 3,
-            dato faktum "dato4" id 4,
-            heltall faktum "generator5" id 5 genererer 3 og 4,
-            desimaltall faktum "desimaltall6" id 6,
-            dokument faktum "dokument7" id 7,
-            inntekt faktum "inntekt8" id 8,
-            heltall faktum "dato9" id 9 genererer 7 og 8,
-            flervalg faktum "flervalg10" med "valg1" med "valg2" med "valg3" id 10,
-            envalg faktum "envalg11" med "valg1" med "valg2" id 11,
-            dato faktum "dato12" id 12,
-            inntekt faktum "inntekt13" id 13,
-            envalg faktum "envalg18" id 18 med "valg1" med "valg2",
-            boolsk faktum "boolsk19" id 19,
-            heltall faktum "generator14" id 14 genererer 12 og 13 og 18 og 19,
-            tekst faktum "tekst15" id 15,
-            periode faktum "periode16" id 16,
-            periode faktum "pågåendePeriode17" id 17,
-            land faktum "f20"
-                gruppe "eøs" med listOf(Land("SWE"), Land("DKK"))
-                gruppe "storbritannia" med listOf(Land("GBR"), Land("DKK"))
-                gruppe "norge-jan-mayen" med listOf(Land("NOR")) id 20,
-        )
+        prototypeFakta =
+            Fakta(
+                prosesstype.faktaversjon,
+                boolsk faktum "boolsk1" id 1,
+                heltall faktum "heltall2" id 2,
+                heltall faktum "heltall3" id 3,
+                dato faktum "dato4" id 4,
+                heltall faktum "generator5" id 5 genererer 3 og 4,
+                desimaltall faktum "desimaltall6" id 6,
+                dokument faktum "dokument7" id 7,
+                inntekt faktum "inntekt8" id 8,
+                heltall faktum "dato9" id 9 genererer 7 og 8,
+                flervalg faktum "flervalg10" med "valg1" med "valg2" med "valg3" id 10,
+                envalg faktum "envalg11" med "valg1" med "valg2" id 11,
+                dato faktum "dato12" id 12,
+                inntekt faktum "inntekt13" id 13,
+                envalg faktum "envalg18" id 18 med "valg1" med "valg2",
+                boolsk faktum "boolsk19" id 19,
+                heltall faktum "generator14" id 14 genererer 12 og 13 og 18 og 19,
+                tekst faktum "tekst15" id 15,
+                periode faktum "periode16" id 16,
+                periode faktum "pågåendePeriode17" id 17,
+                land faktum "f20"
+                    gruppe "eøs" med listOf(Land("SWE"), Land("DKK"))
+                    gruppe "storbritannia" med listOf(Land("GBR"), Land("DKK"))
+                    gruppe "norge-jan-mayen" med listOf(Land("NOR")) id 20,
+            )
     }
 
-    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess = Prosess(
-        prosesstype,
-        prototypeFakta,
-        Seksjon(
-            "seksjon1",
-            Rolle.søker,
-            prototypeFakta.boolsk(1),
-            prototypeFakta.heltall(2),
-            prototypeFakta.tekst(15),
-            prototypeFakta.periode(16),
-            prototypeFakta.periode(17),
-        ),
-        Seksjon(
-            "seksjon2",
-            Rolle.søker,
-            prototypeFakta.heltall(3),
-            prototypeFakta.dato(4),
-            prototypeFakta.generator(5),
-            prototypeFakta.desimaltall(6),
-        ),
-        Seksjon(
-            "seksjon3",
-            Rolle.søker,
-            prototypeFakta.flervalg(10),
-            prototypeFakta.envalg(11),
-            prototypeFakta.dato(12),
-            prototypeFakta.inntekt(13),
-            prototypeFakta.envalg(18),
-            prototypeFakta.boolsk(19),
-            prototypeFakta.generator(14),
-        ),
-        Seksjon(
-            "nav",
-            Rolle.nav,
-            prototypeFakta.dokument(7),
-            prototypeFakta.inntekt(8),
-            prototypeFakta.dato(9),
-        ),
-        Seksjon("seksjon4", Rolle.søker, prototypeFakta.land(20), prototypeFakta.inntekt(8)),
-        rootSubsumsjon = prototypeSubsumsjon,
-    )
-
-    private fun søkerSubsumsjon() = "regel" deltre {
-        "alle".alle(
-            prototypeFakta.boolsk(1) er true,
+    private fun søknadprosess(prototypeSubsumsjon: Subsumsjon): Prosess =
+        Prosess(
+            prosesstype,
+            prototypeFakta,
+            Seksjon(
+                "seksjon1",
+                Rolle.søker,
+                prototypeFakta.boolsk(1),
+                prototypeFakta.heltall(2),
+                prototypeFakta.tekst(15),
+                prototypeFakta.periode(16),
+                prototypeFakta.periode(17),
+            ),
+            Seksjon(
+                "seksjon2",
+                Rolle.søker,
+                prototypeFakta.heltall(3),
+                prototypeFakta.dato(4),
+                prototypeFakta.generator(5),
+                prototypeFakta.desimaltall(6),
+            ),
+            Seksjon(
+                "seksjon3",
+                Rolle.søker,
+                prototypeFakta.flervalg(10),
+                prototypeFakta.envalg(11),
+                prototypeFakta.dato(12),
+                prototypeFakta.inntekt(13),
+                prototypeFakta.envalg(18),
+                prototypeFakta.boolsk(19),
+                prototypeFakta.generator(14),
+            ),
+            Seksjon(
+                "nav",
+                Rolle.nav,
+                prototypeFakta.dokument(7),
+                prototypeFakta.inntekt(8),
+                prototypeFakta.dato(9),
+            ),
+            Seksjon("seksjon4", Rolle.søker, prototypeFakta.land(20), prototypeFakta.inntekt(8)),
+            rootSubsumsjon = prototypeSubsumsjon,
         )
-    }
+
+    private fun søkerSubsumsjon() =
+        "regel" deltre {
+            "alle".alle(
+                prototypeFakta.boolsk(1) er true,
+            )
+        }
 
     @Test
     fun `serialisering av ubesvarte fakta til json`() {
@@ -149,10 +152,11 @@ internal class SøknadsmalJsonBuilderTest {
                 "generator",
                 "generator5",
                 listOf("søker"),
-                assertTemplates = listOf(
-                    { it.assertFaktaAsJson("3", "int", "heltall3", listOf("søker")) },
-                    { it.assertFaktaAsJson("4", "localdate", "dato4", listOf("søker")) },
-                ),
+                assertTemplates =
+                    listOf(
+                        { it.assertFaktaAsJson("3", "int", "heltall3", listOf("søker")) },
+                        { it.assertFaktaAsJson("4", "localdate", "dato4", listOf("søker")) },
+                    ),
             )
             this["fakta"][1].assertFaktaAsJson("6", "double", "desimaltall6", listOf("søker"))
         }
@@ -178,28 +182,29 @@ internal class SøknadsmalJsonBuilderTest {
                 "generator",
                 "generator14",
                 listOf("søker"),
-                assertTemplates = listOf(
-                    { it.assertFaktaAsJson("12", "localdate", "dato12", listOf("søker")) },
-                    { it.assertFaktaAsJson("13", "inntekt", "inntekt13", listOf("søker")) },
-                    {
-                        it.assertValgFaktaAsJson(
-                            "18",
-                            "envalg",
-                            "envalg18",
-                            listOf("søker"),
-                            listOf("valg1", "valg2"),
-                        )
-                    },
-                    {
-                        it.assertValgFaktaAsJson(
-                            "19",
-                            "boolean",
-                            "boolsk19",
-                            listOf("søker"),
-                            listOf("svar.ja", "svar.nei"),
-                        )
-                    },
-                ),
+                assertTemplates =
+                    listOf(
+                        { it.assertFaktaAsJson("12", "localdate", "dato12", listOf("søker")) },
+                        { it.assertFaktaAsJson("13", "inntekt", "inntekt13", listOf("søker")) },
+                        {
+                            it.assertValgFaktaAsJson(
+                                "18",
+                                "envalg",
+                                "envalg18",
+                                listOf("søker"),
+                                listOf("valg1", "valg2"),
+                            )
+                        },
+                        {
+                            it.assertValgFaktaAsJson(
+                                "19",
+                                "boolean",
+                                "boolsk19",
+                                listOf("søker"),
+                                listOf("svar.ja", "svar.nei"),
+                            )
+                        },
+                    ),
             )
         }
         with(malJson["seksjoner"][3]) {
@@ -214,10 +219,11 @@ internal class SøknadsmalJsonBuilderTest {
                 "generator",
                 "dato9",
                 listOf("nav"),
-                assertTemplates = listOf(
-                    { it.assertFaktaAsJson("7", "dokument", "dokument7", listOf("nav")) },
-                    { it.assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav", "søker")) },
-                ),
+                assertTemplates =
+                    listOf(
+                        { it.assertFaktaAsJson("7", "dokument", "dokument7", listOf("nav")) },
+                        { it.assertFaktaAsJson("8", "inntekt", "inntekt8", listOf("nav", "søker")) },
+                    ),
             )
         }
     }

@@ -17,36 +17,45 @@ internal fun Fakta.testSøknadprosess(
     faktatype: Faktatype = testFaktatype(),
     subsumsjon: Subsumsjon,
     seksjon: Fakta.() -> List<Seksjon>,
-): Prosess {
-    return Henvendelser.testProsess(
-        this,
-        Prosess(testProsesstype(faktatype), *seksjon().toTypedArray()),
-        subsumsjon,
-    ).prosess(testPerson)
-}
+): Prosess =
+    Henvendelser
+        .testProsess(
+            this,
+            Prosess(testProsesstype(faktatype), *seksjon().toTypedArray()),
+            subsumsjon,
+        ).prosess(testPerson)
 
-internal val testPerson = Person(Identer.Builder().folkeregisterIdent("12020052345").aktørId("aktørId").build())
+internal val testPerson =
+    Person(
+        Identer
+            .Builder()
+            .folkeregisterIdent("12020052345")
+            .aktørId("aktørId")
+            .build(),
+    )
 
 internal fun Henvendelser.Companion.testProsess(
     prototypeFakta: Fakta,
     prototypeProsess: Prosess,
     prototypeSubsumsjon: Subsumsjon,
     faktumNavBehov: FaktumNavBehov = FaktumNavBehov(),
-): Henvendelser.ProsessBygger {
-    return Henvendelser.FaktaBygger(prototypeFakta, faktumNavBehov)
+): Henvendelser.ProsessBygger =
+    Henvendelser
+        .FaktaBygger(prototypeFakta, faktumNavBehov)
         .leggTilProsess(prototypeProsess, prototypeSubsumsjon)
-}
 
-internal fun testFaktatype() = object : Faktatype {
-    override val id = UUID.randomUUID().toString()
-}
+internal fun testFaktatype() =
+    object : Faktatype {
+        override val id = UUID.randomUUID().toString()
+    }
 
 internal fun testFaktaversjon(faktatype: Faktatype = testFaktatype()) = Faktaversjon(faktatype, 1)
 
-internal fun testProsesstype(faktatype: Faktatype = testFaktatype()) = object : Prosesstype {
-    override val navn: String = UUID.randomUUID().toString()
-    override val faktatype: Faktatype = faktatype
-}
+internal fun testProsesstype(faktatype: Faktatype = testFaktatype()) =
+    object : Prosesstype {
+        override val navn: String = UUID.randomUUID().toString()
+        override val faktatype: Faktatype = faktatype
+    }
 
 internal val Prosesstype.faktaversjon: Faktaversjon
     get() = testFaktaversjon(faktatype)

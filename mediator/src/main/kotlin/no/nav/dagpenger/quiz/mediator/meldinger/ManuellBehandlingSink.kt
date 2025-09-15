@@ -21,10 +21,11 @@ internal class ManuellBehandlingSink(
     }
 
     init {
-        River(rapidsConnection).apply {
-            precondition { it.requireValue("@event_name", "manuell_behandling") }
-            validate { it.requireKey("søknad_uuid", "seksjon_navn") }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                precondition { it.requireValue("@event_name", "manuell_behandling") }
+                validate { it.requireKey("søknad_uuid", "seksjon_navn") }
+            }.register(this)
     }
 
     override fun onPacket(

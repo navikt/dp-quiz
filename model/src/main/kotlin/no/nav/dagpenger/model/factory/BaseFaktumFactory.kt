@@ -80,33 +80,32 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
         private val baseFaktumFactory: BaseFaktumFactory<T>,
         private val gruppeNavn: String,
     ) {
-        infix fun med(land: Collection<Land>): BaseFaktumFactory<T> {
-            return baseFaktumFactory.landGruppe(
+        infix fun med(land: Collection<Land>): BaseFaktumFactory<T> =
+            baseFaktumFactory.landGruppe(
                 Pair(gruppeNavn, land.toList()),
             )
-        }
     }
 
-    private fun landGruppe(landGruppe: Pair<String, List<Land>>): BaseFaktumFactory<T> {
-        return this.apply { landGrupper["${this.navn}.gruppe.${landGruppe.first}"] = landGruppe.second }
-    }
+    private fun landGruppe(landGruppe: Pair<String, List<Land>>): BaseFaktumFactory<T> = this.apply { landGrupper["${this.navn}.gruppe.${landGruppe.first}"] = landGruppe.second }
 
     @Suppress("UNCHECKED_CAST")
-    override fun faktum(): Faktum<T> {
-        return when (clazz) {
-            Envalg::class.java -> GrunnleggendeFaktum(
-                faktumId = faktumId,
-                navn = navn,
-                clazz = clazz,
-                gyldigeValg = GyldigeValg(gyldigeValg),
-            ) as Faktum<T>
+    override fun faktum(): Faktum<T> =
+        when (clazz) {
+            Envalg::class.java ->
+                GrunnleggendeFaktum(
+                    faktumId = faktumId,
+                    navn = navn,
+                    clazz = clazz,
+                    gyldigeValg = GyldigeValg(gyldigeValg),
+                ) as Faktum<T>
 
-            Flervalg::class.java -> GrunnleggendeFaktum(
-                faktumId = faktumId,
-                navn = navn,
-                clazz = clazz,
-                gyldigeValg = GyldigeValg(gyldigeValg),
-            ) as Faktum<T>
+            Flervalg::class.java ->
+                GrunnleggendeFaktum(
+                    faktumId = faktumId,
+                    navn = navn,
+                    clazz = clazz,
+                    gyldigeValg = GyldigeValg(gyldigeValg),
+                ) as Faktum<T>
 
             Land::class.java -> {
                 require(landGrupper.isNotEmpty()) { "Kan ikke lage landfaktum $navn uten noen grupper" }
@@ -120,7 +119,6 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
 
             else -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz)
         }
-    }
 
     @Suppress("UNCHECKED_CAST")
     override fun og(otherId: Int): FaktumFactory<T> =
@@ -131,8 +129,9 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
         }
 
     @Suppress("UNCHECKED_CAST")
-    override infix fun genererer(otherId: Int): BaseFaktumFactory<Int> = (this as BaseFaktumFactory<Int>)
-        .also { templateIder.add(otherId) }
+    override infix fun genererer(otherId: Int): BaseFaktumFactory<Int> =
+        (this as BaseFaktumFactory<Int>)
+            .also { templateIder.add(otherId) }
 
     override fun tilTemplate(faktumMap: MutableMap<FaktumId, Faktum<*>>) {
         if (templateIder.isEmpty()) return
@@ -142,23 +141,24 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
                 ?.also { template -> faktumMap[FaktumId(otherId)] = template }
                 ?: throw IllegalArgumentException("Faktum $otherId finnes ikke")
         }
-        val navngittAvFaktumId = navngittAv?.let {
-            FaktumId(it).also { faktumId ->
-                require(faktumMap[faktumId]?.type() == Tekst::class.java) { "navngittAv må være av type tekst" }
+        val navngittAvFaktumId =
+            navngittAv?.let {
+                FaktumId(it).also { faktumId ->
+                    require(faktumMap[faktumId]?.type() == Tekst::class.java) { "navngittAv må være av type tekst" }
+                }
             }
-        }
         GeneratorFaktum(
             faktumId,
             navn,
             templateIder.map { otherId -> faktumMap[FaktumId(otherId)] as TemplateFaktum<*> },
             navngittAv = navngittAvFaktumId,
-        )
-            .also { generatorfaktum -> faktumMap[faktumId] = generatorfaktum }
+        ).also { generatorfaktum -> faktumMap[faktumId] = generatorfaktum }
     }
 
-    infix fun navngittAv(otherId: Int): BaseFaktumFactory<*> = this.also {
-        navngittAv = otherId
-    }
+    infix fun navngittAv(otherId: Int): BaseFaktumFactory<*> =
+        this.also {
+            navngittAv = otherId
+        }
 
     private val faktumId get() = FaktumId(rootId).also { require(rootId > 0) { "Root id må være positiv" } }
 }

@@ -15,7 +15,7 @@ fun JsonNode.assertFaktaAsJson(
     expectedBeskrivendeId: String,
     expectedRoller: List<String>,
     readOnly: Boolean = false,
-    assertSvar: ((JsonNode) -> Unit)? = null
+    assertSvar: ((JsonNode) -> Unit)? = null,
 ) {
     val beskrivendeId = this.get("beskrivendeId").asText()
     assertEquals(expectedBeskrivendeId, beskrivendeId)
@@ -30,7 +30,7 @@ fun JsonNode.assertFaktaAsJson(
         assertEquals(
             expectedRoller.size,
             actual.size,
-            "$expectedBeskrivendeId har $actual, forventet $expectedRoller "
+            "$expectedBeskrivendeId har $actual, forventet $expectedRoller ",
         )
         assertTrue(expectedRoller.containsAll<String>(actual)) { "$expectedBeskrivendeId har $actual, forventet $expectedRoller " }
     }
@@ -44,7 +44,7 @@ internal fun JsonNode.assertLandFaktum(
     expectedRoller: List<String>,
     expectedLandgruppeIder: Set<String>,
     readOnly: Boolean = false,
-    assertSvar: ((JsonNode) -> Unit)? = null
+    assertSvar: ((JsonNode) -> Unit)? = null,
 ) {
     this.assertFaktaAsJson(expectedId, expectedType, expectedBeskrivendeId, expectedRoller, readOnly, assertSvar)
     assertTrue(this.has("grupper"), "Landfaktum må ha grupper")
@@ -60,7 +60,7 @@ fun JsonNode.assertGeneratorFaktaAsJson(
     expectedRoller: List<String>,
     readOnly: Boolean = false,
     assertTemplates: List<(JsonNode) -> Unit>,
-    assertSvar: ((JsonNode) -> Unit)? = null
+    assertSvar: ((JsonNode) -> Unit)? = null,
 ) {
     this.assertFaktaAsJson(expectedId, expectedType, expectedBeskrivendeId, expectedRoller, readOnly, assertSvar)
     assertTemplates.forEachIndexed { index: Int, test: (JsonNode) -> Unit ->
@@ -75,7 +75,7 @@ fun JsonNode.assertValgFaktaAsJson(
     expectedRoller: List<String>,
     expectedGyldigeValg: List<String>,
     readOnly: Boolean = false,
-    assertSvar: ((JsonNode) -> Unit)? = null
+    assertSvar: ((JsonNode) -> Unit)? = null,
 ) {
     this.assertFaktaAsJson(expectedId, expectedClass, expectedNavn, expectedRoller, readOnly, assertSvar)
     val expectedGyldigeValgMedPrefix = expectedGyldigeValg.map { "$expectedNavn.$it" }

@@ -44,21 +44,22 @@ internal class FaktumSvarService(
     }
 
     init {
-        River(rapidsConnection).apply {
-            precondition { it.requireValue("@event_name", "faktum_svar") }
-            validate {
-                it.requireKey(
-                    "søknad_uuid",
-                    "fakta",
-                )
-                it.require("@opprettet", JsonNode::asLocalDateTime)
-                it.require("@id") { UUID.fromString(it.asText()) }
-                it.requireArray("fakta") {
-                    requireKey("id")
-                    requireKey("type")
+        River(rapidsConnection)
+            .apply {
+                precondition { it.requireValue("@event_name", "faktum_svar") }
+                validate {
+                    it.requireKey(
+                        "søknad_uuid",
+                        "fakta",
+                    )
+                    it.require("@opprettet", JsonNode::asLocalDateTime)
+                    it.require("@id") { UUID.fromString(it.asText()) }
+                    it.requireArray("fakta") {
+                        requireKey("id")
+                        requireKey("type")
+                    }
                 }
-            }
-        }.register(this)
+            }.register(this)
     }
 
     override fun onPacket(
@@ -191,7 +192,9 @@ internal class FaktumSvarService(
 
     private fun harSvar() = { faktumNode: JsonNode -> faktumNode.has("svar") }
 
-    private class ProsessVersjonVisitor(prosess: Prosess) : ProsessVisitor {
+    private class ProsessVersjonVisitor(
+        prosess: Prosess,
+    ) : ProsessVisitor {
         lateinit var faktatype: Faktatype
 
         init {

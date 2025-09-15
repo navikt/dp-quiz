@@ -11,7 +11,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class PeriodeTest {
-
     @Test
     fun `Skal kunne opprette en gyldig periode`() {
         val periodeMedSluttdato = assertDoesNotThrow { Periode(1.januar(), 15.mars()) }

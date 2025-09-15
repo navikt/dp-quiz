@@ -14,11 +14,11 @@ import java.time.LocalDate
 import kotlin.test.assertTrue
 
 class PeriodeFaktumTest {
-
-    val prototypeFakta = Fakta(
-        testversjon,
-        periode faktum "periode" id 1
-    )
+    val prototypeFakta =
+        Fakta(
+            testversjon,
+            periode faktum "periode" id 1,
+        )
 
     lateinit var søknad: Prosess
 
@@ -29,20 +29,22 @@ class PeriodeFaktumTest {
 
     @Test
     fun `Skal kunne besvare et periodefaktum`() {
-        val førstePeriode = Periode(
-            LocalDate.now().minusDays(90),
-            LocalDate.now()
-        )
+        val førstePeriode =
+            Periode(
+                LocalDate.now().minusDays(90),
+                LocalDate.now(),
+            )
 
         val periodeFaktum = søknad.periode(1)
 
         assertDoesNotThrow { periodeFaktum.besvar(førstePeriode) }
         assertTrue(periodeFaktum.erBesvart())
 
-        val andrePeriode = Periode(
-            LocalDate.now().minusDays(260),
-            LocalDate.now().minusDays(50)
-        )
+        val andrePeriode =
+            Periode(
+                LocalDate.now().minusDays(260),
+                LocalDate.now().minusDays(50),
+            )
         assertDoesNotThrow { periodeFaktum.besvar(andrePeriode) }
         assertTrue(periodeFaktum.erBesvart())
     }

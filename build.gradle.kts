@@ -5,7 +5,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
     application
     kotlin("jvm") version "2.2.20"
-    id(Spotless.spotless) version "6.11.0"
+    id("com.diffplug.spotless") version "7.2.1"
 }
 
 repositories {
@@ -18,13 +18,13 @@ repositories {
 
 allprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
-    apply(plugin = Spotless.spotless)
+    apply(plugin = "com.diffplug.spotless")
 
     dependencies {
         implementation(kotlin("reflect"))
 
-        testRuntimeOnly(Junit5.engine)
-        testImplementation(Junit5.api)
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     }
 
     kotlin {
@@ -35,11 +35,11 @@ allprojects {
 
     spotless {
         kotlin {
-            ktlint(Ktlint.version)
+            ktlint()
         }
         kotlinGradle {
             target("*.gradle.kts", "buildSrc/**/*.kt*")
-            ktlint(Ktlint.version)
+            ktlint()
         }
         // Workaround for <https://github.com/diffplug/spotless/issues/1644>
         // using idea found at
@@ -77,7 +77,7 @@ subprojects {
 
     dependencies {
         testImplementation(kotlin("test"))
-        testImplementation(Junit5.api)
-        testRuntimeOnly(Junit5.engine)
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
     }
 }

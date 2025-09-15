@@ -12,9 +12,10 @@ internal class FaktumTilJsonHjelper {
         @Test
         fun `Serialiser ikke Periode tom felt som er null `() {
             val dato = LocalDate.of(2022, 8, 26)
-            val node = jacksonObjectMapper().createObjectNode().also {
-                it.putR(svar = Periode(dato, null))
-            }
+            val node =
+                jacksonObjectMapper().createObjectNode().also {
+                    it.putR(svar = Periode(dato, null))
+                }
             assertEquals("""{"svar":{"fom":"2022-08-26"}}""", node.toString())
         }
     }

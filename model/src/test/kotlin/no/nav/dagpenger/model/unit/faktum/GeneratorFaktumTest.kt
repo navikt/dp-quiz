@@ -33,37 +33,41 @@ class GeneratorFaktumTest {
 
     @BeforeEach
     fun setup() {
-        val faktaPrototype = Fakta(
-            testversjon,
-            heltall faktum "periode antall" id 1 genererer 2 og 3,
-            dato faktum "fom" id 2,
-            dato faktum "tom" id 3,
-            dato faktum "ønsket dato" id 4,
-        )
-        val prototypeSubsumsjon = faktaPrototype generator 1 har "periode".deltre {
-            faktaPrototype.dato(4) mellom faktaPrototype.dato(2) og faktaPrototype.dato(3)
-        }
-        søknadprosess = Prosess(
-            TestProsesser.Test,
-            faktaPrototype,
-            Seksjon(
-                "periode antall",
-                Rolle.nav,
-                faktaPrototype generator 1,
-            ),
-            Seksjon(
-                "periode",
-                Rolle.nav,
-                faktaPrototype dato 2,
-                faktaPrototype dato 3,
-            ),
-            Seksjon(
-                "søknadsdato",
-                Rolle.søker,
-                faktaPrototype dato 4,
-            ),
-            rootSubsumsjon = prototypeSubsumsjon
-        )
+        val faktaPrototype =
+            Fakta(
+                testversjon,
+                heltall faktum "periode antall" id 1 genererer 2 og 3,
+                dato faktum "fom" id 2,
+                dato faktum "tom" id 3,
+                dato faktum "ønsket dato" id 4,
+            )
+        val prototypeSubsumsjon =
+            faktaPrototype generator 1 har
+                "periode".deltre {
+                    faktaPrototype.dato(4) mellom faktaPrototype.dato(2) og faktaPrototype.dato(3)
+                }
+        søknadprosess =
+            Prosess(
+                TestProsesser.Test,
+                faktaPrototype,
+                Seksjon(
+                    "periode antall",
+                    Rolle.nav,
+                    faktaPrototype generator 1,
+                ),
+                Seksjon(
+                    "periode",
+                    Rolle.nav,
+                    faktaPrototype dato 2,
+                    faktaPrototype dato 3,
+                ),
+                Seksjon(
+                    "søknadsdato",
+                    Rolle.søker,
+                    faktaPrototype dato 4,
+                ),
+                rootSubsumsjon = prototypeSubsumsjon,
+            )
     }
 
     @Test
@@ -121,23 +125,26 @@ class GeneratorFaktumTest {
 
     @Test
     fun `vi kan gi navn av type tekst til en generator`() {
-        val faktaPrototype = Fakta(
-            testversjon,
-            tekst faktum "arbeidsgivernavn" id 1,
-            heltall faktum "arbeidsgiver med navn" id 2 navngittAv 1 genererer 1,
-        )
-        val søknadprosess = søknadprosess(
-            faktaPrototype,
-            faktaPrototype generator 2 har "arbeidsgiver".deltre {
-                (faktaPrototype tekst 1).utfylt()
-            },
-            Seksjon(
-                "arbeidsgiver",
-                Rolle.søker,
-                faktaPrototype heltall 2,
-                faktaPrototype tekst 1,
-            ),
-        )
+        val faktaPrototype =
+            Fakta(
+                testversjon,
+                tekst faktum "arbeidsgivernavn" id 1,
+                heltall faktum "arbeidsgiver med navn" id 2 navngittAv 1 genererer 1,
+            )
+        val søknadprosess =
+            søknadprosess(
+                faktaPrototype,
+                faktaPrototype generator 2 har
+                    "arbeidsgiver".deltre {
+                        (faktaPrototype tekst 1).utfylt()
+                    },
+                Seksjon(
+                    "arbeidsgiver",
+                    Rolle.søker,
+                    faktaPrototype heltall 2,
+                    faktaPrototype tekst 1,
+                ),
+            )
         søknadprosess.generator(2).besvar(2)
         søknadprosess.tekst("1.1").besvar(Tekst("Arbeidsgiver 1"))
         søknadprosess.tekst("1.2").besvar(Tekst("Arbeidsgiver 2"))
@@ -157,20 +164,19 @@ class GeneratorFaktumTest {
         faktaPrototype: Fakta,
         prototypeSubsumsjon: Subsumsjon,
         vararg seksjoner: Seksjon,
-    ): Prosess = Prosess(
-        TestProsesser.Test,
-        faktaPrototype,
-        *seksjoner,
-        rootSubsumsjon = prototypeSubsumsjon
-    )
+    ): Prosess =
+        Prosess(
+            TestProsesser.Test,
+            faktaPrototype,
+            *seksjoner,
+            rootSubsumsjon = prototypeSubsumsjon,
+        )
 
     private class GeneratorVisitor(
         prosess: Prosess,
         private val generatorer: MutableSet<GeneratorFaktum> = mutableSetOf(),
-    ) :
-        ProsessVisitor,
+    ) : ProsessVisitor,
         MutableSet<GeneratorFaktum> by generatorer {
-
         init {
             prosess.accept(this)
         }

@@ -6,14 +6,18 @@ interface Faktatype {
     val id: String
 }
 
-class Faktaversjon(val faktatype: Faktatype, val versjon: Int) {
+class Faktaversjon(
+    val faktatype: Faktatype,
+    val versjon: Int,
+) {
     internal companion object {
-        val prototypeversjon = Faktaversjon(
-            object : Faktatype {
-                override val id: String = "prototype"
-            },
-            0,
-        )
+        val prototypeversjon =
+            Faktaversjon(
+                object : Faktatype {
+                    override val id: String = "prototype"
+                },
+                0,
+            )
     }
 
     fun siste() = Henvendelser.siste(faktatype)
@@ -29,12 +33,9 @@ class Faktaversjon(val faktatype: Faktatype, val versjon: Int) {
         require(faktatype.id.isNotBlank()) { "Prosessnavn kan ikke være blank" }
     }
 
-    override fun equals(other: Any?): Boolean =
-        other is Faktaversjon && other.faktatype.id == this.faktatype.id && other.versjon == this.versjon
+    override fun equals(other: Any?): Boolean = other is Faktaversjon && other.faktatype.id == this.faktatype.id && other.versjon == this.versjon
 
     override fun hashCode(): Int = faktatype.id.hashCode() * 37 + versjon.hashCode()
 
-    override fun toString(): String {
-        return "Faktaversjon(faktatype=$faktatype, versjon=$versjon)"
-    }
+    override fun toString(): String = "Faktaversjon(faktatype=$faktatype, versjon=$versjon)"
 }

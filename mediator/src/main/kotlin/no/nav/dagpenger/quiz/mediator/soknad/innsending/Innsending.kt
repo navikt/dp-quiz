@@ -19,25 +19,29 @@ internal object Innsending {
         registrer(søknadsprosess.bygg(prototypeFakta, regeltre))
     }
 
-    private val faktaseksjoner = listOf(
-        GenerellInnsending,
-    )
+    private val faktaseksjoner =
+        listOf(
+            GenerellInnsending,
+        )
     private val alleFakta = flatMapAlleFakta()
     private val alleSeksjoner = flatMapAlleSeksjoner()
     private val prototypeFakta: Fakta
-        get() = Fakta(
-            VERSJON_ID,
-            *alleFakta,
+        get() =
+            Fakta(
+                VERSJON_ID,
+                *alleFakta,
+            )
+    private val søknadsprosess: Prosess =
+        Prosess(
+            Prosesser.Innsending,
+            *alleSeksjoner,
         )
-    private val søknadsprosess: Prosess = Prosess(
-        Prosesser.Innsending,
-        *alleSeksjoner,
-    )
 
     object Subsumsjoner {
-        val regeltre: Subsumsjon = with(prototypeFakta) {
-            GenerellInnsending.regeltre(this)
-        }
+        val regeltre: Subsumsjon =
+            with(prototypeFakta) {
+                GenerellInnsending.regeltre(this)
+            }
     }
 
     private val faktumNavBehov =
@@ -46,21 +50,27 @@ internal object Innsending {
         )
 
     init {
-        Henvendelser.FaktaBygger(
-            prototypeFakta,
-            faktumNavBehov,
-        ).also {
-            it.leggTilProsess(søknadsprosess, regeltre)
-            it.registrer()
-        }
+        Henvendelser
+            .FaktaBygger(
+                prototypeFakta,
+                faktumNavBehov,
+            ).also {
+                it.leggTilProsess(søknadsprosess, regeltre)
+                it.registrer()
+            }
         logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
     }
 
-    private fun flatMapAlleFakta() = faktaseksjoner.flatMap { seksjon ->
-        seksjon.fakta().toList()
-    }.toTypedArray()
+    private fun flatMapAlleFakta() =
+        faktaseksjoner
+            .flatMap { seksjon ->
+                seksjon.fakta().toList()
+            }.toTypedArray()
 
-    private fun flatMapAlleSeksjoner() = faktaseksjoner.map { faktaSeksjon ->
-        faktaSeksjon.seksjon(prototypeFakta)
-    }.flatten().toTypedArray()
+    private fun flatMapAlleSeksjoner() =
+        faktaseksjoner
+            .map { faktaSeksjon ->
+                faktaSeksjon.seksjon(prototypeFakta)
+            }.flatten()
+            .toTypedArray()
 }

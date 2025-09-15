@@ -6,7 +6,6 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.containers.PostgreSQLContainer.POSTGRESQL_PORT
 
 internal object Postgres {
-
     val instance by lazy {
         PostgreSQLContainer<Nothing>("postgres:15.2").apply {
             withReuse(true)
@@ -28,15 +27,17 @@ internal object Postgres {
         System.setProperty(PostgresDataSourceBuilder.DB_DATABASE_KEY, instance.databaseName)
         System.setProperty(PostgresDataSourceBuilder.DB_PASSWORD_KEY, instance.password)
         System.setProperty(PostgresDataSourceBuilder.DB_USERNAME_KEY, instance.username)
-        PostgresDataSourceBuilder.clean().run {
-            block()
-        }.also {
-            System.clearProperty(PostgresDataSourceBuilder.DB_PASSWORD_KEY)
-            System.clearProperty(PostgresDataSourceBuilder.DB_USERNAME_KEY)
-            System.clearProperty(PostgresDataSourceBuilder.DB_HOST_KEY)
-            System.clearProperty(PostgresDataSourceBuilder.DB_PORT_KEY)
-            System.clearProperty(PostgresDataSourceBuilder.DB_DATABASE_KEY)
-            System.clearProperty(ConfigUtils.CLEAN_DISABLED)
-        }
+        PostgresDataSourceBuilder
+            .clean()
+            .run {
+                block()
+            }.also {
+                System.clearProperty(PostgresDataSourceBuilder.DB_PASSWORD_KEY)
+                System.clearProperty(PostgresDataSourceBuilder.DB_USERNAME_KEY)
+                System.clearProperty(PostgresDataSourceBuilder.DB_HOST_KEY)
+                System.clearProperty(PostgresDataSourceBuilder.DB_PORT_KEY)
+                System.clearProperty(PostgresDataSourceBuilder.DB_DATABASE_KEY)
+                System.clearProperty(ConfigUtils.CLEAN_DISABLED)
+            }
     }
 }

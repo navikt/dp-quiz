@@ -24,11 +24,12 @@ internal class GeneratorSubsumsjonTest {
 
     @BeforeEach
     fun setup() {
-        fakta = Fakta(
-            testversjon,
-            heltall faktum "alder" id 1,
-            heltall faktum "barn" id 2 genererer 1,
-        )
+        fakta =
+            Fakta(
+                testversjon,
+                heltall faktum "alder" id 1,
+                heltall faktum "barn" id 2 genererer 1,
+            )
     }
 
     @Test
@@ -42,16 +43,18 @@ internal class GeneratorSubsumsjonTest {
     @Test
     fun `Deltre template subsumsjon works`() {
         val alleBarnMåværeUnder18år = fakta heltall 1 under 18
-        val deltre = "§ 1.2 har kun ikke myndige barn".deltre {
-            alleBarnMåværeUnder18år
-        }
+        val deltre =
+            "§ 1.2 har kun ikke myndige barn".deltre {
+                alleBarnMåværeUnder18år
+            }
         val subsumsjon = fakta generator 2 med deltre
-        val prosess = Prosess(
-            TestProsesser.Test,
-            fakta,
-            Seksjon("seksjon", Rolle.søker, fakta generator 2, fakta boolsk 1),
-            rootSubsumsjon = subsumsjon,
-        )
+        val prosess =
+            Prosess(
+                TestProsesser.Test,
+                fakta,
+                Seksjon("seksjon", Rolle.søker, fakta generator 2, fakta boolsk 1),
+                rootSubsumsjon = subsumsjon,
+            )
 
         prosess.generator(2).besvar(3)
         assertEquals(null, subsumsjon.resultat())

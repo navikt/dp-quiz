@@ -9,11 +9,10 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertContains
 
 internal class FaktaversjonTest {
-
-    private class Navn(override val id: String) : Faktatype {
-        override fun toString(): String {
-            return "Navn{id=$id}"
-        }
+    private class Navn(
+        override val id: String,
+    ) : Faktatype {
+        override fun toString(): String = "Navn{id=$id}"
     }
 
     @Test

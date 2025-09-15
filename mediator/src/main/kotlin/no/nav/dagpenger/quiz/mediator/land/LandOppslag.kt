@@ -4,9 +4,12 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.dagpenger.model.faktum.Land
 import java.io.FileNotFoundException
 
-data class LandKode(private val id: Int, val alpha3Code: String)
-internal object LandOppslag {
+data class LandKode(
+    private val id: Int,
+    val alpha3Code: String,
+)
 
+internal object LandOppslag {
     /**
      * world.json hentet fra https://github.com/stefangabos/world_countries
      */

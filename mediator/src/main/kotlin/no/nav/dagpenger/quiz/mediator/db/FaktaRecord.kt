@@ -62,11 +62,12 @@ class FaktaRecord : FaktaRepository {
     }
 
     override fun eksisterer(uuid: UUID): Boolean {
-        val query = queryOf(
-            //language=PostgreSQL
-            "SELECT id FROM fakta WHERE uuid = :uuid",
-            mapOf("uuid" to uuid),
-        )
+        val query =
+            queryOf(
+                //language=PostgreSQL
+                "SELECT id FROM fakta WHERE uuid = :uuid",
+                mapOf("uuid" to uuid),
+            )
         return using(sessionOf(dataSource)) { session ->
             session.run(
                 query.map { true }.asSingle,
@@ -74,24 +75,33 @@ class FaktaRecord : FaktaRepository {
         }
     }
 
-    private data class DaoProsess(override val id: String) : Faktatype
+    private data class DaoProsess(
+        override val id: String,
+    ) : Faktatype
 
     override fun hent(uuid: UUID): Fakta {
-        data class SoknadRad(val personId: UUID, val navn: String, val versjonId: Int)
+        data class SoknadRad(
+            val personId: UUID,
+            val navn: String,
+            val versjonId: Int,
+        )
 
-        val rad = using(sessionOf(dataSource)) { session ->
-            session.run(
-                queryOf(
-                    //language=PostgreSQL
-                    "SELECT fakta.person_id, versjon.navn , versjon.versjon_id FROM fakta JOIN faktaversjon AS versjon ON (versjon.id = fakta.versjon_id) WHERE uuid = ?",
-                    uuid,
-                ).map { row ->
-                    SoknadRad(UUID.fromString(row.string(1)), row.string(2), row.int(3))
-                }.asSingle,
-            )
-        } ?: throw IllegalArgumentException("Kan ikke hente fakta som ikke finnes, uuid: $uuid")
-        val fakta = Henvendelser.id(Faktaversjon(DaoProsess(rad.navn), rad.versjonId))
-            .fakta(personRecord.hentPerson(rad.personId), uuid)
+        val rad =
+            using(sessionOf(dataSource)) { session ->
+                session.run(
+                    queryOf(
+                        //language=PostgreSQL
+                        "SELECT fakta.person_id, versjon.navn , versjon.versjon_id FROM fakta JOIN faktaversjon AS versjon ON (versjon.id = fakta.versjon_id) WHERE uuid = ?",
+                        uuid,
+                    ).map { row ->
+                        SoknadRad(UUID.fromString(row.string(1)), row.string(2), row.int(3))
+                    }.asSingle,
+                )
+            } ?: throw IllegalArgumentException("Kan ikke hente fakta som ikke finnes, uuid: $uuid")
+        val fakta =
+            Henvendelser
+                .id(Faktaversjon(DaoProsess(rad.navn), rad.versjonId))
+                .fakta(personRecord.hentPerson(rad.personId), uuid)
 
         svarList(uuid).onEach { row ->
             fakta.idOrNull(row.id)?.also { rehydrerFaktum(row, it) }
@@ -136,7 +146,10 @@ class FaktaRecord : FaktaRepository {
         return true
     }
 
-    override fun migrer(uuid: UUID, tilVersjon: Faktaversjon?): Faktaversjon {
+    override fun migrer(
+        uuid: UUID,
+        tilVersjon: Faktaversjon?,
+    ): Faktaversjon {
         val gjeldendeVersjon = prosessversjon(uuid)
         val nyVersjon = tilVersjon ?: gjeldendeVersjon.siste()
 
@@ -158,13 +171,14 @@ class FaktaRecord : FaktaRepository {
 
                 when (forrigeFaktum) {
                     null -> inserts.add(mapOf("soknadId" to soknadId, "id" to faktum.faktumId))
-                    else -> updates.add(
-                        mapOf(
-                            "soknadId" to soknadId,
-                            "gammelFaktumId" to forrigeFaktum.faktumId,
-                            "nyFaktumId" to faktum.faktumId,
-                        ),
-                    )
+                    else ->
+                        updates.add(
+                            mapOf(
+                                "soknadId" to soknadId,
+                                "gammelFaktumId" to forrigeFaktum.faktumId,
+                                "nyFaktumId" to faktum.faktumId,
+                            ),
+                        )
                 }
             }
 
@@ -181,7 +195,10 @@ class FaktaRecord : FaktaRepository {
         return nyVersjon
     }
 
-    private data class FaktumMigrering(val faktumId: BigInteger, val rootId: Int)
+    private data class FaktumMigrering(
+        val faktumId: BigInteger,
+        val rootId: Int,
+    )
 
     private fun internSoknadId(uuid: UUID) =
         queryOf(
@@ -190,15 +207,17 @@ class FaktaRecord : FaktaRepository {
             uuid,
         ).map { it.bigDecimal("id").toBigInteger() }.asSingle
 
-    private fun settVersjon(soknadId: BigInteger, versjon: Faktaversjon) =
-        queryOf(
-            // language=PostgreSQL
-            """UPDATE fakta 
+    private fun settVersjon(
+        soknadId: BigInteger,
+        versjon: Faktaversjon,
+    ) = queryOf(
+        // language=PostgreSQL
+        """UPDATE fakta 
             |SET versjon_id = (SELECT id FROM faktaversjon WHERE navn = :navn AND versjon_id = :versjonId)
             |WHERE id = :soknadId
-            """.trimMargin(),
-            mapOf("navn" to versjon.faktatype.id, "versjonId" to versjon.versjon, "soknadId" to soknadId),
-        ).asUpdate
+        """.trimMargin(),
+        mapOf("navn" to versjon.faktatype.id, "versjonId" to versjon.versjon, "soknadId" to soknadId),
+    ).asUpdate
 
     private fun hentFaktum(sisteVersjon: Faktaversjon) =
         queryOf(
@@ -217,19 +236,20 @@ class FaktaRecord : FaktaRepository {
             )
         }.asList
 
-    private fun prosessversjon(uuid: UUID): Faktaversjon = using(sessionOf(dataSource)) { session ->
-        session.run(
-            queryOf(
-                // language=PostgreSQL
-                """SELECT v.navn, v.versjon_id
+    private fun prosessversjon(uuid: UUID): Faktaversjon =
+        using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf(
+                    // language=PostgreSQL
+                    """SELECT v.navn, v.versjon_id
                 |FROM faktaversjon v
                 |LEFT JOIN fakta s ON v.id=s.versjon_id
                 |WHERE s.uuid = :uuid
-                """.trimMargin(),
-                mapOf("uuid" to uuid),
-            ).map { Faktaversjon(DaoProsess(it.string("navn")), it.int("versjon_id")) }.asSingle,
-        )
-    } ?: throw IllegalArgumentException("Kan ikke finne prosessversjon for en søknad som ikke finnes, uuid: $uuid")
+                    """.trimMargin(),
+                    mapOf("uuid" to uuid),
+                ).map { Faktaversjon(DaoProsess(it.string("navn")), it.int("versjon_id")) }.asSingle,
+            )
+        } ?: throw IllegalArgumentException("Kan ikke finne prosessversjon for en søknad som ikke finnes, uuid: $uuid")
 
     private fun skrivNyeFaktum(
         nyeSvar: MutableMap<String, Faktum<*>?>,
@@ -251,7 +271,8 @@ class FaktaRecord : FaktaRepository {
         fakta: Fakta,
         transactionalSession: TransactionalSession,
     ) {
-        originalSvar.filterNot { (id, faktum) -> nyeSvar[id]?.svar() == faktum?.svar() }
+        originalSvar
+            .filterNot { (id, faktum) -> nyeSvar[id]?.svar() == faktum?.svar() }
             .forEach { (id, originaltFaktum) ->
                 val (rootId, indeks) = fakta.id(id).reflection { rootId, indeks -> rootId to indeks }
 
@@ -264,9 +285,11 @@ class FaktaRecord : FaktaRepository {
             }
     }
 
-    private fun svarMap(fakta: Fakta): MutableMap<String, Faktum<*>?> = fakta.associate { faktum ->
-        faktum.id to (if (faktum.erBesvart()) faktum else null)
-    }.toMutableMap()
+    private fun svarMap(fakta: Fakta): MutableMap<String, Faktum<*>?> =
+        fakta
+            .associate { faktum ->
+                faktum.id to (if (faktum.erBesvart()) faktum else null)
+            }.toMutableMap()
 
     private fun slettDødeTemplatefakta(
         fakta: Fakta,
@@ -274,7 +297,9 @@ class FaktaRecord : FaktaRepository {
         originalSvar: MutableMap<String, Faktum<*>?>,
         transactionalSession: TransactionalSession,
     ) {
-        originalSvar.keys.toSet().subtract(nyeSvar.keys.toSet())
+        originalSvar.keys
+            .toSet()
+            .subtract(nyeSvar.keys.toSet())
             .map { FaktumId(it).reflection { rootId, indeks -> Triple(rootId, indeks, it) } }
             .forEach { (rootId, indeks, id) ->
                 val originaltFaktum = originalSvar[id]?.svar()
@@ -286,26 +311,30 @@ class FaktaRecord : FaktaRepository {
             }
     }
 
-    private fun slettDødeFaktum(fakta: Fakta, rootId: Int, indeks: Int) = queryOf(
+    private fun slettDødeFaktum(
+        fakta: Fakta,
+        rootId: Int,
+        indeks: Int,
+    ) = queryOf(
         //language=PostgreSQL
         """
-              DELETE FROM faktum_verdi
-              WHERE id IN 
-                (SELECT faktum_verdi.id AS faktum_id FROM fakta, faktum_verdi, faktum
-                  WHERE faktum_verdi.soknad_id = fakta.id 
-                        AND faktum_verdi.faktum_id = faktum.id 
-                        AND fakta.uuid = ? 
-                        AND faktum.root_id = ? 
-                        AND faktum_verdi.indeks = ?
-                )
+        DELETE FROM faktum_verdi
+        WHERE id IN 
+          (SELECT faktum_verdi.id AS faktum_id FROM fakta, faktum_verdi, faktum
+            WHERE faktum_verdi.soknad_id = fakta.id 
+                  AND faktum_verdi.faktum_id = faktum.id 
+                  AND fakta.uuid = ? 
+                  AND faktum.root_id = ? 
+                  AND faktum_verdi.indeks = ?
+          )
         """.trimIndent(),
         fakta.uuid,
         rootId,
         indeks,
     ).asExecute
 
-    private fun svarList(uuid: UUID): List<FaktumVerdiRow> {
-        return using(sessionOf(dataSource)) { session ->
+    private fun svarList(uuid: UUID): List<FaktumVerdiRow> =
+        using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
                     //language=PostgreSQL
@@ -361,7 +390,6 @@ class FaktaRecord : FaktaRepository {
                 }.asList,
             )
         }
-    }
 
     private class FaktumVerdiRow(
         val root_id: Int,
@@ -384,7 +412,10 @@ class FaktaRecord : FaktaRepository {
     )
 
     @Suppress("UNCHECKED_CAST")
-    private fun rehydrerFaktum(row: FaktumVerdiRow, faktum: Faktum<*>) {
+    private fun rehydrerFaktum(
+        row: FaktumVerdiRow,
+        faktum: Faktum<*>,
+    ) {
         if (row.heltall != null) {
             (faktum as Faktum<Int>).rehydrer(row.heltall, row.besvartAv)
         }
@@ -434,8 +465,12 @@ class FaktaRecord : FaktaRepository {
         }
     }
 
-    private fun oppdaterFaktum(faktum: Faktum<*>?, fakta: Fakta, indeks: Int, rootId: Int): UpdateQueryAction =
-        FaktumUpdateBuilder(fakta, indeks, rootId).build(faktum?.svar(), besvart(faktum?.besvartAv()))
+    private fun oppdaterFaktum(
+        faktum: Faktum<*>?,
+        fakta: Fakta,
+        indeks: Int,
+        rootId: Int,
+    ): UpdateQueryAction = FaktumUpdateBuilder(fakta, indeks, rootId).build(faktum?.svar(), besvart(faktum?.besvartAv()))
 
     private fun besvart(besvartAv: String?): Int? {
         val besvarer = besvartAv ?: return null
@@ -459,7 +494,11 @@ class FaktaRecord : FaktaRepository {
         }
     }
 
-    private fun arkiverFaktum(fakta: Fakta, rootId: Int, indeks: Int): ExecuteQueryAction =
+    private fun arkiverFaktum(
+        fakta: Fakta,
+        rootId: Int,
+        indeks: Int,
+    ): ExecuteQueryAction =
         queryOf(
             //language=PostgreSQL
             """INSERT INTO gammel_faktum_verdi (soknad_id, faktum_id, indeks, boolsk, aarlig_inntekt, dokument_id, dato, heltall, envalg_id, flervalg_id, tekst,land, periode_id, opprettet, besvart_av, desimaltall)
@@ -493,7 +532,11 @@ class FaktaRecord : FaktaRepository {
             indeks,
         ).asExecute
 
-    private fun opprettTemplateFaktum(indeks: Int, fakta: Fakta, rootId: Int): ExecuteQueryAction =
+    private fun opprettTemplateFaktum(
+        indeks: Int,
+        fakta: Fakta,
+        rootId: Int,
+    ): ExecuteQueryAction =
         queryOf(
             //language=PostgreSQL
             """INSERT INTO faktum_verdi (indeks, soknad_id, faktum_id)
@@ -511,8 +554,8 @@ class FaktaRecord : FaktaRepository {
             ),
         ).asExecute
 
-    override fun opprettede(identer: Identer): Map<LocalDateTime, UUID> {
-        return using(sessionOf(dataSource)) { session ->
+    override fun opprettede(identer: Identer): Map<LocalDateTime, UUID> =
+        using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
                     //language=PostgreSQL
@@ -521,9 +564,11 @@ class FaktaRecord : FaktaRepository {
                 ).map { it.localDateTime(1) to UUID.fromString(it.string(2)) }.asList,
             )
         }.toMap()
-    }
 
-    override fun rehydrerEllerOpprett(fakta: Fakta, person: Person) {
+    override fun rehydrerEllerOpprett(
+        fakta: Fakta,
+        person: Person,
+    ) {
         if (eksisterer(fakta.uuid)) {
             rehydrerFakta(fakta)
         } else {
@@ -531,6 +576,7 @@ class FaktaRecord : FaktaRepository {
         }
     }
 
+    @Suppress("ktlint")
     private class SlettForeldreløseFakta : ProsessRepositoryObserver {
         override fun slett(prosessUUID: UUID, faktaUUID: UUID) {
             return sessionOf(dataSource).use { session ->

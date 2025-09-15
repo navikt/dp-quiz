@@ -14,65 +14,71 @@ import java.time.LocalDateTime
 import kotlin.test.assertEquals
 
 internal class JsonNodeExtensionsTest {
-
-    private val jsonMedSvarlisteMedEtValg = """
+    private val jsonMedSvarlisteMedEtValg =
+        """
 {
   "svar": [
       "valg2"
   ]
 }
-    """.trimIndent()
+        """.trimIndent()
 
-    private val jsonMedSvarlisteMedFlereValg = """
+    private val jsonMedSvarlisteMedFlereValg =
+        """
 {
   "svar": [
       "valg1",
       "valg2"
   ]
 }
-    """.trimIndent()
+        """.trimIndent()
 
-    private val jsonMedSvartekst = """
+    private val jsonMedSvartekst =
+        """
 {
   "svar": "Dette er et tekstsvar"
 }
-    """.trimIndent()
+        """.trimIndent()
 
-    private val jsonMedPeriodeISvaret = """
+    private val jsonMedPeriodeISvaret =
+        """
 {
   "svar": {
       "fom": "2018-01-01",
       "tom": "2018-01-20"
   }
 }
-    """.trimIndent()
+        """.trimIndent()
 
-    private val jsonMedPågåendePeriodeISvaret = """
+    private val jsonMedPågåendePeriodeISvaret =
+        """
 {
   "svar": {
       "fom": "2018-02-01",
       "tom": null
   }
 }
-    """.trimIndent()
+        """.trimIndent()
 
-    private val jsonMedPeriodeUtenTom = """
+    private val jsonMedPeriodeUtenTom =
+        """
 {
   "svar": {
       "fom": "2018-02-01"
   
   }
 }
-    """.trimIndent()
+        """.trimIndent()
 
-    private val jsonMedDokumentsvar = """
+    private val jsonMedDokumentsvar =
+        """
 {
   "svar": {
       "lastOppTidsstempel": "2018-03-01T12:00",
       "urn": "urn:dokumnetlager:dokumentId"
   }
 }
-    """.trimIndent()
+        """.trimIndent()
 
     private val objectMapper = jacksonObjectMapper()
 

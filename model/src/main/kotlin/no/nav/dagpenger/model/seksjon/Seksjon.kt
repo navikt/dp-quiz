@@ -33,8 +33,7 @@ class Seksjon private constructor(
                 it.filtrertSeksjon(relevanteFakta)
             }
 
-        internal fun Collection<Seksjon>.brukerSeksjoner() =
-            this.filter { it.rolle == Rolle.søker }
+        internal fun Collection<Seksjon>.brukerSeksjoner() = this.filter { it.rolle == Rolle.søker }
 
         internal fun List<Seksjon>.medSøknadprosess() = filter { it::_prosess.isInitialized }
     }
@@ -58,8 +57,7 @@ class Seksjon private constructor(
 
     internal fun gjeldendeFakta(subsumsjon: Subsumsjon) = filtrertSeksjon(subsumsjon.nesteFakta())
 
-    internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>) =
-        nesteFakta.any { it in seksjonFakta }
+    internal operator fun contains(nesteFakta: Set<GrunnleggendeFaktum<*>>) = nesteFakta.any { it in seksjonFakta }
 
     internal fun søknadprosess(prosess: Prosess) {
         this._prosess = prosess
@@ -67,8 +65,8 @@ class Seksjon private constructor(
 
     internal fun bareTemplates() = seksjonFakta.all { it is TemplateFaktum }
 
-    internal fun deepCopy(indeks: Int): Seksjon {
-        return if (indeks <= genererteSeksjoner.size) {
+    internal fun deepCopy(indeks: Int): Seksjon =
+        if (indeks <= genererteSeksjoner.size) {
             genererteSeksjoner[indeks - 1]
         } else {
             Seksjon(navn, rolle, mutableSetOf(), avhengerAvFakta.toMutableSet(), indeks).also {
@@ -77,7 +75,6 @@ class Seksjon private constructor(
                 it.søknadprosess(_prosess)
             }
         }
-    }
 
     fun accept(visitor: ProsessVisitor) {
         visitor.preVisit(this, rolle, seksjonFakta, indeks)
@@ -100,16 +97,17 @@ class Seksjon private constructor(
             }
         }
 
-    internal fun bygg(fakta: Fakta) = Seksjon(
-        navn,
-        rolle,
-        seksjonFakta
-            .map { fakta.id(it.faktumId) }
-            .toMutableSet(),
-        avhengerAvFakta
-            .map { fakta.id(it.faktumId) }
-            .toMutableSet(),
-    )
+    internal fun bygg(fakta: Fakta) =
+        Seksjon(
+            navn,
+            rolle,
+            seksjonFakta
+                .map { fakta.id(it.faktumId) }
+                .toMutableSet(),
+            avhengerAvFakta
+                .map { fakta.id(it.faktumId) }
+                .toMutableSet(),
+        )
 
     internal fun tilbakestill(templateFaktumId: FaktumId) {
         seksjonFakta.removeIf { it.faktumId.generertFra(templateFaktumId) }

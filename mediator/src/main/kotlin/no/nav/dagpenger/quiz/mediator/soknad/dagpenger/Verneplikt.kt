@@ -19,43 +19,46 @@ object Verneplikt : DslFaktaseksjon {
     const val `dokumentasjon avtjent militær sivilforsvar tjeneste siste 12 mnd` = 7002
     const val `godkjenning avtjent militær sivilforsvar tjeneste siste 12 mnd` = 7003
 
-    override val fakta = listOf(
-        boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd" id `avtjent militær sivilforsvar tjeneste siste 12 mnd`,
-
-        dokument faktum "faktum.dokument-avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-dokumentasjon"
-            id `dokumentasjon avtjent militær sivilforsvar tjeneste siste 12 mnd` avhengerAv `avtjent militær sivilforsvar tjeneste siste 12 mnd`,
-
-        boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-godkjenning"
-            id `godkjenning avtjent militær sivilforsvar tjeneste siste 12 mnd`
-            avhengerAv `dokumentasjon avtjent militær sivilforsvar tjeneste siste 12 mnd`
-    )
-
-    override fun seksjon(fakta: Fakta) = listOf(
-        fakta.seksjon(
-            "verneplikt",
-            Rolle.søker,
-            *spørsmålsrekkefølgeForSøker()
+    override val fakta =
+        listOf(
+            boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd" id `avtjent militær sivilforsvar tjeneste siste 12 mnd`,
+            dokument faktum "faktum.dokument-avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-dokumentasjon"
+                id `dokumentasjon avtjent militær sivilforsvar tjeneste siste 12 mnd` avhengerAv `avtjent militær sivilforsvar tjeneste siste 12 mnd`,
+            boolsk faktum "faktum.avtjent-militaer-sivilforsvar-tjeneste-siste-12-mnd-godkjenning"
+                id `godkjenning avtjent militær sivilforsvar tjeneste siste 12 mnd`
+                avhengerAv `dokumentasjon avtjent militær sivilforsvar tjeneste siste 12 mnd`,
         )
-    )
+
+    override fun seksjon(fakta: Fakta) =
+        listOf(
+            fakta.seksjon(
+                "verneplikt",
+                Rolle.søker,
+                *spørsmålsrekkefølgeForSøker(),
+            ),
+        )
 
     // https://lovdata.no/lov/2016-08-12-77/§6 Vernepliktsalder er 19 til og med 44 år
     // https://lovdata.no/lov/1997-02-28-19/§4-19
-    override fun regeltre(fakta: Fakta): DeltreSubsumsjon = with(fakta) {
-        "verneplikt".deltre {
-            "må godkjennes hvis ja".minstEnAv(
-                (boolsk(`avtjent militær sivilforsvar tjeneste siste 12 mnd`) er true).sannsynliggjøresAv(
-                    dokument(
-                        `dokumentasjon avtjent militær sivilforsvar tjeneste siste 12 mnd`
-                    )
-                ).godkjentAv(boolsk(`godkjenning avtjent militær sivilforsvar tjeneste siste 12 mnd`)),
-                boolsk(`avtjent militær sivilforsvar tjeneste siste 12 mnd`) er false
-            )
+    override fun regeltre(fakta: Fakta): DeltreSubsumsjon =
+        with(fakta) {
+            "verneplikt".deltre {
+                "må godkjennes hvis ja".minstEnAv(
+                    (boolsk(`avtjent militær sivilforsvar tjeneste siste 12 mnd`) er true)
+                        .sannsynliggjøresAv(
+                            dokument(
+                                `dokumentasjon avtjent militær sivilforsvar tjeneste siste 12 mnd`,
+                            ),
+                        ).godkjentAv(boolsk(`godkjenning avtjent militær sivilforsvar tjeneste siste 12 mnd`)),
+                    boolsk(`avtjent militær sivilforsvar tjeneste siste 12 mnd`) er false,
+                )
+            }
         }
-    }
 
-    override val spørsmålsrekkefølgeForSøker = listOf(
-        `avtjent militær sivilforsvar tjeneste siste 12 mnd`,
-        `dokumentasjon avtjent militær sivilforsvar tjeneste siste 12 mnd`,
-        `godkjenning avtjent militær sivilforsvar tjeneste siste 12 mnd`
-    )
+    override val spørsmålsrekkefølgeForSøker =
+        listOf(
+            `avtjent militær sivilforsvar tjeneste siste 12 mnd`,
+            `dokumentasjon avtjent militær sivilforsvar tjeneste siste 12 mnd`,
+            `godkjenning avtjent militær sivilforsvar tjeneste siste 12 mnd`,
+        )
 }

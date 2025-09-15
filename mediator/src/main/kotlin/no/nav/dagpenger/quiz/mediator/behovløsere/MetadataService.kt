@@ -22,16 +22,17 @@ internal class MetadataService(
     }
 
     init {
-        River(rapidsConnection).apply {
-            precondition {
-                it.requireValue("@event_name", "behov")
-                it.requireAllOrAny("@behov", listOf(behov))
-                it.forbid("@løsning")
-            }
-            validate {
-                it.requireKey("søknad_uuid")
-            }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                precondition {
+                    it.requireValue("@event_name", "behov")
+                    it.requireAllOrAny("@behov", listOf(behov))
+                    it.forbid("@løsning")
+                }
+                validate {
+                    it.requireKey("søknad_uuid")
+                }
+            }.register(this)
     }
 
     override fun onPacket(
@@ -58,7 +59,10 @@ internal class MetadataService(
 fun interface MetadataStrategi {
     fun metadata(prosess: Prosess): Metadata
 
-    data class Metadata(val skjemakode: String? = null, val tittel: String? = null) {
+    data class Metadata(
+        val skjemakode: String? = null,
+        val tittel: String? = null,
+    ) {
         init {
             require(listOf(skjemakode, tittel).any { it != null }) { "Metadata må ha enten skjemakode eller tittel" }
         }

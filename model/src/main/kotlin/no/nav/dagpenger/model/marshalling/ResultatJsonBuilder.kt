@@ -11,7 +11,6 @@ import java.util.UUID
 class ResultatJsonBuilder(
     private val prosess: Prosess,
 ) : FaktaJsonBuilder() {
-
     init {
         prosess.fakta.accept(this)
         prosess.rootSubsumsjon.mulige().accept(this)
@@ -25,7 +24,12 @@ class ResultatJsonBuilder(
         return super.resultat()
     }
 
-    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+    override fun preVisit(
+        fakta: Fakta,
+        faktaversjon: Faktaversjon,
+        uuid: UUID,
+        navBehov: FaktumNavBehov,
+    ) {
         super.preVisit(fakta, faktaversjon, uuid, navBehov)
         root.put("@event_name", "prosess_resultat")
         root.put("@opprettet", "${LocalDateTime.now()}")

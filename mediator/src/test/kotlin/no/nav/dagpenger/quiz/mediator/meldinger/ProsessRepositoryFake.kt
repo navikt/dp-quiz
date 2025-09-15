@@ -9,14 +9,19 @@ import no.nav.dagpenger.quiz.mediator.db.ProsessRepository
 import no.nav.dagpenger.quiz.mediator.helpers.testPerson
 import java.util.UUID
 
-internal class ProsessRepositoryFake(private val prosesstype: Prosesstype, private val faktaversjon: Faktaversjon) :
-    ProsessRepository {
+internal class ProsessRepositoryFake(
+    private val prosesstype: Prosesstype,
+    private val faktaversjon: Faktaversjon,
+) : ProsessRepository {
     var prosess: Prosess? = null
     var hentet: Int = 0
 
-    override fun ny(person: Identer, ikkeBrukt: Prosesstype, uuid: UUID, faktaUUID: UUID): Prosess {
-        return Henvendelser.prosess(testPerson, prosesstype, uuid, faktaUUID, faktaversjon)
-    }
+    override fun ny(
+        person: Identer,
+        ikkeBrukt: Prosesstype,
+        uuid: UUID,
+        faktaUUID: UUID,
+    ): Prosess = Henvendelser.prosess(testPerson, prosesstype, uuid, faktaUUID, faktaversjon)
 
     override fun hent(uuid: UUID) = prosess!!.also { hentet++ }
 

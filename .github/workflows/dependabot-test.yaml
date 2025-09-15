@@ -15,8 +15,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
-      - uses: gradle/gradle-build-action@v3.5.0
-        with:
-          arguments: --configuration-cache test
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew --configuration-cache test

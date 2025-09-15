@@ -416,7 +416,8 @@ internal class SøkerJsonBuilderTest {
                             prototypeFakta.dato(20).utfylt()
                         },
                     "Grunnleggende med dokumentasjon".minstEnAv(
-                        (prototypeFakta.boolsk(24) er true).sannsynliggjøresAv(prototypeFakta.dokument(25))
+                        (prototypeFakta.boolsk(24) er true)
+                            .sannsynliggjøresAv(prototypeFakta.dokument(25))
                             .godkjentAv(prototypeFakta.boolsk(26)),
                         prototypeFakta.boolsk(24) er false,
                     ),

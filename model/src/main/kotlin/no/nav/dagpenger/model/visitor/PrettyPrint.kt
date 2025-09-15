@@ -17,7 +17,9 @@ import no.nav.dagpenger.model.subsumsjon.MinstEnAvSubsumsjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.TomSubsumsjon
 
-internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
+internal class PrettyPrint(
+    subsumsjon: Subsumsjon,
+) : SubsumsjonVisitor {
     private var result = ""
     private var indentTeller = 0
 
@@ -27,35 +29,72 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
 
     fun result() = result
 
-    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(
+        subsumsjon: EnkelSubsumsjon,
+        regel: Regel,
+        fakta: List<Faktum<*>>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         melding("${status(resultat)} $subsumsjon")
         indentTeller++
     }
 
-    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(
+        subsumsjon: EnkelSubsumsjon,
+        regel: Regel,
+        fakta: List<Faktum<*>>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         indentTeller--
     }
 
-    override fun preVisit(subsumsjon: AlleSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(
+        subsumsjon: AlleSubsumsjon,
+        subsumsjoner: List<Subsumsjon>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         melding("${status(resultat)} Kombinasjon av subsumsjoner ${subsumsjon.navn}")
         indentTeller++
     }
 
-    override fun postVisit(subsumsjon: AlleSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(
+        subsumsjon: AlleSubsumsjon,
+        subsumsjoner: List<Subsumsjon>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         indentTeller--
     }
 
-    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(
+        subsumsjon: MinstEnAvSubsumsjon,
+        subsumsjoner: List<Subsumsjon>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         melding("${status(resultat)} Kombinasjon av subsumsjoner ${subsumsjon.navn}")
         indentTeller++
     }
 
-    override fun preVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(
+        subsumsjon: DeltreSubsumsjon,
+        child: Subsumsjon,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         melding("${status(resultat)} Resultat av subsumsjon ${subsumsjon.navn}")
         indentTeller++
     }
 
-    override fun postVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(
+        subsumsjon: DeltreSubsumsjon,
+        child: Subsumsjon,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         indentTeller--
     }
 
@@ -64,17 +103,18 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         action: GodkjenningsSubsumsjon.Action,
         godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         lokaltResultat: Boolean?,
-        childResultat: Boolean?
+        childResultat: Boolean?,
     ) {
         melding("${status(lokaltResultat)} Resultat av subsumsjon ${subsumsjon.navn}")
         indentTeller++
     }
+
     override fun postVisit(
         subsumsjon: GodkjenningsSubsumsjon,
         action: GodkjenningsSubsumsjon.Action,
         godkjenning: List<GrunnleggendeFaktum<Boolean>>,
         resultat: Boolean?,
-        childResultat: Boolean?
+        childResultat: Boolean?,
     ) {
         indentTeller--
     }
@@ -87,7 +127,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         children: Set<Faktum<*>>,
         clazz: Class<R>,
         regel: FaktaRegel<R>,
-        svar: R
+        svar: R,
     ) {
         melding("Faktum: $faktum er utledet til $svar")
         indentTeller++
@@ -100,13 +140,18 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         avhengerAvFakta: Set<Faktum<*>>,
         children: Set<Faktum<*>>,
         clazz: Class<R>,
-        regel: FaktaRegel<R>
+        regel: FaktaRegel<R>,
     ) {
         melding("Faktum: $faktum er ubesvart")
         indentTeller++
     }
 
-    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(
+        subsumsjon: MinstEnAvSubsumsjon,
+        subsumsjoner: List<Subsumsjon>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         indentTeller--
     }
 
@@ -114,12 +159,15 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         faktum: UtledetFaktum<R>,
         id: String,
         children: Set<Faktum<*>>,
-        clazz: Class<R>
+        clazz: Class<R>,
     ) {
         indentTeller--
     }
 
-    override fun preVisitOppfylt(parent: Subsumsjon, child: Subsumsjon) {
+    override fun preVisitOppfylt(
+        parent: Subsumsjon,
+        child: Subsumsjon,
+    ) {
         if (child is TomSubsumsjon) return
 
         indentTeller--
@@ -127,9 +175,15 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         indentTeller++
     }
 
-    override fun postVisitOppfylt(parent: Subsumsjon, child: Subsumsjon) {} // Tom med vilje
+    override fun postVisitOppfylt(
+        parent: Subsumsjon,
+        child: Subsumsjon,
+    ) {} // Tom med vilje
 
-    override fun preVisitIkkeOppfylt(parent: Subsumsjon, child: Subsumsjon) {
+    override fun preVisitIkkeOppfylt(
+        parent: Subsumsjon,
+        child: Subsumsjon,
+    ) {
         if (child is TomSubsumsjon) return
 
         indentTeller--
@@ -137,7 +191,10 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         indentTeller++
     }
 
-    override fun postVisitIkkeOppfylt(parent: Subsumsjon, child: Subsumsjon) {} // Tom med vilje
+    override fun postVisitIkkeOppfylt(
+        parent: Subsumsjon,
+        child: Subsumsjon,
+    ) {} // Tom med vilje
 
     override fun <R : Comparable<R>> visitUtenSvar(
         faktum: GrunnleggendeFaktum<R>,
@@ -149,7 +206,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         roller: Set<Rolle>,
         clazz: Class<R>,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
         melding("Faktum: $faktum for roller ${roller.joinToString(" og ") { it.typeNavn }} er ubesvart")
     }
@@ -166,7 +223,7 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         svar: R,
         besvartAv: String?,
         gyldigeValg: GyldigeValg?,
-        landGrupper: LandGrupper?
+        landGrupper: LandGrupper?,
     ) {
         melding("Faktum: $faktum for roller ${roller.joinToString(" og ") { it.typeNavn }} er besvart med $svar")
     }
@@ -175,9 +232,10 @@ internal class PrettyPrint(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
         result += "  ".repeat(indentTeller) + "${navn}\n"
     }
 
-    private fun status(resultat: Boolean?) = when (resultat) {
-        true -> "[bestått]"
-        false -> "[mislyktes]"
-        null -> "[ukjent]"
-    }
+    private fun status(resultat: Boolean?) =
+        when (resultat) {
+            true -> "[bestått]"
+            false -> "[mislyktes]"
+            null -> "[ukjent]"
+        }
 }

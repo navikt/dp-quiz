@@ -21,29 +21,30 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class UtledetFaktumFactoryTest {
-
     @Test
     fun `maks dato`() {
-        val fakta = Fakta(
-            testversjon,
-            dato faktum "dato1" id 1,
-            dato faktum "dato2" id 2,
-            dato faktum "dato3" id 3,
-            maks dato "maks dato" av 1 og 2 og 3 id 123,
-        )
+        val fakta =
+            Fakta(
+                testversjon,
+                dato faktum "dato1" id 1,
+                dato faktum "dato2" id 2,
+                dato faktum "dato3" id 3,
+                maks dato "maks dato" av 1 og 2 og 3 id 123,
+            )
 
-        val prosess = Prosess(
-            TestProsesser.Test,
-            fakta,
-            Seksjon(
-                "seksjon",
-                Rolle.søker,
-                fakta dato 1,
-                fakta dato 2,
-                fakta dato 3,
-                fakta dato 123,
-            ),
-        )
+        val prosess =
+            Prosess(
+                TestProsesser.Test,
+                fakta,
+                Seksjon(
+                    "seksjon",
+                    Rolle.søker,
+                    fakta dato 1,
+                    fakta dato 2,
+                    fakta dato 3,
+                    fakta dato 123,
+                ),
+            )
 
         val faktum = prosess.dato("123")
 
@@ -61,26 +62,28 @@ internal class UtledetFaktumFactoryTest {
 
     @Test
     fun `maks inntekt`() {
-        val fakta = Fakta(
-            testversjon,
-            inntekt faktum "inntekt1" id 1,
-            inntekt faktum "inntekt2" id 2,
-            inntekt faktum "inntekt3" id 3,
-            maks inntekt "maks inntekt" av 1 og 2 og 3 id 123,
-        )
+        val fakta =
+            Fakta(
+                testversjon,
+                inntekt faktum "inntekt1" id 1,
+                inntekt faktum "inntekt2" id 2,
+                inntekt faktum "inntekt3" id 3,
+                maks inntekt "maks inntekt" av 1 og 2 og 3 id 123,
+            )
 
-        val prosess = Prosess(
-            TestProsesser.Test,
-            fakta,
-            Seksjon(
-                "seksjon",
-                Rolle.søker,
-                fakta inntekt 1,
-                fakta inntekt 2,
-                fakta inntekt 3,
-                fakta inntekt 123,
-            ),
-        )
+        val prosess =
+            Prosess(
+                TestProsesser.Test,
+                fakta,
+                Seksjon(
+                    "seksjon",
+                    Rolle.søker,
+                    fakta inntekt 1,
+                    fakta inntekt 2,
+                    fakta inntekt 3,
+                    fakta inntekt 123,
+                ),
+            )
 
         val faktum = prosess.inntekt("123")
 
@@ -98,26 +101,28 @@ internal class UtledetFaktumFactoryTest {
 
     @Test
     fun `boolean and`() {
-        val fakta = Fakta(
-            testversjon,
-            boolsk faktum "jaNei1" id 1,
-            boolsk faktum "jaNei2" id 2,
-            boolsk faktum "jaNei3" id 3,
-            alle ja "alle ja" av 1 og 2 og 3 id 123,
-        )
+        val fakta =
+            Fakta(
+                testversjon,
+                boolsk faktum "jaNei1" id 1,
+                boolsk faktum "jaNei2" id 2,
+                boolsk faktum "jaNei3" id 3,
+                alle ja "alle ja" av 1 og 2 og 3 id 123,
+            )
 
-        val prosess = Prosess(
-            TestProsesser.Test,
-            fakta,
-            Seksjon(
-                "seksjon",
-                Rolle.søker,
-                fakta boolsk 1,
-                fakta boolsk 2,
-                fakta boolsk 3,
-                fakta boolsk 123,
-            ),
-        )
+        val prosess =
+            Prosess(
+                TestProsesser.Test,
+                fakta,
+                Seksjon(
+                    "seksjon",
+                    Rolle.søker,
+                    fakta boolsk 1,
+                    fakta boolsk 2,
+                    fakta boolsk 3,
+                    fakta boolsk 123,
+                ),
+            )
         val faktum = prosess.dato("123")
 
         assertFalse(faktum.erBesvart())
@@ -134,15 +139,16 @@ internal class UtledetFaktumFactoryTest {
 
     @Test
     fun `avhengigheter til utledetfaktum`() {
-        val fakta = Fakta(
-            testversjon,
-            dato faktum "dato1" id 1,
-            dato faktum "dato2" id 2,
-            dato faktum "dato3" id 3,
-            maks dato "maks dato" av 1 og 2 og 3 id 123,
-            boolsk faktum "boolsk" id 4 avhengerAv 1123,
-            maks dato "maks dato 3" av 1 og 123 id 1123,
-        ).testSøknadprosess()
+        val fakta =
+            Fakta(
+                testversjon,
+                dato faktum "dato1" id 1,
+                dato faktum "dato2" id 2,
+                dato faktum "dato3" id 3,
+                maks dato "maks dato" av 1 og 2 og 3 id 123,
+                boolsk faktum "boolsk" id 4 avhengerAv 1123,
+                maks dato "maks dato 3" av 1 og 123 id 1123,
+            ).testSøknadprosess()
         fakta.dato(1).besvar(1.januar)
         fakta.dato(2).besvar(2.januar)
         fakta.dato(3).besvar(3.januar)

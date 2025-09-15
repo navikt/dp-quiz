@@ -8,47 +8,49 @@ class BareEnAvSubsumsjon private constructor(
     navn: String,
     subsumsjoner: List<Subsumsjon>,
     oppfyltSubsumsjon: Subsumsjon,
-    ikkeOppfyltSubsumsjon: Subsumsjon
+    ikkeOppfyltSubsumsjon: Subsumsjon,
 ) : SammensattSubsumsjon(navn, subsumsjoner.toMutableList(), oppfyltSubsumsjon, ikkeOppfyltSubsumsjon) {
-
     internal constructor(navn: String, subsumsjoner: List<Subsumsjon>) : this(
         navn,
         subsumsjoner,
         TomSubsumsjon,
-        TomSubsumsjon
+        TomSubsumsjon,
     )
 
-    override fun deepCopy(prosess: Prosess) = BareEnAvSubsumsjon(
-        navn,
-        subsumsjoner.map { it.deepCopy(prosess) },
-        oppfyltSubsumsjon.deepCopy(prosess),
-        ikkeOppfyltSubsumsjon.deepCopy(prosess)
-    )
+    override fun deepCopy(prosess: Prosess) =
+        BareEnAvSubsumsjon(
+            navn,
+            subsumsjoner.map { it.deepCopy(prosess) },
+            oppfyltSubsumsjon.deepCopy(prosess),
+            ikkeOppfyltSubsumsjon.deepCopy(prosess),
+        )
 
-    override fun bygg(fakta: Fakta) = BareEnAvSubsumsjon(
-        navn,
-        subsumsjoner.map { it.bygg(fakta) }.toMutableList(),
-        oppfyltSubsumsjon.bygg(fakta),
-        ikkeOppfyltSubsumsjon.bygg(fakta)
-    )
+    override fun bygg(fakta: Fakta) =
+        BareEnAvSubsumsjon(
+            navn,
+            subsumsjoner.map { it.bygg(fakta) }.toMutableList(),
+            oppfyltSubsumsjon.bygg(fakta),
+            ikkeOppfyltSubsumsjon.bygg(fakta),
+        )
 
-    override fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon {
-        return BareEnAvSubsumsjon(
+    override fun deepCopy(
+        indeks: Int,
+        fakta: Fakta,
+    ): Subsumsjon =
+        BareEnAvSubsumsjon(
             "$navn [$indeks]",
             subsumsjoner.map { it.deepCopy(indeks, fakta) }.toMutableList(),
             oppfyltSubsumsjon.deepCopy(indeks, fakta),
-            ikkeOppfyltSubsumsjon.deepCopy(indeks, fakta)
+            ikkeOppfyltSubsumsjon.deepCopy(indeks, fakta),
         )
-    }
 
-    override fun deepCopy(): Subsumsjon {
-        return BareEnAvSubsumsjon(
+    override fun deepCopy(): Subsumsjon =
+        BareEnAvSubsumsjon(
             navn,
             subsumsjoner.map { it.deepCopy() },
             oppfyltSubsumsjon.deepCopy(),
-            ikkeOppfyltSubsumsjon.deepCopy()
+            ikkeOppfyltSubsumsjon.deepCopy(),
         )
-    }
 
     override fun accept(visitor: SubsumsjonVisitor) {
         resultat().also {

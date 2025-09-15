@@ -25,15 +25,16 @@ internal class UtledetFaktumTest {
 
     @BeforeEach
     fun setup() {
-        prosess = Fakta(
-            testversjon,
-            maks dato "maks dato" av 1 og 3 og 6 id 4,
-            maks dato "maks dato" av 1 og 2 og 5 id 3,
-            dato faktum "dato1" id 1,
-            dato faktum "dato2" id 2,
-            dato faktum "dato5" id 5,
-            dato faktum "dato6" id 6
-        ).testSøknadprosess()
+        prosess =
+            Fakta(
+                testversjon,
+                maks dato "maks dato" av 1 og 3 og 6 id 4,
+                maks dato "maks dato" av 1 og 2 og 5 id 3,
+                dato faktum "dato1" id 1,
+                dato faktum "dato2" id 2,
+                dato faktum "dato5" id 5,
+                dato faktum "dato6" id 6,
+            ).testSøknadprosess()
 
         maks4 = prosess dato 4
         maks3 = prosess dato 3

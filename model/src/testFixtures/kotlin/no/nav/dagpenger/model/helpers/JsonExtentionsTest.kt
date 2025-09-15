@@ -6,12 +6,13 @@ import kotlin.test.assertEquals
 
 internal class JsonExtentionsTest {
     private val uformatertJson = """{"id": "faktum.faktumFraGrunnNivå","type": "tekst"}"""
-    private val forventetJson = """
-            {
-              "id" : "faktum.faktumFraGrunnNivå",
-              "type" : "tekst"
-            }
-    """.trimIndent()
+    private val forventetJson =
+        """
+        {
+          "id" : "faktum.faktumFraGrunnNivå",
+          "type" : "tekst"
+        }
+        """.trimIndent()
 
     @Test
     fun `Skal kunne pretty formatere en string`() {

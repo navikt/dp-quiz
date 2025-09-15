@@ -33,7 +33,9 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 import java.time.LocalDateTime
 import java.util.UUID
 
-class SøkerJsonBuilder(private val prosess: Prosess) : ProsessVisitor {
+class SøkerJsonBuilder(
+    private val prosess: Prosess,
+) : ProsessVisitor {
     companion object {
         private val mapper = jacksonObjectMapper()
         private val skalIkkeBesvaresAvSøker = ReadOnlyStrategy { it.harIkkeRolle(Rolle.søker) }
@@ -48,9 +50,10 @@ class SøkerJsonBuilder(private val prosess: Prosess) : ProsessVisitor {
     private lateinit var avhengigheter: MutableSet<Faktum<*>>
     private val generatorer: MutableSet<GeneratorFaktum> = mutableSetOf()
     private val ferdig = prosess.erFerdigFor(Rolle.søker, Rolle.nav)
-    private val avhengigeFaktaErLåst = ReadOnlyStrategy {
-        !gjeldendeFakta.contains(it)
-    }
+    private val avhengigeFaktaErLåst =
+        ReadOnlyStrategy {
+            !gjeldendeFakta.contains(it)
+        }
 
     init {
         prosess.accept(this)
@@ -58,11 +61,19 @@ class SøkerJsonBuilder(private val prosess: Prosess) : ProsessVisitor {
 
     fun resultat() = root
 
-    override fun preVisit(prosess: Prosess, uuid: UUID) {
+    override fun preVisit(
+        prosess: Prosess,
+        uuid: UUID,
+    ) {
         root.put("søknad_uuid", "$uuid")
     }
 
-    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+    override fun preVisit(
+        fakta: Fakta,
+        faktaversjon: Faktaversjon,
+        uuid: UUID,
+        navBehov: FaktumNavBehov,
+    ) {
         root.put("@event_name", "søker_oppgave")
         root.put("versjon_id", faktaversjon.versjon)
         root.put("versjon_navn", faktaversjon.faktatype.id)
@@ -71,47 +82,68 @@ class SøkerJsonBuilder(private val prosess: Prosess) : ProsessVisitor {
         root.put("ferdig", ferdig)
     }
 
-    override fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {
+    override fun visit(
+        type: Identer.Ident.Type,
+        id: String,
+        historisk: Boolean,
+    ) {
         if (type == Identer.Ident.Type.FOLKEREGISTERIDENT) {
             root.put("fødselsnummer", id)
         }
     }
 
-    override fun postVisit(fakta: Fakta, uuid: UUID) {
+    override fun postVisit(
+        fakta: Fakta,
+        uuid: UUID,
+    ) {
         root.set<ArrayNode>("seksjoner", seksjoner)
     }
 
-    override fun postVisit(prosess: Prosess, uuid: UUID) {
+    override fun postVisit(
+        prosess: Prosess,
+        uuid: UUID,
+    ) {
         root.put("antallSeksjoner", seksjonerTotalt.brukerSeksjoner().size)
     }
 
-    override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
+    override fun preVisit(
+        seksjon: Seksjon,
+        rolle: Rolle,
+        fakta: Set<Faktum<*>>,
+        indeks: Int,
+    ) {
         avhengigheter = mutableSetOf()
         gjeldendeFakta = seksjon.gjeldendeFakta(prosess.rootSubsumsjon)
         seksjonerTotalt.add(seksjon)
     }
 
-    override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
+    override fun postVisit(
+        seksjon: Seksjon,
+        rolle: Rolle,
+        indeks: Int,
+    ) {
         if (rolle != Rolle.søker) return
         if (gjeldendeFakta.isEmpty()) return
         // Splitt grunnleggende fakta og generatorer sine fakta
         val avhengigheterUtenforGjeldendeSeksjon = avhengigheter.filterNot { seksjon.contains(it) }
         val (fakta, generatorFakta) = (avhengigheterUtenforGjeldendeSeksjon + gjeldendeFakta).partition { !it.faktumId.harIndeks() }
-        val faktaNode = fakta.fold(mapper.createArrayNode()) { acc, faktum ->
-            val generatorFaktumFakta = when (faktum) {
-                is GeneratorFaktum -> generatorFakta.filter { faktum.harGenerert(it.faktumId) }.toSet()
-                else -> emptySet()
-            }
+        val faktaNode =
+            fakta.fold(mapper.createArrayNode()) { acc, faktum ->
+                val generatorFaktumFakta =
+                    when (faktum) {
+                        is GeneratorFaktum -> generatorFakta.filter { faktum.harGenerert(it.faktumId) }.toSet()
+                        else -> emptySet()
+                    }
 
-            acc.add(
-                SøknadFaktumVisitor(
-                    faktum,
-                    generatorFaktumFakta,
-                    avhengigeFaktaErLåst,
-                    sannsynliggjøringsFaktaListe,
-                ).root,
-            )
-        }
+                acc.add(
+                    SøknadFaktumVisitor(
+                        faktum,
+                        generatorFaktumFakta,
+                        avhengigeFaktaErLåst,
+                        sannsynliggjøringsFaktaListe,
+                    ).root,
+                )
+            }
 
         mapper.createObjectNode().apply {
             put("beskrivendeId", seksjon.navn)
@@ -147,7 +179,9 @@ class SøkerJsonBuilder(private val prosess: Prosess) : ProsessVisitor {
         avhengigheter.addAll(avhengerAvFakta)
     }
 
-    private class SannsynliggjøringsFaktaFinner(subsumsjon: Subsumsjon) : SubsumsjonVisitor {
+    private class SannsynliggjøringsFaktaFinner(
+        subsumsjon: Subsumsjon,
+    ) : SubsumsjonVisitor {
         val fakta = mutableSetOf<GrunnleggendeFaktum<*>>()
 
         init {
@@ -220,33 +254,35 @@ class SøkerJsonBuilder(private val prosess: Prosess) : ProsessVisitor {
             svar: R,
             genererteFaktum: Set<Faktum<*>>,
         ) {
-            val jsonTemplates = templates.fold(mapper.createArrayNode()) { acc, template ->
-                acc.add(SøknadFaktumVisitor(template).root)
-            }
+            val jsonTemplates =
+                templates.fold(mapper.createArrayNode()) { acc, template ->
+                    acc.add(SøknadFaktumVisitor(template).root)
+                }
 
             this.root.lagFaktumNode(id, "generator", faktum.navn, roller, jsonTemplates, svar = svar)
-            val svarListe = mapper.createArrayNode().apply {
-                // Skal alltid inneholde like mange elementer som generatoren er besvart med
-                repeat(faktum.svar()) { i -> insertArray(i) }
-                // Grupper fakta etter indeks så de kan slås opp i
-                val grupperteFakta =
-                    besvarteOgNesteGeneratorFakta.groupBy { fooooo -> fooooo.faktumId.reflection { _, indeks -> indeks } }
-                // Erstatt placeholdere med besvarte eller neste fakta
-                forEachIndexed { indeks, arrayNode ->
-                    set(
-                        indeks,
-                        grupperteFakta[indeks + 1]?.fold(mapper.createArrayNode()) { acc, faktum ->
-                            acc.add(
-                                SøknadFaktumVisitor(
-                                    faktum,
-                                    readOnlyStrategy = readOnlyStrategy,
-                                    sannsynliggjøringsFaktaListe = sannsynliggjøringsFaktaListe,
-                                ).root,
-                            )
-                        } ?: arrayNode,
-                    )
+            val svarListe =
+                mapper.createArrayNode().apply {
+                    // Skal alltid inneholde like mange elementer som generatoren er besvart med
+                    repeat(faktum.svar()) { i -> insertArray(i) }
+                    // Grupper fakta etter indeks så de kan slås opp i
+                    val grupperteFakta =
+                        besvarteOgNesteGeneratorFakta.groupBy { fooooo -> fooooo.faktumId.reflection { _, indeks -> indeks } }
+                    // Erstatt placeholdere med besvarte eller neste fakta
+                    forEachIndexed { indeks, arrayNode ->
+                        set(
+                            indeks,
+                            grupperteFakta[indeks + 1]?.fold(mapper.createArrayNode()) { acc, faktum ->
+                                acc.add(
+                                    SøknadFaktumVisitor(
+                                        faktum,
+                                        readOnlyStrategy = readOnlyStrategy,
+                                        sannsynliggjøringsFaktaListe = sannsynliggjøringsFaktaListe,
+                                    ).root,
+                                )
+                            } ?: arrayNode,
+                        )
+                    }
                 }
-            }
 
             this.root.set<ArrayNode>("svar", svarListe)
             this.root.put("readOnly", readOnlyStrategy.readOnly(faktum))
@@ -331,24 +367,26 @@ class SøkerJsonBuilder(private val prosess: Prosess) : ProsessVisitor {
                 this.root.leggTilGyldigeLand(landGrupper)
                 this.root.leggTilLandGrupper(landGrupper)
             }
-            val sannsynliggjøringerAsJson = avhengigeFakta.filter { it.type() == Dokument::class.java }
-                .filter { sannsynliggjøringsFaktaListe.contains(it) }
-                .fold(mapper.createArrayNode()) { acc, template ->
-                    val fakta = SøknadFaktumVisitor(template, readOnlyStrategy = readOnlyStrategy).root
+            val sannsynliggjøringerAsJson =
+                avhengigeFakta
+                    .filter { it.type() == Dokument::class.java }
+                    .filter { sannsynliggjøringsFaktaListe.contains(it) }
+                    .fold(mapper.createArrayNode()) { acc, template ->
+                        val fakta = SøknadFaktumVisitor(template, readOnlyStrategy = readOnlyStrategy).root
 
-                    if (template.faktumId.harIndeks()) {
-                        generatorer.single { it.harGenerert(template.faktumId) }.identitet(template.faktumId)?.let {
-                            fakta.put(
-                                "generertAv",
-                                when (it.erBesvart()) {
-                                    true -> it.svar().verdi
-                                    false -> "Ubesvart"
-                                },
-                            )
+                        if (template.faktumId.harIndeks()) {
+                            generatorer.single { it.harGenerert(template.faktumId) }.identitet(template.faktumId)?.let {
+                                fakta.put(
+                                    "generertAv",
+                                    when (it.erBesvart()) {
+                                        true -> it.svar().verdi
+                                        false -> "Ubesvart"
+                                    },
+                                )
+                            }
                         }
+                        acc.add(fakta)
                     }
-                    acc.add(fakta)
-                }
             this.root.set<ArrayNode>("sannsynliggjoresAv", sannsynliggjøringerAsJson)
             this.root.put("readOnly", readOnlyStrategy.readOnly(faktum))
         }
