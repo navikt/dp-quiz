@@ -12,7 +12,7 @@ dependencies {
     implementation(libs.bundles.postgres)
     implementation(libs.konfig)
     implementation(libs.kotlin.logging)
-    implementation("de.slub-dresden:urnlib:2.0.1")
+    implementation("de.slub-dresden:urnlib:3.0.0")
 
     // unleash
     implementation("io.getunleash:unleash-client-java:11.1.0") {
