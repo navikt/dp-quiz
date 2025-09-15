@@ -2,8 +2,8 @@ package no.nav.dagpenger.quiz.mediator.meldinger
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jsonStringToMap
-import mu.KotlinLogging
 import no.nav.dagpenger.model.seksjon.Prosess
 
 private val log = KotlinLogging.logger {}
