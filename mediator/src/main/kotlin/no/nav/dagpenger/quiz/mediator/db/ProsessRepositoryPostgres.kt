@@ -32,7 +32,12 @@ class ProsessRepositoryPostgres private constructor(
         observers.add(observer)
     }
 
-    override fun ny(identer: Identer, prosesstype: Prosesstype, uuid: UUID, faktaUUID: UUID): Prosess {
+    override fun ny(
+        identer: Identer,
+        prosesstype: Prosesstype,
+        uuid: UUID,
+        faktaUUID: UUID,
+    ): Prosess {
         val person = personRecord.hentEllerOpprettPerson(identer)
 
         return Henvendelser.prosess(person, prosesstype, uuid, faktaUUID).also {
@@ -60,28 +65,29 @@ class ProsessRepositoryPostgres private constructor(
     }
 
     override fun hent(uuid: UUID): Prosess {
-        val rad = sessionOf(dataSource).use { session ->
-            session.run(
-                queryOf(
-                    //language=PostgreSQL
-                    """
+        val rad =
+            sessionOf(dataSource).use { session ->
+                session.run(
+                    queryOf(
+                        //language=PostgreSQL
+                        """
                     SELECT p.person_id, p.navn, fv.navn AS faktatype, p.fakta_id, fv.versjon_id FROM prosess AS p 
                         JOIN fakta AS f ON f.uuid = p.fakta_id
                         JOIN faktaversjon AS fv ON f.versjon_id = fv.id
                         WHERE p.uuid = ?
-                    """.trimMargin(),
-                    uuid,
-                ).map { row ->
-                    ProsessRad(
-                        personId = row.uuid("person_id"),
-                        navn = row.string("navn"),
-                        faktatype = row.string("faktatype"),
-                        faktaUUID = row.uuid("fakta_id"),
-                        versjonId = row.int("versjon_id"),
-                    )
-                }.asSingle,
-            )
-        } ?: throw IllegalArgumentException("Kan ikke hente en prosess som ikke finnes, uuid: $uuid")
+                        """.trimMargin(),
+                        uuid,
+                    ).map { row ->
+                        ProsessRad(
+                            personId = row.uuid("person_id"),
+                            navn = row.string("navn"),
+                            faktatype = row.string("faktatype"),
+                            faktaUUID = row.uuid("fakta_id"),
+                            versjonId = row.int("versjon_id"),
+                        )
+                    }.asSingle,
+                )
+            } ?: throw IllegalArgumentException("Kan ikke hente en prosess som ikke finnes, uuid: $uuid")
         val person = PersonRecord().hentPerson(rad.personId)
         val prosess = Henvendelser.prosess(person, rad.prosesstype, uuid, rad.faktaUUID, rad.faktaversjon)
         faktaRepository.rehydrerFakta(prosess.fakta)
@@ -92,21 +98,29 @@ class ProsessRepositoryPostgres private constructor(
     override fun lagre(prosess: Prosess) = faktaRepository.lagre(prosess.fakta)
 
     override fun slett(uuid: UUID) {
-        sessionOf(dataSource).use { session ->
-            session.run(
-                queryOf(
-                    //language=PostgreSQL
-                    "DELETE FROM prosess WHERE uuid = :uuid RETURNING fakta_id",
-                    mapOf("uuid" to uuid),
-                ).map { it.uuid("fakta_id") }.asSingle,
-            )
-        }?.let { faktaUUID ->
-            observers.forEach { it.slett(uuid, faktaUUID) }
-        }
+        sessionOf(dataSource)
+            .use { session ->
+                session.run(
+                    queryOf(
+                        //language=PostgreSQL
+                        "DELETE FROM prosess WHERE uuid = :uuid RETURNING fakta_id",
+                        mapOf("uuid" to uuid),
+                    ).map { it.uuid("fakta_id") }.asSingle,
+                )
+            }?.let { faktaUUID ->
+                observers.forEach { it.slett(uuid, faktaUUID) }
+            }
     }
 
-    private data class ProsessFakta(override val id: String) : Faktatype
-    private data class ProsessType(override val navn: String, override val faktatype: Faktatype) : Prosesstype
+    private data class ProsessFakta(
+        override val id: String,
+    ) : Faktatype
+
+    private data class ProsessType(
+        override val navn: String,
+        override val faktatype: Faktatype,
+    ) : Prosesstype
+
     private data class ProsessRad(
         val personId: UUID,
         val navn: String,
@@ -118,14 +132,19 @@ class ProsessRepositoryPostgres private constructor(
         val faktaversjon = Faktaversjon(ProsessFakta(faktatype), versjonId)
     }
 
-    private class PersonIdent(person: Person) : PersonVisitor {
+    private class PersonIdent(
+        person: Person,
+    ) : PersonVisitor {
         lateinit var personId: UUID
 
         init {
             person.accept(this)
         }
 
-        override fun preVisit(person: Person, uuid: UUID) {
+        override fun preVisit(
+            person: Person,
+            uuid: UUID,
+        ) {
             personId = uuid
         }
     }

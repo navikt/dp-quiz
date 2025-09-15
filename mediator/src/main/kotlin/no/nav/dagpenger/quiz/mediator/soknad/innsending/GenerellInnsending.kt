@@ -25,50 +25,53 @@ object GenerellInnsending : DslFaktaseksjon {
     const val dokumentasjon = 1005
     const val `godkjenning av dokumentasjon` = 1006
 
-    override val fakta = listOf(
-        envalg faktum "faktum.generell-innsending.hvorfor"
-            med "svar.klage"
-            med "svar.ettersending"
-            med "svar.endring"
-            med "svar.annet" id `hvorfor sender du inn dokumentasjon`,
-
-        tekst faktum "faktum.generell-innsending.skriv-hvorfor" id `skriv kort hvorfor du sender inn dokumentasjon`
-            avhengerAv `hvorfor sender du inn dokumentasjon`,
-
-        tekst faktum "faktum.generell-innsending.tittel-paa-dokument" id `tittel på dokument` avhengerAv `skriv kort hvorfor du sender inn dokumentasjon` og `hvorfor sender du inn dokumentasjon`,
-
-        dokument faktum "faktum.generell-innsending.dokumentasjon" id dokumentasjon avhengerAv `tittel på dokument`,
-        boolsk faktum "faktum.generell-innsending.godkjenning-dokumentasjon" id `godkjenning av dokumentasjon` avhengerAv dokumentasjon
-    )
-
-    override fun seksjon(fakta: Fakta) = listOf(
-        fakta.seksjon(
-            "generell-innsending",
-            Rolle.søker,
-            *spørsmålsrekkefølgeForSøker()
+    override val fakta =
+        listOf(
+            envalg faktum "faktum.generell-innsending.hvorfor"
+                med "svar.klage"
+                med "svar.ettersending"
+                med "svar.endring"
+                med "svar.annet" id `hvorfor sender du inn dokumentasjon`,
+            tekst faktum "faktum.generell-innsending.skriv-hvorfor" id `skriv kort hvorfor du sender inn dokumentasjon`
+                avhengerAv `hvorfor sender du inn dokumentasjon`,
+            tekst faktum "faktum.generell-innsending.tittel-paa-dokument" id `tittel på dokument` avhengerAv `skriv kort hvorfor du sender inn dokumentasjon` og `hvorfor sender du inn dokumentasjon`,
+            dokument faktum "faktum.generell-innsending.dokumentasjon" id dokumentasjon avhengerAv `tittel på dokument`,
+            boolsk faktum "faktum.generell-innsending.godkjenning-dokumentasjon" id `godkjenning av dokumentasjon` avhengerAv dokumentasjon,
         )
-    )
 
-    override fun regeltre(fakta: Fakta): DeltreSubsumsjon = with(fakta) {
-        "spørsmål".deltre {
-            "alle spørsmålene må være besvart".alle(
-                (envalg(`hvorfor sender du inn dokumentasjon`) inneholder Envalg("faktum.generell-innsending.hvorfor.svar.annet")) hvisOppfylt {
-                    tekst(`skriv kort hvorfor du sender inn dokumentasjon`).utfylt()
-                },
-                tekst(`tittel på dokument`).utfylt()
-                    .sannsynliggjøresAv(dokument(dokumentasjon)).godkjentAv(
-                        boolsk(
-                            `godkjenning av dokumentasjon`
-                        )
-                    )
-            )
+    override fun seksjon(fakta: Fakta) =
+        listOf(
+            fakta.seksjon(
+                "generell-innsending",
+                Rolle.søker,
+                *spørsmålsrekkefølgeForSøker(),
+            ),
+        )
+
+    override fun regeltre(fakta: Fakta): DeltreSubsumsjon =
+        with(fakta) {
+            "spørsmål".deltre {
+                "alle spørsmålene må være besvart".alle(
+                    (envalg(`hvorfor sender du inn dokumentasjon`) inneholder Envalg("faktum.generell-innsending.hvorfor.svar.annet")) hvisOppfylt {
+                        tekst(`skriv kort hvorfor du sender inn dokumentasjon`).utfylt()
+                    },
+                    tekst(`tittel på dokument`)
+                        .utfylt()
+                        .sannsynliggjøresAv(dokument(dokumentasjon))
+                        .godkjentAv(
+                            boolsk(
+                                `godkjenning av dokumentasjon`,
+                            ),
+                        ),
+                )
+            }
         }
-    }
 
-    override val spørsmålsrekkefølgeForSøker: List<Int> = listOf(
-        `hvorfor sender du inn dokumentasjon`,
-        `skriv kort hvorfor du sender inn dokumentasjon`,
-        `tittel på dokument`,
-        dokumentasjon
-    )
+    override val spørsmålsrekkefølgeForSøker: List<Int> =
+        listOf(
+            `hvorfor sender du inn dokumentasjon`,
+            `skriv kort hvorfor du sender inn dokumentasjon`,
+            `tittel på dokument`,
+            dokumentasjon,
+        )
 }

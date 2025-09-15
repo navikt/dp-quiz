@@ -30,91 +30,98 @@ object Bosted : DslFaktaseksjon {
     const val `reist tilbake en gang i uka eller mer` = 6005
     const val `reist i takt med rotasjon` = 6006
 
-    override val fakta = listOf(
-        land faktum "faktum.hvilket-land-bor-du-i"
-            gruppe "tredjeland" med tredjeland
-            gruppe "eøs" med eøsEllerSveits
-            gruppe "norge-jan-mayen" med norge
-            gruppe "storbritannia" med storbritannia id `hvilket land bor du i`,
+    override val fakta =
+        listOf(
+            land faktum "faktum.hvilket-land-bor-du-i"
+                gruppe "tredjeland" med tredjeland
+                gruppe "eøs" med eøsEllerSveits
+                gruppe "norge-jan-mayen" med norge
+                gruppe "storbritannia" med storbritannia id `hvilket land bor du i`,
+            boolsk faktum "faktum.reist-tilbake-etter-arbeidsledig" id `reist tilbake etter arbeidsledig`
+                avhengerAv `hvilket land bor du i`,
+            periode faktum "faktum.reist-tilbake-periode" id `reist tilbake periode`
+                avhengerAv `reist tilbake etter arbeidsledig`,
+            tekst faktum "faktum.reist-tilbake-aarsak" id `reist tilbake årsak`
+                avhengerAv `reist tilbake etter arbeidsledig`,
+            boolsk faktum "faktum.reist-tilbake-en-gang-eller-mer" id `reist tilbake en gang i uka eller mer`
+                avhengerAv `hvilket land bor du i`,
+            boolsk faktum "faktum.reist-i-takt-med-rotasjon" id `reist i takt med rotasjon`
+                avhengerAv `reist tilbake en gang i uka eller mer`,
+        )
 
-        boolsk faktum "faktum.reist-tilbake-etter-arbeidsledig" id `reist tilbake etter arbeidsledig`
-            avhengerAv `hvilket land bor du i`,
+    override fun seksjon(fakta: Fakta) = listOf(fakta.seksjon("bostedsland", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
-        periode faktum "faktum.reist-tilbake-periode" id `reist tilbake periode`
-            avhengerAv `reist tilbake etter arbeidsledig`,
-
-        tekst faktum "faktum.reist-tilbake-aarsak" id `reist tilbake årsak`
-            avhengerAv `reist tilbake etter arbeidsledig`,
-
-        boolsk faktum "faktum.reist-tilbake-en-gang-eller-mer" id `reist tilbake en gang i uka eller mer`
-            avhengerAv `hvilket land bor du i`,
-
-        boolsk faktum "faktum.reist-i-takt-med-rotasjon" id `reist i takt med rotasjon`
-            avhengerAv `reist tilbake en gang i uka eller mer`,
-    )
-
-    override fun seksjon(fakta: Fakta) =
-        listOf(fakta.seksjon("bostedsland", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
-
-    override fun regeltre(fakta: Fakta): DeltreSubsumsjon = with(fakta) {
-        "bosted".deltre {
-            // TODO: Finn ut av bruk av paragrafer i kode?
-            "§ 4-2 Opphold i Norge".bareEnAv(
-                `innenfor Norge`(),
-                `innenfor Storbritannia`(),
-                `innenfor EØS eller Sveits`(),
-                `utenfor EØS`(),
-            )
-        }
-    }
-
-    private fun Fakta.`innenfor Norge`() = "§ 4-2 Opphold i Norge".bareEnAv(
-        *norge.map { land ->
-            land(`hvilket land bor du i`).er(land)
-        }.toTypedArray(),
-    )
-
-    private fun Fakta.`innenfor Storbritannia`() = "§ x.x om Storbritannia og brexit ".bareEnAv(
-        *storbritannia.map { land ->
-            land(`hvilket land bor du i`).er(land)
-        }.toTypedArray(),
-    )
-
-    private fun Fakta.`innenfor EØS eller Sveits`() = "§ x.x innenfor EØS eller Sveits forskrift".bareEnAv(
-        *eøsEllerSveits.map { land ->
-            land(`hvilket land bor du i`).er(land)
-        }.toTypedArray(),
-    ).hvisOppfylt {
-        val `reist tilbake en gang i uka eller mer regel` =
-            boolsk(`reist tilbake en gang i uka eller mer`) er true hvisIkkeOppfylt {
-                boolsk(`reist i takt med rotasjon`).utfylt()
+    override fun regeltre(fakta: Fakta): DeltreSubsumsjon =
+        with(fakta) {
+            "bosted".deltre {
+                // TODO: Finn ut av bruk av paragrafer i kode?
+                "§ 4-2 Opphold i Norge".bareEnAv(
+                    `innenfor Norge`(),
+                    `innenfor Storbritannia`(),
+                    `innenfor EØS eller Sveits`(),
+                    `utenfor EØS`(),
+                )
             }
-
-        val reistTilbake = boolsk(`reist tilbake etter arbeidsledig`) er true hvisOppfylt {
-            periode(`reist tilbake periode`).utfylt().hvisOppfylt {
-                tekst(`reist tilbake årsak`).utfylt().hvisOppfylt {
-                    `reist tilbake en gang i uka eller mer regel`
-                }
-            }
-        } hvisIkkeOppfylt {
-            `reist tilbake en gang i uka eller mer regel`
         }
 
-        reistTilbake
-    }
+    private fun Fakta.`innenfor Norge`() =
+        "§ 4-2 Opphold i Norge".bareEnAv(
+            *norge
+                .map { land ->
+                    land(`hvilket land bor du i`).er(land)
+                }.toTypedArray(),
+        )
 
-    private fun Fakta.`utenfor EØS`() = "§ x.x om resten av verden".alle(
-        *(norge + storbritannia + eøsEllerSveits).map { `et EØS-land` ->
-            land(`hvilket land bor du i`).erIkke(`et EØS-land`)
-        }.toTypedArray(),
-    )
+    private fun Fakta.`innenfor Storbritannia`() =
+        "§ x.x om Storbritannia og brexit ".bareEnAv(
+            *storbritannia
+                .map { land ->
+                    land(`hvilket land bor du i`).er(land)
+                }.toTypedArray(),
+        )
 
-    override val spørsmålsrekkefølgeForSøker = listOf(
-        `hvilket land bor du i`,
-        `reist tilbake etter arbeidsledig`,
-        `reist tilbake periode`,
-        `reist tilbake årsak`,
-        `reist tilbake en gang i uka eller mer`,
-        `reist i takt med rotasjon`,
-    )
+    private fun Fakta.`innenfor EØS eller Sveits`() =
+        "§ x.x innenfor EØS eller Sveits forskrift"
+            .bareEnAv(
+                *eøsEllerSveits
+                    .map { land ->
+                        land(`hvilket land bor du i`).er(land)
+                    }.toTypedArray(),
+            ).hvisOppfylt {
+                val `reist tilbake en gang i uka eller mer regel` =
+                    boolsk(`reist tilbake en gang i uka eller mer`) er true hvisIkkeOppfylt {
+                        boolsk(`reist i takt med rotasjon`).utfylt()
+                    }
+
+                val reistTilbake =
+                    boolsk(`reist tilbake etter arbeidsledig`) er true hvisOppfylt {
+                        periode(`reist tilbake periode`).utfylt().hvisOppfylt {
+                            tekst(`reist tilbake årsak`).utfylt().hvisOppfylt {
+                                `reist tilbake en gang i uka eller mer regel`
+                            }
+                        }
+                    } hvisIkkeOppfylt {
+                        `reist tilbake en gang i uka eller mer regel`
+                    }
+
+                reistTilbake
+            }
+
+    private fun Fakta.`utenfor EØS`() =
+        "§ x.x om resten av verden".alle(
+            *(norge + storbritannia + eøsEllerSveits)
+                .map { `et EØS-land` ->
+                    land(`hvilket land bor du i`).erIkke(`et EØS-land`)
+                }.toTypedArray(),
+        )
+
+    override val spørsmålsrekkefølgeForSøker =
+        listOf(
+            `hvilket land bor du i`,
+            `reist tilbake etter arbeidsledig`,
+            `reist tilbake periode`,
+            `reist tilbake årsak`,
+            `reist tilbake en gang i uka eller mer`,
+            `reist i takt med rotasjon`,
+        )
 }

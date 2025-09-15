@@ -15,32 +15,41 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     companion object {
         internal fun Collection<Faktum<*>>.erAlleBesvart() = this.all { it.erBesvart() }
-        private fun Faktum<*>.deepCopyAvhengigheter(faktum: Faktum<*>, prosess: Prosess) {
+
+        private fun Faktum<*>.deepCopyAvhengigheter(
+            faktum: Faktum<*>,
+            prosess: Prosess,
+        ) {
             faktum.avhengigeFakta.addAll(this.avhengigeFakta.map { prosess.faktum(it.faktumId) })
             faktum.avhengerAvFakta.addAll(this.avhengerAvFakta.map { prosess.faktum(it.faktumId) })
         }
 
-        internal fun List<Faktum<*>>.deepCopy(prosess: Prosess): List<Faktum<*>> = this
-            .map { prototype ->
-                prosess.faktum(prototype.faktumId).also {
-                    prototype.deepCopyAvhengigheter(it, prosess)
+        internal fun List<Faktum<*>>.deepCopy(prosess: Prosess): List<Faktum<*>> =
+            this
+                .map { prototype ->
+                    prosess.faktum(prototype.faktumId).also {
+                        prototype.deepCopyAvhengigheter(it, prosess)
+                    }
+                }.also {
+                    require(it.size == this.size) { "Mangler fakta" }
                 }
-            }
-            .also {
-                require(it.size == this.size) { "Mangler fakta" }
-            }
 
-        internal fun List<Faktum<*>>.deepCopy(indeks: Int, fakta: Fakta): List<Faktum<*>> = this
-            .map { faktum ->
-                faktum.deepCopy(indeks, fakta)
-            }
+        internal fun List<Faktum<*>>.deepCopy(
+            indeks: Int,
+            fakta: Fakta,
+        ): List<Faktum<*>> =
+            this
+                .map { faktum ->
+                    faktum.deepCopy(indeks, fakta)
+                }
 
-        private val prioritet = listOf(
-            GrunnleggendeFaktum::class.java,
-            TemplateFaktum::class.java,
-            GeneratorFaktum::class.java,
-            UtledetFaktum::class.java,
-        )
+        private val prioritet =
+            listOf(
+                GrunnleggendeFaktum::class.java,
+                TemplateFaktum::class.java,
+                GeneratorFaktum::class.java,
+                UtledetFaktum::class.java,
+            )
     }
 
     fun <R> reflection(block: (Int, Int) -> R) = faktumId.reflection(block)
@@ -49,14 +58,17 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     internal abstract fun bygg(byggetFakta: MutableMap<FaktumId, Faktum<*>>): Faktum<*>
 
-    open fun besvar(verdi: R, besvarer: String? = null): Faktum<R> =
-        this.also { avhengigeFakta.forEach { it.tilUbesvart() } }
+    open fun besvar(
+        verdi: R,
+        besvarer: String? = null,
+    ): Faktum<R> = this.also { avhengigeFakta.forEach { it.tilUbesvart() } }
 
-    open fun rehydrer(r: R, besvarer: String?): Faktum<R> = this
+    open fun rehydrer(
+        r: R,
+        besvarer: String?,
+    ): Faktum<R> = this
 
-    open fun tilUbesvart() {
-        throw IllegalStateException("Kan ikke sette utleda faktum til ubesvart")
-    }
+    open fun tilUbesvart(): Unit = throw IllegalStateException("Kan ikke sette utleda faktum til ubesvart")
 
     abstract fun svar(): R
 
@@ -64,7 +76,10 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     abstract fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>>
 
-    abstract fun leggTilHvis(kode: FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>)
+    abstract fun leggTilHvis(
+        kode: FaktumTilstand,
+        fakta: MutableSet<GrunnleggendeFaktum<*>>,
+    )
 
     abstract fun erBesvart(): Boolean
 
@@ -79,7 +94,10 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
         other.avhengerAvFakta.add(this)
     }
 
-    internal open fun deepCopy(indeks: Int, fakta: Fakta): Faktum<*> = this
+    internal open fun deepCopy(
+        indeks: Int,
+        fakta: Fakta,
+    ): Faktum<*> = this
 
     enum class FaktumTilstand {
         Ukjent,
@@ -88,9 +106,7 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
 
     override fun toString() = "$navn med id $id"
 
-    internal open fun tilTemplate(): TemplateFaktum<R> {
-        throw IllegalArgumentException("Kan ikke lage template av faktum: $navn $id")
-    }
+    internal open fun tilTemplate(): TemplateFaktum<R> = throw IllegalArgumentException("Kan ikke lage template av faktum: $navn $id")
 
     override fun compareTo(challenger: Faktum<*>): Int {
         if (this::class.java == challenger::class.java) return this.faktumId.compareTo(challenger.faktumId)
@@ -116,7 +132,9 @@ abstract class Faktum<R : Comparable<R>> internal constructor(
     }
 
     fun harRolle(rolle: Rolle) = rolle in roller
+
     fun harIkkeRolle(rolle: Rolle) = !harRolle(rolle)
+
     internal fun sannsynliggjøresAv(sannsynliggjøringer: Collection<Faktum<*>>) =
         sannsynliggjøringer.forEach {
             require(this.avhengigeFakta.contains(it)) { "${it.navn} (${it.faktumId}) må være avhengig av ${this.navn} (${this.faktumId})" }

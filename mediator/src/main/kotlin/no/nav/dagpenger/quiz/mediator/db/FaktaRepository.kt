@@ -8,15 +8,35 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 interface FaktaRepository {
-    fun ny(identer: Identer, faktaversjon: Faktaversjon, uuid: UUID = UUID.randomUUID()): Fakta
+    fun ny(
+        identer: Identer,
+        faktaversjon: Faktaversjon,
+        uuid: UUID = UUID.randomUUID(),
+    ): Fakta
+
     fun hent(uuid: UUID): Fakta
+
     fun lagre(fakta: Fakta): Boolean
+
     fun opprettede(identer: Identer): Map<LocalDateTime, UUID>
+
     fun slett(uuid: UUID): Boolean
-    fun migrer(uuid: UUID, tilVersjon: Faktaversjon? = null): Faktaversjon
+
+    fun migrer(
+        uuid: UUID,
+        tilVersjon: Faktaversjon? = null,
+    ): Faktaversjon
+
     fun eksisterer(uuid: UUID): Boolean
+
     fun ny(fakta: Fakta): Fakta
-    fun rehydrerEllerOpprett(fakta: Fakta, person: Person)
+
+    fun rehydrerEllerOpprett(
+        fakta: Fakta,
+        person: Person,
+    )
+
     fun rehydrerFakta(fakta: Fakta): Fakta
+
     fun registrer(prosessRepository: ProsessRepository)
 }

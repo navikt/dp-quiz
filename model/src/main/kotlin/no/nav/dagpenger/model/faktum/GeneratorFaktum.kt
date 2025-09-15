@@ -9,16 +9,16 @@ class GeneratorFaktum internal constructor(
     avhengigeFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     avhengerAvFakta: MutableSet<Faktum<*>> = mutableSetOf(),
     roller: MutableSet<Rolle> = mutableSetOf(),
-    private val navngittAv: FaktumId?
+    private val navngittAv: FaktumId?,
 ) : GrunnleggendeFaktum<Int>(
-    faktumId = faktumId,
-    navn = navn,
-    clazz = Int::class.java,
-    avhengigeFakta = avhengigeFakta,
-    avhengerAvFakta = avhengerAvFakta,
-    godkjenner = mutableSetOf(),
-    roller = roller
-) {
+        faktumId = faktumId,
+        navn = navn,
+        clazz = Int::class.java,
+        avhengigeFakta = avhengigeFakta,
+        avhengerAvFakta = avhengerAvFakta,
+        godkjenner = mutableSetOf(),
+        roller = roller,
+    ) {
     internal lateinit var fakta: Fakta
 
     fun identitet(faktumId: FaktumId): Faktum<Tekst>? {
@@ -29,7 +29,10 @@ class GeneratorFaktum internal constructor(
 
     private inline fun <reified T> isT(x: Any) = x is T
 
-    override fun besvar(antall: Int, ident: String?): GrunnleggendeFaktum<Int> {
+    override fun besvar(
+        antall: Int,
+        ident: String?,
+    ): GrunnleggendeFaktum<Int> {
         if (erBesvart() && svar() == antall) {
             return this
         }
@@ -40,14 +43,19 @@ class GeneratorFaktum internal constructor(
         return this
     }
 
-    internal fun harGenerert(other: FaktumId) = this.templates.any {
-        other.generertFra(it.faktumId)
-    }
+    internal fun harGenerert(other: FaktumId) =
+        this.templates.any {
+            other.generertFra(it.faktumId)
+        }
 
-    override fun rehydrer(r: Int, besvarer: String?): Faktum<Int> = this.also {
-        super.rehydrer(r, besvarer)
-        templates.forEach { template -> template.generate(r, fakta) }
-    }
+    override fun rehydrer(
+        r: Int,
+        besvarer: String?,
+    ): Faktum<Int> =
+        this.also {
+            super.rehydrer(r, besvarer)
+            templates.forEach { template -> template.generate(r, fakta) }
+        }
 
     override fun tilUbesvart() {
         tilbakestill()
@@ -65,7 +73,8 @@ class GeneratorFaktum internal constructor(
 
     override fun acceptMedSvar(visitor: FaktumVisitor) {
         val genererteFaktum =
-            templates.flatMap { template -> fakta.filter { it.faktumId.generertFra(template.faktumId) && it.erBesvart() } }
+            templates
+                .flatMap { template -> fakta.filter { it.faktumId.generertFra(template.faktumId) && it.erBesvart() } }
                 .toSet()
         visitor.visitMedSvar(
             this,
@@ -76,7 +85,7 @@ class GeneratorFaktum internal constructor(
             roller,
             Int::class.java,
             gjeldendeSvar,
-            genererteFaktum
+            genererteFaktum,
         )
     }
 
@@ -90,7 +99,7 @@ class GeneratorFaktum internal constructor(
             mutableSetOf(),
             mutableSetOf(),
             roller,
-            navngittAv
+            navngittAv,
         ).also { nyttFaktum ->
             byggetFakta[faktumId] = nyttFaktum
             this.avhengigeFakta.forEach { nyttFaktum.avhengigeFakta.add(it.bygg(byggetFakta)) }

@@ -24,7 +24,9 @@ import no.nav.dagpenger.model.visitor.FaktumVisitor
 import no.nav.dagpenger.model.visitor.ProsessVisitor
 import java.util.UUID
 
-class SøknadsmalJsonBuilder(prosess: Prosess) : ProsessVisitor {
+class SøknadsmalJsonBuilder(
+    prosess: Prosess,
+) : ProsessVisitor {
     companion object {
         private val mapper = ObjectMapper()
     }
@@ -40,25 +42,43 @@ class SøknadsmalJsonBuilder(prosess: Prosess) : ProsessVisitor {
 
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+    override fun preVisit(
+        fakta: Fakta,
+        faktaversjon: Faktaversjon,
+        uuid: UUID,
+        navBehov: FaktumNavBehov,
+    ) {
         root.put("@event_name", "Søknadsmal")
         root.put("versjon_id", faktaversjon.versjon)
         root.put("versjon_navn", faktaversjon.faktatype.id)
     }
 
-    override fun postVisit(fakta: Fakta, uuid: UUID) {
+    override fun postVisit(
+        fakta: Fakta,
+        uuid: UUID,
+    ) {
         root.set<ArrayNode>("seksjoner", seksjoner)
     }
 
-    override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
+    override fun preVisit(
+        seksjon: Seksjon,
+        rolle: Rolle,
+        fakta: Set<Faktum<*>>,
+        indeks: Int,
+    ) {
         this.fakta = fakta.filter { it !is TemplateFaktum<*> }.toMutableSet()
     }
 
-    override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
+    override fun postVisit(
+        seksjon: Seksjon,
+        rolle: Rolle,
+        indeks: Int,
+    ) {
         if (rolle != Rolle.søker) return
-        val faktaNode = fakta.fold(mapper.createArrayNode()) { acc, faktum ->
-            acc.add(SøknadFaktumVisitor(faktum).root)
-        }
+        val faktaNode =
+            fakta.fold(mapper.createArrayNode()) { acc, faktum ->
+                acc.add(SøknadFaktumVisitor(faktum).root)
+            }
         mapper.createObjectNode().apply {
             put("beskrivendeId", seksjon.navn)
             set<ArrayNode>("fakta", faktaNode)
@@ -107,16 +127,16 @@ class SøknadsmalJsonBuilder(prosess: Prosess) : ProsessVisitor {
     ) {
         if (!::fakta.isInitialized) return
         fakta.addAll(
-            generatorFakta.filter { (_, templates) ->
-                templates.contains(faktum)
-            }.keys,
+            generatorFakta
+                .filter { (_, templates) ->
+                    templates.contains(faktum)
+                }.keys,
         )
     }
 
     private class SøknadFaktumVisitor(
         faktum: Faktum<*>,
-    ) :
-        FaktumVisitor {
+    ) : FaktumVisitor {
         val root: ObjectNode = mapper.createObjectNode()
 
         init {

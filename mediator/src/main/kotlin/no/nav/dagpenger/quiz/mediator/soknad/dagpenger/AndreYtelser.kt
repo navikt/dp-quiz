@@ -55,78 +55,75 @@ object AndreYtelser : DslFaktaseksjon {
     const val `dokumentasjon økonomiske goder fra tidligere arbeidsgiver` = 5028
     const val `godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver` = 5029
 
-    override var fakta = listOf(
-        boolsk faktum "faktum.andre-ytelser-mottatt-eller-sokt" id `andre ytelser mottatt eller søkt`,
-        flervalg faktum "faktum.hvilke-andre-ytelser"
-            med "svar.pensjon-offentlig-tjenestepensjon"
-            med "svar.arbeidsloshet-garantikassen-for-fiskere"
-            med "svar.garantilott-garantikassen-for-fiskere"
-            med "svar.etterlonn-arbeidsgiver"
-            med "svar.dagpenger-annet-eos-land"
-            med "svar.annen-ytelse" id `hvilke andre ytelser` avhengerAv `andre ytelser mottatt eller søkt`,
-
-        tekst faktum "faktum.tjenestepensjon-hvem-utbetaler" id `tjenestepensjon hvem utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
-        periode faktum "faktum.tjenestepensjon-hvilken-periode" id `tjenestepensjon hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
-        dokument faktum "faktum.dokument-tjenestepensjon" id `dokumentasjon tjenestepensjon` avhengerAv `hvilke andre ytelser`,
-        boolsk faktum "faktum.godkjenning-dokument-tjenestepensjon" id `godkjenning dokumentasjon tjenestepensjon` avhengerAv `dokumentasjon tjenestepensjon`,
-
-        periode faktum "faktum.arbeidslos-GFF-hvilken-periode" id `arbeidsløs GFF hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
-        dokument faktum "faktum.dokument-arbeidslos-GFF-hvilken-periode" id `dokumentasjon arbeidsløs GFF periode` avhengerAv `hvilke andre ytelser`,
-        boolsk faktum "faktum.godkjenning-dokument-arbeidslos-GFF-hvilken-periode" id `godkjenning dokumentasjon arbeidsløs GFF periode` avhengerAv `dokumentasjon arbeidsløs GFF periode`,
-
-        periode faktum "faktum.garantilott-GFF-hvilken-periode" id `garantilott fra GFF hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
-        dokument faktum "faktum.dokument-garantilott-GFF-hvilken-periode" id `dokumentasjon garantilott fra GFF periode` avhengerAv `hvilke andre ytelser`,
-        boolsk faktum "faktum.godkjenning-dokument-garantilott-GFF-hvilken-periode" id `godkjenning dokumentasjon garantilott fra GFF periode` avhengerAv `dokumentasjon garantilott fra GFF periode`,
-
-        tekst faktum "faktum.etterlonn-arbeidsgiver-hvem-utbetaler" id `etterlønn arbeidsgiver hvem utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
-        periode faktum "faktum.etterlonn-arbeidsgiver-hvilken-periode" id `etterlønn arbeidsgiver hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
-        dokument faktum "faktum.dokument-etterlonn" id `dokumentasjon etterlønn` avhengerAv `hvilke andre ytelser`,
-        boolsk faktum "faktum.godkjenning-dokument-etterlonn" id `godkjenning dokumentasjon etterlønn` avhengerAv `dokumentasjon etterlønn`,
-
-        land faktum "faktum.dagpenger-hvilket-eos-land-utbetaler" gruppe "eøs" med eøsEllerSveits id `dagpenger hvilket eøs land utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
-        periode faktum "faktum.dagpenger-eos-land-hvilken-periode" id `dagpenger eøs land hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
-        dokument faktum "faktum.dokument-dagpenger-eos-land" id `dokumentasjon dagpenger eøs land` avhengerAv `hvilke andre ytelser`,
-        boolsk faktum "faktum.godkjenning-dokument-dagpenger-eos-land" id `godkjenning dokumentasjon dagpenger eøs land` avhengerAv `dokumentasjon dagpenger eøs land`,
-
-        tekst faktum "faktum.hvilken-annen-ytelse" id `hvilken annen ytelse` avhengerAv `andre ytelser mottatt eller søkt`,
-        tekst faktum "faktum.annen-ytelse-hvem-utebetaler" id `annen ytelse hvem utebetaler` avhengerAv `andre ytelser mottatt eller søkt`,
-        periode faktum "faktum.annen-ytelse-hvilken-periode" id `annen ytelse hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
-        dokument faktum "faktum.dokument-annen-ytelse" id `dokumentasjon annen ytelse` avhengerAv `hvilke andre ytelser`,
-        boolsk faktum "faktum.godkjenning-dokument-annen-ytelse" id `godkjenning dokumentasjon annen ytelse` avhengerAv `dokumentasjon annen ytelse`,
-
-        boolsk faktum "faktum.utbetaling-eller-okonomisk-gode-tidligere-arbeidsgiver" id `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
-        tekst faktum "faktum.okonomisk-gode-tidligere-arbeidsgiver-hva-omfatter-avtalen" id `økonomisk gode tidligere arbeidsgiver hva omfatter avtalen` avhengerAv `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
-        dokument faktum "faktum.dokument-okonomiske-goder-tidligere-arbeidsgiver" id `dokumentasjon økonomiske goder fra tidligere arbeidsgiver` avhengerAv `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
-        boolsk faktum "faktum.godkjenning-dokument-okonomiske-goder-tidligere-arbeidsgiver" id `godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver` avhengerAv `dokumentasjon økonomiske goder fra tidligere arbeidsgiver`,
-    )
+    override var fakta =
+        listOf(
+            boolsk faktum "faktum.andre-ytelser-mottatt-eller-sokt" id `andre ytelser mottatt eller søkt`,
+            flervalg faktum "faktum.hvilke-andre-ytelser"
+                med "svar.pensjon-offentlig-tjenestepensjon"
+                med "svar.arbeidsloshet-garantikassen-for-fiskere"
+                med "svar.garantilott-garantikassen-for-fiskere"
+                med "svar.etterlonn-arbeidsgiver"
+                med "svar.dagpenger-annet-eos-land"
+                med "svar.annen-ytelse" id `hvilke andre ytelser` avhengerAv `andre ytelser mottatt eller søkt`,
+            tekst faktum "faktum.tjenestepensjon-hvem-utbetaler" id `tjenestepensjon hvem utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
+            periode faktum "faktum.tjenestepensjon-hvilken-periode" id `tjenestepensjon hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
+            dokument faktum "faktum.dokument-tjenestepensjon" id `dokumentasjon tjenestepensjon` avhengerAv `hvilke andre ytelser`,
+            boolsk faktum "faktum.godkjenning-dokument-tjenestepensjon" id `godkjenning dokumentasjon tjenestepensjon` avhengerAv `dokumentasjon tjenestepensjon`,
+            periode faktum "faktum.arbeidslos-GFF-hvilken-periode" id `arbeidsløs GFF hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
+            dokument faktum "faktum.dokument-arbeidslos-GFF-hvilken-periode" id `dokumentasjon arbeidsløs GFF periode` avhengerAv `hvilke andre ytelser`,
+            boolsk faktum "faktum.godkjenning-dokument-arbeidslos-GFF-hvilken-periode" id `godkjenning dokumentasjon arbeidsløs GFF periode` avhengerAv `dokumentasjon arbeidsløs GFF periode`,
+            periode faktum "faktum.garantilott-GFF-hvilken-periode" id `garantilott fra GFF hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
+            dokument faktum "faktum.dokument-garantilott-GFF-hvilken-periode" id `dokumentasjon garantilott fra GFF periode` avhengerAv `hvilke andre ytelser`,
+            boolsk faktum "faktum.godkjenning-dokument-garantilott-GFF-hvilken-periode" id `godkjenning dokumentasjon garantilott fra GFF periode` avhengerAv `dokumentasjon garantilott fra GFF periode`,
+            tekst faktum "faktum.etterlonn-arbeidsgiver-hvem-utbetaler" id `etterlønn arbeidsgiver hvem utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
+            periode faktum "faktum.etterlonn-arbeidsgiver-hvilken-periode" id `etterlønn arbeidsgiver hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
+            dokument faktum "faktum.dokument-etterlonn" id `dokumentasjon etterlønn` avhengerAv `hvilke andre ytelser`,
+            boolsk faktum "faktum.godkjenning-dokument-etterlonn" id `godkjenning dokumentasjon etterlønn` avhengerAv `dokumentasjon etterlønn`,
+            land faktum "faktum.dagpenger-hvilket-eos-land-utbetaler" gruppe "eøs" med eøsEllerSveits id `dagpenger hvilket eøs land utbetaler` avhengerAv `andre ytelser mottatt eller søkt`,
+            periode faktum "faktum.dagpenger-eos-land-hvilken-periode" id `dagpenger eøs land hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
+            dokument faktum "faktum.dokument-dagpenger-eos-land" id `dokumentasjon dagpenger eøs land` avhengerAv `hvilke andre ytelser`,
+            boolsk faktum "faktum.godkjenning-dokument-dagpenger-eos-land" id `godkjenning dokumentasjon dagpenger eøs land` avhengerAv `dokumentasjon dagpenger eøs land`,
+            tekst faktum "faktum.hvilken-annen-ytelse" id `hvilken annen ytelse` avhengerAv `andre ytelser mottatt eller søkt`,
+            tekst faktum "faktum.annen-ytelse-hvem-utebetaler" id `annen ytelse hvem utebetaler` avhengerAv `andre ytelser mottatt eller søkt`,
+            periode faktum "faktum.annen-ytelse-hvilken-periode" id `annen ytelse hvilken periode` avhengerAv `andre ytelser mottatt eller søkt`,
+            dokument faktum "faktum.dokument-annen-ytelse" id `dokumentasjon annen ytelse` avhengerAv `hvilke andre ytelser`,
+            boolsk faktum "faktum.godkjenning-dokument-annen-ytelse" id `godkjenning dokumentasjon annen ytelse` avhengerAv `dokumentasjon annen ytelse`,
+            boolsk faktum "faktum.utbetaling-eller-okonomisk-gode-tidligere-arbeidsgiver" id `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
+            tekst faktum "faktum.okonomisk-gode-tidligere-arbeidsgiver-hva-omfatter-avtalen" id `økonomisk gode tidligere arbeidsgiver hva omfatter avtalen` avhengerAv `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
+            dokument faktum "faktum.dokument-okonomiske-goder-tidligere-arbeidsgiver" id `dokumentasjon økonomiske goder fra tidligere arbeidsgiver` avhengerAv `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
+            boolsk faktum "faktum.godkjenning-dokument-okonomiske-goder-tidligere-arbeidsgiver" id `godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver` avhengerAv `dokumentasjon økonomiske goder fra tidligere arbeidsgiver`,
+        )
 
     override fun seksjon(fakta: Fakta) = listOf(fakta.seksjon("andre-ytelser", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
-    override fun regeltre(fakta: Fakta): DeltreSubsumsjon = with(fakta) {
-        "andre ytelser".deltre {
-            "Har eller har ikke andre ytelser".minstEnAv(
-                boolsk(`andre ytelser mottatt eller søkt`) er false,
-                boolsk(`andre ytelser mottatt eller søkt`) er true hvisOppfylt {
-                    "Har angitt at har en eller flere andre ytelser".minstEnAv(
-                        tjenestepensjon(),
-                        arbeidsløsGFF(),
-                        garantilottFraGFF(),
-                        etterlønnFraArbeidsgiver(),
-                        dagpengerFraAnnetEøsLand(),
-                        annenYtelse(),
-                    )
-                },
-            ).hvisOppfylt {
-                "Felles avsluttningsspørsmål".minstEnAv(
-                    boolsk(`utbetaling eller økonomisk gode tidligere arbeidsgiver`) er false,
-                    (boolsk(`utbetaling eller økonomisk gode tidligere arbeidsgiver`) er true)
-                        .sannsynliggjøresAv(dokument(`dokumentasjon økonomiske goder fra tidligere arbeidsgiver`))
-                        .godkjentAv(boolsk(`godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver`)) hvisOppfylt {
-                        tekst(`økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`).utfylt()
-                    },
-                )
+
+    override fun regeltre(fakta: Fakta): DeltreSubsumsjon =
+        with(fakta) {
+            "andre ytelser".deltre {
+                "Har eller har ikke andre ytelser"
+                    .minstEnAv(
+                        boolsk(`andre ytelser mottatt eller søkt`) er false,
+                        boolsk(`andre ytelser mottatt eller søkt`) er true hvisOppfylt {
+                            "Har angitt at har en eller flere andre ytelser".minstEnAv(
+                                tjenestepensjon(),
+                                arbeidsløsGFF(),
+                                garantilottFraGFF(),
+                                etterlønnFraArbeidsgiver(),
+                                dagpengerFraAnnetEøsLand(),
+                                annenYtelse(),
+                            )
+                        },
+                    ).hvisOppfylt {
+                        "Felles avsluttningsspørsmål".minstEnAv(
+                            boolsk(`utbetaling eller økonomisk gode tidligere arbeidsgiver`) er false,
+                            (boolsk(`utbetaling eller økonomisk gode tidligere arbeidsgiver`) er true)
+                                .sannsynliggjøresAv(dokument(`dokumentasjon økonomiske goder fra tidligere arbeidsgiver`))
+                                .godkjentAv(boolsk(`godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver`)) hvisOppfylt {
+                                tekst(`økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`).utfylt()
+                            },
+                        )
+                    }
             }
         }
-    }
 
     private fun Fakta.tjenestepensjon() =
         (flervalg(`hvilke andre ytelser`) inneholder Flervalg("faktum.hvilke-andre-ytelser.svar.pensjon-offentlig-tjenestepensjon"))
@@ -135,7 +132,6 @@ object AndreYtelser : DslFaktaseksjon {
             "hvem utbetaler pensjonen og for hvilken periode".alle(
                 tekst(`tjenestepensjon hvem utbetaler`).utfylt(),
                 periode(`tjenestepensjon hvilken periode`).utfylt(),
-
             )
         }
 
@@ -188,36 +184,36 @@ object AndreYtelser : DslFaktaseksjon {
             )
         }
 
-    override val spørsmålsrekkefølgeForSøker = listOf(
-        `andre ytelser mottatt eller søkt`,
-        `hvilke andre ytelser`,
-        `tjenestepensjon hvem utbetaler`,
-        `tjenestepensjon hvilken periode`,
-        `arbeidsløs GFF hvilken periode`,
-        `garantilott fra GFF hvilken periode`,
-        `etterlønn arbeidsgiver hvem utbetaler`,
-        `etterlønn arbeidsgiver hvilken periode`,
-        `dagpenger hvilket eøs land utbetaler`,
-        `dagpenger eøs land hvilken periode`,
-        `hvilken annen ytelse`,
-        `annen ytelse hvem utebetaler`,
-        `annen ytelse hvilken periode`,
-        `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
-        `økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`,
-
-        `dokumentasjon tjenestepensjon`,
-        `godkjenning dokumentasjon tjenestepensjon`,
-        `dokumentasjon arbeidsløs GFF periode`,
-        `godkjenning dokumentasjon arbeidsløs GFF periode`,
-        `dokumentasjon garantilott fra GFF periode`,
-        `godkjenning dokumentasjon garantilott fra GFF periode`,
-        `dokumentasjon etterlønn`,
-        `godkjenning dokumentasjon etterlønn`,
-        `dokumentasjon dagpenger eøs land`,
-        `godkjenning dokumentasjon dagpenger eøs land`,
-        `dokumentasjon annen ytelse`,
-        `godkjenning dokumentasjon annen ytelse`,
-        `dokumentasjon økonomiske goder fra tidligere arbeidsgiver`,
-        `godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver`,
-    )
+    override val spørsmålsrekkefølgeForSøker =
+        listOf(
+            `andre ytelser mottatt eller søkt`,
+            `hvilke andre ytelser`,
+            `tjenestepensjon hvem utbetaler`,
+            `tjenestepensjon hvilken periode`,
+            `arbeidsløs GFF hvilken periode`,
+            `garantilott fra GFF hvilken periode`,
+            `etterlønn arbeidsgiver hvem utbetaler`,
+            `etterlønn arbeidsgiver hvilken periode`,
+            `dagpenger hvilket eøs land utbetaler`,
+            `dagpenger eøs land hvilken periode`,
+            `hvilken annen ytelse`,
+            `annen ytelse hvem utebetaler`,
+            `annen ytelse hvilken periode`,
+            `utbetaling eller økonomisk gode tidligere arbeidsgiver`,
+            `økonomisk gode tidligere arbeidsgiver hva omfatter avtalen`,
+            `dokumentasjon tjenestepensjon`,
+            `godkjenning dokumentasjon tjenestepensjon`,
+            `dokumentasjon arbeidsløs GFF periode`,
+            `godkjenning dokumentasjon arbeidsløs GFF periode`,
+            `dokumentasjon garantilott fra GFF periode`,
+            `godkjenning dokumentasjon garantilott fra GFF periode`,
+            `dokumentasjon etterlønn`,
+            `godkjenning dokumentasjon etterlønn`,
+            `dokumentasjon dagpenger eøs land`,
+            `godkjenning dokumentasjon dagpenger eøs land`,
+            `dokumentasjon annen ytelse`,
+            `godkjenning dokumentasjon annen ytelse`,
+            `dokumentasjon økonomiske goder fra tidligere arbeidsgiver`,
+            `godkjenning dokumentasjon økonomiske goder fra tidligere arbeidsgiver`,
+        )
 }

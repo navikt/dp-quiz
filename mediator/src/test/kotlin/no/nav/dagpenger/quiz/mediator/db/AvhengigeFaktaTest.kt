@@ -58,24 +58,25 @@ internal class AvhengigeFaktaTest {
         val faktaversjon = Faktaversjon(faktatype, 634)
         val prosesstype = prosesstype("Avhengig faktum restet", faktatype)
         Postgres.withMigratedDb {
-            val prototypeFakta = Fakta(
-                faktaversjon,
-                boolsk faktum "f1" id 19 avhengerAv 2 og 13,
-                dato faktum "f2" id 2,
-                dato faktum "f3" id 13,
-            ).registrer { prototypeFakta ->
-                leggTilProsess(
-                    Prosess(
-                        prosesstype,
-                        Seksjon(
-                            "seksjon",
-                            Rolle.nav,
-                            *(prototypeFakta.map { it }.toTypedArray()),
+            val prototypeFakta =
+                Fakta(
+                    faktaversjon,
+                    boolsk faktum "f1" id 19 avhengerAv 2 og 13,
+                    dato faktum "f2" id 2,
+                    dato faktum "f3" id 13,
+                ).registrer { prototypeFakta ->
+                    leggTilProsess(
+                        Prosess(
+                            prosesstype,
+                            Seksjon(
+                                "seksjon",
+                                Rolle.nav,
+                                *(prototypeFakta.map { it }.toTypedArray()),
+                            ),
                         ),
-                    ),
-                    prototypeFakta boolsk 19 er true,
-                )
-            }
+                        prototypeFakta boolsk 19 er true,
+                    )
+                }
             FaktumTable(prototypeFakta)
             originalProsess = prosess(prosesstype)
 
@@ -99,26 +100,27 @@ internal class AvhengigeFaktaTest {
         val prosesstype = prosesstype("Rehydrering", faktatype)
 
         Postgres.withMigratedDb {
-            val prototypeFakta = Fakta(
-                faktaversjon,
-                boolsk faktum "f1" id 1 avhengerAv 4,
-                boolsk faktum "f2" id 2,
-                boolsk faktum "f3" id 3 avhengerAv 1,
-                boolsk faktum "f4" id 4 avhengerAv 5,
-                boolsk faktum "f5" id 5,
-            ).registrer { prototypeFakta ->
-                leggTilProsess(
-                    Prosess(
-                        prosesstype,
-                        Seksjon(
-                            "seksjon",
-                            Rolle.nav,
-                            *(prototypeFakta.map { it }.toTypedArray()),
+            val prototypeFakta =
+                Fakta(
+                    faktaversjon,
+                    boolsk faktum "f1" id 1 avhengerAv 4,
+                    boolsk faktum "f2" id 2,
+                    boolsk faktum "f3" id 3 avhengerAv 1,
+                    boolsk faktum "f4" id 4 avhengerAv 5,
+                    boolsk faktum "f5" id 5,
+                ).registrer { prototypeFakta ->
+                    leggTilProsess(
+                        Prosess(
+                            prosesstype,
+                            Seksjon(
+                                "seksjon",
+                                Rolle.nav,
+                                *(prototypeFakta.map { it }.toTypedArray()),
+                            ),
                         ),
-                    ),
-                    prototypeFakta boolsk 1 er true,
-                )
-            }
+                        prototypeFakta boolsk 1 er true,
+                    )
+                }
 
             FaktumTable(prototypeFakta)
             originalProsess = prosess(prosesstype)
@@ -144,26 +146,27 @@ internal class AvhengigeFaktaTest {
         val prosesstype = prosesstype("Utledet faktum rehydreres", faktatype)
 
         Postgres.withMigratedDb {
-            val prototypeFakta = Fakta(
-                faktaversjon,
-                boolsk faktum "f1" id 1 avhengerAv 4,
-                dato faktum "f2" id 2,
-                dato faktum "f3" id 3,
-                maks dato "f4" av 2 og 3 id 4,
-                boolsk faktum "f1" id 5 avhengerAv 4,
-            ).registrer { prototypeFakta ->
-                leggTilProsess(
-                    Prosess(
-                        prosesstype,
-                        Seksjon(
-                            "seksjon",
-                            Rolle.nav,
-                            *(prototypeFakta.map { it }.toTypedArray()),
+            val prototypeFakta =
+                Fakta(
+                    faktaversjon,
+                    boolsk faktum "f1" id 1 avhengerAv 4,
+                    dato faktum "f2" id 2,
+                    dato faktum "f3" id 3,
+                    maks dato "f4" av 2 og 3 id 4,
+                    boolsk faktum "f1" id 5 avhengerAv 4,
+                ).registrer { prototypeFakta ->
+                    leggTilProsess(
+                        Prosess(
+                            prosesstype,
+                            Seksjon(
+                                "seksjon",
+                                Rolle.nav,
+                                *(prototypeFakta.map { it }.toTypedArray()),
+                            ),
                         ),
-                    ),
-                    prototypeFakta boolsk 1 er true,
-                )
-            }
+                        prototypeFakta boolsk 1 er true,
+                    )
+                }
 
             FaktumTable(prototypeFakta)
             originalProsess = prosess(prosesstype)
@@ -188,36 +191,37 @@ internal class AvhengigeFaktaTest {
         val prosesstype = prosesstype("Resett", faktatype)
 
         Postgres.withMigratedDb {
-            val prototypeFakta = Fakta(
-                faktaversjon,
-                boolsk faktum "f1" id 1,
-                dato faktum "f2" id 2 avhengerAv 1,
-                boolsk faktum "f3" id 3 avhengerAv 1,
-                heltall faktum "f4" id 4 avhengerAv 1,
-                dokument faktum "f5" id 5 avhengerAv 1,
-                desimaltall faktum "f6" id 6 avhengerAv 1,
-                envalg faktum "f7" id 7 med "valg1" med "valg2" avhengerAv 1,
-                flervalg faktum "f8" id 8 med "valg1" med "valg2" avhengerAv 1,
-                heltall faktum "f9" id 9,
-                heltall faktum "f10" id 10,
-                heltall faktum "f11" id 11 genererer 9 og 10 avhengerAv 1,
-                inntekt faktum "f12" id 12 avhengerAv 1,
-                periode faktum "f13" id 13 avhengerAv 1,
-                tekst faktum "f14" id 14 avhengerAv 1,
-                land faktum "f15" gruppe "gruppe" med setOf(Land("BUL")) id 15 avhengerAv 1,
-            ).registrer { prototypeFakta ->
-                leggTilProsess(
-                    Prosess(
-                        prosesstype,
-                        Seksjon(
-                            "seksjon",
-                            Rolle.nav,
-                            *(prototypeFakta.map { it }.toTypedArray()),
+            val prototypeFakta =
+                Fakta(
+                    faktaversjon,
+                    boolsk faktum "f1" id 1,
+                    dato faktum "f2" id 2 avhengerAv 1,
+                    boolsk faktum "f3" id 3 avhengerAv 1,
+                    heltall faktum "f4" id 4 avhengerAv 1,
+                    dokument faktum "f5" id 5 avhengerAv 1,
+                    desimaltall faktum "f6" id 6 avhengerAv 1,
+                    envalg faktum "f7" id 7 med "valg1" med "valg2" avhengerAv 1,
+                    flervalg faktum "f8" id 8 med "valg1" med "valg2" avhengerAv 1,
+                    heltall faktum "f9" id 9,
+                    heltall faktum "f10" id 10,
+                    heltall faktum "f11" id 11 genererer 9 og 10 avhengerAv 1,
+                    inntekt faktum "f12" id 12 avhengerAv 1,
+                    periode faktum "f13" id 13 avhengerAv 1,
+                    tekst faktum "f14" id 14 avhengerAv 1,
+                    land faktum "f15" gruppe "gruppe" med setOf(Land("BUL")) id 15 avhengerAv 1,
+                ).registrer { prototypeFakta ->
+                    leggTilProsess(
+                        Prosess(
+                            prosesstype,
+                            Seksjon(
+                                "seksjon",
+                                Rolle.nav,
+                                *(prototypeFakta.map { it }.toTypedArray()),
+                            ),
                         ),
-                    ),
-                    prototypeFakta boolsk 1 er true,
-                )
-            }
+                        prototypeFakta boolsk 1 er true,
+                    )
+                }
 
             FaktumTable(prototypeFakta)
             originalProsess = prosess(prosesstype)
@@ -254,18 +258,20 @@ internal class AvhengigeFaktaTest {
         }
     }
 
-    private fun faktatype(navn: String) = object : Faktatype {
-        override val id = navn
-    }
+    private fun faktatype(navn: String) =
+        object : Faktatype {
+            override val id = navn
+        }
 
-    private fun prosesstype(navn: String, faktatype: Faktatype) = object : Prosesstype {
+    private fun prosesstype(
+        navn: String,
+        faktatype: Faktatype,
+    ) = object : Prosesstype {
         override val navn: String = navn
         override val faktatype: Faktatype = faktatype
     }
 
-    private fun prosess(prosesstype: Prosesstype): Prosess {
-        return prosessRepository.ny(UNG_PERSON_FNR_2018, prosesstype)
-    }
+    private fun prosess(prosesstype: Prosesstype): Prosess = prosessRepository.ny(UNG_PERSON_FNR_2018, prosesstype)
 
     private fun lagreHentOgSammenlign() {
         prosessRepository.lagre(originalProsess)
@@ -273,7 +279,10 @@ internal class AvhengigeFaktaTest {
         assertDeepEquals(originalProsess, rehydrertProsess)
     }
 
-    private fun assertRecordCount(recordCount: Int, table: String) {
+    private fun assertRecordCount(
+        recordCount: Int,
+        table: String,
+    ) {
         assertEquals(
             recordCount,
             using(sessionOf(dataSource)) { session ->

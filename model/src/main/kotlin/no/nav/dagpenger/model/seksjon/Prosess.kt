@@ -24,7 +24,8 @@ class Prosess private constructor(
     val fakta: Fakta,
     internal val rootSubsumsjon: Subsumsjon,
     private val seksjoner: MutableList<Seksjon>,
-) : TypedFaktum by fakta, MutableList<Seksjon> by seksjoner {
+) : TypedFaktum by fakta,
+    MutableList<Seksjon> by seksjoner {
     constructor(type: Prosesstype, vararg seksjoner: Seksjon) : this(
         UUID.randomUUID(),
         type,
@@ -71,7 +72,7 @@ class Prosess private constructor(
             listOf(
                 seksjoner.firstOrNull { nesteFakta in it } ?: throw NoSuchElementException(
                     "Fant ikke seksjon med fakta:\n ${
-                    nesteFakta.map { "Id=${it.id}, navn='${it.navn}'" }
+                        nesteFakta.map { "Id=${it.id}, navn='${it.navn}'" }
                     }",
                 ),
             )
@@ -89,18 +90,23 @@ class Prosess private constructor(
 
     fun seksjon(navn: String) = seksjoner.first { it.navn == navn }
 
-    internal fun bygg(prosessUUID: UUID, fakta: Fakta, subsumsjon: Subsumsjon) =
-        Prosess(prosessUUID, type, fakta, subsumsjon, seksjoner.map { it.bygg(fakta) }.toMutableList())
+    internal fun bygg(
+        prosessUUID: UUID,
+        fakta: Fakta,
+        subsumsjon: Subsumsjon,
+    ) = Prosess(prosessUUID, type, fakta, subsumsjon, seksjoner.map { it.bygg(fakta) }.toMutableList())
 
     // Brukes for å bygge en prosess uten person, for publisering av maler
-    fun bygg(fakta: Fakta, subsumsjon: Subsumsjon) =
-        Prosess(UUID.randomUUID(), type, fakta, subsumsjon, seksjoner.map { it.bygg(fakta) }.toMutableList())
+    fun bygg(
+        fakta: Fakta,
+        subsumsjon: Subsumsjon,
+    ) = Prosess(UUID.randomUUID(), type, fakta, subsumsjon, seksjoner.map { it.bygg(fakta) }.toMutableList())
 
     internal fun nesteFakta() = rootSubsumsjon.nesteFakta()
 
     fun resultat() = rootSubsumsjon.resultat()
 
     fun erFerdig() = nesteSeksjoner().all { fakta -> fakta.all { faktum -> faktum.erBesvart() } }
-    fun erFerdigFor(vararg roller: Rolle): Boolean =
-        nesteSeksjoner().all { fakta -> fakta.none { faktum -> roller.any { faktum.harRolle(it) } } }
+
+    fun erFerdigFor(vararg roller: Rolle): Boolean = nesteSeksjoner().all { fakta -> fakta.none { faktum -> roller.any { faktum.harRolle(it) } } }
 }

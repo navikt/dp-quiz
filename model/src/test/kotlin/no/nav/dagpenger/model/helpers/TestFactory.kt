@@ -30,16 +30,18 @@ internal fun Prosess.testProsess(testPerson: Person? = null): Prosess {
     return this.bygg(UUID.randomUUID(), fakta, this.rootSubsumsjon.bygg(fakta))
 }
 
-internal fun testFaktatype() = object : Faktatype {
-    override val id = UUID.randomUUID().toString()
-}
+internal fun testFaktatype() =
+    object : Faktatype {
+        override val id = UUID.randomUUID().toString()
+    }
 
 internal fun testFaktaversjon(faktatype: Faktatype = testFaktatype()) = Faktaversjon(faktatype, 1)
 
-internal fun testProsesstype(faktatype: Faktatype = testFaktatype()) = object : Prosesstype {
-    override val navn: String = UUID.randomUUID().toString()
-    override val faktatype: Faktatype = faktatype
-}
+internal fun testProsesstype(faktatype: Faktatype = testFaktatype()) =
+    object : Prosesstype {
+        override val navn: String = UUID.randomUUID().toString()
+        override val faktatype: Faktatype = faktatype
+    }
 
 internal val Prosesstype.faktaversjon: Faktaversjon
     get() = testFaktaversjon(faktatype)

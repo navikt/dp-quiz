@@ -20,11 +20,12 @@ internal class BostedTest {
     @Test
     fun `Bostedsregel for Norge, Svalbard og Jan Mayen`() {
         val fakta = Fakta(testFaktaversjon(), *Bosted.fakta())
-        val søknadprosess = fakta.testSøknadprosess(
-            subsumsjon = Bosted.regeltre(fakta),
-        ) {
-            Bosted.seksjon(this)
-        }
+        val søknadprosess =
+            fakta.testSøknadprosess(
+                subsumsjon = Bosted.regeltre(fakta),
+            ) {
+                Bosted.seksjon(this)
+            }
 
         søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("NOR"))
         assertEquals(true, søknadprosess.resultat())
@@ -36,11 +37,12 @@ internal class BostedTest {
     @Test
     fun `Bostedsregel for EØS og Sveits ikke reist tilbake `() {
         val fakta = Fakta(testFaktaversjon(), *Bosted.fakta())
-        val søknadprosess = fakta.testSøknadprosess(
-            subsumsjon = Bosted.regeltre(fakta),
-        ) {
-            Bosted.seksjon(this)
-        }
+        val søknadprosess =
+            fakta.testSøknadprosess(
+                subsumsjon = Bosted.regeltre(fakta),
+            ) {
+                Bosted.seksjon(this)
+            }
 
         forventedeEøsLand().forEach { land ->
             søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(land)
@@ -60,11 +62,12 @@ internal class BostedTest {
     @Test
     fun `Bostedsregel for EØS og Sveits og har reist tilbake til bostedslandet`() {
         val fakta = Fakta(testFaktaversjon(), *Bosted.fakta())
-        val søknadprosess = fakta.testSøknadprosess(
-            subsumsjon = Bosted.regeltre(fakta),
-        ) {
-            Bosted.seksjon(this)
-        }
+        val søknadprosess =
+            fakta.testSøknadprosess(
+                subsumsjon = Bosted.regeltre(fakta),
+            ) {
+                Bosted.seksjon(this)
+            }
 
         forventedeEøsLand().forEach { land ->
             søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(land)
@@ -93,11 +96,12 @@ internal class BostedTest {
     @Test
     fun `Bostedsregel for Storbritannia`() {
         val fakta = Fakta(testFaktaversjon(), *Bosted.fakta())
-        val søknadprosess = fakta.testSøknadprosess(
-            subsumsjon = Bosted.regeltre(fakta),
-        ) {
-            Bosted.seksjon(this)
-        }
+        val søknadprosess =
+            fakta.testSøknadprosess(
+                subsumsjon = Bosted.regeltre(fakta),
+            ) {
+                Bosted.seksjon(this)
+            }
 
         søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("GBR"))
         assertEquals(true, søknadprosess.resultat())
@@ -112,11 +116,12 @@ internal class BostedTest {
     @Test
     fun `Bostedsregel for utenfor EØS`() {
         val fakta = Fakta(testFaktaversjon(), *Bosted.fakta())
-        val søknadprosess = fakta.testSøknadprosess(
-            subsumsjon = Bosted.regeltre(fakta),
-        ) {
-            Bosted.seksjon(this)
-        }
+        val søknadprosess =
+            fakta.testSøknadprosess(
+                subsumsjon = Bosted.regeltre(fakta),
+            ) {
+                Bosted.seksjon(this)
+            }
 
         søknadprosess.land(Bosted.`hvilket land bor du i`).besvar(Land("AUS"))
         assertEquals(true, søknadprosess.resultat())
@@ -125,47 +130,49 @@ internal class BostedTest {
     @Test
     fun `Faktarekkefølge i seksjon`() {
         val fakta = Fakta(testFaktaversjon(), *Bosted.fakta())
-        val søknadprosess = fakta.testSøknadprosess(
-            subsumsjon = Bosted.regeltre(fakta),
-        ) {
-            Bosted.seksjon(this)
-        }
+        val søknadprosess =
+            fakta.testSøknadprosess(
+                subsumsjon = Bosted.regeltre(fakta),
+            ) {
+                Bosted.seksjon(this)
+            }
         val faktaFraBosted = søknadprosess.nesteSeksjoner().first().joinToString(separator = ",") { it.id }
         assertEquals("6001,6002,6003,6004,6005,6006", faktaFraBosted)
     }
 
-    private fun forventedeEøsLand() = listOf(
-        "BEL",
-        "BGR",
-        "DNK",
-        "EST",
-        "FIN",
-        "FRA",
-        "GRC",
-        "IRL",
-        "ISL",
-        "ITA",
-        "HRV",
-        "CYP",
-        "LVA",
-        "LIE",
-        "LTU",
-        "LUX",
-        "MLT",
-        "NLD",
-        "POL",
-        "PRT",
-        "ROU",
-        "SVK",
-        "SVN",
-        "ESP",
-        "CHE",
-        "SWE",
-        "CZE",
-        "DEU",
-        "HUN",
-        "AUT",
-    ).map { land ->
-        Land(land)
-    }
+    private fun forventedeEøsLand() =
+        listOf(
+            "BEL",
+            "BGR",
+            "DNK",
+            "EST",
+            "FIN",
+            "FRA",
+            "GRC",
+            "IRL",
+            "ISL",
+            "ITA",
+            "HRV",
+            "CYP",
+            "LVA",
+            "LIE",
+            "LTU",
+            "LUX",
+            "MLT",
+            "NLD",
+            "POL",
+            "PRT",
+            "ROU",
+            "SVK",
+            "SVN",
+            "ESP",
+            "CHE",
+            "SWE",
+            "CZE",
+            "DEU",
+            "HUN",
+            "AUT",
+        ).map { land ->
+            Land(land)
+        }
 }

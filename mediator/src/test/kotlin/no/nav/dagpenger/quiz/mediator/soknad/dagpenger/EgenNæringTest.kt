@@ -21,11 +21,12 @@ internal class EgenNæringTest {
 
     @BeforeEach
     fun setup() {
-        prosess = fakta.testSøknadprosess(
-            subsumsjon = EgenNæring.regeltre(fakta),
-        ) {
-            EgenNæring.seksjon(this)
-        }
+        prosess =
+            fakta.testSøknadprosess(
+                subsumsjon = EgenNæring.regeltre(fakta),
+            ) {
+                EgenNæring.seksjon(this)
+            }
     }
 
     @Test
@@ -59,7 +60,8 @@ internal class EgenNæringTest {
         assertEquals(null, prosess.resultat())
 
         prosess.heltall(EgenNæring.`eget gårdsbruk organisasjonsnummer`).besvar(123)
-        prosess.flervalg(EgenNæring.`eget gårdsbruk type gårdsbruk`)
+        prosess
+            .flervalg(EgenNæring.`eget gårdsbruk type gårdsbruk`)
             .besvar(Flervalg("faktum.eget-gaardsbruk-type-gaardsbruk.svar.dyr"))
         prosess.flervalg(EgenNæring.`eget gårdsbruk hvem eier`).besvar(
             Flervalg(

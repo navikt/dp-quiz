@@ -11,17 +11,17 @@ class GeneratorSubsumsjon internal constructor(
     regel: Regel,
     private val faktum: GeneratorFaktum,
     private val deltre: DeltreSubsumsjon,
-    private val resultatSubsumsjon: SammensattSubsumsjon
+    private val resultatSubsumsjon: SammensattSubsumsjon,
 ) : EnkelSubsumsjon(regel, listOf(faktum), resultatSubsumsjon, TomSubsumsjon) {
-
-    override fun lokaltResultat(): Boolean? {
-        return super.lokaltResultat().also { resultat ->
+    override fun lokaltResultat(): Boolean? =
+        super.lokaltResultat().also { resultat ->
             when (resultat) {
                 true -> {
                     (oppfylt as SammensattSubsumsjon).also { sammensattSubsumsjon ->
                         if (sammensattSubsumsjon.size != faktum.svar()) sammensattSubsumsjon.clear()
-                        if (sammensattSubsumsjon.isEmpty())
+                        if (sammensattSubsumsjon.isEmpty()) {
                             sammensattSubsumsjon.addAll((1..faktum.svar()).map { deltre.deepCopy(it, faktum.fakta) })
+                        }
                     }
                 }
                 else -> {
@@ -29,7 +29,6 @@ class GeneratorSubsumsjon internal constructor(
                 }
             }
         }
-    }
 
     override fun accept(visitor: SubsumsjonVisitor) {
         visitor.preVisit(this, deltre)
@@ -37,33 +36,37 @@ class GeneratorSubsumsjon internal constructor(
         visitor.postVisit(this, deltre)
     }
 
-    override fun deepCopy(prosess: Prosess) = GeneratorSubsumsjon(
-        regel,
-        listOf(faktum).deepCopy(prosess).first() as GeneratorFaktum,
-        deltre.deepCopy(prosess),
-        resultatSubsumsjon.deepCopy(prosess) as SammensattSubsumsjon
+    override fun deepCopy(prosess: Prosess) =
+        GeneratorSubsumsjon(
+            regel,
+            listOf(faktum).deepCopy(prosess).first() as GeneratorFaktum,
+            deltre.deepCopy(prosess),
+            resultatSubsumsjon.deepCopy(prosess) as SammensattSubsumsjon,
+        )
 
-    )
+    override fun bygg(fakta: Fakta) =
+        GeneratorSubsumsjon(
+            regel,
+            fakta.id(faktum.faktumId) as GeneratorFaktum,
+            deltre.bygg(fakta),
+            resultatSubsumsjon.bygg(fakta) as SammensattSubsumsjon,
+        )
 
-    override fun bygg(fakta: Fakta) = GeneratorSubsumsjon(
-        regel,
-        fakta.id(faktum.faktumId) as GeneratorFaktum,
-        deltre.bygg(fakta),
-        resultatSubsumsjon.bygg(fakta) as SammensattSubsumsjon
-    )
+    override fun deepCopy() =
+        GeneratorSubsumsjon(
+            regel,
+            faktum,
+            deltre.deepCopy() as DeltreSubsumsjon,
+            resultatSubsumsjon.deepCopy() as SammensattSubsumsjon,
+        )
 
-    override fun deepCopy() = GeneratorSubsumsjon(
-        regel,
-        faktum,
-        deltre.deepCopy() as DeltreSubsumsjon,
-        resultatSubsumsjon.deepCopy() as SammensattSubsumsjon
-    )
-
-    override fun deepCopy(indeks: Int, fakta: Fakta) = GeneratorSubsumsjon(
+    override fun deepCopy(
+        indeks: Int,
+        fakta: Fakta,
+    ) = GeneratorSubsumsjon(
         regel,
         listOf(faktum).deepCopy(indeks, fakta).first() as GeneratorFaktum,
         deltre.deepCopy(indeks, fakta) as DeltreSubsumsjon,
-        resultatSubsumsjon.deepCopy(indeks, fakta) as SammensattSubsumsjon
-
+        resultatSubsumsjon.deepCopy(indeks, fakta) as SammensattSubsumsjon,
     )
 }

@@ -14,11 +14,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class TekstFaktumTest {
-
-    val prototypeFakta = Fakta(
-        testversjon,
-        tekst faktum "tekst" id 1
-    )
+    val prototypeFakta =
+        Fakta(
+            testversjon,
+            tekst faktum "tekst" id 1,
+        )
 
     lateinit var søknad: Prosess
 

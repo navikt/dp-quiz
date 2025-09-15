@@ -25,7 +25,10 @@ abstract class SøknadBesvarer {
     protected fun gjeldendeResultat() = testRapid.inspektør.field(testRapid.inspektør.size - 1, "resultat").asBoolean()
 
     protected fun gjeldendeFakta(id: String) =
-        testRapid.inspektør.field(testRapid.inspektør.size - 1, "fakta").find { it["id"].asText() == id }?.get("svar")
+        testRapid.inspektør
+            .field(testRapid.inspektør.size - 1, "fakta")
+            .find { it["id"].asText() == id }
+            ?.get("svar")
             ?.asBoolean()
 
     protected fun melding(indeks: Int) = testRapid.inspektør.message(indeks)
@@ -274,14 +277,13 @@ abstract class SøknadBesvarer {
     protected fun lagSvar(
         faktumId: String,
         svar: Any,
-    ): String {
-        return when (svar) {
+    ): String =
+        when (svar) {
             is Periode -> lagPeriodeGeneratorSvar(svar, faktumId)
             is Tekst -> """{"id": "$faktumId", "svar": "${svar.verdi}", "type": "${svar::class.java.simpleName.lowercase()}"}"""
             is Envalg, is Flervalg -> lagValgGeneratorSvar(svar as Valg, faktumId)
             else -> """{"id": "$faktumId", "svar": "$svar", "type": "${svar::class.java.simpleName.lowercase()}"}"""
         }
-    }
 
     private fun lagValgGeneratorSvar(
         svar: Valg,

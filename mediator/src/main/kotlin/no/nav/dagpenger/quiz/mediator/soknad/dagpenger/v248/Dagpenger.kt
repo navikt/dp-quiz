@@ -27,42 +27,47 @@ internal object Dagpenger {
         registrer(prototypeFakta)
     }
 
-    private val faktaseksjoner = listOf(
-        Bosted,
-        DinSituasjon,
-        EøsArbeidsforhold,
-        EgenNæring,
-        Verneplikt,
-        AndreYtelser,
-        Utdanning,
-        Barnetillegg,
-        ReellArbeidssoker,
-        Tilleggsopplysninger,
-    )
+    private val faktaseksjoner =
+        listOf(
+            Bosted,
+            DinSituasjon,
+            EøsArbeidsforhold,
+            EgenNæring,
+            Verneplikt,
+            AndreYtelser,
+            Utdanning,
+            Barnetillegg,
+            ReellArbeidssoker,
+            Tilleggsopplysninger,
+        )
     private val alleFakta = flatMapAlleFakta()
     private val alleSeksjoner = flatMapAlleSeksjoner()
     private val prototypeFakta: Fakta
-        get() = Fakta(
-            VERSJON_ID,
-            *alleFakta,
+        get() =
+            Fakta(
+                VERSJON_ID,
+                *alleFakta,
+            )
+    private val prosess =
+        Prosess(
+            Prosesser.Søknad,
+            *alleSeksjoner,
         )
-    private val prosess = Prosess(
-        Prosesser.Søknad,
-        *alleSeksjoner,
-    )
 
     object Subsumsjoner {
-        val regeltre: Subsumsjon = with(prototypeFakta) {
-            Bosted.regeltre(this).hvisOppfylt {
-                DinSituasjon.regeltre(this).uansett {
-                    EøsArbeidsforhold.regeltre(this).uansett {
-                        EgenNæring.regeltre(this).hvisOppfylt {
-                            Verneplikt.regeltre(this).hvisOppfylt {
-                                AndreYtelser.regeltre(this).hvisOppfylt {
-                                    Utdanning.regeltre(this).hvisOppfylt {
-                                        Barnetillegg.regeltre(this).hvisOppfylt {
-                                            ReellArbeidssoker.regeltre(this).hvisOppfylt {
-                                                Tilleggsopplysninger.regeltre(this)
+        val regeltre: Subsumsjon =
+            with(prototypeFakta) {
+                Bosted.regeltre(this).hvisOppfylt {
+                    DinSituasjon.regeltre(this).uansett {
+                        EøsArbeidsforhold.regeltre(this).uansett {
+                            EgenNæring.regeltre(this).hvisOppfylt {
+                                Verneplikt.regeltre(this).hvisOppfylt {
+                                    AndreYtelser.regeltre(this).hvisOppfylt {
+                                        Utdanning.regeltre(this).hvisOppfylt {
+                                            Barnetillegg.regeltre(this).hvisOppfylt {
+                                                ReellArbeidssoker.regeltre(this).hvisOppfylt {
+                                                    Tilleggsopplysninger.regeltre(this)
+                                                }
                                             }
                                         }
                                     }
@@ -72,7 +77,6 @@ internal object Dagpenger {
                     }
                 }
             }
-        }
     }
 
     private val faktumNavBehov =
@@ -83,22 +87,28 @@ internal object Dagpenger {
         )
 
     init {
-        Henvendelser.FaktaBygger(
-            prototypeFakta,
-            faktumNavBehov,
-        ).also {
-            it.registrer()
-            it.leggTilProsess(prosess, regeltre)
-        }
+        Henvendelser
+            .FaktaBygger(
+                prototypeFakta,
+                faktumNavBehov,
+            ).also {
+                it.registrer()
+                it.leggTilProsess(prosess, regeltre)
+            }
 
         logger.info { "\n\n\nREGISTRERT versjon id $VERSJON_ID \n\n\n\n" }
     }
 
-    private fun flatMapAlleFakta() = faktaseksjoner.flatMap { seksjon ->
-        seksjon.fakta().toList()
-    }.toTypedArray()
+    private fun flatMapAlleFakta() =
+        faktaseksjoner
+            .flatMap { seksjon ->
+                seksjon.fakta().toList()
+            }.toTypedArray()
 
-    private fun flatMapAlleSeksjoner() = faktaseksjoner.map { faktaSeksjon ->
-        faktaSeksjon.seksjon(prototypeFakta)
-    }.flatten().toTypedArray()
+    private fun flatMapAlleSeksjoner() =
+        faktaseksjoner
+            .map { faktaSeksjon ->
+                faktaSeksjon.seksjon(prototypeFakta)
+            }.flatten()
+            .toTypedArray()
 }

@@ -32,22 +32,23 @@ internal class ResultatTest {
     @BeforeEach
     fun setup() {
         val prosesstype = testProsesstype()
-        val prototypeFakta = Fakta(
-            prosesstype.faktaversjon,
-            boolsk faktum "f1" id 19,
-        ).registrer { prototypeFakta ->
-            leggTilProsess(
-                Prosess(
-                    prosesstype,
-                    Seksjon(
-                        "seksjon",
-                        Rolle.nav,
-                        *(prototypeFakta.map { it }.toTypedArray()),
+        val prototypeFakta =
+            Fakta(
+                prosesstype.faktaversjon,
+                boolsk faktum "f1" id 19,
+            ).registrer { prototypeFakta ->
+                leggTilProsess(
+                    Prosess(
+                        prosesstype,
+                        Seksjon(
+                            "seksjon",
+                            Rolle.nav,
+                            *(prototypeFakta.map { it }.toTypedArray()),
+                        ),
                     ),
-                ),
-                prototypeFakta boolsk 19 er true,
-            )
-        }
+                    prototypeFakta boolsk 19 er true,
+                )
+            }
 
         Postgres.withMigratedDb {
             FaktumTable(prototypeFakta)
@@ -75,15 +76,16 @@ internal class ResultatTest {
     fun `Lagrer sendt til manuell behandling`() {
         val seksjonsnavn = "manuell seksjon"
         resultatRecord.lagreManuellBehandling(prosess.fakta.uuid, seksjonsnavn)
-        val grunn = using(sessionOf(dataSource)) { session ->
-            session.run(
-                queryOf(
-                    //language=PostgreSQL
-                    "SELECT grunn FROM manuell_behandling WHERE soknad_id = (SELECT fakta.id FROM fakta WHERE fakta.uuid = ?)",
-                    prosess.fakta.uuid,
-                ).map { it.string("grunn") }.asSingle,
-            )
-        }
+        val grunn =
+            using(sessionOf(dataSource)) { session ->
+                session.run(
+                    queryOf(
+                        //language=PostgreSQL
+                        "SELECT grunn FROM manuell_behandling WHERE soknad_id = (SELECT fakta.id FROM fakta WHERE fakta.uuid = ?)",
+                        prosess.fakta.uuid,
+                    ).map { it.string("grunn") }.asSingle,
+                )
+            }
 
         assertEquals(seksjonsnavn, grunn)
     }

@@ -21,7 +21,9 @@ import no.nav.dagpenger.model.visitor.FaktaVisitor
 import no.nav.dagpenger.quiz.mediator.db.PostgresDataSourceBuilder.dataSource
 import java.util.UUID
 
-class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
+class OpprettNyFaktaVisitor(
+    fakta: Fakta,
+) : FaktaVisitor {
     private var internVersjonId = 0
     private var rootId = 0
     private var indeks = 0
@@ -34,15 +36,19 @@ class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
         fakta.accept(this)
     }
 
-    override fun preVisit(person: Person, uuid: UUID) {
+    override fun preVisit(
+        person: Person,
+        uuid: UUID,
+    ) {
         personId = uuid
     }
 
     private fun hentInternId(prosessVersjon: Faktaversjon): Int {
-        val query = queryOf( //language=PostgreSQL
-            "SELECT id FROM faktaversjon WHERE navn = :navn AND versjon_id = :versjon_id",
-            mapOf("navn" to prosessVersjon.faktatype.id, "versjon_id" to prosessVersjon.versjon),
-        )
+        val query =
+            queryOf( //language=PostgreSQL
+                "SELECT id FROM faktaversjon WHERE navn = :navn AND versjon_id = :versjon_id",
+                mapOf("navn" to prosessVersjon.faktatype.id, "versjon_id" to prosessVersjon.versjon),
+            )
         return using(sessionOf(dataSource)) { session ->
             session.run(
                 query.map { it.intOrNull("id") }.asSingle,
@@ -50,17 +56,29 @@ class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
         }
     }
 
-    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+    override fun preVisit(
+        fakta: Fakta,
+        faktaversjon: Faktaversjon,
+        uuid: UUID,
+        navBehov: FaktumNavBehov,
+    ) {
         this.internVersjonId = hentInternId(faktaversjon)
         this.søknadUUID = uuid
     }
 
-    override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
+    override fun visit(
+        faktumId: FaktumId,
+        rootId: Int,
+        indeks: Int,
+    ) {
         this.rootId = rootId
         this.indeks = indeks
     }
 
-    override fun postVisit(fakta: Fakta, uuid: UUID) {
+    override fun postVisit(
+        fakta: Fakta,
+        uuid: UUID,
+    ) {
         val faktumInsertStatement = //language=PostgreSQL
             """INSERT INTO faktum_verdi
                                 (soknad_id, indeks, faktum_id)
@@ -69,20 +87,21 @@ class OpprettNyFaktaVisitor(fakta: Fakta) : FaktaVisitor {
             """.trimMargin()
         using(sessionOf(dataSource)) { session ->
             session.transaction { transactionalSession ->
-                val id = transactionalSession.run(
-                    queryOf( //language=PostgreSQL
-                        """
-                         INSERT INTO fakta(uuid, versjon_id, person_id) 
-                         VALUES (:uuid, :versjon_id, :person_id) 
-                         RETURNING id                        
-                        """.trimIndent(),
-                        mapOf(
-                            "uuid" to søknadUUID,
-                            "versjon_id" to internVersjonId,
-                            "person_id" to personId,
-                        ),
-                    ).map { it.long(1) }.asSingle,
-                )
+                val id =
+                    transactionalSession.run(
+                        queryOf( //language=PostgreSQL
+                            """
+                            INSERT INTO fakta(uuid, versjon_id, person_id) 
+                            VALUES (:uuid, :versjon_id, :person_id) 
+                            RETURNING id                        
+                            """.trimIndent(),
+                            mapOf(
+                                "uuid" to søknadUUID,
+                                "versjon_id" to internVersjonId,
+                                "person_id" to personId,
+                            ),
+                        ).map { it.long(1) }.asSingle,
+                    )
                 val params = faktumParametre.map { originalParameter -> mapOf("soknadId" to id) + originalParameter }
                 transactionalSession.batchPreparedNamedStatement(faktumInsertStatement, params)
             }

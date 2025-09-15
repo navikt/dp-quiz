@@ -4,15 +4,17 @@ import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
-class Inntekt private constructor(private val årlig: Double) : Comparable<Inntekt> {
-
+class Inntekt private constructor(
+    private val årlig: Double,
+) : Comparable<Inntekt> {
     init {
         require(
-            this.årlig !in listOf(
-                Double.POSITIVE_INFINITY,
-                Double.NEGATIVE_INFINITY,
-                Double.NaN
-            )
+            this.årlig !in
+                listOf(
+                    Double.POSITIVE_INFINITY,
+                    Double.NEGATIVE_INFINITY,
+                    Double.NaN,
+                ),
         ) { "inntekt må være gyldig nummer" }
     }
 
@@ -29,9 +31,7 @@ class Inntekt private constructor(private val årlig: Double) : Comparable<Innte
 
         val INGEN = 0.daglig
 
-        internal fun List<Inntekt>.summer(): Inntekt {
-            return this.fold(INGEN) { acc, inntekt -> Inntekt(acc.årlig + inntekt.årlig) }
-        }
+        internal fun List<Inntekt>.summer(): Inntekt = this.fold(INGEN) { acc, inntekt -> Inntekt(acc.årlig + inntekt.årlig) }
 
         internal fun List<Inntekt>.gjennomsnitt(): Inntekt {
             if (this.isEmpty()) return INGEN
@@ -39,12 +39,13 @@ class Inntekt private constructor(private val årlig: Double) : Comparable<Innte
         }
     }
 
-    fun <R> reflection(block: (Double, Double, Double, Int) -> R) = block(
-        årlig,
-        tilMånedligDouble(),
-        tilDagligDouble(),
-        tilDagligInt()
-    )
+    fun <R> reflection(block: (Double, Double, Double, Int) -> R) =
+        block(
+            årlig,
+            tilMånedligDouble(),
+            tilDagligDouble(),
+            tilDagligInt(),
+        )
 
     private fun tilDagligInt() = (rundTilDaglig().årlig / ARBEIDSDAGER_PER_ÅR).roundToInt()
 
@@ -76,9 +77,7 @@ class Inntekt private constructor(private val årlig: Double) : Comparable<Innte
 
     override fun compareTo(other: Inntekt) = if (this == other) 0 else this.årlig.compareTo(other.årlig)
 
-    override fun toString(): String {
-        return "[Årlig: $årlig, Månedlig: ${tilMånedligDouble()}, Daglig: ${tilDagligDouble()}]"
-    }
+    override fun toString(): String = "[Årlig: $årlig, Månedlig: ${tilMånedligDouble()}, Daglig: ${tilDagligDouble()}]"
 }
 
 internal operator fun Number.times(other: Inntekt) = other * this

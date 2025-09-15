@@ -84,11 +84,12 @@ internal class GodkjenningsSubsumsjonTest {
 
     @Test
     fun `Trenger avhengighet for å godkjenne`() {
-        val prototypeFakta = Fakta(
-            testversjon,
-            boolsk faktum "f1" id 1,
-            boolsk faktum "approve1" id 2,
-        )
+        val prototypeFakta =
+            Fakta(
+                testversjon,
+                boolsk faktum "f1" id 1,
+                boolsk faktum "approve1" id 2,
+            )
 
         assertThrows<IllegalArgumentException> {
             (prototypeFakta.boolsk(1) er true).oppfyltGodkjentAv(
@@ -106,11 +107,12 @@ internal class GodkjenningsSubsumsjonTest {
     }
 
     private fun søknadprosess(block: (Fakta) -> Subsumsjon): Prosess {
-        val fakta = Fakta(
-            testversjon,
-            boolsk faktum "faktum" id 1,
-            boolsk faktum "godkjenning" id 2 avhengerAv 1,
-        )
+        val fakta =
+            Fakta(
+                testversjon,
+                boolsk faktum "faktum" id 1,
+                boolsk faktum "godkjenning" id 2 avhengerAv 1,
+            )
 
         faktum = fakta boolsk 1
         godkjenning = fakta boolsk 2

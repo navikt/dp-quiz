@@ -33,15 +33,19 @@ internal class FaktumTableTest {
         }
     }
 
-    private fun assertGyldigeValg(valg: Valg, faktumRootId: Int) {
-        val verdier: Array<String>? = using(sessionOf(dataSource)) { session ->
-            session.run(
-                queryOf( //language=PostgreSQL
-                    "SELECT verdier FROM faktum_gyldige_valg LEFT JOIN faktum ON faktum.id = faktum_gyldige_valg.faktum_id WHERE faktum.root_id = ?",
-                    faktumRootId,
-                ).map { it.array<String>(1) }.asSingle,
-            )
-        }
+    private fun assertGyldigeValg(
+        valg: Valg,
+        faktumRootId: Int,
+    ) {
+        val verdier: Array<String>? =
+            using(sessionOf(dataSource)) { session ->
+                session.run(
+                    queryOf( //language=PostgreSQL
+                        "SELECT verdier FROM faktum_gyldige_valg LEFT JOIN faktum ON faktum.id = faktum_gyldige_valg.faktum_id WHERE faktum.root_id = ?",
+                        faktumRootId,
+                    ).map { it.array<String>(1) }.asSingle,
+                )
+            }
         assertEquals(
             valg.joinToString { it },
             verdier?.joinToString { it },
@@ -49,7 +53,10 @@ internal class FaktumTableTest {
         )
     }
 
-    private fun assertRecordCount(recordCount: Int, table: String) {
+    private fun assertRecordCount(
+        recordCount: Int,
+        table: String,
+    ) {
         assertEquals(
             recordCount,
             using(sessionOf(dataSource)) { session ->

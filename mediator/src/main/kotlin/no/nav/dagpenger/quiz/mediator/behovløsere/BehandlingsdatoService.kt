@@ -8,15 +8,17 @@ import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.micrometer.core.instrument.MeterRegistry
 import java.time.LocalDate
 
-internal class BehandlingsdatoService(rapidsConnection: RapidsConnection) :
-    River.PacketListener {
+internal class BehandlingsdatoService(
+    rapidsConnection: RapidsConnection,
+) : River.PacketListener {
     init {
-        River(rapidsConnection).apply {
-            precondition {
-                it.requireAllOrAny("@behov", listOf("Behandlingsdato"))
-                it.forbid("@løsning")
-            }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                precondition {
+                    it.requireAllOrAny("@behov", listOf("Behandlingsdato"))
+                    it.forbid("@løsning")
+                }
+            }.register(this)
     }
 
     override fun onPacket(

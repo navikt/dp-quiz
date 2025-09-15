@@ -33,34 +33,36 @@ import org.junit.jupiter.api.Test
 class NavJsonBuilderTest {
     @Test
     fun `bygger behov event`() {
-        val faktumNavBehov = FaktumNavBehov(
-            mapOf(
-                1 to "f1Behov",
-                2 to "f2Behov",
-                3 to "f3Behov",
-                4 to "f4Behov",
-                5 to "f5Behov",
-                6 to "f6Behov",
-                7 to "f7Behov",
-                8 to "f8Behov",
-                9 to "f9Behov",
-            ),
-        )
-        val prototypeFakta = Fakta(
-            testversjon,
-            boolsk faktum "f1" id 1,
-            boolsk faktum "f1" id 2 avhengerAv 1,
-            boolsk faktum "f3" id 3,
-            boolsk faktum "f4" id 4 avhengerAv 7,
-            dato faktum "f5" id 5,
-            dato faktum "f6" id 6,
-            maks dato "f56" av 5 og 6 id 7,
-            heltall faktum "periode" id 8 genererer 9 og 10,
-            dato faktum "fom" id 9,
-            dato faktum "tom" id 10,
-        ).also {
-            it.faktumNavBehov(faktumNavBehov)
-        }
+        val faktumNavBehov =
+            FaktumNavBehov(
+                mapOf(
+                    1 to "f1Behov",
+                    2 to "f2Behov",
+                    3 to "f3Behov",
+                    4 to "f4Behov",
+                    5 to "f5Behov",
+                    6 to "f6Behov",
+                    7 to "f7Behov",
+                    8 to "f8Behov",
+                    9 to "f9Behov",
+                ),
+            )
+        val prototypeFakta =
+            Fakta(
+                testversjon,
+                boolsk faktum "f1" id 1,
+                boolsk faktum "f1" id 2 avhengerAv 1,
+                boolsk faktum "f3" id 3,
+                boolsk faktum "f4" id 4 avhengerAv 7,
+                dato faktum "f5" id 5,
+                dato faktum "f6" id 6,
+                maks dato "f56" av 5 og 6 id 7,
+                heltall faktum "periode" id 8 genererer 9 og 10,
+                dato faktum "fom" id 9,
+                dato faktum "tom" id 10,
+            ).also {
+                it.faktumNavBehov(faktumNavBehov)
+            }
         val f1Faktum = prototypeFakta.boolsk(1)
         val f2Faktum = prototypeFakta.boolsk(2)
         val f3Faktum = prototypeFakta.boolsk(3)
@@ -69,9 +71,11 @@ class NavJsonBuilderTest {
         val f8Faktum = prototypeFakta.generator(8)
         val f9Faktum = prototypeFakta.dato(9)
         val f10Faktum = prototypeFakta.dato(10)
-        val periodeSubsumsjon = f8Faktum har "periode".deltre {
-            f7Faktum mellom f9Faktum og f10Faktum
-        }
+        val periodeSubsumsjon =
+            f8Faktum har
+                "periode".deltre {
+                    f7Faktum mellom f9Faktum og f10Faktum
+                }
         val prototypeSubsumsjon: Subsumsjon =
             f1Faktum er true hvisOppfylt {
                 "alle".alle(
@@ -82,25 +86,27 @@ class NavJsonBuilderTest {
                 )
             }
         val søkerSeksjon = Seksjon("seksjon søker", Rolle.søker, f1Faktum)
-        val navSeksjon = Seksjon(
-            "seksjon nav",
-            Rolle.nav,
-            f1Faktum,
-            f2Faktum,
-            f3Faktum,
-            f4Faktum,
-            f7Faktum,
-            f8Faktum,
-            f9Faktum,
-            f10Faktum,
-        )
-        val prototypeProsess = Prosess(
-            TestProsesser.Test,
-            prototypeFakta,
-            søkerSeksjon,
-            navSeksjon,
-            rootSubsumsjon = prototypeSubsumsjon,
-        )
+        val navSeksjon =
+            Seksjon(
+                "seksjon nav",
+                Rolle.nav,
+                f1Faktum,
+                f2Faktum,
+                f3Faktum,
+                f4Faktum,
+                f7Faktum,
+                f8Faktum,
+                f9Faktum,
+                f10Faktum,
+            )
+        val prototypeProsess =
+            Prosess(
+                TestProsesser.Test,
+                prototypeFakta,
+                søkerSeksjon,
+                navSeksjon,
+                rootSubsumsjon = prototypeSubsumsjon,
+            )
         val prosess = prototypeProsess.testProsess(testPerson)
 
         prosess.boolsk(1).besvar(true)

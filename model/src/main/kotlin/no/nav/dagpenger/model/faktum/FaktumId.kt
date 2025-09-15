@@ -2,8 +2,10 @@ package no.nav.dagpenger.model.faktum
 
 import no.nav.dagpenger.model.visitor.FaktumVisitor
 
-class FaktumId private constructor(private val rootId: Int, private val indeks: Int) : Comparable<FaktumId> {
-
+class FaktumId private constructor(
+    private val rootId: Int,
+    private val indeks: Int,
+) : Comparable<FaktumId> {
     constructor(id: Int) : this(id, 0)
 
     constructor(id: String) : this(id.rootId(), id.indeks())
@@ -13,10 +15,11 @@ class FaktumId private constructor(private val rootId: Int, private val indeks: 
         require(indeks >= 0) { "Indeks må være en positiv integer større enn null" }
     }
 
-    fun <R> reflection(block: (Int, Int) -> R) = block(
-        rootId,
-        indeks
-    )
+    fun <R> reflection(block: (Int, Int) -> R) =
+        block(
+            rootId,
+            indeks,
+        )
 
     internal fun generertFra(other: FaktumId) = this.indeks != 0 && this.rootId == other.rootId
 
@@ -32,10 +35,11 @@ class FaktumId private constructor(private val rootId: Int, private val indeks: 
 
     override fun hashCode() = rootId.hashCode() * 37 + indeks.hashCode()
 
-    infix fun medIndeks(indeks: Int) = FaktumId(rootId, indeks).also {
-        require(this.indeks == 0) { "Kan ikke indeksere et allerede indeksert FaktumNavn, id: $id " }
-        require(indeks != 0) { "Indeks må være en positiv integer større enn null" }
-    }
+    infix fun medIndeks(indeks: Int) =
+        FaktumId(rootId, indeks).also {
+            require(this.indeks == 0) { "Kan ikke indeksere et allerede indeksert FaktumNavn, id: $id " }
+            require(indeks != 0) { "Indeks må være en positiv integer større enn null" }
+        }
 
     override fun compareTo(other: FaktumId): Int {
         this.rootId.compareTo(other.rootId).also {
@@ -47,7 +51,8 @@ class FaktumId private constructor(private val rootId: Int, private val indeks: 
     fun harIndeks(): Boolean = this.indeks != 0
 }
 
-private fun String.rootId() = "\\d+".toRegex().find(this)?.value?.toInt()
-    ?: throw IllegalArgumentException("ugyldig id: $this")
+private fun String.rootId() =
+    "\\d+".toRegex().find(this)?.value?.toInt()
+        ?: throw IllegalArgumentException("ugyldig id: $this")
 
 private fun String.indeks(): Int = "\\d+".toRegex().findAll(this).elementAtOrNull(1)?.value?.toInt() ?: 0

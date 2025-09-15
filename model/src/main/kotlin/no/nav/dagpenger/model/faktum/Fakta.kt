@@ -13,7 +13,8 @@ class Fakta private constructor(
     internal val faktaversjon: Faktaversjon,
     val uuid: UUID,
     private val faktaMap: MutableMap<FaktumId, Faktum<*>>,
-) : TypedFaktum, Iterable<Faktum<*>> {
+) : TypedFaktum,
+    Iterable<Faktum<*>> {
     internal val size get() = faktaMap.size
     private var navBehov = FaktumNavBehov(emptyMap())
 
@@ -36,7 +37,11 @@ class Fakta private constructor(
     }
 
     companion object {
-        fun Fakta.seksjon(navn: String, rolle: Rolle, vararg spørsmålsrekkefølge: Int) = Seksjon(
+        fun Fakta.seksjon(
+            navn: String,
+            rolle: Rolle,
+            vararg spørsmålsrekkefølge: Int,
+        ) = Seksjon(
             navn,
             rolle,
             *(spørsmålsrekkefølge.map { id -> this.id(id) }.toTypedArray()),
@@ -49,11 +54,12 @@ class Fakta private constructor(
                 .angiAvhengigheter(this)
                 .tilUtledet(this)
 
-        private fun List<FaktumFactory<*>>.tilFakta() = this.map { factory ->
-            factory.faktum().let { faktum ->
-                faktum.faktumId to faktum
+        private fun List<FaktumFactory<*>>.tilFakta() =
+            this.map { factory ->
+                factory.faktum().let { faktum ->
+                    faktum.faktumId to faktum
+                }
             }
-        }
 
         private fun List<Pair<FaktumId, Faktum<*>>>.sjekkIder(): List<Pair<FaktumId, Faktum<*>>> =
             this.also { fakta ->
@@ -85,78 +91,112 @@ class Fakta private constructor(
     }
 
     override infix fun id(rootId: Int) = id(FaktumId(rootId))
+
     override infix fun id(id: String) = id(FaktumId(id))
-    internal infix fun id(faktumId: FaktumId) = faktaMap[faktumId]
-        ?: throw IllegalArgumentException("Ukjent faktum $faktumId")
+
+    internal infix fun id(faktumId: FaktumId) =
+        faktaMap[faktumId]
+            ?: throw IllegalArgumentException("Ukjent faktum $faktumId")
 
     infix fun idOrNull(faktumId: FaktumId) = faktaMap[faktumId]
+
     infix fun idOrNull(id: String) = idOrNull(FaktumId(id))
 
     override infix fun dokument(rootId: Int) = dokument(FaktumId(rootId))
+
     override infix fun dokument(id: String) = dokument(FaktumId(id))
+
     internal infix fun dokument(faktumId: FaktumId) = id(faktumId) as Faktum<Dokument>
 
     override fun inntekt(rootId: Int) = inntekt(FaktumId(rootId))
+
     override fun inntekt(id: String) = inntekt(FaktumId(id))
+
     internal infix fun inntekt(faktumId: FaktumId) = id(faktumId) as Faktum<Inntekt>
 
     override infix fun boolsk(rootId: Int) = boolsk(FaktumId(rootId))
+
     override infix fun boolsk(id: String) = boolsk(FaktumId(id))
+
     internal infix fun boolsk(faktumId: FaktumId) = id(faktumId) as Faktum<Boolean>
 
     override infix fun dato(rootId: Int) = dato(FaktumId(rootId))
+
     override infix fun dato(id: String) = dato(FaktumId(id))
+
     internal infix fun dato(faktumId: FaktumId) = id(faktumId) as Faktum<LocalDate>
 
     override infix fun heltall(rootId: Int) = heltall(FaktumId(rootId))
+
     override infix fun heltall(id: String) = heltall(FaktumId(id))
+
     internal infix fun heltall(faktumId: FaktumId) = id(faktumId) as Faktum<Int>
 
     override infix fun desimaltall(rootId: Int) = desimaltall(FaktumId(rootId))
+
     override infix fun desimaltall(id: String) = desimaltall(FaktumId(id))
+
     private infix fun desimaltall(faktumId: FaktumId) = id(faktumId) as Faktum<Double>
 
     override infix fun generator(rootId: Int) = generator(FaktumId(rootId))
+
     override infix fun generator(id: String) = generator(FaktumId(id))
+
     internal infix fun generator(faktumId: FaktumId) = id(faktumId) as GeneratorFaktum
 
     override fun envalg(rootId: Int) = envalg(FaktumId(rootId))
+
     override fun envalg(id: String): Faktum<Envalg> = envalg(FaktumId(id))
+
     private infix fun envalg(faktumId: FaktumId) = id(faktumId) as Faktum<Envalg>
 
     override fun flervalg(rootId: Int) = flervalg(FaktumId(rootId))
+
     override fun flervalg(id: String): Faktum<Flervalg> = flervalg(FaktumId(id))
+
     private infix fun flervalg(faktumId: FaktumId) = id(faktumId) as Faktum<Flervalg>
 
     override fun tekst(rootId: Int): Faktum<Tekst> = tekst(FaktumId(rootId))
+
     override fun tekst(id: String): Faktum<Tekst> = tekst(FaktumId(id))
+
     private infix fun tekst(faktumId: FaktumId) = id(faktumId) as Faktum<Tekst>
 
     override fun land(rootId: Int): Faktum<Land> = land(FaktumId(rootId))
+
     override fun land(id: String): Faktum<Land> = land(FaktumId(id))
+
     private fun land(faktumId: FaktumId) = id(faktumId) as Faktum<Land>
 
     override fun periode(rootId: Int): Faktum<Periode> = periode(FaktumId(rootId))
+
     override fun periode(id: String): Faktum<Periode> = periode(FaktumId(id))
+
     private infix fun periode(faktumId: FaktumId) = id(faktumId) as Faktum<Periode>
 
-    fun bygg(person: Person, uuid: UUID = UUID.randomUUID()): Fakta {
+    fun bygg(
+        person: Person,
+        uuid: UUID = UUID.randomUUID(),
+    ): Fakta {
         val byggetFakta = mutableMapOf<FaktumId, Faktum<*>>()
         val mapOfFakta = faktaMap.map { it.key to it.value.bygg(byggetFakta) }.toMap().toMutableMap()
         return Fakta(person, faktaversjon, uuid, mapOfFakta).also { it.faktumNavBehov(navBehov) }
     }
 
-    override fun iterator(): MutableIterator<Faktum<*>> {
-        return faktaMap.values.sorted().sortUtledet().iterator()
-    }
+    override fun iterator(): MutableIterator<Faktum<*>> =
+        faktaMap.values
+            .sorted()
+            .sortUtledet()
+            .iterator()
 
     private fun List<Faktum<*>>.sortUtledet(): MutableList<Faktum<*>> {
         this.forEachIndexed { indeks, faktum ->
             if (faktum !is UtledetFaktum) return@forEachIndexed
             if (faktum.erDefinert(this, indeks)) return@forEachIndexed
-            val nyListe = this.toMutableList().also {
-                it.add(it.removeAt(indeks))
-            }
+            val nyListe =
+                this.toMutableList().also {
+                    it.add(it.removeAt(indeks))
+                }
             return@sortUtledet nyListe.sortUtledet()
         }
         return this.toMutableList()

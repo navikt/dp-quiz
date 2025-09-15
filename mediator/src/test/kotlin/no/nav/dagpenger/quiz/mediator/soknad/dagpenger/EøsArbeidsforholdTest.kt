@@ -30,11 +30,12 @@ internal class EøsArbeidsforholdTest {
 
     @BeforeEach
     fun setup() {
-        prosess = søknad.testSøknadprosess(
-            subsumsjon = EøsArbeidsforhold.regeltre(søknad),
-        ) {
-            EøsArbeidsforhold.seksjon(søknad)
-        }
+        prosess =
+            søknad.testSøknadprosess(
+                subsumsjon = EøsArbeidsforhold.regeltre(søknad),
+            ) {
+                EøsArbeidsforhold.seksjon(søknad)
+            }
     }
 
     @Test
@@ -88,11 +89,12 @@ internal class EøsArbeidsforholdTest {
 
     @Test
     fun `Faktarekkefølge i seksjon`() {
-        val minimaltRegeltreForEøsArbeidsforhold: Subsumsjon = with(søknad) {
-            DinSituasjon.regeltre(this).hvisOppfylt {
-                EøsArbeidsforhold.regeltre(this)
+        val minimaltRegeltreForEøsArbeidsforhold: Subsumsjon =
+            with(søknad) {
+                DinSituasjon.regeltre(this).hvisOppfylt {
+                    EøsArbeidsforhold.regeltre(this)
+                }
             }
-        }
         val søknadprosessForEøsArbeidsforhold =
             søknad.testSøknadprosess(subsumsjon = minimaltRegeltreForEøsArbeidsforhold) {
                 EøsArbeidsforhold.seksjon(søknad) + DinSituasjon.seksjon(søknad)
@@ -109,11 +111,12 @@ internal class EøsArbeidsforholdTest {
 
     @Test
     fun `For et EØS-land skal det være en egen gruppe for kun EØS-land`() {
-        val minimaltRegeltreForEøsArbeidsforhold: Subsumsjon = with(søknad) {
-            DinSituasjon.regeltre(this).hvisOppfylt {
-                EøsArbeidsforhold.regeltre(this)
+        val minimaltRegeltreForEøsArbeidsforhold: Subsumsjon =
+            with(søknad) {
+                DinSituasjon.regeltre(this).hvisOppfylt {
+                    EøsArbeidsforhold.regeltre(this)
+                }
             }
-        }
         val søknadprosessForEøsArbeidsforhold =
             søknad.testSøknadprosess(subsumsjon = minimaltRegeltreForEøsArbeidsforhold) {
                 EøsArbeidsforhold.seksjon(søknad) + DinSituasjon.seksjon(søknad)
@@ -147,26 +150,31 @@ internal class EøsArbeidsforholdTest {
     }
 
     private fun `gjenopptak men har ikke jobbet siden sist eller hatt endringer i arbeidsforhold`() {
-        prosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        prosess
+            .envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja"))
-        prosess.boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
+        prosess
+            .boolsk(DinSituasjon.`gjenopptak jobbet siden sist du fikk dagpenger eller hatt endringer i arbeidsforhold`)
             .besvar(false)
     }
 
     private fun `ny søknad men har ikke vært i jobb`() {
-        prosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        prosess
+            .envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
         prosess.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
     }
 
     private fun `har vært i jobb`() {
-        prosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        prosess
+            .envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
         prosess.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.fast"))
     }
 
     private fun `besvar DinSituasjon`(prosess: Prosess) {
-        prosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        prosess
+            .envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
         prosess.dato(DinSituasjon.`dagpenger søknadsdato`).besvar(1.januar)
 
@@ -174,13 +182,15 @@ internal class EøsArbeidsforholdTest {
         prosess.generator(DinSituasjon.arbeidsforhold).besvar(1)
         prosess.tekst("${DinSituasjon.`arbeidsforhold navn bedrift`}.1").besvar(Tekst("Ullfabrikken"))
         prosess.land("${DinSituasjon.`arbeidsforhold land`}.1").besvar(Land("NOR"))
-        prosess.envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
+        prosess
+            .envalg("${DinSituasjon.`arbeidsforhold endret`}.1")
             .besvar(Envalg("faktum.arbeidsforhold.endret.svar.ikke-endret"))
         prosess.boolsk("${DinSituasjon.`arbeidsforhold kjent antall timer jobbet`}.1").besvar(false)
         prosess.boolsk("${DinSituasjon.`arbeidsforhold har tilleggsopplysninger`}.1").besvar(false)
     }
 
-    private val forventetSpørsmålsrekkefølgeForDinSituasjon = """
+    private val forventetSpørsmålsrekkefølgeForDinSituasjon =
+        """
 101,
 103,
 104,
@@ -243,5 +253,5 @@ internal class EøsArbeidsforholdTest {
 161,
 162,
 163
-    """.trimIndent()
+        """.trimIndent()
 }

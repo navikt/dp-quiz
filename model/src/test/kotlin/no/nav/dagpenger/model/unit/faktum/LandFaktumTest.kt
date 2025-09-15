@@ -20,18 +20,18 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class LandFaktumTest {
-
     private lateinit var prosess: Prosess
     private lateinit var landFaktum: Faktum<Land>
 
     @BeforeEach
     fun setup() {
-        prosess = Fakta(
-            testversjon,
-            land faktum "land" gruppe "eøs" med eøsEllerSveits() gruppe "norge-jan-mayen" med norge() id 1,
-            land faktum "land" gruppe "eøs" med eøsEllerSveits() gruppe "norge-jan-mayen" med norge() id 2,
-            heltall faktum "land generator" genererer 2 id 3
-        ).testSøknadprosess()
+        prosess =
+            Fakta(
+                testversjon,
+                land faktum "land" gruppe "eøs" med eøsEllerSveits() gruppe "norge-jan-mayen" med norge() id 1,
+                land faktum "land" gruppe "eøs" med eøsEllerSveits() gruppe "norge-jan-mayen" med norge() id 2,
+                heltall faktum "land generator" genererer 2 id 3,
+            ).testSøknadprosess()
 
         landFaktum = prosess.land(1)
     }
@@ -70,8 +70,9 @@ internal class LandFaktumTest {
         assertEquals(norge(), forventetLandGrupper["land.gruppe.norge-jan-mayen"])
     }
 
-    private class LandFaktumVisitor(faktum: Faktum<*>) : FaktumVisitor {
-
+    private class LandFaktumVisitor(
+        faktum: Faktum<*>,
+    ) : FaktumVisitor {
         init {
             faktum.accept(this)
         }
@@ -113,38 +114,39 @@ internal class LandFaktumTest {
 
     private fun norge() = listOf(Land("NOR"), Land("SJM"))
 
-    private fun eøsEllerSveits() = listOf(
-        "BEL",
-        "BGR",
-        "DNK",
-        "EST",
-        "FIN",
-        "FRA",
-        "GRC",
-        "IRL",
-        "ISL",
-        "ITA",
-        "HRV",
-        "CYP",
-        "LVA",
-        "LIE",
-        "LTU",
-        "LUX",
-        "MLT",
-        "NLD",
-        "POL",
-        "PRT",
-        "ROU",
-        "SVK",
-        "SVN",
-        "ESP",
-        "CHE",
-        "SWE",
-        "CZE",
-        "DEU",
-        "HUN",
-        "AUT"
-    ).map { land ->
-        Land(land)
-    }
+    private fun eøsEllerSveits() =
+        listOf(
+            "BEL",
+            "BGR",
+            "DNK",
+            "EST",
+            "FIN",
+            "FRA",
+            "GRC",
+            "IRL",
+            "ISL",
+            "ITA",
+            "HRV",
+            "CYP",
+            "LVA",
+            "LIE",
+            "LTU",
+            "LUX",
+            "MLT",
+            "NLD",
+            "POL",
+            "PRT",
+            "ROU",
+            "SVK",
+            "SVN",
+            "ESP",
+            "CHE",
+            "SWE",
+            "CZE",
+            "DEU",
+            "HUN",
+            "AUT",
+        ).map { land ->
+            Land(land)
+        }
 }

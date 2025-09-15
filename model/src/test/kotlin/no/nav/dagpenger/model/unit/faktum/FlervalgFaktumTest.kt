@@ -21,15 +21,14 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class FlervalgFaktumTest {
-
-    val prototypeFakta = Fakta(
-        testversjon,
-        flervalg faktum "flervalg1" med "valg1" med "valg2" med "valg3" id 1,
-        flervalg faktum "flervalg2" med "valg1" med "valg2" med "valg3" id 2,
-        dato faktum "dato" id 3,
-        heltall faktum "generator" id 4 genererer 2 og 3
-
-    )
+    val prototypeFakta =
+        Fakta(
+            testversjon,
+            flervalg faktum "flervalg1" med "valg1" med "valg2" med "valg3" id 1,
+            flervalg faktum "flervalg2" med "valg1" med "valg2" med "valg3" id 2,
+            dato faktum "dato" id 3,
+            heltall faktum "generator" id 4 genererer 2 og 3,
+        )
 
     lateinit var søknad: Prosess
 
@@ -52,7 +51,7 @@ class FlervalgFaktumTest {
         assertThrows<IllegalArgumentException> {
             Fakta(
                 testversjon,
-                flervalg faktum "flervalg" id 1
+                flervalg faktum "flervalg" id 1,
             ).testSøknadprosess(TomSubsumsjon)
         }
     }

@@ -21,9 +21,11 @@ import no.nav.dagpenger.model.visitor.ProsessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
 
-class ManuellBehandlingJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: Int = 0) :
-    ProsessVisitor {
-
+class ManuellBehandlingJsonBuilder(
+    prosess: Prosess,
+    private val seksjonNavn: String,
+    indeks: Int = 0,
+) : ProsessVisitor {
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
@@ -39,7 +41,12 @@ class ManuellBehandlingJsonBuilder(prosess: Prosess, private val seksjonNavn: St
 
     fun resultat() = root
 
-    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+    override fun preVisit(
+        fakta: Fakta,
+        faktaversjon: Faktaversjon,
+        uuid: UUID,
+        navBehov: FaktumNavBehov,
+    ) {
         root.put("@event_name", "manuell_behandling")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
@@ -49,7 +56,11 @@ class ManuellBehandlingJsonBuilder(prosess: Prosess, private val seksjonNavn: St
         root.set<ArrayNode>("identer", identerNode)
     }
 
-    override fun visit(type: Identer.Ident.Type, id: String, historisk: Boolean) {
+    override fun visit(
+        type: Identer.Ident.Type,
+        id: String,
+        historisk: Boolean,
+    ) {
         identerNode.addObject().also { identNode ->
             identNode.put("id", id)
             identNode.put("type", type.name.lowercase())
@@ -57,15 +68,28 @@ class ManuellBehandlingJsonBuilder(prosess: Prosess, private val seksjonNavn: St
         }
     }
 
-    override fun preVisit(seksjon: Seksjon, rolle: Rolle, fakta: Set<Faktum<*>>, indeks: Int) {
+    override fun preVisit(
+        seksjon: Seksjon,
+        rolle: Rolle,
+        fakta: Set<Faktum<*>>,
+        indeks: Int,
+    ) {
         ignore = false
     }
 
-    override fun postVisit(seksjon: Seksjon, rolle: Rolle, indeks: Int) {
+    override fun postVisit(
+        seksjon: Seksjon,
+        rolle: Rolle,
+        indeks: Int,
+    ) {
         ignore = true
     }
 
-    override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
+    override fun visit(
+        faktumId: FaktumId,
+        rootId: Int,
+        indeks: Int,
+    ) {
         this.rootId = rootId
     }
 
@@ -118,7 +142,10 @@ class ManuellBehandlingJsonBuilder(prosess: Prosess, private val seksjonNavn: St
         }
     }
 
-    private fun lagFaktumNode(id: String, navn: String) {
+    private fun lagFaktumNode(
+        id: String,
+        navn: String,
+    ) {
         if (ignore) return
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->
@@ -128,5 +155,8 @@ class ManuellBehandlingJsonBuilder(prosess: Prosess, private val seksjonNavn: St
         faktumIder.add(id)
     }
 
-    private fun ObjectNode.putR(key: Int, svar: Any) = putR(key.toString(), svar)
+    private fun ObjectNode.putR(
+        key: Int,
+        svar: Any,
+    ) = putR(key.toString(), svar)
 }

@@ -159,11 +159,17 @@ internal class FaktaSubsumsjonTest {
         assertEquals(false, prosess.resultat())
     }
 
-    private fun assertIder(fakta: Set<Faktum<*>>, vararg ider: Int) {
+    private fun assertIder(
+        fakta: Set<Faktum<*>>,
+        vararg ider: Int,
+    ) {
         assertIder(fakta, *(ider.map { it.toString() }.toTypedArray()))
     }
 
-    private fun assertIder(fakta: Set<Faktum<*>>, vararg ider: String) {
+    private fun assertIder(
+        fakta: Set<Faktum<*>>,
+        vararg ider: String,
+    ) {
         assertEquals(ider.toList(), fakta.map { it.id })
     }
 

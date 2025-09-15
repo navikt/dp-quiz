@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class VernepliktTest {
-
     private val fakta = Fakta(testFaktaversjon(), *Verneplikt.fakta())
     private lateinit var prosess: Prosess
 
@@ -21,11 +20,12 @@ internal class VernepliktTest {
 
     @BeforeEach
     fun setup() {
-        prosess = fakta.testSøknadprosess(
-            subsumsjon = Verneplikt.regeltre(fakta),
-        ) {
-            Verneplikt.seksjon(this)
-        }
+        prosess =
+            fakta.testSøknadprosess(
+                subsumsjon = Verneplikt.regeltre(fakta),
+            ) {
+                Verneplikt.seksjon(this)
+            }
     }
 
     @Test

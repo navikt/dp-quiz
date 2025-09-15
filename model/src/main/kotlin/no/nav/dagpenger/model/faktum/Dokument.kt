@@ -20,32 +20,35 @@ class Dokument : Comparable<Dokument> {
 
     constructor(lastOppTidsstempel: LocalDateTime, urn: String) {
         this.lastOppTidsstempel = lastOppTidsstempel
-        this.urn = try {
-            URN.rfc8141().parse(urn)
-        } catch (e: URNSyntaxError) {
-            throw IllegalArgumentException(e.message)
-        }
+        this.urn =
+            try {
+                URN.rfc8141().parse(urn)
+            } catch (e: URNSyntaxError) {
+                throw IllegalArgumentException(e.message)
+            }
     }
 
     constructor(lastOppTidsstempel: LocalDate, urn: String) : this(lastOppTidsstempel.atStartOfDay(), urn)
 
     @JvmName("reflectionUrn")
-    fun <R> reflection(block: (LocalDateTime, URN) -> R) = block(
-        lastOppTidsstempel,
-        urn
-    )
+    fun <R> reflection(block: (LocalDateTime, URN) -> R) =
+        block(
+            lastOppTidsstempel,
+            urn,
+        )
 
-    fun <R> reflection(block: (LocalDateTime, String) -> R) = block(
-        lastOppTidsstempel,
-        urn.toString()
-    )
+    fun <R> reflection(block: (LocalDateTime, String) -> R) =
+        block(
+            lastOppTidsstempel,
+            urn.toString(),
+        )
 
-    override fun compareTo(other: Dokument): Int {
-        return this.lastOppTidsstempel.compareTo(other.lastOppTidsstempel)
-    }
+    override fun compareTo(other: Dokument): Int = this.lastOppTidsstempel.compareTo(other.lastOppTidsstempel)
 
-    override fun equals(other: Any?) = other is Dokument &&
-        this.lastOppTidsstempel == other.lastOppTidsstempel && this.urn == other.urn
+    override fun equals(other: Any?) =
+        other is Dokument &&
+            this.lastOppTidsstempel == other.lastOppTidsstempel &&
+            this.urn == other.urn
 
     override fun hashCode(): Int {
         var result = lastOppTidsstempel.hashCode()

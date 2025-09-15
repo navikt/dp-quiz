@@ -22,11 +22,12 @@ internal class DokumentSubsumsjonTest {
 
     @BeforeEach
     fun setUp() {
-        val søknadprosess = Fakta(
-            testversjon,
-            dokument faktum "dokument" id 1,
-            boolsk faktum "saksbehandler godkjenner" id 2 avhengerAv 1
-        ).testSøknadprosess()
+        val søknadprosess =
+            Fakta(
+                testversjon,
+                dokument faktum "dokument" id 1,
+                boolsk faktum "saksbehandler godkjenner" id 2 avhengerAv 1,
+            ).testSøknadprosess()
 
         dokumentFaktum = søknadprosess dokument 1
         dokumentGodkjenning = søknadprosess boolsk 2

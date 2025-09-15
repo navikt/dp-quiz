@@ -32,11 +32,12 @@ internal class BarnetilleggTest {
 
     @BeforeEach
     fun setup() {
-        prosess = fakta.testSøknadprosess(
-            subsumsjon = Barnetillegg.regeltre(fakta),
-        ) {
-            Barnetillegg.seksjon(this)
-        }
+        prosess =
+            fakta.testSøknadprosess(
+                subsumsjon = Barnetillegg.regeltre(fakta),
+            ) {
+                Barnetillegg.seksjon(this)
+            }
     }
 
     @Test

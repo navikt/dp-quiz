@@ -23,16 +23,17 @@ class MigrerProsessService(
     }
 
     init {
-        River(rapidsConnection).apply {
-            precondition {
-                it.requireValue("@event_name", "behov")
-                it.requireAllOrAny("@behov", listOf(BEHOV))
-                it.forbid("@løsning")
-            }
-            validate {
-                it.requireKey("søknad_uuid")
-            }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                precondition {
+                    it.requireValue("@event_name", "behov")
+                    it.requireAllOrAny("@behov", listOf(BEHOV))
+                    it.forbid("@løsning")
+                }
+                validate {
+                    it.requireKey("søknad_uuid")
+                }
+            }.register(this)
     }
 
     override fun onPacket(

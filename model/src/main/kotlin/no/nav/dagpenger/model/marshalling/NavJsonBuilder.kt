@@ -20,7 +20,11 @@ import no.nav.dagpenger.model.visitor.ProsessVisitor
 import java.time.LocalDateTime
 import java.util.UUID
 
-class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: Int = 0) : ProsessVisitor {
+class NavJsonBuilder(
+    prosess: Prosess,
+    private val seksjonNavn: String,
+    indeks: Int = 0,
+) : ProsessVisitor {
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val faktaNode = mapper.createArrayNode()
@@ -34,17 +38,27 @@ class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: 
     init {
         prosess.accept(this)
         ignoreSeksjoner = false
-        prosess.first { seksjonNavn == it.navn && indeks == it.indeks }.filtrertSeksjon(prosess.rootSubsumsjon)
+        prosess
+            .first { seksjonNavn == it.navn && indeks == it.indeks }
+            .filtrertSeksjon(prosess.rootSubsumsjon)
             .accept(this)
     }
 
     fun resultat() = root
 
-    override fun preVisit(prosess: Prosess, uuid: UUID) {
+    override fun preVisit(
+        prosess: Prosess,
+        uuid: UUID,
+    ) {
         root.put("søknad_uuid", "$uuid")
     }
 
-    override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+    override fun preVisit(
+        fakta: Fakta,
+        faktaversjon: Faktaversjon,
+        uuid: UUID,
+        navBehov: FaktumNavBehov,
+    ) {
         root.put("@event_name", "faktum_svar")
         root.put("@opprettet", "${LocalDateTime.now()}")
         root.put("@id", "${UUID.randomUUID()}")
@@ -58,7 +72,11 @@ class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: 
         faktumNavBehov = navBehov
     }
 
-    override fun visit(type: Type, id: String, historisk: Boolean) {
+    override fun visit(
+        type: Type,
+        id: String,
+        historisk: Boolean,
+    ) {
         identerNode.addObject().also { identNode ->
             identNode.put("id", id)
             identNode.put("type", type.name.lowercase())
@@ -66,7 +84,11 @@ class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: 
         }
     }
 
-    override fun visit(faktumId: FaktumId, rootId: Int, indeks: Int) {
+    override fun visit(
+        faktumId: FaktumId,
+        rootId: Int,
+        indeks: Int,
+    ) {
         this.rootId = rootId
     }
 
@@ -121,7 +143,11 @@ class NavJsonBuilder(prosess: Prosess, private val seksjonNavn: String, indeks: 
         }
     }
 
-    private fun lagFaktumNode(id: String, type: String, templates: ArrayNode? = null) {
+    private fun lagFaktumNode(
+        id: String,
+        type: String,
+        templates: ArrayNode? = null,
+    ) {
         if (ignoreSeksjoner) return
         if (id in faktumIder) return
         faktaNode.addObject().also { faktumNode ->

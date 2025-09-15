@@ -22,12 +22,13 @@ internal class DeltreSubsumsjonTest {
 
     @BeforeEach
     fun setup() {
-        val søknadprosess = Fakta(
-            testversjon,
-            boolsk faktum "faktum1" id 1,
-            boolsk faktum "faktum2" id 2,
-            boolsk faktum "faktum3" id 3
-        ).testSøknadprosess()
+        val søknadprosess =
+            Fakta(
+                testversjon,
+                boolsk faktum "faktum1" id 1,
+                boolsk faktum "faktum2" id 2,
+                boolsk faktum "faktum3" id 3,
+            ).testSøknadprosess()
 
         faktum1 = søknadprosess boolsk 1
         faktum2 = søknadprosess boolsk 2

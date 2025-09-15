@@ -15,11 +15,11 @@ import no.nav.dagpenger.quiz.mediator.soknad.Prosessfakta
 import java.util.UUID
 
 class DagpengerMetadataStrategi : MetadataStrategi {
-    override fun metadata(prosess: Prosess): Metadata {
-        return DagpengerSkjemakodeFinner(prosess).skjemaKode()
-    }
+    override fun metadata(prosess: Prosess): Metadata = DagpengerSkjemakodeFinner(prosess).skjemaKode()
 
-    private class DagpengerSkjemakodeFinner(prosess: Prosess) : ProsessVisitor {
+    private class DagpengerSkjemakodeFinner(
+        prosess: Prosess,
+    ) : ProsessVisitor {
         private var permittert: Boolean = false
         private var gjenopptak: Boolean = false
 
@@ -27,21 +27,27 @@ class DagpengerMetadataStrategi : MetadataStrategi {
             prosess.accept(this)
         }
 
-        fun skjemaKode(): Metadata {
-            return when (permittert) {
-                true -> when (gjenopptak) {
-                    true -> Metadata("04-16.04")
-                    else -> Metadata("04-01.04")
-                }
+        fun skjemaKode(): Metadata =
+            when (permittert) {
+                true ->
+                    when (gjenopptak) {
+                        true -> Metadata("04-16.04")
+                        else -> Metadata("04-01.04")
+                    }
 
-                else -> when (gjenopptak) {
-                    true -> Metadata("04-16.03")
-                    else -> Metadata("04-01.03")
-                }
+                else ->
+                    when (gjenopptak) {
+                        true -> Metadata("04-16.03")
+                        else -> Metadata("04-01.03")
+                    }
             }
-        }
 
-        override fun preVisit(fakta: Fakta, faktaversjon: Faktaversjon, uuid: UUID, navBehov: FaktumNavBehov) {
+        override fun preVisit(
+            fakta: Fakta,
+            faktaversjon: Faktaversjon,
+            uuid: UUID,
+            navBehov: FaktumNavBehov,
+        ) {
             require(faktaversjon.faktatype == Prosessfakta.Dagpenger) { "Kan kun håndtere ${Prosessfakta.Dagpenger.name}, var ${faktaversjon.faktatype}" }
         }
 
@@ -54,15 +60,18 @@ class DagpengerMetadataStrategi : MetadataStrategi {
         ) {
             // TODO: vi vil gjerne identifisere subsumsjoner i stede for å bruke faktaene
             if (!gjenopptak) {
-                val g = fakta.filter { it.id.contains(DinSituasjon.`mottatt dagpenger siste 12 mnd`.toString()) }
-                    .filter { it.erBesvart() }
-                    .filter { it.svar() == Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja") }
+                val g =
+                    fakta
+                        .filter { it.id.contains(DinSituasjon.`mottatt dagpenger siste 12 mnd`.toString()) }
+                        .filter { it.erBesvart() }
+                        .filter { it.svar() == Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.ja") }
                 gjenopptak = g.isNotEmpty()
             }
 
             if (!permittert) {
                 val arbeidsforholdFakta =
-                    fakta.filter { it.id.contains(DinSituasjon.`arbeidsforhold endret`.toString()) }
+                    fakta
+                        .filter { it.id.contains(DinSituasjon.`arbeidsforhold endret`.toString()) }
                         .filter { it.erBesvart() }
                         .filter { it.svar() == Envalg("faktum.arbeidsforhold.endret.svar.permittert") }
 

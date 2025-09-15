@@ -22,17 +22,16 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
         // Ignorert
     }
 
-    override fun svar(): R {
-        throw IllegalStateException("Templates har ikke svar")
-    }
+    override fun svar(): R = throw IllegalStateException("Templates har ikke svar")
 
-    override fun besvartAv(): String? {
-        throw IllegalStateException("Templates har ikke svar")
-    }
+    override fun besvartAv(): String? = throw IllegalStateException("Templates har ikke svar")
 
     override fun grunnleggendeFakta(): Set<GrunnleggendeFaktum<*>> = emptySet()
 
-    override fun leggTilHvis(kode: FaktumTilstand, fakta: MutableSet<GrunnleggendeFaktum<*>>) {
+    override fun leggTilHvis(
+        kode: FaktumTilstand,
+        fakta: MutableSet<GrunnleggendeFaktum<*>>,
+    ) {
         // Ignorert
     }
 
@@ -43,35 +42,41 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
         visitor.visit(this, id, avhengigeFakta, avhengerAvFakta, roller, clazz, gyldigeValg)
     }
 
-    override fun add(seksjon: Seksjon) =
-        seksjoner.add(seksjon)
+    override fun add(seksjon: Seksjon) = seksjoner.add(seksjon)
 
-    override fun deepCopy(indeks: Int, fakta: Fakta): Faktum<*> {
-        return fakta.idOrNull(faktumId medIndeks indeks)
+    override fun deepCopy(
+        indeks: Int,
+        fakta: Fakta,
+    ): Faktum<*> =
+        fakta.idOrNull(faktumId medIndeks indeks)
             ?: deepCopy(indeks)
                 .also { lagdFaktum ->
                     fakta.add(lagdFaktum)
                     leggTilAvhengighet(fakta, indeks, lagdFaktum)
                 }
-    }
 
-    private fun deepCopy(indeks: Int) = GrunnleggendeFaktum(
-        faktumId = faktumId medIndeks indeks,
-        navn = navn,
-        clazz = clazz,
-        avhengigeFakta = mutableSetOf(),
-        avhengerAvFakta = mutableSetOf(),
-        godkjenner = mutableSetOf(),
-        roller = roller,
-        gyldigeValg = gyldigeValg,
-        landGrupper = landgrupper,
-    )
+    private fun deepCopy(indeks: Int) =
+        GrunnleggendeFaktum(
+            faktumId = faktumId medIndeks indeks,
+            navn = navn,
+            clazz = clazz,
+            avhengigeFakta = mutableSetOf(),
+            avhengerAvFakta = mutableSetOf(),
+            godkjenner = mutableSetOf(),
+            roller = roller,
+            gyldigeValg = gyldigeValg,
+            landGrupper = landgrupper,
+        )
 
     // Lag instans av template faktum ved besvar eller rehydrering av søknad
-    internal fun generate(generator: Int, fakta: Fakta) {
-        val genererteInstanser = generator.forHvertSvar { indeks: Int ->
-            Pair(indeks, deepCopy(indeks))
-        }
+    internal fun generate(
+        generator: Int,
+        fakta: Fakta,
+    ) {
+        val genererteInstanser =
+            generator.forHvertSvar { indeks: Int ->
+                Pair(indeks, deepCopy(indeks))
+            }
         genererteInstanser.forEach { (indeks, lagdFaktum) ->
             if (seksjoner.isEmpty()) { // Vi rehydrerer fakta fra databasen
                 fakta.add(lagdFaktum)
@@ -93,16 +98,21 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
         indeks: Int,
         lagdFaktum: GrunnleggendeFaktum<R>,
     ) {
-        avhengerAvFakta.map { avhengighet ->
-            fakta.finnEksisterende(avhengighet, indeks) ?: avhengighet.deepCopy(indeks, fakta)
-        }.forEach { it.leggTilAvhengighet(lagdFaktum) }
+        avhengerAvFakta
+            .map { avhengighet ->
+                fakta.finnEksisterende(avhengighet, indeks) ?: avhengighet.deepCopy(indeks, fakta)
+            }.forEach { it.leggTilAvhengighet(lagdFaktum) }
     }
 
     // Finner et allerede instansiert faktum, eller lager ett nytt
-    private fun Fakta.finnEksisterende(avhengighet: Faktum<*>, indeks: Int) = when (avhengighet) {
-        is TemplateFaktum<*> -> singleOrNull {
-            it.faktumId == avhengighet.faktumId medIndeks indeks
-        }
+    private fun Fakta.finnEksisterende(
+        avhengighet: Faktum<*>,
+        indeks: Int,
+    ) = when (avhengighet) {
+        is TemplateFaktum<*> ->
+            singleOrNull {
+                it.faktumId == avhengighet.faktumId medIndeks indeks
+            }
 
         else -> idOrNull(avhengighet.faktumId)
     }
@@ -117,8 +127,7 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
         originalSeksjon
     }
 
-    private fun Int.forHvertSvar(block: (Int) -> Pair<Int, GrunnleggendeFaktum<R>>): List<Pair<Int, GrunnleggendeFaktum<*>>> =
-        (1..this).map { block(it) }
+    private fun Int.forHvertSvar(block: (Int) -> Pair<Int, GrunnleggendeFaktum<R>>): List<Pair<Int, GrunnleggendeFaktum<*>>> = (1..this).map { block(it) }
 
     internal fun tilbakestill() {
         seksjoner.medSøknadprosess().forEach { it.tilbakestill(faktumId) }
@@ -136,7 +145,6 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
             roller,
             gyldigeValg,
             landgrupper,
-        )
-            .also { byggetFakta[faktumId] = it }
+        ).also { byggetFakta[faktumId] = it }
     }
 }

@@ -11,22 +11,23 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
 internal class AlleSubsumsjonTest {
-
-    private val fakta = Fakta(
-        testversjon,
-        BaseFaktumFactory.Companion.boolsk faktum "neida" id 1,
-        BaseFaktumFactory.Companion.boolsk faktum "joda" id 2,
-        BaseFaktumFactory.Companion.boolsk faktum "ja" id 3
-    )
+    private val fakta =
+        Fakta(
+            testversjon,
+            BaseFaktumFactory.Companion.boolsk faktum "neida" id 1,
+            BaseFaktumFactory.Companion.boolsk faktum "joda" id 2,
+            BaseFaktumFactory.Companion.boolsk faktum "ja" id 3,
+        )
 
     private val neida = fakta boolsk 1
     private val joda = fakta boolsk 2
     private val ja1 = fakta boolsk 3
-    private val alle = "både joda og neida".alle(
-        neida er true,
-        joda er false,
-        ja1 er true
-    )
+    private val alle =
+        "både joda og neida".alle(
+            neida er true,
+            joda er false,
+            ja1 er true,
+        )
 
     @Test
     fun `skal være true bare hvis alle undersubsumsjonene er true`() {

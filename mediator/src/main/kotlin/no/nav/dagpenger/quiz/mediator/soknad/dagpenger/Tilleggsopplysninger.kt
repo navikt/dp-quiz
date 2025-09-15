@@ -16,28 +16,29 @@ object Tilleggsopplysninger : DslFaktaseksjon {
     const val tilleggsopplysninger = 4001
     const val `har tilleggsopplysninger` = 4002
 
-    override val fakta = listOf(
-        tekst faktum "faktum.tilleggsopplysninger" id tilleggsopplysninger avhengerAv `har tilleggsopplysninger`,
+    override val fakta =
+        listOf(
+            tekst faktum "faktum.tilleggsopplysninger" id tilleggsopplysninger avhengerAv `har tilleggsopplysninger`,
+            boolsk faktum "faktum.tilleggsopplysninger.har-tilleggsopplysninger" id `har tilleggsopplysninger`,
+        )
 
-        boolsk faktum "faktum.tilleggsopplysninger.har-tilleggsopplysninger" id `har tilleggsopplysninger`
-    )
+    override fun seksjon(fakta: Fakta) = listOf(fakta.seksjon("tilleggsopplysninger", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
 
-    override fun seksjon(fakta: Fakta) =
-        listOf(fakta.seksjon("tilleggsopplysninger", Rolle.søker, *spørsmålsrekkefølgeForSøker()))
-
-    override fun regeltre(fakta: Fakta) = with(fakta) {
-        "tilleggsopplysninger".deltre {
-            "har tilleggsopplysninger eller ikke".minstEnAv(
-                boolsk(`har tilleggsopplysninger`) er false,
-                boolsk(`har tilleggsopplysninger`) er true hvisOppfylt {
-                    tekst(tilleggsopplysninger).utfylt()
-                }
-            )
+    override fun regeltre(fakta: Fakta) =
+        with(fakta) {
+            "tilleggsopplysninger".deltre {
+                "har tilleggsopplysninger eller ikke".minstEnAv(
+                    boolsk(`har tilleggsopplysninger`) er false,
+                    boolsk(`har tilleggsopplysninger`) er true hvisOppfylt {
+                        tekst(tilleggsopplysninger).utfylt()
+                    },
+                )
+            }
         }
-    }
 
-    override val spørsmålsrekkefølgeForSøker = listOf(
-        `har tilleggsopplysninger`,
-        tilleggsopplysninger
-    )
+    override val spørsmålsrekkefølgeForSøker =
+        listOf(
+            `har tilleggsopplysninger`,
+            tilleggsopplysninger,
+        )
 }

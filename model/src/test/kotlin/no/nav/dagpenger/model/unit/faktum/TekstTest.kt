@@ -8,7 +8,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 class TekstTest {
-
     @Test
     fun `skal kaste feil dersom teksten overskrider grenseverdien`() {
         val tekstMed2000Tegn = "A".repeat(2000)

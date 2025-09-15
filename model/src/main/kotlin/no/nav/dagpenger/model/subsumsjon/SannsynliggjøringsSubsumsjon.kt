@@ -9,13 +9,13 @@ import no.nav.dagpenger.model.visitor.SubsumsjonVisitor
 class SannsynliggjøringsSubsumsjon private constructor(
     navn: String,
     private val child: Subsumsjon,
-    private val sannsynliggjøringsFakta: Collection<Faktum<*>>
+    private val sannsynliggjøringsFakta: Collection<Faktum<*>>,
 ) : SammensattSubsumsjon(navn, mutableListOf(child), TomSubsumsjon, TomSubsumsjon) {
     internal constructor(child: Subsumsjon, sannsynliggjøringsFakta: Collection<Faktum<*>>) :
         this(
             "${child.navn} sannsynligjøring",
             child,
-            sannsynliggjøringsFakta
+            sannsynliggjøringsFakta,
         )
 
     override fun lokaltResultat(): Boolean? = child.resultat()
@@ -34,31 +34,34 @@ class SannsynliggjøringsSubsumsjon private constructor(
         }
     }
 
-    override fun deepCopy(): Subsumsjon {
-        return SannsynliggjøringsSubsumsjon(
+    override fun deepCopy(): Subsumsjon =
+        SannsynliggjøringsSubsumsjon(
             navn,
             child.deepCopy(),
-            sannsynliggjøringsFakta
+            sannsynliggjøringsFakta,
         )
-    }
 
-    override fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon {
-        return SannsynliggjøringsSubsumsjon(
+    override fun deepCopy(
+        indeks: Int,
+        fakta: Fakta,
+    ): Subsumsjon =
+        SannsynliggjøringsSubsumsjon(
             "$navn [$indeks]",
             child.deepCopy(indeks, fakta),
-            sannsynliggjøringsFakta.map { it.deepCopy(indeks, fakta) }.toSet()
+            sannsynliggjøringsFakta.map { it.deepCopy(indeks, fakta) }.toSet(),
         )
-    }
 
-    override fun bygg(fakta: Fakta) = SannsynliggjøringsSubsumsjon(
-        navn,
-        child.bygg(fakta),
-        sannsynliggjøringsFakta.map { faktum -> fakta.dokument(faktum.id) }.toSet()
-    )
+    override fun bygg(fakta: Fakta) =
+        SannsynliggjøringsSubsumsjon(
+            navn,
+            child.bygg(fakta),
+            sannsynliggjøringsFakta.map { faktum -> fakta.dokument(faktum.id) }.toSet(),
+        )
 
-    override fun deepCopy(prosess: Prosess) = SannsynliggjøringsSubsumsjon(
-        navn,
-        child.deepCopy(prosess),
-        sannsynliggjøringsFakta.map { faktum -> prosess.dokument(faktum.id) }.toSet()
-    )
+    override fun deepCopy(prosess: Prosess) =
+        SannsynliggjøringsSubsumsjon(
+            navn,
+            child.deepCopy(prosess),
+            sannsynliggjøringsFakta.map { faktum -> prosess.dokument(faktum.id) }.toSet(),
+        )
 }

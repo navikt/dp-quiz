@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class PersonTest {
-
     @Test
     fun ` personer er unike `() {
         val person1 = Person(Builder().folkeregisterIdent("123456789011").aktørId("aktørId").build())

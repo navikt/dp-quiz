@@ -21,29 +21,31 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class SaksbehandlerSeksjonerTest {
-    private val prototypeFakta = Fakta(
-        testversjon,
-        boolsk faktum "f1" id 1,
-        boolsk faktum "approve1" id 2 avhengerAv 1,
-        boolsk faktum "f3" id 3,
-        boolsk faktum "approve3" id 4 avhengerAv 3,
-        boolsk faktum "f5" id 5,
-        boolsk faktum "approve5" id 6 avhengerAv 5,
-    )
+    private val prototypeFakta =
+        Fakta(
+            testversjon,
+            boolsk faktum "f1" id 1,
+            boolsk faktum "approve1" id 2 avhengerAv 1,
+            boolsk faktum "f3" id 3,
+            boolsk faktum "approve3" id 4 avhengerAv 3,
+            boolsk faktum "f5" id 5,
+            boolsk faktum "approve5" id 6 avhengerAv 5,
+        )
     private val prototypeSubsumsjon =
         ((prototypeFakta.boolsk(1) er true).oppfyltGodkjentAv(prototypeFakta.boolsk(2))) hvisOppfylt {
             (prototypeFakta.boolsk(3) er true).ikkeOppfyltGodkjentAv(prototypeFakta.boolsk(4))
         } hvisIkkeOppfylt {
             (prototypeFakta.boolsk(5) er true).godkjentAv(prototypeFakta.boolsk(6))
         }
-    private val prototypeProsess = Prosess(
-        TestProsesser.Test,
-        prototypeFakta,
-        Seksjon("søker", Rolle.søker, prototypeFakta.boolsk(1), prototypeFakta.boolsk(3), prototypeFakta.boolsk(5)),
-        Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
-        Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(4), prototypeFakta.boolsk(6)),
-        rootSubsumsjon = prototypeSubsumsjon,
-    )
+    private val prototypeProsess =
+        Prosess(
+            TestProsesser.Test,
+            prototypeFakta,
+            Seksjon("søker", Rolle.søker, prototypeFakta.boolsk(1), prototypeFakta.boolsk(3), prototypeFakta.boolsk(5)),
+            Seksjon("saksbehandler1", Rolle.saksbehandler, prototypeFakta.boolsk(2)),
+            Seksjon("saksbehandler2", Rolle.saksbehandler, prototypeFakta.boolsk(4), prototypeFakta.boolsk(6)),
+            rootSubsumsjon = prototypeSubsumsjon,
+        )
     private lateinit var seksjoner: Prosess
     private val f1 get() = seksjoner.boolsk(1)
     private val f3 get() = seksjoner.boolsk(3)

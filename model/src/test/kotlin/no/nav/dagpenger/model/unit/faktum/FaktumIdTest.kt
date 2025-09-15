@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class FaktumIdTest {
-
     @Test
     fun equals() {
         assertEquals(FaktumId(1), FaktumId(1))

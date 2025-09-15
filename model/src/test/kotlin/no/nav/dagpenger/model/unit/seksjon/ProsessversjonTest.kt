@@ -21,28 +21,31 @@ internal class ProsessversjonTest {
 
     private companion object {
         val prosesstype = testProsesstype()
-        val prototypeFakta = Fakta(
-            prosesstype.faktaversjon,
-            heltall faktum "f15" id 15 genererer 16 og 17 og 18,
-            heltall faktum "f16" id 16,
-            boolsk faktum "f17" id 17,
-            boolsk faktum "f18" id 18,
-        )
-        val prototypeSeksjon = Seksjon(
-            "seksjon",
-            Rolle.søker,
-            prototypeFakta id 15,
-            prototypeFakta id 16,
-            prototypeFakta id 17,
-            prototypeFakta id 18,
-        )
+        val prototypeFakta =
+            Fakta(
+                prosesstype.faktaversjon,
+                heltall faktum "f15" id 15 genererer 16 og 17 og 18,
+                heltall faktum "f16" id 16,
+                boolsk faktum "f17" id 17,
+                boolsk faktum "f18" id 18,
+            )
+        val prototypeSeksjon =
+            Seksjon(
+                "seksjon",
+                Rolle.søker,
+                prototypeFakta id 15,
+                prototypeFakta id 16,
+                prototypeFakta id 17,
+                prototypeFakta id 18,
+            )
         val prototypeSubsumsjon = prototypeFakta heltall 15 er 6
-        val prototypeProsess = Prosess(
-            prosesstype,
-            prototypeFakta,
-            prototypeSeksjon,
-            rootSubsumsjon = prototypeSubsumsjon,
-        )
+        val prototypeProsess =
+            Prosess(
+                prosesstype,
+                prototypeFakta,
+                prototypeSeksjon,
+                rootSubsumsjon = prototypeSubsumsjon,
+            )
     }
 
     @BeforeEach

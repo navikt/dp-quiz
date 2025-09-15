@@ -22,16 +22,17 @@ class DokumentkravSvarService(
     }
 
     init {
-        River(rapidsConnection).apply {
-            precondition {
-                it.requireValue("@event_name", "behov")
-                it.requireAllOrAny("@behov", listOf(behov))
-                it.forbid("@løsning")
-            }
-            validate {
-                it.requireKey("søknad_uuid", behov)
-            }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                precondition {
+                    it.requireValue("@event_name", "behov")
+                    it.requireAllOrAny("@behov", listOf(behov))
+                    it.forbid("@løsning")
+                }
+                validate {
+                    it.requireKey("søknad_uuid", behov)
+                }
+            }.register(this)
     }
 
     override fun onPacket(

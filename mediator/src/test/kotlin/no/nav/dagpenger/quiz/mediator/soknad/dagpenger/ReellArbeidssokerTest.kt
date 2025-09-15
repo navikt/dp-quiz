@@ -22,16 +22,16 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class ReellArbeidssokerTest {
-
     private lateinit var fakta: Fakta
     private lateinit var prosess: Prosess
 
     @BeforeEach
     fun setup() {
         fakta = Fakta(testFaktaversjon(), *ReellArbeidssoker.fakta())
-        prosess = fakta.testSøknadprosess(subsumsjon = ReellArbeidssoker.regeltre(fakta)) {
-            ReellArbeidssoker.seksjon(this)
-        }
+        prosess =
+            fakta.testSøknadprosess(subsumsjon = ReellArbeidssoker.regeltre(fakta)) {
+                ReellArbeidssoker.seksjon(this)
+            }
     }
 
     @Test

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 internal class HeltallFaktumTest {
-
     @Test
     fun `Støtte fakta med type heltall`() {
         val intFaktum = Fakta(testversjon, heltall faktum "int" id 1).testSøknadprosess().let { it heltall 1 }

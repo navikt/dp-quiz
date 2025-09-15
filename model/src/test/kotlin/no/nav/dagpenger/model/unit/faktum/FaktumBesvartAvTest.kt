@@ -15,22 +15,24 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class FaktumBesvartAvTest {
-
     @Test
     fun `Sjekk at ident blir lagt på når saksbehandler besvarer`() {
-        val fakta = Fakta(
-            testversjon,
-            boolsk faktum "f1" id 1,
-        ).testSøknadprosess()
+        val fakta =
+            Fakta(
+                testversjon,
+                boolsk faktum "f1" id 1,
+            ).testSøknadprosess()
         val ja1 = fakta.boolsk(1)
 
         ja1.besvar(true, "A123456")
         assertEquals("A123456", BesvartAvVisitor(fakta).identer.first())
     }
 
-    private class BesvartAvVisitor(prosess: Prosess) : FaktaVisitor {
-
+    private class BesvartAvVisitor(
+        prosess: Prosess,
+    ) : FaktaVisitor {
         val identer = mutableListOf<String>()
+
         init {
             prosess.fakta.accept(this)
         }
@@ -47,7 +49,7 @@ internal class FaktumBesvartAvTest {
             svar: R,
             besvartAv: String?,
             gyldigeValg: GyldigeValg?,
-            landGrupper: LandGrupper?
+            landGrupper: LandGrupper?,
         ) {
             besvartAv?.let { identer.add(it) }
         }

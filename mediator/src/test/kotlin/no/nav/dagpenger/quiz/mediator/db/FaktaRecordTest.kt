@@ -120,21 +120,22 @@ internal class FaktaRecordTest {
 
     @Test
     @Disabled("Sletting av besvarer for hver søknad er tungt, det må flyttes til en cronjob")
-    fun `Skal kun slette besvarer hvis den ikke refererer til andre søknader`() = Postgres.withMigratedDb {
-        FaktumTable(SøknadEksempel1.prototypeFakta)
-        faktaRecord = FaktaRecord()
-        val søknadProsess1 = fakta(faktaversjon)
-        val søknadProsess2 = fakta(faktaversjon)
-        val besvarer = "123"
-        søknadProsess1.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
-        faktaRecord.lagre(søknadProsess1)
-        søknadProsess2.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
-        faktaRecord.lagre(søknadProsess2)
+    fun `Skal kun slette besvarer hvis den ikke refererer til andre søknader`() =
+        Postgres.withMigratedDb {
+            FaktumTable(SøknadEksempel1.prototypeFakta)
+            faktaRecord = FaktaRecord()
+            val søknadProsess1 = fakta(faktaversjon)
+            val søknadProsess2 = fakta(faktaversjon)
+            val besvarer = "123"
+            søknadProsess1.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
+            faktaRecord.lagre(søknadProsess1)
+            søknadProsess2.dato(2).besvar(LocalDate.now(), besvarer = besvarer)
+            faktaRecord.lagre(søknadProsess2)
 
-        faktaRecord.slett(søknadProsess1.uuid)
+            faktaRecord.slett(søknadProsess1.uuid)
 
-        assertRecordCount(1, "besvarer")
-    }
+            assertRecordCount(1, "besvarer")
+        }
 
     @Test
     fun `Lagring og henting av fakta med kotliquery spesial tegn`() {
@@ -409,15 +410,21 @@ internal class FaktaRecordTest {
         }
     }
 
-    private fun fakta(faktaversjon: Faktaversjon, søknadUUID: UUID): Fakta {
-        return faktaRecord.ny(AvhengigeFaktaTest.UNG_PERSON_FNR_2018, faktaversjon, søknadUUID)
-    }
+    private fun fakta(
+        faktaversjon: Faktaversjon,
+        søknadUUID: UUID,
+    ): Fakta = faktaRecord.ny(AvhengigeFaktaTest.UNG_PERSON_FNR_2018, faktaversjon, søknadUUID)
 
     private fun fakta(faktaversjon: Faktaversjon) = fakta(faktaversjon, UUID.randomUUID())
 
     private fun lagreHentOgSammenlign() {
         faktaRecord.lagre(originalFakta)
-        val uuid = FaktaRecord().opprettede(UNG_PERSON_FNR_2018).toSortedMap().values.first()
+        val uuid =
+            FaktaRecord()
+                .opprettede(UNG_PERSON_FNR_2018)
+                .toSortedMap()
+                .values
+                .first()
         faktaRecord = FaktaRecord()
         rehydrertFakta = faktaRecord.hent(uuid)
         assertJsonEquals(originalFakta.toList(), rehydrertFakta.toList())
@@ -430,7 +437,10 @@ internal class FaktaRecordTest {
         originalFakta = fakta(faktaversjon)
     }
 
-    private fun assertRecordCount(recordCount: Int, table: String) {
+    private fun assertRecordCount(
+        recordCount: Int,
+        table: String,
+    ) {
         assertEquals(
             recordCount,
             using(sessionOf(dataSource)) { session ->
@@ -444,8 +454,8 @@ internal class FaktaRecordTest {
         )
     }
 
-    private fun gammelVerdiForKolonnen(kolonnenavn: String): Any? {
-        return using(sessionOf(dataSource)) { session ->
+    private fun gammelVerdiForKolonnen(kolonnenavn: String): Any? =
+        using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
                     //language=PostgreSQL
@@ -455,5 +465,4 @@ internal class FaktaRecordTest {
                 }.asSingle,
             )
         }
-    }
 }

@@ -9,42 +9,44 @@ class DeltreSubsumsjon private constructor(
     navn: String,
     private val child: Subsumsjon,
     oppfyltSubsumsjon: Subsumsjon,
-    ikkeOppfyltSubsumsjon: Subsumsjon
+    ikkeOppfyltSubsumsjon: Subsumsjon,
 ) : SammensattSubsumsjon(navn, mutableListOf(child), oppfyltSubsumsjon, ikkeOppfyltSubsumsjon) {
-
     internal constructor(navn: String, child: Subsumsjon) : this(navn, child, TomSubsumsjon, TomSubsumsjon)
 
-    override fun deepCopy(prosess: Prosess) = DeltreSubsumsjon(
-        navn,
-        child.deepCopy(prosess),
-        oppfyltSubsumsjon.deepCopy(prosess),
-        ikkeOppfyltSubsumsjon.deepCopy(prosess)
-    )
+    override fun deepCopy(prosess: Prosess) =
+        DeltreSubsumsjon(
+            navn,
+            child.deepCopy(prosess),
+            oppfyltSubsumsjon.deepCopy(prosess),
+            ikkeOppfyltSubsumsjon.deepCopy(prosess),
+        )
 
-    override fun bygg(fakta: Fakta) = DeltreSubsumsjon(
-        navn,
-        child.bygg(fakta),
-        oppfyltSubsumsjon.bygg(fakta),
-        ikkeOppfyltSubsumsjon.bygg(fakta)
-    )
+    override fun bygg(fakta: Fakta) =
+        DeltreSubsumsjon(
+            navn,
+            child.bygg(fakta),
+            oppfyltSubsumsjon.bygg(fakta),
+            ikkeOppfyltSubsumsjon.bygg(fakta),
+        )
 
-    override fun deepCopy(): Subsumsjon {
-        return DeltreSubsumsjon(
+    override fun deepCopy(): Subsumsjon =
+        DeltreSubsumsjon(
             navn,
             child.deepCopy(),
             oppfyltSubsumsjon.deepCopy(),
-            ikkeOppfyltSubsumsjon.deepCopy()
+            ikkeOppfyltSubsumsjon.deepCopy(),
         )
-    }
 
-    override fun deepCopy(indeks: Int, fakta: Fakta): Subsumsjon {
-        return DeltreSubsumsjon(
+    override fun deepCopy(
+        indeks: Int,
+        fakta: Fakta,
+    ): Subsumsjon =
+        DeltreSubsumsjon(
             "$navn [$indeks]",
             child.deepCopy(indeks, fakta),
             oppfyltSubsumsjon.deepCopy(indeks, fakta),
-            ikkeOppfyltSubsumsjon.deepCopy(indeks, fakta)
+            ikkeOppfyltSubsumsjon.deepCopy(indeks, fakta),
         )
-    }
 
     override fun accept(visitor: SubsumsjonVisitor) {
         resultat().also {
@@ -56,7 +58,8 @@ class DeltreSubsumsjon private constructor(
 
     override fun lokaltResultat() = child.resultat()
 
-    override fun _mulige() = this.also {
-        child._mulige()
-    }
+    override fun _mulige() =
+        this.also {
+            child._mulige()
+        }
 }

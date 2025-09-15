@@ -15,21 +15,25 @@ import no.nav.dagpenger.model.seksjon.Seksjon
 import no.nav.dagpenger.model.subsumsjon.Subsumsjon
 import no.nav.dagpenger.model.subsumsjon.alle
 
-internal class MinimalSøknadsprosess(rolle: Rolle) {
+internal class MinimalSøknadsprosess(
+    rolle: Rolle,
+) {
     private val faktaversjon = testFaktaversjon()
-    private val faktumNavBehov = FaktumNavBehov(
-        mapOf(
-            faktumBoolsk to "faktumBoolsk",
-            faktumHeltall to "faktumHeltall",
-            faktumTekst to "faktumTekst",
-        ),
-    )
-    internal val prototypeFakta = Fakta(
-        faktaversjon,
-        boolsk faktum "boolean" id faktumBoolsk,
-        heltall faktum "heltall" id faktumHeltall,
-        tekst faktum "tekst" id faktumTekst,
-    )
+    private val faktumNavBehov =
+        FaktumNavBehov(
+            mapOf(
+                faktumBoolsk to "faktumBoolsk",
+                faktumHeltall to "faktumHeltall",
+                faktumTekst to "faktumTekst",
+            ),
+        )
+    internal val prototypeFakta =
+        Fakta(
+            faktaversjon,
+            boolsk faktum "boolean" id faktumBoolsk,
+            heltall faktum "heltall" id faktumHeltall,
+            tekst faktum "tekst" id faktumTekst,
+        )
     private val prototypeSubsumsjon: Subsumsjon =
         with(prototypeFakta) {
             "alle".alle(
@@ -38,13 +42,14 @@ internal class MinimalSøknadsprosess(rolle: Rolle) {
                 heltall(faktumTekst).utfylt(),
             )
         }
-    private val seksjoner = Seksjon(
-        "test",
-        rolle,
-        prototypeFakta.boolsk(faktumBoolsk),
-        prototypeFakta.heltall(faktumHeltall),
-        prototypeFakta.tekst(faktumTekst),
-    )
+    private val seksjoner =
+        Seksjon(
+            "test",
+            rolle,
+            prototypeFakta.boolsk(faktumBoolsk),
+            prototypeFakta.heltall(faktumHeltall),
+            prototypeFakta.tekst(faktumTekst),
+        )
 
     companion object {
         const val faktumBoolsk = 1
@@ -56,10 +61,11 @@ internal class MinimalSøknadsprosess(rolle: Rolle) {
         registrer(prototypeFakta)
     }
 
-    private val prototypeProsess: Prosess = Prosess(
-        Testprosess.Test,
-        seksjoner,
-    )
+    private val prototypeProsess: Prosess =
+        Prosess(
+            Testprosess.Test,
+            seksjoner,
+        )
 
     fun bygger() = Henvendelser.testProsess(prototypeFakta, prototypeProsess, prototypeSubsumsjon, faktumNavBehov)
 }

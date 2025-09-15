@@ -20,17 +20,19 @@ class DagpengerflytTest {
 
     init {
         Dagpenger.registrer()
-        prosess = Henvendelser.prosess(
-            testPerson,
-            Prosesser.Søknad,
-        )
+        prosess =
+            Henvendelser.prosess(
+                testPerson,
+                Prosesser.Søknad,
+            )
     }
 
     @Test
     fun `dagpenger flyt - letteste vei til ferdig`() {
         prosess.land(Bosted.`hvilket land bor du i`).besvar(Land("NOR"))
 
-        prosess.envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
+        prosess
+            .envalg(DinSituasjon.`mottatt dagpenger siste 12 mnd`)
             .besvar(Envalg("faktum.mottatt-dagpenger-siste-12-mnd.svar.nei"))
         prosess.dato(DinSituasjon.`dagpenger søknadsdato`).besvar(1.januar)
         prosess.envalg(DinSituasjon.`type arbeidstid`).besvar(Envalg("faktum.type-arbeidstid.svar.ingen-passer"))
@@ -77,13 +79,13 @@ class DagpengerflytTest {
         assertTrue(
             prosess.erFerdigFor(Rolle.nav, Rolle.søker),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
         assertTrue(
             prosess.erFerdig(),
             "Forventet at Dagpenger søknadsprosessen ikke var ferdig. Mangler svar på ${
-            prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
+                prosess.nesteSeksjoner().flatten().joinToString { "\n$it" }
             }",
         )
     }

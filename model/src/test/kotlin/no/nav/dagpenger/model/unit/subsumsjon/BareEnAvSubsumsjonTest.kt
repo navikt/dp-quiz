@@ -11,26 +11,26 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
 class BareEnAvSubsumsjonTest {
-
-    private val fakta = Fakta(
-        testversjon,
-        boolsk faktum "neida" id 1,
-        boolsk faktum "joda" id 2,
-        boolsk faktum "ja" id 3
-    )
+    private val fakta =
+        Fakta(
+            testversjon,
+            boolsk faktum "neida" id 1,
+            boolsk faktum "joda" id 2,
+            boolsk faktum "ja" id 3,
+        )
 
     private val neida = fakta boolsk 1
     private val joda = fakta boolsk 2
     private val ja1 = fakta boolsk 3
-    private val bareEnAv = "Enten joda eller neida".bareEnAv(
-        neida er true,
-        joda er true,
-        ja1 er true
-    )
+    private val bareEnAv =
+        "Enten joda eller neida".bareEnAv(
+            neida er true,
+            joda er true,
+            ja1 er true,
+        )
 
     @Test
     fun `skal være true bare hvis en av undersubsumsjonene er true`() {
-
         val søknadsprosess = fakta.testSøknadprosess(bareEnAv)
         søknadsprosess.boolsk(1).besvar(true)
         søknadsprosess.boolsk(2).besvar(false)

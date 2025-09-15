@@ -21,10 +21,11 @@ internal class FaktaSlettetService(
     }
 
     init {
-        River(rapidsConnection).apply {
-            precondition { it.requireValue("@event_name", "søknad_slettet") }
-            validate { it.requireKey("søknad_uuid") }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                precondition { it.requireValue("@event_name", "søknad_slettet") }
+                validate { it.requireKey("søknad_uuid") }
+            }.register(this)
     }
 
     override fun onPacket(

@@ -40,9 +40,9 @@ import no.nav.dagpenger.model.visitor.ProsessVisitor
 import java.io.File
 import java.util.UUID
 
-class SubsumsjonsGraf(prosess: Prosess) :
-    ProsessVisitor {
-
+class SubsumsjonsGraf(
+    prosess: Prosess,
+) : ProsessVisitor {
     var index = 0
     private var currentKanttype = OPPFYLT
 
@@ -53,11 +53,12 @@ class SubsumsjonsGraf(prosess: Prosess) :
 
     private val subGrafer = mutableListOf<MutableGraph>()
 
-    private val rotGraf: MutableGraph = graph(directed = true) {
-        edge["color" eq "black", Arrow.NORMAL]
-        node[Color.BLACK]
-        graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE), GraphAttr.COMPOUND]
-    }
+    private val rotGraf: MutableGraph =
+        graph(directed = true) {
+            edge["color" eq "black", Arrow.NORMAL]
+            node[Color.BLACK]
+            graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.splines(GraphAttr.SplineMode.POLYLINE), GraphAttr.COMPOUND]
+        }
 
     init {
         subGrafer.add(0, rotGraf)
@@ -65,24 +66,43 @@ class SubsumsjonsGraf(prosess: Prosess) :
     }
 
     fun skrivTilFil(filnavn: String) {
-        rotGraf.toGraphviz().scale(5.0).render(Format.PNG).toFile(File(filnavn))
+        rotGraf
+            .toGraphviz()
+            .scale(5.0)
+            .render(Format.PNG)
+            .toFile(File(filnavn))
     }
 
-    override fun preVisit(prosess: Prosess, uuid: UUID) {
+    override fun preVisit(
+        prosess: Prosess,
+        uuid: UUID,
+    ) {
         noder.add(prosess.rootSubsumsjon)
     }
 
-    override fun preVisit(subsumsjon: GeneratorSubsumsjon, deltre: DeltreSubsumsjon) {
+    override fun preVisit(
+        subsumsjon: GeneratorSubsumsjon,
+        deltre: DeltreSubsumsjon,
+    ) {
         opprettetAvSammensatt.add(deltre.navn)
         deltre.accept(this)
         iGeneratorSubsumsjon = true
     }
 
-    override fun postVisit(subsumsjon: GeneratorSubsumsjon, deltre: DeltreSubsumsjon) {
+    override fun postVisit(
+        subsumsjon: GeneratorSubsumsjon,
+        deltre: DeltreSubsumsjon,
+    ) {
         iGeneratorSubsumsjon = false
     }
 
-    override fun preVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(
+        subsumsjon: EnkelSubsumsjon,
+        regel: Regel,
+        fakta: List<Faktum<*>>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         if (iGeneratorSubsumsjon) return
 
         subGrafer.first().let {
@@ -96,11 +116,12 @@ class SubsumsjonsGraf(prosess: Prosess) :
                 return
             }
 
-            val tilNode = if (fakta.any { faktum -> faktum.harRolle(Rolle.manuell) }) {
-                node(subsumsjon.navn).with(RED, RED.font())
-            } else {
-                node(subsumsjon.navn)
-            }
+            val tilNode =
+                if (fakta.any { faktum -> faktum.harRolle(Rolle.manuell) }) {
+                    node(subsumsjon.navn).with(RED, RED.font())
+                } else {
+                    node(subsumsjon.navn)
+                }
 
             if (noder.first() is SammensattSubsumsjon) {
                 sammensattTilEnkel(tilNode)
@@ -133,34 +154,68 @@ class SubsumsjonsGraf(prosess: Prosess) :
         )
     }
 
-    private fun nodeNavn(fakta: List<Faktum<*>>, regel: Regel): List<String> {
+    private fun nodeNavn(
+        fakta: List<Faktum<*>>,
+        regel: Regel,
+    ): List<String> {
         if (fakta.any { it.harRolle(Rolle.manuell) }) return listOf("Manuell behandling")
         if (fakta.size == 1) return listOf(regel.kortNavn(fakta))
         return listOf(fakta[0].navn, regel.typeNavn, fakta[1].navn)
     }
 
-    override fun postVisit(subsumsjon: EnkelSubsumsjon, regel: Regel, fakta: List<Faktum<*>>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(
+        subsumsjon: EnkelSubsumsjon,
+        regel: Regel,
+        fakta: List<Faktum<*>>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         if (iGeneratorSubsumsjon) return
         noder.removeFirst()
     }
 
-    override fun preVisit(subsumsjon: AlleSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(
+        subsumsjon: AlleSubsumsjon,
+        subsumsjoner: List<Subsumsjon>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         lagSammensattNode(subsumsjon, subsumsjoner, "Alle")
     }
 
-    override fun postVisit(subsumsjon: AlleSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(
+        subsumsjon: AlleSubsumsjon,
+        subsumsjoner: List<Subsumsjon>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         ryddSammensattNode()
     }
 
-    override fun preVisit(subsumsjon: MinstEnAvSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(
+        subsumsjon: MinstEnAvSubsumsjon,
+        subsumsjoner: List<Subsumsjon>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         lagSammensattNode(subsumsjon, subsumsjoner, "Minst en av")
     }
 
-    override fun postVisit(subsumsjon: MinstEnAvSubsumsjon, subsumsjoner: List<Subsumsjon>, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(
+        subsumsjon: MinstEnAvSubsumsjon,
+        subsumsjoner: List<Subsumsjon>,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         ryddSammensattNode()
     }
 
-    override fun preVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun preVisit(
+        subsumsjon: DeltreSubsumsjon,
+        child: Subsumsjon,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         if (child is GeneratorSubsumsjon) {
             lagSammensattNode(subsumsjon, emptyList(), "Generator")
         } else {
@@ -168,11 +223,19 @@ class SubsumsjonsGraf(prosess: Prosess) :
         }
     }
 
-    override fun postVisit(subsumsjon: DeltreSubsumsjon, child: Subsumsjon, lokaltResultat: Boolean?, resultat: Boolean?) {
+    override fun postVisit(
+        subsumsjon: DeltreSubsumsjon,
+        child: Subsumsjon,
+        lokaltResultat: Boolean?,
+        resultat: Boolean?,
+    ) {
         ryddSammensattNode()
     }
 
-    override fun preVisitOppfylt(parent: Subsumsjon, child: Subsumsjon) {
+    override fun preVisitOppfylt(
+        parent: Subsumsjon,
+        child: Subsumsjon,
+    ) {
         if (iGeneratorSubsumsjon) return
 
         if (parent is SammensattSubsumsjon) {
@@ -183,13 +246,20 @@ class SubsumsjonsGraf(prosess: Prosess) :
         kant(parent, child, OPPFYLT)
     }
 
-    override fun preVisitIkkeOppfylt(parent: Subsumsjon, child: Subsumsjon) {
+    override fun preVisitIkkeOppfylt(
+        parent: Subsumsjon,
+        child: Subsumsjon,
+    ) {
         if (iGeneratorSubsumsjon) return
 
         kant(parent, child, IKKE_OPPFYLT)
     }
 
-    private fun kant(parent: Subsumsjon, child: Subsumsjon, kanttype: Kanttype) {
+    private fun kant(
+        parent: Subsumsjon,
+        child: Subsumsjon,
+        kanttype: Kanttype,
+    ) {
         currentKanttype = kanttype
 
         val erManuell = parent.alleFakta().any { it.harRolle(Rolle.manuell) }
@@ -229,23 +299,33 @@ class SubsumsjonsGraf(prosess: Prosess) :
     private fun Link.withUtfallAttrs() = this.with(kantFarge(), attr("weight", 10))
 
     private fun Node.withUtfallAttrs(): Node {
-        val label = when (currentKanttype) {
-            OPPFYLT -> "Innvilget"
-            IKKE_OPPFYLT -> "Avslag"
-        }
+        val label =
+            when (currentKanttype) {
+                OPPFYLT -> "Innvilget"
+                IKKE_OPPFYLT -> "Avslag"
+            }
         return this.with(kantFarge().font(), kantFarge(), Label.lines(label))
     }
 
-    private fun lagSammensattNode(subsumsjon: SammensattSubsumsjon, subsumsjoner: List<Subsumsjon>, label: String) {
+    private fun lagSammensattNode(
+        subsumsjon: SammensattSubsumsjon,
+        subsumsjoner: List<Subsumsjon>,
+        label: String,
+    ) {
         if (iGeneratorSubsumsjon) return
 
         subGrafer.first().let {
             val nodeLabel = Label.lines(label, subsumsjon.navn)
 
             val subgraf =
-                mutGraph().setCluster(true).setDirected(true).setName(subsumsjon.navn)
-                    .graphAttrs().add(Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.COMPOUND, nodeLabel)
-                    .graphAttrs().add(nodeLabel)
+                mutGraph()
+                    .setCluster(true)
+                    .setDirected(true)
+                    .setName(subsumsjon.navn)
+                    .graphAttrs()
+                    .add(Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), GraphAttr.COMPOUND, nodeLabel)
+                    .graphAttrs()
+                    .add(nodeLabel)
 
             sammensattAnker.add(0, "${subsumsjon.navn}_dummy")
 
@@ -303,17 +383,20 @@ class SubsumsjonsGraf(prosess: Prosess) :
         sammensattAnker.removeFirst()
     }
 
-    private fun kantRetning() = when (currentKanttype) {
-        OPPFYLT -> SOUTH_WEST
-        IKKE_OPPFYLT -> SOUTH_EAST
-    }
+    private fun kantRetning() =
+        when (currentKanttype) {
+            OPPFYLT -> SOUTH_WEST
+            IKKE_OPPFYLT -> SOUTH_EAST
+        }
 
-    private fun kantFarge() = when (currentKanttype) {
-        OPPFYLT -> GREEN
-        IKKE_OPPFYLT -> RED
-    }
+    private fun kantFarge() =
+        when (currentKanttype) {
+            OPPFYLT -> GREEN
+            IKKE_OPPFYLT -> RED
+        }
 
     private enum class Kanttype {
-        OPPFYLT, IKKE_OPPFYLT
+        OPPFYLT,
+        IKKE_OPPFYLT,
     }
 }

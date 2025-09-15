@@ -34,11 +34,12 @@ class FaktaTest {
 
     @Test
     fun `fakta med avhengigheter`() {
-        val fakta = Fakta(
-            testversjon,
-            dokument faktum "f11" id 11,
-            boolsk faktum "f12" id 12 avhengerAv 11,
-        )
+        val fakta =
+            Fakta(
+                testversjon,
+                dokument faktum "f11" id 11,
+                boolsk faktum "f12" id 12 avhengerAv 11,
+            )
 
         Prosess(
             TestProsesser.Test,
@@ -60,13 +61,14 @@ class FaktaTest {
 
     @Test
     fun `sammensatte fakta`() {
-        val fakta = Fakta(
-            testversjon,
-            dato faktum "f3" id 3,
-            dato faktum "f4" id 4,
-            dato faktum "f5" id 5,
-            maks dato "maksdato" av 3 og 4 og 5 id 345,
-        )
+        val fakta =
+            Fakta(
+                testversjon,
+                dato faktum "f3" id 3,
+                dato faktum "f4" id 4,
+                dato faktum "f5" id 5,
+                maks dato "maksdato" av 3 og 4 og 5 id 345,
+            )
 
         Prosess(
             TestProsesser.Test,
@@ -92,13 +94,14 @@ class FaktaTest {
 
     @Test
     fun `fakta templater `() {
-        val fakta = Fakta(
-            testversjon,
-            heltall faktum "antall barn" id 15 genererer 16 og 17 og 18,
-            heltall faktum "alder barn" id 16,
-            boolsk faktum "skal du ha penger for barn" id 17,
-            boolsk faktum "annen forelder får støtte" id 18,
-        )
+        val fakta =
+            Fakta(
+                testversjon,
+                heltall faktum "antall barn" id 15 genererer 16 og 17 og 18,
+                heltall faktum "alder barn" id 16,
+                boolsk faktum "skal du ha penger for barn" id 17,
+                boolsk faktum "annen forelder får støtte" id 18,
+            )
         val barneSeksjon = Seksjon("barneseksjon", Rolle.søker, fakta id 15, fakta id 16, fakta id 17, fakta id 18)
         Prosess(
             TestProsesser.Test,
@@ -115,15 +118,16 @@ class FaktaTest {
 
     @Test
     fun `sortere utledede faktum`() {
-        val fakta = Fakta(
-            testversjon,
-            dato faktum "f3" id 3,
-            dato faktum "f4" id 4,
-            dato faktum "f5" id 5,
-            maks dato "maksdato" av 6 og 7 id 8,
-            maks dato "maksdato" av 5 og 7 id 6,
-            maks dato "maksdato" av 3 og 4 id 7,
-        )
+        val fakta =
+            Fakta(
+                testversjon,
+                dato faktum "f3" id 3,
+                dato faktum "f4" id 4,
+                dato faktum "f5" id 5,
+                maks dato "maksdato" av 6 og 7 id 8,
+                maks dato "maksdato" av 5 og 7 id 6,
+                maks dato "maksdato" av 3 og 4 id 7,
+            )
 
         assertIder(fakta, 3, 4, 5, 7, 6, 8)
     }
@@ -141,14 +145,15 @@ class FaktaTest {
 
     @Test
     fun `Skal kunne opprette seksjoner`() {
-        val fakta = Fakta(
-            testversjon,
-            dato faktum "f3" id 3,
-            dato faktum "f4" id 4,
-            dato faktum "f5" id 5,
-            heltall faktum "f6" id 6,
-            maks dato "maksdato" av 3 og 4 og 5 id 345,
-        )
+        val fakta =
+            Fakta(
+                testversjon,
+                dato faktum "f3" id 3,
+                dato faktum "f4" id 4,
+                dato faktum "f5" id 5,
+                heltall faktum "f6" id 6,
+                maks dato "maksdato" av 3 og 4 og 5 id 345,
+            )
         val seksjon1 = fakta.seksjon("f6f3f4", Rolle.søker, 6, 3, 4)
         val seksjon2 = fakta.seksjon("f345f5", Rolle.søker, 345, 5)
         assertThrows<IllegalArgumentException> { fakta.seksjon("faktum finnes ikke", Rolle.søker, -2000) }
@@ -156,11 +161,17 @@ class FaktaTest {
         assertEquals("345,5", seksjon2.joinToString(separator = ",") { it.id })
     }
 
-    private fun assertIder(fakta: Fakta, vararg ider: Int) {
+    private fun assertIder(
+        fakta: Fakta,
+        vararg ider: Int,
+    ) {
         assertEquals(ider.map { it.toString() }, fakta.map { it.id })
     }
 
-    private fun assertIder(fakta: Fakta, vararg ider: String) {
+    private fun assertIder(
+        fakta: Fakta,
+        vararg ider: String,
+    ) {
         assertEquals(ider.toList(), fakta.map { it.id })
     }
 }

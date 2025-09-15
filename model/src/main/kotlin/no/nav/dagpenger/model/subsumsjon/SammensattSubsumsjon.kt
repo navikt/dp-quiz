@@ -9,8 +9,9 @@ abstract class SammensattSubsumsjon protected constructor(
     navn: String,
     protected open val subsumsjoner: MutableList<Subsumsjon>,
     oppfyltSubsumsjon: Subsumsjon,
-    ikkeOppfyltSubsumsjon: Subsumsjon
-) : Subsumsjon(navn, oppfyltSubsumsjon, ikkeOppfyltSubsumsjon), MutableList<Subsumsjon> by subsumsjoner {
+    ikkeOppfyltSubsumsjon: Subsumsjon,
+) : Subsumsjon(navn, oppfyltSubsumsjon, ikkeOppfyltSubsumsjon),
+    MutableList<Subsumsjon> by subsumsjoner {
     override fun alleFakta(): List<Faktum<*>> = subsumsjoner.flatMap { it.alleFakta() }
 
     override fun nesteFakta(): Set<GrunnleggendeFaktum<*>> =
@@ -21,6 +22,7 @@ abstract class SammensattSubsumsjon protected constructor(
                 false -> ikkeOppfyltSubsumsjon.nesteFakta()
             }
         }
+
     override fun accept(visitor: SubsumsjonVisitor) {
         subsumsjoner.forEach { it.accept(visitor) }
         super.accept(visitor)
