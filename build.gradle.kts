@@ -23,8 +23,8 @@ allprojects {
     dependencies {
         implementation(kotlin("reflect"))
 
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.4")
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.4")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.0")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:6.0.0")
     }
 
     kotlin {
@@ -77,7 +77,7 @@ subprojects {
 
     dependencies {
         testImplementation(kotlin("test"))
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.4")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.4")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:6.0.0")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.0")
     }
 }
