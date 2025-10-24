@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation(libs.jackson.kotlin)
-    implementation("org.jetbrains.kotlin:kotlin-reflect:2.2.20")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:2.2.21")
 
     implementation("guru.nidi:graphviz-java:0.18.1")
     implementation("guru.nidi:graphviz-kotlin:0.18.1")
@@ -15,5 +15,5 @@ dependencies {
     testFixturesApi(libs.jackson.kotlin)
     testFixturesApi(libs.jackson.datatype.jsr310)
     testFixturesApi("org.junit.jupiter:junit-jupiter-api:6.0.0")
-    testFixturesApi("org.jetbrains.kotlin:kotlin-test:2.2.20")
+    testFixturesApi("org.jetbrains.kotlin:kotlin-test:2.2.21")
 }
