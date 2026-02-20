@@ -5,7 +5,7 @@ import no.nav.dagpenger.model.visitor.IdentVisitor
 class Identer(
     private val identer: Set<Ident>,
 ) : Iterable<Identer.Ident> by identer {
-    override fun equals(other: Any?): Boolean = (this === other) || other is Identer && equals(other)
+    override fun equals(other: Any?): Boolean = (this === other) || (other is Identer && equals(other))
 
     private fun equals(other: Identer): Boolean = this.identer == other.identer
 

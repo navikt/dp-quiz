@@ -158,18 +158,55 @@ internal class FaktumSvarService(
     ) {
         if (svar.isNull) return prosess.id(faktumId).tilUbesvart()
         when (type) {
-            "land" -> prosess.land(faktumId).besvar(svar.asLand(), besvartAv)
-            "boolean" -> prosess.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)
-            "int" -> prosess.heltall(faktumId).besvar(svar.asInt(), besvartAv) // todo: remove?
-            "integer" -> prosess.heltall(faktumId).besvar(svar.asInt(), besvartAv)
-            "double" -> prosess.desimaltall(faktumId).besvar(svar.asDouble(), besvartAv)
-            "localdate" -> prosess.dato(faktumId).besvar(svar.asLocalDate(), besvartAv)
-            "inntekt" -> prosess.inntekt(faktumId).besvar(svar.asDouble().årlig, besvartAv)
-            "envalg" -> prosess.envalg(faktumId).besvar(svar.asEnvalg(), besvartAv)
-            "flervalg" -> prosess.flervalg(faktumId).besvar(svar.asFlervalg(), besvartAv)
-            "tekst" -> prosess.tekst(faktumId).besvar(svar.asTekst(), besvartAv)
-            "periode" -> prosess.periode(faktumId).besvar(svar.asPeriode(), besvartAv)
-            "dokument" -> prosess.dokument(faktumId).besvar(svar.asDokument(), besvartAv)
+            "land" -> {
+                prosess.land(faktumId).besvar(svar.asLand(), besvartAv)
+            }
+
+            "boolean" -> {
+                prosess.boolsk(faktumId).besvar(svar.asBoolean(), besvartAv)
+            }
+
+            "int" -> {
+                prosess.heltall(faktumId).besvar(svar.asInt(), besvartAv)
+            }
+
+            // todo: remove?
+            "integer" -> {
+                prosess.heltall(faktumId).besvar(svar.asInt(), besvartAv)
+            }
+
+            "double" -> {
+                prosess.desimaltall(faktumId).besvar(svar.asDouble(), besvartAv)
+            }
+
+            "localdate" -> {
+                prosess.dato(faktumId).besvar(svar.asLocalDate(), besvartAv)
+            }
+
+            "inntekt" -> {
+                prosess.inntekt(faktumId).besvar(svar.asDouble().årlig, besvartAv)
+            }
+
+            "envalg" -> {
+                prosess.envalg(faktumId).besvar(svar.asEnvalg(), besvartAv)
+            }
+
+            "flervalg" -> {
+                prosess.flervalg(faktumId).besvar(svar.asFlervalg(), besvartAv)
+            }
+
+            "tekst" -> {
+                prosess.tekst(faktumId).besvar(svar.asTekst(), besvartAv)
+            }
+
+            "periode" -> {
+                prosess.periode(faktumId).besvar(svar.asPeriode(), besvartAv)
+            }
+
+            "dokument" -> {
+                prosess.dokument(faktumId).besvar(svar.asDokument(), besvartAv)
+            }
+
             "generator" -> {
                 val svarene = svar as ArrayNode
                 prosess.generator(faktumId).besvar(svarene.size(), besvartAv)
@@ -186,7 +223,9 @@ internal class FaktumSvarService(
                 }
             }
 
-            else -> throw IllegalArgumentException("Ukjent svar-type: $type")
+            else -> {
+                throw IllegalArgumentException("Ukjent svar-type: $type")
+            }
         }
     }
 

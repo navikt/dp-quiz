@@ -170,8 +170,11 @@ class FaktaRecord : FaktaRepository {
                 val forrigeFaktum = gjeldendeTilstand[faktum.rootId]
 
                 when (forrigeFaktum) {
-                    null -> inserts.add(mapOf("soknadId" to soknadId, "id" to faktum.faktumId))
-                    else ->
+                    null -> {
+                        inserts.add(mapOf("soknadId" to soknadId, "id" to faktum.faktumId))
+                    }
+
+                    else -> {
                         updates.add(
                             mapOf(
                                 "soknadId" to soknadId,
@@ -179,6 +182,7 @@ class FaktaRecord : FaktaRepository {
                                 "nyFaktumId" to faktum.faktumId,
                             ),
                         )
+                    }
                 }
             }
 

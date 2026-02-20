@@ -29,17 +29,19 @@ class DagpengerMetadataStrategi : MetadataStrategi {
 
         fun skjemaKode(): Metadata =
             when (permittert) {
-                true ->
+                true -> {
                     when (gjenopptak) {
                         true -> Metadata("04-16.04")
                         else -> Metadata("04-01.04")
                     }
+                }
 
-                else ->
+                else -> {
                     when (gjenopptak) {
                         true -> Metadata("04-16.03")
                         else -> Metadata("04-01.03")
                     }
+                }
             }
 
         override fun preVisit(
