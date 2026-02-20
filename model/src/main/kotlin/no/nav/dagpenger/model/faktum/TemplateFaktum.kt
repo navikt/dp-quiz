@@ -109,12 +109,15 @@ class TemplateFaktum<R : Comparable<R>> internal constructor(
         avhengighet: Faktum<*>,
         indeks: Int,
     ) = when (avhengighet) {
-        is TemplateFaktum<*> ->
+        is TemplateFaktum<*> -> {
             singleOrNull {
                 it.faktumId == avhengighet.faktumId medIndeks indeks
             }
+        }
 
-        else -> idOrNull(avhengighet.faktumId)
+        else -> {
+            idOrNull(avhengighet.faktumId)
+        }
     }
 
     // Sjekker om seksjonen er *kun* templates, og skal dermed klones før vi lager instanser av template i den

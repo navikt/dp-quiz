@@ -91,21 +91,23 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
     @Suppress("UNCHECKED_CAST")
     override fun faktum(): Faktum<T> =
         when (clazz) {
-            Envalg::class.java ->
+            Envalg::class.java -> {
                 GrunnleggendeFaktum(
                     faktumId = faktumId,
                     navn = navn,
                     clazz = clazz,
                     gyldigeValg = GyldigeValg(gyldigeValg),
                 ) as Faktum<T>
+            }
 
-            Flervalg::class.java ->
+            Flervalg::class.java -> {
                 GrunnleggendeFaktum(
                     faktumId = faktumId,
                     navn = navn,
                     clazz = clazz,
                     gyldigeValg = GyldigeValg(gyldigeValg),
                 ) as Faktum<T>
+            }
 
             Land::class.java -> {
                 require(landGrupper.isNotEmpty()) { "Kan ikke lage landfaktum $navn uten noen grupper" }
@@ -117,7 +119,9 @@ class BaseFaktumFactory<T : Comparable<T>> internal constructor(
                 ) as Faktum<T>
             }
 
-            else -> GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz)
+            else -> {
+                GrunnleggendeFaktum(faktumId = faktumId, navn = navn, clazz = clazz)
+            }
         }
 
     @Suppress("UNCHECKED_CAST")

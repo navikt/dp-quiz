@@ -24,6 +24,7 @@ class GeneratorSubsumsjon internal constructor(
                         }
                     }
                 }
+
                 else -> {
                     (oppfylt as SammensattSubsumsjon).clear()
                 }
