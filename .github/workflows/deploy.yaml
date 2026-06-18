@@ -26,7 +26,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
       - run: ./gradlew --configuration-cache build installDist
       - name: Publish results (unit test)
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        uses: EnricoMi/publish-unit-test-result-action@v2.23.0
         with:
           junit_files: "**/build/test-results/test/TEST-*.xml"
 
